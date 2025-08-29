@@ -51,7 +51,8 @@ const Navigation = () => {
     //{ name: 'News', path: '/news' },
     { name: 'Videos', path: '/videos' },
     { name: 'Gallery', path: '/gallery' },
-    { name: 'Contact', path: '/contact' }
+    { name: 'Contact', path: '/contact' },
+    {name :'Admin' ,path: '/admin-login'}
   ];
 
   return (
