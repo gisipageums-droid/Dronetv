@@ -1,18 +1,117 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Drone TV Website</title>
     <!-- Favicon for all browsers and devices -->
     <link rel="icon" type="image/png" href="/images/imagee.png" sizes="32x32" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/images/image.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/images/image.png"
+    />
     <link rel="apple-touch-icon" href="/images/image1.png" />
     <link rel="shortcut icon" href="/images/image1.png" />
   </head>
 
   <body>
+    <!-- Flowise Customer Assistant Chatbot Script -->
+    <script type="module">
+      import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js";
+      Chatbot.init({
+        chatflowid: "61fadaa5-fb73-4dc3-bc81-092212da3976",
+        apiHost: "https://srv1006227.hstgr.cloud",
+        chatflowConfig: {},
+        observersConfig: {},
+        theme: {
+          button: {
+            backgroundColor: "#ffde59",
+            right: 20,
+            bottom: 20,
+            size: 56,
+            borderRadius: 16,
+            dragAndDrop: true,
+            iconColor: "#78350F",
+            customIconSrc: "/images/round_logo.png",
+            autoWindowOpen: {
+              autoOpen: false,
+              openDelay: 3,
+              autoOpenOnMobile: false,
+            },
+          },
+
+          chatWindow: {
+            showTitle: true,
+            showAgentMessages: true,
+            title: "Drone TV.in Support",
+            titleAvatarSrc: "/images/round_logo.png",
+            titleTextColor: "#78350F",
+            welcomeMessage: "Hello! How can I assist you today?",
+            errorMessage: "Oops! Something went wrong. Please try again later.",
+            backgroundColor: "#FDF1D9",
+
+            minWidth: 300,
+            maxWidth: 480,
+            minHeight: 450,
+            maxHeight: 600,
+            fontSize: "clamp(14px, 1vw, 18px)",
+            fontFamily: "'Inter', sans-serif",
+
+            roundedCorners: true,
+            clearChatOnReload: false,
+            sourceDocsTitle: "Helpful Resources:",
+            renderHTML: true,
+            boxShadow: "0 10px 30px rgba(249, 115, 22, 0.15)",
+            starterPrompts: [
+              "Tell me about Drone TV",
+              "What is a Drone?",
+              "List the Upcoming Drone TV events?",
+            ],
+            starterPromptFontSize: 13,
+            botMessage: {
+              backgroundColor: "#FDF1D9",
+              textColor: "#78350F",
+              showAvatar: true,
+              avatarSrc: "/images/round_logo.png",
+            },
+            userMessage: {
+              backgroundColor: "#ffe587",
+              textColor: "#602B0C",
+              showAvatar: true,
+              avatarSrc: "/images/user.png",
+            },
+            textInput: {
+              placeholder: "Type your message here...",
+              backgroundColor: "#ffffff",
+              textColor: "#303235",
+              borderRadius: 14,
+              boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+              sendButtonColor: "#FFC254",
+              maxChars: 120,
+              maxCharsWarningMessage:
+                "Please limit your message to 120 characters.",
+              autoFocus: true,
+            },
+            feedback: {
+              color: "#78350F",
+            },
+            dateTimeToggle: {
+              date: true,
+              time: true,
+            },
+            footer: {
+              textColor: "#78350F",
+              text: "Powered by",
+              company: "Drone TV.in",
+              companyLink: "https://dronetv.in",
+            },
+          },
+        },
+      });
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
