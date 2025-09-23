@@ -97,6 +97,8 @@ const AppContent = () => {
           <Route path='/template/t1' element={<Template1 />} />
           <Route path='/template/t2' element={<Template2 />} />
           <Route path='/form' element={<Form />} />
+          <Route path='/form/:publicId/:userId/:draftId' element={<Form />} />
+
           <Route path='/edit/template/t1' element={<EditTemp1 />} />
           <Route path='/edit/template/t2' element={<EditTemp2 />} />
           <Route path='/user/companies/preview/1/:publishedId/:userId' element={<DashboardPreview1 />} />

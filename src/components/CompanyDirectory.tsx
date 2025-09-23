@@ -14,6 +14,10 @@ interface Company {
   publishedDate: string;
   previewImage?: string;
   status: string;
+
+  userId:string;
+  publicId:string;
+  draftId:string;
 }
 
 interface ApiResponse {
@@ -173,26 +177,31 @@ interface ErrorMessageProps {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className='relative h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6'>
-      {/* ===== Always Visible Popup ===== */}
-      <div className="absolute top-28 right-12 z-10 animate-bounce">
-        <div className="bg-white border border-yellow-300 rounded-xl shadow-lg px-5 py-8 text-center">
-          <h2 className="text-base md:text-lg font-semibold text-amber-900">
+    <div className='h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6'>
+
+
+       {/* ===== Always Visible Popup ===== */}
+      <div className="fixed right-12 top-28 z-10 animate-bounce">
+        <div className="px-5 py-8 text-center bg-white rounded-xl border border-yellow-300 shadow-lg">
+          <h2 className="text-base font-semibold text-amber-900 md:text-lg">
             🎉 Free Trial
           </h2>
-          <p className="text-lg font-semibold text-amber-700 mt-1">
+          <p className="mt-1 text-lg font-semibold text-amber-700">
             You have{" "}
             <span className="font-bold text-amber-600">90</span> free trial days
             remaining.
           </p>
-          <p className="text-sm text-left pl-6 text-amber-700 mt-4">
+          <p className="pl-6 mt-4 text-sm text-left text-amber-700">
             ✅ Create <span className="font-bold text-amber-600">unlimited company templates</span>.
           </p>
-          <p className="text-sm text-left pl-6 text-amber-700 mt-1">
+          <p className="pl-6 mt-1 text-sm text-left text-amber-700">
             ✅ <span className="font-bold">Edit and customize</span> templates at any time.
           </p>
         </div>
       </div>
+
+
+
 
       <div className='text-center max-w-3xl relative w-full'>
         {/* Geometric Elements */}
@@ -389,6 +398,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 // Company Card Component with Edit/Preview Buttons
 const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
   // Create a placeholder image using company name
+  console.log(company)
   const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
     company.companyName?.charAt(0) || "C"
   }%3C/text%3E%3C/svg%3E`;
@@ -444,7 +454,8 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
 // console.log("Company Status:", company.reviewStatus); // Debug log
 
   return (
-    <div className='bg-red-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-pink-500 to-purple-600 group h-full w-full'>
+    // <div className='bg-red-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-pink-500 to-purple-600 group'>
+    <div className='overflow-hidden w-full h-full bg-red-50 from-pink-500 to-purple-600 rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl border-gradient-to-b group'>
       <div className='p-4 md:p-6 lg:p-8'>
         <div className='flex items-center justify-between mb-4 md:mb-6'>
           <div className='flex items-center gap-3 md:gap-4'>
@@ -504,6 +515,24 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
 
           {/* Action Buttons */}
           <div className='flex gap-2 justify-end'>
+
+
+
+             <button
+    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      // Construct the dynamic URL
+      const url = `${window.location.origin}/form/${company.publishedId}/${company.userId}/${company.draftId}`;
+      // const url = `${window.location.origin}/${company.publicId}/${company.userId}/${company.draftId}`;
+      window.open(url, "_blank"); // opens in new tab
+    }}
+    className="px-3 py-2 md:px-4 md:py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2"
+  >
+    <Edit className="w-3 h-3 md:w-4 md:h-4" />
+    Edit Data
+  </button>
+
+
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
@@ -689,6 +718,7 @@ const apiService = {
     try {
       // FIXED: Use the correct endpoint /dashboard-cards
       const url = new URL('https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards');
+      // console.log( "this is the url log",url)
       url.searchParams.append('userId', userId.trim());
       
       console.log('Fetching companies from:', url.toString());
@@ -794,7 +824,9 @@ const apiService = {
             reviewStatus: String(card.reviewStatus).toLowerCase(),
             publishedDate: card.publishedDate || card.createdAt || card.date || new Date().toISOString(),
             previewImage: card.previewImage || card.logo || card.image || '',
-            status: String(card.status || 'approved').toLowerCase()
+            status: String(card.status || 'approved').toLowerCase(),
+            userId: String(card.userId || ''), 
+             draftId: String(card.draftId || '')
           };
         } catch (cardError) {
           console.error(`Error processing card at index ${index}:`, cardError);

@@ -1,15 +1,16 @@
-import { useState } from "react";
+
+
+
+import { useState, useEffect } from "react";
 import { FormData } from "./types/form";
-import { useLocation,useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Step1CompanyCategory from "./components/steps/Step1CompanyCategory";
 import Step3SectorsServed from "./components/steps/Step3SectorsServed";
 import Step4BusinessCategories from "./components/steps/Step4BusinessCategories";
 import Step5ProductsServices from "./components/steps/Step5ProductsServices";
 import Step7PromotionBilling from "./components/steps/Step7PromotionBilling";
 import Step8MediaUploads from "./components/steps/Step8MediaUploads";
-import { AIGenerationLoader } from "./components/AIGenerationLoader";
-import {useTemplate} from "../../../../../context/context"
-import { toast } from "react-toastify";
+import { useTemplate } from "../../../../../context/context";
 
 // ---- initial form state ----
 const initialFormData: FormData = {
@@ -48,6 +49,8 @@ const initialFormData: FormData = {
   sectorsServed: [],
   sectorsOther: "",
   mainCategories: [],
+  subCategories: [],
+  subSubCategories: [],
   otherMainCategories: "",
   geographyOfOperations: [],
   coverageType: "",
@@ -68,13 +71,13 @@ const initialFormData: FormData = {
   aiProducts: [],
   aiProductsOther: "",
   aiServices: [],
-  aiServicesOther: "",
+  aiServicesOther: [],
   gnssSolutions: [],
-  gnssSolutionsOther: "",
+  gnssSolutionsOther: [],
   gnssProducts: [],
-  gnssProductsOther: "",
+  gnssProductsOther: [],
   gnssServices: [],
-  gnssServicesOther: "",
+  gnssServicesOther: [],
   heroBackgroundUrl: "",
   primaryCtaText: "",
   primaryCtaLink: "",
@@ -128,110 +131,90 @@ const initialFormData: FormData = {
 };
 
 function App() {
-const [companyNameStatus, setCompanyNameStatus] = useState<null | { available: boolean; suggestions?: string[]; message: string }>(null);
-const [isCheckingName, setIsCheckingName] = useState(false);
-
   const [currentStep, setCurrentStep] = useState(1);
- 
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const { draftDetails, setAIGenData, AIGenData } = useTemplate();
-    
-  const navigate = useNavigate(); // Use the useNavigate hook
+  const { setAIGenData } = useTemplate();
+  const [isApiLoading, setIsApiLoading] = useState(true);
 
-//function to check company name availability
-
-const checkCompanyName = async (name: string) => {
-  if (!name || name.length < 2) {
-    setCompanyNameStatus(null);
-    return;
-  }
-  setIsCheckingName(true);
-  try {
-    const res = await fetch(`https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(name)}`);
-    const data = await res.json();
-    setCompanyNameStatus(data);
-    
-  } catch (err) {
-    setCompanyNameStatus({ available: false, message: "Error checking name" });
-  } finally {
-    setIsCheckingName(false);
-  }
-};
-
-
-  const API = "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft";
-  //  const Dummyapi = "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/alok-12345/draft-alok-aerospace-2025-002?template=template-2";
-
-  console.log("draftDetails:",draftDetails);
-    // Add a state for API call loading
-  const [isApiLoading, setIsApiLoading] = useState(false);
-
-    async function handleClick() {
-      try {
-        setIsApiLoading(true);
-        const response = await fetch(`${API}/${draftDetails.userId}/${draftDetails.draftId}?template=template-${draftDetails.templateSelection}`);
-        // const response = await fetch(`${Dummyapi}`);
-        
-        const data = await response.json();
-        if (response.ok) {
-          
-          toast.success("AI generates the data successfully",{toastId: "ai-success"})          
-          // Use navigate function instead of Navigate component
-          // console.log("data:",data);
-          
-            setAIGenData(data);
-            // console.log("AIgen:", AIGenData);
-            navigate(`/edit/template/${draftDetails.templateSelection ===1?"t1":"t2"}`);
-          
-  
-          
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-  
-
-  // Get templateId from navigation state
+  const navigate = useNavigate();
   const location = useLocation();
-  const templateId = location.state?.templateId;
-  // console.log(templateId);
-  initialFormData.templateSelection = templateId || "";
-  // console.log("templateSelection: ", initialFormData.templateSelection);
+  const templateId = location.state?.templateId || "";
 
-  // ✅ new: track draftId & selectedTemplate
-  const [draftId, setDraftId] = useState<string | undefined>(undefined);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(templateId); // this comes from your template selection UI
-  const [userId] = useState<string>("user-123"); // replace with real auth/user context
+  // Extract dynamic params from URL
+  const params = useParams<{ publicId?: string; userId?: string; draftId?: string }>();
+  const { publicId, userId, draftId } = params;
 
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+  const [companyNameStatus, setCompanyNameStatus] = useState<null | { available: boolean; suggestions?: string[]; message: string }>(null);
+  const [isCheckingName, setIsCheckingName] = useState(false);
 
+  // Fetch data if URL contains params
+  useEffect(() => {
+    const fetchDraftData = async () => {
+      if (publicId && userId && draftId) {
+        try {
+          const API_URL = `https://l0jg1d9hnc.execute-api.ap-south-1.amazonaws.com/dev/${publicId}/${userId}/${draftId}`;
+          const response = await fetch(API_URL);
+          const data = await response.json();
+
+          if (data?.formData) {
+            console.log("Fetched formData:", data.formData);
+            setFormData((prev) => ({ ...prev, ...data.formData }));
+            setAIGenData(data);
+          } else {
+            console.error("API returned invalid data:", data);
+          }
+        } catch (error) {
+          console.error("Error fetching draft data:", error);
+        } finally {
+          setIsApiLoading(false);
+        }
+      } else {
+        // No params → open empty form
+        setIsApiLoading(false);
+      }
+    };
+
+    fetchDraftData();
+  }, [publicId, userId, draftId, setAIGenData]);
+
+  // Update form data locally
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
 
+  // Submit logic
+  const handleSubmit = async () => {
+    if (userId && draftId) {
+      try {
+        const PUT_URL = `https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${draftId}`;
+        const res = await fetch(PUT_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ formData }),
+        });
+
+        if (!res.ok) throw new Error("Failed to save form");
+        const result = await res.json();
+        console.log("Form saved:", result);
+        alert("Form saved successfully!");
+      } catch (err) {
+        console.error("Save error:", err);
+        alert("Failed to save form!");
+      }
+    } else {
+      alert("No draftId/userId found. Cannot save!");
+    }
+  };
+
+  // Navigation
   const nextStep = () => {
-    if (currentStep < 6) {
-      setCurrentStep(currentStep + 1);
-    } else if (currentStep === 6) {
-      setIsGenerating(true);
-    }
+    if (currentStep < 6) setCurrentStep(currentStep + 1);
   };
-
   const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const handleGenerationComplete = () => {
-    setIsGenerating(false);
-    setIsComplete(true);
-  };
-
+  // Step rendering
   const renderStep = () => {
     const stepProps = {
       formData,
@@ -240,16 +223,14 @@ const checkCompanyName = async (name: string) => {
       onPrev: prevStep,
       onStepClick: (step: number) => setCurrentStep(step),
       isValid: true,
+      checkCompanyName,
+      companyNameStatus,
+      isCheckingName,
     };
 
     switch (currentStep) {
       case 1:
-        return <Step1CompanyCategory 
-        {...stepProps} 
-         checkCompanyName={checkCompanyName}
-        companyNameStatus={companyNameStatus}
-        isCheckingName={isCheckingName}
-        />;
+        return <Step1CompanyCategory {...stepProps} />;
       case 2:
         return <Step3SectorsServed {...stepProps} />;
       case 3:
@@ -261,15 +242,15 @@ const checkCompanyName = async (name: string) => {
       case 6:
         return (
           <Step8MediaUploads
-            formData={formData} // ✅ pass current form data
-            updateFormData={updateFormData} // ✅ so uploads update state
-            userId={userId}
-            draftId={draftId}
-            selectedTemplateId={selectedTemplateId}
-            onNext={nextStep} // ✅ prevent "onNext is not a function"
-            onPrev={prevStep} // ✅ allow going back if needed
-            onSaveSuccess={(newDraftId) => setDraftId(newDraftId)} // ✅ store draftId
-            isValid={true} // ✅ for consistency with other steps
+            formData={formData}
+            updateFormData={updateFormData}
+            userId={userId || "dev@local"}
+            draftId={draftId || "draft-local"}
+            selectedTemplateId={templateId}
+            onNext={nextStep}
+            onPrev={prevStep}
+            onSaveSuccess={handleSubmit}
+            isValid={true}
           />
         );
       default:
@@ -277,37 +258,37 @@ const checkCompanyName = async (name: string) => {
     }
   };
 
-  if (isGenerating) {
-    return <AIGenerationLoader onComplete={handleGenerationComplete} />;
-  }
-
-  if (isComplete) {
-    // Show loading indicator while API call is in progress
-    if (isApiLoading) {
-      return (
-        <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
-          <div className="text-center">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse mb-6">
-              <svg className="w-12 h-12 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Loading Your Website
-            </h1>
-            <p className="text-blue-200 text-lg">
-              Please wait while we prepare your website data
-            </p>
-          </div>
-        </div>
-      );
+  // Check name API (unchanged)
+  const checkCompanyName = async (name: string) => {
+    if (!name || name.length < 2) {
+      setCompanyNameStatus(null);
+      return;
     }
-    
-    // Call handleClick after a short delay when isComplete becomes true
-      handleClick();
-    
-    return null;
+    setIsCheckingName(true);
+    try {
+      const res = await fetch(
+        `https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(
+          name
+        )}`
+      );
+      const data = await res.json();
+      setCompanyNameStatus(data);
+    } catch {
+      setCompanyNameStatus({ available: false, message: "Error checking name" });
+    } finally {
+      setIsCheckingName(false);
+    }
+  };
+
+  if (isApiLoading) {
+    return (
+      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-white mb-2">Loading form data...</h1>
+          <p className="text-blue-200 text-lg">Please wait while we prefill your form</p>
+        </div>
+      </div>
+    );
   }
 
   return <div>{renderStep()}</div>;
