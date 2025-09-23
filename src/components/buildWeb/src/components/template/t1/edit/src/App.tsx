@@ -1,18 +1,19 @@
-import { useEffect, useState, useCallback } from "react";
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import UsedBy from "./components/UsedBy";
+import { useCallback, useEffect, useState } from "react";
+import { useTemplate } from "../../../../../../../context/context";
 import About from "./components/About";
-import Services from "./components/Services";
-import Products from "./components/Products";
 import Blog from "./components/Blog";
-import BlogModal from "./components/BlogModal";
-import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import Header from "./components/Header";
+import Hero from "./components/Hero";
+import Products from "./components/Products";
 import Publish from "./components/Publish";
-import { useTemplate } from "../../../../../../../context/context";
-// import { useEffect } from "react";
+import Services from "./components/Services";
+import Testimonials from "./components/Testimonials";
+import UsedBy from "./components/UsedBy";
+// Import the new editable components
+import EditableGallerySection from "./components/Gallery";
+import EditableCompanyProfile from "./components/Profile";
 
 export default function App() {
   const { AIGenData, setFinalTemplate } = useTemplate();
@@ -62,7 +63,7 @@ export default function App() {
         templateSelection={AIGenData.templateSelection}
       />
       <UsedBy
-      
+        usedByData={AIGenData.content.usedBy}
         onStateChange={useCallback((state) => collectComponentState("usedBy", state), [collectComponentState])}
         publishedId={AIGenData.publishedId}
         userId={AIGenData.userId}
@@ -74,51 +75,67 @@ export default function App() {
         publishedId={AIGenData.publishedId}
         userId={AIGenData.userId}
         templateSelection={AIGenData.templateSelection}
-      
       />
+      
+      {/* Add the EditableCompanyProfile component */}
+      <EditableCompanyProfile
+        profileData={AIGenData.content.profile}
+        onStateChange={useCallback((state) => collectComponentState("profile", state), [collectComponentState])}
+        publishedId={AIGenData.publishedId}
+        userId={AIGenData.userId}
+        templateSelection={AIGenData.templateSelection}
+      />
+      
       <Services 
-      serviceData={AIGenData.content.services}
-      onStateChange={useCallback((state) => collectComponentState("services", state), [collectComponentState])}
-      publishedId={AIGenData.publishedId}
-      userId={AIGenData.userId}
-      templateSelection={AIGenData.templateSelection}
+        serviceData={AIGenData.content.services}
+        onStateChange={useCallback((state) => collectComponentState("services", state), [collectComponentState])}
+        publishedId={AIGenData.publishedId}
+        userId={AIGenData.userId}
+        templateSelection={AIGenData.templateSelection}
       />
       <Products 
-      productData={AIGenData.content.products} 
-      onStateChange={useCallback((state) => collectComponentState("products", state), [collectComponentState])}
-      publishedId={AIGenData.publishedId}
-      userId={AIGenData.userId}
-      templateSelection={AIGenData.templateSelection}
+        productData={AIGenData.content.products} 
+        onStateChange={useCallback((state) => collectComponentState("products", state), [collectComponentState])}
+        publishedId={AIGenData.publishedId}
+        userId={AIGenData.userId}
+        templateSelection={AIGenData.templateSelection}
       />
+      
+      {/* Add the EditableGallerySection component */}
+      <EditableGallerySection
+        
+        onStateChange={useCallback((state) => collectComponentState("gallery", state), [collectComponentState])}
+        publishedId={AIGenData.publishedId}
+        userId={AIGenData.userId}
+        templateSelection={AIGenData.templateSelection}
+      />
+      
       <Blog 
-      blogData={AIGenData.content.blog}
-      onStateChange={useCallback((state) => collectComponentState("blog", state), [collectComponentState])}
-      publishedId={AIGenData.publishedId}
-      userId={AIGenData.userId}
-      templateSelection={AIGenData.templateSelection}
+        blogData={AIGenData.content.blog}
+        onStateChange={useCallback((state) => collectComponentState("blog", state), [collectComponentState])}
+        publishedId={AIGenData.publishedId}
+        userId={AIGenData.userId}
+        templateSelection={AIGenData.templateSelection}
       />
       
       <Testimonials 
-      content={AIGenData.content.testimonials}
-      onStateChange={useCallback((state) => collectComponentState("testimonials", state), [collectComponentState])}
-      publishedId={AIGenData.publishedId}
-      userId={AIGenData.userId}
-      templateSelection={AIGenData.templateSelection}
-       />
+        content={AIGenData.content.testimonials}
+        onStateChange={useCallback((state) => collectComponentState("testimonials", state), [collectComponentState])}
+        publishedId={AIGenData.publishedId}
+        userId={AIGenData.userId}
+        templateSelection={AIGenData.templateSelection}
+      />
       <Contact
-      content={AIGenData.content.contact}
-      onStateChange={useCallback((state) => collectComponentState("contact", state), [collectComponentState])}
-      publishedId={AIGenData.publishedId}
-      userId={AIGenData.userId}
-      templateSelection={AIGenData.templateSelection}
+        content={AIGenData.content.contact}
+        onStateChange={useCallback((state) => collectComponentState("contact", state), [collectComponentState])}
+        publishedId={AIGenData.publishedId}
+        userId={AIGenData.userId}
+        templateSelection={AIGenData.templateSelection}
       />
       <Publish />
       <Footer 
-      onStateChange={useCallback((state) => collectComponentState("footer", state), [collectComponentState])}
-       content={AIGenData.content.company}
-       publishedId={AIGenData.publishedId}
-      userId={AIGenData.userId}
-      templateSelection={AIGenData.templateSelection}
+        onStateChange={useCallback((state) => collectComponentState("footer", state), [collectComponentState])}
+        content={AIGenData.content.company}
       />
     </div>
   );

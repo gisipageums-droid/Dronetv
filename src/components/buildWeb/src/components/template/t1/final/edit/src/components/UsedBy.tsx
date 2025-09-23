@@ -1,10 +1,15 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Edit2, Loader2, Plus, Save, Trash2, Upload, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { Button } from "../components/ui/button";
 
-export default function EditableUsedBy({usedByData, onStateChange, userId, publishedId, templateSelection }) {
+const itemVariants = {
+  hidden: { y: 50, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
+};
+
+export default function EditableUsedBy({ usedByData, onStateChange, userId, publishedId, templateSelection }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -14,21 +19,29 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
   const sectionRef = useRef(null);
   const fileInputRefs = useRef({});
 
-  // Pending image files for S3 upload
+  // Pending image files for S3 upload - same structure as Hero component
   const [pendingImageFiles, setPendingImageFiles] = useState({});
 
-  // Consolidated state
-  const [contentState, setContentState] = useState(usedByData);
-  const [tempContentState, setTempContentState] = useState(usedByData);
+  // Default content structure
+  const defaultCompanies = usedByData.companies;
 
-  // Notify parent of state changes
+  const defaultContent = {
+    title: "USED BY",
+    companies: defaultCompanies,
+  };
+
+  // Consolidated state - same as Hero component
+  const [contentState, setContentState] = useState(defaultContent);
+  const [tempContentState, setTempContentState] = useState(defaultContent);
+
+  // Notify parent of state changes - same as Hero component
   useEffect(() => {
     if (onStateChange) {
       onStateChange(contentState);
     }
   }, [contentState, onStateChange]);
 
-  // Intersection Observer for visibility
+  // Intersection Observer for visibility - same as Hero component
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -48,28 +61,40 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
     };
   }, []);
 
-  // Simulate API call to fetch data from database
+  // Data fetching - same pattern as Hero component
   const fetchUsedByData = async () => {
     setIsLoading(true);
     try {
-      // Use the provided data directly
-      setContentState(usedByData);
-      setTempContentState(usedByData);
+      // Simulate API call like Hero component
+      const response = await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            title: "USED BY",
+            companies: usedByData.companies,
+          });
+        }, 1200);
+      });
+
+      setContentState(response);
+      setTempContentState(response);
       setDataLoaded(true);
     } catch (error) {
       console.error("Error fetching used-by data:", error);
       // Keep default content on error
+      setContentState(defaultContent);
+      setTempContentState(defaultContent);
+      setDataLoaded(true);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Fetch data when component becomes visible
+  // Fetch data when component becomes visible - same as Hero component
   useEffect(() => {
     if (isVisible && !dataLoaded && !isLoading) {
       fetchUsedByData();
     }
-  }, [isVisible, dataLoaded, isLoading, usedByData]);
+  }, [isVisible, dataLoaded, isLoading]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -77,15 +102,15 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
     setPendingImageFiles({});
   };
 
-  // Updated Save function with S3 upload
+  // Save function with EXACT same pattern as Hero component
   const handleSave = async () => {
     try {
       setIsUploading(true);
       
-      // Create a copy of tempContentState to update with S3 URLs
+      // Create a copy of tempContentState to update with S3 URLs - same as Hero
       let updatedState = { ...tempContentState };
 
-      // Upload all pending images
+      // Upload all pending images - same pattern as Hero component
       for (const [companyIdStr, file] of Object.entries(pendingImageFiles)) {
         const companyId = parseInt(companyIdStr);
         
@@ -107,11 +132,10 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          // Update the company image with S3 URL
+          // Update the company image with S3 URL - same as Hero component
           updatedState.companies = updatedState.companies.map(company => 
             company.id === companyId ? { ...company, image: uploadData.imageUrl } : company
           );
-          console.log(`Company ${companyId} image uploaded to S3:`, uploadData.imageUrl);
         } else {
           const errorData = await uploadResponse.json();
           toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
@@ -119,19 +143,19 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
         }
       }
 
-      // Clear pending files
+      // Clear pending files - same as Hero component
       setPendingImageFiles({});
 
-      // Save the updated state with S3 URLs
+      // Save the updated state with S3 URLs - EXACT same pattern as Hero component
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
       
-      // Update both states with the new URLs
+      // Update both states with the new URLs - EXACT same as Hero component
       setContentState(updatedState);
       setTempContentState(updatedState);
       
       setIsEditing(false);
-      toast.success('Used By section saved with S3 URLs ready for publish');
+      toast.success('Used By section saved successfully!');
 
     } catch (error) {
       console.error('Error saving used by section:', error);
@@ -148,40 +172,26 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
     setIsEditing(false);
   };
 
-  // Update functions
-  const updateTempContent = useCallback((field, value) => {
-    setTempContentState((prev) => ({ ...prev, [field]: value }));
-  }, []);
-
-  const updateCompanyName = useCallback((companyId, newName) => {
-    setTempContentState((prev) => ({
-      ...prev,
-      companies: prev.companies.map((company) =>
-        company.id === companyId ? { ...company, name: newName } : company
-      ),
-    }));
-  }, []);
-
-  // Image upload handler with validation
+  // Image upload handler with EXACT same validation as Hero component
   const handleImageUpload = useCallback((companyId, event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Validate file type and size
+    // Validate file type and size - EXACT same as Hero component
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit - same as Hero
       toast.error('File size must be less than 5MB');
       return;
     }
 
-    // Store the file for upload on Save
+    // Store the file for upload on Save - same pattern as Hero component
     setPendingImageFiles(prev => ({ ...prev, [companyId]: file }));
 
-    // Show immediate local preview
+    // Show immediate local preview - same as Hero component
     const reader = new FileReader();
     reader.onload = (e) => {
       setTempContentState((prev) => ({
@@ -196,6 +206,20 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
     reader.readAsDataURL(file);
   }, []);
 
+  // Update functions - same pattern as Hero component
+  const updateTempContent = useCallback((field, value) => {
+    setTempContentState((prev) => ({ ...prev, [field]: value }));
+  }, []);
+
+  const updateCompanyName = useCallback((companyId, newName) => {
+    setTempContentState((prev) => ({
+      ...prev,
+      companies: prev.companies.map((company) =>
+        company.id === companyId ? { ...company, name: newName } : company
+      ),
+    }));
+  }, []);
+
   const addCompany = useCallback(() => {
     setTempContentState((prev) => {
       const newId = Math.max(0, ...prev.companies.map((c) => c.id)) + 1;
@@ -203,11 +227,7 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
         ...prev,
         companies: [
           ...prev.companies,
-          { 
-            id: newId, 
-            name: "New Company", 
-            image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=200" 
-          },
+          { id: newId, name: "New Company", image: BusinessInsider },
         ],
       };
     });
@@ -220,7 +240,7 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
     }));
   }, []);
 
-  // Memoized EditableText component to prevent recreation
+  // Memoized EditableText component - same pattern as Hero component
   const EditableText = useMemo(() => {
     return ({ value, field, companyId, className = "", placeholder = "" }) => {
       const handleChange = (e) => {
@@ -245,9 +265,14 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
 
   const displayContent = isEditing ? tempContentState : contentState;
 
+  // Auto-scroll functionality remains the same
+  const duplicatedCompanies = useMemo(() => {
+    return [...displayContent.companies, ...displayContent.companies];
+  }, [displayContent.companies]);
+
   return (
     <section ref={sectionRef} className='py-16 bg-white relative'>
-      {/* Loading Overlay */}
+      {/* Loading Overlay - EXACT same structure as Hero component */}
       {isLoading && (
         <div className='absolute inset-0 bg-white/80 flex items-center justify-center z-30'>
           <div className='bg-white rounded-lg p-6 shadow-lg flex items-center gap-3 border'>
@@ -257,76 +282,86 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
         </div>
       )}
 
-      {/* Edit Controls - Always visible when data is loaded */}
-      {dataLoaded && (
-        <div className='absolute top-4 right-4 z-20'>
-          {!isEditing ? (
+      {/* Edit Controls - EXACT same positioning and styling as Hero component */}
+      <div className='absolute top-4 right-4 z-20'>
+        {!isEditing ? (
+          <Button
+            onClick={handleEdit}
+            variant='outline'
+            size='sm'
+            className='bg-white hover:bg-gray-50 shadow-lg border-2 border-gray-200 hover:border-blue-300'
+            disabled={isLoading}
+          >
+            <Edit2 className='w-4 h-4 mr-2' />
+            Edit
+          </Button>
+        ) : (
+          <div className='flex gap-2'>
             <Button
-              onClick={handleEdit}
+              onClick={handleSave}
+              size='sm'
+              className='bg-green-600 hover:bg-green-700 text-white shadow-lg'
+              disabled={isSaving || isUploading}
+            >
+              {isUploading ? (
+                <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+              ) : isSaving ? (
+                <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+              ) : (
+                <Save className='w-4 h-4 mr-2' />
+              )}
+              {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+            </Button>
+            <Button
+              onClick={handleCancel}
               variant='outline'
               size='sm'
-              className='bg-white hover:bg-gray-50 shadow-lg border-2 border-gray-200 hover:border-blue-300'
+              className='bg-white hover:bg-gray-50 shadow-lg border-2'
+              disabled={isSaving || isUploading}
             >
-              <Edit2 className='w-4 h-4 mr-2' />
-              Edit
+              <X className='w-4 h-4 mr-2' />
+              Cancel
             </Button>
-          ) : (
-            <div className='flex gap-2'>
-              <Button
-                onClick={handleSave}
-                size='sm'
-                className='bg-green-600 hover:bg-green-700 text-white shadow-lg'
-                disabled={isSaving || isUploading}
-              >
-                {isUploading ? (
-                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                ) : isSaving ? (
-                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                ) : (
-                  <Save className='w-4 h-4 mr-2' />
-                )}
-                {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
-              </Button>
-              <Button
-                onClick={handleCancel}
-                variant='outline'
-                size='sm'
-                className='bg-white hover:bg-gray-50 shadow-lg border-2'
-                disabled={isSaving || isUploading}
-              >
-                <X className='w-4 h-4 mr-2' />
-                Cancel
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
       <div className='max-w-7xl mx-auto px-4'>
         {/* Title Section */}
-        {isEditing ? (
-          <div className='mb-8'>
-            <label className='block text-sm font-medium text-gray-700 mb-2 text-center'>
-              Section Title
-            </label>
-            <div className='max-w-xs mx-auto'>
-              <EditableText
-                value={displayContent.title}
-                field='title'
-                className='text-gray-400 text-lg font-medium'
-                placeholder='Section title'
-              />
+        <motion.div
+          initial='hidden'
+          animate='visible'
+          variants={itemVariants}
+        >
+          {isEditing ? (
+            <div className='mb-8'>
+              <label className='block text-sm font-medium text-gray-700 mb-2 text-center'>
+                Section Title
+              </label>
+              <div className='max-w-xs mx-auto'>
+                <EditableText
+                  value={displayContent.title}
+                  field='title'
+                  className='text-gray-400 text-lg font-medium'
+                  placeholder='Section title'
+                />
+              </div>
             </div>
-          </div>
-        ) : (
-          <p className='text-center text-gray-400 text-lg mb-8'>
-            {displayContent.title}
-          </p>
-        )}
+          ) : (
+            <p className='text-center text-gray-400 text-lg mb-8'>
+              {displayContent.title}
+            </p>
+          )}
+        </motion.div>
 
         {/* Companies Section */}
         {isEditing ? (
-          <div className='space-y-6'>
+          <motion.div 
+            className='space-y-6'
+            initial='hidden'
+            animate='visible'
+            variants={itemVariants}
+          >
             <div className='text-center'>
               <Button
                 onClick={addCompany}
@@ -341,29 +376,43 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
 
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'>
               {displayContent.companies.map((company) => (
-                <div
+                <motion.div
                   key={company.id}
                   className='bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300'
+                  variants={itemVariants}
                 >
                   <div className='space-y-3'>
-                    {/* Company Image */}
+                    {/* Company Image - Editable with EXACT same pattern as Hero component */}
                     <div className='text-center'>
-                      <img
-                        src={company.image}
-                        alt={company.name}
-                        className='h-12 mx-auto opacity-60 grayscale'
-                      />
-                      <Button
-                        onClick={() =>
-                          fileInputRefs.current[company.id]?.click()
-                        }
-                        variant='outline'
-                        size='sm'
-                        className='mt-2 text-xs'
-                      >
-                        <Upload className='w-3 h-3 mr-1' />
-                        Change
-                      </Button>
+                      <div className='relative inline-block'>
+                        <img
+                          src={company.image}
+                          alt={company.name}
+                          className='h-12 mx-auto opacity-60 grayscale'
+                        />
+                        {isEditing && (
+                          <label className='absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded cursor-pointer'>
+                            <Upload className='w-4 h-4 text-white' />
+                            <input
+                              type='file'
+                              accept='image/*'
+                              className='hidden'
+                              onChange={(e) => handleImageUpload(company.id, e)}
+                            />
+                          </label>
+                        )}
+                      </div>
+                      {isEditing && (
+                        <Button
+                          onClick={() => fileInputRefs.current[company.id]?.click()}
+                          variant='outline'
+                          size='sm'
+                          className='mt-2 text-xs'
+                        >
+                          <Upload className='w-3 h-3 mr-1' />
+                          Change Logo
+                        </Button>
+                      )}
                       <input
                         ref={(el) => (fileInputRefs.current[company.id] = el)}
                         type='file'
@@ -371,10 +420,10 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
                         onChange={(e) => handleImageUpload(company.id, e)}
                         className='hidden'
                       />
-                      {pendingImageFiles[company.id] && (
-                        <p className='text-xs text-orange-600 mt-1'>
-                          Image selected: {pendingImageFiles[company.id].name}
-                        </p>
+                      {isEditing && pendingImageFiles[company.id] && (
+                        <div className='text-xs text-orange-600 mt-1'>
+                          Pending: {pendingImageFiles[company.id].name}
+                        </div>
                       )}
                     </div>
 
@@ -393,7 +442,7 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
                     </div>
 
                     {/* Remove Button */}
-                    {displayContent.companies.length > 1 && (
+                    {isEditing && displayContent.companies.length > 1 && (
                       <Button
                         onClick={() => removeCompany(company.id)}
                         variant='outline'
@@ -405,27 +454,59 @@ export default function EditableUsedBy({usedByData, onStateChange, userId, publi
                       </Button>
                     )}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         ) : (
-          <div className='flex flex-wrap justify-around items-center gap-8'>
-            {displayContent.companies.map((company, i) => (
-              <motion.div
-                key={company.id || i}
-                className='flex-shrink-0'
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
+          // Auto-scroll animation for non-edit mode
+          <motion.div 
+            className="w-full overflow-hidden relative"
+            initial='hidden'
+            animate='visible'
+            variants={itemVariants}
+          >
+            <style>
+              {`
+                @keyframes marquee {
+                  0% { transform: translateX(0%); }
+                  100% { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                  animation: marquee 30s linear infinite;
+                }
+                .hover-pause:hover .animate-marquee {
+                  animation-play-state: paused;
+                }
+              `}
+            </style>
+            
+            <div className="hover-pause">
+              <motion.div 
+                className="flex gap-12 items-center animate-marquee"
+                transition={{ duration: 0.8 }}
               >
-                <img
-                  src={company.image}
-                  alt={company.name}
-                  className='h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300'
-                />
+                {duplicatedCompanies.map((company, i) => (
+                  <motion.div
+                    key={`${company.id}-${i}`}
+                    className='flex-shrink-0'
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <img
+                      src={company.image}
+                      alt={company.name}
+                      className='h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300'
+                    />
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </div>
+            </div>
+            
+            {/* Gradient fade effects on sides */}
+            <div className="absolute top-0 left-0 w-20 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
+            <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
+          </motion.div>
         )}
       </div>
 

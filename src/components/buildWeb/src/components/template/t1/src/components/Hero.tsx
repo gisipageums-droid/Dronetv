@@ -1,14 +1,12 @@
 import { motion } from "motion/react";
-import { Button } from "../components/ui/button";
-import Hero1 from "../public/images/Hero/Hero1.jpg";
-import Hero2 from "../public/images/Hero/Hero2.jpg";
-import Hero3 from "../public/images/Hero/Hero3.jpg";
+import Cust6 from "../public/images/customers/ben.jpg";
 import Cust1 from "../public/images/customers/customer-1.jpg";
 import Cust2 from "../public/images/customers/customer-3.jpg";
 import Cust3 from "../public/images/customers/customer-4.jpg";
 import Cust4 from "../public/images/customers/customer-5.jpg";
 import Cust5 from "../public/images/customers/customer-6.jpg";
-import Cust6 from "../public/images/customers/ben.jpg";
+import Hero1 from "../public/images/Hero/Hero1.jpg";
+import Hero3 from "../public/images/Hero/Hero3.jpg";
 import HeroBackground from "../public/images/Hero/HeroBackground.jpg";
 
 const itemVariants = {
@@ -125,7 +123,7 @@ export default function Hero() {
                 </div>
               </div>
               <span className='text-sm sm:text-base text-white font-normal'>
-                Join 500+ satisfied clients
+                Join 20+ satisfied clients
               </span>
             </motion.div>
           </motion.div>

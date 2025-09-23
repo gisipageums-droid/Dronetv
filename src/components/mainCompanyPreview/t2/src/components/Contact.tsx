@@ -12,9 +12,9 @@ export default function Contact({ contactData }) {
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
-        delayChildren: 0.3
-      }
-    }
+        delayChildren: 0.3,
+      },
+    },
   };
 
   const itemVariants = {
@@ -24,15 +24,15 @@ export default function Contact({ contactData }) {
       opacity: 1,
       transition: {
         duration: 0.8,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   return (
-    <motion.section 
-      id="contact" 
-      className="py-20 bg-secondary theme-transition"
+    <motion.section
+      id="contact"
+      className="py-5 bg-secondary theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
@@ -40,7 +40,7 @@ export default function Contact({ contactData }) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <motion.div 
+        <motion.div
           className="text-center max-w-3xl mx-auto mb-16"
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -53,7 +53,9 @@ export default function Contact({ contactData }) {
             viewport={{ once: true }}
             transition={{ duration: 0.8, type: "spring" }}
           >
-            <h2 className="text-3xl md:text-4xl text-foreground mb-4">{contactData.header.title}</h2>
+            <h2 className="text-3xl md:text-4xl text-foreground mb-4">
+              {contactData.header.title}
+            </h2>
           </motion.div>
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -64,17 +66,21 @@ export default function Contact({ contactData }) {
             <p className="text-lg text-muted-foreground inline">
               {contactData.header.descriptionPart1}
             </p>
-            <motion.span 
+            <motion.span
               className="text-red-accent font-semibold"
               whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <span className="text-lg text-red-accent font-semibold">{contactData.header.descriptionPart2}</span>
+              <span className="text-lg text-red-accent font-semibold">
+                {contactData.header.descriptionPart2}
+              </span>
             </motion.span>
-            <span className="text-lg text-muted-foreground">{contactData.header.descriptionPart3}</span>
+            <span className="text-lg text-muted-foreground">
+              {contactData.header.descriptionPart3}
+            </span>
           </motion.div>
         </motion.div>
-          
+
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Form */}
           <motion.div
@@ -84,14 +90,14 @@ export default function Contact({ contactData }) {
             transition={{ duration: 0.8 }}
           >
             <Card className="bg-card border-border relative overflow-hidden hover-lift">
-              <motion.div 
+              <motion.div
                 className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-accent to-primary"
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 1 }}
               />
-              
+
               <CardHeader>
                 <CardTitle className="text-card-foreground">
                   <span className="text-card-foreground">
@@ -103,7 +109,7 @@ export default function Contact({ contactData }) {
                 </p>
               </CardHeader>
               <CardContent className="space-y-6">
-                <motion.div 
+                <motion.div
                   className="grid grid-cols-2 gap-4"
                   variants={containerVariants}
                   initial="hidden"
@@ -113,17 +119,17 @@ export default function Contact({ contactData }) {
                   <motion.div className="space-y-2" variants={itemVariants}>
                     <Label htmlFor="firstName">
                       <span className="text-sm font-medium text-card-foreground">
-                      First Name
-                        </span>
+                        First Name
+                      </span>
                     </Label>
                     <motion.div
                       whileFocus={{ scale: 1.02 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <Input 
-                        id="firstName" 
-                        placeholder="John" 
-                        className="border-border focus:border-primary transition-all duration-300 bg-input-background" 
+                      <Input
+                        id="firstName"
+                        placeholder="John"
+                        className="border-border focus:border-primary transition-all duration-300 bg-input-background"
                       />
                     </motion.div>
                   </motion.div>
@@ -137,16 +143,16 @@ export default function Contact({ contactData }) {
                       whileFocus={{ scale: 1.02 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <Input 
-                        id="lastName" 
-                        placeholder="Doe" 
-                        className="border-border focus:border-primary transition-all duration-300 bg-input-background" 
+                      <Input
+                        id="lastName"
+                        placeholder="Doe"
+                        className="border-border focus:border-primary transition-all duration-300 bg-input-background"
                       />
                     </motion.div>
                   </motion.div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   className="space-y-2"
                   variants={itemVariants}
                   initial="hidden"
@@ -162,16 +168,41 @@ export default function Contact({ contactData }) {
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      placeholder="john@company.com" 
-                      className="border-border focus:border-primary transition-all duration-300 bg-input-background" 
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="john@company.com"
+                      className="border-border focus:border-primary transition-all duration-300 bg-input-background"
                     />
                   </motion.div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
+                  className="space-y-2"
+                  variants={itemVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                >
+                  <Label htmlFor="company">
+                    <span className="text-sm font-medium text-card-foreground">
+                      Phone Number
+                    </span>
+                  </Label>
+                  <motion.div
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Input
+                      type="number"
+                      id="phone"
+                      placeholder="Your Phone Number"
+                      className="border-border focus:border-primary transition-all duration-300 bg-input-background [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </motion.div>
+                </motion.div>
+
+                <motion.div
                   className="space-y-2"
                   variants={itemVariants}
                   initial="hidden"
@@ -187,15 +218,15 @@ export default function Contact({ contactData }) {
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Input 
-                      id="company" 
-                      placeholder="Your Company" 
-                      className="border-border focus:border-primary transition-all duration-300 bg-input-background" 
+                    <Input
+                      id="company"
+                      placeholder="Your Company"
+                      className="border-border focus:border-primary transition-all duration-300 bg-input-background"
                     />
                   </motion.div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   className="space-y-2"
                   variants={itemVariants}
                   initial="hidden"
@@ -206,20 +237,14 @@ export default function Contact({ contactData }) {
                     <span className="text-sm font-medium text-card-foreground">
                       Subject
                     </span>
-                    
                   </Label>
-                  <select 
-                    className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 "
-                  >
+                  <select className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 ">
                     <option className="text-black">General Inquiry</option>
                     <option className="text-black">Strategy Consulting</option>
-                    <option className="text-black">Team Development</option>
-                    <option className="text-black">Digital Transformation</option>
-                    <option className="text-black">Performance Optimization</option>
                   </select>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   className="space-y-2"
                   variants={itemVariants}
                   initial="hidden"
@@ -227,14 +252,16 @@ export default function Contact({ contactData }) {
                   viewport={{ once: true }}
                 >
                   <Label htmlFor="message">
-                    <span className="text-sm font-medium text-card-foreground">Message</span>
+                    <span className="text-sm font-medium text-card-foreground">
+                      Message
+                    </span>
                   </Label>
                   <motion.div
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Textarea 
-                      id="message" 
+                    <Textarea
+                      id="message"
                       placeholder="Tell us about your project and how we can help..."
                       className="min-h-[120px] border-border focus:border-primary transition-all duration-300 bg-input-background"
                     />
@@ -260,15 +287,14 @@ export default function Contact({ contactData }) {
                     </motion.span>
                   </Button>
                 </motion.div>
-                  
-                <motion.div 
+
+                <motion.div
                   className="text-center"
                   variants={itemVariants}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true }}
                 >
-                  
                   <p className="text-sm text-muted-foreground">
                     We typically respond within 24 hours during business days.
                   </p>
@@ -278,7 +304,7 @@ export default function Contact({ contactData }) {
           </motion.div>
 
           {/* Contact Information */}
-          <motion.div 
+          <motion.div
             className="space-y-8"
             variants={containerVariants}
             initial="hidden"
@@ -298,11 +324,17 @@ export default function Contact({ contactData }) {
                         <motion.div
                           whileHover={{ color: "var(--color-primary)" }}
                         >
-                          <h4 className="font-medium text-card-foreground mb-1">{info.title}</h4>
+                          <h4 className="font-medium text-card-foreground mb-1">
+                            {info.title}
+                          </h4>
                         </motion.div>
                         <p className="text-muted-foreground">{info.primary}</p>
-                        <p className="text-muted-foreground text-sm">{info.secondary}</p>
-                        <span className="text-muted-foreground">Closed on Sundays</span>
+                        <p className="text-muted-foreground text-sm">
+                          {info.secondary}
+                        </p>
+                        <span className="text-muted-foreground">
+                          Closed on Sundays
+                        </span>
                       </div>
                     </div>
                   </CardContent>
@@ -322,7 +354,9 @@ export default function Contact({ contactData }) {
                     animate={{ scale: [1, 1.05, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <h4 className="font-bold mb-2 text-primary-foreground">{contactData.cta.title}</h4>
+                    <h4 className="font-bold mb-2 text-primary-foreground">
+                      {contactData.cta.title}
+                    </h4>
                   </motion.div>
                   <p className="text-sm mb-4 opacity-90 text-primary-foreground">
                     {contactData.cta.description}
@@ -330,13 +364,7 @@ export default function Contact({ contactData }) {
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                  >
-                    <Button className="bg-red-accent text-white hover:bg-red-accent/90 font-bold shadow-lg">
-                      <span className="font-bold text-white">
-                        Book Free Consultation
-                      </span>
-                    </Button>
-                  </motion.div>
+                  ></motion.div>
                 </CardContent>
               </Card>
             </motion.div>

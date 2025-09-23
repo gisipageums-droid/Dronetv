@@ -246,7 +246,7 @@ export default function Login() {
             <div className='bg-white py-5 px-8 rounded-lg shadow-lg max-w-md w-full'>
               <div className='flex justify-between px-5 items-center mb-6'>
                 <h2 className='text-2xl font-bold mb-4 pt-5'>Sign In</h2>
-                <img src="./images/logo.png" alt="logo" className='h-10 w-25'/>
+                <img src="./images/Drone tv .in.png" alt="logo" className='h-[5.5rem] w-[6rem]'/>
               </div>
               <form onSubmit={handleLoginSubmit}>
                 <div className='mb-4'>

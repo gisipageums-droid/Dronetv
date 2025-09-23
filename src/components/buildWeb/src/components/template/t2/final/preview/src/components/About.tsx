@@ -134,7 +134,7 @@ export default function About({ aboutData }) {
             className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
           >
             <Eye className="w-4 h-4 mr-2" />
-            <span className="font-medium">{aboutState.visionBadge}</span>
+            <span className="font-semibold text-xl">{aboutState.visionBadge}</span>
           </motion.div>
 
           <motion.h2

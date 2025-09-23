@@ -38,7 +38,7 @@ export default function Blog({ blogData }) {
             className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
             whileHover={{ scale: 1.05 }}
           >
-            <span className="font-medium">{blogData.header.badge}</span>
+            <span className="font-semibold text-lg">{blogData.header.badge}</span>
           </motion.div>
           
           <h2 className="text-3xl md:text-4xl text-foreground mb-6">{blogData.header.title}</h2>

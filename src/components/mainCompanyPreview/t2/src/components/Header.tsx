@@ -39,7 +39,7 @@ export default function Header({headerData}) {
           {/* Logo */}
           <div className="flex items-center">
             <motion.div
-              className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-2 shadow-md"
+              className="w-8 h-8  rounded-lg flex items-center justify-center mr-2 "
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6 }}
             >

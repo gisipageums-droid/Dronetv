@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Edit2, Loader2, Plus, Save, Trash2, Upload, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { Button } from "../components/ui/button";
 import BusinessInsider from "../public/images/logos/BusinessInsider.png";
 import Forbes from "../public/images/logos/Forbes.png";
 import TechCrunch from "../public/images/logos/TechCrunch.png";
 import TheNewYorkTimes from "../public/images/logos/TheNewYorkTimes.png";
 import USAToday from "../public/images/logos/USAToday.png";
 
-export default function EditableUsedBy({ onStateChange, userId, publishedId, templateSelection }) {
+export default function EditableUsedBy({ usedByData,onStateChange, userId, publishedId, templateSelection }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -23,13 +23,13 @@ export default function EditableUsedBy({ onStateChange, userId, publishedId, tem
   const [pendingImageFiles, setPendingImageFiles] = useState({});
 
   // Default content structure
-  const defaultCompanies = [
+   const defaultCompanies = [
     { image: BusinessInsider, name: "Business Insider", id: 1 },
     { image: Forbes, name: "Forbes", id: 2 },
     { image: TechCrunch, name: "TechCrunch", id: 3 },
     { image: TheNewYorkTimes, name: "NY Times", id: 4 },
     { image: USAToday, name: "USA Today", id: 5 },
-  ];
+  ]
 
   const defaultContent = {
     title: "USED BY",
@@ -77,13 +77,7 @@ export default function EditableUsedBy({ onStateChange, userId, publishedId, tem
           resolve({
           
             title: "USED BY",
-            companies: [
-              { image: BusinessInsider, name: "Business Insider", id: 1 },
-              { image: Forbes, name: "Forbes", id: 2 },
-              { image: TechCrunch, name: "TechCrunch", id: 3 },
-              { image: TheNewYorkTimes, name: "NY Times", id: 4 },
-              { image: USAToday, name: "USA Today", id: 5 },
-            ],
+            companies: usedByData.companies,
           });
         }, 1200); // Simulate network delay
       });
@@ -276,6 +270,11 @@ export default function EditableUsedBy({ onStateChange, userId, publishedId, tem
 
   const displayContent = isEditing ? tempContentState : contentState;
 
+  // Add auto-scroll functionality
+  const duplicatedCompanies = useMemo(() => {
+    return [...displayContent.companies, ...displayContent.companies];
+  }, [displayContent.companies]);
+
   return (
     <section ref={sectionRef} className='py-16 bg-white relative'>
       {/* Loading Overlay */}
@@ -377,13 +376,18 @@ export default function EditableUsedBy({ onStateChange, userId, publishedId, tem
                   className='bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300'
                 >
                   <div className='space-y-3'>
-                    {/* Company Image */}
+                    {/* Company Image - Editable in edit mode */}
                     <div className='text-center'>
-                      <img
-                        src={company.image}
-                        alt={company.name}
-                        className='h-12 mx-auto opacity-60 grayscale'
-                      />
+                      <div className='relative inline-block'>
+                        <img
+                          src={company.image}
+                          alt={company.name}
+                          className='h-12 mx-auto opacity-60 grayscale'
+                        />
+                        <div className='absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded'>
+                          <span className='text-white text-xs font-medium'>Change Logo</span>
+                        </div>
+                      </div>
                       <Button
                         onClick={() =>
                           fileInputRefs.current[company.id]?.click()
@@ -393,7 +397,7 @@ export default function EditableUsedBy({ onStateChange, userId, publishedId, tem
                         className='mt-2 text-xs'
                       >
                         <Upload className='w-3 h-3 mr-1' />
-                        Change
+                        Change Logo
                       </Button>
                       <input
                         ref={(el) => (fileInputRefs.current[company.id] = el)}
@@ -441,21 +445,51 @@ export default function EditableUsedBy({ onStateChange, userId, publishedId, tem
             </div>
           </div>
         ) : (
-          <div className='flex flex-wrap justify-around items-center gap-8'>
-            {displayContent.companies.map((company, i) => (
-              <motion.div
-                key={company.id || i}
-                className='flex-shrink-0'
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
+          // Auto-scroll animation for non-edit mode
+          <div className="w-full overflow-hidden relative">
+            <style>
+              {`
+                @keyframes marquee {
+                  0% { transform: translateX(0%); }
+                  100% { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                  animation: marquee 30s linear infinite;
+                }
+                .hover-pause:hover .animate-marquee {
+                  animation-play-state: paused;
+                }
+              `}
+            </style>
+            
+            <div className="hover-pause">
+              <motion.div 
+                className="flex gap-12 items-center animate-marquee"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
               >
-                <img
-                  src={company.image}
-                  alt={company.name}
-                  className='h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300'
-                />
+                {duplicatedCompanies.map((company, i) => (
+                  <motion.div
+                    key={`${company.id}-${i}`}
+                    className='flex-shrink-0'
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <img
+                      src={company.image}
+                      alt={company.name}
+                      className='h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300'
+                    />
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
+            </div>
+            
+            {/* Gradient fade effects on sides */}
+            <div className="absolute top-0 left-0 w-20 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
+            <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
-import { motion } from "motion/react";
-import { useState, useRef, useEffect } from "react";
 import { Edit2, Save, Upload } from "lucide-react";
+import { motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import logo from "../public/images/logos/logo.svg";
 
@@ -13,15 +13,17 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
 
   // Combined state
   const [headerState, setHeaderState] = useState({
-    logoSrc: headerData?.logo ,
+    logoSrc: headerData?.logo || logo,
     companyName: headerData?.name || "Your Company",
     navItems: [
       "Home",
       "About",
+      "Profile",
       "Product",
       "Services",
       "Testimonials",
       "Blog",
+      "Gallery"
     ],
   });
 
@@ -275,21 +277,13 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                   <a
                     key={index}
                     href={`#${item.toLowerCase()}`}
-                    className='text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300'
+                    className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
                   >
                     {item}
                   </a>
                 )
               )}
 
-              <motion.a
-                href='#contact'
-                className='bg-yellow-400 dark:bg-yellow-500 text-red-500 dark:text-gray-900 px-6 py-2 rounded-full font-medium hover:bg-yellow-500 dark:hover:bg-yellow-400 transition-colors duration-300 inline-block'
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Sign Up
-              </motion.a>
             </nav>
 
             {/* Mobile Menu Button */}
@@ -362,15 +356,6 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
               </a>
             )
           )}
-          <div className='pt-2'>
-            <a
-              href='#contact'
-              className='block w-full bg-yellow-400 dark:bg-yellow-500 text-red-500 dark:text-gray-900 px-6 py-2 rounded-full font-medium hover:bg-yellow-500 dark:hover:bg-yellow-400 transition-colors duration-300 text-center'
-              onClick={closeMobileMenu}
-            >
-              Sign Up
-            </a>
-          </div>
         </div>
       </div>
     </>

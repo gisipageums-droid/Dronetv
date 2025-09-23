@@ -333,7 +333,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                 transition={{ duration: 0.3 }}
               >
                 <motion.div 
-                  className="relative w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-2 overflow-hidden"
+                  className="relative w-8 h-8 rounded-lg flex items-center justify-center mr-2 overflow-hidden"
                   whileHover={{ 
                     rotate: 360,
                     boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)"
@@ -580,131 +580,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
           </div>
         </motion.div>
 
-        {/* Newsletter signup */}
-        <motion.div 
-          className="py-8 border-t border-gray-800"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div>
-              {isEditing ? (
-                <input
-                  value={footerContent.newsletter.title}
-                  onChange={(e) => updateNewsletter("title", e.target.value)}
-                  className="font-medium text-white mb-2 bg-transparent border-b"
-                />
-              ) : (
-                <h4 className="font-medium text-white mb-2">{footerContent.newsletter.title}</h4>
-              )}
-              {isEditing ? (
-                <input
-                  value={footerContent.newsletter.description}
-                  onChange={(e) => updateNewsletter("description", e.target.value)}
-                  className="text-gray-400 bg-transparent border-b w-full"
-                />
-              ) : (
-                <p className="text-gray-400">{footerContent.newsletter.description}</p>
-              )}
-            </div>
-            <motion.div 
-              className="flex w-full md:w-auto max-w-md"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-l-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              />
-              <motion.button 
-                className="px-6 py-2 bg-primary text-black rounded-r-lg hover:bg-primary/90 transition-colors font-medium"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {isEditing ? (
-                  <input
-                    value={footerContent.newsletter.buttonText}
-                    onChange={(e) => updateNewsletter("buttonText", e.target.value)}
-                    className="font-medium text-black bg-transparent border-b w-full text-center"
-                  />
-                ) : (
-                  <span className="font-medium text-black">{footerContent.newsletter.buttonText}</span>
-                )}
-              </motion.button>
-            </motion.div>
-          </div>
-        </motion.div>
 
-        {/* Bottom footer */}
-        <motion.div 
-          className="py-6 border-t border-gray-800"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            {isEditing ? (
-              <input
-                value={footerContent.bottomFooter.copyright}
-                onChange={(e) => updateBottomFooter("copyright", e.target.value)}
-                className="text-gray-400 text-sm bg-transparent border-b w-full md:w-auto"
-              />
-            ) : (
-              <p className="text-gray-400 text-sm">{footerContent.bottomFooter.copyright}</p>
-            )}
-            <div className="flex space-x-6 text-sm">
-              {footerContent.bottomFooter.links.map((link, index) => (
-                <motion.div 
-                  key={index}
-                  className="flex items-center"
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
-                  whileHover={{ y: -2 }}
-                >
-                  {isEditing ? (
-                    <div className="flex items-center">
-                      <input
-                        value={link.name}
-                        onChange={(e) => updateBottomFooterLink(index, "name", e.target.value)}
-                        className="text-gray-400 bg-transparent border-b w-32 mr-2"
-                      />
-                      <input
-                        value={link.href}
-                        onChange={(e) => updateBottomFooterLink(index, "href", e.target.value)}
-                        className="text-gray-400 bg-transparent border-b w-32 mr-2"
-                      />
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => removeBottomFooterLink(index)}
-                      >
-                        ×
-                      </Button>
-                    </div>
-                  ) : (
-                    <a 
-                      href={link.href} 
-                      className="text-gray-400 hover:text-primary transition-colors"
-                    >
-                      {link.name}
-                    </a>
-                  )}
-                </motion.div>
-              ))}
-              {isEditing && (
-                <Button onClick={addBottomFooterLink} className="text-green-600">
-                  + Add
-                </Button>
-              )}
-            </div>
-          </div>
-        </motion.div>
       </div>
     </motion.footer>
   );

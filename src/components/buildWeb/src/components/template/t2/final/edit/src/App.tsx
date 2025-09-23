@@ -12,6 +12,8 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { useTemplate } from "../../../../../../../../context/context";
 import { useEffect, useState, useCallback } from "react";
 import Publish from "./components/Publish";
+import Profile from "./components/Profile";
+import Gallery from "./components/Gallery";
 
 export default function App() {
   const { finaleDataReview, setFinalTemplate } = useTemplate();
@@ -65,6 +67,20 @@ export default function App() {
             publishedId={finaleDataReview.publishedId}
             templateSelection={finaleDataReview.templateSelection}
           />
+          <Profile
+            profileData={finaleDataReview.content.profile}
+            onStateChange={useCallback((state) => collectComponentState('profile', state), [collectComponentState])}
+            userId={finaleDataReview.userId}
+            publishedId={finaleDataReview.publishedId}
+            templateSelection={finaleDataReview.templateSelection}
+          />
+            <Product 
+              productData={finaleDataReview.content.products}
+              onStateChange={useCallback((state) => collectComponentState('products', state), [collectComponentState])}
+              userId={finaleDataReview.userId}
+              publishedId={finaleDataReview.publishedId}
+              templateSelection={finaleDataReview.templateSelection}
+            />
           <Services 
             serviceData={finaleDataReview.content.services}
             onStateChange={useCallback((state) => collectComponentState('services', state), [collectComponentState])}
@@ -72,9 +88,9 @@ export default function App() {
             publishedId={finaleDataReview.publishedId}
             templateSelection={finaleDataReview.templateSelection}
           />
-          <Product 
-            productData={finaleDataReview.content.products}
-            onStateChange={useCallback((state) => collectComponentState('products', state), [collectComponentState])}
+          <Gallery 
+            galleryData={finaleDataReview.content.gallery}
+            onStateChange={useCallback((state) => collectComponentState('gallery', state), [collectComponentState])}
             userId={finaleDataReview.userId}
             publishedId={finaleDataReview.publishedId}
             templateSelection={finaleDataReview.templateSelection}

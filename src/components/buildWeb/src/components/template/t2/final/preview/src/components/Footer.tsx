@@ -85,7 +85,7 @@ export default function Footer({ footerData }) {
                 transition={{ duration: 0.3 }}
               >
                 <motion.div 
-                  className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-2"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center mr-2"
                   whileHover={{ 
                     rotate: 360,
                     boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)"
@@ -111,7 +111,7 @@ export default function Footer({ footerData }) {
                   transition={{ duration: 0.2 }}
                 >
                   <Mail className="h-5 w-5 text-primary" />
-                  <span className={`text-gray-400 ${isSubscribed ? '' : 'bg-gray-400'}`}>{footerContent.companyInfo.email}</span>
+                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent.companyInfo.email}</span>
                 </motion.div>
                 <motion.div 
                   className="flex items-center space-x-3"
@@ -119,7 +119,7 @@ export default function Footer({ footerData }) {
                   transition={{ duration: 0.2 }}
                 >
                   <Phone className="h-5 w-5 text-primary" />
-                  <span className={`text-gray-400 ${isSubscribed ? '' : 'bg-gray-400'}`}>{footerContent.companyInfo.phone}</span>
+                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent.companyInfo.phone}</span>
                 </motion.div>
               </div>
 
@@ -185,72 +185,8 @@ export default function Footer({ footerData }) {
           </div>
         </motion.div>
 
-        {/* Newsletter signup */}
-        <motion.div 
-          className="py-8 border-t border-gray-800"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div>
-              <h4 className="font-medium text-white mb-2">{footerContent.newsletter.title}</h4>
-              <p className="text-gray-400">{footerContent.newsletter.description}</p>
-            </div>
-            <motion.div 
-              className="flex w-full md:w-auto max-w-md"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-l-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              />
-              <motion.button 
-                className="px-6 py-2 bg-primary text-black rounded-r-lg hover:bg-primary/90 transition-colors font-medium"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="font-medium text-black">{footerContent.newsletter.buttonText}</span>
-              </motion.button>
-            </motion.div>
-          </div>
-        </motion.div>
+       
 
-        {/* Bottom footer */}
-        <motion.div 
-          className="py-6 border-t border-gray-800"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-400 text-sm">{footerContent.bottomFooter.copyright}</p>
-            <div className="flex space-x-6 text-sm">
-              {footerContent.bottomFooter.links.map((link, index) => (
-                <motion.div 
-                  key={index}
-                  className="flex items-center"
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
-                  whileHover={{ y: -2 }}
-                >
-                  <a 
-                    href={link.href} 
-                    className="text-gray-400 hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </a>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
       </div>
     </motion.footer>
   );

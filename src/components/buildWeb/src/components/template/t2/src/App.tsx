@@ -1,8 +1,11 @@
+// App.tsx (updated)
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import About from "./components/About";
+import Profile from "./components/Profile"; // Add this import
 import Services from "./components/Services";
 import Product from "./components/Product";
+import Gallery from "./components/Gallery";
 import Blog from "./components/Blog";
 import Testimonials from "./components/Testimonials";
 import Clients from "./components/Clients";
@@ -18,8 +21,10 @@ export default function App() {
         <main>
           <Hero />
           <About />
-          <Services />
+          <Profile /> {/* Add this line */}
           <Product />
+          <Services />
+          <Gallery />
           <Blog />
           <Testimonials />
           <Clients />

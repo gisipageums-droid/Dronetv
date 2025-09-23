@@ -173,7 +173,27 @@ interface ErrorMessageProps {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className='h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6'>
+    <div className='relative h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6'>
+      {/* ===== Always Visible Popup ===== */}
+      <div className="absolute top-28 right-12 z-10 animate-bounce">
+        <div className="bg-white border border-yellow-300 rounded-xl shadow-lg px-5 py-8 text-center">
+          <h2 className="text-base md:text-lg font-semibold text-amber-900">
+            🎉 Free Trial
+          </h2>
+          <p className="text-lg font-semibold text-amber-700 mt-1">
+            You have{" "}
+            <span className="font-bold text-amber-600">90</span> free trial days
+            remaining.
+          </p>
+          <p className="text-sm text-left pl-6 text-amber-700 mt-4">
+            ✅ Create <span className="font-bold text-amber-600">unlimited company templates</span>.
+          </p>
+          <p className="text-sm text-left pl-6 text-amber-700 mt-1">
+            ✅ <span className="font-bold">Edit and customize</span> templates at any time.
+          </p>
+        </div>
+      </div>
+
       <div className='text-center max-w-3xl relative w-full'>
         {/* Geometric Elements */}
         <div className='absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-yellow-200 rounded-full opacity-40'></div>
@@ -424,7 +444,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
 // console.log("Company Status:", company.reviewStatus); // Debug log
 
   return (
-    <div className='bg-red-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-pink-500 to-purple-600 group'>
+    <div className='bg-red-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-pink-500 to-purple-600 group h-full w-full'>
       <div className='p-4 md:p-6 lg:p-8'>
         <div className='flex items-center justify-between mb-4 md:mb-6'>
           <div className='flex items-center gap-3 md:gap-4'>

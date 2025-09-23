@@ -11,17 +11,17 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
   
   // Consolidated state
   const [heroState, setHeroState] = useState({
-    badgeText: "Trusted by 500+ Companies",
+    badgeText: "Trusted by 20+ Companies",
     heading: heroData?.title || "Transform Your Business with",
     highlight: "Innovation",
     description: heroData?.subtitle||"We help companies scale and grow with cutting-edge solutions, expert guidance, and proven strategies that deliver",
     highlightDesc: "exceptional results",
     primaryBtn: heroData?.primaryAction?.text||"Get Started Today",
     secondaryBtn: "Watch Demo",
-    trustText: "Join 500+ satisfied clients",
+    trustText: "Join 20+ satisfied clients",
     stats: [
-      { id: 1, value: "500+", label: "Happy Clients", color: "red-accent" },
-      { id: 2, value: "95%", label: "Success Rate", color: "red-accent" },
+      { id: 1, value: "20+", label: "Happy Clients", color: "red-accent" },
+      { id: 2, value: "80%", label: "Success Rate", color: "red-accent" },
       { id: 3, value: "24/7", label: "Support", color: "primary" },
     ],
     heroImage: "https://images.unsplash.com/photo-1698047682129-c3e217ac08b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBidXNpbmVzcyUyMHRlYW0lMjBvZmZpY2V8ZW58MXx8fHwxNzU1NjE4MzQ4fDA&ixlib=rb-4.1.0&q=80&w=1080",

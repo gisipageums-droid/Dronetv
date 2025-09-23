@@ -132,29 +132,6 @@ export default function Product({ productData }) {
             </Button>
           )}
         </div>
-
-        {/* Benefits */}
-        <div className="mt-16 grid md:grid-cols-3 gap-8">
-          {productData.benefits.map((benefit, index) => (
-            <div key={index} className="text-center h-50 group cursor-pointer">
-              <div
-                className={`w-10 h-10 ${
-                  benefit.color === "gradient"
-                    ? "bg-gradient-to-r from-red-accent to-primary"
-                    : `bg-${benefit.color}`
-                } rounded-xl flex items-center justify-center mx-auto mb-3`}
-              >
-                <span className="font-bold text-sm text-white">{benefit.icon}</span>
-              </div>
-              <h4 className="font-semibold text-foreground mb-2 text-sm">
-                {benefit.title}
-              </h4>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                {benefit.desc}
-              </p>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Modal */}

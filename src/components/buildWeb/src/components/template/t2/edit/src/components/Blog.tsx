@@ -204,7 +204,7 @@ export default function Blog({blogData, onStateChange , userId, publishedId, tem
                 className="font-medium bg-transparent border-b text-center"
               />
             ) : (
-              <span className="font-medium">{blogSection.header.badge}</span>
+              <span className="font-semibold text-lg">{blogSection.header.badge}</span>
             )}
           </motion.div>
           

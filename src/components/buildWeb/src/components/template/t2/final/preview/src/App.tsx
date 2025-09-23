@@ -12,6 +12,8 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { useTemplate } from "../../../../../../../../context/context";
 import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
+import Profile from "./components/Profile";
+import Gallery from "./components/Gallery";
 
 export default function App() {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
@@ -104,11 +106,17 @@ export default function App() {
           <About 
             aboutData={finaleDataReview.content.about}
           />
-          <Services 
-            serviceData={finaleDataReview.content.services}
+          <Profile 
+            profileData={finaleDataReview.content.profile}
           />
           <Product 
             productData={finaleDataReview.content.products}
+          />
+          <Services 
+            serviceData={finaleDataReview.content.services}
+          />
+          <Gallery 
+            galleryData={finaleDataReview.content.gallery}
           />
           <Blog 
             blogData={finaleDataReview.content.blog}

@@ -50,7 +50,7 @@ export default function Header() {
     zIndex: 2147483646,
     backgroundColor: "white",
     borderTop: "1px solid #e5e7eb",
-    maxHeight: isMobileMenuOpen ? "384px" : "0",
+    maxHeight: isMobileMenuOpen ? "480px" : "0", // Increased height to fit new items
     opacity: isMobileMenuOpen ? "1" : "0",
     overflow: "hidden" as const,
     transition: "all 0.3s ease-in-out",
@@ -77,11 +77,9 @@ export default function Header() {
                 src={logo}
                 alt='Logo'
                 className='h-4 w-4 sm:h-6 sm:w-6 object-contain'
-                // Entrance animation
                 initial={{ opacity: 0, scale: 0.5, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.8, type: "spring", stiffness: 120 }}
-                // Floating effect (infinite)
                 whileInView={{
                   y: [0, -4, 0],
                   transition: {
@@ -90,11 +88,10 @@ export default function Header() {
                     ease: "easeInOut",
                   },
                 }}
-                // Interactive hover & tap
                 whileHover={{
                   rotate: [0, -5, 5, -5, 0],
                   scale: 1.2,
-                  boxShadow: "0px 0px 15px rgba(255, 215, 0, 0.6)", // gold glow
+                  boxShadow: "0px 0px 15px rgba(255, 215, 0, 0.6)",
                   transition: { duration: 0.5 },
                 }}
                 whileTap={{ scale: 0.9 }}
@@ -102,52 +99,57 @@ export default function Header() {
               <span>Innovative Labs</span>
             </motion.a>
 
-            {/* Desktop Navigation */}
-            <nav className='hidden md:flex items-center space-x-8'>
+            {/* Desktop Navigation — UPDATED with Profile & Gallery */}
+            <nav className='hidden md:flex items-center space-x-6'>
               <a
                 href='#home'
-                className='text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300'
+                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
               >
                 Home
               </a>
               <a
                 href='#about'
-                className='text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300'
+               className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
               >
                 About
               </a>
+              {/* 👇 Added Profile */}
+              <a
+                href='#profile'
+                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
+              >
+                Profile
+              </a>
               <a
                 href='#product'
-                className='text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300'
+                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
               >
                 Product
               </a>
               <a
                 href='#services'
-                className='text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300'
+                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
               >
                 Services
               </a>
               <a
                 href='#testimonials'
-                className='text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300'
+                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
               >
                 Testimonials
               </a>
               <a
                 href='#blog'
-                className='text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300'
+                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
               >
                 Blog
               </a>
-              <motion.a
-                href='#contact'
-                className='bg-yellow-400 dark:bg-yellow-500 text-red-500 dark:text-gray-900 px-6 py-2 rounded-full font-medium hover:bg-yellow-500 dark:hover:bg-yellow-400 transition-colors duration-300 inline-block'
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Sign Up
-              </motion.a>
+              {/* 👇 Added Gallery */}
+              <a
+                href='#gallery'
+                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'              >
+                Gallery
+              </a>
             </nav>
 
             {/* Mobile menu button */}
@@ -193,33 +195,31 @@ export default function Header() {
         </div>
       </motion.header>
 
-      {/* Mobile Navigation Menu */}
+      {/* Mobile Navigation Menu — UPDATED */}
       <div
         style={{ ...mobileMenuStyles }}
         className='md:hidden dark:bg-gray-900 dark:border-gray-700'
       >
         <div className='px-4 pt-2 pb-3 space-y-1 sm:px-6'>
-          {["Home", "About", "Product", "Services", "Testimonials", "Blog"].map(
-            (item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className='block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300'
-                onClick={closeMobileMenu}
-              >
-                {item}
-              </a>
-            )
-          )}
-          <div className='pt-2'>
+          {[
+            "Home",
+            "About",
+            "Profile", // 👈 Added
+            "Product",
+            "Services",
+            "Testimonials",
+            "Blog",
+            "Gallery", // 👈 Added
+          ].map((item) => (
             <a
-              href='#contact'
-              className='block w-full bg-yellow-400 dark:bg-yellow-500 text-red-500 dark:text-gray-900 px-6 py-2 rounded-full font-medium hover:bg-yellow-500 dark:hover:bg-yellow-400 transition-colors duration-300 text-center'
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className='block px-3 py-2.5 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300'
               onClick={closeMobileMenu}
             >
-              Sign Up
+              {item}
             </a>
-          </div>
+          ))}
         </div>
       </div>
     </>

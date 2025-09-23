@@ -42,7 +42,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
     ],
     metric1Num: "15+",
     metric1Label: "Years Experience",
-    metric2Num: "200+",
+    metric2Num: "40+",
     metric2Label: "Projects Completed",
     visionBadge: "Our Vision",
     visionTitle: "Shaping the Future Together",
@@ -423,7 +423,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
               className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
             >
               <Eye className="w-4 h-4 mr-2" />
-              <span className="font-medium">{aboutState.visionBadge}</span>
+              <span className="font-semibold text-xl">{aboutState.visionBadge}</span>
             </motion.div>
           )}
 

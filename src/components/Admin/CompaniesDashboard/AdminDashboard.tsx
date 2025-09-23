@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, ChevronDown, ArrowRight, Star, Users, Building2, Menu, X, Eye, Key, FileText, CheckCircle, XCircle } from "lucide-react";
+import { Search, MapPin, ChevronDown, ArrowRight, Star, Users, Building2, Menu, X, Eye, Key, FileText, CheckCircle, XCircle, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from './credentialProp/Prop'; // ✅ import the modal component
@@ -75,6 +75,7 @@ interface CompanyCardProps {
   onPreview: (publishedId: string) => void;
   onApprove: (publishedId: string) => void;
   onReject: (publishedId: string) => void;
+  onDelete: (publishedId: string) => void;
 }
 
 interface MainContentProps {
@@ -95,6 +96,7 @@ interface MainContentProps {
   industryFilter: string;
   sortBy: string;
   onClearFilters: () => void;
+  onDelete: (publishedId: string) => void;
 }
 
 interface ErrorMessageProps {
@@ -295,7 +297,8 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   onCredentials, 
   onPreview, 
   onApprove, 
-  onReject 
+  onReject,
+  onDelete,
 }) => {
   // Create a placeholder image using company name
   const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
@@ -341,7 +344,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   const statusStyle = getStatusBadge(company.reviewStatus);
 
   return (
-    <div className='bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-blue-500 to-purple-600 group'>
+    <div className='w-full h-full rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-blue-500 to-purple-600 group'>
       <div className='p-4 md:p-6 lg:p-8'>
         <div className='flex items-center justify-between mb-4 md:mb-6'>
           <div className='flex items-center gap-3 md:gap-4'>
@@ -411,6 +414,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
               <Eye className='w-3 h-3 md:w-4 md:h-4' />
               Preview
             </button>
+
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
@@ -421,6 +425,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
               <Key className='w-3 h-3 md:w-4 md:h-4' />
               Credentials
             </button>
+
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
@@ -431,6 +436,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
               <CheckCircle className='w-3 h-3 md:w-4 md:h-4' />
               Approve
             </button>
+
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
@@ -440,6 +446,17 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             >
               <XCircle className='w-3 h-3 md:w-4 md:h-4' />
               Reject
+            </button>
+
+            <button
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onDelete(company.publishedId);
+              }}
+              className='col-span-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center'
+            >
+              <Trash2 className='w-3 h-3 md:w-4 md:h-4' />
+              Delete
             </button>
           </div>
         </div>
@@ -497,7 +514,8 @@ const MainContent: React.FC<MainContentProps> = ({
   searchTerm,
   industryFilter,
   sortBy,
-  onClearFilters
+  onClearFilters,
+  onDelete
 }) => {
   if (loading)
     return (
@@ -551,6 +569,7 @@ const MainContent: React.FC<MainContentProps> = ({
                 onPreview={onPreview}
                 onApprove={onApprove}
                 onReject={onReject}
+                onDelete={onDelete}
               />
             </div>
           ))}
@@ -721,6 +740,37 @@ async fetchPublishedDetails(publishedId: string,
     throw error;
   }
 },
+
+  async deleteCompany(publishedId: string): Promise<any> {
+  try {
+    const response = await fetch(
+      "https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete",
+      {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`, // if required
+        },
+        body: JSON.stringify({
+          publishedId,
+          action: "delete",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Delete response data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error deleting company:", error);
+    throw error;
+  }
+}
+
 };
 
 // Main Admin Dashboard Component
@@ -867,6 +917,29 @@ const handlePreview = async (publishedId: string): Promise<void> => {
     }
   };
 
+   // Handle delete button click
+  const handleDelete = async (publishedId: string): Promise<void> => {
+    if (!window.confirm("Are you sure you want to delete this company? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await apiService.deleteCompany(publishedId);
+
+      // console.log(result)
+        toast.success("Company deleted successfully");
+        // Refresh the companies list
+        await fetchCompanies();
+      
+    } catch (error) {
+      console.error("Error deleting company:", error);
+      toast.error("Failed to delete company");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Load data on component mount
   useEffect(() => {
     fetchCompanies();
@@ -965,6 +1038,8 @@ const handlePreview = async (publishedId: string): Promise<void> => {
           industryFilter={industryFilter}
           sortBy={sortBy}
           onClearFilters={handleClearFilters}
+          // delete function
+          onDelete={handleDelete}
         />
       </div>
     </div>

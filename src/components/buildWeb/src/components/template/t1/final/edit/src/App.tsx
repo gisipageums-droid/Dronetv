@@ -1,16 +1,18 @@
-import { useEffect, useState, useCallback } from "react";
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import UsedBy from "./components/UsedBy";
+import { useCallback, useEffect, useState } from "react";
+import { useTemplate } from "../../../../../../../../context/context";
 import About from "./components/About";
-import Services from "./components/Services";
-import Products from "./components/Products";
 import Blog from "./components/Blog";
-import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import EditableGallerySection from "./components/Gallery";
+import Header from "./components/Header";
+import Hero from "./components/Hero";
+import Products from "./components/Products";
+import EditableCompanyProfile from "./components/Profile";
 import Publish from "./components/Publish";
-import { useTemplate } from "../../../../../../../../context/context";
+import Services from "./components/Services";
+import Testimonials from "./components/Testimonials";
+import UsedBy from "./components/UsedBy";
 // import { useEffect } from "react";
 
 export default function App() {
@@ -73,6 +75,13 @@ export default function App() {
         templateSelection={finaleDataReview.templateSelection}
       
       />
+      <EditableCompanyProfile
+      profileData={finaleDataReview.content.profile}
+      onStateChange={useCallback((state)=> collectComponentState("profile",state),[collectComponentState])}
+      publishedId={finaleDataReview.publishedId}
+      userId={finaleDataReview.userId}
+      templateSelection={finaleDataReview.templateSelection}
+      />
       <Services 
       serviceData={finaleDataReview.content.services}
       onStateChange={useCallback((state) => collectComponentState("services", state), [collectComponentState])}
@@ -94,6 +103,13 @@ export default function App() {
       userId={finaleDataReview.userId}
       templateSelection={finaleDataReview.templateSelection}
       />
+      <EditableGallerySection
+      galleryData={finaleDataReview.content.gallery}
+      onStateChange={useCallback((state) => collectComponentState("gallery", state), [collectComponentState])}
+      publishedId={finaleDataReview.publishedId}
+      userId={finaleDataReview.userId}
+      templateSelection={finaleDataReview.templateSelection}
+        />
       
       <Testimonials 
       content={finaleDataReview.content.testimonials}
@@ -101,7 +117,9 @@ export default function App() {
       publishedId={finaleDataReview.publishedId}
       userId={finaleDataReview.userId}
       templateSelection={finaleDataReview.templateSelection}
-       />
+      />
+      
+
       <Contact
       content={finaleDataReview.content.contact}
       onStateChange={useCallback((state) => collectComponentState("contact", state), [collectComponentState])}

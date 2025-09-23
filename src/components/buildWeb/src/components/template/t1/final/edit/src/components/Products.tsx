@@ -1,20 +1,19 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
+import { motion, useMotionValue } from "framer-motion";
 import {
   Edit2,
-  Save,
-  X,
-  Upload,
   Loader2,
   Plus,
-  Trash2,
+  Save,
   Star,
-  CheckCircle,
+  Trash2,
+  Upload,
+  X
 } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
 
 export default function EditableProducts({ productData, onStateChange, userId, publishedId, templateSelection }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -27,8 +26,14 @@ export default function EditableProducts({ productData, onStateChange, userId, p
   const [selectedProductIndex, setSelectedProductIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
+  const [showAll, setShowAll] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const sectionRef = useRef(null);
   const fileInputRefs = useRef({});
+
+  // Auto-scroll animation values
+  const x = useMotionValue(0);
+  const speed = 0.5;
 
   // Extract data from productData prop or use defaults
   const defaultContent = useMemo(() => {
@@ -103,6 +108,32 @@ export default function EditableProducts({ productData, onStateChange, userId, p
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => sectionRef.current && observer.unobserve(sectionRef.current);
   }, []);
+
+  const displayContent = isEditing ? tempContent : content;
+  const filtered =
+    selected === "All"
+      ? displayContent.products
+      : displayContent.products.filter((p) => p.category === selected);
+
+  // Auto-scroll animation effect
+  useEffect(() => {
+    if (showAll || isEditing) return; // stop animation if showing all in grid or in edit mode
+    
+    let animationFrame;
+
+    const animate = () => {
+      if (!isHovered) {
+        x.set(x.get() - speed);
+        // Reset to 0 if fully scrolled (duplicate loop)
+        const productWidth = 320; // approximate card width
+        if (Math.abs(x.get()) >= (filtered.length / 2) * productWidth) x.set(0);
+      }
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    animate();
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isHovered, x, filtered.length, showAll, isEditing]);
 
   const fetchProductsData = async () => {
     setIsLoading(true);
@@ -195,21 +226,20 @@ export default function EditableProducts({ productData, onStateChange, userId, p
     }
   }, [isVisible, dataLoaded, isLoading, productData]);
 
-  const displayContent = isEditing ? tempContent : content;
-  const filtered =
-    selected === "All"
-      ? displayContent.products
-      : displayContent.products.filter((p) => p.category === selected);
+  // Duplicate products for seamless auto-scroll
+  const duplicatedProducts = showAll || isEditing ? filtered : [...filtered, ...filtered];
 
   const handleEdit = () => {
     setIsEditing(true);
     setTempContent(content);
+    setShowAll(true); // Show grid view when editing
   };
 
   const handleCancel = () => {
     setTempContent(content);
     setPendingImages({});
     setIsEditing(false);
+    setShowAll(false); // Return to auto-scroll view
   };
 
   const handleImageUpload = (productId, event) => {
@@ -367,30 +397,30 @@ export default function EditableProducts({ productData, onStateChange, userId, p
         const baseClasses =
           "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
         if (multiline) {
-          return (
-            <textarea
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              className={`${baseClasses} p-2 resize-none ${className}`}
-              placeholder={placeholder}
-              rows={3}
-            />
-          );
-        }
-        return (
-          <input
-            type='text'
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className={`${baseClasses} p-1 ${className}`}
-            placeholder={placeholder}
-          />
-        );
-      },
-    []
-  );
+      return (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={`${baseClasses} p-2 resize-none ${className}`}
+          placeholder={placeholder}
+          rows={3}
+        />
+      );
+    }
+    return (
+      <input
+        type='text'
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`${baseClasses} p-1 ${className}`}
+        placeholder={placeholder}
+      />
+    );
+  },
+  []
+);
 
-  const updateBenefitField = (index, field, value) => {
+const updateBenefitField = (index, field, value) => {
   setTempContent(prev => ({
     ...prev,
     benefits: prev.benefits.map((benefit, i) =>
@@ -421,7 +451,7 @@ const removeBenefit = (index) => {
   }));
 };
 
-  const renderBenefits = () => {
+const renderBenefits = () => {
   const benefits = isEditing ? tempContent.benefits : displayContent.benefits;
   if (!benefits || benefits.length === 0) return null;
 
@@ -440,7 +470,7 @@ const removeBenefit = (index) => {
                   : benefit.color === "primary"
                   ? "bg-yellow-100 text-yellow-400"
                   : "bg-yellow-100 text-yellow-400"
-              }`} 
+              }`}
           >
             {isEditing ? (
               <input
@@ -500,156 +530,159 @@ const removeBenefit = (index) => {
   );
 };
 
-  if (isLoading) {
-    return (
-      <section ref={sectionRef} className='max-w-7xl mx-auto py-20 bg-gray-50'>
-        <div className='container mx-auto px-4 text-center'>
-          <Loader2 className='w-8 h-8 animate-spin mx-auto mb-4' />
-          <p>Loading products...</p>
-        </div>
-      </section>
-    );
-  }
-
+if (isLoading) {
   return (
-    <section
-      ref={sectionRef}
-      className='max-w-7xl mx-auto py-20 bg-gray-50 relative overflow-hidden'
-    >
-      <div className='container mx-auto px-4'>
-        {/* Edit Controls */}
-        <div className="absolute top-4 right-4 z-10">
-          {!isEditing ? (
+    <section ref={sectionRef} className='max-w-7xl mx-auto py-20 bg-gray-50'>
+      <div className='container mx-auto px-4 text-center'>
+        <Loader2 className='w-8 h-8 animate-spin mx-auto mb-4' />
+        <p>Loading products...</p>
+      </div>
+    </section>
+  );
+}
+
+return (
+  <section
+    ref={sectionRef}
+    className='max-w-7xl mx-auto py-20 bg-gray-50 relative overflow-hidden'
+  >
+    <div className='container mx-auto px-4'>
+      {/* Edit Controls */}
+      <div className="absolute top-4 right-4 z-10">
+        {!isEditing ? (
+          <Button
+            onClick={handleEdit}
+            variant="outline"
+            size="sm"
+            className="bg-white hover:bg-gray-50 shadow-md"
+          >
+            <Edit2 className="w-4 h-4 mr-2" />
+            Edit
+          </Button>
+        ) : (
+          <div className="flex gap-2">
             <Button
-              onClick={handleEdit}
+              onClick={handleSave}
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+              disabled={isSaving || isUploading}
+            >
+              {isUploading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : isSaving ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4 mr-2" />
+              )}
+              {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+            </Button>
+            <Button
+              onClick={handleCancel}
               variant="outline"
               size="sm"
               className="bg-white hover:bg-gray-50 shadow-md"
+              disabled={isSaving || isUploading}
             >
-              <Edit2 className="w-4 h-4 mr-2" />
-              Edit
+              <X className="w-4 h-4 mr-2" />
+              Cancel
             </Button>
-          ) : (
-            <div className="flex gap-2">
-              <Button
-                onClick={handleSave}
-                size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
-                disabled={isSaving || isUploading}
-              >
-                {isUploading ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : isSaving ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4 mr-2" />
-                )}
-                {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
-              </Button>
-              <Button
-                onClick={handleCancel}
-                variant="outline"
-                size="sm"
-                className="bg-white hover:bg-gray-50 shadow-md"
-                disabled={isSaving || isUploading}
-              >
-                <X className="w-4 h-4 mr-2" />
-                Cancel
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <div className='flex justify-between items-center mb-8'>
-          <div>
-            {isEditing ? (
-              <EditableText
-                value={tempContent.sectionTitle}
-                onChange={(val) =>
-                  setTempContent({ ...tempContent, sectionTitle: val })
-                }
-                className='text-4xl font-bold mb-2'
-              />
-            ) : (
-              <h2 className='text-4xl font-bold mb-2'>
-                {displayContent.sectionTitle}
-              </h2>
-            )}
-
-            {isEditing ? (
-              <EditableText
-                value={tempContent.sectionSubtitle}
-                onChange={(val) =>
-                  setTempContent({ ...tempContent, sectionSubtitle: val })
-                }
-                className='text-2xl font-semibold mb-2'
-              />
-            ) : (
-              <h3 className='text-2xl font-semibold mb-2'>
-                {displayContent.sectionSubtitle}
-              </h3>
-            )}
-
-            {isEditing ? (
-              <EditableText
-                value={tempContent.sectionDescription}
-                onChange={(val) =>
-                  setTempContent({ ...tempContent, sectionDescription: val })
-                }
-                className='text-gray-600'
-              />
-            ) : (
-              <p className='text-gray-600'>
-                {displayContent.sectionDescription}
-                {displayContent.trustText && (
-                  <span className='font-semibold text-yellow-400'>
-                    {" "}
-                    {displayContent.trustText}
-                  </span>
-                )}
-              </p>
-            )}
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* Categories */}
-        <div className='flex gap-4 justify-center mt-6 flex-wrap mb-16'>
-          {displayContent.categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                setSelected(cat);
-              }}
-              className={`px-6 py-2 rounded-full transition-colors ${
-                selected === cat
-                  ? "bg-yellow-400 text-gray-900"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {cat}
-              {isEditing && cat !== "All" && (
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeCategory(cat);
-                  }}
-                  className='ml-2 text-xs text-red-600 hover:text-red-800 cursor-pointer'
-                >
-                  ✕
+      <div className='flex justify-between items-center mb-8'>
+        <div>
+          {isEditing ? (
+            <EditableText
+              value={tempContent.sectionTitle}
+              onChange={(val) =>
+                setTempContent({ ...tempContent, sectionTitle: val })
+              }
+              className='text-4xl font-bold mb-2'
+            />
+          ) : (
+            <h2 className='text-4xl font-bold mb-2'>
+              {displayContent.sectionTitle}
+            </h2>
+          )}
+
+          {isEditing ? (
+            <EditableText
+              value={tempContent.sectionSubtitle}
+              onChange={(val) =>
+                setTempContent({ ...tempContent, sectionSubtitle: val })
+              }
+              className='text-2xl font-semibold mb-2'
+            />
+          ) : (
+            <h3 className='text-2xl font-semibold mb-2'>
+              {displayContent.sectionSubtitle}
+            </h3>
+          )}
+
+          {isEditing ? (
+            <EditableText
+              value={tempContent.sectionDescription}
+              onChange={(val) =>
+                setTempContent({ ...tempContent, sectionDescription: val })
+              }
+              className='text-gray-600'
+            />
+          ) : (
+            <p className='text-gray-600'>
+              {displayContent.sectionDescription}
+              {displayContent.trustText && (
+                <span className='font-semibold text-yellow-400'>
+                  {" "}
+                  {displayContent.trustText}
                 </span>
               )}
-            </button>
-          ))}
-          {isEditing && (
-            <Button onClick={addCategory} size='sm' variant='outline'>
-              <Plus className='w-4 h-4 mr-1' /> Add Category
-            </Button>
+            </p>
           )}
         </div>
       </div>
 
-      {/* Products Grid */}
-      <div className='container mx-auto px-4'>
+      {/* Categories */}
+      <div className='flex gap-4 justify-center mt-6 flex-wrap mb-16'>
+        {displayContent.categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => {
+              setSelected(cat);
+              setShowAll(false);
+            }}
+            className={`px-6 py-2 rounded-full transition-colors ${
+              selected === cat
+                ? "bg-yellow-400 text-gray-900"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {cat}
+            {isEditing && cat !== "All" && (
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeCategory(cat);
+                }}
+                className='ml-2 text-xs text-red-600 hover:text-red-800 cursor-pointer'
+              >
+                ✕
+              </span>
+            )}
+          </button>
+        ))}
+        {isEditing && (
+          <Button onClick={addCategory} size='sm' variant='outline'>
+            <Plus className='w-4 h-4 mr-1' /> Add Category
+          </Button>
+        )}
+      </div>
+    </div>
+
+    {/* Products Display */}
+    <div className='container mx-auto px-4'>
+      {showAll || isEditing ? (
+        // Grid view for editing or when "show all" is enabled
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
           {filtered.map((product) => (
             <Card
@@ -817,83 +850,135 @@ const removeBenefit = (index) => {
             </Card>
           ))}
         </div>
-      </div>
-
-      <div className='container mx-auto px-4'>
-        {isEditing && (
-          <Button onClick={addProduct} size='sm' className='mt-6'>
-            <Plus className='w-4 h-4 mr-1' /> Add Product
-          </Button>
-        )}
-
-        {/* Benefits Section */}
-        {renderBenefits()}
-      </div>
-
-      {/* Modal */}
-      {isModalOpen && selectedProductIndex !== null && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
-          <div className="bg-white rounded-xl w-full max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 bg-gray-500 text-white rounded-full p-2"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {isEditing ? (
-              <EditableText
-                value={tempContent.products[selectedProductIndex].title}
-                onChange={(val) => updateProductField(tempContent.products[selectedProductIndex].id, "title", val)}
-                className="text-2xl font-bold mb-4"
-              />
-            ) : (
-              <h2 className="text-2xl font-bold mb-4">
-                {tempContent.products[selectedProductIndex].title}
-              </h2>
-            )}
-
-            {isEditing ? (
-              <EditableText
-                value={tempContent.products[selectedProductIndex].detailedDescription}
-                onChange={(val) => updateProductField(tempContent.products[selectedProductIndex].id, "detailedDescription", val)}
-                multiline
-                className="mb-4"
-              />
-            ) : (
-              <p className="text-gray-600 mb-4">
-                {tempContent.products[selectedProductIndex].detailedDescription}
-              </p>
-            )}
-
-            {/* Pricing & Timeline */}
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-2">Pricing</h3>
-                {isEditing ? (
-                  <EditableText
-                    value={tempContent.products[selectedProductIndex].pricing}
-                    onChange={(val) => updateProductField(tempContent.products[selectedProductIndex].id, "pricing", val)}
+      ) : (
+        // Auto-scroll view for non-edit mode
+        <div
+          className='overflow-x-hidden'
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <motion.div className='flex gap-6' style={{ x }}>
+            {duplicatedProducts.map((product, i) => (
+              <Card
+                key={i}
+                className='group flex-none w-80 overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-xl'
+              >
+                <div className='relative'>
+                  <img
+                    src={product.image || "https://via.placeholder.com/320x180?text=Product+Image"}
+                    alt={product.title}
+                    className='w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500'
                   />
-                ) : (
-                  <p>{tempContent.products[selectedProductIndex].pricing}</p>
-                )}
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">Timeline</h3>
-                {isEditing ? (
-                  <EditableText
-                    value={tempContent.products[selectedProductIndex].timeline}
-                    onChange={(val) => updateProductField(tempContent.products[selectedProductIndex].id, "timeline", val)}
-                  />
-                ) : (
-                  <p>{tempContent.products[selectedProductIndex].timeline}</p>
-                )}
-              </div>
+                  {product.isPopular && (
+                    <Badge className='absolute top-4 right-4 bg-yellow-400 text-white'>
+                      <Star className='w-3 h-3 mr-1' fill='currentColor' />
+                      Popular
+                    </Badge>
+                  )}
+                  <Badge className='absolute top-4 left-4 bg-yellow-400 text-gray-900'>
+                    {product.category}
+                  </Badge>
+                </div>
+                <CardContent className='p-6 bg-white'>
+                  <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+                    {product.title}
+                  </h3>
+                  <p className='text-gray-600 mb-4'>{product.description}</p>
+                  <button 
+                    className='text-red-500 font-medium hover:text-red-600'
+                    onClick={() => openModal(product.id)}
+                  >
+                    Learn More →
+                  </button>
+                </CardContent>
+              </Card>
+            ))}
+          </motion.div>
+        </div>
+      )}
+
+      {!showAll && !isEditing && (
+        <div className='text-center mt-8'>
+          <button
+            onClick={() => setShowAll(true)}
+            className='px-6 py-2 bg-yellow-400 rounded-full text-gray-900 font-medium hover:bg-yellow-500 transition'
+          >
+            Load More
+          </button>
+        </div>
+      )}
+
+      {isEditing && (
+        <Button onClick={addProduct} size='sm' className='mt-6'>
+          <Plus className='w-4 h-4 mr-1' /> Add Product
+        </Button>
+      )}
+    </div>
+
+    {/* Modal */}
+    {isModalOpen && selectedProductIndex !== null && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+        <div className="bg-white rounded-xl w-full max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
+          <button
+            onClick={closeModal}
+            className="absolute top-4 right-4 bg-gray-500 text-white rounded-full p-2"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {isEditing ? (
+            <EditableText
+              value={tempContent.products[selectedProductIndex].title}
+              onChange={(val) => updateProductField(tempContent.products[selectedProductIndex].id, "title", val)}
+              className="text-2xl font-bold mb-4"
+            />
+          ) : (
+            <h2 className="text-2xl font-bold mb-4">
+              {tempContent.products[selectedProductIndex].title}
+            </h2>
+          )}
+
+          {isEditing ? (
+            <EditableText
+              value={tempContent.products[selectedProductIndex].detailedDescription}
+              onChange={(val) => updateProductField(tempContent.products[selectedProductIndex].id, "detailedDescription", val)}
+              multiline
+              className="mb-4"
+            />
+          ) : (
+            <p className="text-gray-600 mb-4">
+              {tempContent.products[selectedProductIndex].detailedDescription}
+            </p>
+          )}
+
+          {/* Pricing & Timeline */}
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-semibold mb-2">Pricing</h3>
+              {isEditing ? (
+                <EditableText
+                  value={tempContent.products[selectedProductIndex].pricing}
+                  onChange={(val) => updateProductField(tempContent.products[selectedProductIndex].id, "pricing", val)}
+                />
+              ) : (
+                <p>{tempContent.products[selectedProductIndex].pricing}</p>
+              )}
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">Timeline</h3>
+              {isEditing ? (
+                <EditableText
+                  value={tempContent.products[selectedProductIndex].timeline}
+                  onChange={(val) => updateProductField(tempContent.products[selectedProductIndex].id, "timeline", val)}
+                />
+              ) : (
+                <p>{tempContent.products[selectedProductIndex].timeline}</p>
+              )}
             </div>
           </div>
         </div>
-      )}
-    </section>
-  );
+      </div>
+    )}
+  </section>
+);
 }

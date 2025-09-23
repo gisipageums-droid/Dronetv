@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import UsedBy from "./components/UsedBy";
+import { useState } from "react";
 import About from "./components/About";
-import Services from "./components/Services";
-import Products from "./components/Products";
 import Blog from "./components/Blog";
 import BlogModal from "./components/BlogModal";
-import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import GallerySection from "./components/GallerySection";
+import Header from "./components/Header";
+import Hero from "./components/Hero";
+import Products from "./components/Products";
+import CompanyProfile from "./components/Profile";
+import Services from "./components/Services";
+import Testimonials from "./components/Testimonials";
+import UsedBy from "./components/UsedBy";
 // In your _app.js or _app.tsx
 // import "./styles/hamburger-fix.css";
 
@@ -24,12 +26,14 @@ export default function App() {
       <Hero />
       <UsedBy />
       <About />
+      <CompanyProfile/>
       <Services />
       <Products />
       <Blog onSelectBlog={setSelectedBlog} />
       {selectedBlog && (
         <BlogModal blog={selectedBlog} onClose={() => setSelectedBlog(null)} />
       )}
+      <GallerySection/>
       <Testimonials />
       <Contact />
       <Footer />

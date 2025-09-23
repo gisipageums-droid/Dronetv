@@ -1,15 +1,21 @@
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "../components/ui/card";
+import { motion, useMotionValue } from "framer-motion";
+import { Star, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "../components/ui/badge";
-import { Star, CheckCircle } from "lucide-react";
 import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
 
 export default function Products({ productData }) {
   const [selected, setSelected] = useState("All");
   const [selectedProductIndex, setSelectedProductIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const sectionRef = useRef(null);
+
+  // Auto-scroll animation values
+  const x = useMotionValue(0);
+  const speed = 0.5;
 
   // Extract data from productData prop
   const content = {
@@ -26,6 +32,29 @@ export default function Products({ productData }) {
     ? content.products
     : content.products.filter((p) => p.category === selected);
 
+  // Duplicate products for seamless auto-scroll
+  const duplicatedProducts = showAll ? filtered : [...filtered, ...filtered];
+
+  // Auto-scroll animation effect
+  useEffect(() => {
+    if (showAll) return; // stop animation if showing all in grid
+    
+    let animationFrame;
+
+    const animate = () => {
+      if (!isHovered) {
+        x.set(x.get() - speed);
+        // Reset to 0 if fully scrolled (duplicate loop)
+        const productWidth = 320; // approximate card width
+        if (Math.abs(x.get()) >= (filtered.length / 2) * productWidth) x.set(0);
+      }
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    animate();
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isHovered, x, filtered.length, showAll]);
+
   const openModal = (index) => {
     setSelectedProductIndex(index);
     setIsModalOpen(true);
@@ -40,7 +69,7 @@ export default function Products({ productData }) {
     if (!content.benefits || content.benefits.length === 0) return null;
 
     return (
-      <div  className='mt-16 grid grid-cols-1 md:grid-cols-3 gap-8'>
+      <div className='mt-16 grid grid-cols-1 md:grid-cols-3 gap-8'>
         {content.benefits.map((benefit, index) => (
           <div
             key={index}
@@ -68,7 +97,7 @@ export default function Products({ productData }) {
 
   return (
     <section
-    id="product"    
+      id="product"    
       ref={sectionRef}
       className='max-w-7xl mx-auto py-20 bg-gray-50 relative overflow-hidden'
     >
@@ -98,7 +127,10 @@ export default function Products({ productData }) {
           {content.categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => setSelected(cat)}
+              onClick={() => {
+                setSelected(cat);
+                setShowAll(false);
+              }}
               className={`px-6 py-2 rounded-full transition-colors ${
                 selected === cat
                   ? "bg-yellow-400 text-gray-900"
@@ -111,80 +143,139 @@ export default function Products({ productData }) {
         </div>
       </div>
 
-      {/* Products Grid */}
+      {/* Products Display */}
       <div className='container mx-auto px-4'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-          {filtered.map((product, index) => (
-            <Card
-              key={product.id}
-              className='shadow-md rounded-xl overflow-hidden relative bg-white hover:shadow-lg transition-shadow duration-300'
-            >
-              {product.isPopular && (
-                <div className='absolute top-4 right-4 z-10'>
-                  <Badge className='bg-yellow-400 text-white'>
-                    <Star className='w-3 h-3 mr-1' fill='currentColor' />
-                    Popular
-                  </Badge>
-                </div>
-              )}
+        {showAll ? (
+          // Grid view when "show all" is enabled
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+            {filtered.map((product, index) => (
+              <Card
+                key={product.id}
+                className='shadow-md rounded-xl overflow-hidden relative bg-white hover:shadow-lg transition-shadow duration-300'
+              >
+                {product.isPopular && (
+                  <div className='absolute top-4 right-4 z-10'>
+                    <Badge className='bg-yellow-400 text-white'>
+                      <Star className='w-3 h-3 mr-1' fill='currentColor' />
+                      Popular
+                    </Badge>
+                  </div>
+                )}
 
-              <CardContent className='p-0'>
-                <div className='relative'>
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className='w-full h-48 object-cover'
-                  />
-                </div>
+                <CardContent className='p-0'>
+                  <div className='relative'>
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className='w-full h-48 object-cover'
+                    />
+                  </div>
 
-                <div className='p-6'>
-                  <div className='flex items-center justify-between mb-3'>
-                    <Badge className={product.categoryColor}>
+                  <div className='p-6'>
+                    <div className='flex items-center justify-between mb-3'>
+                      <Badge className={product.categoryColor}>
+                        {product.category}
+                      </Badge>
+                    </div>
+
+                    <h3 className='text-xl font-bold mb-3'>
+                      {product.title}
+                    </h3>
+
+                    <p className='text-gray-600 mb-4'>
+                      {product.description}
+                    </p>
+
+                    {product.features && product.features.length > 0 && (
+                      <div className='mb-4'>
+                        <h4 className='font-semibold mb-2 text-sm'>
+                          Features:
+                        </h4>
+                        <ul className='text-sm text-gray-600 space-y-1'>
+                          {product.features.map((feature, idx) => (
+                            <li key={idx} className='flex items-center'>
+                              <div className='w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 flex-shrink-0'></div>
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <Button 
+                      size="sm" 
+                      className="hover:scale-105" 
+                      onClick={() => openModal(index)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          // Auto-scroll view
+          <div
+            className='overflow-x-hidden'
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <motion.div className='flex gap-6' style={{ x }}>
+              {duplicatedProducts.map((product, i) => (
+                <Card
+                  key={`${product.id}-${i}`}
+                  className='group flex-none w-80 overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-xl'
+                >
+                  <div className='relative'>
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className='w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500'
+                    />
+                    {product.isPopular && (
+                      <Badge className='absolute top-4 right-4 bg-yellow-400 text-white'>
+                        <Star className='w-3 h-3 mr-1' fill='currentColor' />
+                        Popular
+                      </Badge>
+                    )}
+                    <Badge className='absolute top-4 left-4 bg-yellow-400 text-gray-900'>
                       {product.category}
                     </Badge>
                   </div>
+                  <CardContent className='p-6 bg-white'>
+                    <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+                      {product.title}
+                    </h3>
+                    <p className='text-gray-600 mb-4'>{product.description}</p>
+                    <button 
+                      className='text-red-500 font-medium hover:text-red-600'
+                      onClick={() => {
+                        const originalIndex = content.products.findIndex(p => p.id === product.id);
+                        if (originalIndex !== -1) openModal(originalIndex);
+                      }}
+                    >
+                      Learn More →
+                    </button>
+                  </CardContent>
+                </Card>
+              ))}
+            </motion.div>
+          </div>
+        )}
 
-                  <h3 className='text-xl font-bold mb-3'>
-                    {product.title}
-                  </h3>
+        {!showAll && (
+          <div className='text-center mt-8'>
+            <button
+              onClick={() => setShowAll(true)}
+              className='px-6 py-2 bg-yellow-400 rounded-full text-gray-900 font-medium hover:bg-yellow-500 transition'
+            >
+              Load More
+            </button>
+          </div>
+        )}
 
-                  <p className='text-gray-600 mb-4'>
-                    {product.description}
-                  </p>
-
-                  {product.features && product.features.length > 0 && (
-                    <div className='mb-4'>
-                      <h4 className='font-semibold mb-2 text-sm'>
-                        Features:
-                      </h4>
-                      <ul className='text-sm text-gray-600 space-y-1'>
-                        {product.features.map((feature, idx) => (
-                          <li key={idx} className='flex items-center'>
-                            <div className='w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 flex-shrink-0'></div>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <Button 
-                    size="sm" 
-                    className="hover:scale-105" 
-                    onClick={() => openModal(index)}
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      <div className='container mx-auto px-4'>
-        {/* Benefits Section */}
-        {renderBenefits()}
+      
       </div>
 
       {/* Modal */}

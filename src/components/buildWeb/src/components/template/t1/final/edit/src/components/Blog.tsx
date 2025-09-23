@@ -563,7 +563,7 @@ export default function Blog({
                 <EditableText
                   value={tempContent.header.desc}
                   onChange={(val) => updateHeaderField("desc", val)}
-                  className='text-gray-600 dark:text-gray-300'
+                  className='text-gray-600 dark:text-gray-600'
                   multiline
                   placeholder="Blog section description"
                 />
