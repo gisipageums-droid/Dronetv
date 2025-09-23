@@ -33,7 +33,7 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
       onNext={onNext}
       onPrev={onPrev}
       isValid={isValid}
-      currentStep={5}
+      currentStep={6}
       totalSteps={6}
     >
       <div className="space-y-8">

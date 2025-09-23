@@ -58,6 +58,15 @@ sectorsOther: {
   geographyOfOperations: string[];
   coverageType?: string;
 
+  // edtemporarily
+  // subCategories:string[];
+  subCategories?: { [key: string]: string[] }; 
+  // subSubCategories:string[]
+subSubCategories?: { [subCategory: string]: string[] };
+
+
+
+
   // D1. Drone Manufacturing
   manufacturingSubcategories: string[];
   manufOther?: string;

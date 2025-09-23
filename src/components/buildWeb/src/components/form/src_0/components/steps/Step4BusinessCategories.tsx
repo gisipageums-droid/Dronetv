@@ -11,70 +11,11 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   isValid,
 }) => {
   // State for single expanded category and selected categories
-  // const [expandedMainCategory, setExpandedMainCategory] = useState<string>('');
-  // const [selectedMainCategories, setSelectedMainCategories] = useState<string[]>([]);
-  // const [selectedSubcategories, setSelectedSubcategories] = useState<{[key: string]: string[]}>({});
-  // const [expandedSubcategory, setExpandedSubcategory] = useState<string>('');
-  // const [selectedSubSubcategories, setSelectedSubSubcategories] = useState<{[key: string]: string[]}>({});
-
-
-
-
-  const [selectedMainCategories, setSelectedMainCategories] = useState<string[]>(formData.mainCategories || []);
-const [selectedSubcategories, setSelectedSubcategories] = useState<{ [key: string]: string[] }>(formData.subCategories || {});
-const [selectedSubSubcategories, setSelectedSubSubcategories] = useState<{ [key: string]: string[] }>(formData.subSubCategories || {});
-
-// Auto-expand first category/subcategory if editing
-const [expandedMainCategory, setExpandedMainCategory] = useState<string>(
-  formData.mainCategories?.[0] || ''
-);
-const [expandedSubcategory, setExpandedSubcategory] = useState<string>(
-  Object.keys(formData.subCategories || {})[0] || ''
-);
-
-
-
-
-
-// // --- Add these after all useState calls ---
-// React.useEffect(() => {
-//   updateFormData({ mainCategories: selectedMainCategories });
-// }, [selectedMainCategories]);
-
-
-
-// React.useEffect(() => {
-//   updateFormData({ subCategories: selectedSubcategories });
-// }, [selectedSubcategories]);
-
-
-// React.useEffect(() => {
-//   // Sync local state with FormData
-//   updateFormData({ subSubCategories: selectedSubSubcategories });
-// }, [selectedSubSubcategories, updateFormData]);
-
-
-
-
-React.useEffect(() => {
-  if (formData.mainCategories !== selectedMainCategories) {
-    updateFormData({ mainCategories: selectedMainCategories });
-  }
-}, [selectedMainCategories, formData.mainCategories, updateFormData]);
-
-React.useEffect(() => {
-  if (JSON.stringify(formData.subCategories) !== JSON.stringify(selectedSubcategories)) {
-    updateFormData({ subCategories: selectedSubcategories });
-  }
-}, [selectedSubcategories, formData.subCategories, updateFormData]);
-
-React.useEffect(() => {
-  if (JSON.stringify(formData.subSubCategories) !== JSON.stringify(selectedSubSubcategories)) {
-    updateFormData({ subSubCategories: selectedSubSubcategories });
-  }
-}, [selectedSubSubcategories, formData.subSubCategories, updateFormData]);
-
-
+  const [expandedMainCategory, setExpandedMainCategory] = useState<string>('');
+  const [selectedMainCategories, setSelectedMainCategories] = useState<string[]>([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState<{[key: string]: string[]}>({});
+  const [expandedSubcategory, setExpandedSubcategory] = useState<string>('');
+  const [selectedSubSubcategories, setSelectedSubSubcategories] = useState<{[key: string]: string[]}>({});
 
   // Main business categories
   const mainCategories = [
@@ -285,14 +226,6 @@ React.useEffect(() => {
     'Aerial Surveys': ['Photogrammetry', 'LiDAR Surveys', 'Thermal Imaging', 'Multispectral Imaging', 'Hyperspectral Imaging', 'UAV Surveys']
   };
 
-
-
-
-
-
-
-  
-
   const handleMainCategoryToggle = (category: string) => {
     if (expandedMainCategory === category) {
       // If clicking the same category, collapse it
@@ -408,7 +341,7 @@ React.useEffect(() => {
       onPrev={onPrev}
       isValid={isValid}
       currentStep={3}
-      totalSteps={6}
+      totalSteps={7}
     >
       <div className="space-y-6">
         {/* Main Business Categories */}
@@ -513,12 +446,6 @@ React.useEffect(() => {
                         subCategoryStyle = 'bg-white hover:bg-slate-50 border border-slate-200';
                         subTextStyle = 'text-slate-700';
                       }
-
-
-
-
-
-                      
                       
                       return (
                         <button

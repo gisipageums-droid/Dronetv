@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { useTemplate } from "../../../../../../../context/context";
 import { toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
 
 // ✅ Updated File Upload API URL (your actual endpoint)
 const FILE_UPLOAD_API_URL = "https://1i8zpm4qu4.execute-api.ap-south-1.amazonaws.com/prod/upload-file";
@@ -155,24 +154,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     }
   };
 
-
-
-
-
-  const location = useLocation();
-
-// Extract URL parts
-const pathParts = location.pathname.split("/").filter(Boolean);
-// Example pathParts for /form/publicId/userId/draftId => ['form', 'publicId', 'userId', 'draftId']
-const isDraftLink = pathParts.length === 4; 
-const publicId = isDraftLink ? pathParts[1] : null;
-const userIdFromUrl = isDraftLink ? pathParts[2] : null;
-const draftId = isDraftLink ? pathParts[3] : null;
-
-
-
-
-
   // ✅ Enhanced Form Submit Handler
   const handleSubmit = async () => {
     setIsUploading(true);
@@ -224,38 +205,7 @@ const draftId = isDraftLink ? pathParts[3] : null;
       setUploadProgress(75);
       
       // Submit form data to lambda
-      // const response = await retryRequest(FORM_SUBMIT_API_URL, payload, 3, 60000);
-
-
-
-
-
-      let response;
-
-if (isDraftLink && userIdFromUrl && draftId) {
-  // ✅ PUT request for draft link
-  const draftApiUrl = `https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev/${userIdFromUrl}/${draftId}`;
-  setUploadStatus("Updating draft...");
-  setUploadProgress(60);
-
-  response = await axios.put(draftApiUrl, payload, {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    timeout: 60000,
-  });
-} else {
-  // ✅ POST request for new form
-  setUploadStatus("Submitting form data...");
-  setUploadProgress(60);
-
-  response = await retryRequest(FORM_SUBMIT_API_URL, payload, 3, 60000);
-}
-
-
-
-
+      const response = await retryRequest(FORM_SUBMIT_API_URL, payload, 3, 60000);
 
       console.log("✅ Form submitted successfully:", response.data);
       
@@ -267,14 +217,6 @@ if (isDraftLink && userIdFromUrl && draftId) {
         toast.success("Form submitted successfully! AI is generating your website...");
         onNext();
       }, 1500);
-
-
-
-
-
-      
-
-
 
     } catch (error: any) {
       console.error("❌ Form submission failed:", error);

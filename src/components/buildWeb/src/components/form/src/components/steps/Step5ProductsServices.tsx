@@ -66,6 +66,83 @@ const Step5ProductsServices: React.FC<StepProps> = ({
       totalSteps={6}
     >
       <div className="space-y-6">
+
+
+        <div className="space-y-4">
+  {/* Main Categories */}
+  <div>
+    <h4 className="text-sm font-semibold text-slate-800 mb-2">Selected Main Categories</h4>
+    <div className="flex flex-wrap gap-2">
+      {formData.mainCategories?.map((main) => (
+        <span
+          key={main}
+          className="inline-block px-2 py-1 rounded border bg-blue-50 text-blue-900 border-blue-200 text-xs font-medium"
+        >
+          {main}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  {/* Subcategories */}
+  <div>
+    <h4 className="text-sm font-semibold text-slate-800 mb-2">Selected Subcategories</h4>
+    <div className="flex flex-wrap gap-2">
+      {formData.subCategories &&
+        Object.entries(formData.subCategories).map(([main, subs]) =>
+          subs.map((sub) => (
+            <span
+              key={`${main}-${sub}`}
+              className="inline-block px-2 py-1 rounded border bg-green-50 text-green-900 border-green-200 text-xs font-medium"
+            >
+              {sub} ({main})
+            </span>
+          ))
+        )}
+    </div>
+  </div>
+
+  {/* Sub-subcategories */}
+  <div>
+    <h4 className="text-sm font-semibold text-slate-800 mb-2">Selected Sub-Subcategories</h4>
+    <div className="flex flex-wrap gap-2">
+      {formData.subSubCategories &&
+        Object.entries(formData.subSubCategories).map(([sub, subSubs]) =>
+          subSubs.map((subSub) => (
+            <span
+              key={`${sub}-${subSub}`}
+              className="inline-block px-2 py-1 rounded border bg-purple-50 text-purple-900 border-purple-200 text-xs font-medium"
+            >
+              {subSub} ({sub})
+            </span>
+          ))
+        )}
+    </div>
+  </div>
+
+  {/* Custom Categories */}
+  {formData.otherMainCategories && formData.otherMainCategories.trim() && (
+    <div>
+      <h4 className="text-sm font-semibold text-slate-800 mb-2">Custom Categories</h4>
+      <div className="flex flex-wrap gap-2">
+        {formData.otherMainCategories.split(',').map((item, index) => {
+          const trimmed = item.trim();
+          if (!trimmed) return null;
+          return (
+            <span
+              key={index}
+              className="inline-block px-2 py-1 rounded border bg-yellow-50 text-yellow-900 border-yellow-200 text-xs font-medium"
+            >
+              {trimmed}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  )}
+</div>
+
+
         {/* Services Section */}
         <div className="bg-blue-50 rounded-lg p-3">
           <h3 className="text-sm font-bold text-blue-900 mb-2 flex items-center">
