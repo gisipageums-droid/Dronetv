@@ -242,21 +242,18 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                     onChange={(e) => updateField("primaryBtn", e.target.value)} 
                     className="bg-transparent border-b border-primary outline-none max-w-[200px]" 
                   />
-                  <input 
-                    value={heroState.secondaryBtn} 
-                    onChange={(e) => updateField("secondaryBtn", e.target.value)} 
-                    className="bg-transparent border-b border-muted-foreground outline-none max-w-[200px]" 
-                  />
+                 
                 </>
               ) : (
                 <>
                   <Button size="lg" className="bg-primary text-primary-foreground shadow-xl">
+                    <a href="#contact">
                     {heroState.primaryBtn}
+
+                    </a>
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
-                  <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                    <Play className="mr-2 h-5 w-5" /> {heroState.secondaryBtn}
-                  </Button>
+                  
                 </>
               )}
             </motion.div>

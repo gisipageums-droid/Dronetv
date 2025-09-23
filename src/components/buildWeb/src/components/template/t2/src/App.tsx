@@ -11,6 +11,7 @@ import Testimonials from "./components/Testimonials";
 import Clients from "./components/Clients";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import Publish from "./components/Publish";
 import { ThemeProvider } from "./components/ThemeProvider";
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
           <Clients />
           <Contact />
         </main>
+        <Publish />
         <Footer />
       </div>
     </ThemeProvider>

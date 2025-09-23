@@ -8,7 +8,7 @@ import { useTheme } from "./ThemeProvider";
 export default function Header({headerData}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
-  console.log("name",headerData.companyName);
+  // console.log("name",headerData.companyName);
   const menuVariants = {
     closed: { opacity: 0, height: 0, transition: { duration: 0.3 } },
     open: {
@@ -79,7 +79,7 @@ export default function Header({headerData}) {
           {/* Right side */}
           <div className="flex items-center space-x-4">
             <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300">
-              {headerData.ctaText}
+              <a href="#contact">{headerData.ctaText}</a>
             </Button>
 
             <ThemeToggle />

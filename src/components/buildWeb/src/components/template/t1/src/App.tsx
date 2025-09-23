@@ -12,6 +12,7 @@ import CompanyProfile from "./components/Profile";
 import Services from "./components/Services";
 import Testimonials from "./components/Testimonials";
 import UsedBy from "./components/UsedBy";
+import Publish from "./components/Publish";
 // In your _app.js or _app.tsx
 // import "./styles/hamburger-fix.css";
 
@@ -36,6 +37,7 @@ export default function App() {
       <GallerySection/>
       <Testimonials />
       <Contact />
+      <Publish />
       <Footer />
     </div>
   );

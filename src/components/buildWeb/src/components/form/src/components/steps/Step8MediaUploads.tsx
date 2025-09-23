@@ -155,26 +155,23 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     }
   };
 
-
-
-
-
   const location = useLocation();
 
-// Extract URL parts
-const pathParts = location.pathname.split("/").filter(Boolean);
-// Example pathParts for /form/publicId/userId/draftId => ['form', 'publicId', 'userId', 'draftId']
-const isDraftLink = pathParts.length === 4; 
-const publicId = isDraftLink ? pathParts[1] : null;
-const userIdFromUrl = isDraftLink ? pathParts[2] : null;
-const draftId = isDraftLink ? pathParts[3] : null;
-
-
-
-
+  // Extract URL parts
+  const pathParts = location.pathname.split("/").filter(Boolean);
+  // Example pathParts for /form/publicId/userId/draftId => ['form', 'publicId', 'userId', 'draftId']
+  const isDraftLink = pathParts.length === 4; 
+  const publicId = isDraftLink ? pathParts[1] : null;
+  const userIdFromUrl = isDraftLink ? pathParts[2] : null;
+  const draftId = isDraftLink ? pathParts[3] : null;
 
   // ✅ Enhanced Form Submit Handler
   const handleSubmit = async () => {
+    // Prevent submit if logo is not uploaded
+    if (!formData.companyLogoUrl || typeof formData.companyLogoUrl !== "string" || !formData.companyLogoUrl.startsWith("http")) {
+      toast.error("Please upload your company logo in Brand & Site Images before submitting.");
+      return;
+    }
     setIsUploading(true);
     setUploadProgress(0);
     setUploadStatus("Preparing form submission...");
@@ -223,39 +220,28 @@ const draftId = isDraftLink ? pathParts[3] : null;
 
       setUploadProgress(75);
       
-      // Submit form data to lambda
-      // const response = await retryRequest(FORM_SUBMIT_API_URL, payload, 3, 60000);
-
-
-
-
-
       let response;
 
-if (isDraftLink && userIdFromUrl && draftId) {
-  // ✅ PUT request for draft link
-  const draftApiUrl = `https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev/${userIdFromUrl}/${draftId}`;
-  setUploadStatus("Updating draft...");
-  setUploadProgress(60);
+      if (isDraftLink && userIdFromUrl && draftId) {
+        // ✅ PUT request for draft link
+        const draftApiUrl = `https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev/${userIdFromUrl}/${draftId}`;
+        setUploadStatus("Updating draft...");
+        setUploadProgress(60);
 
-  response = await axios.put(draftApiUrl, payload, {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    timeout: 60000,
-  });
-} else {
-  // ✅ POST request for new form
-  setUploadStatus("Submitting form data...");
-  setUploadProgress(60);
+        response = await axios.put(draftApiUrl, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          timeout: 60000,
+        });
+      } else {
+        // ✅ POST request for new form
+        setUploadStatus("Submitting form data...");
+        setUploadProgress(60);
 
-  response = await retryRequest(FORM_SUBMIT_API_URL, payload, 3, 60000);
-}
-
-
-
-
+        response = await retryRequest(FORM_SUBMIT_API_URL, payload, 3, 60000);
+      }
 
       console.log("✅ Form submitted successfully:", response.data);
       
@@ -267,14 +253,6 @@ if (isDraftLink && userIdFromUrl && draftId) {
         toast.success("Form submitted successfully! AI is generating your website...");
         onNext();
       }, 1500);
-
-
-
-
-
-      
-
-
 
     } catch (error: any) {
       console.error("❌ Form submission failed:", error);
@@ -390,6 +368,7 @@ if (isDraftLink && userIdFromUrl && draftId) {
         {description && (
           <p className='text-sm text-slate-600 mb-2'>{description}</p>
         )}
+        
         <div
           className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-slate-400 transition-colors ${getStatusColor()}`}
         >
@@ -464,7 +443,7 @@ if (isDraftLink && userIdFromUrl && draftId) {
       onNext={handleSubmit}
       onPrev={onPrev}
       isValid={isValid && !isUploading}
-      currentStep={7}
+      currentStep={6}
       totalSteps={6}
       nextButtonText={isUploading ? "Submitting..." : "Submit Form"}
     >
@@ -490,35 +469,6 @@ if (isDraftLink && userIdFromUrl && draftId) {
             </p>
           </div>
         )}
-
-        {/* Template Selection Summary */}
-        <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6'>
-          <h3 className='text-lg font-semibold text-yellow-800 mb-2'>
-            📋 Selected Template
-          </h3>
-          <div className='text-yellow-700'>
-            {formData?.templateSelection ? (
-              <>
-               <p>
-  <strong>Template:</strong>{" "}
-  {formData.templateSelection === 1
-    ? "Modern template"
-    : formData.templateSelection === 2
-    ? "Professional template"
-    : "not selected"}
-</p>
-                <p>
-                  <strong>Template ID:</strong>{" "}
-                  {formData.templateSelection}
-                </p>
-              </>
-            ) : (
-              <p className='text-red-600'>
-                ⚠️ No template selected. Please go back and select a template.
-              </p>
-            )}
-          </div>
-        </div>
 
         {/* Brand & Site Images */}
         <FileUploadSection

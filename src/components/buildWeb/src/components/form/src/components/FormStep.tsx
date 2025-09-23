@@ -26,7 +26,7 @@ export const FormStep: React.FC<FormStepProps> = ({
   isFirstStep = false,
   isLastStep = false,
   currentStep,
-  totalSteps = 7,
+  totalSteps = 6,
 }) => {
   const stepTitles = [
     'Company Info',

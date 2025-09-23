@@ -17,7 +17,6 @@ export default function Hero() {
 
   // Buttons
   const [primaryBtn, setPrimaryBtn] = useState("Get Started Today");
-  const [secondaryBtn, setSecondaryBtn] = useState("Watch Demo");
 
   // Trust text
   const [trustText, setTrustText] = useState("Join 500+ satisfied clients");
@@ -196,11 +195,7 @@ export default function Hero() {
                     onChange={(e) => setPrimaryBtn(e.target.value)}
                     className='bg-transparent border-b border-primary outline-none max-w-[200px]'
                   />
-                  <input
-                    value={secondaryBtn}
-                    onChange={(e) => setSecondaryBtn(e.target.value)}
-                    className='bg-transparent border-b border-muted-foreground outline-none max-w-[200px]'
-                  />
+                
                 </>
               ) : (
                 <>
@@ -211,13 +206,7 @@ export default function Hero() {
                     {primaryBtn}
                     <ArrowRight className='ml-2 h-5 w-5' />
                   </Button>
-                  <Button
-                    variant='outline'
-                    size='lg'
-                    className='border-primary text-primary hover:bg-primary hover:text-primary-foreground'
-                  >
-                    <Play className='mr-2 h-5 w-5' /> {secondaryBtn}
-                  </Button>
+                
                 </>
               )}
             </motion.div>

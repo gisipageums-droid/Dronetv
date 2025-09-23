@@ -213,7 +213,162 @@
 //     setFormData((prev) => ({ ...prev, ...data }));
 //   };
 
+//   // Step 1 validation logic
+//   const validateStep1 = () => {
+//     // Company Category: at least 1
+//     if (!formData.companyCategory || formData.companyCategory.length === 0) {
+//       toast.error("Please select at least one Company Category.");
+//       return false;
+//     }
+//     // Company Name: required
+//     if (!formData.companyName || formData.companyName.trim() === "") {
+//       toast.error("Company Name is required.");
+//       return false;
+//     }
+//     // Website URL: required
+//     if (!formData.websiteUrl || formData.websiteUrl.trim() === "") {
+//       toast.error("Website URL is required.");
+//       return false;
+//     }
+//     // Director/MD Information required
+//     if (!formData.directorName || formData.directorName.trim() === "") {
+//       toast.error("Director Name is required.");
+//       return false;
+//     }
+//     if (!formData.directorPhone || formData.directorPhone.trim() === "") {
+//       toast.error("Director Phone is required.");
+//       return false;
+//     }
+//     if (!formData.directorEmail || formData.directorEmail.trim() === "") {
+//       toast.error("Director Email is required.");
+//       return false;
+//     }
+//     // Alternative Contact required
+//     if (!formData.altContactName || formData.altContactName.trim() === "") {
+//       toast.error("Alternative Contact Name is required.");
+//       return false;
+//     }
+//     if (!formData.altContactPhone || formData.altContactPhone.trim() === "") {
+//       toast.error("Alternative Contact Phone is required.");
+//       return false;
+//     }
+//     if (!formData.altContactEmail || formData.altContactEmail.trim() === "") {
+//       toast.error("Alternative Contact Email is required.");
+//       return false;
+//     }
+//     // Address Information required
+//     if (!formData.officeAddress || formData.officeAddress.trim() === "") {
+//       toast.error("Office Address is required.");
+//       return false;
+//     }
+//     if (!formData.country || formData.country.trim() === "") {
+//       toast.error("Country is required.");
+//       return false;
+//     }
+//     if (!formData.state || formData.state.trim() === "") {
+//       toast.error("State is required.");
+//       return false;
+//     }
+//     if (!formData.city || formData.city.trim() === "") {
+//       toast.error("City is required.");
+//       return false;
+//     }
+//     if (!formData.postalCode || formData.postalCode.trim() === "") {
+//       toast.error("Postal Code is required.");
+//       return false;
+//     }
+//     // All other fields in Company Information are optional
+//     // Legal Information is optional
+//     return true;
+//   };
+
+//   // Step 3 validation logic
+//   const validateStep3 = () => {
+//     if (!formData.sectorsServed || typeof formData.sectorsServed !== "object") {
+//       toast.error("Please select at least one sector.");
+//       return false;
+//     }
+//     // Check if at least one selected category has at least one sector selected
+//     const hasAny = formData.companyCategory.some(
+//       (cat) =>
+//         Array.isArray(formData.sectorsServed[cat]) &&
+//         formData.sectorsServed[cat].length > 0
+//     );
+//     if (!hasAny) {
+//       toast.error("Please select at least one sector for your company category.");
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   // Step 4 validation logic
+//   const validateStep4 = () => {
+//     if (!formData.mainCategories || formData.mainCategories.length === 0) {
+//       toast.error("Please select at least one Main Business Category.");
+//       return false;
+//     }
+//     if (!formData.geographyOfOperations || formData.geographyOfOperations.length === 0) {
+//       toast.error("Please select at least one Geography of Operations.");
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   // Step 5 validation logic
+//   const validateStep5 = () => {
+//     if (!formData.services || formData.services.length === 0) {
+//       toast.error("Please add at least one service.");
+//       return false;
+//     }
+//     if (!formData.products || formData.products.length === 0) {
+//       toast.error("Please add at least one product.");
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   // Step 7 validation logic
+//   const validateStep7 = () => {
+//     if (!formData.promoFormats || formData.promoFormats.length === 0) {
+//       toast.error("Please select at least one Promotion Preference.");
+//       return false;
+//     }
+//     if (!formData.acceptTerms || !formData.acceptPrivacy) {
+//       toast.error("Please accept Terms & Conditions and Privacy Policy to continue.");
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   // Step 8 validation logic
+//   const validateStep8 = () => {
+//     if (!formData.companyLogoUrl || typeof formData.companyLogoUrl !== "string" || !formData.companyLogoUrl.startsWith("http")) {
+//       toast.error("Please upload your company logo in Brand & Site Images.");
+//       return false;
+//     }
+//     return true;
+//   };
+
 //   const nextStep = () => {
+//     // Only validate on step 1, 3, 4, 5, 7, and 8
+//     if (currentStep === 1) {
+//       if (!validateStep1()) return;
+//     }
+//     if (currentStep === 2) {
+//       if (!validateStep3()) return;
+//     }
+//     if (currentStep === 3) {
+//       if (!validateStep4()) return;
+//     }
+//     if (currentStep === 4) {
+//       if (!validateStep5()) return;
+//     }
+//     if (currentStep === 5) {
+//       if (!validateStep7()) return;
+//     }
+//     if (currentStep === 6) {
+//       if (!validateStep8()) return;
+//     }
 //     if (currentStep < 6) {
 //       setCurrentStep(currentStep + 1);
 //     } else if (currentStep === 6) {
@@ -547,7 +702,162 @@ function App() {
     setFormData((prev) => ({ ...prev, ...data }));
   };
 
+  // Step 1 validation logic
+  const validateStep1 = () => {
+    // Company Category: at least 1
+    if (!formData.companyCategory || formData.companyCategory.length === 0) {
+      toast.error("Please select at least one Company Category.");
+      return false;
+    }
+    // Company Name: required
+    if (!formData.companyName || formData.companyName.trim() === "") {
+      toast.error("Company Name is required.");
+      return false;
+    }
+    // Website URL: required
+    if (!formData.websiteUrl || formData.websiteUrl.trim() === "") {
+      toast.error("Website URL is required.");
+      return false;
+    }
+    // Director/MD Information required
+    if (!formData.directorName || formData.directorName.trim() === "") {
+      toast.error("Director Name is required.");
+      return false;
+    }
+    if (!formData.directorPhone || formData.directorPhone.trim() === "") {
+      toast.error("Director Phone is required.");
+      return false;
+    }
+    if (!formData.directorEmail || formData.directorEmail.trim() === "") {
+      toast.error("Director Email is required.");
+      return false;
+    }
+    // Alternative Contact required
+    if (!formData.altContactName || formData.altContactName.trim() === "") {
+      toast.error("Alternative Contact Name is required.");
+      return false;
+    }
+    if (!formData.altContactPhone || formData.altContactPhone.trim() === "") {
+      toast.error("Alternative Contact Phone is required.");
+      return false;
+    }
+    if (!formData.altContactEmail || formData.altContactEmail.trim() === "") {
+      toast.error("Alternative Contact Email is required.");
+      return false;
+    }
+    // Address Information required
+    if (!formData.officeAddress || formData.officeAddress.trim() === "") {
+      toast.error("Office Address is required.");
+      return false;
+    }
+    if (!formData.country || formData.country.trim() === "") {
+      toast.error("Country is required.");
+      return false;
+    }
+    if (!formData.state || formData.state.trim() === "") {
+      toast.error("State is required.");
+      return false;
+    }
+    if (!formData.city || formData.city.trim() === "") {
+      toast.error("City is required.");
+      return false;
+    }
+    if (!formData.postalCode || formData.postalCode.trim() === "") {
+      toast.error("Postal Code is required.");
+      return false;
+    }
+    // All other fields in Company Information are optional
+    // Legal Information is optional
+    return true;
+  };
+
+  // Step 3 validation logic
+  const validateStep3 = () => {
+    if (!formData.sectorsServed || typeof formData.sectorsServed !== "object") {
+      toast.error("Please select at least one sector.");
+      return false;
+    }
+    // Check if at least one selected category has at least one sector selected
+    const hasAny = formData.companyCategory.some(
+      (cat) =>
+        Array.isArray(formData.sectorsServed[cat]) &&
+        formData.sectorsServed[cat].length > 0
+    );
+    if (!hasAny) {
+      toast.error("Please select at least one sector for your company category.");
+      return false;
+    }
+    return true;
+  };
+
+  // Step 4 validation logic
+  const validateStep4 = () => {
+    if (!formData.mainCategories || formData.mainCategories.length === 0) {
+      toast.error("Please select at least one Main Business Category.");
+      return false;
+    }
+    if (!formData.geographyOfOperations || formData.geographyOfOperations.length === 0) {
+      toast.error("Please select at least one Geography of Operations.");
+      return false;
+    }
+    return true;
+  };
+
+  // Step 5 validation logic
+  const validateStep5 = () => {
+    if (!formData.services || formData.services.length === 0) {
+      toast.error("Please add at least one service.");
+      return false;
+    }
+    if (!formData.products || formData.products.length === 0) {
+      toast.error("Please add at least one product.");
+      return false;
+    }
+    return true;
+  };
+
+  // Step 7 validation logic
+  const validateStep7 = () => {
+    if (!formData.promoFormats || formData.promoFormats.length === 0) {
+      toast.error("Please select at least one Promotion Preference.");
+      return false;
+    }
+    if (!formData.acceptTerms || !formData.acceptPrivacy) {
+      toast.error("Please accept Terms & Conditions and Privacy Policy to continue.");
+      return false;
+    }
+    return true;
+  };
+
+  // Step 8 validation logic
+  const validateStep8 = () => {
+    if (!formData.companyLogoUrl || typeof formData.companyLogoUrl !== "string" || !formData.companyLogoUrl.startsWith("http")) {
+      toast.error("Please upload your company logo in Brand & Site Images.");
+      return false;
+    }
+    return true;
+  };
+
   const nextStep = () => {
+    // Only validate on step 1, 3, 4, 5, 7, and 8
+    if (currentStep === 1) {
+      if (!validateStep1()) return;
+    }
+    if (currentStep === 2) {
+      if (!validateStep3()) return;
+    }
+    if (currentStep === 3) {
+      if (!validateStep4()) return;
+    }
+    if (currentStep === 4) {
+      if (!validateStep5()) return;
+    }
+    if (currentStep === 5) {
+      if (!validateStep7()) return;
+    }
+    if (currentStep === 6) {
+      if (!validateStep8()) return;
+    }
     if (currentStep < 6) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === 6) {

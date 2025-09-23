@@ -52,7 +52,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       isValid={isValid}
       isFirstStep={true}
       currentStep={1}
-      totalSteps={7}
+      totalSteps={6}
     >
       <div className="space-y-6">
         {/* Company Category */}

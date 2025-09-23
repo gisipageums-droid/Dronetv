@@ -293,7 +293,10 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
               />
             ) : (
               <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300">
+                <a href="#contact">
+
                 {content.ctaText}
+                </a>
               </Button>
             )}
 

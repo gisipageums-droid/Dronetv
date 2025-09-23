@@ -79,7 +79,10 @@ export default function Header({headerData}) {
           {/* Right side */}
           <div className="flex items-center space-x-4">
             <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300">
+            <a href="#contact">
+
               {headerData.ctaText}
+            </a>
             </Button>
 
             <ThemeToggle />

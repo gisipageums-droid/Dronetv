@@ -74,11 +74,11 @@ export default function Hero({ heroData }) {
             {/* Buttons */}
             <motion.div className="flex flex-col sm:flex-row gap-4" variants={itemVariants}>
               <Button size="lg" className="bg-primary text-primary-foreground shadow-xl">
+                <a href="#contact">
+
                 {heroData.primaryBtn}
+                </a>
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                <Play className="mr-2 h-5 w-5" /> {heroData.secondaryBtn}
               </Button>
             </motion.div>
 

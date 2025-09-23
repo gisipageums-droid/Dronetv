@@ -261,7 +261,7 @@ const EventsPage = () => {
 
 
   const handleViewDetailsClick = () => {
-    navigate('/company/droneexpo'); // Redirect to the specified URL
+    navigate('/event/droneexpo'); // Redirect to the specified URL
   };
 
   return (

@@ -89,7 +89,7 @@ const AppContent = () => {
           <Route path='/search' element={<SearchPage />} />
           <Route path='/product/:id' element={<ProductDetailPage />} />
           <Route path='/service/:id' element={<ServiceDetailPage />} />
-          <Route path='/company/*' element={<SubApp />} />
+          <Route path='/event/*' element={<SubApp />} />
           <Route
             path='/user/companies/template-selection'
             element={<Select />}
