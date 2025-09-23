@@ -218,85 +218,76 @@ const CompaniesPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {currentCompanies.map((company, idx) => {
-                const totalServices = company.servicesCount || 0; // Assuming servicesCount exists
-                const totalProducts = company.productsCount; // No products in this API currently
+                const totalServices = company.servicesCount || 0;
+                const totalProducts = company.productsCount;
+
                 return (
                   <div
                     key={company.companyName + idx}
-                    className="group  bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
+                    className="group bg-[#f1ee8e] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] flex flex-col justify-between"
                   >
-                    <div className="relative p-8  transition-all duration-500">
-                      <div className="flex justify-center mb-4">
-                        <div className="relative">
-                          <div className="absolute inset-0 bg-yellow-400/20 rounded-2xl blur-xl scale-150 group-hover:scale-200 transition-all duration-700"></div>
-                          <div className="relative bg-yellow-400/20 backdrop-blur-sm rounded-2xl flex items-center justify-center w-16 h-16 group-hover:scale-110 transition-all duration-500 border border-yellow-400/30 group-hover:shadow-lg group-hover:shadow-yellow-400/30">
-                            {company.previewImage ? (
-                              <img
-                                src={company.previewImage}
-                                alt={company.companyName}
-                                className="w-12 h-12 object-contain object-center bg-white"
-                                style={{ background: "#fff" }}
-                              />
-                            ) : (
-                              <div className="w-12 h-12 bg-gray-200 rounded-2xl"></div>
-                            )}
-                          </div>
+                    {/* Top Section */}
+                    <div className="p-4 flex flex-col items-center text-center">
+                      <div className="relative mb-3">
+                        <div className="absolute inset-0 bg-yellow-300/30 rounded-xl blur-lg scale-110 group-hover:scale-125 transition-transform duration-500"></div>
+                        <div className="relative bg-yellow-100 rounded-xl flex items-center justify-center w-14 h-14 border border-yellow-400/30 shadow-inner">
+                          {company.previewImage ? (
+                            <img
+                              src={company.previewImage}
+                              alt={company.companyName}
+                              className="w-10 h-10 object-contain bg-white rounded-md"
+                            />
+                          ) : (
+                            <span className="text-sm font-bold text-gray-700 uppercase">
+                              {company.companyName[0]}
+                            </span>
+                          )}
                         </div>
                       </div>
 
-                      <div className="text-center">
-                        <h3 className="text-xl font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300">
-                          {company.companyName}
-                        </h3>
-                        {company.location && (
-                          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-2">
-                            <MapPin className="h-3 w-3" />
-                            {company.location} 
-                          </div>
-                        )}
-                      </div>
+                      <h3 className="text-base font-semibold text-black mb-1 group-hover:text-gray-800 transition-colors">
+                        {company.companyName}
+                      </h3>
+                      {company.location && (
+                        <div className="flex items-center justify-center gap-1 text-xs text-gray-600">
+                          <MapPin className="h-3 w-3" />
+                          {company.location}
+                        </div>
+                      )}
                     </div>
-                    <div className="relative p-8  transition-all duration-500">
-                      <p className="text-gray-600 mb-4 leading-relaxed text-sm line-clamp-3">
-                        {company.companyDescription || 'No company description.'}
+
+                    {/* Bottom Section */}
+                    <div className="p-4 flex flex-col justify-between flex-1">
+                      <p className="text-gray-700 text-xs line-clamp-2 mb-3">
+                        {company.companyDescription || "No company description."}
                       </p>
 
-                      {/* Services & Products */}
-                      <div className="grid grid-cols-2 gap-3 mb-4">
-                        <div className="flex-1 bg-yellow-300 rounded-lg p-3 text-center">
-                          <div className="text-lg font-bold text-black">{totalServices}</div>
-                          <div className="text-xs text-gray-600">Total Services</div>
+                      <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div className="bg-yellow-200 rounded-md py-1 text-center">
+                          <div className="text-sm font-bold text-black">{totalServices}</div>
+                          <div className="text-[10px] text-gray-600">Services</div>
                         </div>
-                        <div className="flex-1 bg-yellow-300 rounded-lg p-3 text-center">
-                          <div className="text-lg font-bold text-yellow-700">{totalProducts}</div>
-                          <div className="text-xs text-yellow-700">Total Products</div>
+                        <div className="bg-yellow-200 rounded-md py-1 text-center">
+                          <div className="text-sm font-bold text-yellow-700">{totalProducts}</div>
+                          <div className="text-[10px] text-yellow-700">Products</div>
                         </div>
                       </div>
 
-                      <div className="flex justify-center">
-                        <button
-                          // onClick={() => {
-                          //   if (!company.isTemplate2 ) {
-                          //     navigate(`/admin/companies/preview/1/${publishedId}/${company.userId}`);
-                          //   } else if (company.isTemplate2) {
-                          //     navigate(`/admin/companies/preview/2/${publishedId}/${company.userId}`);
-                          //   }
-                          // }}
-                          onClick={() => {
+                      <button
+                        onClick={() => {
                           if (company.templateSelection=== 'template-1') {
                             navigate(`/company/${company.urlSlug}`);
                           } else if (company.templateSelection === 'template-2') {
                             navigate(`/companies/${company.urlSlug}`);
                           }
                         }}
-                          className="group/btn bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-xl font-semibold text-sm hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg"
-                        >
-                          <span>View Profile </span>
-                          <ExternalLink className="h-3 w-3 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                        </button>
-                      </div>
+                        className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-3 py-2 rounded-md font-medium text-xs hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 flex items-center justify-center gap-1 shadow-sm border border-orange-200"
+                      >
+                        <span>View Profile</span>
+                        <ExternalLink className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                      </button>
                     </div>
                   </div>
                 );
