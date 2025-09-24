@@ -2,7 +2,7 @@ import React from "react";
 import { StepProps } from "../../types/form";
 import { Building2, User, Phone, Globe } from "lucide-react";
 import { FormInput, Select } from "../FormInput";
-import { countries, indianStates } from "../../data/countries";
+import { useEffect, useState } from "react";
 import { FormStep } from "../FormStep";
 
 interface Step1CompanyCategoryProps extends StepProps {
@@ -24,6 +24,54 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   companyNameStatus,
   isCheckingName,
 }) => {
+  // Country/State API integration
+  const [countryOptions, setCountryOptions] = useState<{ value: string; label: string }[]>([]);
+  const [stateOptions, setStateOptions] = useState<{ value: string; label: string }[]>([]);
+  const [loadingCountries, setLoadingCountries] = useState(false);
+  const [loadingStates, setLoadingStates] = useState(false);
+
+  // Fetch countries on mount
+  useEffect(() => {
+    setLoadingCountries(true);
+    fetch("https://countriesnow.space/api/v0.1/countries")
+      .then((res) => res.json())
+      .then((data) => {
+        // API returns { data: [{ country, ... }] }
+        if (data && data.data) {
+          setCountryOptions(data.data.map((c: any) => ({ value: c.country, label: c.country })));
+        } else {
+          setCountryOptions([]);
+        }
+      })
+      .catch(() => setCountryOptions([]))
+      .finally(() => setLoadingCountries(false));
+  }, []);
+
+  // Fetch states when country changes
+  useEffect(() => {
+    if (!formData.country) {
+      setStateOptions([]);
+      return;
+    }
+    setLoadingStates(true);
+    fetch(`https://countriesnow.space/api/v0.1/countries/states`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ country: formData.country })
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // API returns { data: { states: [{ name }] } }
+        if (data && data.data && data.data.states) {
+          setStateOptions(data.data.states.map((s: any) => ({ value: s.name, label: s.name })));
+        } else {
+          setStateOptions([]);
+        }
+      })
+      .catch(() => setStateOptions([]))
+      .finally(() => setLoadingStates(false));
+  }, [formData.country]);
+
   const categoryOptions = [
     {
       value: "Drone",
@@ -361,19 +409,21 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
                   <Select
                     label="Country"
-                    options={countries}
+                    options={countryOptions}
                     value={formData.country}
-                    onChange={(value) => updateFormData({ country: value })}
+                    onChange={(value) => {
+                      updateFormData({ country: value, state: "" });
+                    }}
                     required
-                    placeholder="Select Country"
+                    placeholder={loadingCountries ? "Loading..." : "Select Country"}
                   />
                   <Select
                     label="State"
-                    options={indianStates}
+                    options={stateOptions}
                     value={formData.state}
                     onChange={(value) => updateFormData({ state: value })}
                     required
-                    placeholder="Select State"
+                    placeholder={loadingStates ? "Loading..." : "Select State"}
                   />
                   <FormInput
                     label="City"
