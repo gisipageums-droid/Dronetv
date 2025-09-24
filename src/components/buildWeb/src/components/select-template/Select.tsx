@@ -15,22 +15,22 @@ export default function TemplateSelector() {
   const navigate = useNavigate();
 
   const templates = [
-    {
-      id: 1,
-      name: "Modern template",
-      imgpath: "/images/temp-1.png",
-      description:
-        "Clean design with yellow hero section perfect for creative professionals",
-      features: [
-        "Yellow Hero Section",
-        "Testimonials",
-        "Contact Form",
-        "Responsive Design",
-      ],
-      path: "/template/t1",
-      rating: 4.8,
-      tags: ["Modern", "Minimalist"],
-    },
+    // {
+    //   id: 1,
+    //   name: "Modern template",
+    //   imgpath: "/images/temp-1.png",
+    //   description:
+    //     "Clean design with yellow hero section perfect for creative professionals",
+    //   features: [
+    //     "Yellow Hero Section",
+    //     "Testimonials",
+    //     "Contact Form",
+    //     "Responsive Design",
+    //   ],
+    //   path: "/template/t1",
+    //   rating: 4.8,
+    //   tags: ["Modern", "Minimalist"],
+    // },
     {
       id: 2,
       name: "Professional template",
