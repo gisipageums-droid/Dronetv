@@ -10,11 +10,15 @@ const Footer = () => {
   ];
 
   const footerLinks = [
-    { name: 'Privacy Policy', href: '#' },
-    { name: 'Terms of Service', href: '#' },
-    { name: 'Contact', href: '#' },
-    { name: 'Careers', href: '#' },
-    { name: 'Press', href: '#' }
+    {
+      name: "Terms & Conditions",
+      url: "/termsandconditions"
+    },
+  { name: 'Privacy Policy', url: '/privacypolicy' },
+    // { name: 'Terms of Service', href: '#' },
+    // { name: 'Contact', href: '#' },
+    // { name: 'Careers', href: '#' },
+    // { name: 'Press', href: '#' }
   ];
 
   const scrollToTop = () => {
@@ -67,17 +71,20 @@ const Footer = () => {
 
             {/* Footer Links */}
             <div className="flex flex-wrap justify-center gap-8 mb-8">
-              {footerLinks.map((link, index) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="relative text-black hover:text-gray-800 transition-all duration-300 font-medium group"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <span className="relative z-10">{link.name}</span>
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                </a>
-              ))}
+              {footerLinks.map((link, index) => {
+                const linkUrl = link.url || link.href;
+                return (
+                  <a
+                    key={link.name}
+                    href={linkUrl}
+                    className="relative text-black hover:text-gray-800 transition-all duration-300 font-medium group"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <span className="relative z-10">{link.name}</span>
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                  </a>
+                );
+              })}
             </div>
 
             {/* Copyright */}

@@ -19,6 +19,8 @@ import ProductsPage from "./components/ProductsPage";
 import EventsPage from "./components/EventsPage";
 import NewsPage from "./components/NewsPage";
 import AboutPage from "./components/AboutPage";
+import TermsAndConditions from "./components/TermsAndConditions";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 import PartnerPage from "./components/PartnerPage";
 import ContactPage from "./components/ContactPage";
 import SearchPage from "./components/SearchPage";
@@ -51,18 +53,120 @@ import ResetPassword from "./components/ResetPassword";
 import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
-const HomePage = () => (
-  <>
-    <Hero />
-    <PopularVideos />
-    <UpcomingEvents />
-    <BrowseByTopic />
-    <FeaturedCompanies />
-    <OurPartners />
-    <GalleryGlimpse />
-    <Newsletter />
-  </>
-);
+import { useLanguage } from './components/LanguageContext';
+
+const translations: any = {
+  English: {
+    hero: {
+      title1: "Explore the Future",
+      title2: "of Drone Technology",
+      watchNow: "Watch Now",
+      browseCategories: "Browse Categories"
+    },
+    popularVideos: {
+      sectionTitle: "Popular Videos"
+    },
+    upcomingEvents: {
+      sectionTitle: "Upcoming Events",
+      sectionDesc: "Connect, learn, and network at industry-leading events"
+    },
+    browseByTopic: {
+      sectionTitle: "Browse by Topic"
+    },
+    featuredCompanies: {
+      sectionTitle: "Featured Companies"
+    },
+    ourPartners: {
+      sectionTitle: "Our Partners"
+    },
+    galleryGlimpse: {
+      sectionTitle: "Gallery Glimpse"
+    },
+    newsletter: {
+      sectionTitle: "Stay Updated with Drone TV!",
+      sectionDesc: "Get exclusive access to the latest news, cutting-edge videos, and industry insights delivered straight to your inbox."
+    }
+  },
+  Hindi: {
+    hero: {
+      title1: "भविष्य का अन्वेषण करें",
+      title2: "ड्रोन तकनीक का",
+      watchNow: "अभी देखें",
+      browseCategories: "श्रेणियाँ ब्राउज़ करें"
+    },
+    popularVideos: {
+      sectionTitle: "लोकप्रिय वीडियो"
+    },
+    upcomingEvents: {
+      sectionTitle: "आगामी कार्यक्रम",
+      sectionDesc: "उद्योग-अग्रणी कार्यक्रमों में जुड़ें, सीखें और नेटवर्क करें"
+    },
+    browseByTopic: {
+      sectionTitle: "विषय अनुसार ब्राउज़ करें"
+    },
+    featuredCompanies: {
+      sectionTitle: "विशेष कंपनियाँ"
+    },
+    ourPartners: {
+      sectionTitle: "हमारे साझेदार"
+    },
+    galleryGlimpse: {
+      sectionTitle: "गैलरी झलक"
+    },
+    newsletter: {
+      sectionTitle: "Drone TV के साथ अपडेट रहें!",
+      sectionDesc: "नवीनतम समाचार, वीडियो और उद्योग अंतर्दृष्टि सीधे अपने इनबॉक्स में प्राप्त करें।"
+    }
+  },
+  Telugu: {
+    hero: {
+      title1: "భవిష్యత్తును అన్వేషించండి",
+      title2: "డ్రోన్ సాంకేతికత",
+      watchNow: "ఇప్పుడు చూడండి",
+      browseCategories: "వర్గాలను బ్రౌజ్ చేయండి"
+    },
+    popularVideos: {
+      sectionTitle: "ప్రాచుర్యం పొందిన వీడియోలు"
+    },
+    upcomingEvents: {
+      sectionTitle: "రాబోయే ఈవెంట్స్",
+      sectionDesc: "ప్రముఖ ఈవెంట్స్‌లో కలవండి, నేర్చుకోండి, నెట్‌వర్క్ చేయండి"
+    },
+    browseByTopic: {
+      sectionTitle: "విషయాల ద్వారా బ్రౌజ్ చేయండి"
+    },
+    featuredCompanies: {
+      sectionTitle: "ప్రధాన కంపెనీలు"
+    },
+    ourPartners: {
+      sectionTitle: "మన భాగస్వాములు"
+    },
+    galleryGlimpse: {
+      sectionTitle: "గ్యాలరీ గ్లింప్స్"
+    },
+    newsletter: {
+      sectionTitle: "Drone TV తో తాజా సమాచారం పొందండి!",
+      sectionDesc: "తాజా వార్తలు, వీడియోలు మరియు పరిశ్రమ సమాచారం మీ ఇన్బాక్స్‌లోకి పంపబడుతుంది."
+    }
+  }
+};
+
+const HomePage = () => {
+  const { language } = useLanguage();
+  const t = translations[language] || translations['English'];
+  return (
+    <>
+      <Hero {...t.hero} />
+      <PopularVideos sectionTitle={t.popularVideos.sectionTitle} />
+      <UpcomingEvents sectionTitle={t.upcomingEvents.sectionTitle} sectionDesc={t.upcomingEvents.sectionDesc} />
+      <BrowseByTopic sectionTitle={t.browseByTopic.sectionTitle} />
+      <FeaturedCompanies sectionTitle={t.featuredCompanies.sectionTitle} />
+      <OurPartners sectionTitle={t.ourPartners.sectionTitle} />
+      <GalleryGlimpse sectionTitle={t.galleryGlimpse.sectionTitle} />
+      <Newsletter sectionTitle={t.newsletter.sectionTitle} sectionDesc={t.newsletter.sectionDesc} />
+    </>
+  );
+};
 
 const AppContent = () => {
   const location = useLocation();
@@ -84,6 +188,8 @@ const AppContent = () => {
           <Route path='/news' element={<NewsPage />} />
           <Route path='/about' element={<AboutPage />} />
           <Route path='/partner' element={<PartnerPage />} />
+          <Route path='/termsandconditions' element={<TermsAndConditions />} />
+          <Route path='/privacypolicy' element={<PrivacyPolicy />} />
           <Route path='/gallery' element={<GalleryPage />} />
           <Route path='/contact' element={<ContactPage />} />
           <Route path='/search' element={<SearchPage />} />
