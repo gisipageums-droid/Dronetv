@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
+import logo from "/images/Drone tv .in.jpg";
 
 export default function Header({headerData,onStateChange,publishedId,userId,templateSelection}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -168,13 +169,13 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                 <div className="relative w-full h-full">
                   {content.logoUrl && content.logoUrl.startsWith('data:') || content.logoUrl && content.logoUrl.startsWith('http') ? (
                     <img
-                      src={content.logoUrl}
+                      src={content.logoUrl || logo}
                       alt="Logo"
                       className="w-full h-full object-contain"
                     />
                   ) : (
                     <span className="text-black font-bold text-lg">
-                      {content.logoUrl}
+                      {content.logoUrl }
                     </span>
                   )}
                   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -190,7 +191,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                 <>
                   {content.logoUrl && (content.logoUrl.startsWith('data:') || content.logoUrl.startsWith('http')) ? (
                     <img
-                      src={content.logoUrl}
+                      src={content.logoUrl || logo}
                       alt="Logo"
                       className="w-full h-full object-contain"
                     />

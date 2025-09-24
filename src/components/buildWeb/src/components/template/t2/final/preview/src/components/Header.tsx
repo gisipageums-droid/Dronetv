@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
+import logo from "/images/Drone tv .in.jpg";
 
 export default function Header({headerData}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,7 +45,7 @@ export default function Header({headerData}) {
               transition={{ duration: 0.6 }}
             >
                <img
-                  src={headerData.logoUrl}
+                  src={headerData.logoUrl || logo}
                   alt="Logo"
                   className="w-full h-full object-contain"
                 />

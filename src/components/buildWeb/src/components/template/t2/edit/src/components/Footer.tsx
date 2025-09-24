@@ -12,7 +12,7 @@ import {
 import { motion } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "./ui/button";
-import logo from "../img/logo/logo.svg";
+import logo from "/images/Drone tv .in.jpg";
 import { toast } from "react-toastify";
 
 export default function Footer({
@@ -31,7 +31,7 @@ export default function Footer({
   // Merged all state into a single object
   const [footerContent, setFooterContent] = useState({
     companyInfo: {
-      logoText: footerLogo?.logo || logo,
+      logoText: footerLogo?.logo ,
       companyName: footerLogo?.name || "Company",
       description:
         "We help businesses transform and grow with innovative solutions, expert guidance, and proven strategies that deliver exceptional results.",
@@ -416,7 +416,7 @@ export default function Footer({
                   {isEditing ? (
                     <div className="relative w-full h-full">
                       <img
-                        src={footerContent.companyInfo.logoText}
+                        src={footerContent.companyInfo.logoText ||logo}
                         alt="Logo"
                         className="w-full h-full object-contain"
                       />
@@ -431,7 +431,7 @@ export default function Footer({
                     </div>
                   ) : (
                     <img
-                      src={footerContent.companyInfo.logoText}
+                      src={footerContent.companyInfo.logoText ||logo}
                       alt="Logo"
                       className="w-full h-full object-contain"
                     />

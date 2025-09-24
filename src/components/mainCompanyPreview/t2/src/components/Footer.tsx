@@ -1,6 +1,7 @@
 import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import logo from "/images/Drone tv .in.jpg";
 
 export default function Footer({ footerData }) {
 let { isSubscribed, setIsSubscribed } = useState(false);
@@ -95,7 +96,7 @@ let { isSubscribed, setIsSubscribed } = useState(false);
                 >
                   {/* <span className="text-black font-bold text-lg">{footerContent.companyInfo.logoUrl}</span> */}
                    <img
-                      src={footerContent.companyInfo.logoUrl}
+                      src={footerContent.companyInfo.logoUrl || logo}
                       alt="Logo"
                       className="w-full h-full object-contain rounded-lg"
                     />

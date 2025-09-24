@@ -869,13 +869,12 @@ const AdminDashboard: React.FC = () => {
     try {
       setIsMutating(true);
       const result = await apiService.deleteCompany(publishedId);
-      if (result?.status === "deleted" || result?.status === "success") {
-        toast.success("Company deleted successfully");
+      console.log("delete result: ",result);
+      
+      
+        toast(result.message);
         await fetchCompanies();
-      } else {
-        toast.error("Failed to delete company");
-        await fetchCompanies();
-      }
+      
     } catch (err) {
       console.error("Error deleting company:", err);
       toast.error("Failed to delete company");

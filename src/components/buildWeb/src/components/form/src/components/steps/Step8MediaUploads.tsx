@@ -167,11 +167,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
   // ✅ Enhanced Form Submit Handler
   const handleSubmit = async () => {
-    // Prevent submit if logo is not uploaded
-    if (!formData.companyLogoUrl || typeof formData.companyLogoUrl !== "string" || !formData.companyLogoUrl.startsWith("http")) {
-      toast.error("Please upload your company logo in Brand & Site Images before submitting.");
-      return;
-    }
     setIsUploading(true);
     setUploadProgress(0);
     setUploadStatus("Preparing form submission...");
@@ -482,8 +477,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
               accept='.png,.svg,.jpg,.jpeg'
               value={formData?.companyLogoUrl}
               onChange={(val) => updateFormData({ companyLogoUrl: val })}
-              required
-              description='PNG/SVG preferred, minimum 1000×1000px, max 5MB'
+              description='PNG/SVG preferred, minimum 1000×1000px, max 5MB. If no logo is uploaded, a default logo will be used.'
               fieldName='companyLogoUrl'
             />
           </div>

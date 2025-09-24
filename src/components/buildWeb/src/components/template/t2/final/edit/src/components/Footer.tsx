@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
-
+import logo from "/images/Drone tv .in.jpg";
 // Create an icon map to convert string names to actual components
 const iconMap = {
   Facebook: Facebook,
@@ -344,7 +344,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                     <div className="relative w-full h-full">
                       {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (
                         <img
-                          src={footerContent.companyInfo.logoUrl}
+                          src={footerContent.companyInfo.logoUrl || logo}
                           alt="Logo"
                           className="w-full h-full object-contain"
                         />

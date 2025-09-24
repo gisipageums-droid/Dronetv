@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
-import logo from "../img/logo/logo.svg";
+import logo from "/images/Drone tv .in.jpg";
 import { toast } from "react-toastify";
 
 export default function Header({ headerData, onStateChange, userId, publishedId, templateSelection }) {
@@ -16,7 +16,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   
   const [content, setContent] = useState({
-    logoLetter: headerData?.logo || logo,
+    logoLetter: headerData?.logo ,
     companyName: headerData?.name || "Company",
     navItems: [
       { id: 1, label: "Home", href: "#home", color: "primary" },
@@ -182,7 +182,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
               {isEditing ? (
                 <div className="relative w-full h-full">
                   <img
-                    src={content.logoLetter}
+                    src={content.logoLetter||logo}
                     alt="Logo"
                     className="w-full h-full object-contain"
                   />
@@ -197,7 +197,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                 </div>
               ) : (
                 <img
-                  src={content.logoLetter}
+                  src={content.logoLetter||logo}
                   alt="Logo"
                   className="w-full h-full object-contain"
                 />

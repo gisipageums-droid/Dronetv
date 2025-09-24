@@ -832,10 +832,7 @@ function App() {
 
   // Step 8 validation logic
   const validateStep8 = () => {
-    if (!formData.companyLogoUrl || typeof formData.companyLogoUrl !== "string" || !formData.companyLogoUrl.startsWith("http")) {
-      toast.error("Please upload your company logo in Brand & Site Images.");
-      return false;
-    }
+    
     return true;
   };
 

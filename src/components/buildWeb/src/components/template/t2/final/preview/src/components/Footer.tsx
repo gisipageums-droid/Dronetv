@@ -1,6 +1,7 @@
 import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import logo from "/images/Drone tv .in.jpg";
 
 export default function Footer({ footerData }) {
   // Create a mapping from social media names to their icon components
@@ -93,7 +94,7 @@ export default function Footer({ footerData }) {
                   transition={{ duration: 0.6 }}
                 >
                    <img
-                        src={footerContent.companyInfo.logoUrl}
+                        src={footerContent.companyInfo.logoUrl || logo}
                         alt="Logo"
                         className="w-full h-full object-contain"
                       />
