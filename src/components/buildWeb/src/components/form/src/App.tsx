@@ -613,6 +613,7 @@ function App() {
   const { draftDetails, setAIGenData, AIGenData } = useTemplate();
   const navigate = useNavigate();
   const location = useLocation();
+  
 
   // ✅ extract params for prefill
   const params = useParams<{ publicId?: string; userId?: string; draftId?: string }>();

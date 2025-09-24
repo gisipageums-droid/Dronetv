@@ -1,67 +1,110 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Filter, ChevronDown, Package, Star, Eye, DollarSign, Calendar, Zap, Shield, Cpu } from 'lucide-react';
+// ProductsPage.tsx
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import {
+  Search,
+  ChevronDown,
+  Package,
+  Star,
+  Eye,
+  Zap,
+  Shield,
+  Cpu
+} from "lucide-react";
 
-const ProductsPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sortBy, setSortBy] = useState('popularity');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+/**
+ * Types
+ */
+type RawApiItem = {
+  publishedId?: string;
+  userId?: string;
+  products?: any; // block (object) that may contain products array / heading / benefits
+  websiteContent?: any;
+  websiteData?: any;
+};
+
+type ProductShape = {
+  id: string | number;
+  name: string;
+  description: string;
+  image: string;
+  category: string;
+  price: string;
+  rating: number;
+  popularity: number;
+  features: string[];
+  featured?: boolean;
+};
+
+const ProductsPage: React.FC = () => {
+  // UI state
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [sortBy, setSortBy] = useState<string>("popularity");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredProducts, setFilteredProducts] = useState<ProductShape[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const productsPerPage = 12;
 
-  const categories = ['All', 'Drones', 'Sensors', 'Accessories', 'Software', 'Batteries', 'Cameras'];
+  // Data state (initial static data + will be replaced by API data when available)
+  const [products, setProducts] = useState<ProductShape[]>([]);
+
+  // categories & sort options
+  const categories = ["All", "Drones", "Sensors", "Accessories", "Software", "Batteries", "Cameras"];
   const sortOptions = [
-    { value: 'popularity', label: 'Sort by Popularity' },
-    { value: 'price', label: 'Sort by Price' },
-    { value: 'name', label: 'Sort by Name' },
-    { value: 'rating', label: 'Sort by Rating' }
+    { value: "popularity", label: "Sort by Popularity" },
+    { value: "price", label: "Sort by Price" },
+    { value: "name", label: "Sort by Name" },
+    { value: "rating", label: "Sort by Rating" }
   ];
 
-  const allProducts = [
-     {
-    id: 1,
-    name: "AGRIBOT A5",
-    description: "India’s 1st Type Certified Agriculture Drone, approved by DGCA.",
-    image: "/images/product1.png",
-    category: "Agriculture Drones",
-    price: "₹4,50,000",
-    rating: 5.0,
-    popularity: 95,
-    features: ["1 Acre Spray in 7 Minutes", "Water Usage: 8-10 Liters per Acre", "3 in 1 Agri Drone: Spray, Broadcast, Crop Health Monitoring"],
-    featured: true
-  },
-  {
-    id: 2,
-    name: "AGRIBOT A6",
-    description: "Advanced Agriculture Drone with DGCA Certification.",
-    image: "/images/product2.png",
-    category: "Agriculture Drones",
-    price: "₹5,50,000",
-    rating: 4.9,
-    popularity: 90,
-    features: ["1 Acre Spray in 7 Minutes", "Water Usage: 8-10 Liters per Acre", "Radar-Based Collision Detection", "Fleet Management Dashboard"],
-    featured: true
-  },
-  {
-    id: 3,
-    name: "Surveybot",
-    description: "Advanced drone for aerial surveys with 16-channel LiDAR for accurate data collection.",
-    image: "/images/product3.png",
-    category: "Survey Drones",
-    price: "₹6,50,000",
-    rating: 4.8,
-    popularity: 89,
-    features: ["16-Channel LiDAR for Precision", "360° 3D High-Speed Scanning", "Battery and Engine Powered", "Terrain Compatibility"],
-    featured: true
-  },
+  // ------------------------------
+  // Static fallback products (kept same as provided, but typed)
+  // ------------------------------
+  const staticProducts: ProductShape[] = [
+    {
+      id: 1,
+      name: "AGRIBOT A5",
+      description: "India’s 1st Type Certified Agriculture Drone, approved by DGCA.",
+      image: "/images/product1.png",
+      category: "Agriculture Drones",
+      price: "₹4,50,000",
+      rating: 5.0,
+      popularity: 95,
+      features: ["1 Acre Spray in 7 Minutes", "Water Usage: 8-10 Liters per Acre", "3 in 1 Agri Drone: Spray, Broadcast, Crop Health Monitoring"],
+      featured: true
+    },
+    {
+      id: 2,
+      name: "AGRIBOT A6",
+      description: "Advanced Agriculture Drone with DGCA Certification.",
+      image: "/images/product2.png",
+      category: "Agriculture Drones",
+      price: "₹5,50,000",
+      rating: 4.9,
+      popularity: 90,
+      features: ["1 Acre Spray in 7 Minutes", "Water Usage: 8-10 Liters per Acre", "Radar-Based Collision Detection", "Fleet Management Dashboard"],
+      featured: true
+    },
+    {
+      id: 3,
+      name: "Surveybot",
+      description: "Advanced drone for aerial surveys with 16-channel LiDAR for accurate data collection.",
+      image: "/images/product3.png",
+      category: "Survey Drones",
+      price: "₹6,50,000",
+      rating: 4.8,
+      popularity: 89,
+      features: ["16-Channel LiDAR for Precision", "360° 3D High-Speed Scanning", "Battery and Engine Powered", "Terrain Compatibility"],
+      featured: true
+    },
     {
       id: 4,
       name: "Professional Gimbal Camera",
       description: "3-axis stabilized camera with 4K recording and professional-grade image quality.",
       image: "https://images.pexels.com/photos/724712/pexels-photo-724712.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Cameras",
-      price: "$1,299",
+      price: "₹1,299",
       rating: 4.6,
       popularity: 85,
       features: ["3-axis Stabilization", "4K Recording", "Professional Quality"]
@@ -72,7 +115,7 @@ const ProductsPage = () => {
       description: "Extended flight time battery with intelligent power management and fast charging.",
       image: "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Batteries",
-      price: "$199",
+      price: "₹199",
       rating: 4.5,
       popularity: 78,
       features: ["60min Flight Time", "Fast Charging", "Smart Management"]
@@ -83,7 +126,7 @@ const ProductsPage = () => {
       description: "Comprehensive software solution for managing multiple drones and flight operations.",
       image: "https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Software",
-      price: "$299/month",
+      price: "₹299/month",
       rating: 4.8,
       popularity: 90,
       features: ["Fleet Management", "Real-time Monitoring", "Analytics Dashboard"]
@@ -94,7 +137,7 @@ const ProductsPage = () => {
       description: "High-resolution thermal camera for search and rescue, inspection, and surveillance applications.",
       image: "https://images.pexels.com/photos/442587/pexels-photo-442587.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Cameras",
-      price: "$3,999",
+      price: "₹3,999",
       rating: 4.9,
       popularity: 82,
       features: ["Thermal Imaging", "High Resolution", "Multiple Applications"]
@@ -105,7 +148,7 @@ const ProductsPage = () => {
       description: "Smart landing pad with LED guidance system and automatic drone positioning.",
       image: "https://images.pexels.com/photos/1034662/pexels-photo-1034662.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Accessories",
-      price: "$399",
+      price: "₹399",
       rating: 4.4,
       popularity: 75,
       features: ["LED Guidance", "Auto Positioning", "Weather Resistant"]
@@ -116,7 +159,7 @@ const ProductsPage = () => {
       description: "High-performance racing drone kit with carbon fiber frame and FPV system.",
       image: "https://images.pexels.com/photos/724712/pexels-photo-724712.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Drones",
-      price: "$799",
+      price: "₹799",
       rating: 4.7,
       popularity: 88,
       features: ["Carbon Fiber", "FPV System", "High Performance"]
@@ -127,7 +170,7 @@ const ProductsPage = () => {
       description: "Advanced multi-spectral imaging sensor for precision agriculture and environmental monitoring.",
       image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Sensors",
-      price: "$4,999",
+      price: "₹4,999",
       rating: 4.8,
       popularity: 79,
       features: ["Multi-Spectral", "Agriculture Ready", "Environmental Monitoring"]
@@ -138,7 +181,7 @@ const ProductsPage = () => {
       description: "Professional-grade carrying case with custom foam inserts and weather protection.",
       image: "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Accessories",
-      price: "$149",
+      price: "₹149",
       rating: 4.3,
       popularity: 70,
       features: ["Weather Protection", "Custom Foam", "Professional Grade"]
@@ -149,43 +192,128 @@ const ProductsPage = () => {
       description: "Intelligent multi-battery charger with safety features and fast charging capabilities.",
       image: "https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=600",
       category: "Batteries",
-      price: "$299",
+      price: "₹299",
       rating: 4.6,
       popularity: 83,
       features: ["Multi-Battery", "Safety Features", "Fast Charging"]
     }
   ];
 
+  // ------------------------------
+  // Fetch API data on mount (Axios .then/.catch usage)
+  // ------------------------------
   useEffect(() => {
-    let filtered = allProducts;
+    // set static first so UI not empty
+    setProducts(staticProducts);
+
+    // Replace with your real API endpoint
+    const API = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/view";
+
+    axios
+      .get(API)
+      .then((res) => {
+        // expected response structure: { status: true, message: "...", data: [ { publishedId, userId, products: { products: [ ... ] } } ] }
+        const payload = res.data;
+        if (payload && Array.isArray(payload.data) && payload.data.length > 0) {
+          // flatten API items -> product list
+          const apiProducts: ProductShape[] = [];
+
+          payload.data.forEach((item: RawApiItem) => {
+            // products may live in item.products.products OR item.websiteContent.products.products OR item.websiteData.content.products
+            const content = item.products ?? item.websiteContent ?? item.websiteData?.content ?? {};
+            // the actual array of product entries might be in content.products (based on your earlier screenshot)
+            const arr = content.products ?? [];
+
+            if (Array.isArray(arr) && arr.length > 0) {
+              arr.forEach((p: any, pIndex: number) => {
+                // map possible fields to our ProductShape
+                const mapped: ProductShape = {
+                  id: item.publishedId ?? "api", // Use publishedId as the main ID for API calls
+                  name: p.title ?? p.name ?? p.heading ?? `Product ${pIndex + 1}`,
+                  description: p.description ?? p.detailedDescription ?? p.desc ?? "",
+                  image: p.image ?? p.url ?? p.thumbnail ?? "", // fallback to possible fields
+                  category: p.category ?? "Products",
+                  price: (p.price && String(p.price)) ?? p.pricing ?? p.priceLabel ?? "₹0",
+                  rating: Number(p.rating ?? p.reviews?.avg ?? 4.5) || 4.5,
+                  popularity: Number(p.popularity ?? pIndex) || 0,
+                  features: Array.isArray(p.features) ? p.features.map((f: any) => String(f)) : [],
+                  featured: p.isPopular ?? false
+                };
+                apiProducts.push(mapped);
+              });
+            } else {
+              // if no array found, attempt to pick single product-like fields
+              const maybeSingle = content;
+              if (maybeSingle && (maybeSingle.title || maybeSingle.image)) {
+                const mapped: ProductShape = {
+                  id: item.publishedId ?? "api", // Use publishedId as the main ID for API calls
+                  name: maybeSingle.title ?? "Product",
+                  description: maybeSingle.description ?? "",
+                  image: maybeSingle.image ?? "",
+                  category: maybeSingle.category ?? "Products",
+                  price: (maybeSingle.price && String(maybeSingle.price)) ?? "₹0",
+                  rating: Number(maybeSingle.rating ?? 4.5),
+                  popularity: 0,
+                  features: [],
+                  featured: false
+                };
+                apiProducts.push(mapped);
+              }
+            }
+          });
+
+          // if apiProducts found, replace products state
+          if (apiProducts.length > 0) {
+            setProducts(apiProducts);
+          } else {
+            // no items found in API response; keep staticProducts
+            console.warn("API returned but no products parsed, keeping static fallback.");
+          }
+        } else {
+          console.warn("API returned no data, keeping static fallback.");
+        }
+      })
+      .catch((err) => {
+        console.error("API Error:", err);
+        // keep staticProducts as fallback
+      });
+  }, []);
+
+  // ------------------------------
+  // Filtering / Sorting (runs whenever products, selectedCategory, searchQuery, sortBy changes)
+  // ------------------------------
+  useEffect(() => {
+    let filtered = [...products];
 
     // Filter by category
-    if (selectedCategory !== 'All') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
+    if (selectedCategory !== "All") {
+      filtered = filtered.filter((product) => product.category === selectedCategory);
     }
 
     // Filter by search query
     if (searchQuery) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.features.some(feature =>
-          feature.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(q) ||
+        product.description.toLowerCase().includes(q) ||
+        product.features.some((feature) => feature.toLowerCase().includes(q))
       );
     }
 
     // Sort products
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'popularity':
-          return b.popularity - a.popularity;
-        case 'price':
-          return parseFloat(a.price.replace(/[^0-9.]/g, '')) - parseFloat(b.price.replace(/[^0-9.]/g, ''));
-        case 'name':
+        case "popularity":
+          return (b.popularity || 0) - (a.popularity || 0);
+        case "price":
+          // parse numbers from price string
+          const aPrice = parseFloat(String(a.price).replace(/[^0-9.]/g, "")) || 0;
+          const bPrice = parseFloat(String(b.price).replace(/[^0-9.]/g, "")) || 0;
+          return aPrice - bPrice;
+        case "name":
           return a.name.localeCompare(b.name);
-        case 'rating':
-          return b.rating - a.rating;
+        case "rating":
+          return (b.rating || 0) - (a.rating || 0);
         default:
           return 0;
       }
@@ -193,71 +321,85 @@ const ProductsPage = () => {
 
     setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [selectedCategory, sortBy, searchQuery]);
+  }, [products, selectedCategory, sortBy, searchQuery]);
 
-  const featuredProducts = allProducts.filter(product => product.featured);
+  // Featured / Pagination helpers
+  const featuredProducts = products.filter((product) => product.featured);
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
 
-  const getCategoryIcon = (category) => {
-    switch (category) {
-      case 'Drones': return Zap;
-      case 'Sensors': return Cpu;
-      case 'Accessories': return Package;
-      case 'Software': return Shield;
-      case 'Batteries': return Zap;
-      case 'Cameras': return Eye;
-      default: return Package;
+  // Icons helpers
+  const getCategoryIcon = (category?: string) => {
+    switch ((category || "").toLowerCase()) {
+      case "drones":
+      case "agriculture drones":
+      case "survey drones":
+        return Zap;
+      case "sensors":
+        return Cpu;
+      case "accessories":
+        return Package;
+      case "software":
+        return Shield;
+      case "batteries":
+        return Zap;
+      case "cameras":
+        return Eye;
+      default:
+        return Package;
     }
   };
 
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case 'Drones': return 'bg-black';
-      case 'Sensors': return 'bg-gray-900';
-      case 'Accessories': return 'bg-gray-800';
-      case 'Software': return 'bg-gray-700';
-      case 'Batteries': return 'bg-gray-600';
-      case 'Cameras': return 'bg-black';
-      default: return 'bg-gray-800';
+  const getCategoryColor = (category?: string) => {
+    switch ((category || "").toLowerCase()) {
+      case "drones": return "bg-black";
+      case "sensors": return "bg-gray-900";
+      case "accessories": return "bg-gray-800";
+      case "software": return "bg-gray-700";
+      case "batteries": return "bg-gray-600";
+      case "cameras": return "bg-black";
+      default: return "bg-gray-800";
     }
   };
 
+  // ------------------------------
+  // JSX UI (kept mostly same as your original)
+  // ------------------------------
   return (
-    <div className="min-h-screen bg-yellow-400 pt-16">
+    <div className="pt-16 min-h-screen bg-yellow-400">
       {/* Hero Section */}
-      <section className="py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 relative overflow-hidden">
+      <section className="overflow-hidden relative py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500">
         <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200/30 rounded-full animate-pulse blur-2xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-600/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-10 left-10 w-32 h-32 rounded-full blur-2xl animate-pulse bg-yellow-200/30"></div>
+          <div className="absolute right-10 bottom-10 w-40 h-40 rounded-full blur-2xl animate-pulse bg-yellow-600/20" style={{ animationDelay: "2s" }}></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h1 className="text-2xl md:text-5xl font-black text-black mb-2 tracking-tight">
+        <div className="relative z-10 px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
+          <h1 className="mb-2 text-2xl font-black tracking-tight text-black md:text-5xl">
             Products Catalog
           </h1>
-          <p className="text-xl text-black/80 max-w-2xl mx-auto mb-4">
+          <p className="mx-auto mb-4 max-w-2xl text-xl text-black/80">
             Explore advanced drones, sensors, and accessories for professionals.
           </p>
-          <div className="w-24 h-1 bg-black mx-auto rounded-full"></div>
+          <div className="mx-auto w-24 h-1 bg-black rounded-full"></div>
         </div>
       </section>
 
       {/* Filter Section */}
-      <section className="py-3 bg-yellow-400 sticky top-16 z-40 border-b border-black/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+      <section className="sticky top-16 z-40 py-3 bg-yellow-400 border-b border-black/10">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60" />
+              <Search className="absolute left-3 top-1/2 w-4 h-4 transform -translate-y-1/2 text-black/60" />
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-black/20 bg-yellow-200 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-black placeholder-black/60 font-medium text-sm transition-all duration-300"
+                className="py-2 pr-3 pl-10 w-full text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 placeholder-black/60"
               />
             </div>
 
@@ -268,15 +410,15 @@ const ProductsPage = () => {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/20 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-44"
+                  className="px-3 py-2 w-44 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
-                  {categories.map(category => (
+                  {categories.map((category) => (
                     <option key={category} value={category}>
-                      {category === 'All' ? 'All Categories' : category}
+                      {category === "All" ? "All Categories" : category}
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
               </div>
 
               {/* Sort Options */}
@@ -284,47 +426,43 @@ const ProductsPage = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/20 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-44"
+                  className="px-3 py-2 w-44 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
-                  {sortOptions.map(option => (
+                  {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
               </div>
             </div>
           </div>
 
           {/* Active Filters Display */}
-          <div className="mt-2 flex flex-wrap gap-2">
-            {selectedCategory !== 'All' && (
-              <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+          <div className="flex flex-wrap gap-2 mt-2">
+            {selectedCategory !== "All" && (
+              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
                 Category: {selectedCategory}
-                <button onClick={() => setSelectedCategory('All')} className="hover:text-white transition-colors duration-200 text-sm">×</button>
+                <button onClick={() => setSelectedCategory("All")} className="text-sm transition-colors duration-200 hover:text-white">×</button>
               </span>
             )}
             {searchQuery && (
-              <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
                 Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="hover:text-white transition-colors duration-200 text-sm">×</button>
+                <button onClick={() => setSearchQuery("")} className="text-sm transition-colors duration-200 hover:text-white">×</button>
               </span>
             )}
           </div>
         </div>
       </section>
 
-
       {/* Featured Products Section */}
       <section className="py-4 bg-gradient-to-b from-yellow-400 to-yellow-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredProducts.map((product, index) => {
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {featuredProducts.slice(0, 3).map((product, index) => {
               const IconComponent = getCategoryIcon(product.category);
-
               return (
                 <div
                   key={product.id}
@@ -335,52 +473,51 @@ const ProductsPage = () => {
                   }}
                 >
                   <div className="p-3">
-                    <div className="relative overflow-hidden rounded-2xl">
+                    <div className="overflow-hidden relative rounded-2xl">
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110 border-b-2 border-black/10"
+                        className="object-cover w-full h-48 border-b-2 transition-all duration-700 group-hover:scale-110 border-black/10"
                       />
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
 
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-all duration-500 group-hover:opacity-100">
                         <Link
                           to={`/product/${product.id}`}
-                          className="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300"
+                          className="px-4 py-2 font-bold text-black bg-yellow-400 rounded-full shadow-2xl transition-all duration-500 transform scale-0 group-hover:scale-100 hover:bg-yellow-300"
                         >
                           View Details
                         </Link>
                       </div>
 
                       <div className={`absolute top-4 right-4 ${getCategoryColor(product.category)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1`}>
-                        <IconComponent className="h-3 w-3" />
+                        <IconComponent className="w-3 h-3" />
                         {product.category}
                       </div>
 
-                      <div className="absolute bottom-4 right-4 bg-black/80 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
-                        {/* <DollarSign className="h-3 w-3" /> */}
+                      <div className="flex absolute right-4 bottom-4 gap-1 items-center px-2 py-1 text-xs font-medium text-white rounded-lg bg-black/80">
                         {product.price}
                       </div>
 
-                      <div className="absolute top-4 left-4 bg-yellow-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
-                        <Star className="h-3 w-3 fill-current" />
+                      <div className="flex absolute top-4 left-4 gap-1 items-center px-2 py-1 text-xs font-bold text-black bg-yellow-400 rounded-lg">
+                        <Star className="w-3 h-3 fill-current" />
                         Featured
                       </div>
                     </div>
 
                     <div className="p-6">
                       <Link to={`/product/${product.id}`}>
-                        <h3 className="text-xl font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300 cursor-pointer">
+                        <h3 className="mb-2 text-xl font-bold text-black transition-colors duration-300 cursor-pointer group-hover:text-gray-800">
                           {product.name}
                         </h3>
                       </Link>
-                      <p className="text-gray-600 mb-4 line-clamp-2">{product.description}</p>
+                      <p className="mb-4 text-gray-600 line-clamp-2">{product.description}</p>
 
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-4 text-gray-500 text-sm">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-current text-yellow-500" />
+                      <div className="flex justify-between items-center mb-4">
+                        <div className="flex gap-4 items-center text-sm text-gray-500">
+                          <div className="flex gap-1 items-center">
+                            <Star className="w-4 h-4 text-yellow-500 fill-current" />
                             {product.rating}
                           </div>
                         </div>
@@ -390,10 +527,10 @@ const ProductsPage = () => {
 
                     <div className="mb-4">
                       <div className="flex flex-wrap gap-1">
-                        {product.features.slice(0, 3).map((feature, idx) => (
+                        {product.features.slice(0, 3).map((feature) => (
                           <span
                             key={feature}
-                            className="bg-yellow-300 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium"
+                            className="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-300 rounded-full"
                           >
                             {feature}
                           </span>
@@ -410,9 +547,9 @@ const ProductsPage = () => {
 
       {/* Products Grid Section */}
       <section className="py-16 bg-yellow-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl md:text-4xl font-black text-black">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-black text-black md:text-4xl">
               All Products ({filteredProducts.length})
             </h2>
             <div className="text-black/60">
@@ -421,18 +558,17 @@ const ProductsPage = () => {
           </div>
 
           {currentProducts.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto">
-                <Search className="h-16 w-16 text-black/40 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-black mb-2">No products found</h3>
+            <div className="py-16 text-center">
+              <div className="p-12 mx-auto max-w-md rounded-3xl backdrop-blur-sm bg-white/80">
+                <Search className="mx-auto mb-4 w-16 h-16 text-black/40" />
+                <h3 className="mb-2 text-2xl font-bold text-black">No products found</h3>
                 <p className="text-black/60">Try adjusting your filters or search terms</p>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {currentProducts.map((product, index) => {
                 const IconComponent = getCategoryIcon(product.category);
-
                 return (
                   <div
                     key={product.id}
@@ -442,56 +578,55 @@ const ProductsPage = () => {
                       animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
                     }}
                   >
-                    <div className="relative overflow-hidden">
+                    <div className="overflow-hidden relative">
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-40 object-cover transition-all duration-700 group-hover:scale-110"
+                        className="object-cover w-full h-40 transition-all duration-700 group-hover:scale-110"
                       />
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
 
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-all duration-500 group-hover:opacity-100">
                         <Link
                           to={`/product/${product.id}`}
-                          className="bg-yellow-400 text-black px-6 py-3 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300"
+                          className="px-6 py-3 font-bold text-black bg-yellow-400 rounded-full shadow-2xl transition-all duration-500 transform scale-0 group-hover:scale-100 hover:bg-yellow-300"
                         >
                           View Details
                         </Link>
                       </div>
 
                       <div className={`absolute top-3 right-3 ${getCategoryColor(product.category)} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
-                        <IconComponent className="h-3 w-3" />
+                        <IconComponent className="w-3 h-3" />
                         {product.category}
                       </div>
 
-                      <div className="absolute bottom-3 right-3 bg-black/80 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
-                        
+                      <div className="flex absolute right-3 bottom-3 gap-1 items-center px-2 py-1 text-xs font-medium text-white rounded-lg bg-black/80">
                         {product.price}
                       </div>
                     </div>
 
                     <div className="p-4">
                       <Link to={`/product/${product.id}`}>
-                        <h3 className="text-lg font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2 cursor-pointer">
+                        <h3 className="mb-2 text-lg font-bold text-black transition-colors duration-300 cursor-pointer group-hover:text-gray-800 line-clamp-2">
                           {product.name}
                         </h3>
                       </Link>
-                      <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{product.description}</p>
+                      <p className="mb-3 text-sm text-gray-600 line-clamp-2">{product.description}</p>
 
-                      <div className="flex items-center justify-between text-xs mb-3">
-                        <div className="flex items-center gap-1 text-gray-500">
-                          <Star className="h-3 w-3 fill-current text-yellow-600" />
+                      <div className="flex justify-between items-center mb-3 text-xs">
+                        <div className="flex gap-1 items-center text-gray-500">
+                          <Star className="w-3 h-3 text-yellow-600 fill-current" />
                           {product.rating}
                         </div>
                         <div className="text-lg font-bold text-black">{product.price}</div>
                       </div>
 
                       <div className="flex flex-wrap gap-1">
-                        {product.features.slice(0, 2).map((feature, idx) => (
+                        {product.features.slice(0, 2).map((feature) => (
                           <span
                             key={feature}
-                            className="bg-yellow-300 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium"
+                            className="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-300 rounded-full"
                           >
                             {feature}
                           </span>
@@ -507,11 +642,11 @@ const ProductsPage = () => {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-center mt-12">
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2 items-center">
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                  className="px-4 py-2 font-medium text-black rounded-xl border-2 backdrop-blur-sm transition-all duration-300 bg-white/80 border-black/20 hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
@@ -524,8 +659,8 @@ const ProductsPage = () => {
                         key={page}
                         onClick={() => setCurrentPage(page)}
                         className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${page === currentPage
-                            ? 'bg-black text-yellow-400 border-2 border-black'
-                            : 'bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40'
+                          ? "bg-black text-yellow-400 border-2 border-black"
+                          : "bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40"
                           }`}
                       >
                         {page}
@@ -538,9 +673,9 @@ const ProductsPage = () => {
                 })}
 
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                  className="px-4 py-2 font-medium text-black rounded-xl border-2 backdrop-blur-sm transition-all duration-300 bg-white/80 border-black/20 hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
