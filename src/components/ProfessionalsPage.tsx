@@ -44,31 +44,51 @@ const ProfessionalsPage: React.FC = () => {
   >([]);
   const [allProfessionals, setAllProfessionals] = useState<Professional[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const professionalsPerPage = 12;
   const navigate = useNavigate();
 
+  // Static professionals data - Only Sumit Krishnan and Dev R
+  const staticProfessionals: Professional[] = [
+    {
+      id: "1",
+      fullName: "Dev R",
+      profession: "Founder & CEO",
+      location: "Singapore & India",
+      rating: 4.8,
+      experience: "16 years",
+      profilePicture: "/images/dev.png",
+      bio: "Founder & CEO with expertise in drone technology innovation, business strategy, and driving technological advancement in the industry. Passionate about broadcasting the future of drones through innovation and storytelling.",
+      specialties: ["Business Strategy", "Drone Technology", "GIS", "AI Solutions"],
+      projects: 150,
+      featured: true,
+      selectedTemplate: "2"
+    },
+    {
+      id: "2",
+      fullName: "Sumit Krishnan",
+      profession: "DGCA RPAS Instructor",
+      location: "India",
+      rating: 4.9,
+      experience: "11 years",
+      profilePicture: "/images/sumit.jpg",
+      bio: "DGCA-certified Remotely Piloted Aircraft Instructor with over 11 years of combined experience in drone operations and aerospace education. Specializes in training drone pilots and developing UAV curriculum.",
+      specialties: ["RPAS Training", "Aerospace Education", "Flight Dynamics", "Technical Writing"],
+      projects: 85,
+      featured: true,
+      selectedTemplate: "1"
+    }
+  ];
+
   const professions: string[] = [
     "All",
-    "Drone Pilot",
-    "AI Specialist",
-    "GIS Expert",
-    "Software Engineer",
-    "Data Analyst",
-    "Flight Instructor",
-    "Photographer",
+    "DGCA RPAS Instructor",
+    "Founder & CEO"
   ];
   const locations: string[] = [
     "All",
-    "San Francisco, CA",
-    "Austin, TX",
-    "Seattle, WA",
-    "Denver, CO",
-    "Miami, FL",
-    "Boston, MA",
-    "Chicago, IL",
-    "New York, NY",
+    "India",
+    "Singapore & India"
   ];
   const sortOptions: SortOption[] = [
     { value: "name", label: "Sort by Name" },
@@ -78,51 +98,14 @@ const ProfessionalsPage: React.FC = () => {
   ];
 
   useEffect(() => {
-    const fetchProfessionals = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          "https://slvrjjextb.execute-api.ap-south-1.amazonaws.com/Portfolio-get"
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch professionals");
-        }
-        const data = await response.json();
+    // Simulate loading for smooth transition
+    const timer = setTimeout(() => {
+      setAllProfessionals(staticProfessionals);
+      setFilteredProfessionals(staticProfessionals);
+      setLoading(false);
+    }, 800);
 
-        // Transform the API data to match our expected format
-        const transformedData: Professional[] = data.map((item: any) => ({
-          id: item.id,
-          fullName: item.fullName || "Unkown",
-          profession: item.profession || "Drone Pilot", // Default to Drone Pilot if not specified
-          location: item.location || "Unknown Location",
-          rating: parseFloat(item.rating) || 4.5, // Default rating if not provided
-          experience: item.experience || "5 years",
-          profilePicture:
-            item.profilePicture ||
-            "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
-          bio:
-            item.bio ||
-            "Professional in the drone industry with extensive experience.",
-          specialties: item.specialties
-            ? item.specialties.split(",")
-            : ["Aerial Photography", "Mapping"],
-          projects: parseInt(item.projects) || 50,
-          featured: item.featured === "true" || false,
-          selectedTemplate: item.selectedTemplate,
-        }));
-
-        setAllProfessionals(transformedData);
-        setFilteredProfessionals(transformedData);
-        setLoading(false);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
-        setLoading(false);
-      }
-    };
-
-    fetchProfessionals();
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -203,20 +186,10 @@ const ProfessionalsPage: React.FC = () => {
 
   const getProfessionColor = (profession: string): string => {
     switch (profession) {
-      case "Drone Pilot":
+      case "DGCA RPAS Instructor":
         return "bg-black";
-      case "AI Specialist":
-        return "bg-gray-900";
-      case "GIS Expert":
-        return "bg-gray-800";
-      case "Software Engineer":
-        return "bg-gray-700";
-      case "Data Analyst":
-        return "bg-gray-600";
-      case "Flight Instructor":
-        return "bg-black";
-      case "Photographer":
-        return "bg-gray-900";
+      case "Founder & CEO":
+        return "bg-red-600";
       default:
         return "bg-gray-800";
     }
@@ -250,23 +223,6 @@ const ProfessionalsPage: React.FC = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-yellow-400 pt-16 flex items-center justify-center">
-        <div className="bg-[#f1ee8e] rounded-3xl p-8 max-w-md mx-auto text-center">
-          <div className="text-red-500 mb-4">Error: {error}</div>
-          <p className="text-black mb-4">Failed to load professionals data.</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-black text-yellow-400 px-6 py-2 rounded-xl font-semibold hover:bg-gray-800 transition-all"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-yellow-400 pt-16">
       {/* Hero Section */}
@@ -281,10 +237,10 @@ const ProfessionalsPage: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-2xl md:text-5xl font-black text-black mb-2 tracking-tight">
-            Meet Our Professionals
+            Meet Our Team
           </h1>
           <p className="text-xl text-black/80 max-w-2xl mx-auto mb-4">
-            Meet the experts shaping the future of drone tech
+            Meet the industry leaders driving innovation in drone technology and education
           </p>
           <div className="w-24 h-1 bg-black mx-auto rounded-full"></div>
         </div>
@@ -471,7 +427,7 @@ const ProfessionalsPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl md:text-4xl font-black text-black">
-              All Professionals ({filteredProfessionals.length})
+              Our Team ({filteredProfessionals.length})
             </h2>
             <div className="text-black/60">
               Page {currentPage} of {totalPages}
@@ -513,7 +469,7 @@ const ProfessionalsPage: React.FC = () => {
                       : "1";
 
                     // Navigate to the portfolio page
-                    navigate(`/company/portfolio/template-${professional.selectedTemplate || '1'}/${professional.id}`)}}
+                    navigate(`/event/portfolio/template-${professional.selectedTemplate || '1'}/${professional.id}`)}}
                 >
 
 
