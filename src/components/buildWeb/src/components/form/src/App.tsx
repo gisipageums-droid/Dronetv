@@ -842,21 +842,27 @@ function App() {
   const nextStep = () => {
     // Only validate on step 1, 3, 4, 5, 7, and 8
     if (currentStep === 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (!validateStep1()) return;
     }
     if (currentStep === 2) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (!validateStep3()) return;
     }
     if (currentStep === 3) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (!validateStep4()) return;
     }
     if (currentStep === 4) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (!validateStep5()) return;
     }
     if (currentStep === 5) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (!validateStep7()) return;
     }
     if (currentStep === 6) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (!validateStep8()) return;
     }
     if (currentStep < 6) {
@@ -868,6 +874,7 @@ function App() {
 
   const prevStep = () => {
     if (currentStep > 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       setCurrentStep(currentStep - 1);
     }
   };

@@ -1,11 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { Search, MapPin, ChevronDown, ArrowRight, Star, Users, Building2, Menu, X, Eye, Key, FileText, CheckCircle, XCircle, Trash2 } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  Search,
+  MapPin,
+  ChevronDown,
+  ArrowRight,
+  Star,
+  Users,
+  Building2,
+  Menu,
+  X,
+  Eye,
+  Key,
+  FileText,
+  CheckCircle,
+  XCircle,
+  Trash2,
+  Clock,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import CredentialsModal from './credentialProp/Prop'; // ✅ import the modal component
-// import { useTemplate } from "../../context/context"; // ✅ import context hook
+import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
 
-// TypeScript Interfaces
+// -------------------- Types --------------------
 interface Company {
   publishedId: string;
   companyId: string;
@@ -76,10 +92,12 @@ interface CompanyCardProps {
   onApprove: (publishedId: string) => void;
   onReject: (publishedId: string) => void;
   onDelete: (publishedId: string) => void;
+  disabled?: boolean;
 }
 
 interface MainContentProps {
   companies: Company[];
+  recentCompanies: Company[];
   currentPage: number;
   totalPages: number;
   loading: boolean;
@@ -104,43 +122,61 @@ interface ErrorMessageProps {
   onRetry: () => void;
 }
 
-// Header Component
+// -------------------- Constants --------------------
+const SORT_OPTIONS = [
+  "Sort by Date",
+  "Sort by Latest",
+  "Sort by Location",
+  "Sort by Sector",
+] as const;
+type SortOption = typeof SORT_OPTIONS[number];
+
+// -------------------- Small Hooks --------------------
+function useDebounce<T>(value: T, delay = 300) {
+  const [debounced, setDebounced] = useState<T>(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return debounced;
+}
+
+// -------------------- Header --------------------
 const Header: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className='h-[40vh] md:h-[60vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6'>
-      <div className='text-center max-w-3xl relative w-full'>
-        {/* Geometric Elements */}
-        <div className='absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-blue-200 rounded-full opacity-40'></div>
-        <div className='absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-blue-200 opacity-30 rounded-2xl'></div>
+    <div className="h-[40vh] md:h-[60vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6">
+      <div className="relative w-full max-w-3xl text-center">
+        <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full border border-blue-200 opacity-40 md:-top-20 md:-left-20 md:w-40 md:h-40"></div>
+        <div className="absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-blue-200 opacity-30 rounded-2xl"></div>
 
-        <div className='relative z-10'>
-          <div className='flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-8'>
-            <div className='w-2 h-2 md:w-3 md:h-3 bg-blue-400 rounded-full'></div>
-            <div className='w-4 h-4 md:w-6 md:h-6 border-2 border-blue-400'></div>
-            <div className='w-3 h-3 md:w-4 md:h-4 bg-blue-600 rotate-45'></div>
+        <div className="relative z-10">
+          <div className="flex gap-2 justify-center items-center mb-4 md:gap-4 md:mb-8">
+            <div className="w-2 h-2 bg-blue-400 rounded-full md:w-3 md:h-3"></div>
+            <div className="w-4 h-4 border-2 border-blue-400 md:w-6 md:h-6"></div>
+            <div className="w-3 h-3 bg-blue-600 rotate-45 md:w-4 md:h-4"></div>
           </div>
 
-          <h1 className='text-3xl md:text-5xl font-light text-blue-900 mb-4 md:mb-6'>
+          <h1 className="mb-4 text-3xl font-light text-blue-900 md:text-5xl md:mb-6">
             Admin Dashboard
-            <span className='block text-xl md:text-3xl font-extralight text-blue-600 mt-1 md:mt-2'>
+            <span className="block mt-1 text-xl font-extralight text-blue-600 md:text-3xl md:mt-2">
               Company Management
             </span>
           </h1>
 
-          <p className='text-base md:text-lg text-blue-700 mb-6 md:mb-10 max-w-xl mx-auto font-light'>
+          <p className="mx-auto mb-6 max-w-xl text-base font-light text-blue-700 md:text-lg md:mb-10">
             Review and manage all company listings, credentials, and approvals.
           </p>
 
-          <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
+          <div className="flex flex-col gap-4 justify-center items-center sm:flex-row">
             <button
-              onClick={() => navigate('/admin/analytics')}
-              className='bg-gradient-to-r from-blue-400 to-blue-500 text-white px-6 py-3 md:px-8 md:py-4 font-semibold hover:from-blue-500 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto text-sm md:text-base'
+              onClick={() => navigate("/admin/analytics")}
+              className="px-6 py-3 w-full text-sm font-semibold text-white bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg shadow-lg transition-all duration-300 transform md:px-8 md:py-4 hover:from-blue-500 hover:to-blue-600 hover:shadow-xl hover:-translate-y-1 sm:w-auto md:text-base"
             >
-             
+              Analytics
             </button>
-            <div className='w-px h-8 md:h-12 bg-blue-300 hidden sm:block'></div>
-            <button className='text-blue-700 hover:text-blue-900 transition-colors duration-300 text-sm md:text-base sm:mt-0 mt-2'>
+            <div className="hidden w-px h-8 bg-blue-300 md:h-12 sm:block"></div>
+            <button className="mt-2 text-sm text-blue-700 transition-colors duration-300 hover:text-blue-900 md:text-base sm:mt-0">
               Export Data
             </button>
           </div>
@@ -150,28 +186,26 @@ const Header: React.FC = () => {
   );
 };
 
-/* Dropdown Filter Component */
+// -------------------- Dropdown --------------------
 const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, options, placeholder }) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <div className='relative'>
+    <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className='w-full flex justify-between items-center px-4 py-3 bg-gray-50 text-gray-700 text-sm rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300'
+        className="flex justify-between items-center px-4 py-3 w-full text-sm text-gray-700 bg-gray-50 rounded-lg border border-gray-200 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-300"
+        aria-haspopup="listbox"
+        aria-expanded={open}
       >
-        <span
-          className={value === options[0] ? "text-gray-500" : "text-gray-900"}
-        >
-          {value || placeholder}
+        <span className={value === options[0] ? "text-gray-500" : "text-gray-900"}>
+          {value || options[0] || placeholder}
         </span>
-        <ChevronDown
-          className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
-        />
+        <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className='absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-sm z-10'>
+        <div className="absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-sm" role="listbox">
           {options.map((option: string, idx: number) => (
             <button
               key={idx}
@@ -179,11 +213,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                value === option
-                  ? "bg-gray-50 text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option ? "bg-gray-50 text-gray-900 font-medium" : "text-gray-700 hover:bg-gray-50"
+                }`}
+              role="option"
+              aria-selected={value === option}
             >
               {option}
             </button>
@@ -194,7 +227,7 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
   );
 };
 
-/* Sidebar Filters Component */
+// -------------------- Sidebar --------------------
 const Sidebar: React.FC<SidebarProps> = ({
   searchTerm,
   onSearchChange,
@@ -204,267 +237,224 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSortChange,
   industries,
   isMobileSidebarOpen,
-  onCloseMobileSidebar
+  onCloseMobileSidebar,
 }) => {
-  const sortOptions: string[] = [
-    "Sort by Name",
-    "Sort by Location",
-    "Sort by Date",
-    "Sort by Sector",
-  ];
+  const sortOptions: string[] = ["Sort by Date", ...SORT_OPTIONS.filter((s) => s !== "Sort by Date")];
 
   return (
-    <div className={`bg-blue-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 
-      ${isMobileSidebarOpen ? 'fixed inset-0 z-50 w-full overflow-y-auto' : 'hidden md:block md:w-80'}`}
+    <div
+      className={`bg-blue-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 ${isMobileSidebarOpen ? "overflow-y-auto fixed inset-0 z-50 w-full" : "hidden md:block md:w-80"
+        }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
           <h2 className="text-xl font-bold">Filters</h2>
-          <button onClick={onCloseMobileSidebar} className="p-2">
+          <button onClick={onCloseMobileSidebar} className="p-2" aria-label="Close filters">
             <X className="w-5 h-5" />
           </button>
         </div>
       )}
-      
-      <div className='space-y-6 md:space-y-8'>
-        {/* Search Section */}
-        <div className='space-y-3'>
-          <label className='text-sm font-medium text-gray-900 block'>
-            Search
-          </label>
-          <div className='relative'>
-            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
+
+      <div className="space-y-6 md:space-y-8">
+        <div className="space-y-3">
+          <label className="block text-sm font-medium text-gray-900">Search</label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 w-4 h-4 text-gray-400 transform -translate-y-1/2" />
             <input
-              type='text'
-              placeholder='Search companies...'
+              type="text"
+              placeholder="Search companies..."
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
-              className='w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 bg-gray-50 transition-colors'
+              className="py-3 pr-4 pl-10 w-full text-sm bg-gray-50 rounded-lg border border-gray-200 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300"
+              aria-label="Search companies"
             />
-        </div>
-        </div>
-
-        {/* Industry Filter */}
-        <div className='space-y-3'>
-          <label className='text-sm font-medium text-gray-900 block'>
-            Sector
-          </label>
-          <MinimalisticDropdown
-            value={industryFilter}
-            onChange={onIndustryChange}
-            options={industries}
-            placeholder='Select sector'
-          />
+          </div>
         </div>
 
-        {/* Sort Filter */}
-        <div className='space-y-3'>
-          <label className='text-sm font-medium text-gray-900 block'>
-            Sort by
-          </label>
-          <MinimalisticDropdown
-            value={sortBy}
-            onChange={onSortChange}
-            options={sortOptions}
-            placeholder='Sort options'
-          />
+        <div className="space-y-3">
+          <label className="block text-sm font-medium text-gray-900">Sector</label>
+          <MinimalisticDropdown value={industryFilter} onChange={onIndustryChange} options={industries} placeholder="Select sector" />
         </div>
 
-        {/* Clear Filters */}
+        <div className="space-y-3">
+          <label className="block text-sm font-medium text-gray-900">Sort by</label>
+          <MinimalisticDropdown key={`sort-${sortBy}`} value={sortBy} onChange={onSortChange} options={sortOptions} placeholder="Sort options" />
+        </div>
+
         <button
           onClick={() => {
             onSearchChange("");
             onIndustryChange("All Sectors");
-            onSortChange("Sort by Name");
+            onSortChange("Sort by Date");
           }}
-          className='text-sm text-gray-500 hover:text-gray-700 transition-colors underline underline-offset-2'
+          className="text-sm text-gray-500 underline transition-colors hover:text-gray-700 underline-offset-2"
         >
           Clear all filters
         </button>
 
-        {/* Divider */}
-        <div className='border-t border-gray-100'></div>
-
-       
+        <div className="border-t border-gray-100"></div>
       </div>
     </div>
   );
 };
 
-// Company Card Component with four action buttons
-const CompanyCard: React.FC<CompanyCardProps> = ({ 
-  company, 
-  onCredentials, 
-  onPreview, 
-  onApprove, 
+// -------------------- CompanyCard --------------------
+const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
+  company,
+  onCredentials,
+  onPreview,
+  onApprove,
   onReject,
   onDelete,
+  disabled = false,
 }) => {
-  // Create a placeholder image using company name
-  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
-    company.companyName?.charAt(0) || "C"
-  }%3C/text%3E%3C/svg%3E`;
+  // Use encodeURIComponent for safety inside data URI
+  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${encodeURIComponent(
+    (company.companyName && company.companyName.charAt(0)) || "C"
+  )}%3C/text%3E%3C/svg%3E`;
 
-  // Format date
-  const formatDate = (dateString: string): string => {
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return "Date not available";
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-    } catch (error) {
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    } catch {
       return "Date not available";
     }
   };
 
-  // Status badge styling based on status
-  const getStatusBadge = (reviewStatus: string) => {
-    if (reviewStatus === "active") {
-      return {
-        bg: 'bg-yellow-100',
-        text: 'text-yellow-800',
-        label: 'Needs Review'
-      };
-    } else if (reviewStatus === "rejected") {
-      return {
-        bg: 'bg-red-100',
-        text: 'text-red-800',
-        label: 'Rejected'
-      };
-    } else if (reviewStatus === "approved") {
-      return {
-        bg: 'bg-green-100',
-        text: 'text-green-800',
-        label: 'approved'
-      };
+  const getStatusBadge = (reviewStatus?: string) => {
+    if (reviewStatus === "active") return { bg: "bg-yellow-100", text: "text-yellow-800", label: "Needs Review" };
+    if (reviewStatus === "rejected") return { bg: "bg-red-100", text: "text-red-800", label: "Rejected" };
+    if (reviewStatus === "approved") return { bg: "bg-green-100", text: "text-green-800", label: "Approved" };
+    return { bg: "bg-gray-50", text: "text-gray-700", label: "Unknown" };
   };
-  }
+
   const statusStyle = getStatusBadge(company.reviewStatus);
 
   return (
-    <div className='w-full h-full rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-blue-500 to-purple-600 group'>
-      <div className='p-4 md:p-6 lg:p-8'>
-        <div className='flex items-center justify-between mb-4 md:mb-6'>
-          <div className='flex items-center gap-3 md:gap-4'>
-            <div className='w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-white p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-purple-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110'>
+    <div className="overflow-hidden w-full h-full rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group">
+      <div className="p-4 md:p-6 lg:p-8">
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <div className="flex gap-3 items-center md:gap-4">
+            <div className="flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16">
               <img
                 src={company.previewImage || placeholderImg}
                 alt={`${company.companyName} logo`}
-                className='w-full h-full object-contain transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110'
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = placeholderImg;
+                className="object-contain w-full h-full"
+                onError={(e) => {
+                  const t = e.target as HTMLImageElement;
+                  if (t.src !== placeholderImg) t.src = placeholderImg;
                 }}
+                loading="lazy"
               />
             </div>
             <div className="max-w-[calc(100%-60px)] md:max-w-none">
-              <h3 className='text-lg md:text-xl font-bold text-gray-900 line-clamp-2'>
-                {company.companyName || 'Unnamed Company'}
-              </h3>
-              <div className='flex items-center text-gray-600 mt-1'>
-                <MapPin className='w-3 h-3 mr-1' />
-                <span className='text-xs md:text-sm'>{company.location || 'Location not specified'}</span>
+              <h3 className="text-lg font-bold text-gray-900 md:text-xl line-clamp-2">{company.companyName || "Unnamed Company"}</h3>
+              <div className="flex items-center mt-1 text-gray-600">
+                <MapPin className="mr-1 w-3 h-3" />
+                <span className="text-xs md:text-sm">{company.location || "Location not specified"}</span>
               </div>
             </div>
           </div>
-          <div className='text-right hidden sm:block'>
+
+          <div className="hidden text-right sm:block">
             <div className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 md:px-3 md:py-1 rounded-full text-xs font-medium`}>
-              <Building2 className='w-3 h-3' />
+              <Building2 className="w-3 h-3" />
               {statusStyle.label}
             </div>
           </div>
         </div>
 
-        {/* Sectors */}
-        <div className='mb-4 md:mb-6'>
-          <div className='flex flex-wrap gap-1 md:gap-2'>
-            {(company.sectors && company.sectors.length > 0 ? company.sectors : ['General']).map((sector: string, index: number) => (
-              <span
-                key={index}
-                className='px-2 py-1 md:px-3 md:py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full'
-              >
+        <div className="mb-4 md:mb-6">
+          <div className="flex flex-wrap gap-1 md:gap-2">
+            {(company.sectors && company.sectors.length > 0 ? company.sectors : ["General"]).map((sector: string, index: number) => (
+              <span key={index} className="px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full md:px-3 md:py-1">
                 {sector}
               </span>
             ))}
           </div>
         </div>
 
-        {/* Date and Actions Row */}
-        <div className='flex flex-col gap-3'>
-          <div className='flex items-center gap-3 md:gap-6'>
-            <div className='flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1 md:px-4 md:py-2'>
-              <span className='font-bold text-purple-600 text-xs md:text-sm'>
-                {company.publishedDate ? formatDate(company.publishedDate) : 'Date not available'}
-              </span>
-              <span className='text-xs text-gray-600 hidden md:block'>Published</span>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-3 items-center md:gap-6">
+            <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg md:px-4 md:py-2">
+              <span className="text-xs font-bold text-purple-600 md:text-sm">{formatDate(company.publishedDate)}</span>
+              <span className="hidden text-xs text-gray-600 md:block">Published</span>
             </div>
           </div>
 
-          {/* Action Buttons - Four buttons in a grid */}
-          <div className='grid grid-cols-2 gap-2'>
+          <div className="grid grid-cols-2 gap-2">
             <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              onClick={(e) => {
                 e.stopPropagation();
                 onPreview(company.publishedId);
               }}
-              className='px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center'
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 md:text-sm"
+              aria-label={`Preview ${company.companyName}`}
+              disabled={disabled}
             >
-              <Eye className='w-3 h-3 md:w-4 md:h-4' />
+              <Eye className="w-3 h-3 md:w-4 md:h-4" />
               Preview
             </button>
 
             <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              onClick={(e) => {
                 e.stopPropagation();
                 onCredentials(company.publishedId);
               }}
-              className='px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center'
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg transition-colors hover:bg-purple-200 md:text-sm"
+              aria-label={`Credentials ${company.companyName}`}
+              disabled={disabled}
             >
-              <Key className='w-3 h-3 md:w-4 md:h-4' />
+              <Key className="w-3 h-3 md:w-4 md:h-4" />
               Credentials
             </button>
 
             <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              onClick={(e) => {
                 e.stopPropagation();
                 onApprove(company.publishedId);
               }}
-              className='px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center'
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 md:text-sm"
+              aria-label={`Approve ${company.companyName}`}
+              disabled={disabled}
             >
-              <CheckCircle className='w-3 h-3 md:w-4 md:h-4' />
+              <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
               Approve
             </button>
 
             <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              onClick={(e) => {
                 e.stopPropagation();
                 onReject(company.publishedId);
               }}
-              className='px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center'
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 md:text-sm"
+              aria-label={`Reject ${company.companyName}`}
+              disabled={disabled}
             >
-              <XCircle className='w-3 h-3 md:w-4 md:h-4' />
+              <XCircle className="w-3 h-3 md:w-4 md:h-4" />
               Reject
             </button>
 
             <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              onClick={(e) => {
                 e.stopPropagation();
                 onDelete(company.publishedId);
               }}
-              className='col-span-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center'
+              className="flex col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 md:text-sm"
+              aria-label={`Delete ${company.companyName}`}
+              disabled={disabled}
             >
-              <Trash2 className='w-3 h-3 md:w-4 md:h-4' />
+              <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
               Delete
             </button>
           </div>
         </div>
 
-        {/* Additional Info */}
-        <div className='mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100'>
-          <div className='flex justify-between items-center text-xs text-gray-400'>
-            <span className="truncate mr-2">ID: {company.publishedId || 'No ID'}</span>
+        <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
+          <div className="flex justify-between items-center text-xs text-gray-400">
+            <span className="mr-2 truncate">ID: {company.publishedId || "No ID"}</span>
             <span>v{company.version}</span>
           </div>
         </div>
@@ -473,153 +463,38 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
   );
 };
 
-// Loading Component
+// -------------------- Loading & Error --------------------
 const LoadingSpinner: React.FC = () => (
-  <div className='flex items-center justify-center py-16'>
-    <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600'></div>
-    <span className='ml-4 text-gray-600'>Loading companies...</span>
+  <div className="flex justify-center items-center py-16">
+    <div className="w-12 h-12 rounded-full border-b-2 border-purple-600 animate-spin" />
+    <span className="ml-4 text-gray-600">Loading companies...</span>
   </div>
 );
 
-// Error Component
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
-  <div className='text-center py-16'>
-    <div className='text-6xl mb-4'>⚠</div>
-    <p className='text-xl text-red-600 mb-2'>Error loading companies</p>
-    <p className='text-gray-500 mb-4'>{error}</p>
-    <button
-      onClick={onRetry}
-      className='bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors'
-    >
+  <div className="py-16 text-center">
+    <div className="mb-4 text-6xl">⚠</div>
+    <p className="mb-2 text-xl text-red-600">Error loading companies</p>
+    <p className="mb-4 text-gray-500">{error}</p>
+    <button onClick={onRetry} className="px-6 py-3 font-semibold text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600">
       Try Again
     </button>
   </div>
 );
 
-// Main Content Area Component
-const MainContent: React.FC<MainContentProps> = ({
-  companies,
-  currentPage,
-  totalPages,
-  loading,
-  error,
-  onRetry,
-  totalCount,
-  hasMore,
-  onOpenMobileSidebar,
-  onCredentials,
-  onPreview,
-  onApprove,
-  onReject,
-  searchTerm,
-  industryFilter,
-  sortBy,
-  onClearFilters,
-  onDelete
-}) => {
-  if (loading)
-    return (
-      <div className='flex-1 bg-blue-50 px-4 md:px-8 py-8'>
-        <LoadingSpinner />
-      </div>
-    );
-  if (error)
-    return (
-      <div className='flex-1 bg-blue-50 px-4 md:px-8 py-8'>
-        <ErrorMessage error={error} onRetry={onRetry} />
-      </div>
-    );
-
-  return (
-    <div className='flex-1 bg-blue-50 px-4 md:px-8 py-8'>
-      {/* Mobile filter button */}
-      <button 
-        onClick={onOpenMobileSidebar}
-        className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200"
-      >
-        <Menu className="w-4 h-4" />
-        <span>Filters</span>
-      </button>
-
-      {/* Results Header */}
-      <div className='flex items-center justify-between mb-6 md:mb-8 flex-wrap gap-3 md:gap-4'>
-        <h2 className='text-xl md:text-2xl font-bold text-black'>
-          All Companies ({totalCount || companies.length})
-        </h2>
-        <div className='flex items-center gap-2 md:gap-4'>
-          <span className='text-black font-medium text-sm md:text-base'>
-            Page {currentPage} of {totalPages}
-          </span>
-          {hasMore && (
-            <span className='text-xs md:text-sm text-gray-600 bg-blue-100 px-2 py-1 md:px-3 md:py-1 rounded-full'>
-              More available
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Company Grid */}
-      {companies.length > 0 ? (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'>
-          {companies.map((company: Company, index: number) => (
-            <div key={company.publishedId || index} className='animate-fadeIn'>
-              <CompanyCard 
-                company={company}
-                onCredentials={onCredentials}
-                onPreview={onPreview}
-                onApprove={onApprove}
-                onReject={onReject}
-                onDelete={onDelete}
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <>
-          {/* Check if filters are applied */}
-          {searchTerm || industryFilter !== "All Sectors" || sortBy !== "Sort by Name" ? (
-            // Empty State with Filters Applied
-            <div className='text-center py-12 md:py-16'>
-              <div className='text-6xl mb-4'>🔍</div>
-              <p className='text-xl text-gray-700 mb-2'>No companies match your filters</p>
-              <p className='text-gray-500 mb-6'>
-                Try adjusting your search criteria or clear all filters
-              </p>
-              <button
-                onClick={onClearFilters}
-                className='bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors'
-              >
-                Clear All Filters
-              </button>
-            </div>
-          ) : (
-            // Empty State - No companies at all
-            <div className='text-center py-12 md:py-16'>
-              <div className='text-6xl mb-4'>🏢</div>
-              <p className='text-xl text-gray-700 mb-2'>No companies found</p>
-              <p className='text-gray-500 mb-6'>
-                There are no company listings in the system yet.
-              </p>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-};
-
-// API Service for Admin
+// -------------------- API Service --------------------
 const apiService = {
-  async fetchAllCompanies(): Promise<ApiResponse> {
+  async fetchAllCompanies(signal?: AbortSignal): Promise<ApiResponse> {
     try {
       const response = await fetch(
-        'https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin',
+        "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin",
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
           },
+          signal,
         }
       );
 
@@ -629,7 +504,6 @@ const apiService = {
 
       const data = await response.json();
       console.log("Fetched companies data:", data);
-      
       return data;
     } catch (error) {
       console.error("Error fetching companies:", error);
@@ -637,36 +511,10 @@ const apiService = {
     }
   },
 
-  // Update the fetchCompanyCredentials function if it needs userId
-async fetchCompanyCredentials(publishedId: string, userId: string): Promise<any> {
-  try {
-    const response = await fetch(
-      `https://xe9l3knwqi.execute-api.ap-south-1.amazonaws.com/prod/admin/form-details/${publishedId}`);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching company credentials:", error);
-    throw error;
-  }
-},
-
-  async approveCompany(publishedId: string, action: string): Promise<any> {
+  async fetchCompanyCredentials(publishedId: string): Promise<any> {
     try {
-      const body = JSON.stringify({ publishedId, action });
       const response = await fetch(
-        `https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: body,
-        }
+        `https://xe9l3knwqi.execute-api.ap-south-1.amazonaws.com/prod/admin/form-details/${publishedId}`
       );
 
       if (!response.ok) {
@@ -674,8 +522,27 @@ async fetchCompanyCredentials(publishedId: string, userId: string): Promise<any>
       }
 
       const data = await response.json();
-      console.log("Approve response data:", data);
-      
+      return data;
+    } catch (error) {
+      console.error("Error fetching company credentials:", error);
+      throw error;
+    }
+  },
+
+  async approveCompany(publishedId: string, action: string): Promise<any> {
+    try {
+      const body = JSON.stringify({ publishedId, action });
+      const response = await fetch(
+        `https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body,
+        }
+      );
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
       return data;
     } catch (error) {
       console.error("Error approving company:", error);
@@ -685,25 +552,18 @@ async fetchCompanyCredentials(publishedId: string, userId: string): Promise<any>
 
   async rejectCompany(publishedId: string, action: string): Promise<any> {
     try {
+      const body = JSON.stringify({ publishedId, action });
       const response = await fetch(
         `https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review`,
         {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            
-          },
-          body: JSON.stringify({ publishedId, action }),
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body,
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      console.log("Reject response data:", data);
-      
       return data;
     } catch (error) {
       console.error("Error rejecting company:", error);
@@ -711,302 +571,345 @@ async fetchCompanyCredentials(publishedId: string, userId: string): Promise<any>
     }
   },
 
-// Update the fetchPublishedDetails function in the apiService
-async fetchPublishedDetails(publishedId: string,
-   userId: string,
-  //  setFinaleDataReview: (data: PublishedDetailsResponse) => void
-  ): Promise<any> {
-  try {
-    const response = await fetch(
-      `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-User-Id': userId,
-        },
-      }
-    );
+  async fetchPublishedDetails(publishedId: string, userId: string): Promise<any> {
+    try {
+      const response = await fetch(
+        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json", "X-User-Id": userId },
+        }
+      );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching published details:", error);
+      throw error;
     }
-
-    const data = await response.json();
-    // setFinaleDataReview(data); // Set the data in the state
-    return data;
-  } catch (error) {
-    console.error("Error fetching published details:", error);
-    throw error;
-  }
-},
+  },
 
   async deleteCompany(publishedId: string): Promise<any> {
-  try {
-    const response = await fetch(
-      "https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete",
-      {
-        method: "POST", 
+    try {
+      const response = await fetch("https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`, // if required
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
         },
-        body: JSON.stringify({
-          publishedId,
-          action: "delete",
-        }),
-      }
-    );
+        body: JSON.stringify({ publishedId, action: "delete" }),
+      });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error deleting company:", error);
+      throw error;
     }
-
-    const data = await response.json();
-    console.log("Delete response data:", data);
-    return data;
-  } catch (error) {
-    console.error("Error deleting company:", error);
-    throw error;
-  }
-}
-
+  },
 };
 
-// Main Admin Dashboard Component
+// -------------------- Recent Companies Section --------------------
+const RecentCompaniesSection: React.FC<{
+  recentCompanies: Company[];
+  onCredentials: (publishedId: string) => void;
+  onPreview: (publishedId: string) => void;
+  onApprove: (publishedId: string) => void;
+  onReject: (publishedId: string) => void;
+  onDelete: (publishedId: string) => void;
+  disabled?: boolean;
+}> = ({ recentCompanies, onCredentials, onPreview, onApprove, onReject, onDelete, disabled }) => {
+  if (recentCompanies.length === 0) return null;
+
+  return (
+    <div className="mb-8">
+      <div className="flex gap-3 items-center mb-6">
+        <div className="flex gap-2 items-center">
+          <Clock className="w-6 h-6 text-blue-600" />
+          <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+            Recent Companies
+          </h2>
+        </div>
+        <span className="px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-full">
+          Last 7 days
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+        {recentCompanies.map((company) => (
+          <div key={company.publishedId} className="animate-fadeIn">
+            <CompanyCard
+              company={company}
+              onCredentials={onCredentials}
+              onPreview={onPreview}
+              onApprove={onApprove}
+              onReject={onReject}
+              onDelete={onDelete}
+              disabled={disabled}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 border-t border-gray-200"></div>
+    </div>
+  );
+};
+
+// -------------------- Main Component --------------------
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
-  // const { setFinaleDataReview } = useTemplate(); // ✅ bring context setter
-  // State management
+
+  // data state
   const [companies, setCompanies] = useState<Company[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+
+  // loading states
+  const [isFetching, setIsFetching] = useState<boolean>(true); // initial fetch
+  const [isMutating, setIsMutating] = useState<boolean>(false); // approve/reject/delete
   const [error, setError] = useState<string | null>(null);
+
+  // UI state
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [industryFilter, setIndustryFilter] = useState<string>("All Sectors");
-  const [sortBy, setSortBy] = useState<string>("Sort by Name");
+  const [sortBy, setSortBy] = useState<string>("Sort by Date");
   const [currentPage] = useState<number>(1);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
-  const [credentialsModal, setCredentialsModal] = useState<{isOpen: boolean; data: any}>({
-    isOpen: false,
-    data: null
-  });
+  const [credentialsModal, setCredentialsModal] = useState<{ isOpen: boolean; data: any }>({ isOpen: false, data: null });
 
- // Update the handleCredentials function if it also needs userId
-const handleCredentials = async (publishedId: string): Promise<void> => {
-  try {
-    // Find the company to get the userId
-    const company = companies.find(c => c.publishedId === publishedId);
-    if (!company) {
-      toast.error("Company not found");
-      return;
-    }
-    
-    setLoading(true);
-    const credentials = await apiService.fetchCompanyCredentials(publishedId, company.userId);
-    
-    // Open modal with credentials data
-    setCredentialsModal({
-      isOpen: true,
-      data: credentials
-    });
-    
-  } catch (error) {
-    console.error("Error fetching company credentials:", error);
-    toast.error("Failed to fetch company credentials");
-  } finally {
-    setLoading(false);
-  }
-};
+  // -------------------- Recent Companies Logic --------------------
+  const recentCompanies = useMemo(() => {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
- // Update the handlePreview function in the main component
-const handlePreview = async (publishedId: string): Promise<void> => {
-  try {
-    // Find the company to get the userId
-    const company = companies.find(c => c.publishedId === publishedId);
-    if (!company) {
-      toast.error("Company not found");
-      return;
-    }
+    return companies.filter(company => {
+      if (!company.createdAt) return false;
+      const createdAt = new Date(company.createdAt);
+      return createdAt >= sevenDaysAgo;
+    }).slice(0, 6); // Show max 6 recent companies
+  }, [companies]);
 
-    const details = await apiService.fetchPublishedDetails(publishedId, company.userId);
-
-    // Navigate to preview page
-    if(details.templateSelection === "template-1"){
-      navigate(`/admin/companies/preview/1/${publishedId}/${company.userId}`);
-    } else if(details.templateSelection === "template-2"){
-      navigate(`/admin/companies/preview/2/${publishedId}/${company.userId}`);
-    }
-  } catch (error) {
-    console.error("Error loading template for preview:", error);
-    toast.error("Failed to load template for preview");
-  }
-};  
-
-  // Handle approve button click
-  const handleApprove = async (publishedId: string): Promise<void> => {
+  // -------------------- Fetch Companies (with AbortController) --------------------
+  const fetchCompanies = async (signal?: AbortSignal) => {
     try {
-      const action = "approve";
-      setLoading(true);
-      const result = await apiService.approveCompany(publishedId, action);
-
-      if (result.status === "approved") {
-        toast.success("Company approved successfully");
-        // Refresh the companies list
-        fetchCompanies();
-      } else {
-        toast.error("Failed to approve company");
-      }
-    } catch (error) {
-      console.error("Error approving company:", error);
-      toast.error("Failed to approve company");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle reject button click
-  const handleReject = async (publishedId: string): Promise<void> => {
-    try {
-      const action = "reject";
-      
-      setLoading(true);
-      const result = await apiService.rejectCompany(publishedId, action);
-
-      if (result.status === "rejected") {
-        toast.success("Company rejected successfully");
-        // Refresh the companies list
-        fetchCompanies();
-      } else {
-        toast.error("Failed to reject company");
-      }
-    } catch (error) {
-      console.error("Error rejecting company:", error);
-      toast.error("Failed to reject company");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Clear filters function
-  const handleClearFilters = (): void => {
-    setSearchTerm("");
-    setIndustryFilter("All Sectors");
-    setSortBy("Sort by Name");
-  };
-
-  // Fetch all companies from API
-  const fetchCompanies = async (): Promise<void> => {
-    try {
-      setLoading(true);
+      setIsFetching(true);
       setError(null);
-      
-      const data = await apiService.fetchAllCompanies();
-      
-      setCompanies(data.cards || []);
+      const data = await apiService.fetchAllCompanies(signal);
+
+      // --- ENSURE: sort by publishedDate (newest first) immediately after fetch ---
+      const cards: Company[] = (data.cards || []).slice();
+      cards.sort((a, b) => {
+        const ta = new Date(a.publishedDate || 0).getTime();
+        const tb = new Date(b.publishedDate || 0).getTime();
+        return tb - ta; // newest first (descending)
+      });
+
+      setCompanies(cards);
       setTotalCount(data.totalCount || 0);
       setHasMore(data.hasTemplates || false);
-      
     } catch (err) {
-      console.error('Error in fetchCompanies:', err);
-      const errorMessage = err instanceof Error ? err.message : "Failed to fetch companies";
-      setError(errorMessage);
+      if ((err as any)?.name === "AbortError") return;
+      console.error("Error in fetchCompanies:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch companies");
     } finally {
-      setLoading(false);
+      setIsFetching(false);
     }
   };
 
-   // Handle delete button click
-  const handleDelete = async (publishedId: string): Promise<void> => {
-    if (!window.confirm("Are you sure you want to delete this company? This action cannot be undone.")) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const result = await apiService.deleteCompany(publishedId);
-
-      // console.log(result)
-        toast.success("Company deleted successfully");
-        // Refresh the companies list
-        await fetchCompanies();
-      
-    } catch (error) {
-      console.error("Error deleting company:", error);
-      toast.error("Failed to delete company");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Load data on component mount
   useEffect(() => {
-    fetchCompanies();
+    // Force default sort to "Sort by Date" on first mount (so UI shows Date)
+    setSortBy("Sort by Date");
+
+    const controller = new AbortController();
+    fetchCompanies(controller.signal);
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Get unique sectors from companies
-  const industries: string[] = [
-    "All Sectors",
-    ...Array.from(new Set(companies.flatMap((c: Company) => c.sectors || []))).sort(),
-  ];
+  // -------------------- Derived lists (useMemo) --------------------
+  const industries = useMemo(() => {
+    return ["All Sectors", ...Array.from(new Set(companies.flatMap((c) => c.sectors || []))).sort()];
+  }, [companies]);
 
-  // Filter and sort companies
-  const filteredCompanies = companies.filter((company: Company) => {
-    const matchesSearch = !searchTerm || 
-      (company.companyName && company.companyName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (company.location && company.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (company.sectors && company.sectors.some((sector: string) =>
-        sector.toLowerCase().includes(searchTerm.toLowerCase())
-      ));
-    
-    const matchesSector =
-      industryFilter === "All Sectors" ||
-      (company.sectors && company.sectors.includes(industryFilter));
-    
-    return matchesSearch && matchesSector;
-  });
+  const filteredCompanies = useMemo(() => {
+    const q = (debouncedSearchTerm || "").trim().toLowerCase();
+    return companies.filter((company) => {
+      const matchesSearch =
+        !q ||
+        (company.companyName && company.companyName.toLowerCase().includes(q)) ||
+        (company.location && company.location.toLowerCase().includes(q)) ||
+        (company.sectors && company.sectors.some((sector) => sector.toLowerCase().includes(q)));
 
-  // Sort companies
-  const sortedCompanies = [...filteredCompanies].sort((a: Company, b: Company) => {
+      const matchesSector = industryFilter === "All Sectors" || (company.sectors && company.sectors.includes(industryFilter));
+      return matchesSearch && matchesSector;
+    });
+  }, [companies, debouncedSearchTerm, industryFilter]);
+
+  const getMostRecentDate = (company: Company) =>
+    Math.max(
+      new Date(company.lastModified || 0).getTime(),
+      new Date(company.lastActivity || 0).getTime(),
+      new Date(company.publishedDate || 0).getTime(),
+      new Date(company.createdAt || 0).getTime()
+    );
+
+  const sortedCompanies = useMemo(() => {
+    const arr = [...filteredCompanies];
     switch (sortBy) {
       case "Sort by Location":
-        return (a.location || "").localeCompare(b.location || "");
+        return arr.sort((a, b) => (a.location || "").localeCompare(b.location || ""));
       case "Sort by Date":
-        const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0;
-        const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0;
-        return dateB - dateA;
+        // publishedDate descending (newest first)
+        return arr.sort((a, b) => new Date(b.publishedDate || 0).getTime() - new Date(a.publishedDate || 0).getTime());
       case "Sort by Sector":
-        const sectorA = a.sectors && a.sectors.length > 0 ? a.sectors[0] : "";
-        const sectorB = b.sectors && b.sectors.length > 0 ? b.sectors[0] : "";
-        return sectorA.localeCompare(sectorB);
+        return arr.sort((a, b) => ((a.sectors?.[0] || "").localeCompare(b.sectors?.[0] || "")));
+      case "Sort by Latest":
       default:
-        return (a.companyName || "").localeCompare(b.companyName || "");
+        // most recent activity across fields
+        return arr.sort((a, b) => getMostRecentDate(b) - getMostRecentDate(a));
     }
-  });
+  }, [filteredCompanies, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(sortedCompanies.length / 12));
 
-  return (
-    <div className='min-h-screen bg-blue-100'>
-      <Header />
-      
-      {/* Credentials Modal */}
-   <CredentialsModal
-  isOpen={credentialsModal.isOpen}
-  onClose={() => setCredentialsModal({isOpen: false, data: null})}
-  data={credentialsModal.data}
-  loading={loading}
-  onPreview={handlePreview}
-  onApprove={handleApprove}
-  onReject={handleReject}
-  company={companies.find(c => c.publishedId === credentialsModal.data?.publishedId) || null}
-/>
-        
+  // -------------------- Handlers (mutations with isMutating) --------------------
+  const handleCredentials = async (publishedId: string) => {
+    try {
+      const company = companies.find((c) => c.publishedId === publishedId);
+      if (!company) {
+        toast.error("Company not found");
+        return;
+      }
+      setIsMutating(true);
+      const credentials = await apiService.fetchCompanyCredentials(publishedId);
+      setCredentialsModal({ isOpen: true, data: credentials });
+    } catch (err) {
+      console.error("Error fetching company credentials:", err);
+      toast.error("Failed to fetch company credentials");
+    } finally {
+      setIsMutating(false);
+    }
+  };
 
-      {/* Main Layout Container */}
-      <div className='flex flex-col md:flex-row bg-gray-50 min-h-screen'>
-        {/* Left Sidebar */}
+  const handlePreview = async (publishedId: string) => {
+    try {
+      const company = companies.find((c) => c.publishedId === publishedId);
+      if (!company) {
+        toast.error("Company not found");
+        return;
+      }
+      setIsMutating(true);
+      const details = await apiService.fetchPublishedDetails(publishedId, company.userId);
+      if (details.templateSelection === "template-1") {
+        navigate(`/admin/companies/preview/1/${publishedId}/${company.userId}`);
+      } else if (details.templateSelection === "template-2") {
+        navigate(`/admin/companies/preview/2/${publishedId}/${company.userId}`);
+      } else {
+        toast.info("Unknown template selection");
+      }
+    } catch (err) {
+      console.error("Error loading template for preview:", err);
+      toast.error("Failed to load template for preview");
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const handleApprove = async (publishedId: string) => {
+    if (!window.confirm("Approve this company?")) return;
+    try {
+      setIsMutating(true);
+      // optimistic update
+      setCompanies((prev) => prev.map((c) => (c.publishedId === publishedId ? { ...c, isApproved: true, reviewStatus: "approved" } : c)));
+      const result = await apiService.approveCompany(publishedId, "approve");
+      if (result?.status === "approved" || result?.status === "success") {
+        toast.success("Company approved successfully");
+        await fetchCompanies();
+      } else {
+        toast.error("Failed to approve company");
+        await fetchCompanies();
+      }
+    } catch (err) {
+      console.error("Error approving company:", err);
+      toast.error("Failed to approve company");
+      await fetchCompanies();
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const handleReject = async (publishedId: string) => {
+    if (!window.confirm("Reject this company?")) return;
+    try {
+      setIsMutating(true);
+      setCompanies((prev) => prev.map((c) => (c.publishedId === publishedId ? { ...c, isApproved: false, reviewStatus: "rejected" } : c)));
+      const result = await apiService.rejectCompany(publishedId, "reject");
+      if (result?.status === "rejected" || result?.status === "success") {
+        toast.success("Company rejected successfully");
+        await fetchCompanies();
+      } else {
+        toast.error("Failed to reject company");
+        await fetchCompanies();
+      }
+    } catch (err) {
+      console.error("Error rejecting company:", err);
+      toast.error("Failed to reject company");
+      await fetchCompanies();
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const handleDelete = async (publishedId: string) => {
+    if (!window.confirm("Are you sure you want to delete this company? This action cannot be undone.")) return;
+    try {
+      setIsMutating(true);
+      const result = await apiService.deleteCompany(publishedId);
+      if (result?.status === "deleted" || result?.status === "success") {
+        toast.success("Company deleted successfully");
+        await fetchCompanies();
+      } else {
+        toast.error("Failed to delete company");
+        await fetchCompanies();
+      }
+    } catch (err) {
+      console.error("Error deleting company:", err);
+      toast.error("Failed to delete company");
+      await fetchCompanies();
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const handleRetry = () => {
+    fetchCompanies();
+  };
+
+  // -------------------- Render --------------------
+  return (
+    <div className="min-h-screen bg-white">
+      <Header />
+
+      {/* Mobile sidebar toggle */}
+      <div className="flex sticky top-0 z-40 justify-between items-center p-4 bg-white border-b border-gray-200 md:hidden">
+        <button
+          onClick={() => setIsMobileSidebarOpen(true)}
+          className="p-2 rounded-lg border border-gray-200"
+          aria-label="Open filters"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+        <span className="text-sm font-medium text-gray-700">
+          {totalCount} {totalCount === 1 ? "company" : "companies"}
+        </span>
+      </div>
+
+      {/* Main layout */}
+      <div className="flex">
         <Sidebar
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -1019,29 +922,92 @@ const handlePreview = async (publishedId: string): Promise<void> => {
           onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
         />
 
-        {/* Main Content Area */}
-        <MainContent
-          companies={sortedCompanies}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          loading={loading}
-          error={error}
-          onRetry={fetchCompanies}
-          totalCount={totalCount}
-          hasMore={hasMore}
-          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
-          onCredentials={handleCredentials}
-          onPreview={handlePreview}
-          onApprove={handleApprove}
-          onReject={handleReject}
-          searchTerm={searchTerm}
-          industryFilter={industryFilter}
-          sortBy={sortBy}
-          onClearFilters={handleClearFilters}
-          // delete function
-          onDelete={handleDelete}
-        />
+        <div className="flex-1 p-4 md:p-8">
+          {/* Recent Companies Section */}
+          <RecentCompaniesSection
+            recentCompanies={recentCompanies}
+            onCredentials={handleCredentials}
+            onPreview={handlePreview}
+            onApprove={handleApprove}
+            onReject={handleReject}
+            onDelete={handleDelete}
+            disabled={isMutating}
+          />
+
+          {/* All Companies Section */}
+          <div className="flex gap-3 items-center mb-6">
+            <div className="flex gap-2 items-center">
+              <Building2 className="w-6 h-6 text-blue-600" />
+              <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+                All Companies
+              </h2>
+            </div>
+            <span className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full">
+              {sortedCompanies.length} {sortedCompanies.length === 1 ? "company" : "companies"}
+            </span>
+          </div>
+
+          {isFetching ? (
+            <LoadingSpinner />
+          ) : error ? (
+            <ErrorMessage error={error} onRetry={handleRetry} />
+          ) : sortedCompanies.length === 0 ? (
+            <div className="py-16 text-center">
+              <div className="mb-4 text-6xl">🏢</div>
+              <p className="mb-2 text-xl text-gray-600">No companies found</p>
+              <p className="text-gray-500">Try adjusting your search or filters</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+              {sortedCompanies.map((company) => (
+                <div key={company.publishedId} className="animate-fadeIn">
+                  <CompanyCard
+                    company={company}
+                    onCredentials={handleCredentials}
+                    onPreview={handlePreview}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                    onDelete={handleDelete}
+                    disabled={isMutating}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center mt-8">
+              <button
+                className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={currentPage <= 1}
+              >
+                <ArrowRight className="w-4 h-4 rotate-180" />
+                Previous
+              </button>
+              <span className="mx-4 text-sm text-gray-600">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={currentPage >= totalPages}
+              >
+                Next
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Credentials Modal */}
+      {credentialsModal.isOpen && (
+        <CredentialsModal
+          isOpen={credentialsModal.isOpen}
+          onClose={() => setCredentialsModal({ isOpen: false, data: null })}
+          data={credentialsModal.data}
+        />
+      )}
     </div>
   );
 };

@@ -209,7 +209,7 @@ const ProfessionalsPage: React.FC = () => {
   };
 
   const handleAddEventClick = (): void => {
-    navigate("/company");
+    navigate("/professional/select");
   };
 
   if (loading) {

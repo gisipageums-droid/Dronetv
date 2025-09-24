@@ -51,6 +51,12 @@ import ResetPassword from "./components/ResetPassword";
 import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
+import ProfessionalForm from "./components/Professional/form/form/src/App";
+import ProfessionalTemplateSelector from "./components/Professional/Select-Template/select";
+import ProTemp2 from "./components/Professional/Template/T-2/src/App";
+import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App"
+import SignupConfirmation from "./components/Professional/form/form/greeting/greeting";
+import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
 const HomePage = () => (
   <>
     <Hero />
@@ -118,6 +124,17 @@ const AppContent = () => {
           {/* main preview routes */}
           <Route path='/company/:urlSlug' element={<MainCompPreviewT1 />} />
           <Route path='/companies/:urlSlug' element={<MainCompPreviewT2 />} />
+
+          {/* professionals route */}
+
+<Route path='/professional/form' element={<ProfessionalForm/>} />
+          <Route path='/professional/select' element={<ProfessionalTemplateSelector/>} />
+          <Route path='/professional/t2' element={<ProTemp2/>} />
+          <Route path='/professional/t1' element={<ProTemp1/>} />
+
+          <Route path='/professional/Greeting' element={<SignupConfirmation/>} />
+          <Route path='/professional/edit/:draftId/:userId' element={<EditTemp_2/>} />
+
         </Routes>
         {!hideFooter && <Footer />}
         <ScrollingFooter />

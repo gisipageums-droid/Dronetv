@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, MapPin, ExternalLink } from 'lucide-react';
+import { Search, ChevronDown, MapPin, ExternalLink, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 
@@ -11,6 +11,13 @@ interface Company {
   previewImage?: string;
   heroImage?: string;
   aboutDescription?: string;
+  createdAt?: string;
+  publishedDate?: string;
+  templateSelection?: string;
+  urlSlug?: string;
+  servicesCount?: number;
+  productsCount?: number;
+  companyDescription?: string;
   [key: string]: any;
 }
 
@@ -19,6 +26,7 @@ const CompaniesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [filteredCompanies, setFilteredCompanies] = useState<Company[]>([]);
+  const [recentCompanies, setRecentCompanies] = useState<Company[]>([]);
   const [selectedIndustry, setSelectedIndustry] = useState('All');
   const [sortBy, setSortBy] = useState('companyName');
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,10 +42,24 @@ const CompaniesPage: React.FC = () => {
         const res = await fetch('https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=main');
         const data = await res.json();
         // Set companies from `cards` array
-        setAllCompanies(Array.isArray(data.cards) ? data.cards : []);
+        const companies = Array.isArray(data.cards) ? data.cards : [];
+        setAllCompanies(companies);
+
+        // Calculate recent companies (last 7 days)
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const recent = companies.filter(company => {
+          if (!company.createdAt) return false;
+          const createdAt = new Date(company.createdAt);
+          return createdAt >= sevenDaysAgo;
+        }).slice(0, 6); // Show max 6 recent companies
+
+        setRecentCompanies(recent);
       } catch (error) {
         console.error(error);
         setAllCompanies([]);
+        setRecentCompanies([]);
       }
       setLoading(false);
     };
@@ -97,6 +119,80 @@ const CompaniesPage: React.FC = () => {
     }
   };
 
+  // 7. Company Card Component (reusable)
+  const CompanyCard: React.FC<{ company: Company; index: number }> = ({ company, index }) => {
+    const totalServices = company.servicesCount || 0;
+    const totalProducts = company.productsCount || 0;
+
+    return (
+      <div
+        className="group bg-[#f1ee8e] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] flex flex-col justify-between"
+      >
+        {/* Top Section */}
+        <div className="flex flex-col items-center p-4 text-center">
+          <div className="relative mb-3">
+            <div className="absolute inset-0 rounded-xl blur-lg transition-transform duration-500 scale-110 bg-yellow-300/30 group-hover:scale-125"></div>
+            <div className="flex relative justify-center items-center w-14 h-14 bg-yellow-100 rounded-xl border shadow-inner border-yellow-400/30">
+              {company.previewImage ? (
+                <img
+                  src={company.previewImage}
+                  alt={company.companyName}
+                  className="object-contain w-10 h-10 bg-white rounded-md"
+                />
+              ) : (
+                <span className="text-sm font-bold text-gray-700 uppercase">
+                  {company.companyName[0]}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <h3 className="mb-1 text-base font-semibold text-black transition-colors group-hover:text-gray-800">
+            {company.companyName}
+          </h3>
+          {company.location && (
+            <div className="flex gap-1 justify-center items-center text-xs text-gray-600">
+              <MapPin className="w-3 h-3" />
+              {company.location}
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Section */}
+        <div className="flex flex-col flex-1 justify-between p-4">
+          <p className="mb-3 text-xs text-gray-700 line-clamp-2">
+            {company.companyDescription || "No company description."}
+          </p>
+
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="py-1 text-center bg-yellow-200 rounded-md">
+              <div className="text-sm font-bold text-black">{totalServices}</div>
+              <div className="text-[10px] text-gray-600">Services</div>
+            </div>
+            <div className="py-1 text-center bg-yellow-200 rounded-md">
+              <div className="text-sm font-bold text-yellow-700">{totalProducts}</div>
+              <div className="text-[10px] text-yellow-700">Products</div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              if (company.templateSelection === 'template-1') {
+                navigate(`/company/${company.urlSlug}`);
+              } else if (company.templateSelection === 'template-2') {
+                navigate(`/companies/${company.urlSlug}`);
+              }
+            }}
+            className="flex gap-1 justify-center items-center px-3 py-2 w-full text-xs font-medium text-black bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-md border border-orange-200 shadow-sm transition-all duration-300 hover:from-yellow-500 hover:to-yellow-700"
+          >
+            <span>View Profile</span>
+            <ExternalLink className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <LoadingScreen
@@ -107,26 +203,26 @@ const CompaniesPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-yellow-400 pt-16">
+    <div className="pt-16 min-h-screen bg-yellow-400">
       {/* Hero Section */}
-      <section className="py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 relative overflow-hidden">
+      <section className="overflow-hidden relative py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200/30 rounded-full animate-pulse blur-2xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-600/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-10 left-10 w-32 h-32 rounded-full blur-2xl animate-pulse bg-yellow-200/30"></div>
+          <div className="absolute right-10 bottom-10 w-40 h-40 rounded-full blur-2xl animate-pulse bg-yellow-600/20" style={{ animationDelay: '2s' }}></div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h1 className="text-2xl md:text-5xl font-black text-black mb-2 tracking-tight">
+        <div className="relative z-10 px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
+          <h1 className="mb-2 text-2xl font-black tracking-tight text-black md:text-5xl">
             Companies Directory
           </h1>
-          <p className="text-xl text-black/80 max-w-2xl mx-auto mb-4">
+          <p className="mx-auto mb-4 max-w-2xl text-xl text-black/80">
             Explore top companies leading drone, AI, and geospatial tech.
           </p>
-          <div className="w-24 h-1 bg-black mx-auto rounded-full"></div>
+          <div className="mx-auto w-24 h-1 bg-black rounded-full"></div>
         </div>
         <div className="absolute top-4 right-10 z-10 pointer-events-auto">
           <button
             onClick={() => navigate('/user/companies/template-selection')}
-            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-red-600 transition duration-300"
+            className="px-6 py-3 text-white bg-black rounded-lg transition duration-300 hover:bg-red-600"
           >
             List your Company
           </button>
@@ -134,18 +230,18 @@ const CompaniesPage: React.FC = () => {
       </section>
 
       {/* Filter Section */}
-      <section className="py-3 bg-yellow-400 sticky top-16 z-40 border-b border-black/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+      <section className="sticky top-16 z-40 py-3 bg-yellow-400 border-b border-black/10">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60" />
+              <Search className="absolute left-3 top-1/2 w-4 h-4 transform -translate-y-1/2 text-black/60" />
               <input
                 type="text"
                 placeholder="Search companies..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-black/20 bg-yellow-200 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-black placeholder-black/60 font-medium text-sm transition-all duration-300"
+                className="py-2 pr-3 pl-10 w-full text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 placeholder-black/60"
               />
             </div>
 
@@ -155,7 +251,7 @@ const CompaniesPage: React.FC = () => {
                 <select
                   value={selectedIndustry}
                   onChange={(e) => setSelectedIndustry(e.target.value)}
-                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/20 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-48"
+                  className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   {['All'].concat(
                     Array.from(new Set(allCompanies.flatMap(c => c.sectors ?? [])))
@@ -165,144 +261,107 @@ const CompaniesPage: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
               </div>
               <div className="relative">
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value)}
-                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/20 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-48"
+                  className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   <option value="companyName">Sort by Name</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
               </div>
             </div>
           </div>
 
           {/* Active Filters */}
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mt-2">
             {selectedIndustry !== 'All' && (
-              <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
                 Industry: {selectedIndustry}
-                <button onClick={() => setSelectedIndustry('All')} className="hover:text-white transition-colors duration-200 text-sm">×</button>
+                <button onClick={() => setSelectedIndustry('All')} className="text-sm transition-colors duration-200 hover:text-white">×</button>
               </span>
             )}
             {searchQuery && (
-              <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
                 Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="hover:text-white transition-colors duration-200 text-sm">×</button>
+                <button onClick={() => setSearchQuery('')} className="text-sm transition-colors duration-200 hover:text-white">×</button>
               </span>
             )}
           </div>
         </div>
       </section>
 
-      {/* Companies Grid Section */}
-      <section className="py-16 bg-yellow-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl md:text-4xl font-black text-black">
-              All Companies ({filteredCompanies.length})
-            </h2>
+      {/* Recent Companies Section */}
+      {recentCompanies.length > 0 && (
+        <section className="py-8 bg-yellow-400">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="flex gap-3 items-center mb-6">
+              <div className="flex gap-2 items-center">
+                <Clock className="w-6 h-6 text-black" />
+                <h2 className="text-2xl font-black text-black md:text-3xl">
+                  Recent Companies
+                </h2>
+              </div>
+              <span className="px-3 py-1 text-sm font-medium text-yellow-400 bg-black rounded-full">
+                Last 7 days
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {recentCompanies.map((company, idx) => (
+                <CompanyCard key={`recent-${company.companyName}-${idx}`} company={company} index={idx} />
+              ))}
+            </div>
+
+            <div className="mt-8 border-t border-black/20"></div>
+          </div>
+        </section>
+      )}
+
+      {/* All Companies Section */}
+      <section className="py-8 bg-yellow-400">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex gap-2 items-center">
+              <h2 className="text-2xl font-black text-black md:text-3xl">
+                All Companies
+              </h2>
+              <span className="px-3 py-1 text-sm font-medium text-black bg-yellow-200 rounded-full">
+                {filteredCompanies.length} {filteredCompanies.length === 1 ? 'company' : 'companies'}
+              </span>
+            </div>
             <div className="text-black/60">
               Page {currentPage} of {totalPages}
             </div>
           </div>
+
           {currentCompanies.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto">
-                <Search className="h-16 w-16 text-black/40 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-black mb-2">No companies found</h3>
+            <div className="py-16 text-center">
+              <div className="p-12 mx-auto max-w-md rounded-3xl backdrop-blur-sm bg-white/80">
+                <Search className="mx-auto mb-4 w-16 h-16 text-black/40" />
+                <h3 className="mb-2 text-2xl font-bold text-black">No companies found</h3>
                 <p className="text-black/60">Try adjusting your filters or search terms</p>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {currentCompanies.map((company, idx) => {
-                const totalServices = company.servicesCount || 0;
-                const totalProducts = company.productsCount;
-
-                return (
-                  <div
-                    key={company.companyName + idx}
-                    className="group bg-[#f1ee8e] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] flex flex-col justify-between"
-                  >
-                    {/* Top Section */}
-                    <div className="p-4 flex flex-col items-center text-center">
-                      <div className="relative mb-3">
-                        <div className="absolute inset-0 bg-yellow-300/30 rounded-xl blur-lg scale-110 group-hover:scale-125 transition-transform duration-500"></div>
-                        <div className="relative bg-yellow-100 rounded-xl flex items-center justify-center w-14 h-14 border border-yellow-400/30 shadow-inner">
-                          {company.previewImage ? (
-                            <img
-                              src={company.previewImage}
-                              alt={company.companyName}
-                              className="w-10 h-10 object-contain bg-white rounded-md"
-                            />
-                          ) : (
-                            <span className="text-sm font-bold text-gray-700 uppercase">
-                              {company.companyName[0]}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <h3 className="text-base font-semibold text-black mb-1 group-hover:text-gray-800 transition-colors">
-                        {company.companyName}
-                      </h3>
-                      {company.location && (
-                        <div className="flex items-center justify-center gap-1 text-xs text-gray-600">
-                          <MapPin className="h-3 w-3" />
-                          {company.location}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Bottom Section */}
-                    <div className="p-4 flex flex-col justify-between flex-1">
-                      <p className="text-gray-700 text-xs line-clamp-2 mb-3">
-                        {company.companyDescription || "No company description."}
-                      </p>
-
-                      <div className="grid grid-cols-2 gap-2 mb-3">
-                        <div className="bg-yellow-200 rounded-md py-1 text-center">
-                          <div className="text-sm font-bold text-black">{totalServices}</div>
-                          <div className="text-[10px] text-gray-600">Services</div>
-                        </div>
-                        <div className="bg-yellow-200 rounded-md py-1 text-center">
-                          <div className="text-sm font-bold text-yellow-700">{totalProducts}</div>
-                          <div className="text-[10px] text-yellow-700">Products</div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          if (company.templateSelection=== 'template-1') {
-                            navigate(`/company/${company.urlSlug}`);
-                          } else if (company.templateSelection === 'template-2') {
-                            navigate(`/companies/${company.urlSlug}`);
-                          }
-                        }}
-                        className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-3 py-2 rounded-md font-medium text-xs hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 flex items-center justify-center gap-1 shadow-sm border border-orange-200"
-                      >
-                        <span>View Profile</span>
-                        <ExternalLink className="h-3 w-3 transition-transform group-hover:translate-x-1" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {currentCompanies.map((company, idx) => (
+                <CompanyCard key={`all-${company.companyName}-${idx}`} company={company} index={idx} />
+              ))}
             </div>
           )}
 
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-center mt-12">
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2 items-center">
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                  className="px-4 py-2 font-medium text-black rounded-xl border-2 backdrop-blur-sm transition-all duration-300 bg-white/80 border-black/20 hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
@@ -329,7 +388,7 @@ const CompaniesPage: React.FC = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                  className="px-4 py-2 font-medium text-black rounded-xl border-2 backdrop-blur-sm transition-all duration-300 bg-white/80 border-black/20 hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
