@@ -39,10 +39,10 @@ const Profile = ({ profileData }) => {
                   alt={member.name}
                   className="w-full h-full object-cover"
                 />
-                <div 
+                {/* <div 
                   className="absolute bottom-0 left-0 w-full h-16 bg-opacity-90"
                   style={{ backgroundColor: "#facc15" }}
-                ></div>
+                ></div> */}
               </div>
               <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
@@ -58,6 +58,7 @@ const Profile = ({ profileData }) => {
                 <div className="flex justify-center mt-4 space-x-3">
                   <a
                     href={member.socialLinks.twitter}
+                    target="_blank"
                     className={`p-2 rounded-full ${
                       theme === "dark" 
                         ? "bg-gray-800 hover:bg-gray-500" 
@@ -71,6 +72,7 @@ const Profile = ({ profileData }) => {
                   </a>
                   <a
                     href={member.socialLinks.linkedin}
+                    target="_blank"
                     className={`p-2 rounded-full ${
                       theme === "dark" 
                         ? "bg-gray-800 hover:bg-gray-500" 

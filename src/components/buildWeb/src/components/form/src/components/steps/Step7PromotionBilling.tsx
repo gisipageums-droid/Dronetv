@@ -65,7 +65,7 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
             </div>
           )}
         </div>
-
+{/* 
         {showBillingFields && (
           <div className="bg-blue-50 rounded-lg p-6">
             <h3 className="text-lg font-bold text-blue-900 mb-4">Billing Information</h3>
@@ -134,7 +134,7 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
               rows={3}
             />
           </div>
-        )}
+        )} */}
 
         <div className="bg-slate-50 rounded-lg p-6">
           <h3 className="text-lg font-bold text-slate-900 mb-4">Terms & Conditions</h3>

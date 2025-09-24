@@ -262,10 +262,10 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                   </motion.div>
                 )}
                 
-                <div 
+                {/* <div 
                   className="absolute bottom-0 left-0 w-full h-16 bg-opacity-90"
                   style={{ backgroundColor: "#facc15" }}
-                ></div>
+                ></div> */}
               </div>
               <div className="p-6 text-center">
                 {isEditing ? (
@@ -326,6 +326,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                     <>
                       <a
                         href={member.socialLinks.twitter}
+                        target="_black"
                         className={`p-2 rounded-full ${
                           theme === "dark" 
                             ? "bg-gray-800 hover:bg-gray-500" 
@@ -339,6 +340,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                       </a>
                       <a
                         href={member.socialLinks.linkedin}
+                        target="_blank"
                         className={`p-2 rounded-full ${
                           theme === "dark" 
                             ? "bg-gray-800 hover:bg-gray-500" 

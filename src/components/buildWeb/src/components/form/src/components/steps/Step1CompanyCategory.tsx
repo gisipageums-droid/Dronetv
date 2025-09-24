@@ -203,11 +203,11 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             {/* Legal Information */}
             <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
               <h3 className="text-sm font-bold text-amber-900 mb-2">
-                Legal Information (Optional)
+                Trade Information (Optional)
               </h3>
               <div className="space-y-2">
                 <FormInput
-                  label="Legal Company Name"
+                  label="Brand Name"
                   value={formData.legalName || ""}
                   onChange={(value) => updateFormData({ legalName: value })}
                   placeholder="If different from brand name"
