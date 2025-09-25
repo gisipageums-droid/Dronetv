@@ -82,7 +82,7 @@ const AppContent = () => {
           <Route path='/' element={<HomePage />} />
           <Route path='/videos' element={<VideosPage />} />
           <Route path='/professionals' element={<ProfessionalsPage />} />
-          <Route path='/companies' element={<CompaniesPage />} />
+          <Route path='/listed-companies' element={<CompaniesPage />} />
           <Route path='/user/companies' element={<CompanyDirectory />} />
           <Route path='/products' element={<ProductsPage />} />
           <Route path='/services' element={<ServicesPage />} />
@@ -98,6 +98,10 @@ const AppContent = () => {
           <Route path='/event/*' element={<SubApp />} />
           <Route
             path='/user/companies/template-selection'
+            element={<Select />}
+          />
+          <Route
+            path='/companies'
             element={<Select />}
           />
           <Route path='/template/t1' element={<Template1 />} />

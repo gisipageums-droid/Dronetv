@@ -221,7 +221,7 @@ const CompaniesPage: React.FC = () => {
         </div>
         <div className="absolute top-4 right-10 z-10 pointer-events-auto">
           <button
-            onClick={() => navigate('/user/companies/template-selection')}
+            onClick={() => navigate('/companies')}
             className="px-6 py-3 text-white bg-black rounded-lg transition duration-300 hover:bg-red-600"
           >
             List your Company
