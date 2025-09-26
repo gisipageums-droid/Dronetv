@@ -8,6 +8,8 @@ const Step3SectorsServed: React.FC<StepProps> = ({
   updateFormData,
   onNext,
   onPrev,
+  onSkip, // Add this line
+  showSkip, // Add this line
   isValid,
 }) => {
   // Drone-specific sectors
@@ -80,11 +82,13 @@ const Step3SectorsServed: React.FC<StepProps> = ({
   };
 
   return (
-    <FormStep
+     <FormStep
       title="Sectors You Serve"
       description="Select the industries and sectors your company serves"
       onNext={onNext}
       onPrev={onPrev}
+      onSkip={onSkip} // Add this line
+      showSkip={showSkip} // Add this line
       isValid={isValid}
       currentStep={2}
       totalSteps={6}

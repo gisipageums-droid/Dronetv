@@ -440,7 +440,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       isValid={isValid && !isUploading}
       currentStep={6}
       totalSteps={6}
-      nextButtonText={isUploading ? "Submitting..." : "Submit Form"}
+      isLastStep={true} // Add this line
     >
       <div className='space-y-8'>
         {/* Upload Progress */}

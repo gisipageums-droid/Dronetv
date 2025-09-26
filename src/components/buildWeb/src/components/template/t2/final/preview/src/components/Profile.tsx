@@ -90,22 +90,6 @@ const Profile = ({ profileData }) => {
           ))}
         </div>
 
-        <div className={`mt-16 p-8 rounded-lg text-center ${
-          theme === "dark" ? "bg-gray-900" : "bg-white"
-        }`}>
-          <h3 className="text-2xl font-bold mb-4">{profileData.joinTeam.title}</h3>
-          <p className="mb-6 max-w-2xl mx-auto">
-            {profileData.joinTeam.description}
-          </p>
-          <motion.button
-            className="px-6 py-3 rounded-full font-medium text-white"
-            style={{ backgroundColor: "#facc15" }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {profileData.joinTeam.buttonText}
-          </motion.button>
-        </div>
       </div>
     </section>
   );

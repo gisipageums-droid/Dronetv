@@ -34,6 +34,11 @@ export default function Footer({ footerData }) {
   // Process the footer data
   const footerContent = processFooterData(footerData);
 
+  // Filter out the "Legal" category from footerLinks
+  const filteredFooterLinks = footerContent ? 
+    Object.entries(footerContent.footerLinks || {}).filter(([category]) => category !== "Legal")
+    : [];
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -94,15 +99,15 @@ export default function Footer({ footerData }) {
                   transition={{ duration: 0.6 }}
                 >
                    <img
-                        src={footerContent.companyInfo.logoUrl || logo}
+                        src={footerContent?.companyInfo?.logoUrl || logo}
                         alt="Logo"
                         className="w-full h-full object-contain"
                       />
                 </motion.div>
-                <span className="text-xl font-bold text-white">{footerContent.companyInfo.companyName}</span>
+                <span className="text-xl font-bold text-white">{footerContent?.companyInfo?.companyName}</span>
               </motion.div>
               
-              <p className="text-gray-400 max-w-md">{footerContent.companyInfo.description}</p>
+              <p className="text-gray-400 max-w-md">{footerContent?.companyInfo?.description}</p>
 
               {/* Contact info */}
               <div className="space-y-3">
@@ -112,7 +117,7 @@ export default function Footer({ footerData }) {
                   transition={{ duration: 0.2 }}
                 >
                   <Mail className="h-5 w-5 text-primary" />
-                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent.companyInfo.email}</span>
+                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent?.companyInfo?.email}</span>
                 </motion.div>
                 <motion.div 
                   className="flex items-center space-x-3"
@@ -120,13 +125,13 @@ export default function Footer({ footerData }) {
                   transition={{ duration: 0.2 }}
                 >
                   <Phone className="h-5 w-5 text-primary" />
-                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent.companyInfo.phone}</span>
+                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent?.companyInfo?.phone}</span>
                 </motion.div>
               </div>
 
               {/* Social links */}
-              <div className="flex space-x-4 flex-wrap">
-                {footerContent.socialLinks.map((social, index) => {
+              <div className={`flex space-x-4 flex-wrap relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'}`}>
+                {footerContent?.socialLinks?.map((social, index) => {
                   const IconComponent = social.icon;
                   return (
                     <motion.a
@@ -152,8 +157,8 @@ export default function Footer({ footerData }) {
               </div>
             </motion.div>
 
-            {/* Footer links */}
-            {Object.entries(footerContent.footerLinks).map(([category, links], categoryIndex) => (
+            {/* Footer links - Filtered to exclude Legal */}
+            {filteredFooterLinks.map(([category, links], categoryIndex) => (
               <motion.div 
                 key={category}
                 variants={itemVariants}

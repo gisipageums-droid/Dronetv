@@ -881,14 +881,25 @@ function App() {
     setIsComplete(true);
   };
 
+
+  // Add skip step function
+  const skipStep = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (currentStep < 6) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
   const renderStep = () => {
     const stepProps = {
       formData,
       updateFormData,
       onNext: nextStep,
       onPrev: prevStep,
+      onSkip: skipStep, // Add skip handler
       onStepClick: (step: number) => setCurrentStep(step),
       isValid: true,
+      showSkip: currentStep >= 2 && currentStep <= 5, // Show skip for steps 2-5 only
     };
 
     switch (currentStep) {
@@ -921,6 +932,7 @@ function App() {
             onPrev={prevStep}
             onSaveSuccess={(newDraftId) => setDraftId(newDraftId)}
             isValid={true}
+            showSkip={false} // Explicitly hide skip for last step
           />
         );
       default:

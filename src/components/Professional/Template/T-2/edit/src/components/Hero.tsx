@@ -1,6 +1,6 @@
 import { Edit2, Loader2, Save, Upload, X } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 
 // Custom Button component
@@ -78,6 +78,21 @@ const defaultHeroData: HeroData = {
   }
 };
 
+// Animation variants
+const itemVariants = {
+  hidden: { y: 50, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
+};
+
+const imageVariants = {
+  hidden: { scale: 0.8, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
 // Props interface
 interface HeroProps {
   heroData?: HeroData;
@@ -89,47 +104,59 @@ interface HeroProps {
 
 export function Hero({ heroData, onStateChange, userId, publishedId, templateSelection }: HeroProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
 
   const [data, setData] = useState<HeroData>(defaultHeroData);
   const [tempData, setTempData] = useState<HeroData>(defaultHeroData);
 
-  // Load data from backend or props
+  // Add this useEffect to notify parent of state changes
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        if (heroData) {
-          setData(heroData);
-          setTempData(heroData);
-        } else {
-          // Fetch from backend API
-          const response = await fetch(`/api/hero/${userId}/${publishedId}`);
-          if (response.ok) {
-            const backendData = await response.json();
-            setData(backendData);
-            setTempData(backendData);
-          } else {
-            // Use default data if fetch fails
-            setData(defaultHeroData);
-            setTempData(defaultHeroData);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading hero data:', error);
-        setData(defaultHeroData);
-        setTempData(defaultHeroData);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (onStateChange) {
+      onStateChange(data);
+    }
+  }, [data]);
 
-    loadData();
-  }, [heroData, userId, publishedId]);
+
+  // Intersection observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (heroRef.current) observer.observe(heroRef.current);
+    return () => {
+      if (heroRef.current) observer.unobserve(heroRef.current);
+    };
+  }, []);
+
+  // Fake API fetch
+  const fetchHeroData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await new Promise<HeroData>((resolve) =>
+        setTimeout(() => resolve(heroData || defaultHeroData), 1200)
+      );
+      setData(response);
+      setTempData(response);
+      setDataLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible && !dataLoaded && !isLoading) {
+      fetchHeroData();
+    }
+  }, [isVisible, dataLoaded, isLoading, heroData]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -137,11 +164,12 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     setPendingImageFile(null);
   };
 
+  // Updated Save function with S3 upload
   const handleSave = async () => {
     try {
       setIsUploading(true);
-
-      // Create a copy of tempData to update with S3 URLs
+      
+      // Create a copy of tempData to update with S3 URL
       let updatedData = { ...tempData };
 
       // Upload image if there's a pending file
@@ -153,58 +181,44 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
 
         const formData = new FormData();
         formData.append('file', pendingImageFile);
-        formData.append('sectionName', 'hero');
-        formData.append('imageField', 'profileImage');
-        formData.append('templateSelection', templateSelection);
+        formData.append('userId', userId);
+        formData.append('fieldName', 'heroImage');
 
-        const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
+        const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
           method: 'POST',
           body: formData,
         });
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          updatedData.imageUrl = uploadData.imageUrl;
-          console.log('Profile image uploaded to S3:', uploadData.imageUrl);
+          updatedData.imageUrl = uploadData.s3Url;
+          console.log('Profile image uploaded to S3:', uploadData.s3Url);
         } else {
           const errorData = await uploadResponse.json();
           toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
           return;
         }
+      }else{
+        console.log("not calling api");
+        
       }
 
       // Clear pending file
       setPendingImageFile(null);
 
-      // Save the updated data with S3 URLs
+      // Save the updated data with S3 URL
       setIsSaving(true);
-
-      // Save to backend API
-      const response = await fetch(`/api/hero/${userId}/${publishedId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: updatedData,
-          templateSelection
-        })
-      });
-
-      if (response.ok) {
-        const savedData = await response.json();
-        setData(savedData);
-        if (onStateChange) {
-          onStateChange(savedData);
-        }
-        setIsEditing(false);
-        toast.success('Hero section saved successfully');
-      } else {
-        throw new Error('Failed to save data');
-      }
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      
+      // Update both states with the new URL
+      setData(updatedData);
+      setTempData(updatedData);
+      
+      setIsEditing(false);
+      toast.success('Hero section saved with S3 URL ready for publish');
 
     } catch (error) {
-      console.error('Error saving hero data:', error);
+      console.error('Error saving hero section:', error);
       toast.error('Error saving changes. Please try again.');
     } finally {
       setIsUploading(false);
@@ -218,6 +232,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     setIsEditing(false);
   };
 
+  // Image upload handler with validation
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -247,39 +262,107 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     reader.readAsDataURL(file);
   };
 
-  const updateField = (field: keyof HeroData, value: string) => {
-    setTempData({ ...tempData, [field]: value });
-  };
+  // Stable update functions with useCallback
+  const updateTempContent = useCallback((field: keyof HeroData, value: string) => {
+    setTempData((prev) => ({ ...prev, [field]: value }));
+  }, []);
 
-  const updateStat = (stat: keyof HeroData['stats'], value: string) => {
-    setTempData({
-      ...tempData,
-      stats: { ...tempData.stats, [stat]: value }
-    });
-  };
+  const updateStat = useCallback((stat: keyof HeroData['stats'], value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      stats: { ...prev.stats, [stat]: value }
+    }));
+  }, []);
 
-  const updateButton = (button: keyof HeroData['buttons'], value: string) => {
-    setTempData({
-      ...tempData,
-      buttons: { ...tempData.buttons, [button]: value }
-    });
-  };
+  const updateButton = useCallback((button: keyof HeroData['buttons'], value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      buttons: { ...prev.buttons, [button]: value }
+    }));
+  }, []);
+
+  // Memoized EditableText component
+  const EditableText = useMemo(() => {
+    return ({
+      value,
+      field,
+      multiline = false,
+      className = "",
+      placeholder = "",
+      rows = 3,
+      statField,
+      buttonField,
+    }: {
+      value: string;
+      field?: keyof HeroData;
+      multiline?: boolean;
+      className?: string;
+      placeholder?: string;
+      rows?: number;
+      statField?: keyof HeroData['stats'];
+      buttonField?: keyof HeroData['buttons'];
+    }) => {
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const newValue = e.target.value;
+        if (statField) {
+          updateStat(statField, newValue);
+        } else if (buttonField) {
+          updateButton(buttonField, newValue);
+        } else if (field) {
+          updateTempContent(field, newValue);
+        }
+      };
+
+      const baseClasses = "w-full bg-white/10 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-white placeholder-gray-300";
+
+      if (multiline) {
+        return (
+          <textarea
+            value={value}
+            onChange={handleChange}
+            className={`${baseClasses} p-3 resize-none ${className}`}
+            placeholder={placeholder}
+            rows={rows}
+          />
+        );
+      }
+
+      return (
+        <input
+          type='text'
+          value={value}
+          onChange={handleChange}
+          className={`${baseClasses} p-2 ${className}`}
+          placeholder={placeholder}
+        />
+      );
+    };
+  }, [updateTempContent, updateStat, updateButton]);
 
   const displayData = isEditing ? tempData : data;
 
   if (isLoading) {
     return (
-      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-gray-600 mt-4">Loading hero data...</p>
+      <section 
+        ref={heroRef}
+        className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
+      >
+        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
+          <div className='bg-white rounded-lg p-6 shadow-lg flex items-center gap-3'>
+            <Loader2 className='w-5 h-5 animate-spin text-blue-600' />
+            <span className='text-gray-700'>Loading content...</span>
+          </div>
         </div>
       </section>
     );
   }
 
   return (
-    <section id="home" className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20">
+    <section 
+      id="home" 
+      ref={heroRef}
+      className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -287,9 +370,10 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
             <Button
               onClick={handleEdit}
               size='sm'
-              className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+              className='bg-red-400 hover:bg-red-600 shadow-md'
+              disabled={isLoading}
             >
-              <Edit2 className='w-4 h-4 mr-2' />
+              <Edit2 className='w-4 h-4 mr-2 ' />
               Edit
             </Button>
           ) : (
@@ -312,7 +396,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
               <Button
                 onClick={handleCancel}
                 size='sm'
-                className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+                className='bg-red-400 hover:bg-red-600 shadow-md'
                 disabled={isSaving || isUploading}
               >
                 <X className='w-4 h-4 mr-2' />
@@ -324,41 +408,57 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-8">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight">
+          <motion.div
+            className="space-y-8"
+            initial='hidden'
+            animate='visible'
+            variants={itemVariants}
+          >
+            <motion.h1 
+              className="text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight"
+              variants={itemVariants}
+            >
               Hi, I'm{' '}
               {isEditing ? (
-                <input
-                  type="text"
+                <EditableText
                   value={displayData.name}
-                  onChange={(e) => updateField('name', e.target.value)}
-                  className="text-yellow-500 bg-transparent border-2 border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none p-1"
+                  field='name'
+                  className="text-yellow-500 p-1"
+                  placeholder="Your name"
                 />
               ) : (
                 <span className="text-yellow-500">{displayData.name}</span>
               )}
-            </h1>
+            </motion.h1>
 
             {isEditing ? (
-              <textarea
+              <EditableText
                 value={displayData.description}
-                onChange={(e) => updateField('description', e.target.value)}
-                className="text-xl text-muted-foreground leading-relaxed w-full bg-transparent border-2 border-dashed border-gray-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                field='description'
+                multiline
+                className="text-yellow-500 p-1"
+                placeholder="Your description"
                 rows={3}
               />
             ) : (
-              <p className="text-xl text-muted-foreground leading-relaxed">
+              <motion.p 
+                className="text-xl text-muted-foreground leading-relaxed"
+                variants={itemVariants}
+              >
                 {displayData.description}
-              </p>
+              </motion.p>
             )}
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-4"
+              variants={itemVariants}
+            >
               {isEditing ? (
-                <input
-                  type="text"
+                <EditableText
                   value={displayData.buttons.work}
-                  onChange={(e) => updateButton('work', e.target.value)}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none"
+                  buttonField='work'
+                  className="px-6 py-3 text-yellow-500 rounded-lg"
+                  placeholder="Work button text"
                 />
               ) : (
                 <a
@@ -370,11 +470,11 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
               )}
 
               {isEditing ? (
-                <input
-                  type="text"
+                <EditableText
                   value={displayData.buttons.contact}
-                  onChange={(e) => updateButton('contact', e.target.value)}
-                  className="px-6 py-3 bg-transparent text-blue-600 border border-blue-600 rounded-lg border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none"
+                  buttonField='contact'
+                  className="px-6 py-3 bg-transparent text-yellow-500 border border-blue-600 rounded-lg"
+                  placeholder="Contact button text"
                 />
               ) : (
                 <a
@@ -384,22 +484,25 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
                   {displayData.buttons.contact}
                 </a>
               )}
-            </div>
+            </motion.div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 pt-8">
-              {['projects', 'experience', 'satisfaction'].map((stat, index) => (
+            <motion.div 
+              className="grid grid-cols-3 gap-8 pt-8"
+              variants={itemVariants}
+            >
+              {(['projects', 'experience', 'satisfaction'] as const).map((stat, index) => (
                 <div key={index} className="text-center">
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={displayData.stats[stat as keyof HeroData['stats']]}
-                      onChange={(e) => updateStat(stat as keyof HeroData['stats'], e.target.value)}
-                      className="text-3xl text-yellow-500 mb-2 bg-transparent border-2 border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none p-1 w-16 text-center"
+                    <EditableText
+                      value={displayData.stats[stat]}
+                      statField={stat}
+                      className="text-3xl text-yellow-500 mb-2 p-1 w-16 text-center"
+                      placeholder="Value"
                     />
                   ) : (
                     <div className="text-3xl text-yellow-500 mb-2">
-                      {displayData.stats[stat as keyof HeroData['stats']]}
+                      {displayData.stats[stat]}
                     </div>
                   )}
                   <p className="text-muted-foreground capitalize">
@@ -409,42 +512,16 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
                   </p>
                 </div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Right Content - User Image */}
           <motion.div
             className="relative"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial='hidden'
+            animate='visible'
+            variants={imageVariants}
           >
-            {isEditing && (
-              <div className='absolute top-4 right-4 z-10'>
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  size="sm"
-                  className="bg-black/40 hover:bg-black/60 text-white shadow-md backdrop-blur-sm"
-                >
-                  <Upload className="w-4 h-4 mr-2 text-white" />
-                  Change Image
-                </Button>
-
-                <input
-                  ref={fileInputRef}
-                  type='file'
-                  accept='image/*'
-                  onChange={handleImageUpload}
-                  className='hidden'
-                />
-                {pendingImageFile && (
-                  <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
-                    Image selected: {pendingImageFile.name}
-                  </p>
-                )}
-              </div>
-            )}
-
             <motion.div
               className="relative"
               whileHover={{ scale: 1.05 }}
@@ -463,11 +540,29 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
-                <img
-                  src={displayData.imageUrl}
-                  alt={`${displayData.name} - ${displayData.title}`}
-                  className="w-full h-96 object-cover object-center transition-transform duration-300 hover:scale-110"
-                />
+                <div className="relative">
+                  <img
+                    src={displayData.imageUrl}
+                    alt={`${displayData.name} - ${displayData.title}`}
+                    className="w-full h-96 object-cover object-center transition-transform duration-300 hover:scale-110"
+                  />
+                  {isEditing && (
+                    <label className='absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors'>
+                      <Upload className='w-4 h-4' />
+                      <input
+                        type='file'
+                        accept='image/*'
+                        className='hidden'
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                  )}
+                  {isEditing && pendingImageFile && (
+                    <div className='absolute top-2 left-2 text-xs text-orange-300 bg-black/70 px-2 py-1 rounded'>
+                      Pending upload: {pendingImageFile.name}
+                    </div>
+                  )}
+                </div>
               </motion.div>
             </motion.div>
           </motion.div>

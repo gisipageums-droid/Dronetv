@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { fetchFormStructure, submitForm } from "./api/formApi";
 import { Step1 } from "./components/steps/Step1";
 import { Step2 } from "./components/steps/Step2";
@@ -9,6 +9,7 @@ import { Step5 } from "./components/steps/Step5";
 import { Summary } from "./components/steps/Summary";
 import { FormProvider, useForm } from "./context/FormContext";
 import { useFormSteps } from "./hooks/useFormSteps";
+import { Loader } from "./components/Loader";
 
 // --- Loader Component ---
 // const Loader = ({ message }: { message: string }) => (
@@ -36,8 +37,9 @@ function AppInner() {
 
   // enable this for template fetching
     const location = useLocation();
+    const navigate = useNavigate()
   const templateIdFromState = location.state?.templateId; 
-  console.log("Template ID from state:", templateIdFromState);
+  // console.log("Template ID from state:", templateIdFromState);
 
 
 
@@ -48,8 +50,8 @@ function AppInner() {
 
   const draftId= `draft-${Date.now()}`
   const handleSubmit = async () => {
-    window.location.href ="/professional/Greeting"
-    // setLoading(true);
+    // window.location.href ="/professional/Greeting"
+    setLoading(true);
     setSuccess(false);
 
 
@@ -72,13 +74,16 @@ function AppInner() {
         version: "2.4",
       };
 
-      await submitForm(payload);  // plain JSON
+      const tempRes= await submitForm(payload);  // plain JSON
+      console.log(tempRes);
+      
 
       setSuccess(true);
       setTimeout(() => setLoading(false), 30000);
       setTimeout(() => {
 
         // window.location.href = `/professional/edit/${draftId}/${email}/template=${templateIdFromState}`; 
+        navigate(`/professional/edit/${draftId}/${email}/template=${templateIdFromState}`)
       }, 30000);
     } catch (err) {
       console.error(err);
@@ -115,10 +120,10 @@ function AppInner() {
       {/* <div className="bg-yellow-100"> */}
       {/* <div className="max-w-4xl mx-auto p-6 space-y-6 relative"> */}
 
-      {/* {loading && <Loader message={success ? "Created Successfully!" : "Submitting..."} />} */}
-      {/* {loading &&
-        // <Loader />
-      } */}
+       {/* {loading && <Loader message={success ? "Created Successfully!" : "Submitting..."} />}  */}
+       {loading &&
+        <Loader />}
+     
       {/* <Loader onComplete={() => setLoading(false)}  /> */}
 
 

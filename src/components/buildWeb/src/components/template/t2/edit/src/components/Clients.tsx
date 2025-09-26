@@ -351,7 +351,7 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
         </div>
 
         {/* Client Stats */}
-        <motion.div
+        {/* <motion.div
           className="mt-16 text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -428,7 +428,7 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
               </motion.div>
             )}
           </div>
-        </motion.div>
+        </motion.div> */}
 
         
       </div>

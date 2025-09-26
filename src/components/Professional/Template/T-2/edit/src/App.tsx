@@ -12,9 +12,11 @@ import { Projects } from './components/Projects';
 import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
+import { useTemplate } from "../../../../../context/context"
 
 // Define types for the component states
 interface ComponentStates {
+  hero?: any;
   about?: any;
   certifications?: any;
   clients?: any;
@@ -31,25 +33,34 @@ interface AIGenData {
 }
 
 export default function EditTemp_2() {
+  const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData, publishProfessionalTemplate } = useTemplate();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [AIGenData, setAIGenData] = useState<AIGenData>({
-  publishedId: "",
-  userId: "",
-  draftId: "",
-  templateSelection: "",
-  content: {}
-});
-
   const [componentStates, setComponentStates] = useState<ComponentStates>({});
 
   const { userId, draftId } = useParams();
-  // Memoize the collectComponentState function
+
+  // Memoize the collectComponentState function - same as App2.tsx
   const collectComponentState = useCallback((componentName: keyof ComponentStates, state: any) => {
     setComponentStates((prev) => ({
       ...prev,
       [componentName]: state,
     }));
   }, []);
+
+  // Update finalTemplate whenever componentStates changes - same as App2.tsx
+  useEffect(() => {
+    setFinalTemplate((prev: any) => ({
+      ...prev,
+      professionalId: AIGenData.professionalId,
+      userId: AIGenData.userId,
+      submissionId: AIGenData.submissionId,
+      templateSelection: AIGenData.templateSelection,
+      content: {
+        ...prev.content,
+        ...componentStates,
+      },
+    }));
+  }, [componentStates, setFinalTemplate, AIGenData]);
 
   useEffect(() => {
     // Apply or remove dark class on document element
@@ -60,19 +71,17 @@ export default function EditTemp_2() {
     }
   }, [isDarkMode]);
 
+  // Keep the original fetchTemplateData function from App.tsx
   useEffect(() => {
-    // Simulate fetching data from backend/API
     const fetchTemplateData = async () => {
       try {
         // Replace with actual API call
         const response = await fetch(`https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod/api/professional/${userId}/${draftId}?template=template-2`);
         if (response.ok) {
           const data = await response.json();
-          setAIGenData(prev => ({
-            ...prev,
-            ...data,
-            content: data.content || {}
-          }));
+
+          setFinalTemplate(data)
+          setAIGenData(data);
           // Set initial component states from fetched data
           if (data.content) {
             setComponentStates(data.content);
@@ -81,97 +90,23 @@ export default function EditTemp_2() {
         }
       } catch (error) {
         console.error('Error fetching template data:', error);
-        // Use default data if fetch fails
-        setAIGenData(prev => ({
-          ...prev,
-          content: {
-            about: {},
-            certifications: {},
-            clients: {},
-            experience: {},
-            // Initialize other component states
-          }
-        }));
       }
     };
-    fetchTemplateData()
-  }, [userId, draftId]);
-
-  useEffect(() => {
-    // Update AIGenData with component states when they change
-    setAIGenData((prev) => ({
-      ...prev,
-      content: {
-        ...prev.content,
-        ...componentStates,
-      },
-    }));
-
-    // Auto-save functionality (optional)
-    const autoSave = setTimeout(() => {
-      if (Object.keys(componentStates).length > 0) {
-        saveTemplateData();
-      }
-    }, 2000); // Save after 2 seconds of inactivity
-
-    return () => clearTimeout(autoSave);
-  }, [componentStates]);
-
-  const saveTemplateData = async () => {
-    try {
-      const response = await fetch(`/api/template-data/${userId}/${draftId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...AIGenData,
-          templateSelection: AIGenData.templateSelection,
-          content: componentStates
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save template data');
-      }
-
-      console.log('Template data saved successfully');
-    } catch (error) {
-      console.error('Error saving template data:', error);
-    }
-  };
+    
+    fetchTemplateData();
+  }, [userId, draftId, setFinalTemplate, setAIGenData]);
 
   const handleDarkModeToggle = (isDark: boolean) => {
     setIsDarkMode(isDark);
   };
 
-  // Function to handle final publish
-  const handlePublish = async () => {
-    try {
-      await saveTemplateData();
-
-      // Additional publish logic
-      const response = await fetch(`/api/publish/${AIGenData.userId}/${AIGenData.publishedId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          templateSelection: AIGenData.templateSelection,
-          content: componentStates
-        })
-      });
-
-      if (response.ok) {
-        console.log('Portfolio published successfully');
-        toast.success('Portfolio published successfully!');
-      } else {
-        toast.error('Failed to publish portfolio');
-      }
-    } catch (error) {
-      console.error('Error publishing portfolio:', error);
-      toast.error('Error publishing portfolio. Please try again.');
+  // Use the publishTemplate function from context - same pattern as App2.tsx
+  const handlePublish = () => {
+    if (Object.keys(componentStates).length === 0) {
+      toast.error("No content to publish");
+      return;
     }
+    publishProfessionalTemplate()
   };
 
   return (
@@ -179,7 +114,7 @@ export default function EditTemp_2() {
       <Header onDarkModeToggle={handleDarkModeToggle} />
 
       {/* Publish Button */}
-      <div className="fixed top-20 left-4 z-50">
+      <div className="fixed top-[9.5rem] left-4 z-50">
         <button
           onClick={handlePublish}
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-300"
@@ -189,25 +124,45 @@ export default function EditTemp_2() {
       </div>
 
       <main>
-        <Hero />
+        <Hero
+          heroData={componentStates.hero}
+          onStateChange={(state) => collectComponentState('heroContent', state)}
+          userId={AIGenData.userId}
+          publishedId={AIGenData.professionalId}
+          templateSelection={AIGenData.templateSelection}
+        />
 
         {/* About Section with State Management */}
         <About
           aboutData={componentStates.about}
-          onStateChange={(state) => collectComponentState('about', state)}
+          onStateChange={(state) => collectComponentState('aboutContent', state)}
           userId={AIGenData.userId}
-          publishedId={AIGenData.publishedId}
+          publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
-        <Skills />
-        <Projects />
+        <Skills 
+          skillsData={componentStates.skills}
+          onStateChange={(state) => collectComponentState('skillContent', state)}
+          userId={AIGenData.userId}
+          publishedId={AIGenData.professionalId}
+          templateSelection={AIGenData.templateSelection}
+        />
+
+        <Projects 
+          projectsData={componentStates.projects}
+          onStateChange={(state) => collectComponentState('projectContent', state)}
+          userId={AIGenData.userId}
+          publishedId={AIGenData.professionalId}
+          templateSelection={AIGenData.templateSelection}
+        />
+
         {/* Certifications Section with State Management */}
         <Certifications
           certData={componentStates.certifications}
-          onStateChange={(state) => collectComponentState('certifications', state)}
+          onStateChange={(state) => collectComponentState('certificationsContent', state)}
           userId={AIGenData.userId}
-          publishedId={AIGenData.publishedId}
+          publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
@@ -215,31 +170,46 @@ export default function EditTemp_2() {
         <section id="clients">
           <Clients
             clientsData={componentStates.clients}
-            onStateChange={(state) => collectComponentState('clients', state)}
+            onStateChange={(state) => collectComponentState('clientsContent', state)}
             userId={AIGenData.userId}
-            publishedId={AIGenData.publishedId}
+            publishedId={AIGenData.professionalId}
             templateSelection={AIGenData.templateSelection}
           />
         </section>
 
         <section id="testimonials">
-          <SimpleTestimonials />
+          <SimpleTestimonials 
+            testimonialsData={componentStates.testimonials}
+            onStateChange={(state) => collectComponentState('testimonialContent', state)}
+            userId={AIGenData.userId}
+            publishedId={AIGenData.professionalId}
+            templateSelection={AIGenData.templateSelection}
+          />
         </section>
 
-        <Contact />
+        <Contact 
+          contactData={componentStates.contact}
+          onStateChange={(state) => collectComponentState('contactContent', state)}
+          userId={AIGenData.userId}
+          publishedId={AIGenData.professionalId}
+          templateSelection={AIGenData.templateSelection}
+        />
       </main>
 
-      <Footer />
+      <Footer 
+        footerData={componentStates.footer}
+        onStateChange={(state) => collectComponentState('footerContent', state)}
+        userId={AIGenData.userId}
+        publishedId={AIGenData.professionalId}
+        templateSelection={AIGenData.templateSelection}
+      />
+      
       <Toaster 
         position="top-right"
         expand={false}
         richColors
         closeButton
       />
-
-
-
-
     </div>
   );
 }

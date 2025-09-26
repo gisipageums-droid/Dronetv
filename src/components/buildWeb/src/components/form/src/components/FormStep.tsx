@@ -1,5 +1,7 @@
+// FormStep.tsx - Updated with skip button
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, SkipForward } from 'lucide-react';
+import { motion } from "motion/react";
 
 interface FormStepProps {
   title: string;
@@ -7,10 +9,12 @@ interface FormStepProps {
   children: React.ReactNode;
   onNext?: () => void;
   onPrev?: () => void;
+  onSkip?: () => void; // New skip handler
   onStepClick?: (step: number) => void;
   isValid?: boolean;
   isFirstStep?: boolean;
   isLastStep?: boolean;
+  showSkip?: boolean; // New prop to control skip button visibility
   currentStep: number;
   totalSteps?: number;
 }
@@ -21,10 +25,12 @@ export const FormStep: React.FC<FormStepProps> = ({
   children,
   onNext,
   onPrev,
+  onSkip, // New prop
   onStepClick,
   isValid = true,
   isFirstStep = false,
   isLastStep = false,
+  showSkip = false, // Default to false
   currentStep,
   totalSteps = 6,
 }) => {
@@ -39,7 +45,7 @@ export const FormStep: React.FC<FormStepProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100">
-      {/* Header */}
+      {/* Header - unchanged */}
       <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -55,10 +61,9 @@ export const FormStep: React.FC<FormStepProps> = ({
         </div>
       </div>
 
-      {/* Progress Bar */}
+      {/* Progress Bar - unchanged */}
       <div className="bg-yellow-100 shadow-sm border-b border-amber-200">
         <div className="max-w-4xl mx-auto px-6 py-3">
-          {/* Step Navigation */}
           <div className="flex items-center justify-between mb-3 overflow-x-auto pb-2">
             {stepTitles.map((stepTitle, index) => {
               const stepNumber = index + 1;
@@ -129,7 +134,7 @@ export const FormStep: React.FC<FormStepProps> = ({
           {children}
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - Updated with skip button */}
         <div className="flex justify-between items-center bg-white rounded-lg shadow-md border border-amber-200 p-3">
           <button
             onClick={onPrev}
@@ -144,20 +149,43 @@ export const FormStep: React.FC<FormStepProps> = ({
             Previous
           </button>
 
-          <button
-            onClick={onNext}
-            disabled={!isValid}
-            className={`flex items-center px-6 py-2 rounded-md bg-black font-medium transition-all ${
-              !isValid
-                ? 'bg-yellow-100 text-gray-400 cursor-not-allowed'
-                : isLastStep
-                ? 'bg-gradient-to-r from-amber-600 to-yellow-600 text-white hover:from-amber-700 hover:to-yellow-700 hover:shadow-md'
-                : 'bg-gradient-to-r from-black to-gray-800 text-yellow-400 hover:from-gray-800 hover:to-black hover:shadow-md'
-            }`}
-          >
-            {isLastStep ? 'Submit Form' : 'Next Step'}
-            {!isLastStep && <ChevronRight className="w-4  h-4 ml-1" />}
-          </button>
+          <div className="flex gap-2">
+            {/* Skip Button - Only show for steps 2-5 */}
+            {showSkip && !isLastStep && (
+              <motion.button
+               whileInView={{opacity:[0,1] , y:[-5,0]}}
+               transition={{duration:0.5,ease:"easeIn"}}
+               whileHover={{y:[0,-2]}}
+               whileTap={{scale:[1,0.9]}}
+                onClick={onSkip}
+                className="flex items-center px-4 py-2 rounded-md bg-green-500 text-gray-700 font-medium transition-all hover:bg-gray-300 hover:shadow-md"
+              >
+                <SkipForward className="w-4 h-4 mr-1" />
+                Skip This Step
+              </motion.button>
+            )}
+
+            {/* Next/Submit Button */}
+            <motion.button
+           
+             whileInView={{opacity:[0,1] , y:[-5,0]}}
+               transition={{duration:0.5,ease:"easeIn"}}
+               whileHover={{y:[0,-2]}}
+               whileTap={{scale:[1,0.9]}}
+              onClick={onNext}
+              disabled={!isValid}
+              className={`flex items-center px-6 py-2 rounded-md font-medium transition-all ${
+                !isValid
+                  ? 'bg-yellow-100 text-gray-400 cursor-not-allowed'
+                  : isLastStep
+                  ? 'bg-black text-white hover:bg-amber-700  hover:shadow-md'
+                  : 'bg-black text-yellow-400 hover:gt-gray-800  hover:shadow-md'
+              }`}
+            >
+              {isLastStep ? 'Submit Form' : 'Next Step'}
+              {!isLastStep && <ChevronRight className="w-4 h-4 ml-1" />}
+            </motion.button>
+          </div>
         </div>
       </div>
     </div>

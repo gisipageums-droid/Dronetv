@@ -4,8 +4,6 @@ import { useState } from "react";
 import logo from "/images/Drone tv .in.jpg";
 
 export default function Footer({ footerData }) {
-let { isSubscribed, setIsSubscribed } = useState(false);
-
   // Create a mapping from social media names to their icon components
   const iconMap = {
     Facebook: Facebook,
@@ -14,6 +12,7 @@ let { isSubscribed, setIsSubscribed } = useState(false);
     Instagram: Instagram
   };
 
+  let  {isSubscribed,setIsSubscribed} = useState(false)
   // Function to process footerData and ensure icons are proper components
   const processFooterData = (data) => {
     if (!data) return null;
@@ -34,6 +33,11 @@ let { isSubscribed, setIsSubscribed } = useState(false);
 
   // Process the footer data
   const footerContent = processFooterData(footerData);
+
+  // Filter out the "Legal" category from footerLinks
+  const filteredFooterLinks = footerContent ? 
+    Object.entries(footerContent.footerLinks || {}).filter(([category]) => category !== "Legal")
+    : [];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -87,24 +91,23 @@ let { isSubscribed, setIsSubscribed } = useState(false);
                 transition={{ duration: 0.3 }}
               >
                 <motion.div 
-                  className="w-8 h-8  rounded-lg flex items-center justify-center mr-2" 
+                  className="w-8 h-8 rounded-lg flex items-center justify-center mr-2"
                   whileHover={{ 
                     rotate: 360,
                     boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)"
                   }}
                   transition={{ duration: 0.6 }}
                 >
-                  {/* <span className="text-black font-bold text-lg">{footerContent.companyInfo.logoUrl}</span> */}
                    <img
-                      src={footerContent.companyInfo.logoUrl || logo}
-                      alt="Logo"
-                      className="w-full h-full object-contain rounded-lg"
-                    />
+                        src={footerContent?.companyInfo?.logoUrl || logo}
+                        alt="Logo"
+                        className="w-full h-full object-contain"
+                      />
                 </motion.div>
-                <span className="text-xl font-bold text-white">{footerContent.companyInfo.companyName}</span>
+                <span className="text-xl font-bold text-white">{footerContent?.companyInfo?.companyName}</span>
               </motion.div>
               
-              <p className="text-gray-400 max-w-md">{footerContent.companyInfo.description}</p>
+              <p className="text-gray-400 max-w-md">{footerContent?.companyInfo?.description}</p>
 
               {/* Contact info */}
               <div className="space-y-3">
@@ -114,8 +117,7 @@ let { isSubscribed, setIsSubscribed } = useState(false);
                   transition={{ duration: 0.2 }}
                 >
                   <Mail className="h-5 w-5 text-primary" />
-                  
-                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent.companyInfo.email}</span>
+                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent?.companyInfo?.email}</span>
                 </motion.div>
                 <motion.div 
                   className="flex items-center space-x-3"
@@ -123,13 +125,13 @@ let { isSubscribed, setIsSubscribed } = useState(false);
                   transition={{ duration: 0.2 }}
                 >
                   <Phone className="h-5 w-5 text-primary" />
-                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`} >{footerContent.companyInfo.phone}</span>
+                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent?.companyInfo?.phone}</span>
                 </motion.div>
               </div>
 
               {/* Social links */}
-              <div className="flex space-x-4 flex-wrap">
-                {footerContent.socialLinks.map((social, index) => {
+              <div className={`flex space-x-4 flex-wrap relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'}`}>
+                {footerContent?.socialLinks?.map((social, index) => {
                   const IconComponent = social.icon;
                   return (
                     <motion.a
@@ -155,8 +157,8 @@ let { isSubscribed, setIsSubscribed } = useState(false);
               </div>
             </motion.div>
 
-            {/* Footer links */}
-            {Object.entries(footerContent.footerLinks).map(([category, links], categoryIndex) => (
+            {/* Footer links - Filtered to exclude Legal */}
+            {filteredFooterLinks.map(([category, links], categoryIndex) => (
               <motion.div 
                 key={category}
                 variants={itemVariants}
@@ -189,9 +191,8 @@ let { isSubscribed, setIsSubscribed } = useState(false);
           </div>
         </motion.div>
 
-      
-
        
+
       </div>
     </motion.footer>
   );

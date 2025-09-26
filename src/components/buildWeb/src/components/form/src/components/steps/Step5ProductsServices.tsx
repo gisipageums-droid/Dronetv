@@ -9,6 +9,8 @@ const Step5ProductsServices: React.FC<StepProps> = ({
   updateFormData,
   onNext,
   onPrev,
+    onSkip, // Add this line
+  showSkip, // Add this line
   isValid,
 }) => {
   const addService = () => {
@@ -62,6 +64,8 @@ const Step5ProductsServices: React.FC<StepProps> = ({
       onNext={onNext}
       onPrev={onPrev}
       isValid={isValid}
+       onSkip={onSkip}
+  showSkip={showSkip}
       currentStep={4}
       totalSteps={6}
     >
@@ -150,15 +154,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
             Services
           </h3>
           
-          <div className="mb-2">
-            <FormInput
-              label="What do you call your services section?"
-              value={formData.servicesTitle}
-              onChange={(value) => updateFormData({ servicesTitle: value })}
-              required
-              placeholder="e.g., Our Services"
-            />
-          </div>
+          
           
           <div className="space-y-2">
             <div className="flex justify-between items-center">
@@ -231,15 +227,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
             Products
           </h3>
           
-          <div className="mb-2">
-            <FormInput
-              label="What do you call your products section?"
-              value={formData.productsTitle}
-              onChange={(value) => updateFormData({ productsTitle: value })}
-              required
-              placeholder="e.g., Our Products"
-            />
-          </div>
+       
           
           <div className="space-y-2">
             <div className="flex justify-between items-center">

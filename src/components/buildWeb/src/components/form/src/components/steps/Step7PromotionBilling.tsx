@@ -48,6 +48,8 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
   formData,
   updateFormData,
   onNext,
+    onSkip, // Add this line
+  showSkip, // Add this line
   onPrev,
   isValid,
 }) => {
@@ -241,6 +243,8 @@ Email: privacy@dronetv.in`;
         onPrev={onPrev}
         isValid={isValid}
         currentStep={5}
+         onSkip={onSkip}
+  showSkip={showSkip}
         totalSteps={6}
       >
         <div className="space-y-8">

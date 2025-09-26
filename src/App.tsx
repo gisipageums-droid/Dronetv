@@ -55,8 +55,9 @@ import ProfessionalForm from "./components/Professional/form/form/src/App";
 import ProfessionalTemplateSelector from "./components/Professional/Select-Template/select";
 import ProTemp2 from "./components/Professional/Template/T-2/src/App";
 import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App"
-import SignupConfirmation from "./components/Professional/form/form/greeting/greeting";
+// import SignupConfirmation from "./components/Professional/form/form/greeting/greeting";
 import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
+import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main"
 const HomePage = () => (
   <>
     <Hero />
@@ -136,8 +137,10 @@ const AppContent = () => {
           <Route path='/professional/t2' element={<ProTemp2/>} />
           <Route path='/professional/t1' element={<ProTemp1/>} />
 
-          <Route path='/professional/Greeting' element={<SignupConfirmation/>} />
-          <Route path='/professional/edit/:draftId/:userId' element={<EditTemp_2/>} />
+          {/* <Route path='/professional/Greeting' element={<SignupConfirmation/>} /> */}
+          <Route path='/professional/edit/:draftId/:userId/template=2' element={<EditTemp_2/>} />
+          <Route path='/professional/edit/:draftId/:userId/template=1' element={<EditTemp_1/>} />
+
 
         </Routes>
         {!hideFooter && <Footer />}

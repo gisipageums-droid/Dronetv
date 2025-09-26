@@ -394,41 +394,9 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
         <div className={`mt-16 p-8 rounded-lg text-center ${
           theme === "dark" ? "bg-gray-900" : "bg-white"
         }`}>
-          {isEditing ? (
-            <>
-              <input
-                value={contentState.joinTeam.title}
-                onChange={(e) => updateJoinTeamField("title", e.target.value)}
-                className="text-2xl font-bold mb-4 border-b bg-transparent text-center w-full"
-              />
-              <textarea
-                value={contentState.joinTeam.description}
-                onChange={(e) => updateJoinTeamField("description", e.target.value)}
-                className="mb-6 max-w-2xl mx-auto border-b bg-transparent text-center w-full"
-              />
-              <input
-                value={contentState.joinTeam.buttonText}
-                onChange={(e) => updateJoinTeamField("buttonText", e.target.value)}
-                className="border-b bg-transparent text-center w-48 mx-auto"
-              />
-            </>
-          ) : (
-            <>
-              <h3 className="text-2xl font-bold mb-4">{contentState.joinTeam.title}</h3>
-              <p className="mb-6 max-w-2xl mx-auto">
-                {contentState.joinTeam.description}
-              </p>
-            </>
-          )}
           
-          <motion.button
-            className="px-6 py-3 rounded-full font-medium text-white"
-            style={{ backgroundColor: "#facc15" }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {contentState.joinTeam.buttonText}
-          </motion.button>
+          
+          
         </div>
       </div>
     </section>

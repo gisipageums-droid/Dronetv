@@ -173,7 +173,10 @@ subSubCategories?: { [subCategory: string]: string[] };
 export interface StepProps {
   formData: FormData;
   updateFormData: (data: Partial<FormData>) => void;
-  onNext: () => void;
-  onPrev: () => void;
-  isValid: boolean;
+  onNext?: () => void;
+  onPrev?: () => void;
+  onSkip?: () => void; // Add this
+  onStepClick?: (step: number) => void;
+  isValid?: boolean;
+  showSkip?: boolean; // Add this;
 }

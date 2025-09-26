@@ -105,45 +105,7 @@ export default function Clients({ clientData }) {
           </motion.div>
         </div>
 
-        {/* Client Stats */}
-        <motion.div
-          className="mt-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {clientData.stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="group cursor-pointer"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -3 }}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {stat.value}
-                  </div>
-                </motion.div>
-                <div className="text-muted-foreground text-sm">
-                  {stat.label}
-                </div>
-                <motion.div
-                  className="w-6 h-1 bg-primary/30 group-hover:bg-primary transition-colors mt-2 mx-auto rounded-full"
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+
       </div>
     </motion.section>
   );

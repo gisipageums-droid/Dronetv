@@ -8,6 +8,8 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   updateFormData,
   onNext,
   onPrev,
+  onSkip, // Add this line
+  showSkip, // Add this line
   isValid,
 }) => {
   const [selectedMainCategories, setSelectedMainCategories] = useState<
@@ -586,6 +588,8 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       description="Select your main business categories and specific areas of operation"
       onNext={onNext}
       onPrev={onPrev}
+       onSkip={onSkip}
+       showSkip={showSkip}
       isValid={isValid}
       currentStep={3}
       totalSteps={7}

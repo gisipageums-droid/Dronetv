@@ -16,7 +16,7 @@ export function DarkModeToggle({ onToggle }: DarkModeToggleProps) {
 
     setIsDark(shouldBeDark);
     onToggle(shouldBeDark);
-  }, [onToggle]);
+  }, []); // Remove onToggle from dependencies - run only once on mount
 
   const toggleDarkMode = () => {
     const newIsDark = !isDark;

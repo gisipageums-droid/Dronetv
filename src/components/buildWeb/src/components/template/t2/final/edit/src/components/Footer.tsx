@@ -127,53 +127,6 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
     }));
   };
 
-  // Handlers for newsletter
-  const updateNewsletter = (field, value) => {
-    setFooterContent(prev => ({ 
-      ...prev, 
-      newsletter: { ...prev.newsletter, [field]: value } 
-    }));
-  };
-
-  // Handlers for bottom footer
-  const updateBottomFooter = (field, value) => {
-    setFooterContent(prev => ({ 
-      ...prev, 
-      bottomFooter: { ...prev.bottomFooter, [field]: value } 
-    }));
-  };
-
-  const updateBottomFooterLink = (index, field, value) => {
-    setFooterContent(prev => ({
-      ...prev,
-      bottomFooter: {
-        ...prev.bottomFooter,
-        links: prev.bottomFooter.links.map((link, i) => 
-          i === index ? { ...link, [field]: value } : link
-        )
-      }
-    }));
-  };
-
-  const addBottomFooterLink = () => {
-    setFooterContent(prev => ({
-      ...prev,
-      bottomFooter: {
-        ...prev.bottomFooter,
-        links: [...prev.bottomFooter.links, { name: "New Link", href: "#" }]
-      }
-    }));
-  };
-
-  const removeBottomFooterLink = (index) => {
-    setFooterContent(prev => ({
-      ...prev,
-      bottomFooter: {
-        ...prev.bottomFooter,
-        links: prev.bottomFooter.links.filter((_, i) => i !== index)
-      }
-    }));
-  };
 
   // Logo upload functionality
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
