@@ -58,6 +58,7 @@ import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App"
 // import SignupConfirmation from "./components/Professional/form/form/greeting/greeting";
 import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
 import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main"
+import NotFound from "./components/buildWeb/src/components/form/src/Notfound"
 const HomePage = () => (
   <>
     <Hero />
@@ -109,6 +110,8 @@ const AppContent = () => {
           <Route path='/template/t2' element={<Template2 />} />
           <Route path='/form' element={<Form />} />
           <Route path='/form/:publicId/:userId/:draftId' element={<Form />} />
+         {/* AI get not found */}
+          <Route path='/form/notfound' element={<NotFound />} />
 
           <Route path='/edit/template/t1' element={<EditTemp1 />} />
           <Route path='/edit/template/t2' element={<EditTemp2 />} />

@@ -678,10 +678,12 @@ function App() {
       const response = await fetch(`${API}/${draftDetails.userId}/${draftDetails.draftId}?template=template-${draftDetails.templateSelection}`);
       const data = await response.json();
       if (response.ok) {
-        toast.success("AI generates the data successfully", { toastId: "ai-success" });
+        toast.success(`AI generates the data successfully`, { toastId: "ai-success" });
         setAIGenData(data);
         navigate(`/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}`);
       } else {
+        navigate("/form/notfound")
+        toast.error("AI get data is not found",{toastId:"not-found"})
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
