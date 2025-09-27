@@ -151,7 +151,7 @@ export const FormStep: React.FC<FormStepProps> = ({
 
           <div className="flex gap-2">
             {/* Skip Button - Only show for steps 2-5 */}
-            {showSkip && !isLastStep && (
+            {/* {showSkip && !isLastStep && (
               <motion.button
                whileInView={{opacity:[0,1] , y:[-5,0]}}
                transition={{duration:0.5,ease:"easeIn"}}
@@ -163,7 +163,7 @@ export const FormStep: React.FC<FormStepProps> = ({
                 <SkipForward className="w-4 h-4 mr-1" />
                 Skip This Step
               </motion.button>
-            )}
+            )} */}
 
             {/* Next/Submit Button */}
             <motion.button
