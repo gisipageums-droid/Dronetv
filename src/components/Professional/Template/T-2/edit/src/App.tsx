@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useTemplate } from "../../../../../context/context";
 import { About } from './components/About';
 import { Certifications } from './components/Certifications';
 import { Clients } from './components/Clients';
@@ -12,22 +13,25 @@ import { Projects } from './components/Projects';
 import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
-import { useTemplate } from "../../../../../context/context"
 
 // Define types for the component states
 interface ComponentStates {
-  hero?: any;
-  about?: any;
-  certifications?: any;
-  clients?: any;
-  experience?: any;
-  // Add other component states as needed
+  heroContent?: any;
+  aboutContent?: any;
+  certificationsContent?: any;
+  clientsContent?: any;
+  skillContent?: any;
+  projectContent?: any;
+  testimonialContent?: any;
+  contactContent?: any;
+  footerContent?: any;
+  headerContent?: any; // Added missing header property
 }
 
 interface AIGenData {
-  publishedId: string;
+  professionalId: string;
   userId: string;
-  draftId: string;
+  submissionId: string;
   templateSelection: string;
   content?: ComponentStates;
 }
@@ -36,18 +40,24 @@ export default function EditTemp_2() {
   const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData, publishProfessionalTemplate } = useTemplate();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [componentStates, setComponentStates] = useState<ComponentStates>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const { userId, draftId } = useParams();
 
-  // Memoize the collectComponentState function - same as App2.tsx
+  // Memoize the collectComponentState function with proper dependencies
   const collectComponentState = useCallback((componentName: keyof ComponentStates, state: any) => {
     setComponentStates((prev) => ({
       ...prev,
       [componentName]: state,
     }));
-  }, []);
+  }, []); // Empty dependency array since we're using functional update
 
-  // Update finalTemplate whenever componentStates changes - same as App2.tsx
+  // Memoize callback creators to prevent recreation on every render
+  const createStateChangeHandler = useCallback((componentName: keyof ComponentStates) => {
+    return (state: any) => collectComponentState(componentName, state);
+  }, [collectComponentState]);
+
+  // Update finalTemplate whenever componentStates changes
   useEffect(() => {
     setFinalTemplate((prev: any) => ({
       ...prev,
@@ -63,7 +73,6 @@ export default function EditTemp_2() {
   }, [componentStates, setFinalTemplate, AIGenData]);
 
   useEffect(() => {
-    // Apply or remove dark class on document element
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -71,47 +80,78 @@ export default function EditTemp_2() {
     }
   }, [isDarkMode]);
 
-  // Keep the original fetchTemplateData function from App.tsx
+  // Fetch template data
   useEffect(() => {
     const fetchTemplateData = async () => {
       try {
-        // Replace with actual API call
+        setIsLoading(true);        
         const response = await fetch(`https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod/api/professional/${userId}/${draftId}?template=template-2`);
+        
         if (response.ok) {
           const data = await response.json();
 
-          setFinalTemplate(data)
+          setFinalTemplate(data);
           setAIGenData(data);
-          // Set initial component states from fetched data
+          
           if (data.content) {
             setComponentStates(data.content);
-            console.log("Fetched content:", data.content);
+          } else {
+            toast.error("No content found in response");
+            setComponentStates({});
           }
+        } else {
+          console.error('Failed to fetch template data:', response.status);
+          toast.error('Failed to load template data');
         }
       } catch (error) {
         console.error('Error fetching template data:', error);
+        toast.error('Error loading template data');
+      } finally {
+        setIsLoading(false);
       }
     };
     
-    fetchTemplateData();
+    if (userId && draftId) {
+      fetchTemplateData();
+    }
   }, [userId, draftId, setFinalTemplate, setAIGenData]);
 
-  const handleDarkModeToggle = (isDark: boolean) => {
+  const handleDarkModeToggle = useCallback((isDark: boolean) => {
     setIsDarkMode(isDark);
-  };
+  }, []);
 
-  // Use the publishTemplate function from context - same pattern as App2.tsx
-  const handlePublish = () => {
+  const handlePublish = useCallback(() => {
     if (Object.keys(componentStates).length === 0) {
       toast.error("No content to publish");
       return;
     }
-    publishProfessionalTemplate()
-  };
+    publishProfessionalTemplate();
+  }, [componentStates, publishProfessionalTemplate]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading template data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // console.log('Current component states:', componentStates);
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Header onDarkModeToggle={handleDarkModeToggle} />
+      <Header 
+        onDarkModeToggle={handleDarkModeToggle}
+        headerData={componentStates.headerContent}
+        onStateChange={createStateChangeHandler('headerContent')}
+        userId={AIGenData.userId}
+        publishedId={AIGenData.professionalId}
+        templateSelection={AIGenData.templateSelection}
+      />
 
       {/* Publish Button */}
       <div className="fixed top-[9.5rem] left-4 z-50">
@@ -125,80 +165,83 @@ export default function EditTemp_2() {
 
       <main>
         <Hero
-          heroData={componentStates.hero}
-          onStateChange={(state) => collectComponentState('heroContent', state)}
+          heroData={componentStates.heroContent}
+          onStateChange={createStateChangeHandler('heroContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
-        {/* About Section with State Management */}
+        {/* About Section */}
         <About
-          aboutData={componentStates.about}
-          onStateChange={(state) => collectComponentState('aboutContent', state)}
+          aboutData={componentStates.aboutContent}
+          onStateChange={createStateChangeHandler('aboutContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
         <Skills 
-          skillsData={componentStates.skills}
-          onStateChange={(state) => collectComponentState('skillContent', state)}
+          skillsData={componentStates.skillContent}
+          onStateChange={createStateChangeHandler('skillContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
         <Projects 
-          projectsData={componentStates.projects}
-          onStateChange={(state) => collectComponentState('projectContent', state)}
+          projectsData={componentStates.projectContent}
+          onStateChange={createStateChangeHandler('projectContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
-        {/* Certifications Section with State Management */}
+        {/* Certifications Section */}
         <Certifications
-          certData={componentStates.certifications}
-          onStateChange={(state) => collectComponentState('certificationsContent', state)}
+          certData={componentStates.certificationsContent}
+          onStateChange={createStateChangeHandler('certificationsContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
-        {/* Clients Section with State Management */}
+        {/* Clients Section */}
         <section id="clients">
           <Clients
-            clientsData={componentStates.clients}
-            onStateChange={(state) => collectComponentState('clientsContent', state)}
+            clientsData={componentStates.clientsContent}
+            onStateChange={createStateChangeHandler('clientsContent')}
             userId={AIGenData.userId}
             publishedId={AIGenData.professionalId}
             templateSelection={AIGenData.templateSelection}
           />
         </section>
 
+        {/* Testimonials Section */}
         <section id="testimonials">
           <SimpleTestimonials 
-            testimonialsData={componentStates.testimonials}
-            onStateChange={(state) => collectComponentState('testimonialContent', state)}
+            testimonialsData={componentStates.testimonialContent}
+            onStateChange={createStateChangeHandler('testimonialContent')}
             userId={AIGenData.userId}
             publishedId={AIGenData.professionalId}
             templateSelection={AIGenData.templateSelection}
           />
         </section>
 
+        {/* Contact Section */}
         <Contact 
-          contactData={componentStates.contact}
-          onStateChange={(state) => collectComponentState('contactContent', state)}
+          contactData={componentStates.contactContent}
+          onStateChange={createStateChangeHandler('contactContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
       </main>
 
+      {/* Footer */}
       <Footer 
-        footerData={componentStates.footer}
-        onStateChange={(state) => collectComponentState('footerContent', state)}
+        footerData={componentStates.footerContent}
+        onStateChange={createStateChangeHandler('footerContent')}
         userId={AIGenData.userId}
         publishedId={AIGenData.professionalId}
         templateSelection={AIGenData.templateSelection}

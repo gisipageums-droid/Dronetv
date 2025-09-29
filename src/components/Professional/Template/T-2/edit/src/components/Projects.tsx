@@ -1,7 +1,8 @@
 import { Edit2, ExternalLink, Github, Loader2, Plus, Save, Trash2, Upload, X } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 
 // Custom Button component
 const Button = ({
@@ -109,58 +110,71 @@ interface ProjectsProps {
 
 export function Projects({ projectsData, onStateChange, userId, publishedId, templateSelection }: ProjectsProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const projectsRef = useRef<HTMLDivElement>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
+  
+  // Pending image files for S3 upload - SAME PATTERN AS HERO
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
   const [data, setData] = useState<ProjectsData>(defaultProjectsData);
   const [tempData, setTempData] = useState<ProjectsData>(defaultProjectsData);
 
-  // Load data from backend or props
+  // Notify parent of state changes - SAME AS HERO
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        if (projectsData) {
-          setData(projectsData);
-          setTempData(projectsData);
-        } else {
-          // Fetch from backend API
-          const response = await fetch(`/api/projects/${userId}/${publishedId}`);
-          if (response.ok) {
-            const backendData = await response.json();
-            setData(backendData);
-            setTempData(backendData);
-          } else {
-            // Use default data if fetch fails
-            setData(defaultProjectsData);
-            setTempData(defaultProjectsData);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading projects data:', error);
-        setData(defaultProjectsData);
-        setTempData(defaultProjectsData);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (onStateChange) {
+      onStateChange(data);
+    }
+  }, [data]);
 
-    loadData();
-  }, [projectsData, userId, publishedId]);
+  // Intersection observer - SAME AS HERO
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (projectsRef.current) observer.observe(projectsRef.current);
+    return () => {
+      if (projectsRef.current) observer.unobserve(projectsRef.current);
+    };
+  }, []);
+
+  // Fake API fetch - SAME LOGIC AS HERO
+  const fetchProjectsData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await new Promise<ProjectsData>((resolve) =>
+        setTimeout(() => resolve(projectsData || defaultProjectsData), 1200)
+      );
+      setData(response);
+      setTempData(response);
+      setDataLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible && !dataLoaded && !isLoading) {
+      fetchProjectsData();
+    }
+  }, [isVisible, dataLoaded, isLoading, projectsData]);
 
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingImageFiles({});
+    setPendingImageFiles({}); // Clear pending files - SAME AS HERO
   };
 
+  // Save function with S3 upload - SAME PATTERN AS HERO
   const handleSave = async () => {
     try {
       setIsUploading(true);
-
+      
       // Create a copy of tempData to update with S3 URLs
       let updatedData = { ...tempData };
 
@@ -173,11 +187,10 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('sectionName', 'projects');
-        formData.append('imageField', `project_${projectId}`);
-        formData.append('templateSelection', templateSelection);
+        formData.append('userId', userId);
+        formData.append('fieldName', `project_${projectId}`);
 
-        const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
+        const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
           method: 'POST',
           body: formData,
         });
@@ -186,9 +199,9 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
           const uploadData = await uploadResponse.json();
           // Update the project image with the S3 URL
           updatedData.projects = updatedData.projects.map(project =>
-            project.id === projectId ? { ...project, image: uploadData.imageUrl } : project
+            project.id === projectId ? { ...project, image: uploadData.s3Url } : project
           );
-          console.log('Project image uploaded to S3:', uploadData.imageUrl);
+          console.log('Project image uploaded to S3:', uploadData.s3Url);
         } else {
           const errorData = await uploadResponse.json();
           toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
@@ -196,38 +209,22 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
         }
       }
 
-      // Clear pending files
+      // Clear pending files - SAME AS HERO
       setPendingImageFiles({});
 
       // Save the updated data with S3 URLs
       setIsSaving(true);
-
-      // Save to backend API
-      const response = await fetch(`/api/projects/${userId}/${publishedId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: updatedData,
-          templateSelection
-        })
-      });
-
-      if (response.ok) {
-        const savedData = await response.json();
-        setData(savedData);
-        if (onStateChange) {
-          onStateChange(savedData);
-        }
-        setIsEditing(false);
-        toast.success('Projects section saved successfully');
-      } else {
-        throw new Error('Failed to save data');
-      }
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      
+      // Update both states with the new URLs - SAME AS HERO
+      setData(updatedData);
+      setTempData(updatedData);
+      
+      setIsEditing(false);
+      toast.success('Projects section saved with S3 URLs ready for publish');
 
     } catch (error) {
-      console.error('Error saving projects data:', error);
+      console.error('Error saving projects section:', error);
       toast.error('Error saving changes. Please try again.');
     } finally {
       setIsUploading(false);
@@ -237,29 +234,30 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingImageFiles({});
+    setPendingImageFiles({}); // Clear pending files - SAME AS HERO
     setIsEditing(false);
   };
 
+  // Image upload handler with validation - SAME PATTERN AS HERO
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, projectId: string) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
+    // Validate file type and size - SAME AS HERO
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit - SAME AS HERO
       toast.error('File size must be less than 5MB');
       return;
     }
 
-    // Store the file for upload on Save
+    // Store the file for upload on Save - SAME PATTERN AS HERO
     setPendingImageFiles(prev => ({ ...prev, [projectId]: file }));
 
-    // Show immediate local preview
+    // Show immediate local preview - SAME AS HERO
     const reader = new FileReader();
     reader.onload = (e) => {
       const updatedProjects = tempData.projects.map(project =>
@@ -270,33 +268,34 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
     reader.readAsDataURL(file);
   };
 
-  const updateProject = (index: number, field: string, value: any) => {
+  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  const updateProject = useCallback((index: number, field: string, value: any) => {
     const updatedProjects = [...tempData.projects];
     updatedProjects[index] = { ...updatedProjects[index], [field]: value };
     setTempData({ ...tempData, projects: updatedProjects });
-  };
+  }, [tempData]);
 
-  const updateTechnology = (projectIndex: number, techIndex: number, value: string) => {
+  const updateTechnology = useCallback((projectIndex: number, techIndex: number, value: string) => {
     const updatedProjects = [...tempData.projects];
     const updatedTechnologies = [...updatedProjects[projectIndex].technologies];
     updatedTechnologies[techIndex] = value;
     updatedProjects[projectIndex].technologies = updatedTechnologies;
     setTempData({ ...tempData, projects: updatedProjects });
-  };
+  }, [tempData]);
 
-  const addTechnology = (projectIndex: number) => {
+  const addTechnology = useCallback((projectIndex: number) => {
     const updatedProjects = [...tempData.projects];
     updatedProjects[projectIndex].technologies.push('New Technology');
     setTempData({ ...tempData, projects: updatedProjects });
-  };
+  }, [tempData]);
 
-  const removeTechnology = (projectIndex: number, techIndex: number) => {
+  const removeTechnology = useCallback((projectIndex: number, techIndex: number) => {
     const updatedProjects = [...tempData.projects];
     updatedProjects[projectIndex].technologies = updatedProjects[projectIndex].technologies.filter((_, i) => i !== techIndex);
     setTempData({ ...tempData, projects: updatedProjects });
-  };
+  }, [tempData]);
 
-  const addProject = () => {
+  const addProject = useCallback(() => {
     const newProject: Project = {
       id: Date.now().toString(),
       title: 'New Project',
@@ -310,9 +309,9 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
       ...tempData,
       projects: [...tempData.projects, newProject]
     });
-  };
+  }, [tempData]);
 
-  const removeProject = (index: number) => {
+  const removeProject = useCallback((index: number) => {
     if (tempData.projects.length <= 1) {
       toast.error("You must have at least one project");
       return;
@@ -320,30 +319,31 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
 
     const updatedProjects = tempData.projects.filter((_, i) => i !== index);
     setTempData({ ...tempData, projects: updatedProjects });
-  };
+  }, [tempData]);
 
-  const updateSection = (field: keyof Omit<ProjectsData, 'projects'>, value: string) => {
+  const updateSection = useCallback((field: keyof Omit<ProjectsData, 'projects'>, value: string) => {
     setTempData({
       ...tempData,
       [field]: value
     });
-  };
+  }, [tempData]);
 
   const displayData = isEditing ? tempData : data;
 
-  if (isLoading) {
+  // Loading state - SAME PATTERN AS HERO
+  if (isLoading || !displayData.projects || displayData.projects.length === 0) {
     return (
-      <section id="projects" className="py-20 bg-background">
+      <section ref={projectsRef} id="projects" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-gray-600 mt-4">Loading projects data...</p>
+          <p className="text-muted-foreground mt-4">Loading projects data...</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section id="projects" className="py-20 bg-background">
+    <section ref={projectsRef} id="projects" className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -408,12 +408,12 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
                 type="text"
                 value={displayData.sectionTitle}
                 onChange={(e) => updateSection('sectionTitle', e.target.value)}
-                className="text-3xl sm:text-4xl text-foreground mb-4 bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md"
+                className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
               />
               <textarea
                 value={displayData.sectionDescription}
                 onChange={(e) => updateSection('sectionDescription', e.target.value)}
-                className="text-lg text-muted-foreground max-w-2xl mx-auto bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                 rows={3}
               />
             </>
@@ -455,16 +455,13 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
               )}
 
               <div className="relative overflow-hidden">
-                <motion.div
-                  
-                  transition={{ duration: 0.3 }}
-                >
+                <motion.div transition={{ duration: 0.3 }}>
                   {isEditing && (
                     <div className="absolute top-2 left-2 z-10">
                       <Button
                         onClick={() => fileInputRefs.current[project.id]?.click()}
                         size="sm"
-                        variant="outline" // 👈 prevents default blue/white styling
+                        variant="outline"
                         className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
                       >
                         <Upload className="w-4 h-4 mr-2 text-black" />
@@ -485,7 +482,7 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
                       )}
                     </div>
                   )}
-                  <img
+                  <ImageWithFallback
                     src={project.image}
                     alt={project.title}
                     className="w-full h-48 object-cover"
@@ -519,7 +516,7 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
                     type="text"
                     value={project.title}
                     onChange={(e) => updateProject(index, 'title', e.target.value)}
-                    className="text-xl text-foreground mb-2 w-full bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                    className="text-xl text-foreground mb-2 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                   />
                 ) : (
                   <h3 className="text-xl text-foreground mb-2">{project.title}</h3>
@@ -529,7 +526,7 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
                   <textarea
                     value={project.description}
                     onChange={(e) => updateProject(index, 'description', e.target.value)}
-                    className="text-muted-foreground mb-4 leading-relaxed w-full bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                    className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                     rows={3}
                   />
                 ) : (
@@ -579,14 +576,14 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
                       value={project.liveUrl}
                       onChange={(e) => updateProject(index, 'liveUrl', e.target.value)}
                       placeholder="Live Demo URL"
-                      className="w-full p-2 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                      className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
                     />
                     <input
                       type="text"
                       value={project.githubUrl}
                       onChange={(e) => updateProject(index, 'githubUrl', e.target.value)}
                       placeholder="GitHub URL"
-                      className="w-full p-2 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                      className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                 ) : (
@@ -622,7 +619,7 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
               type="text"
               value={displayData.viewAllButton}
               onChange={(e) => updateSection('viewAllButton', e.target.value)}
-              className="inline-flex items-center px-6 py-3 bg-yellow-400 text-gray-900 rounded-lg bg-transparent border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none text-center"
+              className="inline-flex items-center px-6 py-3 bg-yellow-400 text-gray-900 rounded-lg bg-white/80 border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none text-center"
             />
           ) : (
             <a

@@ -59,6 +59,8 @@ import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App"
 import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
 import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main"
 import NotFound from "./components/buildWeb/src/components/form/src/Notfound"
+import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboard";
+import UserEvent from "./components/UserEvent";
 const HomePage = () => (
   <>
     <Hero />
@@ -144,7 +146,9 @@ const AppContent = () => {
           <Route path='/professional/edit/:draftId/:userId/template=2' element={<EditTemp_2/>} />
           <Route path='/professional/edit/:draftId/:userId/template=1' element={<EditTemp_1/>} />
 
-
+        {/* event routes */}
+        <Route path='/admin/event/dashboard' element={<EventAdminDashboard />} />
+        <Route path='/user/event' element={<UserEvent />} />
         </Routes>
         {!hideFooter && <Footer />}
         <ScrollingFooter />

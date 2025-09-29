@@ -1,7 +1,8 @@
 import { Cloud, Code, Database, Edit2, Globe, Loader2, Plus, Save, Smartphone, Trash2, Upload, X, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 
 // Custom Button component
 const Button = ({
@@ -125,20 +126,67 @@ interface SkillsProps {
 
 export function Skills({ skillsData, onStateChange, userId, publishedId, templateSelection }: SkillsProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const skillsRef = useRef<HTMLDivElement>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
+  
+  // Pending icon files for S3 upload - SAME PATTERN AS HERO
   const [pendingIconFiles, setPendingIconFiles] = useState<Record<string, File>>({});
 
-  const [data, setData] = useState<SkillsData>(skillsData || defaultData);
-  const [tempData, setTempData] = useState<SkillsData>(skillsData || defaultData);
+  const [data, setData] = useState<SkillsData>(defaultData);
+  const [tempData, setTempData] = useState<SkillsData>(defaultData);
+
+  // Notify parent of state changes - SAME AS HERO
+  useEffect(() => {
+    if (onStateChange) {
+      onStateChange(data);
+    }
+  }, [data]);
+
+  // Intersection observer - SAME AS HERO
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (skillsRef.current) observer.observe(skillsRef.current);
+    return () => {
+      if (skillsRef.current) observer.unobserve(skillsRef.current);
+    };
+  }, []);
+
+  // Fake API fetch - SAME LOGIC AS HERO
+  const fetchSkillsData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await new Promise<SkillsData>((resolve) =>
+        setTimeout(() => resolve(skillsData || defaultData), 1200)
+      );
+      setData(response);
+      setTempData(response);
+      setDataLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible && !dataLoaded && !isLoading) {
+      fetchSkillsData();
+    }
+  }, [isVisible, dataLoaded, isLoading, skillsData]);
 
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingIconFiles({});
+    setPendingIconFiles({}); // Clear pending files - SAME AS HERO
   };
 
+  // Save function with S3 upload - SAME PATTERN AS HERO
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -155,11 +203,10 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('sectionName', 'skills');
-        formData.append('imageField', `skill_icon_${skillId}`);
-        formData.append('templateSelection', templateSelection);
+        formData.append('userId', userId);
+        formData.append('fieldName', `skill_icon_${skillId}`);
 
-        const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
+        const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
           method: 'POST',
           body: formData,
         });
@@ -168,9 +215,9 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
           const uploadData = await uploadResponse.json();
           // Update the skill icon with the S3 URL
           updatedData.skills = updatedData.skills.map(skill => 
-            skill.id === skillId ? { ...skill, iconUrl: uploadData.imageUrl, icon: undefined } : skill
+            skill.id === skillId ? { ...skill, iconUrl: uploadData.s3Url, icon: undefined } : skill
           );
-          console.log('Skill icon uploaded to S3:', uploadData.imageUrl);
+          console.log('Skill icon uploaded to S3:', uploadData.s3Url);
         } else {
           const errorData = await uploadResponse.json();
           toast.error(`Icon upload failed: ${errorData.message || 'Unknown error'}`);
@@ -178,38 +225,22 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
         }
       }
 
-      // Clear pending files
+      // Clear pending files - SAME AS HERO
       setPendingIconFiles({});
 
       // Save the updated data with S3 URLs
       setIsSaving(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
       
-      // Save to backend API
-      const response = await fetch(`/api/skills/${userId}/${publishedId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: updatedData,
-          templateSelection
-        })
-      });
-
-      if (response.ok) {
-        const savedData = await response.json();
-        setData(savedData);
-        if (onStateChange) {
-          onStateChange(savedData);
-        }
-        setIsEditing(false);
-        toast.success('Skills section saved successfully');
-      } else {
-        throw new Error('Failed to save data');
-      }
+      // Update both states with the new URLs - SAME AS HERO
+      setData(updatedData);
+      setTempData(updatedData);
+      
+      setIsEditing(false);
+      toast.success('Skills section saved with S3 URLs ready for publish');
 
     } catch (error) {
-      console.error('Error saving skills:', error);
+      console.error('Error saving skills section:', error);
       toast.error('Error saving changes. Please try again.');
     } finally {
       setIsUploading(false);
@@ -219,15 +250,16 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingIconFiles({});
+    setPendingIconFiles({}); // Clear pending files - SAME AS HERO
     setIsEditing(false);
   };
 
+  // Icon upload handler with validation - SAME PATTERN AS HERO
   const handleIconUpload = (event: React.ChangeEvent<HTMLInputElement>, skillId: string) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
+    // Validate file type and size - SAME AS HERO
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
@@ -238,10 +270,10 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
       return;
     }
 
-    // Store the file for upload on Save
+    // Store the file for upload on Save - SAME PATTERN AS HERO
     setPendingIconFiles(prev => ({ ...prev, [skillId]: file }));
 
-    // Show immediate local preview
+    // Show immediate local preview - SAME AS HERO
     const reader = new FileReader();
     reader.onload = (e) => {
       const updatedSkills = tempData.skills.map(skill =>
@@ -252,13 +284,21 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
     reader.readAsDataURL(file);
   };
 
-  const updateSkill = (index: number, field: keyof Skill, value: any) => {
+  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  const updateSkill = useCallback((index: number, field: keyof Skill, value: any) => {
     const updatedSkills = [...tempData.skills];
     updatedSkills[index] = { ...updatedSkills[index], [field]: value };
     setTempData({ ...tempData, skills: updatedSkills });
-  };
+  }, [tempData]);
 
-  const addSkill = () => {
+  const updateHeader = useCallback((field: keyof SkillsData['header'], value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      header: { ...prev.header, [field]: value }
+    }));
+  }, []);
+
+  const addSkill = useCallback(() => {
     const newSkill: Skill = {
       id: Date.now().toString(),
       title: "New Skill",
@@ -269,9 +309,9 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
       ...tempData,
       skills: [...tempData.skills, newSkill]
     });
-  };
+  }, [tempData]);
 
-  const removeSkill = (index: number) => {
+  const removeSkill = useCallback((index: number) => {
     if (tempData.skills.length <= 1) {
       toast.error("You must have at least one skill");
       return;
@@ -279,19 +319,24 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
     
     const updatedSkills = tempData.skills.filter((_, i) => i !== index);
     setTempData({ ...tempData, skills: updatedSkills });
-  };
-
-  const updateHeader = (field: keyof SkillsData['header'], value: string) => {
-    setTempData({
-      ...tempData,
-      header: { ...tempData.header, [field]: value }
-    });
-  };
+  }, [tempData]);
 
   const displayData = isEditing ? tempData : data;
 
+  // Loading state - SAME PATTERN AS HERO
+  if (isLoading || !displayData.skills || displayData.skills.length === 0) {
+    return (
+      <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
+          <p className="text-muted-foreground mt-4">Loading skills data...</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -357,7 +402,7 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
                 type="text"
                 value={displayData.header.title}
                 onChange={(e) => updateHeader('title', e.target.value)}
-                className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
               />
               <textarea
                 value={displayData.header.subtitle}
@@ -410,7 +455,7 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
                   <Button
                     onClick={() => fileInputRefs.current[skill.id]?.click()}
                     size='sm'
-                    className='absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm shadow-md p-1 '
+                    className='absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm shadow-md p-1'
                   >
                     <Upload className='w-3 h-3 text-black' />
                     <input
@@ -423,8 +468,14 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
                   </Button>
                 )}
                 
+                {pendingIconFiles[skill.id] && (
+                  <p className='absolute -bottom-6 text-xs text-orange-600 bg-white p-1 rounded'>
+                    Icon selected
+                  </p>
+                )}
+                
                 {skill.iconUrl ? (
-                  <img
+                  <ImageWithFallback
                     src={skill.iconUrl}
                     alt={skill.title}
                     className="w-8 h-8 object-contain"

@@ -1,10 +1,10 @@
 import { Award, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-// Custom Button component
+// Custom Button component (same as yours)
 const Button = ({
   children,
   onClick,
@@ -81,33 +81,7 @@ const defaultData: CertificationsData = {
       description: "Comprehensive certification covering React, Node.js, databases, and modern web development practices. Intensive 6-month program with hands-on projects.",
       credentialUrl: "#"
     },
-    {
-      id: '2',
-      title: "Advanced JavaScript Programming",
-      issuer: "Code Institute",
-      date: "2022",
-      image: "https://images.unsplash.com/photo-1565229284535-2cbbe3049123?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2RpbmclMjBjZXJ0aWZpY2F0aW9uJTIwcHJvZ3JhbW1pbmd8ZW58MXx8fHwxNTc1ODc1NDN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      description: "In-depth study of JavaScript ES6+, async programming, design patterns, and performance optimization techniques for modern web applications.",
-      credentialUrl: "#"
-    },
-    {
-      id: '3',
-      title: "React Developer Certification",
-      issuer: "Meta (Facebook)",
-      date: "2023",
-      image: "https://images.unsplash.com/photo-1554306274-f23873d9a26c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWIlMjBkZXZlbG9wbWVudCUyMGNvdXJzZSUyMGNvbXBsZXRpb258ZW58MXx8fHwxNzU3NTkxMTEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      description: "Official Meta certification covering React fundamentals, hooks, state management, testing, and advanced patterns for building scalable applications.",
-      credentialUrl: "#"
-    },
-    {
-      id: '4',
-      title: "Cloud Computing AWS",
-      issuer: "Amazon Web Services",
-      date: "2024",
-      image: "https://images.unsplash.com/photo-1752937326758-f130e633b422?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjZXJ0aWZpY2F0ZSUyMGRpcGxvbWElMjBhY2hpZXZlbWVudHxlbnwxfHx8fDE3NTc1ODc1NDN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      description: "AWS Solutions Architect certification covering cloud infrastructure, serverless computing, security, and scalable application deployment.",
-      credentialUrl: "#"
-    }
+    // ... other certificates
   ],
   stats: {
     certificationsCount: "4+",
@@ -133,52 +107,218 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const certificationsRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Pending image files for S3 upload - using same pattern as Hero
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
   const [data, setData] = useState<CertificationsData>(defaultData);
   const [tempData, setTempData] = useState<CertificationsData>(defaultData);
 
-  // Load data from backend or props
+  // Add this useEffect to notify parent of state changes - SAME AS HERO
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        if (certData) {
-          setData(certData);
-          setTempData(certData);
-        } else if (userId && publishedId) {
-          // Only fetch from backend if we have the required IDs
-          const response = await fetch(`/api/certifications/${userId}/${publishedId}`);
-          if (response.ok) {
-            const backendData = await response.json();
-            setData(backendData);
-            setTempData(backendData);
-          } else {
-            // Use default data if fetch fails
-            setData(defaultData);
-            setTempData(defaultData);
-          }
-        } else {
-          // Use default data if no props or IDs provided
-          setData(defaultData);
-          setTempData(defaultData);
-        }
-      } catch (error) {
-        console.error('Error loading certifications data:', error);
-        setData(defaultData);
-        setTempData(defaultData);
-      } finally {
-        setIsLoading(false);
-      }
+    if (onStateChange) {
+      onStateChange(data);
+    }
+  }, [data]);
+
+  // Intersection observer - SAME AS HERO
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (certificationsRef.current) observer.observe(certificationsRef.current);
+    return () => {
+      if (certificationsRef.current) observer.unobserve(certificationsRef.current);
     };
+  }, []);
 
-    loadData();
-  }, [certData, userId, publishedId]);
+  // Fake API fetch - SAME LOGIC AS HERO
+  const fetchCertData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await new Promise<CertificationsData>((resolve) =>
+        setTimeout(() => resolve(certData || defaultData), 1200)
+      );
+      setData(response);
+      setTempData(response);
+      setDataLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    if (isVisible && !dataLoaded && !isLoading) {
+      fetchCertData();
+    }
+  }, [isVisible, dataLoaded, isLoading, certData]);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setTempData({ ...data });
+    setPendingImageFiles({}); // Clear pending files - SAME AS HERO
+  };
+
+  // Save function with S3 upload - SAME PATTERN AS HERO
+  const handleSave = async () => {
+    try {
+      setIsUploading(true);
+      
+      // Create a copy of tempData to update with S3 URLs
+      let updatedData = { ...tempData };
+
+      // Upload images for certificates with pending files
+      for (const [certId, file] of Object.entries(pendingImageFiles)) {
+        if (!userId || !publishedId || !templateSelection) {
+          toast.error('Missing user information. Please refresh and try again.');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('userId', userId);
+        formData.append('fieldName', `certificate_${certId}`);
+
+        const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          // Update the certificate image with the S3 URL
+          updatedData.certificates = updatedData.certificates.map(cert =>
+            cert.id === certId ? { ...cert, image: uploadData.s3Url } : cert
+          );
+          console.log('Certificate image uploaded to S3:', uploadData.s3Url);
+        } else {
+          const errorData = await uploadResponse.json();
+          toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
+          return;
+        }
+      }
+
+      // Clear pending files - SAME AS HERO
+      setPendingImageFiles({});
+
+      // Save the updated data with S3 URLs
+      setIsSaving(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      
+      // Update both states with the new URLs - SAME AS HERO
+      setData(updatedData);
+      setTempData(updatedData);
+      
+      setIsEditing(false);
+      toast.success('Certifications saved with S3 URLs ready for publish');
+
+    } catch (error) {
+      console.error('Error saving certifications:', error);
+      toast.error('Error saving changes. Please try again.');
+    } finally {
+      setIsUploading(false);
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setTempData({ ...data });
+    setPendingImageFiles({}); // Clear pending files - SAME AS HERO
+    setIsEditing(false);
+  };
+
+  // Image upload handler with validation - SAME PATTERN AS HERO
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, certId: string) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size - SAME AS HERO
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit - SAME AS HERO
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    // Store the file for upload on Save - SAME PATTERN AS HERO
+    setPendingImageFiles(prev => ({ ...prev, [certId]: file }));
+
+    // Show immediate local preview - SAME AS HERO
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const updatedCerts = tempData.certificates.map(cert =>
+        cert.id === certId ? { ...cert, image: e.target?.result as string } : cert
+      );
+      setTempData({ ...tempData, certificates: updatedCerts });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  const updateCertificate = useCallback((index: number, field: keyof Certificate, value: string) => {
+    const updatedCerts = [...tempData.certificates];
+    updatedCerts[index] = { ...updatedCerts[index], [field]: value };
+    setTempData({ ...tempData, certificates: updatedCerts });
+  }, [tempData]);
+
+  const updateStat = useCallback((field: keyof CertificationsData['stats'], value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      stats: { ...prev.stats, [field]: value }
+    }));
+  }, []);
+
+  const updateHeader = useCallback((field: keyof CertificationsData['header'], value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      header: { ...prev.header, [field]: value }
+    }));
+  }, []);
+
+  // Memoized functions - SAME PATTERN AS HERO
+  const addCertificate = useCallback(() => {
+    const newCert: Certificate = {
+      id: Date.now().toString(),
+      title: "New Certification",
+      issuer: "Issuer Name",
+      date: "2024",
+      image: "https://via.placeholder.com/500x300?text=Certificate+Image",
+      description: "Certificate description",
+      credentialUrl: "#"
+    };
+    setTempData({
+      ...tempData,
+      certificates: [...tempData.certificates, newCert]
+    });
+    setCurrentIndex(tempData.certificates.length);
+  }, [tempData]);
+
+  const removeCertificate = useCallback((index: number) => {
+    if (!tempData.certificates || tempData.certificates.length <= 1) {
+      toast.error("You must have at least one certificate");
+      return;
+    }
+
+    const updatedCerts = tempData.certificates.filter((_, i) => i !== index);
+    setTempData({ ...tempData, certificates: updatedCerts });
+
+    if (currentIndex >= updatedCerts.length) {
+      setCurrentIndex(updatedCerts.length - 1);
+    }
+  }, [tempData, currentIndex]);
+
+  // Navigation functions
   const nextSlide = () => {
     if (!tempData.certificates || tempData.certificates.length === 0) return;
     setDirection(1);
@@ -195,177 +335,6 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
     if (!tempData.certificates || tempData.certificates.length === 0) return;
     setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
-  };
-
-  const handleEdit = () => {
-    setIsEditing(true);
-    setTempData({ ...data });
-    setPendingImageFiles({});
-  };
-
-  const handleSave = async () => {
-    try {
-      setIsUploading(true);
-
-      // Create a copy of tempData to update with S3 URLs
-      let updatedData = { ...tempData };
-
-      // Upload images for certificates with pending files
-      for (const [certId, file] of Object.entries(pendingImageFiles)) {
-        if (!userId || !publishedId || !templateSelection) {
-          toast.error('Missing user information. Please refresh and try again.');
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('sectionName', 'certifications');
-        formData.append('imageField', `certificate_${certId}`);
-        formData.append('templateSelection', templateSelection);
-
-        const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Update the certificate image with the S3 URL
-          updatedData.certificates = updatedData.certificates.map(cert =>
-            cert.id === certId ? { ...cert, image: uploadData.imageUrl } : cert
-          );
-          console.log('Certificate image uploaded to S3:', uploadData.imageUrl);
-        } else {
-          const errorData = await uploadResponse.json();
-          toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
-          return;
-        }
-      }
-
-      // Clear pending files
-      setPendingImageFiles({});
-
-      // Save the updated data with S3 URLs
-      setIsSaving(true);
-
-      // Save to backend API
-      const response = await fetch(`/api/certifications/${userId}/${publishedId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: updatedData,
-          templateSelection
-        })
-      });
-
-      if (response.ok) {
-        const savedData = await response.json();
-        setData(savedData);
-        if (onStateChange) {
-          onStateChange(savedData);
-        }
-        setIsEditing(false);
-        toast.success('Certifications saved successfully');
-      } else {
-        throw new Error('Failed to save data');
-      }
-
-    } catch (error) {
-      console.error('Error saving certifications:', error);
-      toast.error('Error saving changes. Please try again.');
-    } finally {
-      setIsUploading(false);
-      setIsSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setTempData({ ...data });
-    setPendingImageFiles({});
-    setIsEditing(false);
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, certId: string) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type and size
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
-    // Store the file for upload on Save
-    setPendingImageFiles(prev => ({ ...prev, [certId]: file }));
-
-    // Show immediate local preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const updatedCerts = tempData.certificates.map(cert =>
-        cert.id === certId ? { ...cert, image: e.target?.result as string } : cert
-      );
-      setTempData({ ...tempData, certificates: updatedCerts });
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const updateCertificate = (index: number, field: keyof Certificate, value: string) => {
-    const updatedCerts = [...tempData.certificates];
-    updatedCerts[index] = { ...updatedCerts[index], [field]: value };
-    setTempData({ ...tempData, certificates: updatedCerts });
-  };
-
-  const addCertificate = () => {
-    const newCert: Certificate = {
-      id: Date.now().toString(),
-      title: "New Certification",
-      issuer: "Issuer Name",
-      date: "2024",
-      image: "https://via.placeholder.com/500x300?text=Certificate+Image",
-      description: "Certificate description",
-      credentialUrl: "#"
-    };
-    setTempData({
-      ...tempData,
-      certificates: [...tempData.certificates, newCert]
-    });
-    setCurrentIndex(tempData.certificates.length); // Navigate to the new certificate
-  };
-
-  const removeCertificate = (index: number) => {
-    if (!tempData.certificates || tempData.certificates.length <= 1) {
-      toast.error("You must have at least one certificate");
-      return;
-    }
-
-    const updatedCerts = tempData.certificates.filter((_, i) => i !== index);
-    setTempData({ ...tempData, certificates: updatedCerts });
-
-    // Adjust current index if needed
-    if (currentIndex >= updatedCerts.length) {
-      setCurrentIndex(updatedCerts.length - 1);
-    }
-  };
-
-  const updateStat = (field: keyof CertificationsData['stats'], value: string) => {
-    setTempData({
-      ...tempData,
-      stats: { ...tempData.stats, [field]: value }
-    });
-  };
-
-  const updateHeader = (field: keyof CertificationsData['header'], value: string) => {
-    setTempData({
-      ...tempData,
-      header: { ...tempData.header, [field]: value }
-    });
   };
 
   const slideVariants = {
@@ -386,11 +355,10 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
   };
 
   const displayData = isEditing ? tempData : data;
-
-  // Add a check to prevent accessing undefined data
+  // Loading state - SAME PATTERN AS HERO
   if (isLoading || !displayData.certificates || displayData.certificates.length === 0) {
     return (
-      <section id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
+      <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
           <p className="text-muted-foreground mt-4">Loading certifications data...</p>
@@ -399,8 +367,9 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
     );
   }
 
+  // Rest of your JSX remains the same...
   return (
-    <section id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
+    <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -513,7 +482,7 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
                       <Button
                         onClick={() => fileInputRef.current?.click()}
                         size="sm"
-                        variant="outline" // 👈 prevents default blue/white styling
+                        variant="outline"
                         className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
                       >
                         <Upload className='w-4 h-4 mr-2' />

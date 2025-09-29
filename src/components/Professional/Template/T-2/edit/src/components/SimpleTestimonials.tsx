@@ -1,5 +1,5 @@
 import { Edit2, Loader2, Plus, Quote, Save, Star, Trash2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 // Custom Button component
@@ -105,78 +105,76 @@ interface TestimonialsProps {
 
 export function SimpleTestimonials({ testimonialsData, onStateChange, userId, publishedId, templateSelection }: TestimonialsProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
+
   const [data, setData] = useState<TestimonialsData>(defaultTestimonialsData);
   const [tempData, setTempData] = useState<TestimonialsData>(defaultTestimonialsData);
 
-  // Load data from backend or props
+  // Notify parent of state changes - SAME AS HERO
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        if (testimonialsData) {
-          setData(testimonialsData);
-          setTempData(testimonialsData);
-        } else {
-          // Fetch from backend API
-          const response = await fetch(`/api/testimonials/${userId}/${publishedId}`);
-          if (response.ok) {
-            const backendData = await response.json();
-            setData(backendData);
-            setTempData(backendData);
-          } else {
-            // Use default data if fetch fails
-            setData(defaultTestimonialsData);
-            setTempData(defaultTestimonialsData);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading testimonials data:', error);
-        setData(defaultTestimonialsData);
-        setTempData(defaultTestimonialsData);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (onStateChange) {
+      onStateChange(data);
+    }
+  }, [data]);
 
-    loadData();
-  }, [testimonialsData, userId, publishedId]);
+  // Intersection observer - SAME AS HERO
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (testimonialsRef.current) observer.observe(testimonialsRef.current);
+    return () => {
+      if (testimonialsRef.current) observer.unobserve(testimonialsRef.current);
+    };
+  }, []);
+
+  // Fake API fetch - SAME LOGIC AS HERO
+  const fetchTestimonialsData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await new Promise<TestimonialsData>((resolve) =>
+        setTimeout(() => resolve(testimonialsData || defaultTestimonialsData), 1200)
+      );
+      setData(response);
+      setTempData(response);
+      setDataLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible && !dataLoaded && !isLoading) {
+      fetchTestimonialsData();
+    }
+  }, [isVisible, dataLoaded, isLoading, testimonialsData]);
 
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
   };
 
+  // Save function - SAME PATTERN AS HERO
   const handleSave = async () => {
     try {
       setIsSaving(true);
       
-      // Save to backend API
-      const response = await fetch(`/api/testimonials/${userId}/${publishedId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: tempData,
-          templateSelection
-        })
-      });
+      // Save the updated data
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      
+      // Update both states - SAME AS HERO
+      setData(tempData);
+      
+      setIsEditing(false);
+      toast.success('Testimonials section saved successfully');
 
-      if (response.ok) {
-        const savedData = await response.json();
-        setData(savedData);
-        if (onStateChange) {
-          onStateChange(savedData);
-        }
-        setIsEditing(false);
-        toast.success('Testimonials section saved successfully');
-      } else {
-        throw new Error('Failed to save data');
-      }
     } catch (error) {
-      console.error('Error saving testimonials data:', error);
+      console.error('Error saving testimonials section:', error);
       toast.error('Error saving changes. Please try again.');
     } finally {
       setIsSaving(false);
@@ -188,19 +186,20 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
     setIsEditing(false);
   };
 
-  const updateTestimonial = (index: number, field: string, value: any) => {
+  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  const updateTestimonial = useCallback((index: number, field: string, value: any) => {
     const updatedTestimonials = [...tempData.testimonials];
     updatedTestimonials[index] = { ...updatedTestimonials[index], [field]: value };
     setTempData({ ...tempData, testimonials: updatedTestimonials });
-  };
+  }, [tempData]);
 
-  const updateRating = (index: number, rating: number) => {
+  const updateRating = useCallback((index: number, rating: number) => {
     const updatedTestimonials = [...tempData.testimonials];
     updatedTestimonials[index].rating = rating;
     setTempData({ ...tempData, testimonials: updatedTestimonials });
-  };
+  }, [tempData]);
 
-  const addTestimonial = () => {
+  const addTestimonial = useCallback(() => {
     const newTestimonial: Testimonial = {
       id: Date.now().toString(),
       name: 'New Client',
@@ -212,9 +211,9 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
       ...tempData,
       testimonials: [...tempData.testimonials, newTestimonial]
     });
-  };
+  }, [tempData]);
 
-  const removeTestimonial = (index: number) => {
+  const removeTestimonial = useCallback((index: number) => {
     if (tempData.testimonials.length <= 1) {
       toast.error("You must have at least one testimonial");
       return;
@@ -222,39 +221,39 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
     
     const updatedTestimonials = tempData.testimonials.filter((_, i) => i !== index);
     setTempData({ ...tempData, testimonials: updatedTestimonials });
-  };
+  }, [tempData]);
 
-  const updateSection = (field: keyof Omit<TestimonialsData, 'testimonials'>, value: string) => {
+  const updateSection = useCallback((field: keyof Omit<TestimonialsData, 'testimonials'>, value: string) => {
     setTempData({
       ...tempData,
       [field]: value
     });
-  };
+  }, [tempData]);
 
   const displayData = isEditing ? tempData : data;
 
-  if (isLoading) {
+  // Loading state - SAME PATTERN AS HERO
+  if (isLoading || !displayData.testimonials || displayData.testimonials.length === 0) {
     return (
-      <section className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+      <section ref={testimonialsRef} className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-gray-600 mt-4">Loading testimonials data...</p>
+          <p className="text-muted-foreground mt-4">Loading testimonials data...</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section ref={testimonialsRef} className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
           {!isEditing ? (
             <Button
               onClick={handleEdit}
-              
               size='sm'
-              className='bg-red-500 hover:bg-red-600 shadow-md'
+              className='bg-red-500 hover:bg-red-600 shadow-md text-white'
             >
               <Edit2 className='w-4 h-4 mr-2' />
               Edit
@@ -277,7 +276,7 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
               <Button
                 onClick={handleCancel}
                 size='sm'
-                className='bg-red-500 hover:bg-red-600 shadow-md'
+                className='bg-red-500 hover:bg-red-600 shadow-md text-white'
                 disabled={isSaving}
               >
                 <X className='w-4 h-4 mr-2' />
@@ -304,12 +303,12 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
                 type="text"
                 value={displayData.sectionTitle}
                 onChange={(e) => updateSection('sectionTitle', e.target.value)}
-                className="text-3xl sm:text-4xl text-foreground mb-4 bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md"
+                className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
               />
               <textarea
                 value={displayData.sectionDescription}
                 onChange={(e) => updateSection('sectionDescription', e.target.value)}
-                className="text-lg text-muted-foreground max-w-2xl mx-auto bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                 rows={3}
               />
             </>
@@ -371,7 +370,7 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
                 <textarea
                   value={testimonial.review}
                   onChange={(e) => updateTestimonial(index, 'review', e.target.value)}
-                  className="text-muted-foreground leading-relaxed mb-6 w-full bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                  className="text-muted-foreground leading-relaxed mb-6 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                   rows={4}
                 />
               ) : (
@@ -404,13 +403,13 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
                         type="text"
                         value={testimonial.name}
                         onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
-                        className="text-foreground mb-1 w-full bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-foreground mb-1 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                       />
                       <input
                         type="text"
                         value={testimonial.position}
                         onChange={(e) => updateTestimonial(index, 'position', e.target.value)}
-                        className="text-sm text-muted-foreground w-full bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                       />
                     </>
                   ) : (
@@ -434,19 +433,19 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
                   type="text"
                   value={displayData.ctaTitle}
                   onChange={(e) => updateSection('ctaTitle', e.target.value)}
-                  className="text-2xl text-foreground mb-4 w-full bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                  className="text-2xl text-foreground mb-4 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
                 />
                 <textarea
                   value={displayData.ctaDescription}
                   onChange={(e) => updateSection('ctaDescription', e.target.value)}
-                  className="text-muted-foreground mb-6 max-w-xl mx-auto w-full bg-transparent border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                  className="text-muted-foreground mb-6 max-w-xl mx-auto w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                   rows={3}
                 />
                 <input
                   type="text"
                   value={displayData.ctaButton}
                   onChange={(e) => updateSection('ctaButton', e.target.value)}
-                  className="inline-flex items-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg bg-transparent border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none text-center"
+                  className="inline-flex items-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg bg-white/80 border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none text-center"
                 />
               </>
             ) : (

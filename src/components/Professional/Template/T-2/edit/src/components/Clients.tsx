@@ -1,5 +1,5 @@
-import { Edit2, Loader2, Plus, Save, Trash2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Edit2, Loader2, Plus, Save, Trash2, Upload, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 // Custom Button component
@@ -85,96 +85,186 @@ const defaultData: ClientsData = {
 
 export function Clients({ clientsData, onStateChange, userId, publishedId, templateSelection }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const clientsRef = useRef<HTMLDivElement>(null);
+  
+  // Pending logo files for S3 upload - SAME PATTERN AS HERO
+  const [pendingLogoFiles, setPendingLogoFiles] = useState<Record<string, File>>({});
+
   const [data, setData] = useState<ClientsData>(defaultData);
   const [tempData, setTempData] = useState<ClientsData>(defaultData);
 
-  // Load data from backend or props
+  // Notify parent of state changes - SAME AS HERO
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        if (clientsData) {
-          setData(clientsData);
-          setTempData(clientsData);
-        } else {
-          // Fetch from backend API
-          const response = await fetch(`/api/clients/${userId}/${publishedId}`);
-          if (response.ok) {
-            const backendData = await response.json();
-            setData(backendData);
-            setTempData(backendData);
-          } else {
-            // Use default data if fetch fails
-            setData(defaultData);
-            setTempData(defaultData);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading clients data:', error);
-        setData(defaultData);
-        setTempData(defaultData);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (onStateChange) {
+      onStateChange(data);
+    }
+  }, [data]);
 
-    loadData();
-  }, [clientsData, userId, publishedId]);
+  // Intersection observer - SAME AS HERO
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (clientsRef.current) observer.observe(clientsRef.current);
+    return () => {
+      if (clientsRef.current) observer.unobserve(clientsRef.current);
+    };
+  }, []);
+
+  // Fake API fetch - SAME LOGIC AS HERO
+  const fetchClientsData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await new Promise<ClientsData>((resolve) =>
+        setTimeout(() => resolve(clientsData || defaultData), 1200)
+      );
+      setData(response);
+      setTempData(response);
+      setDataLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible && !dataLoaded && !isLoading) {
+      fetchClientsData();
+    }
+  }, [isVisible, dataLoaded, isLoading, clientsData]);
 
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
+    setPendingLogoFiles({}); // Clear pending files - SAME AS HERO
   };
 
+  // Save function with S3 upload - SAME PATTERN AS HERO
   const handleSave = async () => {
     try {
-      setIsSaving(true);
+      setIsUploading(true);
       
-      // Save to backend API
-      const response = await fetch(`/api/clients/${userId}/${publishedId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: tempData,
-          templateSelection
-        })
-      });
+      // Create a copy of tempData to update with S3 URLs
+      let updatedData = { ...tempData };
 
-      if (response.ok) {
-        const savedData = await response.json();
-        setData(savedData);
-        if (onStateChange) {
-          onStateChange(savedData);
+      // Upload logos for clients with pending files
+      for (const [clientId, file] of Object.entries(pendingLogoFiles)) {
+        if (!userId || !publishedId || !templateSelection) {
+          toast.error('Missing user information. Please refresh and try again.');
+          return;
         }
-        setIsEditing(false);
-        toast.success('Clients section saved successfully');
-      } else {
-        throw new Error('Failed to save data');
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('userId', userId);
+        formData.append('fieldName', `client_logo_${clientId}`);
+
+        const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          // Update the client logo with the S3 URL
+          updatedData.clients = updatedData.clients.map(client =>
+            client.id === clientId ? { ...client, logo: uploadData.s3Url } : client
+          );
+          console.log('Client logo uploaded to S3:', uploadData.s3Url);
+        } else {
+          const errorData = await uploadResponse.json();
+          toast.error(`Logo upload failed: ${errorData.message || 'Unknown error'}`);
+          return;
+        }
       }
+
+      // Clear pending files - SAME AS HERO
+      setPendingLogoFiles({});
+
+      // Save the updated data with S3 URLs
+      setIsSaving(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      
+      // Update both states with the new URLs - SAME AS HERO
+      setData(updatedData);
+      setTempData(updatedData);
+      
+      setIsEditing(false);
+      toast.success('Clients section saved with S3 URLs ready for publish');
+      console.log("data :",setTempData)
     } catch (error) {
-      console.error('Error saving clients data:', error);
+      console.error('Error saving clients section:', error);
       toast.error('Error saving changes. Please try again.');
     } finally {
+      setIsUploading(false);
       setIsSaving(false);
     }
   };
 
   const handleCancel = () => {
     setTempData({ ...data });
+    setPendingLogoFiles({}); // Clear pending files - SAME AS HERO
     setIsEditing(false);
   };
 
-  const updateClient = (index: number, field: string, value: string) => {
+  // Logo upload handler with validation - SAME PATTERN AS HERO
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>, clientId: string) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size - SAME AS HERO
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit - SAME AS HERO
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    // Store the file for upload on Save - SAME PATTERN AS HERO
+    setPendingLogoFiles(prev => ({ ...prev, [clientId]: file }));
+
+    // Show immediate local preview - SAME AS HERO
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const updatedClients = tempData.clients.map(client =>
+        client.id === clientId ? { ...client, logo: e.target?.result as string } : client
+      );
+      setTempData({ ...tempData, clients: updatedClients });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  const updateClient = useCallback((index: number, field: string, value: string) => {
     const updatedClients = [...tempData.clients];
     updatedClients[index] = { ...updatedClients[index], [field]: value };
     setTempData({ ...tempData, clients: updatedClients });
-  };
+  }, [tempData]);
 
-  const addClient = () => {
+  const updateStat = useCallback((field: keyof Stats, value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      stats: { ...prev.stats, [field]: value }
+    }));
+  }, []);
+
+  const updateCta = useCallback((field: keyof ClientsData['cta'], value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      cta: { ...prev.cta, [field]: value }
+    }));
+  }, []);
+
+  // Memoized functions - SAME PATTERN AS HERO
+  const addClient = useCallback(() => {
     const newClient: Client = {
       id: Date.now().toString(),
       name: 'New Client',
@@ -184,9 +274,9 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
       ...tempData,
       clients: [...tempData.clients, newClient]
     });
-  };
+  }, [tempData]);
 
-  const removeClient = (index: number) => {
+  const removeClient = useCallback((index: number) => {
     if (tempData.clients.length <= 1) {
       toast.error("You must have at least one client");
       return;
@@ -194,27 +284,14 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
     
     const updatedClients = tempData.clients.filter((_, i) => i !== index);
     setTempData({ ...tempData, clients: updatedClients });
-  };
-
-  const updateStat = (field: keyof Stats, value: string) => {
-    setTempData({
-      ...tempData,
-      stats: { ...tempData.stats, [field]: value }
-    });
-  };
-
-  const updateCta = (field: keyof ClientsData['cta'], value: string) => {
-    setTempData({
-      ...tempData,
-      cta: { ...tempData.cta, [field]: value }
-    });
-  };
+  }, [tempData]);
 
   const displayData = isEditing ? tempData : data;
 
-  if (isLoading) {
+  // Loading state - SAME PATTERN AS HERO
+  if (isLoading || !displayData.clients || displayData.clients.length === 0) {
     return (
-      <section className="py-20 bg-background">
+      <section ref={clientsRef} className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
           <p className="text-muted-foreground mt-4">Loading clients data...</p>
@@ -224,7 +301,7 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
   }
 
   return (
-    <section className="py-20 bg-background">
+    <section ref={clientsRef} className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -243,20 +320,22 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
                 onClick={handleSave}
                 size='sm'
                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
-                disabled={isSaving}
+                disabled={isSaving || isUploading}
               >
-                {isSaving ? (
+                {isUploading ? (
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                ) : isSaving ? (
                   <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                 ) : (
                   <Save className='w-4 h-4 mr-2' />
                 )}
-                {isSaving ? "Saving..." : "Save"}
+                {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
               </Button>
               <Button
                 onClick={handleCancel}
                 size='sm'
                 className='bg-red-500 hover:bg-red-600 shadow-md'
-                disabled={isSaving}
+                disabled={isSaving || isUploading}
               >
                 <X className='w-4 h-4 mr-2' />
                 Cancel
@@ -327,14 +406,36 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
               className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 relative"
             >
               {isEditing && (
-                <Button
-                  onClick={() => removeClient(index)}
-                  size='sm'
-                  variant='outline'
-                  className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
-                >
-                  <Trash2 className='w-3 h-3' />
-                </Button>
+                <>
+                  <Button
+                    onClick={() => removeClient(index)}
+                    size='sm'
+                    variant='outline'
+                    className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
+                  >
+                    <Trash2 className='w-3 h-3' />
+                  </Button>
+                  <Button
+                    onClick={() => document.getElementById(`logo-upload-${client.id}`)?.click()}
+                    size='sm'
+                    variant='outline'
+                    className='absolute -top-2 -left-2 bg-blue-50 hover:bg-blue-100 text-blue-700 p-1'
+                  >
+                    <Upload className='w-3 h-3' />
+                  </Button>
+                  <input
+                    id={`logo-upload-${client.id}`}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleLogoUpload(e, client.id)}
+                    className="hidden"
+                  />
+                  {pendingLogoFiles[client.id] && (
+                    <p className='absolute -bottom-2 text-xs text-orange-600 bg-white p-1 rounded'>
+                      Logo selected
+                    </p>
+                  )}
+                </>
               )}
               <div className="text-center">
                 {isEditing ? (

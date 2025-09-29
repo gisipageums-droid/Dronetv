@@ -25,7 +25,6 @@ export const Loader: React.FC<LoaderProps> = ({
     { icon: Sparkles, text: "Adding final touches and optimizations..." },
     { icon: Zap, text: "Your website is ready!" },
   ];
- console.log({onComplete})
   useEffect(() => {
     const totalSteps = steps.length;
     const stepDuration = duration / totalSteps; // time per step

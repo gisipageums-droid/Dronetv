@@ -1,6 +1,6 @@
 import { Edit2, Loader2, Save, Upload, X } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 // Custom Button component
@@ -78,6 +78,29 @@ const defaultHeroData: HeroData = {
   }
 };
 
+// Safe data merger function
+const mergeHeroData = (incomingData?: Partial<HeroData>): HeroData => {
+  if (!incomingData) {
+    return defaultHeroData;
+  }
+
+  return {
+    name: incomingData.name || defaultHeroData.name,
+    title: incomingData.title || defaultHeroData.title,
+    description: incomingData.description || defaultHeroData.description,
+    imageUrl: incomingData.imageUrl || defaultHeroData.imageUrl,
+    stats: {
+      projects: incomingData.stats?.projects || defaultHeroData.stats.projects,
+      experience: incomingData.stats?.experience || defaultHeroData.stats.experience,
+      satisfaction: incomingData.stats?.satisfaction || defaultHeroData.stats.satisfaction,
+    },
+    buttons: {
+      work: incomingData.buttons?.work || defaultHeroData.buttons.work,
+      contact: incomingData.buttons?.contact || defaultHeroData.buttons.contact,
+    }
+  };
+};
+
 // Animation variants
 const itemVariants = {
   hidden: { y: 50, opacity: 0 },
@@ -95,7 +118,7 @@ const imageVariants = {
 
 // Props interface
 interface HeroProps {
-  heroData?: HeroData;
+  heroData?: Partial<HeroData>;
   onStateChange?: (data: HeroData) => void;
   userId?: string;
   publishedId?: string;
@@ -109,21 +132,33 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
   const [isUploading, setIsUploading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
-
-  // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  
+  const heroRef = useRef<HTMLDivElement>(null);
+  
+  // Initialize with safe merged data
+  const [data, setData] = useState<HeroData>(() => mergeHeroData(heroData));
+  const [tempData, setTempData] = useState<HeroData>(() => mergeHeroData(heroData));
 
-  const [data, setData] = useState<HeroData>(defaultHeroData);
-  const [tempData, setTempData] = useState<HeroData>(defaultHeroData);
-
-  // Add this useEffect to notify parent of state changes
+  // Improved data loading effect
   useEffect(() => {
-    if (onStateChange) {
-      onStateChange(data);
+    if (heroData) {
+      const mergedData = mergeHeroData(heroData);
+      setData(mergedData);
+      setTempData(mergedData);
+      setDataLoaded(true);
+      setIsLoading(false);
+    } else if (!dataLoaded) {
+      setIsLoading(true);
+      const timer = setTimeout(() => {
+        setData(defaultHeroData);
+        setTempData(defaultHeroData);
+        setDataLoaded(true);
+        setIsLoading(false);
+      }, 1200);
+      return () => clearTimeout(timer);
     }
-  }, [data]);
-
+  }, [heroData, dataLoaded]);
 
   // Intersection observer
   useEffect(() => {
@@ -137,24 +172,19 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     };
   }, []);
 
-  // Fake API fetch
-  const fetchHeroData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await new Promise<HeroData>((resolve) =>
-        setTimeout(() => resolve(heroData || defaultHeroData), 1200)
-      );
-      setData(response);
-      setTempData(response);
-      setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  // Trigger loading when component becomes visible
   useEffect(() => {
     if (isVisible && !dataLoaded && !isLoading) {
-      fetchHeroData();
+      setIsLoading(true);
+      const timer = setTimeout(() => {
+        const mergedData = mergeHeroData(heroData);
+        setData(mergedData);
+        setTempData(mergedData);
+        setDataLoaded(true);
+        setIsLoading(false);
+      }, 500);
+      
+      return () => clearTimeout(timer);
     }
   }, [isVisible, dataLoaded, isLoading, heroData]);
 
@@ -164,18 +194,24 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     setPendingImageFile(null);
   };
 
-  // Updated Save function with S3 upload
+  // Fixed Save function with better error handling
   const handleSave = async () => {
     try {
-      setIsUploading(true);
+      setIsSaving(true);
       
-      // Create a copy of tempData to update with S3 URL
+      // Only set uploading state if there's actually a file to upload
+      if (pendingImageFile) {
+        setIsUploading(true);
+      }
+
       let updatedData = { ...tempData };
 
-      // Upload image if there's a pending file
+      // Upload image only if there's a pending file
       if (pendingImageFile) {
         if (!userId || !publishedId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
+          setIsUploading(false);
+          setIsSaving(false);
           return;
         }
 
@@ -192,30 +228,31 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
           updatedData.imageUrl = uploadData.s3Url;
-          console.log('Profile image uploaded to S3:', uploadData.s3Url);
         } else {
           const errorData = await uploadResponse.json();
           toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
+          setIsUploading(false);
+          setIsSaving(false);
           return;
         }
-      }else{
-        console.log("not calling api");
-        
       }
 
-      // Clear pending file
-      setPendingImageFile(null);
-
-      // Save the updated data with S3 URL
-      setIsSaving(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       
-      // Update both states with the new URL
       setData(updatedData);
       setTempData(updatedData);
-      
+      setPendingImageFile(null);
       setIsEditing(false);
-      toast.success('Hero section saved with S3 URL ready for publish');
+      
+      // Notify parent component of state change
+      if (onStateChange) {
+        onStateChange(updatedData);
+      }
+      
+      toast.success(pendingImageFile 
+        ? 'Hero section saved with new image!' 
+        : 'Hero section updated successfully!');
 
     } catch (error) {
       console.error('Error saving hero section:', error);
@@ -262,22 +299,47 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     reader.readAsDataURL(file);
   };
 
+  // Safe data accessor functions
+  const getButtons = useCallback(() => {
+    return {
+      work: tempData?.buttons?.work || defaultHeroData.buttons.work,
+      contact: tempData?.buttons?.contact || defaultHeroData.buttons.contact,
+    };
+  }, [tempData]);
+
+  const getStats = useCallback(() => {
+    return {
+      projects: tempData?.stats?.projects || defaultHeroData.stats.projects,
+      experience: tempData?.stats?.experience || defaultHeroData.stats.experience,
+      satisfaction: tempData?.stats?.satisfaction || defaultHeroData.stats.satisfaction,
+    };
+  }, [tempData]);
+
   // Stable update functions with useCallback
   const updateTempContent = useCallback((field: keyof HeroData, value: string) => {
-    setTempData((prev) => ({ ...prev, [field]: value }));
+    setTempData((prev) => ({ 
+      ...prev, 
+      [field]: value 
+    }));
   }, []);
 
   const updateStat = useCallback((stat: keyof HeroData['stats'], value: string) => {
     setTempData(prev => ({
       ...prev,
-      stats: { ...prev.stats, [stat]: value }
+      stats: { 
+        ...prev.stats, 
+        [stat]: value 
+      }
     }));
   }, []);
 
   const updateButton = useCallback((button: keyof HeroData['buttons'], value: string) => {
     setTempData(prev => ({
       ...prev,
-      buttons: { ...prev.buttons, [button]: value }
+      buttons: { 
+        ...prev.buttons, 
+        [button]: value 
+      }
     }));
   }, []);
 
@@ -318,7 +380,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
       if (multiline) {
         return (
           <textarea
-            value={value}
+            value={value || ''}
             onChange={handleChange}
             className={`${baseClasses} p-3 resize-none ${className}`}
             placeholder={placeholder}
@@ -330,7 +392,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
       return (
         <input
           type='text'
-          value={value}
+          value={value || ''}
           onChange={handleChange}
           className={`${baseClasses} p-2 ${className}`}
           placeholder={placeholder}
@@ -339,7 +401,10 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     };
   }, [updateTempContent, updateStat, updateButton]);
 
+  // Safe display data
   const displayData = isEditing ? tempData : data;
+  const safeButtons = getButtons();
+  const safeStats = getStats();
 
   if (isLoading) {
     return (
@@ -361,11 +426,11 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     <section 
       id="home" 
       ref={heroRef}
-      className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
+      className="min-h-screen mt-[4.5rem] flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* Edit Controls */}
-        <div className='text-right mb-8'>
+        <div className='text-right z-50 b-8'>
           {!isEditing ? (
             <Button
               onClick={handleEdit}
@@ -431,58 +496,57 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
               )}
             </motion.h1>
 
-            {isEditing ? (
-              <EditableText
-                value={displayData.description}
-                field='description'
-                multiline
-                className="text-yellow-500 p-1"
-                placeholder="Your description"
-                rows={3}
-              />
-            ) : (
-              <motion.p 
-                className="text-xl text-muted-foreground leading-relaxed"
-                variants={itemVariants}
-              >
-                {displayData.description}
-              </motion.p>
-            )}
+            <motion.div variants={itemVariants}>
+              {isEditing ? (
+                <EditableText
+                  value={displayData.description}
+                  field='description'
+                  multiline
+                  className="text-lg text-yellow-500 p-1"
+                  placeholder="Your description"
+                  rows={3}
+                />
+              ) : (
+                <p className="text-xl text-muted-foreground leading-relaxed">
+                  {displayData.description}
+                </p>
+              )}
+            </motion.div>
 
             <motion.div 
               className="flex flex-col sm:flex-row gap-4"
               variants={itemVariants}
             >
               {isEditing ? (
-                <EditableText
-                  value={displayData.buttons.work}
-                  buttonField='work'
-                  className="px-6 py-3 text-yellow-500 rounded-lg"
-                  placeholder="Work button text"
-                />
+                <>
+                  <EditableText
+                    value={safeButtons.work}
+                    buttonField='work'
+                    className="px-6 py-3 rounded-lg text-yellow-500 text-center"
+                    placeholder="Work button text"
+                  />
+                  <EditableText
+                    value={safeButtons.contact}
+                    buttonField='contact'
+                    className="px-6 py-3 text-yellow-500 rounded-lg text-center"
+                    placeholder="Contact button text"
+                  />
+                </>
               ) : (
-                <a
-                  href="#projects"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {displayData.buttons.work}
-                </a>
-              )}
-
-              {isEditing ? (
-                <EditableText
-                  value={displayData.buttons.contact}
-                  buttonField='contact'
-                  className="px-6 py-3 bg-transparent text-yellow-500 border border-blue-600 rounded-lg"
-                  placeholder="Contact button text"
-                />
-              ) : (
-                <a
-                  href="#contact"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
-                >
-                  {displayData.buttons.contact}
-                </a>
+                <>
+                  <a
+                    href="#projects"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    {safeButtons.work}
+                  </a>
+                  <a
+                    href="#contact"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                  >
+                    {safeButtons.contact}
+                  </a>
+                </>
               )}
             </motion.div>
 
@@ -495,14 +559,14 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
                 <div key={index} className="text-center">
                   {isEditing ? (
                     <EditableText
-                      value={displayData.stats[stat]}
+                      value={safeStats[stat]}
                       statField={stat}
-                      className="text-3xl text-yellow-500 mb-2 p-1 w-16 text-center"
+                      className="text-3xl mb-2 p-1 w-16 text-center text-yellow-500 mx-auto"
                       placeholder="Value"
                     />
                   ) : (
                     <div className="text-3xl text-yellow-500 mb-2">
-                      {displayData.stats[stat]}
+                      {safeStats[stat]}
                     </div>
                   )}
                   <p className="text-muted-foreground capitalize">
@@ -542,7 +606,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
               >
                 <div className="relative">
                   <img
-                    src={displayData.imageUrl}
+                    src={displayData.imageUrl || defaultHeroData.imageUrl}
                     alt={`${displayData.name} - ${displayData.title}`}
                     className="w-full h-96 object-cover object-center transition-transform duration-300 hover:scale-110"
                   />
@@ -571,3 +635,12 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     </section>
   );
 }
+
+// Add default props
+Hero.defaultProps = {
+  heroData: undefined,
+  onStateChange: undefined,
+  userId: '',
+  publishedId: '',
+  templateSelection: '',
+};
