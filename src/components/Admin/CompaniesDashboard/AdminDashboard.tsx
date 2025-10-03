@@ -17,10 +17,10 @@ import {
   Trash2,
   Clock,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
-
+import { motion } from 'motion/react';
 // -------------------- Types --------------------
 interface Company {
   publishedId: string;
@@ -293,6 +293,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         <div className="border-t border-gray-100"></div>
+          <motion.button
+            whileTap={{scale:[0.9,1]}}
+            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200">
+            <Link to={'/admin/professional'} >Professionals </Link>
+
+            </motion.button>
       </div>
     </div>
   );

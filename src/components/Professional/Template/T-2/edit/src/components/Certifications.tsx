@@ -46,7 +46,7 @@ const Button = ({
   );
 };
 
-interface Certificate {
+interface Certification {
   id: string;
   title: string;
   issuer: string;
@@ -57,21 +57,17 @@ interface Certificate {
 }
 
 interface CertificationsData {
-  certificates: Certificate[];
-  stats: {
-    certificationsCount: string;
-    hoursLearning: string;
-    skillsMastered: string;
-    successRate: string;
-  };
-  header: {
-    title: string;
-    subtitle: string;
-  };
+  subtitle: string;
+  heading: string;
+  description: string;
+  certifications: Certification[];
 }
 
 const defaultData: CertificationsData = {
-  certificates: [
+  subtitle: "Professional certifications and achievements",
+  heading: "Certifications & Awards",
+  description: "Continuous learning and professional development milestones.",
+  certifications: [
     {
       id: '1',
       title: "Full Stack Web Development",
@@ -80,19 +76,8 @@ const defaultData: CertificationsData = {
       image: "https://images.unsplash.com/photo-1752937326758-f130e633b422?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNl",
       description: "Comprehensive certification covering React, Node.js, databases, and modern web development practices. Intensive 6-month program with hands-on projects.",
       credentialUrl: "#"
-    },
-    // ... other certificates
-  ],
-  stats: {
-    certificationsCount: "4+",
-    hoursLearning: "500+",
-    skillsMastered: "15+",
-    successRate: "100%"
-  },
-  header: {
-    title: "Certifications & Achievements",
-    subtitle: "Continuous learning and professional development through industry-recognized certifications"
-  }
+    }
+  ]
 };
 
 interface CertificationsProps {
@@ -115,20 +100,20 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
   const certificationsRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Pending image files for S3 upload - using same pattern as Hero
+  // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
   const [data, setData] = useState<CertificationsData>(defaultData);
   const [tempData, setTempData] = useState<CertificationsData>(defaultData);
 
-  // Add this useEffect to notify parent of state changes - SAME AS HERO
+  // Notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(data);
     }
   }, [data]);
 
-  // Intersection observer - SAME AS HERO
+  // Intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -140,7 +125,7 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
     };
   }, []);
 
-  // Fake API fetch - SAME LOGIC AS HERO
+  // Fake API fetch
   const fetchCertData = async () => {
     setIsLoading(true);
     try {
@@ -164,10 +149,10 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingImageFiles({}); // Clear pending files - SAME AS HERO
+    setPendingImageFiles({});
   };
 
-  // Save function with S3 upload - SAME PATTERN AS HERO
+  // Save function with S3 upload
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -175,7 +160,7 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
       // Create a copy of tempData to update with S3 URLs
       let updatedData = { ...tempData };
 
-      // Upload images for certificates with pending files
+      // Upload images for certifications with pending files
       for (const [certId, file] of Object.entries(pendingImageFiles)) {
         if (!userId || !publishedId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
@@ -185,7 +170,7 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
         const formData = new FormData();
         formData.append('file', file);
         formData.append('userId', userId);
-        formData.append('fieldName', `certificate_${certId}`);
+        formData.append('fieldName', `certification_${certId}`);
 
         const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
           method: 'POST',
@@ -194,11 +179,11 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          // Update the certificate image with the S3 URL
-          updatedData.certificates = updatedData.certificates.map(cert =>
+          // Update the certification image with the S3 URL
+          updatedData.certifications = updatedData.certifications.map(cert =>
             cert.id === certId ? { ...cert, image: uploadData.s3Url } : cert
           );
-          console.log('Certificate image uploaded to S3:', uploadData.s3Url);
+          console.log('Certification image uploaded to S3:', uploadData.s3Url);
         } else {
           const errorData = await uploadResponse.json();
           toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
@@ -206,14 +191,14 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
         }
       }
 
-      // Clear pending files - SAME AS HERO
+      // Clear pending files
       setPendingImageFiles({});
 
       // Save the updated data with S3 URLs
       setIsSaving(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       
-      // Update both states with the new URLs - SAME AS HERO
+      // Update both states with the new URLs
       setData(updatedData);
       setTempData(updatedData);
       
@@ -231,87 +216,80 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingImageFiles({}); // Clear pending files - SAME AS HERO
+    setPendingImageFiles({});
     setIsEditing(false);
   };
 
-  // Image upload handler with validation - SAME PATTERN AS HERO
+  // Image upload handler with validation
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, certId: string) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size - SAME AS HERO
+    // Validate file type and size
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit - SAME AS HERO
+    if (file.size > 5 * 1024 * 1024) {
       toast.error('File size must be less than 5MB');
       return;
     }
 
-    // Store the file for upload on Save - SAME PATTERN AS HERO
+    // Store the file for upload on Save
     setPendingImageFiles(prev => ({ ...prev, [certId]: file }));
 
-    // Show immediate local preview - SAME AS HERO
+    // Show immediate local preview
     const reader = new FileReader();
     reader.onload = (e) => {
-      const updatedCerts = tempData.certificates.map(cert =>
+      const updatedCerts = tempData.certifications.map(cert =>
         cert.id === certId ? { ...cert, image: e.target?.result as string } : cert
       );
-      setTempData({ ...tempData, certificates: updatedCerts });
+      setTempData({ ...tempData, certifications: updatedCerts });
     };
     reader.readAsDataURL(file);
   };
 
-  // Stable update functions with useCallback - SAME PATTERN AS HERO
-  const updateCertificate = useCallback((index: number, field: keyof Certificate, value: string) => {
-    const updatedCerts = [...tempData.certificates];
+  // Stable update functions with useCallback
+  const updateCertification = useCallback((index: number, field: keyof Certification, value: string) => {
+    const updatedCerts = [...tempData.certifications];
     updatedCerts[index] = { ...updatedCerts[index], [field]: value };
-    setTempData({ ...tempData, certificates: updatedCerts });
+    setTempData({ ...tempData, certifications: updatedCerts });
   }, [tempData]);
 
-  const updateStat = useCallback((field: keyof CertificationsData['stats'], value: string) => {
+  const updateHeader = useCallback((field: keyof Omit<CertificationsData, 'certifications'>, value: string) => {
     setTempData(prev => ({
       ...prev,
-      stats: { ...prev.stats, [field]: value }
+      [field]: value
     }));
   }, []);
 
-  const updateHeader = useCallback((field: keyof CertificationsData['header'], value: string) => {
-    setTempData(prev => ({
-      ...prev,
-      header: { ...prev.header, [field]: value }
-    }));
-  }, []);
-
-  // Memoized functions - SAME PATTERN AS HERO
-  const addCertificate = useCallback(() => {
-    const newCert: Certificate = {
+  // Memoized functions
+  const addCertification = useCallback(() => {
+    const newCert: Certification = {
       id: Date.now().toString(),
       title: "New Certification",
       issuer: "Issuer Name",
       date: "2024",
       image: "https://via.placeholder.com/500x300?text=Certificate+Image",
-      description: "Certificate description",
+      description: "Certification description",
       credentialUrl: "#"
     };
     setTempData({
       ...tempData,
-      certificates: [...tempData.certificates, newCert]
+      certifications: [...tempData.certifications, newCert]
     });
-    setCurrentIndex(tempData.certificates.length);
+    setCurrentIndex(tempData.certifications.length);
   }, [tempData]);
 
-  const removeCertificate = useCallback((index: number) => {
-    if (!tempData.certificates || tempData.certificates.length <= 1) {
-      toast.error("You must have at least one certificate");
+  const removeCertification = useCallback((index: number) => {
+    if (!tempData.certifications || tempData.certifications.length <= 1) {
+      toast.error("You must have at least one certification");
       return;
     }
 
-    const updatedCerts = tempData.certificates.filter((_, i) => i !== index);
-    setTempData({ ...tempData, certificates: updatedCerts });
+    const updatedCerts = tempData.certifications.filter((_, i) => i !== index);
+    setTempData({ ...tempData, certifications: updatedCerts });
 
     if (currentIndex >= updatedCerts.length) {
       setCurrentIndex(updatedCerts.length - 1);
@@ -320,19 +298,19 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
 
   // Navigation functions
   const nextSlide = () => {
-    if (!tempData.certificates || tempData.certificates.length === 0) return;
+    if (!tempData.certifications || tempData.certifications.length === 0) return;
     setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % tempData.certificates.length);
+    setCurrentIndex((prev) => (prev + 1) % tempData.certifications.length);
   };
 
   const prevSlide = () => {
-    if (!tempData.certificates || tempData.certificates.length === 0) return;
+    if (!tempData.certifications || tempData.certifications.length === 0) return;
     setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + tempData.certificates.length) % tempData.certificates.length);
+    setCurrentIndex((prev) => (prev - 1 + tempData.certifications.length) % tempData.certifications.length);
   };
 
   const goToSlide = (index: number) => {
-    if (!tempData.certificates || tempData.certificates.length === 0) return;
+    if (!tempData.certifications || tempData.certifications.length === 0) return;
     setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
   };
@@ -355,8 +333,9 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
   };
 
   const displayData = isEditing ? tempData : data;
-  // Loading state - SAME PATTERN AS HERO
-  if (isLoading || !displayData.certificates || displayData.certificates.length === 0) {
+
+  // Loading state
+  if (isLoading || !displayData.certifications || displayData.certifications.length === 0) {
     return (
       <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -367,7 +346,6 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
     );
   }
 
-  // Rest of your JSX remains the same...
   return (
     <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -409,13 +387,13 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
                 Cancel
               </Button>
               <Button
-                onClick={addCertificate}
+                onClick={addCertification}
                 variant='outline'
                 size='sm'
                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
               >
                 <Plus className='w-4 h-4 mr-2' />
-                Add Certificate
+                Add Certification
               </Button>
             </div>
           )}
@@ -434,27 +412,40 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
             {isEditing ? (
               <input
                 type="text"
-                value={displayData.header.title}
-                onChange={(e) => updateHeader('title', e.target.value)}
+                value={displayData.heading}
+                onChange={(e) => updateHeader('heading', e.target.value)}
                 className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
               />
             ) : (
               <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground">
-                {displayData.header.title}
+                {displayData.heading}
               </h2>
             )}
           </div>
           {isEditing ? (
-            <textarea
-              value={displayData.header.subtitle}
-              onChange={(e) => updateHeader('subtitle', e.target.value)}
-              className="text-xl text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
-              rows={2}
-            />
+            <>
+              <input
+                type="text"
+                value={displayData.subtitle}
+                onChange={(e) => updateHeader('subtitle', e.target.value)}
+                className="text-xl text-yellow-600 mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
+              />
+              <textarea
+                value={displayData.description}
+                onChange={(e) => updateHeader('description', e.target.value)}
+                className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                rows={2}
+              />
+            </>
           ) : (
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {displayData.header.subtitle}
-            </p>
+            <>
+              <p className="text-xl text-yellow-600 mb-4 max-w-3xl mx-auto">
+                {displayData.subtitle}
+              </p>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                {displayData.description}
+              </p>
+            </>
           )}
         </motion.div>
 
@@ -475,7 +466,7 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
                 }}
                 className="absolute inset-0 grid md:grid-cols-2 gap-0"
               >
-                {/* Certificate Image */}
+                {/* Certification Image */}
                 <div className="relative">
                   {isEditing && (
                     <div className='absolute top-2 right-2 z-10'>
@@ -492,29 +483,29 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
                         ref={fileInputRef}
                         type='file'
                         accept='image/*'
-                        onChange={(e) => handleImageUpload(e, displayData.certificates[currentIndex]?.id || '')}
+                        onChange={(e) => handleImageUpload(e, displayData.certifications[currentIndex]?.id || '')}
                         className='hidden'
                       />
-                      {pendingImageFiles[displayData.certificates[currentIndex]?.id || ''] && (
+                      {pendingImageFiles[displayData.certifications[currentIndex]?.id || ''] && (
                         <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
-                          Image selected: {pendingImageFiles[displayData.certificates[currentIndex]?.id || '']?.name}
+                          Image selected: {pendingImageFiles[displayData.certifications[currentIndex]?.id || '']?.name}
                         </p>
                       )}
                     </div>
                   )}
                   <ImageWithFallback
-                    src={displayData.certificates[currentIndex]?.image || ''}
-                    alt={displayData.certificates[currentIndex]?.title || 'Certificate image'}
+                    src={displayData.certifications[currentIndex]?.image || ''}
+                    alt={displayData.certifications[currentIndex]?.title || 'Certification image'}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
                 </div>
 
-                {/* Certificate Details */}
+                {/* Certification Details */}
                 <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-yellow-50 dark:from-card dark:to-yellow-900/20">
                   {isEditing && (
                     <Button
-                      onClick={() => removeCertificate(currentIndex)}
+                      onClick={() => removeCertification(currentIndex)}
                       size='sm'
                       variant='outline'
                       className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
@@ -527,13 +518,13 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
                     {isEditing ? (
                       <input
                         type="text"
-                        value={displayData.certificates[currentIndex]?.title || ''}
-                        onChange={(e) => updateCertificate(currentIndex, 'title', e.target.value)}
+                        value={displayData.certifications[currentIndex]?.title || ''}
+                        onChange={(e) => updateCertification(currentIndex, 'title', e.target.value)}
                         className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                       />
                     ) : (
                       <h3 className="text-2xl lg:text-3xl text-foreground mb-2">
-                        {displayData.certificates[currentIndex]?.title || ''}
+                        {displayData.certifications[currentIndex]?.title || ''}
                       </h3>
                     )}
 
@@ -543,51 +534,56 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
                         <div className="flex gap-2">
                           <input
                             type="text"
-                            value={displayData.certificates[currentIndex]?.issuer || ''}
-                            onChange={(e) => updateCertificate(currentIndex, 'issuer', e.target.value)}
+                            value={displayData.certifications[currentIndex]?.issuer || ''}
+                            onChange={(e) => updateCertification(currentIndex, 'issuer', e.target.value)}
                             className="bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg"
                           />
                           <span>•</span>
                           <input
                             type="text"
-                            value={displayData.certificates[currentIndex]?.date || ''}
-                            onChange={(e) => updateCertificate(currentIndex, 'date', e.target.value)}
+                            value={displayData.certifications[currentIndex]?.date || ''}
+                            onChange={(e) => updateCertification(currentIndex, 'date', e.target.value)}
                             className="bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg w-20"
                           />
                         </div>
                       ) : (
-                        <span className="text-lg">{displayData.certificates[currentIndex]?.issuer || ''} • {displayData.certificates[currentIndex]?.date || ''}</span>
+                        <span className="text-lg">{displayData.certifications[currentIndex]?.issuer || ''} • {displayData.certifications[currentIndex]?.date || ''}</span>
                       )}
                     </div>
                   </div>
 
                   {isEditing ? (
                     <textarea
-                      value={displayData.certificates[currentIndex]?.description || ''}
-                      onChange={(e) => updateCertificate(currentIndex, 'description', e.target.value)}
+                      value={displayData.certifications[currentIndex]?.description || ''}
+                      onChange={(e) => updateCertification(currentIndex, 'description', e.target.value)}
                       className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground mb-6 leading-relaxed"
                       rows="4"
                     />
                   ) : (
                     <p className="text-muted-foreground mb-6 leading-relaxed">
-                      {displayData.certificates[currentIndex]?.description || ''}
+                      {displayData.certifications[currentIndex]?.description || ''}
                     </p>
                   )}
 
                   {isEditing ? (
                     <input
                       type="text"
-                      value={displayData.certificates[currentIndex]?.credentialUrl || ''}
-                      onChange={(e) => updateCertificate(currentIndex, 'credentialUrl', e.target.value)}
+                      value={displayData.certifications[currentIndex]?.credentialUrl || ''}
+                      onChange={(e) => updateCertification(currentIndex, 'credentialUrl', e.target.value)}
                       className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                       placeholder="Credential URL"
                     />
-                  ) : (
-                    <button className="inline-flex items-center text-yellow-600 hover:text-yellow-700 transition-colors group">
+                  ) : displayData.certifications[currentIndex]?.credentialUrl && displayData.certifications[currentIndex]?.credentialUrl !== '#' ? (
+                    <a 
+                      href={displayData.certifications[currentIndex]?.credentialUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-yellow-600 hover:text-yellow-700 transition-colors group"
+                    >
                       <span className="mr-2">View Credential</span>
                       <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  )}
+                    </a>
+                  ) : null}
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -609,7 +605,7 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
 
           {/* Dots Indicator */}
           <div className="flex justify-center mt-8 space-x-3">
-            {displayData.certificates.map((_, index) => (
+            {displayData.certifications.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
@@ -621,46 +617,6 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
             ))}
           </div>
         </div>
-
-        {/* Certificate Stats */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          {[
-            { key: 'certificationsCount' as const, label: 'Certifications' },
-            { key: 'hoursLearning' as const, label: 'Hours of Learning' },
-            { key: 'skillsMastered' as const, label: 'Skills Mastered' },
-            { key: 'successRate' as const, label: 'Success Rate' }
-          ].map((stat) => (
-            <div key={stat.key} className="text-center hover:scale-105 transition-transform duration-300">
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={displayData.stats[stat.key]}
-                  onChange={(e) => updateStat(stat.key, e.target.value)}
-                  className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
-                />
-              ) : (
-                <div className="text-3xl sm:text-4xl text-yellow-500 mb-2">{displayData.stats[stat.key]}</div>
-              )}
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={stat.label}
-                  onChange={(e) => { }}
-                  className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
-                  disabled
-                />
-              ) : (
-                <p className="text-muted-foreground">{stat.label}</p>
-              )}
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );

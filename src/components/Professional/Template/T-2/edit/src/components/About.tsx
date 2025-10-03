@@ -178,7 +178,7 @@ export function About({
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          updatedData.imageUrl = uploadData.s3Url;
+          updatedData.imageSrc = uploadData.s3Url;
           console.log('About image uploaded to S3:', uploadData.s3Url);
         } else {
           const errorData = await uploadResponse.json();
@@ -240,7 +240,7 @@ export function About({
     reader.onload = (e) => {
       setTempData((prev) => ({
         ...prev,
-        imageUrl: e.target?.result as string,
+        imageSrc: e.target?.result as string,
       }));
     };
     reader.readAsDataURL(file);
@@ -441,7 +441,7 @@ export function About({
               <div className="absolute inset-0 bg-yellow-400 rounded-3xl transform -rotate-6"></div>
               <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
                 <ImageWithFallback
-                  src={displayData.imageUrl}
+                  src={displayData.imageSrc}
                   alt="About me"
                   className="w-full h-96 object-cover"
                 />
@@ -482,7 +482,7 @@ export function About({
                 </div>
               ) : (
                 <>
-                  {displayData.title}<span className="text-yellow-500">{displayData.highlightedText}</span>
+                  {displayData.heading}<span className="text-yellow-500">{displayData.highlightedText}</span>
                 </>
               )}
             </motion.h2>

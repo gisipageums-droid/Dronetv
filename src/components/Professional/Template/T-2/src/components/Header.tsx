@@ -14,6 +14,7 @@ export function Header({ onDarkModeToggle }: HeaderProps) {
     { name: 'About', href: '#about' },
     { name: 'Skills', href: '#skills' },
     { name: 'Projects', href: '#projects' },
+    { name: 'Services', href: '#services' },
     { name: 'Clients', href: '#clients' },
     { name: 'Reviews', href: '#testimonials' },
     { name: 'Contact', href: '#contact' },

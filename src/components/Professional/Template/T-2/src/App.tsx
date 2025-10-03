@@ -9,6 +9,7 @@ import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
 import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
+import { Services } from './components/Services';
 
 export default function ProTemp2() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -34,6 +35,7 @@ export default function ProTemp2() {
         <About />
         <Skills />
         <Projects />
+        <Services/>
         <Certifications />
         <section id="clients">
           <Clients />

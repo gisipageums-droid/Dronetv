@@ -10,7 +10,7 @@ import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
-import { SimpleTestimonials } from './components/SimpleTestimonials';
+import { Testimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
 
@@ -219,7 +219,7 @@ export default function EditTemp_2() {
 
         {/* Testimonials Section */}
         <section id="testimonials">
-          <SimpleTestimonials 
+          <Testimonials
             testimonialsData={componentStates.testimonialContent}
             onStateChange={createStateChangeHandler('testimonialContent')}
             userId={AIGenData.userId}

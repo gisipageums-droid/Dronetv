@@ -52,6 +52,9 @@ interface Stats {
 }
 
 interface ClientsData {
+  subtitle: string;
+  heading: string;
+  description: string;
   clients: Client[];
   stats: Stats;
   cta: {
@@ -62,6 +65,9 @@ interface ClientsData {
 }
 
 const defaultData: ClientsData = {
+  subtitle: "Trusted by amazing companies",
+  heading: "Clients & Partners",
+  description: "I have had the privilege of working with some incredible organizations.",
   clients: [
     { id: '1', name: 'TechCorp', industry: 'Technology' },
     { id: '2', name: 'StartupCo', industry: 'E-commerce' },
@@ -92,20 +98,20 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
   const [isVisible, setIsVisible] = useState(false);
   const clientsRef = useRef<HTMLDivElement>(null);
   
-  // Pending logo files for S3 upload - SAME PATTERN AS HERO
+  // Pending logo files for S3 upload
   const [pendingLogoFiles, setPendingLogoFiles] = useState<Record<string, File>>({});
 
   const [data, setData] = useState<ClientsData>(defaultData);
   const [tempData, setTempData] = useState<ClientsData>(defaultData);
 
-  // Notify parent of state changes - SAME AS HERO
+  // Notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(data);
     }
   }, [data]);
 
-  // Intersection observer - SAME AS HERO
+  // Intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -117,12 +123,36 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
     };
   }, []);
 
-  // Fake API fetch - SAME LOGIC AS HERO
+  // Transform backend data to match component structure
+  const transformBackendData = (backendData: any): ClientsData => {
+    if (!backendData) return defaultData;
+    
+    return {
+      subtitle: backendData.subtitle || defaultData.subtitle,
+      heading: backendData.heading || defaultData.heading,
+      description: backendData.description || defaultData.description,
+      clients: backendData.clients || defaultData.clients,
+      stats: backendData.stats || defaultData.stats,
+      cta: backendData.cta || defaultData.cta
+    };
+  };
+
+  // Fetch clients data
   const fetchClientsData = async () => {
     setIsLoading(true);
     try {
+      // If clientsData is provided as prop, use it directly
+      if (clientsData) {
+        const transformedData = transformBackendData(clientsData);
+        setData(transformedData);
+        setTempData(transformedData);
+        setDataLoaded(true);
+        return;
+      }
+
+      // Otherwise, simulate API fetch with default data
       const response = await new Promise<ClientsData>((resolve) =>
-        setTimeout(() => resolve(clientsData || defaultData), 1200)
+        setTimeout(() => resolve(defaultData), 1200)
       );
       setData(response);
       setTempData(response);
@@ -141,10 +171,10 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingLogoFiles({}); // Clear pending files - SAME AS HERO
+    setPendingLogoFiles({});
   };
 
-  // Save function with S3 upload - SAME PATTERN AS HERO
+  // Save function with S3 upload
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -183,20 +213,19 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
         }
       }
 
-      // Clear pending files - SAME AS HERO
+      // Clear pending files
       setPendingLogoFiles({});
 
       // Save the updated data with S3 URLs
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
       
-      // Update both states with the new URLs - SAME AS HERO
+      // Update both states with the new URLs
       setData(updatedData);
       setTempData(updatedData);
       
       setIsEditing(false);
       toast.success('Clients section saved with S3 URLs ready for publish');
-      console.log("data :",setTempData)
     } catch (error) {
       console.error('Error saving clients section:', error);
       toast.error('Error saving changes. Please try again.');
@@ -208,30 +237,30 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingLogoFiles({}); // Clear pending files - SAME AS HERO
+    setPendingLogoFiles({});
     setIsEditing(false);
   };
 
-  // Logo upload handler with validation - SAME PATTERN AS HERO
+  // Logo upload handler with validation
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>, clientId: string) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size - SAME AS HERO
+    // Validate file type and size
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit - SAME AS HERO
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
       toast.error('File size must be less than 5MB');
       return;
     }
 
-    // Store the file for upload on Save - SAME PATTERN AS HERO
+    // Store the file for upload on Save
     setPendingLogoFiles(prev => ({ ...prev, [clientId]: file }));
 
-    // Show immediate local preview - SAME AS HERO
+    // Show immediate local preview
     const reader = new FileReader();
     reader.onload = (e) => {
       const updatedClients = tempData.clients.map(client =>
@@ -242,7 +271,7 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
     reader.readAsDataURL(file);
   };
 
-  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  // Stable update functions with useCallback
   const updateClient = useCallback((index: number, field: string, value: string) => {
     const updatedClients = [...tempData.clients];
     updatedClients[index] = { ...updatedClients[index], [field]: value };
@@ -263,7 +292,14 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
     }));
   }, []);
 
-  // Memoized functions - SAME PATTERN AS HERO
+  const updateHeading = useCallback((field: 'subtitle' | 'heading' | 'description', value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
+
+  // Memoized functions
   const addClient = useCallback(() => {
     const newClient: Client = {
       id: Date.now().toString(),
@@ -288,7 +324,7 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
 
   const displayData = isEditing ? tempData : data;
 
-  // Loading state - SAME PATTERN AS HERO
+  // Loading state
   if (isLoading || !displayData.clients || displayData.clients.length === 0) {
     return (
       <section ref={clientsRef} className="py-20 bg-background">
@@ -355,13 +391,40 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
 
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
-            Trusted by <span className="text-yellow-500">Leading Companies</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            I've had the privilege of working with amazing companies across various 
-            industries, delivering innovative solutions that drive real business results.
-          </p>
+          {isEditing ? (
+            <>
+              <input
+                type="text"
+                value={displayData.subtitle}
+                onChange={(e) => updateHeading('subtitle', e.target.value)}
+                className="text-lg text-muted-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+              />
+              <input
+                type="text"
+                value={displayData.heading}
+                onChange={(e) => updateHeading('heading', e.target.value)}
+                className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+              />
+              <textarea
+                value={displayData.description}
+                onChange={(e) => updateHeading('description', e.target.value)}
+                className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                rows="2"
+              />
+            </>
+          ) : (
+            <>
+              <p className="text-lg text-muted-foreground mb-2">
+                {displayData.subtitle}
+              </p>
+              <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
+                {displayData.heading}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {displayData.description}
+              </p>
+            </>
+          )}
         </div>
 
         {/* Stats */}

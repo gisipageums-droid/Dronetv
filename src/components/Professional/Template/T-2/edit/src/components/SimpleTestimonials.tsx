@@ -1,4 +1,7 @@
+// ye code edit  sampletestimonial.tsx  ka updated code h 
+
 import { Edit2, Loader2, Plus, Quote, Save, Star, Trash2, X } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -44,54 +47,58 @@ const Button = ({
   );
 };
 
-// Define types for Testimonial data
+// Define types for Testimonial data based on your JSON
 interface Testimonial {
-  id: string;
+  id: number;
   name: string;
   position: string;
+  content: string;
   rating: number;
-  review: string;
+  project: string;
+  date: string;
 }
 
 interface TestimonialsData {
+  subtitle: string;
+  heading: string;
+  description: string;
   testimonials: Testimonial[];
-  sectionTitle: string;
-  sectionDescription: string;
-  ctaTitle: string;
-  ctaDescription: string;
-  ctaButton: string;
 }
 
-// Default data for Testimonials section
+// Default data for Testimonials section based on your JSON
 const defaultTestimonialsData: TestimonialsData = {
+  subtitle: "client success stories and feedback",
+  heading: "What Clients Say",
+  description: "testimonials from satisfied clients",
   testimonials: [
     {
-      id: '1',
-      name: 'Sarah Johnson',
-      position: 'CEO, TechCorp',
+      id: 1,
+      name: "Rajesh Kumar",
+      position: "Project Manager",
+      content: "Working with Professional transformed our web development process. Their attention to detail and innovative approach helped us launch our site ahead of schedule, resulting in a 30% increase in user engagement.",
       rating: 5,
-      review: "John delivered an exceptional e-commerce platform that exceeded our expectations. His attention to detail and technical expertise helped us increase our conversion rate by 40%."
+      project: "Web Development",
+      date: "2024"
     },
     {
-      id: '2',
-      name: 'Michael Chen',
-      position: 'CTO, StartupCo',
+      id: 2,
+      name: "Piyu Sharma",
+      position: "Business Owner",
+      content: "Professional provided us with a custom solution that exceeded our expectations. Their commitment to quality and excellent customer service made the entire process smooth and enjoyable.",
       rating: 5,
-      review: "Working with John was a game-changer for our startup. He built our entire tech stack from scratch and helped us scale from 0 to 10,000 users in just 6 months."
+      project: "Custom Solution",
+      date: "2024"
     },
     {
-      id: '3',
-      name: 'Emily Rodriguez',
-      position: 'Product Manager, InnovateLabs',
+      id: 3,
+      name: "Amita Patel",
+      position: "Tech Lead",
+      content: "The technical expertise of Professional was crucial for our project. Their insights and guidance helped us navigate complex challenges, ultimately leading to a successful implementation of our consulting strategies.",
       rating: 5,
-      review: "John's ability to translate complex requirements into elegant solutions is remarkable. He developed our fintech dashboard that handles millions of transactions daily."
+      project: "Technical Consulting",
+      date: "2024"
     }
-  ],
-  sectionTitle: 'What Clients Say',
-  sectionDescription: "Don't just take my word for it. Here's what my clients have to say about working with me and the results we've achieved together.",
-  ctaTitle: 'Ready to be the next success story?',
-  ctaDescription: 'Join the growing list of satisfied clients who have transformed their businesses with innovative digital solutions.',
-  ctaButton: 'Start Your Success Story'
+  ]
 };
 
 // Props interface
@@ -103,7 +110,13 @@ interface TestimonialsProps {
   templateSelection?: string;
 }
 
-export function SimpleTestimonials({ testimonialsData, onStateChange, userId, publishedId, templateSelection }: TestimonialsProps) {
+export function Testimonials({ 
+  testimonialsData, 
+  onStateChange, 
+  userId, 
+  publishedId, 
+  templateSelection 
+}: TestimonialsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -114,14 +127,14 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
   const [data, setData] = useState<TestimonialsData>(defaultTestimonialsData);
   const [tempData, setTempData] = useState<TestimonialsData>(defaultTestimonialsData);
 
-  // Notify parent of state changes - SAME AS HERO
+  // Notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(data);
     }
   }, [data]);
 
-  // Intersection observer - SAME AS HERO
+  // Intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -133,7 +146,7 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
     };
   }, []);
 
-  // Fake API fetch - SAME LOGIC AS HERO
+  // Fake API fetch
   const fetchTestimonialsData = async () => {
     setIsLoading(true);
     try {
@@ -159,7 +172,7 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
     setTempData({ ...data });
   };
 
-  // Save function - SAME PATTERN AS HERO
+  // Save function
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -167,7 +180,7 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
       // Save the updated data
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
       
-      // Update both states - SAME AS HERO
+      // Update both states
       setData(tempData);
       
       setIsEditing(false);
@@ -186,8 +199,8 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
     setIsEditing(false);
   };
 
-  // Stable update functions with useCallback - SAME PATTERN AS HERO
-  const updateTestimonial = useCallback((index: number, field: string, value: any) => {
+  // Stable update functions with useCallback
+  const updateTestimonial = useCallback((index: number, field: keyof Testimonial, value: any) => {
     const updatedTestimonials = [...tempData.testimonials];
     updatedTestimonials[index] = { ...updatedTestimonials[index], [field]: value };
     setTempData({ ...tempData, testimonials: updatedTestimonials });
@@ -201,11 +214,13 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
 
   const addTestimonial = useCallback(() => {
     const newTestimonial: Testimonial = {
-      id: Date.now().toString(),
+      id: Date.now(),
       name: 'New Client',
-      position: 'Position, Company',
+      position: 'Position',
+      content: 'Add a testimonial review here...',
       rating: 5,
-      review: 'Add a testimonial review here...'
+      project: 'Project Type',
+      date: '2024'
     };
     setTempData({
       ...tempData,
@@ -232,10 +247,10 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
 
   const displayData = isEditing ? tempData : data;
 
-  // Loading state - SAME PATTERN AS HERO
-  if (isLoading || !displayData.testimonials || displayData.testimonials.length === 0) {
+  // Loading state
+  if (isLoading) {
     return (
-      <section ref={testimonialsRef} className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+      <section ref={testimonialsRef} id="testimonials" className="relative py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
           <p className="text-muted-foreground mt-4">Loading testimonials data...</p>
@@ -245,15 +260,15 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
   }
 
   return (
-    <section ref={testimonialsRef} className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section ref={testimonialsRef} id="testimonials" className="relative py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
-        <div className='text-right mb-8'>
+        <div className='text-right mb-20'>
           {!isEditing ? (
             <Button
               onClick={handleEdit}
               size='sm'
-              className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+              className='bg-red-500 hover:bg-red-600 text-white shadow-md'
             >
               <Edit2 className='w-4 h-4 mr-2' />
               Edit
@@ -296,43 +311,84 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
         </div>
 
         {/* Header */}
-        <div className="text-center mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
           {isEditing ? (
             <>
               <input
                 type="text"
-                value={displayData.sectionTitle}
-                onChange={(e) => updateSection('sectionTitle', e.target.value)}
+                value={displayData.subtitle}
+                onChange={(e) => updateSection('subtitle', e.target.value)}
+                className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                placeholder="Subtitle"
+              />
+              <input
+                type="text"
+                value={displayData.heading}
+                onChange={(e) => updateSection('heading', e.target.value)}
                 className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                placeholder="Heading"
               />
               <textarea
-                value={displayData.sectionDescription}
-                onChange={(e) => updateSection('sectionDescription', e.target.value)}
+                value={displayData.description}
+                onChange={(e) => updateSection('description', e.target.value)}
                 className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
-                rows={3}
+                rows={2}
+                placeholder="Description"
               />
             </>
           ) : (
             <>
-              <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
-                {displayData.sectionTitle.split(' ')[0]}{' '}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="text-lg text-yellow-500 mb-2"
+              >
+                {displayData.subtitle}
+              </motion.p>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="text-3xl sm:text-4xl text-foreground mb-4"
+              >
+                {displayData.heading.split(' ')[0]}{' '}
                 <span className="text-yellow-500">
-                  {displayData.sectionTitle.split(' ').slice(1).join(' ')}
+                  {displayData.heading.split(' ').slice(1).join(' ')}
                 </span>
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {displayData.sectionDescription}
-              </p>
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="text-lg text-muted-foreground max-w-2xl mx-auto"
+              >
+                {displayData.description}
+              </motion.p>
             </>
           )}
-        </div>
+        </motion.div>
 
         {/* Testimonials Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayData.testimonials.map((testimonial, index) => (
-            <div
+            <motion.div
               key={testimonial.id}
-              className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300 relative"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.2 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.05 }}
+              className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 relative"
             >
               {isEditing && (
                 <Button
@@ -368,35 +424,51 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
               {/* Review */}
               {isEditing ? (
                 <textarea
-                  value={testimonial.review}
-                  onChange={(e) => updateTestimonial(index, 'review', e.target.value)}
+                  value={testimonial.content}
+                  onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
                   className="text-muted-foreground leading-relaxed mb-6 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                   rows={4}
+                  placeholder="Testimonial content"
                 />
               ) : (
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  "{testimonial.review}"
+                  "{testimonial.content}"
                 </p>
+              )}
+
+              {/* Project and Date */}
+              {isEditing ? (
+                <div className="mb-4 space-y-2">
+                  <input
+                    type="text"
+                    value={testimonial.project}
+                    onChange={(e) => updateTestimonial(index, 'project', e.target.value)}
+                    className="text-sm text-yellow-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                    placeholder="Project type"
+                  />
+                  <input
+                    type="text"
+                    value={testimonial.date}
+                    onChange={(e) => updateTestimonial(index, 'date', e.target.value)}
+                    className="text-sm text-gray-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                    placeholder="Date"
+                  />
+                </div>
+              ) : (
+                <div className="mb-4">
+                  <p className="text-sm text-yellow-500">{testimonial.project}</p>
+                  <p className="text-sm text-gray-500">{testimonial.date}</p>
+                </div>
               )}
 
               {/* Client Info */}
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={testimonial.name.charAt(0)}
-                      onChange={(e) => updateTestimonial(index, 'name', e.target.value + testimonial.name.slice(1))}
-                      className="w-6 h-6 bg-transparent border-none text-gray-900 text-lg text-center p-0"
-                      maxLength={1}
-                    />
-                  ) : (
-                    <span className="text-gray-900 text-lg">
-                      {testimonial.name.charAt(0)}
-                    </span>
-                  )}
+                  <span className="text-gray-900 text-lg">
+                    {testimonial.name.charAt(0)}
+                  </span>
                 </div>
-                <div className="flex-1">
+                <div>
                   {isEditing ? (
                     <>
                       <input
@@ -404,12 +476,14 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
                         value={testimonial.name}
                         onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
                         className="text-foreground mb-1 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        placeholder="Client name"
                       />
                       <input
                         type="text"
                         value={testimonial.position}
                         onChange={(e) => updateTestimonial(index, 'position', e.target.value)}
                         className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        placeholder="Position"
                       />
                     </>
                   ) : (
@@ -420,51 +494,8 @@ export function SimpleTestimonials({ testimonialsData, onStateChange, userId, pu
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="text-center mt-16">
-          <div className="bg-card rounded-2xl p-8 shadow-lg">
-            {isEditing ? (
-              <>
-                <input
-                  type="text"
-                  value={displayData.ctaTitle}
-                  onChange={(e) => updateSection('ctaTitle', e.target.value)}
-                  className="text-2xl text-foreground mb-4 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
-                />
-                <textarea
-                  value={displayData.ctaDescription}
-                  onChange={(e) => updateSection('ctaDescription', e.target.value)}
-                  className="text-muted-foreground mb-6 max-w-xl mx-auto w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                  rows={3}
-                />
-                <input
-                  type="text"
-                  value={displayData.ctaButton}
-                  onChange={(e) => updateSection('ctaButton', e.target.value)}
-                  className="inline-flex items-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg bg-white/80 border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none text-center"
-                />
-              </>
-            ) : (
-              <>
-                <h3 className="text-2xl text-foreground mb-4">
-                  {displayData.ctaTitle}
-                </h3>
-                <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-                  {displayData.ctaDescription}
-                </p>
-                <a
-                  href="#contact"
-                  className="inline-flex items-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500 hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  {displayData.ctaButton}
-                </a>
-              </>
-            )}
-          </div>
         </div>
       </div>
     </section>
