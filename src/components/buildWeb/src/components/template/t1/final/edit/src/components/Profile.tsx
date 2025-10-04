@@ -82,7 +82,7 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
             "Ownership & Accountability",
             "Grow Together"
         ],
-        companyImage: profileData?.companyImage || "https://images.unsplash.com/photo-1529533520516-5e45b20d07a5?w=800&h=600&fit=crop"
+        companyImage: profileData?.imageUrl || "https://images.unsplash.com/photo-1529533520516-5e45b20d07a5?w=800&h=600&fit=crop"
     };
 
     // Consolidated state

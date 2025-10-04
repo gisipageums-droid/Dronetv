@@ -1,24 +1,21 @@
-import React from "react";
 import {
-  Mail,
-  Phone,
-  MapPin,
   Facebook,
   Github,
-  Linkedin,
   Instagram,
-  ArrowRight,
-  Twitter,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Twitter
 } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
 import { motion } from "motion/react";
 import { useState } from "react";
 
 export default function Footer({ content }) {
-  let { isSubscribed, setIsSubscribed } = useState(false);
   // Use the content prop directly
+  let { isSubscribed, setIsSubscribed } = useState(false);
   const footerData = content 
+
   const getSocialIcon = (iconName) => {
     const icons = {
       Facebook: Facebook,
@@ -77,7 +74,7 @@ export default function Footer({ content }) {
             variants={itemVariants}
           >
             <div className='flex items-center justify-center md:justify-start space-x-3 mb-4'>
-              <span className='flex flex-row gap-2 text-xl font-bold text-red-500'>
+              <span className='flex flex-row gap-2 text-xl font-bold text-yellow-400'>
                 <img
                   src={footerData.brand.logoUrl}
                   alt='Logo'
@@ -90,28 +87,6 @@ export default function Footer({ content }) {
             <p className='text-gray-300 text-sm leading-relaxed mb-6'>
               {footerData.brand.description}
             </p>
-
-            {/* Newsletter Signup */}
-            <div className='space-y-3'>
-              <h4 className='font-medium text-white text-sm'>
-                {footerData.newsletter.title}
-              </h4>
-
-              <div className='flex flex-col sm:flex-row gap-2 justify-center md:justify-start'>
-                <Input
-                  type='email'
-                  placeholder={footerData.newsletter.placeholder}
-                  className='h-10 text-sm flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500'
-                />
-                <Button
-                  size='sm'
-                  className='bg-yellow-400 hover:bg-yellow-500 h-10 px-4 whitespace-nowrap text-black'
-                >
-                  Subscribe
-                  <ArrowRight className='w-4 h-4 ml-2' />
-                </Button>
-              </div>
-            </div>
           </motion.div>
 
           {/* Dynamic Sections */}
@@ -151,66 +126,22 @@ export default function Footer({ content }) {
 
             {/* Contact Info */}
             <div className='space-y-3 mb-6 text-sm'>
-              <div className={` flex items-start justify-center md:justify-start space-x-3 text-gray-300 ${isSubscribed ? '' : 'bg-gray-300'} select-none`}>
+              <div className={`flex items-start justify-center md:justify-start space-x-3 text-gray-300 ${isSubscribed ? '' : 'blur-[3px] select-none'}`}>
                 <Mail className='w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0' />
-                <span>{footerData.contact.email}</span>
+                <span className="">{footerData.contact.email}</span>
               </div>
 
-              <div className={`flex items-start justify-center md:justify-start space-x-3 text-gray-300 ${isSubscribed ? '' : 'bg-gray-300'} select-none`}>
+              <div className={`flex items-start justify-center md:justify-start space-x-3 text-gray-300 ${isSubscribed ? '' : 'blur-[3px] select-none'}`}>
                 <Phone className='w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0' />
-                <span>{footerData.contact.phone}</span>
+                <span className="">{footerData.contact.phone}</span>
               </div>
 
               <div className='flex items-start justify-center md:justify-start space-x-3 text-gray-300'>
-                <MapPin className='w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0' />
-                <span>{footerData.contact.address}</span>
-              </div>
-            </div>
-
-            {/* Social Media */}
-            <div>
-              <h5 className='font-medium text-white mb-3 text-sm'>
-                Follow Us
-              </h5>
-              <div className='flex justify-center md:justify-start space-x-3 flex-wrap gap-2'>
-                {footerData.socialMedia.map((social) => (
-                  <a
-                    key={social.id}
-                    href={social.href}
-                    className={`w-9 h-9 bg-gray-800 ${social.hoverColor} rounded-lg flex items-center justify-center transition-all duration-200 text-gray-300 hover:text-white hover:scale-105`}
-                    aria-label={social.name}
-                  >
-                    {getSocialIcon(social.icon)}
-                  </a>
-                ))}
+                <MapPin className={`w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0 ${isSubscribed ? '' : 'blur-[3px] select-none'}`} />
+                <span className={`${isSubscribed ? '' : 'blur-[3px] select-none'}`}>{footerData.contact.address}</span>
               </div>
             </div>
           </motion.div>
-        </motion.div>
-
-        {/* Bottom Copyright Section */}
-        <motion.div 
-          className='mt-8 pt-6 border-t border-gray-800'
-          variants={itemVariants}
-        >
-          <div className='flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0 text-center md:text-left'>
-            <div className='text-sm text-gray-400'>
-              {footerData.copyright}
-            </div>
-
-            {/* Legal Links */}
-            <div className='flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm'>
-              {footerData.legalLinks.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  className='text-gray-400 hover:text-gray-200 transition-colors'
-                >
-                  {link.text}
-                </a>
-              ))}
-            </div>
-          </div>
         </motion.div>
       </div>
     </motion.footer>

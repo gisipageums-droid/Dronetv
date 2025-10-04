@@ -1,23 +1,34 @@
 import {
+  ArrowRight,
   Edit2,
+  Facebook,
+  Github,
+  Instagram,
+  Linkedin,
   Mail,
   MapPin,
   Phone,
   Plus,
   Save,
   Trash2,
+  Twitter,
+  Upload,
   X,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 
-export default function EditableFooter({ 
-  content, 
-  onStateChange, 
+export default function EditableFooter({
+  content,
+  onStateChange,
+  userId,
+  publishedId,
+  templateSelection,
 }) {
-   // Initialize with data from props or use default structure
+  // Initialize with data from props or use default structure
   const initialData = {
     brand: {
       name: content.name,
@@ -25,10 +36,7 @@ export default function EditableFooter({
         "Innovative solutions for modern businesses. Transform your operations with our expert guidance and cutting-edge technology.",
       logoUrl: content.logo,
     },
-    newsletter: {
-      title: "Stay Updated",
-      placeholder: "Enter your email",
-    },
+  
     contact: {
       email: "hello@innovativelabs.com",
       phone: "+1 (555) 123-4567",
@@ -94,17 +102,20 @@ export default function EditableFooter({
     ],
     copyright: "© 2024 Innovative Labs. All rights reserved.",
   };
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [footerData, setFooterData] = useState(initialData);
   const [tempData, setTempData] = useState(initialData);
+  const [pendingLogoFile, setPendingLogoFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Update state when content prop changes
   useEffect(() => {
     if (content) {
-      setFooterData(content);
-      setTempData(content);
+      setFooterData(initialData);
+      setTempData(initialData);
     }
   }, [content]);
 
@@ -115,6 +126,33 @@ export default function EditableFooter({
     }
   }, [footerData, onStateChange]);
 
+  const handleLogoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB limit
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    // Store the file for upload on Save
+    setPendingLogoFile(file);
+
+    // Show immediate local preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      updateNestedField("brand.logoUrl", reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleEdit = () => {
     setIsEditing(true);
     setTempData(footerData);
@@ -123,16 +161,80 @@ export default function EditableFooter({
   const handleCancel = () => {
     setTempData(footerData);
     setIsEditing(false);
+    setPendingLogoFile(null);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
-      setFooterData(tempData);
+    setIsUploading(true);
+
+    try {
+      let updatedLogoUrl = tempData.brand.logoUrl;
+
+      // If there's a pending logo, upload it first
+      if (pendingLogoFile) {
+        if (!userId || !publishedId || !templateSelection) {
+          console.error("Missing required props:", {
+            userId,
+            publishedId,
+            templateSelection,
+          });
+          toast.error(
+            "Missing user information. Please refresh and try again."
+          );
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", pendingLogoFile);
+        formData.append("sectionName", "footer");
+        formData.append("imageField", "logoUrl");
+        formData.append("templateSelection", templateSelection);
+
+        const uploadResponse = await fetch(
+          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          // Update the logo URL to the S3 URL
+          updatedLogoUrl = uploadData.imageUrl;
+          setPendingLogoFile(null);
+        } else {
+          const errorData = await uploadResponse.json();
+          console.error("Logo upload failed:", errorData);
+          toast.error(
+            `Logo upload failed: ${errorData.message || "Unknown error"}`
+          );
+          return;
+        }
+      }
+
+      // Create updated data with the new logo URL
+      const updatedData = {
+        ...tempData,
+        brand: {
+          ...tempData.brand,
+          logoUrl: updatedLogoUrl
+        }
+      };
+
+      // Now save the updated data
+      setFooterData(updatedData);
+      setTempData(updatedData);
       setIsEditing(false);
+      toast.success("Footer saved successfully");
+    } catch (error) {
+      console.error("Error saving footer:", error);
+      toast.error("Error saving changes. Please try again.");
+    } finally {
       setIsSaving(false);
-      toast.success('Footer saved successfully');
-    }, 500);
+      setIsUploading(false);
+    }
   };
 
   const updateNestedField = (path, value) => {
@@ -148,6 +250,32 @@ export default function EditableFooter({
 
       return newData;
     });
+  };
+
+  // Simplified update functions similar to Footer2.tsx
+  const updateBrand = (field, value) => {
+    setTempData(prev => ({
+      ...prev,
+      brand: { ...prev.brand, [field]: value }
+    }));
+  };
+
+ 
+
+  const updateContact = (field, value) => {
+    setTempData(prev => ({
+      ...prev,
+      contact: { ...prev.contact, [field]: value }
+    }));
+  };
+
+  const updateSectionTitle = (sectionIndex, value) => {
+    setTempData(prev => ({
+      ...prev,
+      sections: prev.sections.map((section, index) =>
+        index === sectionIndex ? { ...section, title: value } : section
+      )
+    }));
   };
 
   const addSectionLink = (sectionId) => {
@@ -201,34 +329,101 @@ export default function EditableFooter({
     }));
   };
 
-  const EditableField = ({
-    value,
-    onChange,
-    placeholder,
-    multiline = false,
-    className = "",
-  }) => {
-    if (multiline) {
-      return (
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className={`w-full p-2 border border-gray-600 rounded bg-gray-800 text-white text-sm resize-none ${className}`}
-          rows={3}
-        />
-      );
-    }
+  const addSection = () => {
+    setTempData((prev) => ({
+      ...prev,
+      sections: [
+        ...prev.sections,
+        {
+          id: Date.now(),
+          title: "New Section",
+          links: [{ id: Date.now() + 1, text: "New Link", href: "#" }],
+        },
+      ],
+    }));
+  };
 
-    return (
-      <input
-        type='text'
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={`w-full p-2 border border-gray-600 rounded bg-gray-800 text-white text-sm ${className}`}
-      />
-    );
+  const removeSection = (sectionId) => {
+    if (tempData.sections.length > 1) {
+      setTempData((prev) => ({
+        ...prev,
+        sections: prev.sections.filter((section) => section.id !== sectionId),
+      }));
+    }
+  };
+
+  const updateSocialMedia = (index, field, value) => {
+    setTempData((prev) => ({
+      ...prev,
+      socialMedia: prev.socialMedia.map((social, i) =>
+        i === index ? { ...social, [field]: value } : social
+      ),
+    }));
+  };
+
+  const addSocialMedia = () => {
+    setTempData((prev) => ({
+      ...prev,
+      socialMedia: [
+        ...prev.socialMedia,
+        {
+          id: Date.now(),
+          name: "New Social",
+          icon: "Facebook",
+          href: "#",
+          hoverColor: "hover:bg-blue-600",
+        },
+      ],
+    }));
+  };
+
+  const removeSocialMedia = (id) => {
+    if (tempData.socialMedia.length > 1) {
+      setTempData((prev) => ({
+        ...prev,
+        socialMedia: prev.socialMedia.filter((social) => social.id !== id),
+      }));
+    }
+  };
+
+  const updateLegalLink = (index, field, value) => {
+    setTempData((prev) => ({
+      ...prev,
+      legalLinks: prev.legalLinks.map((link, i) =>
+        i === index ? { ...link, [field]: value } : link
+      ),
+    }));
+  };
+
+  const addLegalLink = () => {
+    setTempData((prev) => ({
+      ...prev,
+      legalLinks: [
+        ...prev.legalLinks,
+        { id: Date.now(), text: "New Link", href: "#" },
+      ],
+    }));
+  };
+
+  const removeLegalLink = (id) => {
+    if (tempData.legalLinks.length > 1) {
+      setTempData((prev) => ({
+        ...prev,
+        legalLinks: prev.legalLinks.filter((link) => link.id !== id),
+      }));
+    }
+  };
+
+  const getSocialIcon = (iconName) => {
+    const icons = {
+      Facebook: Facebook,
+      Github: Github,
+      Linkedin: Linkedin,
+      Instagram: Instagram,
+      Twitter: Twitter,
+    };
+    const IconComponent = icons[iconName] || Facebook;
+    return <IconComponent className="w-4 h-4" />;
   };
 
   const containerVariants = {
@@ -237,9 +432,9 @@ export default function EditableFooter({
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
+        delayChildren: 0.2,
+      },
+    },
   };
 
   const itemVariants = {
@@ -249,9 +444,9 @@ export default function EditableFooter({
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   return (
@@ -262,9 +457,8 @@ export default function EditableFooter({
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className='max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 relative'>
+        transition={{ duration: 0.8 }}>
+        <div className='max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-12 relative'>
           {/* Edit Toggle - positioned in top right */}
           <div className='absolute top-4 right-4 z-10'>
             {!isEditing ? (
@@ -289,7 +483,7 @@ export default function EditableFooter({
                   ) : (
                     <Save className='w-3 h-3 mr-1' />
                   )}
-                  Save
+                  {isSaving ? (isUploading ? 'Uploading...' : 'Saving...') : 'Save'}
                 </Button>
                 <Button
                   onClick={handleCancel}
@@ -305,7 +499,7 @@ export default function EditableFooter({
           
           {/* Main Footer Content */}
           <motion.div 
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center md:text-left'
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-center md:text-left'
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -313,45 +507,53 @@ export default function EditableFooter({
           >
             {/* Brand Section */}
             <motion.div 
-              className='flex flex-col items-center md:items-start'
+              className='col-span-1 md:col-span-2 lg:col-span-1'
               variants={itemVariants}
             >
-              <div className='flex items-center space-x-3 mb-6'>
+              <div className='flex items-center justify-center md:justify-start space-x-3 mb-4'>
                 <span className='flex flex-row gap-2 text-xl font-bold text-red-500'>
-                  <motion.img
-                    src={tempData.brand.logoUrl}
-                    alt='Logo'
-                    className='h-6 w-6 object-contain'
-                    // Entrance animation
-                    initial={{ opacity: 0, scale: 0.5, y: -20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ duration: 0.8, type: "spring", stiffness: 120 }}
-                    // Floating effect (infinite)
-                    whileInView={{
-                      y: [0, -4, 0],
-                      transition: {
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      },
-                    }}
-                    // Interactive hover & tap
-                    whileHover={{
-                      rotate: [0, -5, 5, -5, 0],
-                      scale: 1.2,
-                      boxShadow: "0px 0px 15px rgba(255, 215, 0, 0.6)",
-                      transition: { duration: 0.5 },
-                    }}
-                    whileTap={{ scale: 0.9 }}
-                  />
+                  <div className="relative">
+                    <img
+                      src={tempData.brand.logoUrl}
+                      alt='Logo'
+                      className='h-4 w-4 sm:h-6 sm:w-6 object-contain'
+                      style={{
+                        filter: isEditing ? "brightness(0.7)" : "none",
+                      }}
+                    />
+                    {isEditing && (
+                      <div className="absolute -bottom-14 left-0 bg-white/90 p-2 rounded shadow-lg">
+                        <p className="text-xs mb-1 text-gray-600">Upload Logo:</p>
+                        <motion.button
+                          onClick={() => fileInputRef.current?.click()}
+                          className='flex items-center gap-1 p-1 bg-gray-200 rounded shadow text-xs hover:bg-gray-300'
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <Upload size={12} /> Choose File
+                        </motion.button>
+                        {pendingLogoFile && (
+                          <p className="text-xs text-orange-600 mt-1 max-w-[150px] truncate">
+                            Selected: {pendingLogoFile.name}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    <input
+                      type='file'
+                      ref={fileInputRef}
+                      accept='image/*'
+                      onChange={handleLogoUpload}
+                      className='hidden'
+                    />
+                  </div>
                   {isEditing ? (
-                    <EditableField
+                    <input
+                      type="text"
                       value={tempData.brand.name}
-                      onChange={(value) =>
-                        updateNestedField("brand.name", value)
-                      }
-                      placeholder='Brand name'
-                      className='bg-gray-800 border-gray-600'
+                      onChange={(e) => updateBrand("name", e.target.value)}
+                      placeholder="Brand name"
+                      className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm"
                     />
                   ) : (
                     tempData.brand.name
@@ -362,61 +564,52 @@ export default function EditableFooter({
               {isEditing ? (
                 <div className='mb-4'>
                   <label className='block text-xs text-gray-400 mb-1'>
-                    Logo URL:
-                  </label>
-                  <EditableField
-                    value={tempData.brand.logoUrl}
-                    onChange={(value) =>
-                      updateNestedField("brand.logoUrl", value)
-                    }
-                    placeholder='Logo URL'
-                    className='mb-2'
-                  />
-                  <label className='block text-xs text-gray-400 mb-1'>
                     Description:
                   </label>
-                  <EditableField
+                  <textarea
                     value={tempData.brand.description}
-                    onChange={(value) =>
-                      updateNestedField("brand.description", value)
-                    }
-                    placeholder='Brand description'
-                    multiline={true}
+                    onChange={(e) => updateBrand("description", e.target.value)}
+                    placeholder="Brand description"
+                    className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white text-sm resize-none"
+                    rows={3}
                   />
                 </div>
               ) : (
-                <p className='text-gray-300 text-sm leading-relaxed mb-8 text-center md:text-left'>
+                <p className='text-gray-300 text-sm leading-relaxed mb-6'>
                   {tempData.brand.description}
                 </p>
               )}
+
+            
             </motion.div>
 
-            {/* Company Links */}
+            {/* Dynamic Sections */}
             {tempData.sections.map((section, sectionIndex) => (
               <motion.div 
                 key={section.id} 
-                className='flex flex-col items-center md:items-start'
+                className='col-span-1'
                 variants={itemVariants}
               >
-                <div className='flex items-center justify-center md:justify-start mb-6'>
+                <div className='flex items-center justify-center md:justify-start mb-4'>
                   {isEditing ? (
                     <div className="flex items-center w-full">
-                      <EditableField
+                      <input
+                        type="text"
                         value={section.title}
-                        onChange={(value) => {
-                          const newSections = [...tempData.sections];
-                          newSections[sectionIndex] = {
-                            ...newSections[sectionIndex],
-                            title: value,
-                          };
-                          setTempData((prev) => ({
-                            ...prev,
-                            sections: newSections,
-                          }));
-                        }}
-                        placeholder='Section title'
-                        className='font-semibold text-white flex-1'
+                        onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)}
+                        placeholder="Section title"
+                        className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm font-semibold flex-1"
                       />
+                      {tempData.sections.length > 1 && (
+                        <Button
+                          onClick={() => removeSection(section.id)}
+                          size="sm"
+                          variant="destructive"
+                          className="ml-2"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      )}
                     </div>
                   ) : (
                     <h4 className='font-semibold text-white'>
@@ -425,36 +618,24 @@ export default function EditableFooter({
                   )}
                 </div>
 
-                <ul className='space-y-4 text-sm'>
+                <ul className='space-y-3 text-sm'>
                   {section.links.map((link) => (
                     <li key={link.id} className='flex items-center gap-2'>
                       {isEditing ? (
                         <div className='flex-1 space-y-1'>
-                          <EditableField
+                          <input
+                            type="text"
                             value={link.text}
-                            onChange={(value) =>
-                              updateSectionLink(
-                                section.id,
-                                link.id,
-                                "text",
-                                value
-                              )
-                            }
-                            placeholder='Link text'
-                            className='text-xs'
+                            onChange={(e) => updateSectionLink(section.id, link.id, "text", e.target.value)}
+                            placeholder="Link text"
+                            className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
                           />
-                          <EditableField
+                          <input
+                            type="text"
                             value={link.href}
-                            onChange={(value) =>
-                              updateSectionLink(
-                                section.id,
-                                link.id,
-                                "href",
-                                value
-                              )
-                            }
-                            placeholder='Link URL'
-                            className='text-xs'
+                            onChange={(e) => updateSectionLink(section.id, link.id, "href", e.target.value)}
+                            placeholder="Link URL"
+                            className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
                           />
                         </div>
                       ) : (
@@ -492,57 +673,71 @@ export default function EditableFooter({
               </motion.div>
             ))}
 
+            {/* Add Section Button */}
+            {isEditing && (
+              <motion.div 
+                className="col-span-1 flex items-center justify-center"
+                variants={itemVariants}
+              >
+                <Button
+                  onClick={addSection}
+                  size="sm"
+                  variant="outline"
+                  className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add Section
+                </Button>
+              </motion.div>
+            )}
+
             {/* Contact & Social Media */}
             <motion.div 
-              className='flex flex-col items-center md:items-start md:col-span-2 lg:col-span-1'
-              variants={itemVariants}
-            >
-              <h4 className='font-semibold text-white mb-6'>Get in Touch</h4>
+              className='col-span-1'
+              variants={itemVariants}>
+              <h4 className='font-semibold text-white mb-4'>Get in Touch</h4>
 
               {/* Contact Info */}
-              <div className='space-y-5 mb-10 text-sm'>
-                <div className='flex items-start space-x-3 text-gray-300'>
+              <div className='space-y-3 mb-6 text-sm'>
+                <div className='flex items-start justify-center md:justify-start space-x-3 text-gray-300'>
                   <Mail className='w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0' />
                   {isEditing ? (
-                    <EditableField
+                    <input
+                      type="email"
                       value={tempData.contact.email}
-                      onChange={(value) =>
-                        updateNestedField("contact.email", value)
-                      }
-                      placeholder='Email address'
-                      className='flex-1 text-xs'
+                      onChange={(e) => updateContact("email", e.target.value)}
+                      placeholder="Email address"
+                      className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs flex-1"
                     />
                   ) : (
                     <span className="blur-[3px] select-none">{tempData.contact.email}</span>
                   )}
                 </div>
 
-                <div className='flex items-start space-x-3 text-gray-300'>
+                <div className='flex items-start justify-center md:justify-start space-x-3 text-gray-300'>
                   <Phone className='w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0' />
                   {isEditing ? (
-                    <EditableField
+                    <input
+                      type="tel"
                       value={tempData.contact.phone}
-                      onChange={(value) =>
-                        updateNestedField("contact.phone", value)
-                      }
-                      placeholder='Phone number'
-                      className='flex-1 text-xs'
+                      onChange={(e) => updateContact("phone", e.target.value)}
+                      placeholder="Phone number"
+                      className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs flex-1"
                     />
                   ) : (
                     <span className="blur-[3px] select-none">{tempData.contact.phone}</span>
                   )}
                 </div>
 
-                <div className='flex items-start space-x-3 text-gray-300'>
+                <div className='flex items-start justify-center md:justify-start space-x-3 text-gray-300'>
                   <MapPin className='w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0' />
                   {isEditing ? (
-                    <EditableField
+                    <input
+                      type="text"
                       value={tempData.contact.address}
-                      onChange={(value) =>
-                        updateNestedField("contact.address", value)
-                      }
-                      placeholder='Address'
-                      className='flex-1 text-xs'
+                      onChange={(e) => updateContact("address", e.target.value)}
+                      placeholder="Address"
+                      className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs flex-1"
                     />
                   ) : (
                     <span className="blur-[3px] select-none">{tempData.contact.address}</span>
@@ -553,7 +748,6 @@ export default function EditableFooter({
           </motion.div>
         </div>
       </motion.footer>
-
     </>
   );
 }

@@ -108,6 +108,7 @@ export default function App() {
         publishedId={AIGenData.publishedId}
         userId={AIGenData.userId}
         templateSelection={AIGenData.templateSelection}
+        galleryData={AIGenData.content.gallery}
       />
       
       <Blog 

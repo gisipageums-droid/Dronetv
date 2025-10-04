@@ -2,9 +2,8 @@ import { Edit2, Loader2, Plus, Save, Trash2, Upload, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { Badge } from "../components/ui/badge";
 
-// Custom Button component (same as in EditableAbout)
+// Custom Button component
 const Button = ({
     children,
     onClick,
@@ -38,6 +37,15 @@ const Button = ({
     );
 };
 
+// Custom Badge component
+const Badge = ({ children, className }) => (
+    <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${className}`}
+    >
+        {children}
+    </span>
+);
+
 export default function EditableCompanyProfile({ profileData, onStateChange, userId, publishedId, templateSelection }) {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -51,23 +59,6 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
     // Pending image file for S3 upload
     const [pendingImageFile, setPendingImageFile] = useState(null);
 
-    // Default content structure
-    const defaultContent = profileData || {
-        companyName: "Innovative Labs",
-        establishedYear: 2015,
-        description: "Founded in 2015, we are a global innovation studio crafting digital experiences, scalable platforms, and future-ready strategies for industry leaders.",
-        growthThisYear: 42,
-        satisfiedCustomers: 10000,
-        teamSize: 150,
-        projectsDelivered: 500,
-        coreValues: ["Innovation First", "Client Obsessed", "Ownership & Accountability", "Grow Together"],
-        companyImage: "https://images.unsplash.com/photo-1529533520516-5e45b20d07a5?w=800&h=600&fit=crop"
-    };
-
-    // Consolidated state
-    const [profileState, setProfileState] = useState(defaultContent);
-    const [tempProfileState, setTempProfileState] = useState(defaultContent);
-
     // Animation counters
     const hasAnimated = useRef(false);
     const [animatedCounters, setAnimatedCounters] = useState({
@@ -75,6 +66,29 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
         team: 0,
         projects: 0,
     });
+
+    // Default content structure - UPDATED to match backend field names
+    const defaultContent = {
+        companyName: profileData?.companyName || "Innovative Labs",
+        establishedYear: profileData?.establishedYear || 2015,
+        growthThisYear: profileData?.growthThisYear || 42,
+        satisfiedCustomers: profileData?.satisfiedCustomers || 20,
+        teamSize: profileData?.teamSize || 150,
+        projectsDelivered: profileData?.projectsDelivered || 25,
+        description: profileData?.description || "Founded in 2015, we are a global innovation studio crafting digital experiences, scalable platforms, and future-ready strategies for industry leaders.",
+        coreValues: profileData?.coreValues || [
+            "Innovation First",
+            "Client Obsessed",
+            "Ownership & Accountability",
+            "Grow Together"
+        ],
+        // CHANGED: companyImage → imageUrl to match backend
+        imageUrl: profileData?.imageUrl || "https://images.unsplash.com/photo-1529533520516-5e45b20d07a5?w=800&h=600&fit=crop"
+    };
+
+    // Consolidated state
+    const [profileState, setProfileState] = useState(defaultContent);
+    const [tempProfileState, setTempProfileState] = useState(defaultContent);
 
     // Notify parent of state changes
     useEffect(() => {
@@ -103,11 +117,12 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
         };
     }, []);
 
-    // Counter animation effect
+    // Animate counters when section becomes visible
     useEffect(() => {
         if (!isVisible || hasAnimated.current) return;
 
         hasAnimated.current = true;
+
         const duration = 2000;
 
         const animateCounter = (start, end, setter) => {
@@ -126,19 +141,19 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
         };
 
         const timers = [
-            animateCounter(animatedCounters.growth, profileState.growthThisYear, (v) =>
+            animateCounter(animatedCounters.growth, tempProfileState.growthThisYear, (v) =>
                 setAnimatedCounters((prev) => ({ ...prev, growth: v }))
             ),
-            animateCounter(animatedCounters.team, profileState.teamSize, (v) =>
+            animateCounter(animatedCounters.team, tempProfileState.teamSize, (v) =>
                 setAnimatedCounters((prev) => ({ ...prev, team: v }))
             ),
-            animateCounter(animatedCounters.projects, profileState.projectsDelivered, (v) =>
+            animateCounter(animatedCounters.projects, tempProfileState.projectsDelivered, (v) =>
                 setAnimatedCounters((prev) => ({ ...prev, projects: v }))
             ),
         ];
 
-        return () => timers.forEach((clear) => clear && clear());
-    }, [isVisible, profileState.growthThisYear, profileState.teamSize, profileState.projectsDelivered]);
+        return () => timers.forEach((clear) => clear());
+    }, [isVisible, tempProfileState.growthThisYear, tempProfileState.teamSize, tempProfileState.projectsDelivered]);
 
     // Simulate API call to fetch data from database
     const fetchProfileData = async () => {
@@ -173,15 +188,22 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
         setIsEditing(true);
         setTempProfileState(profileState);
         setPendingImageFile(null);
+        // Reset animation for editing
+        hasAnimated.current = false;
+        setAnimatedCounters({
+            growth: 0,
+            team: 0,
+            projects: 0,
+        });
     };
 
-    // Updated Save function with S3 upload
     const handleSave = async () => {
         try {
             setIsUploading(true);
-
-            // Create a copy of tempProfileState to update with S3 URLs
             let updatedState = { ...tempProfileState };
+
+            console.log('Starting save process...');
+            console.log('Pending image file:', pendingImageFile);
 
             // Upload company image if there's a pending file
             if (pendingImageFile) {
@@ -192,8 +214,8 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
 
                 const formData = new FormData();
                 formData.append('file', pendingImageFile);
-                formData.append('sectionName', 'profile');
-                formData.append('imageField', 'companyImage');
+                formData.append('sectionName', 'companyProfile');
+                formData.append('imageField', 'imageUrl');
                 formData.append('templateSelection', templateSelection);
 
                 const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
@@ -203,8 +225,9 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
 
                 if (uploadResponse.ok) {
                     const uploadData = await uploadResponse.json();
-                    updatedState.companyImage = uploadData.imageUrl;
-                    console.log('Company image uploaded to S3:', uploadData.imageUrl);
+                    // ADD CACHE BUSTING HERE
+                    updatedState.imageUrl = `${uploadData.imageUrl}?t=${Date.now()}`;
+                    console.log('Image uploaded successfully with cache busting:', updatedState.imageUrl);
                 } else {
                     const errorData = await uploadResponse.json();
                     toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
@@ -215,19 +238,19 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
             // Clear pending file
             setPendingImageFile(null);
 
-            // Save the updated state with S3 URLs
+            // Save the updated state
             setIsSaving(true);
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+            await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            // Update both states with the new URLs
+            // Update states
             setProfileState(updatedState);
             setTempProfileState(updatedState);
 
             setIsEditing(false);
-            toast.success('Profile section saved with S3 URLs ready for publish');
+            toast.success('Company profile saved successfully!');
 
         } catch (error) {
-            console.error('Error saving profile section:', error);
+            console.error('Error saving company profile:', error);
             toast.error('Error saving changes. Please try again.');
         } finally {
             setIsUploading(false);
@@ -249,9 +272,9 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
     // Update functions for arrays
     const updateCoreValue = useCallback((index, value) => {
         setTempProfileState((prev) => {
-            const updatedValues = [...prev.coreValues];
-            updatedValues[index] = value;
-            return { ...prev, coreValues: updatedValues };
+            const updatedCoreValues = [...prev.coreValues];
+            updatedCoreValues[index] = value;
+            return { ...prev, coreValues: updatedCoreValues };
         });
     }, []);
 
@@ -295,7 +318,7 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
         reader.onload = (e) => {
             setTempProfileState((prev) => ({
                 ...prev,
-                companyImage: e.target.result,
+                imageUrl: e.target.result, // CHANGED: companyImage → imageUrl
             }));
         };
         reader.readAsDataURL(file);
@@ -309,13 +332,13 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
             multiline = false,
             className = "",
             placeholder = "",
-            onChange = null, // Allow custom onChange handler
+            onChange = null,
         }) => {
             const handleChange = (e) => {
                 if (onChange) {
-                    onChange(e); // Use custom handler if provided
+                    onChange(e);
                 } else {
-                    updateTempContent(field, e.target.value); // Use default handler
+                    updateTempContent(field, e.target.value);
                 }
             };
 
@@ -355,9 +378,9 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
 
     return (
         <section
-            id='profile'
+            id="profile"
             ref={sectionRef}
-            className='py-24 bg-gradient-to-b from-white to-yellow-50/30 scroll-mt-20 relative'
+            className="py-24 bg-gradient-to-b from-white to-yellow-50/30 scroll-mt-20 relative"
         >
             {/* Loading Overlay */}
             {isLoading && (
@@ -414,14 +437,14 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
                 </div>
             )}
 
-            <div className='max-w-7xl mx-auto px-6'>
-                <div className='grid lg:grid-cols-2 gap-16 items-center'>
-                    {/* LEFT SIDE - Company Image */}
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                    {/* LEFT SIDE — Company Image */}
                     <motion.div
                         initial={{ opacity: 0, x: -60 }}
                         animate={isVisible ? { opacity: 1, x: 0 } : {}}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className='relative'
+                        className="relative"
                     >
                         {isEditing && (
                             <div className='absolute top-2 right-2 z-10'>
@@ -450,51 +473,50 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
                         )}
                         <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100">
                             <img
-                                src={displayContent.companyImage || "https://via.placeholder.com/800x600?text=Company+Image"}
+                                src={displayContent.imageUrl}
                                 alt={`${displayContent.companyName} Office`}
-                                className='w-full h-auto object-cover'
+                                className="w-full h-auto object-cover"
                                 onError={(e) => {
-                                    e.currentTarget.src = "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=600&fit=crop";
+                                    // Fallback if image fails
+                                    e.currentTarget.src =
+                                        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=600&fit=crop";
                                 }}
                             />
                         </div>
                     </motion.div>
 
                     {/* RIGHT SIDE — Company Info */}
-                    <div className='space-y-8'>
+                    <div className="space-y-8">
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={isVisible ? { opacity: 1, y: 0 } : {}}
                             transition={{ delay: 0.2, duration: 0.7 }}
                         >
-                            {isEditing ? (
-                                <div className="flex items-center gap-2 mb-4">
-                                    <span className="text-sm text-gray-600">Since:</span>
+                            <Badge className="bg-[#ffeb3b] text-gray-900 px-4 py-1.5 mb-4">
+                                Since {isEditing ? (
                                     <EditableText
                                         value={displayContent.establishedYear}
                                         field='establishedYear'
-                                        className="w-20"
+                                        className="w-16 ml-1"
                                         placeholder="Year"
                                     />
-                                </div>
-                            ) : (
-                                <Badge className="bg-[#ffeb3b] text-gray-900 px-4 py-1.5 mb-4">
-                                    Since {displayContent.establishedYear}
-                                </Badge>
-                            )}
+                                ) : (
+                                    displayContent.establishedYear
+                                )}
+                            </Badge>
 
-                            {isEditing ? (
-                                <EditableText
-                                    value={displayContent.companyName}
-                                    field='companyName'
-                                    className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
-                                    placeholder="Company Name"
-                                />
-                            ) : (
-                                <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-                                    {displayContent.companyName}
-                                </h2>
-                            )}
+                            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                                {isEditing ? (
+                                    <EditableText
+                                        value={displayContent.companyName}
+                                        field='companyName'
+                                        className="text-4xl md:text-5xl"
+                                        placeholder="Company name"
+                                    />
+                                ) : (
+                                    displayContent.companyName
+                                )}
+                            </h2>
 
                             {isEditing ? (
                                 <EditableText
@@ -516,28 +538,26 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
                             {[
                                 {
                                     label: "Growth This Year",
-                                    value: isEditing ? displayContent.growthThisYear : displayCounters.growth,
-                                    field: 'growthThisYear',
-                                    suffix: '%',
+                                    value: `${displayCounters.growth}%`,
+                                    field: "growthThisYear",
                                     delay: 0.4,
                                 },
                                 {
                                     label: "Happy Clients",
-                                    value: isEditing ? displayContent.satisfiedCustomers : displayContent.satisfiedCustomers,
-                                    field: 'satisfiedCustomers',
-                                    suffix: '+',
+                                    value: `${displayContent.satisfiedCustomers}+`,
+                                    field: "satisfiedCustomers",
                                     delay: 0.6,
                                 },
                                 {
                                     label: "Team Members",
-                                    value: isEditing ? displayContent.teamSize : displayCounters.team,
-                                    field: 'teamSize',
+                                    value: displayCounters.team,
+                                    field: "teamSize",
                                     delay: 0.8,
                                 },
                                 {
                                     label: "Projects Delivered",
-                                    value: isEditing ? displayContent.projectsDelivered : displayCounters.projects,
-                                    field: 'projectsDelivered',
+                                    value: displayCounters.projects,
+                                    field: "projectsDelivered",
                                     delay: 1.0,
                                 },
                             ].map((stat, i) => (
@@ -551,9 +571,9 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
                                     {isEditing ? (
                                         <div className="flex flex-col items-center">
                                             <EditableText
-                                                value={stat.value}
+                                                value={displayContent[stat.field]}
                                                 field={stat.field}
-                                                className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-1 text-center"
+                                                className="text-3xl md:text-4xl font-extrabold text-gray-900 w-20 text-center mb-1"
                                                 placeholder="Value"
                                             />
                                             <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
@@ -563,7 +583,7 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
                                     ) : (
                                         <>
                                             <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
-                                                {stat.value}{stat.suffix || ''}
+                                                {stat.value}
                                             </div>
                                             <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
                                                 {stat.label}
@@ -582,53 +602,49 @@ export default function EditableCompanyProfile({ profileData, onStateChange, use
                             className="mt-8 space-y-4"
                         >
                             <h3 className="text-xl font-bold text-gray-900">Our Core Values</h3>
-
-                            {isEditing ? (
-                                <div className="space-y-2">
-                                    {displayContent.coreValues.map((value, i) => (
-                                        <div key={i} className="flex items-center gap-2">
-                                            <input
-                                                type="text"
-                                                value={value}
-                                                onChange={(e) => updateCoreValue(i, e.target.value)}
-                                                className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                                                placeholder="Core value"
-                                            />
-                                            <Button
-                                                onClick={() => removeCoreValue(i)}
-                                                size="sm"
-                                                variant="outline"
-                                                className="bg-red-50 hover:bg-red-100 text-red-700"
-                                            >
-                                                <Trash2 className="w-3 h-3" />
-                                            </Button>
-                                        </div>
-                                    ))}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                                {displayContent.coreValues.map((value, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ x: -20, opacity: 0 }}
+                                        animate={isVisible ? { x: 0, opacity: 1 } : {}}
+                                        transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
+                                        className="flex items-center gap-2 p-3 bg-yellow-50 rounded-xl"
+                                    >
+                                        <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
+                                        {isEditing ? (
+                                            <div className="flex items-center gap-2 w-full">
+                                                <EditableText
+                                                    value={value}
+                                                    onChange={(e) => updateCoreValue(i, e.target.value)}
+                                                    className="flex-1"
+                                                    placeholder="Core value"
+                                                />
+                                                <Button
+                                                    onClick={() => removeCoreValue(i)}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <span className="text-gray-800 font-medium">{value}</span>
+                                        )}
+                                    </motion.div>
+                                ))}
+                                {isEditing && (
                                     <Button
                                         onClick={addCoreValue}
                                         size="sm"
                                         variant="outline"
-                                        className="bg-green-50 hover:bg-green-100 text-green-700 mt-2"
+                                        className="bg-green-50 hover:bg-green-100 text-green-700 w-full"
                                     >
                                         <Plus className="w-3 h-3 mr-1" /> Add Value
                                     </Button>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                                    {displayContent.coreValues.map((value, i) => (
-                                        <motion.div
-                                            key={i}
-                                            initial={{ x: -20, opacity: 0 }}
-                                            animate={isVisible ? { x: 0, opacity: 1 } : {}}
-                                            transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
-                                            className="flex items-center gap-2 p-3 bg-yellow-50 rounded-xl"
-                                        >
-                                            <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
-                                            <span className="text-gray-800 font-medium">{value}</span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </motion.div>
                     </div>
                 </div>

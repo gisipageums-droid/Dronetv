@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
-import { Edit2, Loader2, Plus, Save, Trash2, Upload, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "../components/ui/button";
+import { toast } from "react-toastify";
 import BusinessInsider from "../public/images/logos/BusinessInsider.png";
 import Forbes from "../public/images/logos/Forbes.png";
 import TechCrunch from "../public/images/logos/TechCrunch.png";
 import TheNewYorkTimes from "../public/images/logos/TheNewYorkTimes.png";
 import USAToday from "../public/images/logos/USAToday.png";
 
-export default function EditableUsedBy({ usedByData,onStateChange, userId, publishedId, templateSelection }) {
+export default function EditableUsedBy({ onStateChange, userId, publishedId, templateSelection }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -17,19 +17,20 @@ export default function EditableUsedBy({ usedByData,onStateChange, userId, publi
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
+  const scrollerRef = useRef(null);
   const fileInputRefs = useRef({});
 
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState({});
 
   // Default content structure
-   const defaultCompanies = [
+  const defaultCompanies = [
     { image: BusinessInsider, name: "Business Insider", id: 1 },
     { image: Forbes, name: "Forbes", id: 2 },
     { image: TechCrunch, name: "TechCrunch", id: 3 },
     { image: TheNewYorkTimes, name: "NY Times", id: 4 },
     { image: USAToday, name: "USA Today", id: 5 },
-  ]
+  ];
 
   const defaultContent = {
     title: "USED BY",
@@ -59,13 +60,52 @@ export default function EditableUsedBy({ usedByData,onStateChange, userId, publi
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
-
+    
     return () => {
       if (sectionRef.current) {
         observer.unobserve(sectionRef.current);
       }
     };
   }, []);
+  
+  const displayContent = isEditing ? tempContentState : contentState;
+  // Auto-scroll effect for non-editing mode
+  useEffect(() => {
+    if (!isEditing && scrollerRef.current && displayContent.companies.length > 0) {
+      const scroller = scrollerRef.current;
+      const scrollWidth = scroller.scrollWidth;
+      const clientWidth = scroller.clientWidth;
+      
+      if (scrollWidth > clientWidth) {
+        let scrollPos = 0;
+        const scrollSpeed = 0.2; // pixels per frame
+        let direction = 1; // 1 for right, -1 for left
+        
+        const scroll = () => {
+          if (!scrollerRef.current) return;
+          
+          scrollPos += scrollSpeed * direction;
+          
+          // Reverse direction when reaching edges
+          if (scrollPos >= scrollWidth - clientWidth) {
+            direction = -1;
+          } else if (scrollPos <= 0) {
+            direction = 1;
+          }
+          
+          scrollerRef.current.scrollLeft = scrollPos;
+          requestAnimationFrame(scroll);
+        };
+        
+        // Start scrolling
+        requestAnimationFrame(scroll);
+        
+        return () => {
+          // Cleanup will happen when ref changes or component unmounts
+        };
+      }
+    }
+  }, [isEditing, displayContent.companies.length]);
 
   // Simulate API call to fetch data from database
   const fetchUsedByData = async () => {
@@ -75,9 +115,14 @@ export default function EditableUsedBy({ usedByData,onStateChange, userId, publi
       const response = await new Promise((resolve) => {
         setTimeout(() => {
           resolve({
-          
             title: "USED BY",
-            companies: usedByData.companies,
+            companies: [
+              { image: BusinessInsider, name: "Business Insider", id: 1 },
+              { image: Forbes, name: "Forbes", id: 2 },
+              { image: TechCrunch, name: "TechCrunch", id: 3 },
+              { image: TheNewYorkTimes, name: "NY Times", id: 4 },
+              { image: USAToday, name: "USA Today", id: 5 },
+            ],
           });
         }, 1200); // Simulate network delay
       });
@@ -105,7 +150,7 @@ export default function EditableUsedBy({ usedByData,onStateChange, userId, publi
     setTempContentState(contentState);
     setPendingImageFiles({});
   };
-
+  
   // Updated Save function with S3 upload
   const handleSave = async () => {
     try {
@@ -268,12 +313,6 @@ export default function EditableUsedBy({ usedByData,onStateChange, userId, publi
     };
   }, [updateTempContent, updateCompanyName]);
 
-  const displayContent = isEditing ? tempContentState : contentState;
-
-  // Add auto-scroll functionality
-  const duplicatedCompanies = useMemo(() => {
-    return [...displayContent.companies, ...displayContent.companies];
-  }, [displayContent.companies]);
 
   return (
     <section ref={sectionRef} className='py-16 bg-white relative'>
@@ -376,18 +415,13 @@ export default function EditableUsedBy({ usedByData,onStateChange, userId, publi
                   className='bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300'
                 >
                   <div className='space-y-3'>
-                    {/* Company Image - Editable in edit mode */}
+                    {/* Company Image */}
                     <div className='text-center'>
-                      <div className='relative inline-block'>
-                        <img
-                          src={company.image}
-                          alt={company.name}
-                          className='h-12 mx-auto opacity-60 grayscale'
-                        />
-                        <div className='absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded'>
-                          <span className='text-white text-xs font-medium'>Change Logo</span>
-                        </div>
-                      </div>
+                      <img
+                        src={company.image}
+                        alt={company.name}
+                        className='h-12 mx-auto opacity-60 grayscale'
+                      />
                       <Button
                         onClick={() =>
                           fileInputRefs.current[company.id]?.click()
@@ -397,7 +431,7 @@ export default function EditableUsedBy({ usedByData,onStateChange, userId, publi
                         className='mt-2 text-xs'
                       >
                         <Upload className='w-3 h-3 mr-1' />
-                        Change Logo
+                        Change
                       </Button>
                       <input
                         ref={(el) => (fileInputRefs.current[company.id] = el)}
@@ -445,51 +479,44 @@ export default function EditableUsedBy({ usedByData,onStateChange, userId, publi
             </div>
           </div>
         ) : (
-          // Auto-scroll animation for non-edit mode
-          <div className="w-full overflow-hidden relative">
-            <style>
-              {`
-                @keyframes marquee {
-                  0% { transform: translateX(0%); }
-                  100% { transform: translateX(-50%); }
-                }
-                .animate-marquee {
-                  animation: marquee 30s linear infinite;
-                }
-                .hover-pause:hover .animate-marquee {
-                  animation-play-state: paused;
-                }
-              `}
-            </style>
+          <div className="relative overflow-hidden">
+            {/* Custom CSS to hide scrollbar */}
+            <style jsx>{`
+              .hide-scrollbar {
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+              }
+              .hide-scrollbar::-webkit-scrollbar {
+                display: none; /* Chrome, Safari and Opera */
+              }
+            `}</style>
             
-            <div className="hover-pause">
-              <motion.div 
-                className="flex gap-12 items-center animate-marquee"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-              >
-                {duplicatedCompanies.map((company, i) => (
-                  <motion.div
-                    key={`${company.id}-${i}`}
-                    className='flex-shrink-0'
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <img
-                      src={company.image}
-                      alt={company.name}
-                      className='h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300'
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
+            {/* Auto-scrolling container */}
+            <div 
+              ref={scrollerRef}
+              className="flex items-center gap-12 py-4 overflow-x-auto hide-scrollbar"
+              style={{ scrollBehavior: 'auto' }}
+            >
+              {/* Duplicate content for seamless looping */}
+              {[...displayContent.companies, ...displayContent.companies].map((company, i) => (
+                <motion.div
+                  key={`${company.id}-${i}`}
+                  className="flex-shrink-0"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <img
+                    src={company.image}
+                    alt={company.name}
+                    className='h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300'
+                  />
+                </motion.div>
+              ))}
             </div>
             
-            {/* Gradient fade effects on sides */}
-            <div className="absolute top-0 left-0 w-20 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
-            <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
+            {/* Gradient overlays for better visual effect */}
+            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none" />
           </div>
         )}
       </div>

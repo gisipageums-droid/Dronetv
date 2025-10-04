@@ -1034,11 +1034,11 @@ const AdminProfessionalDashboard: React.FC = () => {
         <div className='min-h-screen bg-blue-100'>
             <Header />
 
-            {/* Credentials Modal */}
+          {/* Credentials Modal */}
             <ProfessionalCredentialsModal
                 isOpen={credentialsModal.isOpen}
                 onClose={() => setCredentialsModal({ isOpen: false, data: null })}
-                data={credentialsModal.data}
+                            professionalId={credentialsModal.data?.professionalId}
                 loading={loading}
                 onPreview={handlePreview}
                 onApprove={handleApprove}

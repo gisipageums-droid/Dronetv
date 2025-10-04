@@ -11,6 +11,8 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import { useTemplate } from "../../../context/context";
 import { useLocation, useParams } from "react-router-dom";
+import GallerySection from "./components/Gallery";
+import CompanyProfile from "./components/Profile"
 // import { useEffect } from "react";
 
 export default function App() {
@@ -102,6 +104,9 @@ export default function App() {
       <About 
         aboutData={finaleDataReview.content.about}
       />
+       <CompanyProfile
+              profileData={finaleDataReview.content.profile}
+            />
       <Services 
       serviceData={finaleDataReview.content.services}
       />
@@ -109,11 +114,13 @@ export default function App() {
       productData={finaleDataReview.content.products} 
      
       />
+      
       <Blog 
       blogData={finaleDataReview.content.blog}
     
       />
-      
+        <GallerySection 
+            galleryData={finaleDataReview.content.gallery}/>
       <Testimonials 
       content={finaleDataReview.content.testimonials}
       
