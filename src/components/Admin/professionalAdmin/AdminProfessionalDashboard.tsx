@@ -712,13 +712,15 @@ const apiService = {
     async fetchProfessionalDetails(professionalId: string): Promise<any> {
         try {
             const response = await fetch(
-                `https://your-api-endpoint/professional-details/${professionalId}`);
+                `https://dfdooqn9k1.execute-api.ap-south-1.amazonaws.com/dev/professionals/${professionalId}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
+            console.log(data);
+            
             return data;
         } catch (error) {
             console.error("Error fetching professional details:", error);
@@ -782,9 +784,9 @@ const apiService = {
     async deleteProfessional(professionalId: string): Promise<any> {
         try {
             const response = await fetch(
-                `https://ss6lmkj0o8.execute-api.ap-south-1.amazonaws.com/dev`,
+                `https://ss6lmkj0o8.execute-api.ap-south-1.amazonaws.com/prof/delete-prof-tem`,
                 {
-                    method: 'DELETE',
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
@@ -798,6 +800,8 @@ const apiService = {
             }
 
             const data = await response.json();
+            console.log(data);
+            
             return data;
         } catch (error) {
             console.error("Error deleting professional:", error);
@@ -934,7 +938,7 @@ const AdminProfessionalDashboard: React.FC = () => {
             setIsMutating(true);
             const result = await apiService.deleteProfessional(professionalId);
 
-            if (result.success) {
+            if (result.message==="Professional template deleted successfully") {
                 toast.success("Professional deleted successfully");
                 await fetchProfessionals();
             } else {

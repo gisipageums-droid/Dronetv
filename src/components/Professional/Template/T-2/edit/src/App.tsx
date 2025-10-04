@@ -13,6 +13,7 @@ import { Projects } from './components/Projects';
 import { Testimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
+import { Services } from './components/services';
 
 // Define types for the component states
 interface ComponentStates {
@@ -26,6 +27,7 @@ interface ComponentStates {
   contactContent?: any;
   footerContent?: any;
   headerContent?: any; // Added missing header property
+  serviceContent?: any; // Added missing serviceContent property
 }
 
 interface AIGenData {
@@ -188,7 +190,13 @@ export default function EditTemp_2() {
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
-
+<Services
+          servicesData={componentStates.serviceContent}
+          onStateChange={createStateChangeHandler('serviceContent')}
+          userId={AIGenData.userId}
+          publishedId={AIGenData.professionalId}
+          templateSelection={AIGenData.templateSelection}
+        />
         <Projects 
           projectsData={componentStates.projectContent}
           onStateChange={createStateChangeHandler('projectContent')}
@@ -196,7 +204,7 @@ export default function EditTemp_2() {
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
-
+        
         {/* Certifications Section */}
         <Certifications
           certData={componentStates.certificationsContent}

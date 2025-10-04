@@ -223,6 +223,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle, userId, pu
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
     { name: 'Skills', href: '#skills' },
+    {name:'services', href:'#services'},
     { name: 'Projects', href: '#projects' },
     { name: 'Clients', href: '#clients' },
     { name: 'Reviews', href: '#testimonials' },

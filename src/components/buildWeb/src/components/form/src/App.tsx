@@ -199,6 +199,8 @@ function App() {
   async function handleClick() {
     try {
       setIsApiLoading(true);
+      console.log("draft Details:",draftDetails);
+      
       const response = await fetch(`${API}/${draftDetails.userId}/${draftDetails.draftId}?template=template-${draftDetails.templateSelection}`);
       const data = await response.json();
       if (response.ok) {
