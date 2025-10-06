@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// Service.tsx (updated with proper state management and parent sync)
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Code,
@@ -23,7 +24,9 @@ import {
   Shield,
   SaveAll,
   Edit,
+  Server,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Service {
   id: number;
@@ -37,305 +40,245 @@ interface Service {
   deliveryTime: string;
 }
 
-const Service: React.FC = () => {
-  const [hoveredService, setHoveredService] = useState<number | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [isAddingNew, setIsAddingNew] = useState(false);
+export interface ServiceContent {
+  subtitle: string;
+  heading: string;
+  description: string;
+  services: Service[];
+}
 
-  // Available icons for services
-  const availableIcons = {
-    Globe: Globe,
-    Smartphone: Smartphone,
-    Database: Database,
-    Code: Code,
-    Palette: Palette,
-    Zap: Zap,
-    Monitor: Monitor,
-    Briefcase: Briefcase,
-    Lightbulb: Lightbulb,
-    Cpu: Cpu,
-    Cloud: Cloud,
-    Shield: Shield,
-  };
+interface ServiceProps {
+  content?: ServiceContent;
+  onSave: (updatedContent: ServiceContent) => void;
+}
 
-  const colorOptions = [
-    "from-blue-500 to-cyan-500",
-    "from-purple-500 to-pink-500",
-    "from-green-500 to-emerald-500",
-    "from-orange-500 to-red-500",
-    "from-pink-500 to-rose-500",
-    "from-yellow-500 to-orange-500",
-    "from-indigo-500 to-purple-500",
-    "from-teal-500 to-cyan-500",
-    "from-red-500 to-pink-500",
-    "from-emerald-500 to-teal-500",
-  ];
+const defaultContent: ServiceContent = {
+  subtitle: "professional services to transform your business",
+  heading: "What I Do ",
+  description: "comprehensive services tailored to your needs",
+  services: [],
+};
 
-  const [services, setServices] = useState<Service[]>([
-    {
-      id: 1,
-      title: "Web Development",
-      shortDescription: "Modern, responsive websites built with cutting-edge technologies",
-      fullDescription: "Custom web applications using React, Next.js, and modern frameworks. Focus on performance, SEO, and user experience.",
-      icon: "Globe",
-      color: "from-blue-500 to-cyan-500",
-      features: ["Responsive Design", "SEO Optimized", "Fast Performance", "Modern Frameworks"],
-      pricing: "Starting at $2,500",
-      deliveryTime: "2-4 weeks",
-    },
-    {
-      id: 2,
-      title: "Mobile App Development",
-      shortDescription: "Native and cross-platform mobile applications",
-      fullDescription: "iOS and Android apps built with React Native and Flutter. Native performance with cross-platform efficiency.",
-      icon: "Smartphone",
-      color: "from-purple-500 to-pink-500",
-      features: ["Cross-Platform", "Native Performance", "App Store Ready", "Push Notifications"],
-      pricing: "Starting at $5,000",
-      deliveryTime: "4-8 weeks",
-    },
-    {
-      id: 3,
-      title: "Backend Development",
-      shortDescription: "Scalable server-side solutions and APIs",
-      fullDescription: "Robust backend systems using Node.js, Python, and cloud services. RESTful APIs and microservices architecture.",
-      icon: "Database",
-      color: "from-green-500 to-emerald-500",
-      features: ["RESTful APIs", "Database Design", "Cloud Integration", "Scalable Architecture"],
-      pricing: "Starting at $3,000",
-      deliveryTime: "3-6 weeks",
-    },
-    {
-      id: 4,
-      title: "Full-Stack Development",
-      shortDescription: "Complete end-to-end application development",
-      fullDescription: "Comprehensive solutions covering frontend, backend, database, and deployment. One-stop development service.",
-      icon: "Code",
-      color: "from-orange-500 to-red-500",
-      features: ["End-to-End Solution", "Database Integration", "DevOps Setup", "Maintenance Support"],
-      pricing: "Starting at $7,500",
-      deliveryTime: "6-12 weeks",
-    },
-    {
-      id: 5,
-      title: "UI/UX Design",
-      shortDescription: "Beautiful, user-centered design solutions",
-      fullDescription: "Modern interface design with focus on user experience. Wireframing, prototyping, and design systems.",
-      icon: "Palette",
-      color: "from-pink-500 to-rose-500",
-      features: ["User Research", "Wireframing", "Prototyping", "Design Systems"],
-      pricing: "Starting at $1,500",
-      deliveryTime: "1-3 weeks",
-    },
-    {
-      id: 6,
-      title: "Performance Optimization",
-      shortDescription: "Speed up and optimize existing applications",
-      fullDescription: "Improve application performance, reduce loading times, and enhance user experience through optimization.",
-      icon: "Zap",
-      color: "from-yellow-500 to-orange-500",
-      features: ["Speed Optimization", "Code Refactoring", "Bundle Analysis", "Performance Monitoring"],
-      pricing: "Starting at $1,000",
-      deliveryTime: "1-2 weeks",
-    },
-  ]);
+const colorOptions = [
+  "from-blue-500 to-cyan-500",
+  "from-purple-500 to-pink-500",
+  "from-green-500 to-emerald-500",
+  "from-orange-500 to-red-500",
+  "from-pink-500 to-rose-500",
+  "from-yellow-500 to-orange-500",
+  "from-indigo-500 to-purple-500",
+  "from-teal-500 to-cyan-500",
+  "from-red-500 to-pink-500",
+  "from-emerald-500 to-teal-500",
+];
 
-  const [newService, setNewService] = useState<Omit<Service, 'id'>>({
-    title: "",
-    shortDescription: "",
-    fullDescription: "",
-    icon: "Code",
-    color: "from-blue-500 to-cyan-500",
-    features: [""],
-    pricing: "",
-    deliveryTime: "",
-  });
+/* ---------- ServiceForm Component (memoized) ---------- */
+type FormData = Omit<Service, "id">;
 
-  const [editForm, setEditForm] = useState<Service | null>(null);
+const ServiceForm: React.FC<{
+  initial: FormData;
+  onCancel: () => void;
+  onSave: (payload: FormData) => void;
+  autoFocus?: boolean;
+}> = React.memo(({ initial, onCancel, onSave, autoFocus = false }) => {
+  const [local, setLocal] = useState<FormData>(() => ({
+    title: initial.title ?? "",
+    shortDescription: initial.shortDescription ?? "",
+    fullDescription: initial.fullDescription ?? "",
+    icon: initial.icon ?? "Code",
+    color: initial.color ?? colorOptions[0],
+    features:
+      Array.isArray(initial.features) && initial.features.length > 0
+        ? initial.features
+        : [""],
+    pricing: initial.pricing ?? "",
+    deliveryTime: initial.deliveryTime ?? "",
+  }));
 
-  const handleAddNew = () => {
-    if (newService.title && newService.shortDescription) {
-      const id = Math.max(...services.map(s => s.id), 0) + 1;
-      setServices([...services, { 
-        ...newService, 
-        id,
-        features: newService.features.filter(f => f.trim() !== "")
-      }]);
-      setNewService({
-        title: "",
-        shortDescription: "",
-        fullDescription: "",
-        icon: "Code",
-        color: "from-blue-500 to-cyan-500",
-        features: [""],
-        pricing: "",
-        deliveryTime: "",
-      });
-      setIsAddingNew(false);
+  const titleRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (autoFocus) {
+      const t = setTimeout(() => {
+        titleRef.current?.focus();
+        const el = titleRef.current;
+        if (el) el.setSelectionRange(el.value.length, el.value.length);
+      }, 40);
+      return () => clearTimeout(t);
     }
+  }, [autoFocus]);
+
+  useEffect(() => {
+    setLocal({
+      title: initial.title ?? "",
+      shortDescription: initial.shortDescription ?? "",
+      fullDescription: initial.fullDescription ?? "",
+      icon: initial.icon ?? "Code",
+      color: initial.color ?? colorOptions[0],
+      features:
+        Array.isArray(initial.features) && initial.features.length > 0
+          ? initial.features
+          : [""],
+      pricing: initial.pricing ?? "",
+      deliveryTime: initial.deliveryTime ?? "",
+    });
+  }, [initial]);
+
+  const setField = (k: keyof FormData, v: any) => {
+    setLocal((prev) => ({ ...prev, [k]: v }));
   };
 
-  const handleEdit = (service: Service) => {
-    setEditForm({ ...service });
-    setEditingId(service.id);
+  const updateFeature = (i: number, v: string) => {
+    setLocal((prev) => {
+      const arr = [...prev.features];
+      arr[i] = v;
+      return { ...prev, features: arr };
+    });
   };
 
-  const handleSaveEdit = () => {
-    if (editForm) {
-      setServices(services.map(s => 
-        s.id === editForm.id ? {
-          ...editForm,
-          features: editForm.features.filter(f => f.trim() !== "")
-        } : s
-      ));
-      setEditForm(null);
-      setEditingId(null);
-    }
+  const addFeature = () =>
+    setLocal((prev) => ({ ...prev, features: [...prev.features, ""] }));
+
+  const removeFeature = (i: number) =>
+    setLocal((prev) => ({
+      ...prev,
+      features: prev.features.filter((_, idx) => idx !== i),
+    }));
+
+  const handleSave = () => {
+    const cleaned = {
+      ...local,
+      features: local.features.filter((f) => f.trim() !== ""),
+    };
+    onSave(cleaned);
   };
 
-  const handleDelete = (id: number) => {
-    setServices(services.filter(s => s.id !== id));
-  };
-
-  const handleCancelEdit = () => {
-    setEditForm(null);
-    setEditingId(null);
-    setIsAddingNew(false);
-  };
-
-  const updateFeature = (data: Service | Omit<Service, 'id'>, index: number, value: string, isEdit: boolean = false) => {
-    const newFeatures = [...data.features];
-    newFeatures[index] = value;
-    
-    if (isEdit && editForm) {
-      setEditForm({ ...editForm, features: newFeatures });
-    } else {
-      setNewService({ ...newService, features: newFeatures });
-    }
-  };
-
-  const addFeature = (isEdit: boolean = false) => {
-    if (isEdit && editForm) {
-      setEditForm({ ...editForm, features: [...editForm.features, ""] });
-    } else {
-      setNewService({ ...newService, features: [...newService.features, ""] });
-    }
-  };
-
-  const removeFeature = (index: number, isEdit: boolean = false) => {
-    if (isEdit && editForm) {
-      setEditForm({ ...editForm, features: editForm.features.filter((_, i) => i !== index) });
-    } else {
-      setNewService({ ...newService, features: newService.features.filter((_, i) => i !== index) });
-    }
-  };
-
-  const ServiceForm = ({ 
-    data, 
-    onChange, 
-    isNew = false 
-  }: { 
-    data: Omit<Service, 'id'> | Service, 
-    onChange: (field: string, value: string | string[]) => void,
-    isNew?: boolean 
-  }) => (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border-2 border-dashed border-orange-300 dark:border-orange-600">
+  return (
+    <div
+      className="p-6 bg-white border-2 border-orange-300 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
+      onMouseDown={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
+    >
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <input
+            ref={titleRef}
             type="text"
             placeholder="Service Title"
-            value={data.title}
-            onChange={(e) => onChange('title', e.target.value)}
-            className="w-full p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            value={local.title}
+            onChange={(e) => setField("title", e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
           />
           <select
-            value={data.icon}
-            onChange={(e) => onChange('icon', e.target.value)}
-            className="w-full p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            value={local.icon}
+            onChange={(e) => setField("icon", e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
           >
-            {Object.keys(availableIcons).map(iconName => (
-              <option key={iconName} value={iconName}>{iconName}</option>
-            ))}
-          </select>
-        </div>
-        
-        <textarea
-          placeholder="Short Description"
-          value={data.shortDescription}
-          onChange={(e) => onChange('shortDescription', e.target.value)}
-          rows={2}
-          className="w-full p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent resize-none"
-        />
-        
-        <textarea
-          placeholder="Full Description"
-          value={data.fullDescription}
-          onChange={(e) => onChange('fullDescription', e.target.value)}
-          rows={3}
-          className="w-full p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent resize-none"
-        />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder="Pricing (e.g., Starting at $2,500)"
-            value={data.pricing}
-            onChange={(e) => onChange('pricing', e.target.value)}
-            className="w-full p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-          />
-          <input
-            type="text"
-            placeholder="Delivery Time (e.g., 2-4 weeks)"
-            value={data.deliveryTime}
-            onChange={(e) => onChange('deliveryTime', e.target.value)}
-            className="w-full p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">Color Scheme:</label>
-          <select
-            value={data.color}
-            onChange={(e) => onChange('color', e.target.value)}
-            className="w-full p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-          >
-            {colorOptions.map(color => (
-              <option key={color} value={color}>
-                {color.replace('from-', '').replace(' to-', ' → ').replace(/-500|-400/g, '')}
+            {Object.keys({
+              Globe,
+              Smartphone,
+              Database,
+              Code,
+              Palette,
+              Zap,
+              Monitor,
+              Briefcase,
+              Lightbulb,
+              Cpu,
+              Cloud,
+              Shield,
+              Server,
+            }).map((k) => (
+              <option key={k} value={k}>
+                {k}
               </option>
             ))}
           </select>
         </div>
-        
+
+        <textarea
+          placeholder="Short Description"
+          value={local.shortDescription}
+          onChange={(e) => setField("shortDescription", e.target.value)}
+          rows={2}
+          className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+        />
+
+        <textarea
+          placeholder="Full Description"
+          value={local.fullDescription}
+          onChange={(e) => setField("fullDescription", e.target.value)}
+          rows={3}
+          className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+        />
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <input
+            type="text"
+            placeholder="Pricing (e.g., Starting at $2,500)"
+            value={local.pricing}
+            onChange={(e) => setField("pricing", e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+          />
+          <input
+            type="text"
+            placeholder="Delivery Time (e.g., 2-4 weeks)"
+            value={local.deliveryTime}
+            onChange={(e) => setField("deliveryTime", e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">
+            Color Scheme:
+          </label>
+          <select
+            value={local.color}
+            onChange={(e) => setField("color", e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+          >
+            {colorOptions.map((color) => (
+              <option key={color} value={color}>
+                {color
+                  .replace("from-", "")
+                  .replace(" to-", " → ")
+                  .replace(/-500|-400/g, "")}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-gray-700 dark:text-gray-300 font-medium">Features:</label>
+            <label className="font-medium text-gray-700 dark:text-gray-300">
+              Features :
+            </label>
             <button
               type="button"
-              onClick={() => addFeature(!isNew)}
-              className="flex items-center space-x-1 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
+              onClick={addFeature}
+              className="flex items-center px-3 py-1 space-x-1 text-sm text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
             >
               <Plus className="w-4 h-4" />
               <span>Add</span>
             </button>
           </div>
+
           <div className="space-y-2">
-            {data.features.map((feature, index) => (
-              <div key={index} className="flex space-x-2">
+            {local.features.map((f, idx) => (
+              <div key={idx} className="flex space-x-2">
                 <input
                   type="text"
                   placeholder="Feature"
-                  value={feature}
-                  onChange={(e) => updateFeature(data, index, e.target.value, !isNew)}
-                  className="flex-1 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  value={f}
+                  onChange={(e) => updateFeature(idx, e.target.value)}
+                  className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
                 />
-                {data.features.length > 1 && (
+                {local.features.length > 1 && (
                   <button
                     type="button"
-                    onClick={() => removeFeature(index, !isNew)}
-                    className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    onClick={() => removeFeature(idx)}
+                    className="p-2 text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -344,18 +287,18 @@ const Service: React.FC = () => {
             ))}
           </div>
         </div>
-        
-        <div className="flex space-x-2">
+
+        <div className="flex gap-2">
           <button
-            onClick={isNew ? handleAddNew : handleSaveEdit}
-            className="flex items-center space-x-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+            onClick={handleSave}
+            className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-green-500 rounded-lg hover:bg-green-600"
           >
             <Save className="w-4 h-4" />
-            <span>{isNew ? 'Add Service' : 'Save Changes'}</span>
+            <span>Save</span>
           </button>
           <button
-            onClick={handleCancelEdit}
-            className="flex items-center space-x-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+            onClick={onCancel}
+            className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-gray-500 rounded-lg hover:bg-gray-600"
           >
             <X className="w-4 h-4" />
             <span>Cancel</span>
@@ -364,21 +307,159 @@ const Service: React.FC = () => {
       </div>
     </div>
   );
+});
+(ServiceForm as any).displayName = "ServiceFormMemo";
+
+/* ---------- Main Service Component ---------- */
+const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
+  const [serviceContent, setServiceContent] =
+    useState<ServiceContent>(defaultContent);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [hoveredService, setHoveredService] = useState<number | null>(null);
+
+  // Sync with parent content
+  useEffect(() => {
+    if (content) {
+      const processedServices = (content.services ?? []).map((s) => ({
+        ...s,
+        id:
+          typeof s.id === "number" ? Math.floor(s.id) : parseInt(String(s.id)),
+        features: Array.isArray(s.features) ? s.features : [],
+        icon: s.icon || "Code",
+        color: s.color || "from-blue-500 to-cyan-500",
+      }));
+
+      setServiceContent({
+        subtitle: content.subtitle ?? defaultContent.subtitle,
+        heading: content.heading ?? defaultContent.heading,
+        description: content.description ?? defaultContent.description,
+        services: processedServices,
+      });
+    }
+  }, [content]);
+
+  const availableIcons = useMemo(
+    () => ({
+      Globe,
+      Smartphone,
+      Database,
+      Code,
+      Palette,
+      Zap,
+      Monitor,
+      Briefcase,
+      Lightbulb,
+      Cpu,
+      Cloud,
+      Shield,
+      Server,
+    }),
+    []
+  );
+
+  const handleContentChange = (field: keyof ServiceContent, value: string) => {
+    const updated = { ...serviceContent, [field]: value };
+    setServiceContent(updated);
+    onSave(updated);
+  };
+
+  const handleAddService = (payload: Omit<Service, "id">) => {
+    const id =
+      serviceContent.services.length > 0
+        ? Math.max(...serviceContent.services.map((s) => s.id)) + 1
+        : 1;
+
+    const newService: Service = {
+      ...payload,
+      id,
+      features: payload.features.filter((f) => f.trim() !== ""),
+    };
+
+    const updatedServices = [...serviceContent.services, newService];
+    const updatedContent = { ...serviceContent, services: updatedServices };
+
+    setServiceContent(updatedContent);
+    onSave(updatedContent);
+    setIsAddingNew(false);
+    toast.success("Service added successfully!");
+  };
+
+  const handleEditService = (payload: Omit<Service, "id">) => {
+    if (editingId === null) return;
+
+    const updatedServices = serviceContent.services.map((s) =>
+      s.id === editingId
+        ? {
+            ...s,
+            ...payload,
+            features: payload.features.filter((f) => f.trim() !== ""),
+          }
+        : s
+    );
+
+    const updatedContent = { ...serviceContent, services: updatedServices };
+    setServiceContent(updatedContent);
+    onSave(updatedContent);
+    setEditingId(null);
+    toast.success("Service updated successfully!");
+  };
+
+  const handleDeleteService = (id: number) => {
+    const updatedServices = serviceContent.services.filter((s) => s.id !== id);
+    const updatedContent = { ...serviceContent, services: updatedServices };
+
+    setServiceContent(updatedContent);
+    onSave(updatedContent);
+
+    if (editingId === id) {
+      setEditingId(null);
+    }
+
+    toast.success("Service deleted successfully!");
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setIsAddingNew(false);
+  };
+
+  const handleSaveSection = () => {
+    onSave(serviceContent);
+    setIsEditMode(false);
+    setEditingId(null);
+    setIsAddingNew(false);
+    toast.success("Services section saved successfully!");
+  };
 
   return (
     <section id="services" className="py-20 bg-gray-50 dark:bg-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Edit Mode Toggle */}
         <div className="absolute top-0 right-0">
           <button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
-              isEditMode 
-                ? 'bg-orange-500 hover:bg-orange-600 text-white' 
-                : 'bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 shadow-lg'
+            onClick={() => {
+              if (isEditMode) {
+                handleSaveSection();
+              } else {
+                setIsEditMode(true);
+              }
+            }}
+            className={`flex items-center gap-2 p-3 rounded-full transition-all ${
+              isEditMode
+                ? "text-white bg-orange-500 hover:bg-orange-600"
+                : "text-gray-700 bg-white shadow-lg hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
             }`}
           >
-            {isEditMode ? <SaveAll className="h-6 w-6" /> : <Edit className="h-6 w-6" />}
+            {isEditMode ? (
+              <SaveAll className="w-6 h-6" />
+            ) : (
+              <Edit className="w-6 h-6" />
+            )}
+            {/* <span className="hidden sm:inline">
+              {isEditMode ? "Save Section" : "Edit Section"}
+            </span> */}
           </button>
         </div>
 
@@ -388,26 +469,55 @@ const Service: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="mb-16 text-center"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            My{" "}
-            <span className="text-orange-400">
-              Services
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Comprehensive development solutions tailored to bring your ideas to
-            life with modern technologies and best practices.
-          </p>
+          {isEditMode ? (
+            <div
+              className="space-y-4"
+              onMouseDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <input
+                type="text"
+                value={serviceContent.heading}
+                onChange={(e) => handleContentChange("heading", e.target.value)}
+                className="w-full max-w-lg p-2 mx-auto text-4xl font-bold text-gray-900 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                placeholder="Section heading"
+              />
+              <textarea
+                value={serviceContent.description}
+                onChange={(e) =>
+                  handleContentChange("description", e.target.value)
+                }
+                className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                rows={2}
+                placeholder="Section description"
+              />
+            </div>
+          ) : (
+            <>
+              <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
+                {serviceContent.heading.split(" ")[0]}{" "}
+                <span className="text-orange-400">
+                  {serviceContent.heading.split(" ").slice(1).join(" ")}
+                </span>
+              </h2>
+              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+                {serviceContent.description}
+              </p>
+            </>
+          )}
         </motion.div>
 
         {/* Add New Button */}
         {isEditMode && (
-          <div className="text-center mb-8">
+          <div className="mb-8 text-center">
             <button
-              onClick={() => setIsAddingNew(true)}
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors shadow-lg"
+              onClick={() => {
+                setIsAddingNew(true);
+                setEditingId(null);
+              }}
+              className="inline-flex items-center gap-2 px-6 py-3 text-white transition-colors bg-orange-500 rounded-lg shadow-lg hover:bg-orange-600"
             >
               <Plus className="w-5 h-5" />
               <span>Add New Service</span>
@@ -417,7 +527,7 @@ const Service: React.FC = () => {
 
         {/* New Service Form */}
         <AnimatePresence>
-          {isAddingNew && (
+          {isEditMode && isAddingNew && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -425,146 +535,202 @@ const Service: React.FC = () => {
               className="mb-8"
             >
               <ServiceForm
-                data={newService}
-                onChange={(field, value) => 
-                  setNewService(prev => ({ ...prev, [field]: value }))
-                }
-                isNew={true}
+                initial={{
+                  title: "",
+                  shortDescription: "",
+                  fullDescription: "",
+                  icon: "Code",
+                  color: colorOptions[0],
+                  features: [""],
+                  pricing: "",
+                  deliveryTime: "",
+                }}
+                autoFocus={true}
+                onCancel={handleCancel}
+                onSave={handleAddService}
               />
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          <AnimatePresence>
-            {services.map((service, index) => {
-              const IconComponent = availableIcons[service.icon as keyof typeof availableIcons];
-              const isHovered = hoveredService === service.id;
-              return (
-                <motion.div
-                  key={service.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -10, scale: 1.02 }}
-                  onHoverStart={() => setHoveredService(service.id)}
-                  onHoverEnd={() => setHoveredService(null)}
-                  className="group relative bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
-                >
-                  {/* Edit Controls */}
-                  {isEditMode && (
-                    <div className="absolute top-3 right-3 flex space-x-2 z-20">
-                      <button
-                        onClick={() => handleEdit(service)}
-                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                      >
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(service.id)}
-                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
+        {/* Services Grid or Empty State */}
+        {serviceContent.services.length === 0 ? (
+          <div className="py-20 text-center">
+            <p className="mb-4 text-lg text-gray-500 dark:text-gray-400">
+              No services available yet.
+            </p>
+            {isEditMode && (
+              <button
+                onClick={() => setIsAddingNew(true)}
+                className="px-6 py-2 text-white transition-colors bg-orange-500 rounded-lg hover:bg-orange-600"
+              >
+                Add Your First Service
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 mb-16 md:grid-cols-2 lg:grid-cols-3">
+            <AnimatePresence>
+              {serviceContent.services.map((service, index) => {
+                const IconComponent =
+                  availableIcons[service.icon as keyof typeof availableIcons] ||
+                  Code;
+                const isCardEditing = editingId === service.id;
 
-                  {editingId === service.id ? (
-                    <ServiceForm
-                      data={editForm!}
-                      onChange={(field, value) => 
-                        setEditForm(prev => prev ? ({ ...prev, [field]: value }) : null)
-                      }
-                    />
-                  ) : (
-                    <>
-                      {/* Service Icon */}
-                      <div
-                        className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color} mb-6 group-hover:scale-110 transition-transform duration-300`}
-                      >
-                        <IconComponent className="w-8 h-8 text-white" />
+                return (
+                  <motion.div
+                    key={service.id}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.5, delay: index * 0.06 }}
+                    whileHover={
+                      isEditMode || isCardEditing
+                        ? undefined
+                        : { y: -10, scale: 1.02 }
+                    }
+                    onHoverStart={
+                      isEditMode || isCardEditing
+                        ? undefined
+                        : () => setHoveredService(service.id)
+                    }
+                    onHoverEnd={
+                      isEditMode || isCardEditing
+                        ? undefined
+                        : () => setHoveredService(null)
+                    }
+                    className="relative p-8 transition-all duration-300 bg-white border border-gray-100 shadow-xl rounded-2xl group dark:bg-gray-900 hover:shadow-2xl dark:border-gray-800"
+                  >
+                    {/* Edit Controls */}
+                    {isEditMode && !isCardEditing && (
+                      <div className="absolute z-20 flex gap-2 top-3 right-3">
+                        <button
+                          onClick={() => setEditingId(service.id)}
+                          className="p-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteService(service.id)}
+                          className="p-2 text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
+                    )}
 
-                      {/* Service Title */}
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                        {service.title}
-                      </h3>
-
-                      {/* Service Description */}
-                      <motion.p
-                        layout
-                        className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed transition-all duration-300"
-                      >
-                        {isHovered
-                          ? service.fullDescription
-                          : service.shortDescription}
-                      </motion.p>
-
-                      {/* Features */}
-                      <ul className="space-y-2 mb-6">
-                        {service.features.map((feature, idx) => (
-                          <motion.li
-                            key={idx}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={
-                              isHovered
-                                ? { opacity: 1, x: 0 }
-                                : { opacity: 0.7, x: 0 }
-                            }
-                            transition={{ delay: isHovered ? idx * 0.1 : 0 }}
-                            className="flex items-center text-sm text-gray-600 dark:text-gray-400"
-                          >
-                            <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                            {feature}
-                          </motion.li>
-                        ))}
-                      </ul>
-
-                      {/* Pricing and Timeline */}
-                      <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Starting at
-                          </p>
-                          <p
-                            className={`font-bold bg-gradient-to-r ${service.color} bg-clip-text text-transparent`}
-                          >
-                            {service.pricing}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Delivery
-                          </p>
-                          <p className="font-medium text-gray-900 dark:text-white">
-                            {service.deliveryTime}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* CTA Button */}
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`w-full bg-gradient-to-r ${service.color} text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-lg`}
-                      >
-                        <span>Get Started</span>
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                      </motion.button>
-
-                      {/* Hover Effect Overlay */}
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}
+                    {isCardEditing ? (
+                      <ServiceForm
+                        initial={{
+                          title: service.title,
+                          shortDescription: service.shortDescription,
+                          fullDescription: service.fullDescription,
+                          icon: service.icon,
+                          color: service.color,
+                          features: service.features,
+                          pricing: service.pricing,
+                          deliveryTime: service.deliveryTime,
+                        }}
+                        autoFocus
+                        onCancel={handleCancel}
+                        onSave={handleEditService}
                       />
-                    </>
-                  )}
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
+                    ) : (
+                      <>
+                        <div
+                          className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${
+                            service.color
+                          } mb-6 ${
+                            isEditMode ? "" : "group-hover:scale-110"
+                          } transition-transform duration-300`}
+                        >
+                          <IconComponent className="w-8 h-8 text-white" />
+                        </div>
+
+                        <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+                          {service.title}
+                        </h3>
+
+                        <motion.p
+                          layout
+                          className="mb-6 leading-relaxed text-gray-600 transition-all duration-300 dark:text-gray-400"
+                        >
+                          {hoveredService === service.id
+                            ? service.fullDescription
+                            : service.shortDescription}
+                        </motion.p>
+
+                        <ul className="mb-6 space-y-2">
+                          {service.features.map((feature, idx) => (
+                            <motion.li
+                              key={`${service.id}-feat-${idx}`}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={
+                                hoveredService === service.id
+                                  ? { opacity: 1, x: 0 }
+                                  : { opacity: 0.9, x: 0 }
+                              }
+                              transition={{
+                                delay:
+                                  hoveredService === service.id
+                                    ? idx * 0.06
+                                    : 0,
+                              }}
+                              className="flex items-center text-sm text-gray-600 dark:text-gray-400"
+                            >
+                              <Check className="flex-shrink-0 w-4 h-4 mr-2 text-green-500" />
+                              {feature}
+                            </motion.li>
+                          ))}
+                        </ul>
+
+                        <div className="flex items-center justify-between p-4 mb-6 rounded-lg bg-gray-50 dark:bg-gray-800">
+                          <div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Pricing
+                            </p>
+                            <p
+                              className={`font-bold bg-gradient-to-r ${service.color} bg-clip-text text-transparent`}
+                            >
+                              {service.pricing}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Delivery
+                            </p>
+                            <p className="font-medium text-gray-900 dark:text-white">
+                              {service.deliveryTime}
+                            </p>
+                          </div>
+                        </div>
+
+                        <motion.button
+                          whileHover={isEditMode ? undefined : { scale: 1.05 }}
+                          whileTap={isEditMode ? undefined : { scale: 0.95 }}
+                          className={`w-full bg-gradient-to-r ${
+                            service.color
+                          } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                            isEditMode ? "" : "group-hover:shadow-lg"
+                          }`}
+                        >
+                          <span>Get Started</span>
+                          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        </motion.button>
+
+                        {!isEditMode && (
+                          <div
+                            className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}
+                          />
+                        )}
+                      </>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        )}
 
         {/* Why Choose Me Section */}
         <motion.div
@@ -572,18 +738,18 @@ const Service: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           viewport={{ once: true }}
-          className="text-center bg-white dark:bg-gray-900 rounded-3xl p-8 lg:p-12 shadow-xl"
+          className="p-8 text-center bg-white shadow-xl rounded-3xl dark:bg-gray-900 lg:p-12"
         >
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+          <h3 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
             Why Choose My Services?
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500">
                 <Star className="w-8 h-8 text-white" />
               </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">
+              <h4 className="mb-2 font-bold text-gray-900 dark:text-white">
                 Quality Focused
               </h4>
               <p className="text-gray-600 dark:text-gray-400">
@@ -593,10 +759,10 @@ const Service: React.FC = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-emerald-500">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">
+              <h4 className="mb-2 font-bold text-gray-900 dark:text-white">
                 Fast Delivery
               </h4>
               <p className="text-gray-600 dark:text-gray-400">
@@ -606,10 +772,10 @@ const Service: React.FC = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-orange-500 to-red-500">
                 <Code className="w-8 h-8 text-white" />
               </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">
+              <h4 className="mb-2 font-bold text-gray-900 dark:text-white">
                 Full Support
               </h4>
               <p className="text-gray-600 dark:text-gray-400">

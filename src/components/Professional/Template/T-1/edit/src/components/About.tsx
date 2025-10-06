@@ -1,9 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Award, Calendar, MapPin, Users, Edit, Save, X } from "lucide-react";
+import { toast } from "sonner";
 
-const About: React.FC = () => {
-  const [aboutContent, setAboutContent] = useState({
+export interface AboutContent {
+  subtitle: string;
+  heading: string;
+  description1: string;
+  description2: string;
+  description3: string;
+  yearsExperience: string;
+  projectsCompleted: string;
+  happyClients: string;
+  countriesServed: string;
+  skills: string[];
+  imageSrc: string;
+}
+
+interface AboutProps {
+  content?: AboutContent;
+  onSave?: (updated: AboutContent) => void;
+  userId?: string | undefined;
+}
+
+const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
+  const [aboutContent, setAboutContent] = useState<AboutContent>({
     subtitle:
       "Passionate developer with a love for creating innovative solutions that bridge the gap between design and technology.",
     heading: "Building Digital Dreams Into Reality",
@@ -23,23 +44,47 @@ const About: React.FC = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [skillsInput, setSkillsInput] = useState(""); // temp state for editing skills
+
+  // Sync local state with props when content changes
+  useEffect(() => {
+    if (content) {
+      setAboutContent(content);
+    }
+  }, [content]);
+
+  // Sync skillsInput when entering edit mode
+  useEffect(() => {
+    if (isEditing) {
+      setSkillsInput(aboutContent.skills.join(", "));
+    }
+  }, [isEditing, aboutContent.skills]);
 
   const stats = [
     {
       icon: Calendar,
       label: "Years Experience",
       value: aboutContent.yearsExperience,
+      key: "yearsExperience" as const,
     },
     {
       icon: Award,
       label: "Projects Completed",
       value: aboutContent.projectsCompleted,
+      key: "projectsCompleted" as const,
     },
-    { icon: Users, label: "Happy Clients", value: aboutContent.happyClients },
+    {
+      icon: Users,
+      label: "Happy Clients",
+      value: aboutContent.happyClients,
+      key: "happyClients" as const,
+    },
     {
       icon: MapPin,
       label: "Countries Served",
       value: aboutContent.countriesServed,
+      key: "countriesServed" as const,
     },
   ];
 
@@ -47,58 +92,95 @@ const About: React.FC = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
+      transition: { staggerChildren: 0.2, delayChildren: 0.1 },
     },
   };
 
   const itemVariants = {
     hidden: { y: 50, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-      },
-    },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
   };
 
   const handleContentChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setAboutContent((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setAboutContent((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleStatChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    statKey: keyof Pick<
+      AboutContent,
+      | "yearsExperience"
+      | "projectsCompleted"
+      | "happyClients"
+      | "countriesServed"
+    >
   ) => {
     const { value } = e.target;
-    const statKeys = [
-      "yearsExperience",
-      "projectsCompleted",
-      "happyClients",
-      "countriesServed",
-    ] as const;
-    const key = statKeys[index];
-    setAboutContent((prevState) => ({
-      ...prevState,
-      [key]: value,
-    }));
+    setAboutContent((prevState) => ({ ...prevState, [statKey]: value }));
   };
 
-  const handleSkillChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const skillsArray = e.target.value.split(",").map((skill) => skill.trim());
-    setAboutContent((prevState) => ({
-      ...prevState,
-      skills: skillsArray,
-    }));
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setAboutContent((prev) => ({
+            ...prev,
+            imageSrc: reader.result as string,
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+
+      setIsUploading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId!);
+      formData.append("fieldName", "AboutImage");
+
+      const uploadResponse = await fetch(
+        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        setAboutContent((prev) => ({
+          ...prev,
+          imageSrc: uploadData.s3Url,
+        }));
+        toast.success("Image uploaded successfully!");
+      } else {
+        const errorData = await uploadResponse.json();
+        toast.error(
+          `Image upload failed: ${errorData.message || "Unknown error"}`
+        );
+        return;
+      }
+
+      setIsUploading(false);
+    }
+  };
+
+  const handleSave = () => {
+    const skillsArray = skillsInput
+      .split(",")
+      .map((skill) => skill.trim())
+      .filter((skill) => skill.length > 0);
+
+    const updated = { ...aboutContent, skills: skillsArray };
+    setAboutContent(updated);
+    onSave?.(updated); // 🔹 send updates to App.tsx
+    setIsEditing(false);
+    toast.success("About section updated successfully!");
   };
 
   return (
@@ -115,22 +197,19 @@ const About: React.FC = () => {
             variants={itemVariants}
             className="text-center mb-16 relative"
           >
-            <div
-              className={`absolute top-0 right-0 px-4 py-2 rounded-full flex items-center gap-2 font-semibold shadow-lg transition-all duration-300 hover:scale-105`}
-            >
+            <div className="absolute top-0 right-0 px-4 py-2">
               {isEditing ? (
-                <div className="absolute top-0 right-0 flex items-center justify-center gap-2">
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setIsEditing(false)}
-                    className=" p-2 text-gray-900 dark:text-white bg-green-500 hover:bg-green-600 rounded-full transition-colors"
+                    onClick={handleSave}
+                    className="p-2 text-gray-900 dark:text-white bg-green-500 hover:bg-green-600 rounded-full transition-colors"
                     title="Save Changes"
                   >
                     <Save className="w-6 h-6" />
                   </button>
-
                   <button
                     onClick={() => setIsEditing(false)}
-                    className=" p-2 text-gray-900 dark:text-white bg-green-500 hover:bg-green-600 rounded-full transition-colors"
+                    className="p-2 text-gray-900 dark:text-white bg-red-500 hover:bg-red-600 rounded-full transition-colors"
                     title="Cancel"
                   >
                     <X className="w-6 h-6" />
@@ -139,7 +218,7 @@ const About: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="absolute top-0 right-0 p-2 text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-full transition-colors"
+                  className="p-2 text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-full transition-colors"
                   title="Edit Section"
                 >
                   <Edit className="w-6 h-6" />
@@ -148,17 +227,15 @@ const About: React.FC = () => {
             </div>
 
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              About{" "}
-              <span className="text-orange-500">
-                Me
-              </span>
+              About <span className="text-orange-500">Me</span>
             </h2>
+
             {isEditing ? (
               <textarea
                 name="subtitle"
                 value={aboutContent.subtitle}
                 onChange={handleContentChange}
-                className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none"
+                className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                 rows={2}
               />
             ) : (
@@ -177,7 +254,27 @@ const About: React.FC = () => {
                   alt="About me"
                   className="w-full h-[600px] object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-tr from-accent-orange/20 to-accent-yellow/20"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-yellow-500/20"></div>
+                {isEditing &&
+                  (!isUploading ? (
+                    <motion.label
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/40 text-white font-semibold text-lg"
+                    >
+                      Click to change image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </motion.label>
+                  ) : (
+                    <div className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/40 text-white font-semibold text-lg">
+                      <p>Uploading...</p>
+                    </div>
+                  ))}
               </div>
             </motion.div>
 
@@ -189,7 +286,7 @@ const About: React.FC = () => {
                   name="heading"
                   value={aboutContent.heading}
                   onChange={handleContentChange}
-                  className="w-full text-3xl font-bold bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2"
+                  className="w-full text-3xl font-bold bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                 />
               ) : (
                 <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -204,21 +301,21 @@ const About: React.FC = () => {
                       name="description1"
                       value={aboutContent.description1}
                       onChange={handleContentChange}
-                      className="w-full bg-gray-100 dark:bg-gray-800 rounded-lg p-2 resize-none"
+                      className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                       rows={3}
                     />
                     <textarea
                       name="description2"
                       value={aboutContent.description2}
                       onChange={handleContentChange}
-                      className="w-full bg-gray-100 dark:bg-gray-800 rounded-lg p-2 resize-none"
+                      className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                       rows={4}
                     />
                     <textarea
                       name="description3"
                       value={aboutContent.description3}
                       onChange={handleContentChange}
-                      className="w-full bg-gray-100 dark:bg-gray-800 rounded-lg p-2 resize-none"
+                      className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                       rows={3}
                     />
                   </>
@@ -231,7 +328,7 @@ const About: React.FC = () => {
                 )}
               </div>
 
-              {/* Skills Highlight */}
+              {/* Skills */}
               <div className="space-y-4">
                 <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Core Expertise
@@ -239,30 +336,34 @@ const About: React.FC = () => {
                 {isEditing ? (
                   <input
                     type="text"
-                    name="skills"
-                    value={aboutContent.skills.join(", ")}
-                    onChange={handleSkillChange}
-                    className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2"
-                    placeholder="Separate skills with commas (e.g., React, Node.js)"
+                    value={skillsInput}
+                    onChange={(e) => setSkillsInput(e.target.value)}
+                    className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                   />
                 ) : (
                   <div className="flex flex-wrap gap-3">
-                    {aboutContent.skills.map((skill, index) => (
-                      <motion.span
-                        key={index}
-                        whileHover={{ scale: 1.05 }}
-                        className="px-4 py-2 bg-gradient-to-r from-accent-yellow/10 to-accent-orange/10 border border-accent-orange/30 rounded-full text-accent-orange font-medium"
-                      >
-                        {skill}
-                      </motion.span>
-                    ))}
+                    {aboutContent.skills.length > 0 ? (
+                      aboutContent.skills.map((skill, index) => (
+                        <motion.span
+                          key={index}
+                          whileHover={{ scale: 1.05 }}
+                          className="px-4 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+                        >
+                          {skill}
+                        </motion.span>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 dark:text-gray-400 italic">
+                        No skills specified
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
             </motion.div>
           </div>
 
-          {/* Stats Section */}
+          {/* Stats */}
           <motion.div
             variants={itemVariants}
             className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-16 border-t border-gray-200 dark:border-gray-700"
@@ -273,24 +374,16 @@ const About: React.FC = () => {
                 whileHover={{ y: -5 }}
                 className="text-center group"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-yellow/10 to-accent-red/10 rounded-full mb-4 group-hover:from-accent-yellow/20 group-hover:to-accent-red/20 transition-all duration-200">
-                  <stat.icon className="w-8 h-8 text-accent-orange" />
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-500/10 to-red-500/10 rounded-full mb-4 group-hover:from-yellow-500/20 group-hover:to-red-500/20 transition-all duration-200">
+                  <stat.icon className="w-8 h-8 text-orange-500" />
                 </div>
                 <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   {isEditing ? (
                     <input
                       type="text"
-                      name={
-                        [
-                          "yearsExperience",
-                          "projectsCompleted",
-                          "happyClients",
-                          "countriesServed",
-                        ][index]
-                      }
                       value={stat.value}
-                      onChange={(e) => handleStatChange(e, index)}
-                      className="w-16 bg-gray-100 dark:bg-gray-800 text-center rounded-lg"
+                      onChange={(e) => handleStatChange(e, stat.key)}
+                      className="w-20 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white text-center rounded-lg border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                     />
                   ) : (
                     stat.value
