@@ -16,11 +16,12 @@ import {
   XCircle,
   Trash2,
   Clock,
+  AlertCircle,
 } from "lucide-react";
 import { useNavigate,Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 // -------------------- Types --------------------
 interface Company {
   publishedId: string;
@@ -686,6 +687,10 @@ const AdminDashboard: React.FC = () => {
   const [currentPage] = useState<number>(1);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
   const [credentialsModal, setCredentialsModal] = useState<{ isOpen: boolean; data: any }>({ isOpen: false, data: null });
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; publishedId: string | null }>({
+    isOpen: false,
+    publishedId: null,
+  });
 
   // -------------------- Recent Companies Logic --------------------
   const recentCompanies = useMemo(() => {
@@ -870,23 +875,26 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Replace handleDelete with modal logic
   const handleDelete = async (publishedId: string) => {
-    if (!window.confirm("Are you sure you want to delete this company? This action cannot be undone.")) return;
+    setDeleteModal({ isOpen: true, publishedId });
+  };
+
+  // Confirm delete action
+  const confirmDelete = async () => {
+    if (!deleteModal.publishedId) return;
     try {
       setIsMutating(true);
-      const result = await apiService.deleteCompany(publishedId);
-      console.log("delete result: ",result);
-      
-      
-        toast(result.message);
-        await fetchCompanies();
-      
+      const result = await apiService.deleteCompany(deleteModal.publishedId);
+      toast(result.message);
+      await fetchCompanies();
     } catch (err) {
       console.error("Error deleting company:", err);
       toast.error("Failed to delete company");
       await fetchCompanies();
     } finally {
       setIsMutating(false);
+      setDeleteModal({ isOpen: false, publishedId: null });
     }
   };
 
@@ -898,6 +906,79 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteModal.isOpen && (
+          <motion.div
+            className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDeleteModal({ isOpen: false, publishedId: null })}
+          >
+            <motion.div
+              className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Trash2 className="text-red-600" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Confirm Deletion
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setDeleteModal({ isOpen: false, publishedId: null })}
+                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
+              {/* Modal Body */}
+              <div className="mb-6">
+                <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg mb-4">
+                  <AlertCircle
+                    size={18}
+                    className="text-red-600 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-sm text-red-800">
+                    This action cannot be undone. All data for this company will be permanently deleted.
+                  </p>
+                </div>
+                <p className="text-gray-600">
+                  Are you sure you want to delete this company?
+                </p>
+              </div>
+              {/* Modal Footer */}
+              <div className="flex gap-3 justify-end">
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.1 }}
+                  onClick={() => setDeleteModal({ isOpen: false, publishedId: null })}
+                  className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
+                  disabled={isMutating}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.1 }}
+                  onClick={confirmDelete}
+                  className="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-md"
+                  disabled={isMutating}
+                >
+                  Confirm & Delete
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile sidebar toggle */}
       <div className="flex sticky top-0 z-40 justify-between items-center p-4 bg-white border-b border-gray-200 md:hidden">
