@@ -63,6 +63,8 @@ import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboa
 import UserEvent from "./components/UserEvent";
 import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard"
 import UserProfessional from "./components/profissionalDirectory"
+import ExcelDataProcessor from "./components/excelextraction/excel";
+import DocumentTextExtractor from "./components/excelextraction/extracttext";
 const HomePage = () => (
   <>
     <Hero />
@@ -153,6 +155,10 @@ const AppContent = () => {
         {/* event routes */}
         <Route path='/admin/event/dashboard' element={<EventAdminDashboard />} />
         <Route path='/user/event' element={<UserEvent />} />
+        
+        {/* excel extraction route */}
+        <Route path='/excel' element={<ExcelDataProcessor />} />
+        <Route path='/extract-text' element={<DocumentTextExtractor />} />
         </Routes>
         {!hideFooter && <Footer />}
         <ScrollingFooter />
