@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Search, MapPin, ChevronDown, ArrowRight, Star, Users, Building2, Menu, X, Eye, Edit, User, Briefcase, Award } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUserAuth, useTemplate } from "./context/context";
+import { motion } from "motion/react";
 
 // TypeScript Interfaces for Professional Profiles
 interface ProfessionalProfile {
@@ -106,6 +107,10 @@ interface PublishedDetailsResponse {
 
 interface User {
   userId: string;
+  userData: {
+    email: string;
+    // Add other userData properties as needed
+  };
   // Add other user properties as needed
 }
 
@@ -358,6 +363,15 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Divider */}
         <div className='border-t border-gray-100'></div>
 
+
+         <motion.button
+        whileTap={{ scale: [0.9, 1] }}
+        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+      >
+        <Link to={"/user/companies"}>Companies </Link>
+      </motion.button>
+
+
         {/* CTA Section */}
         <div className='space-y-3'>
           <p className='text-sm text-gray-600'>Ready to showcase your expertise?</p>
@@ -429,7 +443,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
   const statusStyle = getStatusBadge(profile.status);
 
   return (
-    <div className='overflow-hidden w-full h-full bg-indigo-50 from-blue-500 to-purple-600 rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl border-gradient-to-b group'>
+    <div className='overflow-hidden w-full h-full bg-gray-50  rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl border-gradient-to-b group'>
       <div className='p-4 md:p-6 lg:p-8'>
         <div className='flex items-center justify-between mb-4 md:mb-6'>
           <div className='flex items-center gap-3 md:gap-4'>
@@ -928,9 +942,9 @@ const ProfessionalDirectory: React.FC = () => {
       );
 
       if(details.templateSelection === "template-1"){
-        navigate(`/user/professionals/edit/1/${professionalId}`);
+        navigate(`/user/professionals/edit/1/${professionalId}/${user.userData.email}`);
       }else if(details.templateSelection === "template-2"){
-        navigate(`/user/professionals/edit/2/${professionalId}`);
+        navigate(`/user/professionals/edit/2/${professionalId}/${user.userData.email}`);
       }
 
     } catch (error) {
@@ -951,11 +965,11 @@ const ProfessionalDirectory: React.FC = () => {
       // );
     console.log("template ID",templateSelection);
     
-      // if(details.templateSelection === "template-1"){
-      //   navigate(`/user/professionals/preview/1/${professionalId}/${user.userData.email}`);
-      // }else if(details.templateSelection === "template-2"){
-      //   navigate(`/user/professionals/preview/2/${professionalId}/${user.userData.email}`);
-      // }
+      if(templateSelection === "template-1"){
+        navigate(`/user/professionals/preview/1/${professionalId}/${user.userData.email}`);
+      }else if(templateSelection === "template-2"){
+        navigate(`/user/professionals/preview/2/${professionalId}/${user.userData.email}`);
+      }
     } catch (error) {
       console.error("Error loading template for preview:", error);
       alert("Failed to load template for preview. Please try again.");

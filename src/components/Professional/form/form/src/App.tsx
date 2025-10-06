@@ -194,7 +194,7 @@ function AppInner() {
       <div className="max-w-4xl mx-auto p-6 space-y-6 relative">
 
         {/* --- Admin Button (only if admin flag true) --- */}
-        {admin && current < 5 && (
+        {/* {admin && current < 5 && (
           <div className="flex justify-end -mt-2">
             <button
               onClick={() => setAdminOpen(true)}
@@ -203,7 +203,7 @@ function AppInner() {
               Open Admin Panel
             </button>
           </div>
-        )}
+        )} */}
 
         {/* --- Step Content Container --- */}
         <div className="bg-white border-2  border-yellow-300 shadow-md rounded-xl p-6 border border-gray-200">
