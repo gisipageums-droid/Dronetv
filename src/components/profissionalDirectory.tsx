@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Search, MapPin, ChevronDown, ArrowRight, Star, Users, Building2, Menu, X, Eye, Edit, User, Briefcase, Award } from "lucide-react";
-import { useNavigate,Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import { useUserAuth, useTemplate } from "./context/context";
+import { Briefcase, ChevronDown, Edit, Eye, MapPin, Menu, Search, User, X } from "lucide-react";
 import { motion } from "motion/react";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useUserAuth } from "./context/context";
 
 // TypeScript Interfaces for Professional Profiles
 interface ProfessionalProfile {
@@ -135,7 +135,7 @@ interface SidebarProps {
 
 interface ProfileCardProps {
   profile: ProfessionalProfile;
-  onEdit: (professionalId: string) => void;
+  onEdit: (professionalId: string ,templateSelection: string) => void;
   onPreview: (professionalId: string,templateSelection: string) => void;
 }
 
@@ -149,7 +149,7 @@ interface MainContentProps {
   totalCount: number;
   hasMore: boolean;
   onOpenMobileSidebar: () => void;
-  onEdit: (professionalId: string) => void;
+  onEdit: (professionalId: string,templateSelection: string) => void;
   onPreview: (professionalId: string, templateSelection: string) => void;
   searchTerm: string;
   specialtyFilter: string;
@@ -555,7 +555,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                onEdit(profile.professionalId);
+                onEdit(profile.professionalId, profile.templateSelection || "" );
               }}
               className='px-3 py-2 md:px-4 md:py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2'
             >
@@ -868,52 +868,12 @@ const apiService = {
     }
   },
 
-  async fetchPublishedDetails(
-    professionalId: string,
-    userId: string,
-    setFinaleDataReview: (data: PublishedDetailsResponse) => void
-  ): Promise<PublishedDetailsResponse> {
-    try {
-      const response = await fetch(
-        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards/published-details/${professionalId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-User-Id': userId,
-          },
-        }
-      );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Published Details API Error:", errorText);
-        
-        if (response.status === 401) {
-          throw new Error("User not authenticated.");
-        } else if (response.status === 403) {
-          throw new Error("You don't have permission to access this template.");
-        } else if (response.status === 404) {
-          throw new Error("Template not found.");
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      }
-
-      const data = await response.json();
-      setFinaleDataReview(data)
-      return data;
-    } catch (error) {
-      console.error("Error fetching published details:", error);
-      throw error;
-    }
-  },
 };
 
 // Main Professional Directory Component
 const ProfessionalDirectory: React.FC = () => {
   const { user }: { user: User | null } = useUserAuth();
-  const { setFinaleDataReview } = useTemplate();
   const navigate = useNavigate();
 
   // State management
@@ -929,21 +889,21 @@ const ProfessionalDirectory: React.FC = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
  
   // Navigation handlers
-  const handleEdit = async (professionalId: string): Promise<void> => {
+  const handleEdit = async (professionalId: string ,templateSelection:string): Promise<void> => {
     try {
       if (!user?.userData?.email) {
         throw new Error("User not authenticated");
       }
       
-      const details = await apiService.fetchPublishedDetails(
-        professionalId,
-        user.userData.email,
-        setFinaleDataReview
-      );
+      // const details = await apiService.fetchPublishedDetails(
+      //   professionalId,
+      //   user.userData.email,
+      //   setFinaleDataReview
+      // );
 
-      if(details.templateSelection === "template-1"){
+      if(templateSelection === "template-1"){
         navigate(`/user/professionals/edit/1/${professionalId}/${user.userData.email}`);
-      }else if(details.templateSelection === "template-2"){
+      }else if(templateSelection === "template-2"){
         navigate(`/user/professionals/edit/2/${professionalId}/${user.userData.email}`);
       }
 

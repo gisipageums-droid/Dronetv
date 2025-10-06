@@ -12,12 +12,13 @@ import {
   X,
   XCircle,
   Clock,
+  AlertCircle,
 } from "lucide-react";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProfessionalCredentialsModal from "./ProfessionalCredentialsModal";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 // TypeScript Interfaces for Professionals
 interface Professional {
@@ -897,6 +898,10 @@ const AdminProfessionalDashboard: React.FC = () => {
     isOpen: false,
     data: null,
   });
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; professionalId: string | null }>({
+    isOpen: false,
+    professionalId: null,
+  });
 
   // Calculate recent professionals (last 7 days)
   const recentProfessionals = useMemo(() => {
@@ -945,11 +950,11 @@ const AdminProfessionalDashboard: React.FC = () => {
       // Navigate to preview page based on template
       if (professional.templateSelection === "template-1") {
         navigate(
-          `/admin/professionals/preview/1/${professionalId}/${professional.userId}`
+          `/user/professionals/preview/1/${professionalId}/${professional.userId}`
         );
       } else if (professional.templateSelection === "template-2") {
         navigate(
-          `/admin/professionals/preview/2/${professionalId}/${professional.userId}`
+          `/user/professionals/preview/2/${professionalId}/${professional.userId}`
         );
       }
     } catch (error) {
@@ -1014,17 +1019,15 @@ const AdminProfessionalDashboard: React.FC = () => {
 
   // Handle delete button click
   const handleDelete = async (professionalId: string): Promise<void> => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this professional? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
+    setDeleteModal({ isOpen: true, professionalId });
+  };
 
+  // Confirm delete action
+  const confirmDelete = async () => {
+    if (!deleteModal.professionalId) return;
     try {
       setIsMutating(true);
-      const result = await apiService.deleteProfessional(professionalId);
+      const result = await apiService.deleteProfessional(deleteModal.professionalId);
 
       if (result.message === "Professional template deleted successfully") {
         toast.success("Professional deleted successfully");
@@ -1037,6 +1040,7 @@ const AdminProfessionalDashboard: React.FC = () => {
       toast.error("Failed to delete professional");
     } finally {
       setIsMutating(false);
+      setDeleteModal({ isOpen: false, professionalId: null });
     }
   };
 
@@ -1141,6 +1145,79 @@ const AdminProfessionalDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-blue-100">
       <Header />
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteModal.isOpen && (
+          <motion.div
+            className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDeleteModal({ isOpen: false, professionalId: null })}
+          >
+            <motion.div
+              className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Trash2 className="text-red-600" size={24} />
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Confirm Deletion
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setDeleteModal({ isOpen: false, professionalId: null })}
+                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
+              {/* Modal Body */}
+              <div className="mb-6">
+                <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg mb-4">
+                  <AlertCircle
+                    size={18}
+                    className="text-red-600 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-sm text-red-800">
+                    This action cannot be undone. All data for this professional will be permanently deleted.
+                  </p>
+                </div>
+                <p className="text-gray-600">
+                  Are you sure you want to delete this professional?
+                </p>
+              </div>
+              {/* Modal Footer */}
+              <div className="flex gap-3 justify-end">
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.1 }}
+                  onClick={() => setDeleteModal({ isOpen: false, professionalId: null })}
+                  className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
+                  disabled={isMutating}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.1 }}
+                  onClick={confirmDelete}
+                  className="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-md"
+                  disabled={isMutating}
+                >
+                  Confirm & Delete
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Credentials Modal */}
       <ProfessionalCredentialsModal
