@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Search, MapPin, ChevronDown, ArrowRight, Star, Users, Building2, Menu, X, Eye, Edit } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUserAuth, useTemplate } from "./context/context";
-import { use } from "framer-motion/client";
-
+import { motion } from "motion/react";
 // TypeScript Interfaces
 interface Company {
   publishedId: string;
@@ -379,6 +378,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Divider */}
         <div className='border-t border-gray-100'></div>
+
+
+         <motion.button
+        whileTap={{ scale: [0.9, 1] }}
+        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+      >
+        <Link to={"/user/professional"}>Professional </Link>
+      </motion.button>
+
+
 
         {/* CTA Section */}
         <div className='space-y-3'>

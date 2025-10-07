@@ -1,18 +1,21 @@
-import React, { useState } from "react";
+// Testimonials.tsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Quote, 
-  Star, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  Save, 
-  X, 
+import {
+  Quote,
+  Star,
+  Plus,
+  Edit3,
+  Trash2,
+  Save,
+  X,
   SaveAll,
-  Edit
+  Edit,
+  Upload,
 } from "lucide-react";
+import { toast } from "sonner";
 
-interface Testimonial {
+export interface Testimonial {
   id: number;
   name: string;
   position: string;
@@ -21,205 +24,272 @@ interface Testimonial {
   content: string;
   rating: number;
   project: string;
+  date?: string;
 }
 
-const Testimonials: React.FC = () => {
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [isAddingNew, setIsAddingNew] = useState(false);
-  
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      position: "CEO, TechStart Inc.",
-      company: "TechStart Inc.",
-      image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400",
-      content: "John delivered an exceptional e-commerce platform that exceeded our expectations. His attention to detail and ability to understand our business needs made the entire process smooth and efficient.",
-      rating: 5,
-      project: "E-Commerce Platform",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      position: "CTO, DataFlow Solutions",
-      company: "DataFlow Solutions",
-      image: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
-      content: "Working with John was a game-changer for our company. He transformed our complex data requirements into an intuitive platform that our team loves using. Highly recommended!",
-      rating: 5,
-      project: "Data Analytics Dashboard",
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      position: "Product Manager, InnovateLab",
-      company: "InnovateLab",
-      image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
-      content: "Johns expertise in both frontend and backend development allowed us to build a cohesive product. His communication skills and proactive approach made our collaboration seamless.",
-      rating: 5,
-      project: "Project Management Tool",
-    },
-    {
-      id: 4,
-      name: "David Thompson",
-      position: "Founder, EduTech Pro",
-      company: "EduTech Pro",
-      image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400",
-      content: "John built our learning management system from the ground up. The scalability and user experience he delivered have been crucial to our success. A true professional!",
-      rating: 5,
-      project: "Learning Management System",
-    },
-    {
-      id: 5,
-      name: "Lisa Wang",
-      position: "Marketing Director, GrowthCo",
-      company: "GrowthCo",
-      image: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400",
-      content: "The mobile app John developed for us has received fantastic user feedback. His ability to translate our vision into a beautiful, functional product was impressive.",
-      rating: 5,
-      project: "Mobile Application",
-    },
-  ]);
+export interface TestimonialContent {
+  subtitle: string;
+  heading: string;
+  description: string;
+  testimonials: Testimonial[];
+}
 
-  const [newTestimonial, setNewTestimonial] = useState<Omit<Testimonial, 'id'>>({
-    name: "",
-    position: "",
-    company: "",
-    image: "",
-    content: "",
-    rating: 5,
-    project: "",
-  });
+interface TestimonialsProps {
+  content?: TestimonialContent;
+  onSave: (updatedContent: TestimonialContent) => void;
+  userId?: string;
+}
 
-  const [editForm, setEditForm] = useState<Testimonial | null>(null);
+const defaultContent: TestimonialContent = {
+  subtitle: "client success stories and feedback",
+  heading: "What Clients Say",
+  description: "testimonials from satisfied clients",
+  testimonials: [],
+};
 
-  const handleAddNew = () => {
-    if (newTestimonial.name && newTestimonial.content) {
-      const id = Math.max(...testimonials.map(t => t.id), 0) + 1;
-      setTestimonials([...testimonials, { ...newTestimonial, id }]);
-      setNewTestimonial({
-        name: "",
-        position: "",
-        company: "",
-        image: "",
-        content: "",
-        rating: 5,
-        project: "",
-      });
-      setIsAddingNew(false);
+/* -----------------------
+   Memoized TestimonialForm
+   ----------------------- */
+type FormData = Omit<Testimonial, "id">;
+
+const TestimonialForm: React.FC<{
+  initial: FormData;
+  onCancel: () => void;
+  onSave: (payload: FormData) => void | Promise<void>;
+  autoFocus?: boolean;
+  userId?: string;
+}> = React.memo(({ initial, onCancel, onSave, autoFocus = false, userId }) => {
+  const [local, setLocal] = useState<FormData>(() => ({
+    name: initial.name ?? "",
+    position: initial.position ?? "",
+    company: initial.company ?? "",
+    image: initial.image ?? "",
+    content: initial.content ?? "",
+    rating: initial.rating ?? 5,
+    project: initial.project ?? "",
+    date: initial.date ?? new Date().getFullYear().toString(),
+  }));
+
+  const [isUploading, setIsUploading] = useState(false);
+  const nameRef = useRef<HTMLInputElement | null>(null);
+
+  // Sync when initial changes
+  useEffect(() => {
+    setLocal({
+      name: initial.name ?? "",
+      position: initial.position ?? "",
+      company: initial.company ?? "",
+      image: initial.image ?? "",
+      content: initial.content ?? "",
+      rating: initial.rating ?? 5,
+      project: initial.project ?? "",
+      date: initial.date ?? new Date().getFullYear().toString(),
+    });
+  }, [initial]);
+
+  // Auto-focus effect
+  useEffect(() => {
+    if (autoFocus) {
+      const t = setTimeout(() => {
+        nameRef.current?.focus();
+        const el = nameRef.current;
+        if (el) el.setSelectionRange(el.value.length, el.value.length);
+      }, 40);
+      return () => clearTimeout(t);
+    }
+  }, [autoFocus]);
+
+  const setField = (k: keyof FormData, v: any) => setLocal((p) => ({ ...p, [k]: v }));
+
+  // Image upload handler - same as Hero.tsx
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // First set local preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setLocal((prev) => ({
+            ...prev,
+            image: reader.result as string,
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+
+      setIsUploading(true);
+
+      // Upload to S3
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId!);
+      formData.append("fieldName", "testimonialImage");
+
+      try {
+        const uploadResponse = await fetch(
+          `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          setLocal((prev) => ({
+            ...prev,
+            image: uploadData.s3Url,
+          }));
+          toast.success("Image uploaded successfully!");
+        } else {
+          const errorData = await uploadResponse.json();
+          toast.error(
+            `Image upload failed: ${errorData.message || "Unknown error"}`
+          );
+          return;
+        }
+      } catch (error) {
+        toast.error("Image upload failed due to network error");
+        console.error("Upload error:", error);
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
-  const handleEdit = (testimonial: Testimonial) => {
-    setEditForm({ ...testimonial });
-    setEditingId(testimonial.id);
-  };
+  // Save handler
+  const handleSave = async () => {
+    if (!local.name.trim() || !local.content.trim()) {
+      toast.error("Please provide name and testimonial content.");
+      return;
+    }
 
-  const handleSaveEdit = () => {
-    if (editForm) {
-      setTestimonials(testimonials.map(t => 
-        t.id === editForm.id ? editForm : t
-      ));
-      setEditForm(null);
-      setEditingId(null);
+    try {
+      await onSave(local);
+    } catch (err) {
+      console.error("Error saving testimonial form:", err);
+      toast.error("Save failed.");
     }
   };
 
-  const handleDelete = (id: number) => {
-    setTestimonials(testimonials.filter(t => t.id !== id));
-  };
-
-  const handleCancelEdit = () => {
-    setEditForm(null);
-    setEditingId(null);
-    setIsAddingNew(false);
-  };
-
-  const TestimonialForm = ({ 
-    data, 
-    onChange, 
-    isNew = false 
-  }: { 
-    data: Omit<Testimonial, 'id'> | Testimonial, 
-    onChange: (field: string, value: string | number) => void,
-    isNew?: boolean 
-  }) => (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border-2 border-dashed border-orange-300 dark:border-orange-600">
+  return (
+    <div
+      className="p-6 border-2 border-orange-300 border-dashed bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl dark:border-orange-600"
+      onMouseDown={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
+    >
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <input
+            ref={nameRef}
             type="text"
-            placeholder="Name"
-            value={data.name}
-            onChange={(e) => onChange('name', e.target.value)}
-            className="w-full p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            placeholder="Name *"
+            value={local.name}
+            onChange={(e) => setField("name", e.target.value)}
+            className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
           />
           <input
             type="text"
             placeholder="Position"
-            value={data.position}
-            onChange={(e) => onChange('position', e.target.value)}
-            className="w-full p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            value={local.position}
+            onChange={(e) => setField("position", e.target.value)}
+            className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
           />
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <input
             type="text"
             placeholder="Company"
-            value={data.company}
-            onChange={(e) => onChange('company', e.target.value)}
-            className="w-full p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            value={local.company}
+            onChange={(e) => setField("company", e.target.value)}
+            className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
           />
           <input
             type="text"
             placeholder="Project"
-            value={data.project}
-            onChange={(e) => onChange('project', e.target.value)}
-            className="w-full p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            value={local.project}
+            onChange={(e) => setField("project", e.target.value)}
+            className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
           />
         </div>
-        
-        <input
-          type="url"
-          placeholder="Image URL"
-          value={data.image}
-          onChange={(e) => onChange('image', e.target.value)}
-          className="w-full p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-        />
-        
+
+        <div className="grid items-center grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <input
+              type="url"
+              placeholder="Image URL"
+              value={local.image}
+              onChange={(e) => setField("image", e.target.value)}
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${
+              isUploading 
+                ? "bg-gray-400 cursor-not-allowed" 
+                : "bg-gray-100 dark:bg-gray-800"
+            }`}>
+              <Upload className="w-4 h-4" />
+              <span className="text-sm">
+                {isUploading ? "Uploading..." : "Upload Image"}
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={isUploading}
+                onChange={handleImageUpload}
+              />
+            </label>
+          </div>
+        </div>
+
         <textarea
-          placeholder="Testimonial content"
-          value={data.content}
-          onChange={(e) => onChange('content', e.target.value)}
+          placeholder="Testimonial content *"
+          value={local.content}
+          onChange={(e) => setField("content", e.target.value)}
           rows={4}
-          className="w-full p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent resize-none"
+          className="w-full p-3 bg-white border border-gray-300 rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
         />
-        
+
         <div className="flex items-center space-x-2">
-          <label className="text-gray-700 dark:text-gray-300 font-medium">Rating:</label>
+          <label className="font-medium text-gray-700 dark:text-gray-300">Rating:</label>
           <select
-            value={data.rating}
-            onChange={(e) => onChange('rating', parseInt(e.target.value))}
-            className="p-2 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+            value={local.rating}
+            onChange={(e) => setField("rating", parseInt(e.target.value))}
+            className="p-2 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
           >
-            {[1, 2, 3, 4, 5].map(rating => (
-              <option key={rating} value={rating}>{rating} Star{rating !== 1 ? 's' : ''}</option>
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <option key={rating} value={rating}>
+                {rating} Star{rating !== 1 ? "s" : ""}
+              </option>
             ))}
           </select>
         </div>
-        
+
         <div className="flex space-x-2">
           <button
-            onClick={isNew ? handleAddNew : handleSaveEdit}
-            className="flex items-center space-x-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+            onClick={handleSave}
+            disabled={isUploading}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
+              isUploading 
+                ? "bg-green-400 cursor-not-allowed" 
+                : "bg-green-500 hover:bg-green-600"
+            }`}
           >
             <Save className="w-4 h-4" />
-            <span>{isNew ? 'Add' : 'Save'}</span>
+            <span>{isUploading ? "Saving..." : "Save"}</span>
           </button>
           <button
-            onClick={handleCancelEdit}
-            className="flex items-center space-x-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+            onClick={onCancel}
+            disabled={isUploading}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
+              isUploading 
+                ? "bg-gray-400 cursor-not-allowed" 
+                : "bg-gray-500 hover:bg-gray-600"
+            }`}
           >
             <X className="w-4 h-4" />
             <span>Cancel</span>
@@ -228,47 +298,181 @@ const Testimonials: React.FC = () => {
       </div>
     </div>
   );
+});
+(TestimonialForm as any).displayName = "TestimonialFormMemo";
+
+/* -----------------------
+   Main Testimonials component
+   ----------------------- */
+const Testimonials: React.FC<TestimonialsProps> = ({ content, onSave, userId }) => {
+  const [testimonialContent, setTestimonialContent] = useState<TestimonialContent>(defaultContent);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
+
+  // Initialize content
+  useEffect(() => {
+    if (!content) return;
+    
+    const processedTestimonials = (content.testimonials ?? []).map((t) => ({
+      ...t,
+      id: typeof t.id === "number" ? Math.floor(t.id) : parseInt(String(t.id)),
+      rating: Math.floor(t.rating || 5),
+    }));
+    
+    setTestimonialContent({
+      subtitle: content.subtitle ?? defaultContent.subtitle,
+      heading: content.heading ?? defaultContent.heading,
+      description: content.description ?? defaultContent.description,
+      testimonials: processedTestimonials,
+    });
+    setTestimonials(processedTestimonials);
+  }, [content]);
+
+  const startEdit = (t: Testimonial) => {
+    setEditingId(t.id);
+    setIsAddingNew(false);
+  };
+
+  const handleAddNew = async (payload?: Omit<Testimonial, "id">) => {
+    const source = payload ?? {
+      name: "",
+      position: "",
+      company: "",
+      image: "",
+      content: "",
+      rating: 5,
+      project: "",
+      date: new Date().getFullYear().toString(),
+    };
+
+    if (!source.name.trim() || !source.content.trim()) {
+      toast.error("Please provide a name and testimonial content.");
+      return;
+    }
+
+    const id = testimonials.length > 0 ? Math.max(...testimonials.map((t) => t.id)) + 1 : 1;
+    const created: Testimonial = { ...source, id };
+    const updated = [...testimonials, created];
+    
+    setTestimonials(updated);
+    setTestimonialContent((p) => ({ ...p, testimonials: updated }));
+    setIsAddingNew(false);
+    
+    toast.success("Testimonial added.");
+    onSave?.({ ...testimonialContent, testimonials: updated });
+  };
+
+  const handleSaveEdit = (payload: FormData) => {
+    if (editingId == null) return;
+    
+    const updated = testimonials.map((t) => 
+      t.id === editingId ? { ...t, ...payload } : t
+    );
+    
+    setTestimonials(updated);
+    setTestimonialContent((p) => ({ ...p, testimonials: updated }));
+    setEditingId(null);
+    
+    toast.success("Testimonial updated.");
+    onSave?.({ ...testimonialContent, testimonials: updated });
+  };
+
+  const handleDelete = (id: number) => {
+    const updated = testimonials.filter((t) => t.id !== id);
+    setTestimonials(updated);
+    setTestimonialContent((p) => ({ ...p, testimonials: updated }));
+    toast.success("Testimonial removed.");
+    onSave?.({ ...testimonialContent, testimonials: updated });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setIsAddingNew(false);
+  };
+
+  const handleContentChange = (field: keyof TestimonialContent, value: string) => {
+    const updated = { ...testimonialContent, [field]: value };
+    setTestimonialContent(updated);
+    // Auto-save section content changes
+    onSave?.({ ...updated, testimonials });
+  };
+
+  const handleSaveSection = () => {
+    onSave?.({ ...testimonialContent, testimonials });
+    setIsEditMode(false);
+    toast.success("Testimonials section saved.");
+  };
 
   return (
     <section id="testimonials" className="py-20 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Edit Mode Toggle */}
+      <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="absolute top-0 right-0">
           <button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={`w-12 h-12 rounded-full flex items-center justify-center p-2 transition-alll ${
-              isEditMode 
-                ? 'bg-orange-500 hover:bg-orange-600 text-white' 
-                : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
+            onClick={() => {
+              if (isEditMode) {
+                handleSaveSection();
+              } else {
+                setIsEditMode(true);
+              }
+            }}
+            className={`w-12 h-12 rounded-full flex items-center justify-center p-2 transition-all ${
+              isEditMode
+                ? "bg-orange-500 hover:bg-orange-600 text-white"
+                : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
             }`}
+            title={isEditMode ? "Save Section" : "Edit Section"}
           >
-            {isEditMode ? <SaveAll className="h-6 w-6" /> : <Edit className="h-6 w-6" />}
+            {isEditMode ? <SaveAll className="w-6 h-6" /> : <Edit className="w-6 h-6" />}
           </button>
         </div>
 
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="mb-16 text-center"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            What Clients <span className="text-orange-400">Say</span>
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Don't just take my word for it. Here's what my clients have to say
-            about working with me.
-          </p>
+          {isEditMode ? (
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={testimonialContent.heading}
+                onChange={(e) => handleContentChange("heading", e.target.value)}
+                className="w-full max-w-2xl p-2 mx-auto text-4xl font-bold text-gray-900 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                placeholder="Section heading"
+              />
+              <textarea
+                value={testimonialContent.description}
+                onChange={(e) => handleContentChange("description", e.target.value)}
+                className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                rows={2}
+                placeholder="Section description"
+              />
+            </div>
+          ) : (
+            <>
+              <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
+                {testimonialContent.heading.split(" ").slice(0, -1).join(" ")}{" "}
+                <span className="text-orange-400">{testimonialContent.heading.split(" ").slice(-1)}</span>
+              </h2>
+              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+                {testimonialContent.description}
+              </p>
+            </>
+          )}
         </motion.div>
 
-        {/* Add New Button */}
         {isEditMode && (
-          <div className="text-center mb-8">
+          <div className="mb-8 text-center">
             <button
-              onClick={() => setIsAddingNew(true)}
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+              onClick={() => {
+                setIsAddingNew(true);
+                setEditingId(null);
+              }}
+              className="inline-flex items-center px-6 py-3 space-x-2 text-white transition-colors bg-orange-500 rounded-lg hover:bg-orange-600"
             >
               <Plus className="w-5 h-5" />
               <span>Add New Testimonial</span>
@@ -276,147 +480,162 @@ const Testimonials: React.FC = () => {
           </div>
         )}
 
-        {/* New Testimonial Form */}
         <AnimatePresence>
-          {isAddingNew && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+          {isEditMode && isAddingNew && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              exit={{ opacity: 0, y: -20 }} 
               className="mb-8"
             >
               <TestimonialForm
-                data={newTestimonial}
-                onChange={(field, value) => 
-                  setNewTestimonial(prev => ({ ...prev, [field]: value }))
-                }
-                isNew={true}
+                initial={{
+                  name: "",
+                  position: "",
+                  company: "",
+                  image: "",
+                  content: "",
+                  rating: 5,
+                  project: "",
+                  date: new Date().getFullYear().toString(),
+                }}
+                autoFocus
+                userId={userId}
+                onCancel={() => setIsAddingNew(false)}
+                onSave={handleAddNew}
               />
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          <AnimatePresence>
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -10, scale: 1.02 }}
-                className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 relative"
+        {testimonials.length === 0 ? (
+          <div className="py-20 text-center">
+            <p className="mb-4 text-lg text-gray-500 dark:text-gray-400">No testimonials available yet.</p>
+            {isEditMode && (
+              <button 
+                onClick={() => setIsAddingNew(true)} 
+                className="px-6 py-2 text-white transition-colors bg-orange-500 rounded-lg hover:bg-orange-600"
               >
-                {/* Edit Controls */}
-                {isEditMode && (
-                  <div className="absolute top-3 right-3 flex space-x-2">
-                    <button
-                      onClick={() => handleEdit(testimonial)}
-                      className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(testimonial.id)}
-                      className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-
-                {editingId === testimonial.id ? (
-                  <TestimonialForm
-                    data={editForm!}
-                    onChange={(field, value) => 
-                      setEditForm(prev => prev ? ({ ...prev, [field]: value }) : null)
-                    }
-                  />
-                ) : (
-                  <>
-                    {/* Quote Icon */}
-                    <div className="flex justify-end mb-4">
-                      <div className="w-10 h-10 bg-gradient-to-r from-accent-yellow to-accent-orange rounded-full flex items-center justify-center">
-                        <Quote className="w-5 h-5 text-black dark:text-white" />
-                      </div>
-                    </div>
-
-                    {/* Testimonial Content */}
-                    <blockquote className="text-gray-700 dark:text-gray-300 mb-6 italic leading-relaxed">
-                      "{testimonial.content}"
-                    </blockquote>
-
-                    {/* Rating */}
-                    <div className="flex space-x-1 mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="w-4 h-4 fill-accent-yellow text-accent-yellow"
-                        />
-                      ))}
-                    </div>
-
-                    {/* Client Info */}
-                    <div className="flex items-center space-x-4">
-                      <img
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-bold text-gray-900 dark:text-white">
-                          {testimonial.name}
-                        </h3>
-                        <p className="text-accent-orange font-medium text-sm">
-                          {testimonial.position}
-                        </p>
-                        <p className="text-gray-600 dark:text-gray-400 text-xs">
-                          {testimonial.company}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Project Tag */}
-                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <div className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-accent-yellow/20 to-accent-orange/20 border border-accent-orange/30 rounded-full">
-                        <span className="text-accent-orange font-medium text-sm">
-                          {testimonial.project}
-                        </span>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Client Logos Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
-            Trusted by Amazing Companies
-          </h3>
-
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
-            {Array.from(new Set(testimonials.map(t => t.company))).map((company, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.1, opacity: 1 }}
-                className="px-6 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg font-bold text-gray-700 dark:text-gray-300"
-              >
-                {company}
-              </motion.div>
-            ))}
+                Add Your First Testimonial
+              </button>
+            )}
           </div>
-        </motion.div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 mb-16 md:grid-cols-2 lg:grid-cols-3">
+            <AnimatePresence>
+              {testimonials.map((testimonial, index) => (
+                <motion.div
+                  key={testimonial.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="relative p-6 transition-all duration-300 shadow-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl hover:shadow-2xl"
+                >
+                  {isEditMode && (
+                    <div className="absolute flex space-x-2 top-3 right-3">
+                      <button 
+                        onClick={() => startEdit(testimonial)} 
+                        className="p-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(testimonial.id)} 
+                        className="p-2 text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+
+                  {editingId === testimonial.id ? (
+                    <TestimonialForm
+                      initial={{
+                        name: testimonial.name,
+                        position: testimonial.position,
+                        company: testimonial.company,
+                        image: testimonial.image,
+                        content: testimonial.content,
+                        rating: testimonial.rating,
+                        project: testimonial.project,
+                        date: testimonial.date ?? new Date().getFullYear().toString(),
+                      }}
+                      autoFocus
+                      userId={userId}
+                      onCancel={handleCancelEdit}
+                      onSave={handleSaveEdit}
+                    />
+                  ) : (
+                    <>
+                      <div className="flex justify-end mb-4">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500">
+                          <Quote className="w-5 h-5 text-black dark:text-white" />
+                        </div>
+                      </div>
+
+                      <blockquote className="mb-6 italic leading-relaxed text-gray-700 dark:text-gray-300">"{testimonial.content}"</blockquote>
+
+                      <div className="flex mb-4 space-x-1">
+                        {[...Array(Math.max(0, testimonial.rating))].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        ))}
+                      </div>
+
+                      <div className="flex items-center space-x-4">
+                        <img 
+                          src={testimonial.image} 
+                          alt={testimonial.name} 
+                          className="object-cover w-12 h-12 rounded-full"
+                          onError={(e) => {
+                            // Fallback for broken images
+                            (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.name)}&background=random`;
+                          }}
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900 dark:text-white">{testimonial.name}</h3>
+                          <p className="text-sm font-medium text-orange-500">{testimonial.position}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">{testimonial.company}</p>
+                        </div>
+                      </div>
+
+                      <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div className="inline-flex items-center px-3 py-1 border rounded-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-orange-500/30">
+                          <span className="text-sm font-medium text-orange-500">{testimonial.project}</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {testimonials.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.5, delay: 0.2 }} 
+            viewport={{ once: true }} 
+            className="text-center"
+          >
+            <h3 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white">Trusted by Amazing Companies</h3>
+
+            <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
+              {Array.from(new Set(testimonials.map((t) => t.company))).map((company, idx) => (
+                <motion.div 
+                  key={idx} 
+                  whileHover={{ scale: 1.1, opacity: 1 }} 
+                  className="px-6 py-3 font-bold text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-800 dark:text-gray-300"
+                >
+                  {company}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );

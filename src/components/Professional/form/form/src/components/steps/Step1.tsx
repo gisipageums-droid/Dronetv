@@ -13,9 +13,9 @@ export const Step1 = ({ step }: { step: any }) => {
       {/* Categories on Top */}
       {step.categories && (
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-3">Company Category</h3>
+          <h3 className="text-lg font-semibold text-slate-900 mb-3">Professional Category</h3>
           <p className="text-sm text-slate-600 mb-2">
-            Select your company's main business category (you can select multiple)
+            Select your Professional's main business category (you can select multiple)
           </p>
           <div className="flex justify-center">
             <MultiSelect

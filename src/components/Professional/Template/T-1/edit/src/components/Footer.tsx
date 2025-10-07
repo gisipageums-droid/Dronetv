@@ -13,9 +13,10 @@ const Footer: React.FC = () => {
   ];
 
   const moreLinks = [
-    { href: "#certifications", label: "Certifications" },
+    // { href: "#certifications", label: "Certifications" },
+    { href: "#services", label: "Services" },
     { href: "#testimonials", label: "Testimonials" },
-    { href: "#contact", label: "Contact" },
+    // { href: "#contact", label: "Contact" },
   ];
 
   const scrollToTop = () => {

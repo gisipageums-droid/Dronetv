@@ -63,8 +63,11 @@ import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboa
 import UserEvent from "./components/UserEvent";
 import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard"
 import UserProfessional from "./components/profissionalDirectory"
+
 import ExcelDataProcessor from "./components/excelextraction/excel";
 import DocumentTextExtractor from "./components/excelextraction/extracttext";
+// import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/"
+import FinaleProfessionalTemp2 from "./components/Professional/Template/T-2/final/preview/src/App"
 const HomePage = () => (
   <>
     <Hero />
@@ -151,7 +154,7 @@ const AppContent = () => {
           <Route path='/professional/edit/:draftId/:userId/template=1' element={<EditTemp_1/>} />
           <Route path="/user/professional" element={<UserProfessional />} />
           <Route path="/admin/professional" element={<AdminProfessional />} />
-
+          <Route path='/user/professionals/preview/2/:professionalId/:userId' element={<FinaleProfessionalTemp2 />} />
         {/* event routes */}
         <Route path='/admin/event/dashboard' element={<EventAdminDashboard />} />
         <Route path='/user/event' element={<UserEvent />} />
