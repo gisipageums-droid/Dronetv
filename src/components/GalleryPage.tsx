@@ -1,19 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, ChevronDown, X, ChevronLeft, ChevronRight, Download, Share2, Heart, Calendar, MapPin, Users, Plus, Upload, Tag } from 'lucide-react';
 
+// Define TypeScript interfaces
+interface ImageItem {
+  id: number;
+  src: string;
+  title: string;
+  category: string;
+  date: string;
+  location: string;
+  attendees: string;
+  description: string;
+  tags?: string[];
+}
+
+interface FormData {
+  title: string;
+  category: string;
+  description: string;
+  tags: string;
+  location: string;
+  attendees: string;
+  image: File | null;
+  imagePreview: string | null;
+}
+
 const GalleryPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredImages, setFilteredImages] = useState([]);
+  const [filteredImages, setFilteredImages] = useState<ImageItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [showAddImageModal, setShowAddImageModal] = useState(false);
+  const [processedImages, setProcessedImages] = useState<Record<number, string>>({});
   const isInitialLoad = useRef(true);
-  
+
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: '',
     category: 'Events',
     description: '',
@@ -26,10 +51,10 @@ const GalleryPage = () => {
 
   const imagesPerPage = 24;
   const categories = ['All', 'Events', 'Collaborations', 'Conferences', 'Interviews', 'Product Launches', 'Team Photos'];
-  
+
   // Default images - these are the initial images
-  const defaultImages = [
-     {
+  const defaultImages: ImageItem[] = [
+    {
       id: 1,
       src: "/images/1.jpg",
       title: "Tech Innovations Showcase",
@@ -553,20 +578,72 @@ const GalleryPage = () => {
     },
   ];
 
-  const [allImages, setAllImages] = useState([]);
+  const [allImages, setAllImages] = useState<ImageItem[]>([]);
 
   // localStorage management
   const STORAGE_KEY = 'droneTV_gallery_images_v3';
-  
+
+  // Watermark helper function
+  async function bakeThumbWatermark(
+    src: string,
+    targetW = 1200,
+    targetH = 675,
+    logoSrc = '/images/logo.png' // Path to your logo image for watermark
+  ): Promise<string> {
+    try {
+      const res = await fetch(src, { mode: 'cors', cache: 'force-cache' });
+      if (!res.ok || res.type === 'opaque') throw new Error('CORS blocked');
+      const bmp = await createImageBitmap(await res.blob());
+
+      // Cover scaling
+      const scale = Math.max(targetW / bmp.width, targetH / bmp.height);
+      const drawW = Math.round(bmp.width * scale);
+      const drawH = Math.round(bmp.height * scale);
+      const dx = Math.round((targetW - drawW) / 2); // center crop
+      const dy = Math.round((targetH - drawH) / 2);
+
+      const c = document.createElement('canvas');
+      c.width = targetW;
+      c.height = targetH;
+      const ctx = c.getContext('2d')!;
+
+      // Draw the image
+      ctx.drawImage(bmp, dx, dy, drawW, drawH);
+
+      // Add watermark (logo image)
+      const logo = new Image();
+      logo.src = logoSrc;
+      await new Promise((resolve) => {
+        logo.onload = resolve;
+      });
+
+      // Calculate watermark size (20% of image width)
+      const logoWidth = Math.min(targetW * 0.2, logo.width);
+      const logoHeight = (logoWidth / logo.width) * logo.height;
+
+      // Position watermark at bottom-right corner with margin
+      const margin = 16;
+      const x = targetW - logoWidth - margin;
+      const y = targetH - logoHeight - margin;
+
+      ctx.globalAlpha = 0.65;
+      ctx.drawImage(logo, x, y, logoWidth, logoHeight); // Draw watermark logo
+
+      return c.toDataURL('image/png');
+    } catch (error) {
+      console.error(`Error processing image ${src}:`, error);
+      // Return original source if watermark fails
+      return src;
+    }
+  }
+
   // Load images from localStorage on component mount
   useEffect(() => {
     const loadImagesFromStorage = () => {
       try {
         const savedImages = localStorage.getItem(STORAGE_KEY);
-        
         if (savedImages) {
           const parsedImages = JSON.parse(savedImages);
-          
           if (Array.isArray(parsedImages) && parsedImages.length > 0) {
             // Use saved images if they exist
             setAllImages(parsedImages);
@@ -583,13 +660,37 @@ const GalleryPage = () => {
         // On error, fall back to default images
         setAllImages(defaultImages);
       }
-      
       // Set initial load flag to false after loading
       isInitialLoad.current = false;
     };
-
     loadImagesFromStorage();
   }, []);
+
+  // Process images to add watermarks when allImages changes
+  useEffect(() => {
+    const processAllImages = async () => {
+      const processed: Record<number, string> = {};
+      const promises = allImages.map(async (image) => {
+        try {
+          // Only process if it's not a data URL (uploaded image)
+          if (!image.src.startsWith('data:image')) {
+            const watermarked = await bakeThumbWatermark(image.src);
+            processed[image.id] = watermarked;
+          } else {
+            processed[image.id] = image.src; // For uploaded images, use as is
+          }
+        } catch (error) {
+          console.error(`Failed to process image ${image.id}:`, error);
+          processed[image.id] = image.src; // Fallback to original
+        }
+      });
+
+      await Promise.all(promises);
+      setProcessedImages(processed);
+    };
+
+    processAllImages();
+  }, [allImages]);
 
   // Save images to localStorage whenever allImages changes (but not on initial load)
   useEffect(() => {
@@ -636,7 +737,6 @@ const GalleryPage = () => {
 
     // Sort by ID (most recent first)
     filtered.sort((a, b) => b.id - a.id);
-
     setFilteredImages(filtered);
     setCurrentPage(1);
   }, [selectedCategory, searchQuery, allImages]);
@@ -646,7 +746,7 @@ const GalleryPage = () => {
   const currentImages = filteredImages.slice(indexOfFirstImage, indexOfLastImage);
   const totalPages = Math.ceil(filteredImages.length / imagesPerPage);
 
-  const openLightbox = (image, globalIndex) => {
+  const openLightbox = (image: ImageItem, globalIndex: number) => {
     setSelectedImage(image);
     setLightboxIndex(globalIndex);
     setIsLiked(false);
@@ -657,37 +757,55 @@ const GalleryPage = () => {
     setLightboxIndex(0);
   };
 
-  const navigateLightbox = (direction) => {
+  const navigateLightbox = (direction: 'next' | 'prev') => {
     const newIndex = direction === 'next'
       ? (lightboxIndex + 1) % filteredImages.length
       : (lightboxIndex - 1 + filteredImages.length) % filteredImages.length;
-
     setLightboxIndex(newIndex);
     setSelectedImage(filteredImages[newIndex]);
   };
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedImage) { // Only handle if lightbox is open
+        if (e.key === 'ArrowRight') {
+          navigateLightbox('next');
+        } else if (e.key === 'ArrowLeft') {
+          navigateLightbox('prev');
+        } else if (e.key === 'Escape') {
+          closeLightbox();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedImage, lightboxIndex, filteredImages]);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       // Check file size (limit to 10MB)
       if (file.size > 10 * 1024 * 1024) {
         alert('File size must be less than 10MB');
         return;
       }
-
       const reader = new FileReader();
       reader.onload = (e) => {
         setFormData({
           ...formData,
           image: file,
-          imagePreview: e.target.result
+          imagePreview: e.target.result as string
         });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -695,28 +813,24 @@ const GalleryPage = () => {
     });
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     // Validate required fields
     if (!formData.title.trim() || !formData.description.trim() || !formData.imagePreview) {
       alert('Please fill in all required fields (Title, Description) and upload an image.');
       return;
     }
-
     // Create tags array from comma-separated string
     const tagsArray = formData.tags
       .split(',')
       .map(tag => tag.trim())
       .filter(tag => tag !== '');
-
     // Generate unique ID based on timestamp and random number
     const newId = Date.now() + Math.floor(Math.random() * 1000);
-
     // Create new image object
-    const newImage = {
+    const newImage: ImageItem = {
       id: newId,
-      src: formData.imagePreview,
+      src: formData.imagePreview, // For uploaded images, use data URL directly
       title: formData.title.trim(),
       category: formData.category,
       date: getCurrentDate(),
@@ -725,10 +839,8 @@ const GalleryPage = () => {
       description: formData.description.trim(),
       tags: tagsArray
     };
-
     // Add new image to the beginning of the array
     setAllImages(prevImages => [newImage, ...prevImages]);
-
     // Reset form
     setFormData({
       title: '',
@@ -740,10 +852,8 @@ const GalleryPage = () => {
       image: null,
       imagePreview: null
     });
-
     // Close modal
     setShowAddImageModal(false);
-
     // Show success message
     alert('Image added successfully!');
   };
@@ -771,7 +881,6 @@ const GalleryPage = () => {
           <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200/30 rounded-full animate-pulse blur-2xl"></div>
           <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-600/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
         </div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-2xl md:text-5xl font-black text-black mb-2 tracking-tight">
             Photo Gallery
@@ -798,7 +907,6 @@ const GalleryPage = () => {
                 className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-black/20 bg-yellow-200 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-black placeholder-black/60 font-medium text-sm transition-all duration-300"
               />
             </div>
-
             <div className="flex gap-2 sm:gap-3 items-center w-full sm:w-auto justify-between sm:justify-end order-2 sm:order-2">
               {/* Add Image Button */}
               <button
@@ -808,7 +916,6 @@ const GalleryPage = () => {
                 <Plus className="h-4 w-4" />
                 <span>Gallery</span>
               </button>
-
               {/* Category Filter */}
               <div className="relative">
                 <select
@@ -836,7 +943,6 @@ const GalleryPage = () => {
           <div className="mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold text-black">Gallery ({filteredImages.length})</h2>
           </div>
-
           {filteredImages.length === 0 ? (
             <div className="text-center py-16">
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 sm:p-12 max-w-md mx-auto">
@@ -851,7 +957,6 @@ const GalleryPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {currentImages.map((image, index) => {
                   const globalIndex = indexOfFirstImage + index;
-                  
                   return (
                     <div
                       key={image.id}
@@ -864,7 +969,7 @@ const GalleryPage = () => {
                     >
                       <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105">
                         <img
-                          src={image.src}
+                          src={processedImages[image.id] || image.src}
                           alt={image.title}
                           className="w-full h-48 sm:h-56 lg:h-64 object-cover transition-all duration-700 group-hover:scale-110"
                           loading="lazy"
@@ -885,7 +990,6 @@ const GalleryPage = () => {
                   );
                 })}
               </div>
-
               {/* Pagination - Centered at bottom */}
               {totalPages > 1 && (
                 <div className="flex justify-center mt-8 sm:mt-12 pb-8">
@@ -898,7 +1002,6 @@ const GalleryPage = () => {
                       <span className="hidden sm:inline">Previous</span>
                       <ChevronLeft className="h-4 w-4 sm:hidden" />
                     </button>
-
                     {[...Array(totalPages)].map((_, index) => {
                       const page = index + 1;
                       if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
@@ -919,7 +1022,6 @@ const GalleryPage = () => {
                       }
                       return null;
                     })}
-
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
@@ -949,7 +1051,6 @@ const GalleryPage = () => {
                 <X className="h-5 sm:h-6 w-5 sm:w-6" />
               </button>
             </div>
-
             <form onSubmit={handleFormSubmit} className="space-y-4 sm:space-y-6">
               {/* Image Upload */}
               <div>
@@ -993,7 +1094,6 @@ const GalleryPage = () => {
                   )}
                 </div>
               </div>
-
               {/* Title */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-black mb-2">
@@ -1010,7 +1110,6 @@ const GalleryPage = () => {
                   required
                 />
               </div>
-
               {/* Category */}
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-black mb-2">
@@ -1030,7 +1129,6 @@ const GalleryPage = () => {
                   ))}
                 </select>
               </div>
-
               {/* Date (Auto-generated) */}
               <div>
                 <label className="block text-sm font-medium text-black mb-2">
@@ -1043,7 +1141,6 @@ const GalleryPage = () => {
                   className="w-full px-3 py-2 border border-black/20 rounded-lg bg-gray-100 text-black/60 text-sm"
                 />
               </div>
-
               {/* Description */}
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-black mb-2">
@@ -1060,7 +1157,6 @@ const GalleryPage = () => {
                   required
                 />
               </div>
-
               {/* Location */}
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-black mb-2">
@@ -1076,7 +1172,6 @@ const GalleryPage = () => {
                   placeholder="Enter location"
                 />
               </div>
-
               {/* Attendees */}
               <div>
                 <label htmlFor="attendees" className="block text-sm font-medium text-black mb-2">
@@ -1092,7 +1187,6 @@ const GalleryPage = () => {
                   placeholder="e.g., 100+, 50 people"
                 />
               </div>
-
               {/* Tags */}
               <div>
                 <label htmlFor="tags" className="block text-sm font-medium text-black mb-2">
@@ -1111,7 +1205,6 @@ const GalleryPage = () => {
                   />
                 </div>
               </div>
-
               {/* Submit Buttons */}
               <div className="flex gap-3 sm:gap-4 justify-end">
                 <button
@@ -1144,7 +1237,6 @@ const GalleryPage = () => {
             >
               <X className="h-5 sm:h-6 w-5 sm:w-6" />
             </button>
-
             {/* Navigation Buttons */}
             {filteredImages.length > 1 && (
               <>
@@ -1162,16 +1254,14 @@ const GalleryPage = () => {
                 </button>
               </>
             )}
-
             {/* Image */}
             <div className="relative max-w-full max-h-full">
               <img
-                src={selectedImage.src}
+                src={processedImages[selectedImage.id] || selectedImage.src}
                 alt={selectedImage.title}
                 className="max-w-full max-h-[70vh] sm:max-h-[80vh] object-contain rounded-lg shadow-2xl"
               />
             </div>
-
             {/* Image Info Panel */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 sm:p-6">
               <div className="max-w-4xl mx-auto">
@@ -1206,7 +1296,6 @@ const GalleryPage = () => {
                       </div>
                     )}
                   </div>
-
                   <div className="flex items-center gap-2 sm:gap-3 justify-center sm:justify-end">
                     <button
                       onClick={() => setIsLiked(!isLiked)}
@@ -1218,14 +1307,17 @@ const GalleryPage = () => {
                     <button className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
                       <Share2 className="h-4 sm:h-5 w-4 sm:w-5" />
                     </button>
-                    <button className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
+                    <a
+                      href={processedImages[selectedImage.id] || selectedImage.src}
+                      download={`${selectedImage.title.replace(/\s+/g, '_')}.png`}
+                      className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300"
+                    >
                       <Download className="h-4 sm:h-5 w-4 sm:w-5" />
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
             </div>
-
             {/* Image Counter */}
             <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-black/50 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
               {lightboxIndex + 1} / {filteredImages.length}
