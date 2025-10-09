@@ -134,57 +134,20 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
   const skillsRef = useRef<HTMLDivElement>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
   
-  // Pending icon files for S3 upload
+  // Pending icon files for S3 upload - SAME PATTERN AS HERO
   const [pendingIconFiles, setPendingIconFiles] = useState<Record<string, File>>({});
 
   const [data, setData] = useState<SkillsData>(defaultData);
   const [tempData, setTempData] = useState<SkillsData>(defaultData);
 
-  // Helper function to get icon component from string name
-  const getIconComponent = (iconName: string) => {
-    const iconMap: { [key: string]: any } = {
-      Code, Database, Cloud, Smartphone, Globe, Zap
-    };
-    return iconMap[iconName] || Zap; // Fallback to Zap if icon not found
-  };
-
-  // Modified icon rendering logic
-  const renderSkillIcon = (skill: Skill) => {
-    // Priority 1: iconUrl (uploaded image)
-    if (skill.iconUrl) {
-      return (
-        <ImageWithFallback
-          src={skill.iconUrl}
-          alt={skill.title}
-          className="w-8 h-8 object-contain"
-        />
-      );
-    }
-    
-    // Priority 2: icon (can be either component or string)
-    if (skill.icon) {
-      // If icon is a string (from backend), get the component
-      if (typeof skill.icon === 'string') {
-        const IconComponent = getIconComponent(skill.icon);
-        return <IconComponent className="w-8 h-8 text-gray-900" />;
-      }
-      // If icon is already a component (default case)
-      const IconComponent = skill.icon;
-      return <IconComponent className="w-8 h-8 text-gray-900" />;
-    }
-    
-    // Priority 3: fallback icon
-    return <Zap className="w-8 h-8 text-gray-900" />;
-  };
-
-  // Notify parent of state changes
+  // Notify parent of state changes - SAME AS HERO
   useEffect(() => {
     if (onStateChange) {
       onStateChange(data);
     }
   }, [data]);
 
-  // Intersection observer
+  // Intersection observer - SAME AS HERO
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -196,7 +159,7 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
     };
   }, []);
 
-  // Fake API fetch
+  // Fake API fetch - SAME LOGIC AS HERO
   const fetchSkillsData = async () => {
     setIsLoading(true);
     try {
@@ -220,10 +183,10 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingIconFiles({}); // Clear pending files
+    setPendingIconFiles({}); // Clear pending files - SAME AS HERO
   };
 
-  // Save function with S3 upload
+  // Save function with S3 upload - SAME PATTERN AS HERO
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -262,14 +225,14 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
         }
       }
 
-      // Clear pending files
+      // Clear pending files - SAME AS HERO
       setPendingIconFiles({});
 
       // Save the updated data with S3 URLs
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
       
-      // Update both states with the new URLs
+      // Update both states with the new URLs - SAME AS HERO
       setData(updatedData);
       setTempData(updatedData);
       
@@ -287,16 +250,16 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingIconFiles({}); // Clear pending files
+    setPendingIconFiles({}); // Clear pending files - SAME AS HERO
     setIsEditing(false);
   };
 
-  // Icon upload handler with validation
+  // Icon upload handler with validation - SAME PATTERN AS HERO
   const handleIconUpload = (event: React.ChangeEvent<HTMLInputElement>, skillId: string) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
+    // Validate file type and size - SAME AS HERO
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
@@ -307,10 +270,10 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
       return;
     }
 
-    // Store the file for upload on Save
+    // Store the file for upload on Save - SAME PATTERN AS HERO
     setPendingIconFiles(prev => ({ ...prev, [skillId]: file }));
 
-    // Show immediate local preview
+    // Show immediate local preview - SAME AS HERO
     const reader = new FileReader();
     reader.onload = (e) => {
       const updatedSkills = tempData.skills.map(skill =>
@@ -321,7 +284,7 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
     reader.readAsDataURL(file);
   };
 
-  // Stable update functions with useCallback
+  // Stable update functions with useCallback - SAME PATTERN AS HERO
   const updateSkill = useCallback((index: number, field: keyof Skill, value: any) => {
     const updatedSkills = [...tempData.skills];
     updatedSkills[index] = { ...updatedSkills[index], [field]: value };
@@ -360,7 +323,7 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
   const displayData = isEditing ? tempData : data;
 
-  // Loading state
+  // Loading state - SAME PATTERN AS HERO
   if (isLoading || !displayData.skills || displayData.skills.length === 0) {
     return (
       <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
@@ -511,8 +474,17 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
                   </p>
                 )}
                 
-                {/* Use the new render function */}
-                {renderSkillIcon(skill)}
+                {skill.iconUrl ? (
+                  <ImageWithFallback
+                    src={skill.iconUrl}
+                    alt={skill.title}
+                    className="w-8 h-8 object-contain"
+                  />
+                ) : skill.icon ? (
+                  <skill.icon className="w-8 h-8 text-gray-900" />
+                ) : (
+                  <Zap className="w-8 h-8 text-gray-900" />
+                )}
               </motion.div>
 
               {isEditing ? (

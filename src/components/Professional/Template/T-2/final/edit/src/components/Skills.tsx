@@ -65,56 +65,7 @@ interface SkillsData {
   };
 }
 
-const defaultData: SkillsData = {
-  skills: [
-    {
-      id: '1',
-      icon: Code,
-      title: 'Frontend Development',
-      description: 'React, Vue.js, TypeScript, Tailwind CSS',
-      level: 95
-    },
-    {
-      id: '2',
-      icon: Database,
-      title: 'Backend Development',
-      description: 'Node.js, Python, PostgreSQL, MongoDB',
-      level: 90
-    },
-    {
-      id: '3',
-      icon: Cloud,
-      title: 'Cloud & DevOps',
-      description: 'AWS, Docker, Kubernetes, CI/CD',
-      level: 85
-    },
-    {
-      id: '4',
-      icon: Smartphone,
-      title: 'Mobile Development',
-      description: 'React Native, Flutter, iOS/Android',
-      level: 80
-    },
-    {
-      id: '5',
-      icon: Globe,
-      title: 'Web Design',
-      description: 'UI/UX, Figma, Adobe XD, Responsive Design',
-      level: 88
-    },
-    {
-      id: '6',
-      icon: Zap,
-      title: 'Performance',
-      description: 'Optimization, SEO, Analytics, Testing',
-      level: 92
-    }
-  ],
-  header: {
-    title: "My Skills",
-    subtitle: "A comprehensive set of technical skills and expertise built through years of hands-on experience and continuous learning."
-  }
-};
+// Remove the defaultData constant since we'll use dynamic data
 
 interface SkillsProps {
   skillsData?: SkillsData;
@@ -133,17 +84,35 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
   const [isVisible, setIsVisible] = useState(false);
   const skillsRef = useRef<HTMLDivElement>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
-  
+
   // Pending icon files for S3 upload
   const [pendingIconFiles, setPendingIconFiles] = useState<Record<string, File>>({});
 
-  const [data, setData] = useState<SkillsData>(defaultData);
-  const [tempData, setTempData] = useState<SkillsData>(defaultData);
+  // Initialize with skillsData or empty structure
+  const [data, setData] = useState<SkillsData>(() => 
+    skillsData || {
+      skills: [],
+      header: {
+        title: "My Skills",
+        subtitle: "A comprehensive set of technical skills and expertise built through years of hands-on experience and continuous learning."
+      }
+    }
+  );
+  
+  const [tempData, setTempData] = useState<SkillsData>(() => 
+    skillsData || {
+      skills: [],
+      header: {
+        title: "My Skills",
+        subtitle: "A comprehensive set of technical skills and expertise built through years of hands-on experience and continuous learning."
+      }
+    }
+  );
 
   // Helper function to get icon component from string name
   const getIconComponent = (iconName: string) => {
     const iconMap: { [key: string]: any } = {
-      Code, Database, Cloud, Smartphone, Globe, Zap
+      Code, Database, Cloud, Smartphone, Globe, Zap, Cpu: Zap // Add Cpu with Zap as fallback
     };
     return iconMap[iconName] || Zap; // Fallback to Zap if icon not found
   };
@@ -184,6 +153,15 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
     }
   }, [data]);
 
+  // Update data when skillsData prop changes
+  useEffect(() => {
+    if (skillsData) {
+      setData(skillsData);
+      setTempData(skillsData);
+      setDataLoaded(true);
+    }
+  }, [skillsData]);
+
   // Intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -196,18 +174,24 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
     };
   }, []);
 
-  // Fake API fetch
+  // Fake API fetch - simplified since we're using props
   const fetchSkillsData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await new Promise<SkillsData>((resolve) =>
-        setTimeout(() => resolve(skillsData || defaultData), 1200)
-      );
-      setData(response);
-      setTempData(response);
+    if (skillsData) {
+      // If skillsData is provided via props, use it directly
+      setData(skillsData);
+      setTempData(skillsData);
       setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
+    } else {
+      // Only show loading if no data is provided
+      setIsLoading(true);
+      try {
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        // If no skillsData provided, keep the empty/default state
+        setDataLoaded(true);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -360,8 +344,8 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
   const displayData = isEditing ? tempData : data;
 
-  // Loading state
-  if (isLoading || !displayData.skills || displayData.skills.length === 0) {
+  // Loading state - only show if we're actually loading and have no data
+  if ((isLoading && !dataLoaded) || (!dataLoaded && displayData.skills.length === 0)) {
     return (
       <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

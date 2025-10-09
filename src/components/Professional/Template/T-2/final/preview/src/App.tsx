@@ -118,7 +118,7 @@ export default function FinalProTemp2() {
           aboutData={finaleDataReview[0].content.aboutContent}
         />
         <Skills 
-          skillData={finaleDataReview[0].content.skillContent}
+          skillsData={finaleDataReview[0].content.skillContent}
         />
         <Services 
           serviceData={finaleDataReview[0].content.serviceContent}

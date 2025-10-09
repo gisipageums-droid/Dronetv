@@ -51,7 +51,7 @@ import ResetPassword from "./components/ResetPassword";
 import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
-import ProfessionalForm from "./components/Professional/form/form/src/App";
+import ProfessionalForm from "./components/Professional/form/src/App";
 import ProfessionalTemplateSelector from "./components/Professional/Select-Template/select";
 import ProTemp2 from "./components/Professional/Template/T-2/src/App";
 import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App"
@@ -68,6 +68,9 @@ import ExcelDataProcessor from "./components/excelextraction/excel";
 import DocumentTextExtractor from "./components/excelextraction/extracttext";
 // import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/"
 import FinaleProfessionalTemp2 from "./components/Professional/Template/T-2/final/preview/src/App"
+import FinalEditTemp_2 from "./components/Professional/Template/T-2/final/edit/src/App"
+import MainProTemp2 from "./components/mainProfessionalPreview/t2/src/App";
+
 const HomePage = () => (
   <>
     <Hero />
@@ -155,6 +158,9 @@ const AppContent = () => {
           <Route path="/user/professional" element={<UserProfessional />} />
           <Route path="/admin/professional" element={<AdminProfessional />} />
           <Route path='/user/professionals/preview/2/:professionalId/:userId' element={<FinaleProfessionalTemp2 />} />
+          <Route path='/user/professionals/edit/2/:professionalId/:userId' element={<FinalEditTemp_2 />} />
+          <Route path='/professionals/:urlSlug' element={<MainProTemp2 />} />
+
         {/* event routes */}
         <Route path='/admin/event/dashboard' element={<EventAdminDashboard />} />
         <Route path='/user/event' element={<UserEvent />} />

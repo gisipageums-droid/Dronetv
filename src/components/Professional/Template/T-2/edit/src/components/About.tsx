@@ -56,6 +56,22 @@ interface AboutData {
   imageUrl: string;
 }
 
+const defaultData: AboutData = {
+  title: "About",
+  highlightedText: "Me",
+  description1:
+    "I'm a passionate full-stack developer with over 3 years of experience creating digital solutions that make a difference. I specialize in modern web technologies and love turning complex problems into simple, beautiful designs.",
+  description2:
+    "When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or sharing my knowledge through technical writing and mentoring.",
+  skills: [
+    "Frontend: React, Vue.js, TypeScript",
+    "Backend: Node.js, Python, PostgreSQL",
+    "Cloud: AWS, Docker, Kubernetes",
+  ],
+  buttonText: "Let's Work Together",
+  imageUrl:
+    "https://images.unsplash.com/photo-1695634621121-691d54259d37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBwb3J0Zm9saW8lMjBkZXNpZ258ZW58MXx8fHwxNzU3NDg4OTI1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+};
 
 interface AboutProps {
   aboutData?: AboutData;
@@ -83,24 +99,6 @@ export function About({
 
   // Pending image file for S3 upload - SAME PATTERN AS HERO
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
-
-  const defaultData = {
-  title: "About",
-  highlightedText: "Me",
-  description1:aboutData.description1||
-    "I'm a passionate full-stack developer with over 3 years of experience creating digital solutions that make a difference. I specialize in modern web technologies and love turning complex problems into simple, beautiful designs.",
-  description2:aboutData.description2||
-    "When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or sharing my knowledge through technical writing and mentoring.",
-  skills: aboutData.skills||[
-    "Frontend: React, Vue.js, TypeScript",
-    "Backend: Node.js, Python, PostgreSQL",
-    "Cloud: AWS, Docker, Kubernetes",
-  ],
-  buttonText: "Let's Work Together",
-  imageUrl:aboutData.imageSrc||
-    "https://images.unsplash.com/photo-1695634621121-691d54259d37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBwb3J0Zm9saW8lMjBkZXNpZ258ZW58MXx8fHwxNzU3NDg4OTI1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-};
-
 
   const [data, setData] = useState<AboutData>(defaultData);
   const [tempData, setTempData] = useState<AboutData>(defaultData);
@@ -178,7 +176,7 @@ export function About({
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          updatedData.imageSrc = uploadData.s3Url;
+          updatedData.imageUrl = uploadData.s3Url;
           console.log('About image uploaded to S3:', uploadData.s3Url);
         } else {
           const errorData = await uploadResponse.json();
@@ -240,7 +238,7 @@ export function About({
     reader.onload = (e) => {
       setTempData((prev) => ({
         ...prev,
-        imageSrc: e.target?.result as string,
+        imageUrl: e.target?.result as string,
       }));
     };
     reader.readAsDataURL(file);
@@ -330,7 +328,7 @@ export function About({
   }, [updateTempContent, updateSkill]);
 
   const displayData = isEditing ? tempData : data;
-  // console.log("----------ii", displayData)
+  console.log("----------ii", displayData)
 
   // Loading state - SAME PATTERN AS HERO
   if (isLoading) {
@@ -346,9 +344,9 @@ export function About({
 
   return (
     <section ref={aboutRef} id="about" className="relative py-20 bg-background">
-      <div className="max-w-7xl mx-auto  px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
-        <div className='text-right z-50  mb-20'>
+        <div className='text-right mb-8'>
           {!isEditing ? (
             <Button
               onClick={handleEdit}
@@ -441,7 +439,7 @@ export function About({
               <div className="absolute inset-0 bg-yellow-400 rounded-3xl transform -rotate-6"></div>
               <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
                 <ImageWithFallback
-                  src={displayData.imageSrc}
+                  src={displayData.imageUrl}
                   alt="About me"
                   className="w-full h-96 object-cover"
                 />
@@ -482,7 +480,7 @@ export function About({
                 </div>
               ) : (
                 <>
-                  {displayData.heading}<span className="text-yellow-500">{displayData.highlightedText}</span>
+                  {displayData.title}<span className="text-yellow-500">{displayData.highlightedText}</span>
                 </>
               )}
             </motion.h2>

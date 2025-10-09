@@ -10,10 +10,10 @@ import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
-import { Testimonials } from './components/SimpleTestimonials';
+// import { Services } from './components/services';
+import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
-import { Services } from './components/services';
 
 // Define types for the component states
 interface ComponentStates {
@@ -27,7 +27,6 @@ interface ComponentStates {
   contactContent?: any;
   footerContent?: any;
   headerContent?: any; // Added missing header property
-  serviceContent?: any; // Added missing serviceContent property
 }
 
 interface AIGenData {
@@ -86,15 +85,15 @@ export default function EditTemp_2() {
   useEffect(() => {
     const fetchTemplateData = async () => {
       try {
-        setIsLoading(true);        
+        setIsLoading(true);
         const response = await fetch(`https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod/api/professional/${userId}/${draftId}?template=template-2`);
-        
+
         if (response.ok) {
           const data = await response.json();
 
           setFinalTemplate(data);
           setAIGenData(data);
-          
+
           if (data.content) {
             setComponentStates(data.content);
           } else {
@@ -112,7 +111,7 @@ export default function EditTemp_2() {
         setIsLoading(false);
       }
     };
-    
+
     if (userId && draftId) {
       fetchTemplateData();
     }
@@ -146,7 +145,7 @@ export default function EditTemp_2() {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Header 
+      <Header
         onDarkModeToggle={handleDarkModeToggle}
         headerData={componentStates.headerContent}
         onStateChange={createStateChangeHandler('headerContent')}
@@ -183,28 +182,29 @@ export default function EditTemp_2() {
           templateSelection={AIGenData.templateSelection}
         />
 
-        <Skills 
+        <Skills
           skillsData={componentStates.skillContent}
           onStateChange={createStateChangeHandler('skillContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
-<Services
+        {/* <Services
           servicesData={componentStates.serviceContent}
           onStateChange={createStateChangeHandler('serviceContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
-        />
-        <Projects 
+        /> */}
+
+        <Projects
           projectsData={componentStates.projectContent}
           onStateChange={createStateChangeHandler('projectContent')}
           userId={AIGenData.userId}
           publishedId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
-        
+
         {/* Certifications Section */}
         <Certifications
           certData={componentStates.certificationsContent}
@@ -227,7 +227,7 @@ export default function EditTemp_2() {
 
         {/* Testimonials Section */}
         <section id="testimonials">
-          <Testimonials
+          <SimpleTestimonials
             testimonialsData={componentStates.testimonialContent}
             onStateChange={createStateChangeHandler('testimonialContent')}
             userId={AIGenData.userId}
@@ -237,7 +237,7 @@ export default function EditTemp_2() {
         </section>
 
         {/* Contact Section */}
-        <Contact 
+        <Contact
           contactData={componentStates.contactContent}
           onStateChange={createStateChangeHandler('contactContent')}
           userId={AIGenData.userId}
@@ -247,15 +247,15 @@ export default function EditTemp_2() {
       </main>
 
       {/* Footer */}
-      <Footer 
+      <Footer
         footerData={componentStates.footerContent}
         onStateChange={createStateChangeHandler('footerContent')}
         userId={AIGenData.userId}
         publishedId={AIGenData.professionalId}
         templateSelection={AIGenData.templateSelection}
       />
-      
-      <Toaster 
+
+      <Toaster
         position="top-right"
         expand={false}
         richColors

@@ -64,20 +64,11 @@ interface CertificationsData {
 }
 
 const defaultData: CertificationsData = {
-  subtitle: "Professional certifications and achievements",
-  heading: "Certifications & Awards",
-  description: "Continuous learning and professional development milestones.",
-  certifications: [
-    {
-      id: '1',
-      title: "Full Stack Web Development",
-      issuer: "Tech Academy",
-      date: "2023",
-      image: "https://images.unsplash.com/photo-1752937326758-f130e633b422?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNl",
-      description: "Comprehensive certification covering React, Node.js, databases, and modern web development practices. Intensive 6-month program with hands-on projects.",
-      credentialUrl: "#"
-    }
-  ]
+  subtitle: "",
+  heading: "",
+  description: "",
+  certifications: []
+  
 };
 
 interface CertificationsProps {

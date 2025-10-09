@@ -64,28 +64,22 @@ interface ClientsData {
   };
 }
 
+// Empty default data
 const defaultData: ClientsData = {
-  subtitle: "Trusted by amazing companies",
-  heading: "Clients & Partners",
-  description: "I have had the privilege of working with some incredible organizations.",
-  clients: [
-    { id: '1', name: 'TechCorp', industry: 'Technology' },
-    { id: '2', name: 'StartupCo', industry: 'E-commerce' },
-    { id: '3', name: 'InnovateLabs', industry: 'FinTech' },
-    { id: '4', name: 'DigitalFirst', industry: 'Healthcare' },
-    { id: '5', name: 'CloudVentures', industry: 'SaaS' },
-    { id: '6', name: 'NextGen Solutions', industry: 'Enterprise' }
-  ],
+  subtitle: "",
+  heading: "",
+  description: "",
+  clients: [],
   stats: {
-    happyClients: '50+',
-    projectsDelivered: '100+',
-    industriesServed: '15+',
-    successRate: '99%'
+    happyClients: "",
+    projectsDelivered: "",
+    industriesServed: "",
+    successRate: ""
   },
   cta: {
-    title: 'Ready to join these successful companies?',
-    description: 'Let\'s discuss how I can help transform your ideas into powerful digital solutions that drive growth and innovation.',
-    buttonText: 'Start Your Project'
+    title: "",
+    description: "",
+    buttonText: ""
   }
 };
 
@@ -128,12 +122,21 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
     if (!backendData) return defaultData;
     
     return {
-      subtitle: backendData.subtitle || defaultData.subtitle,
-      heading: backendData.heading || defaultData.heading,
-      description: backendData.description || defaultData.description,
-      clients: backendData.clients || defaultData.clients,
-      stats: backendData.stats || defaultData.stats,
-      cta: backendData.cta || defaultData.cta
+      subtitle: backendData.subtitle || "",
+      heading: backendData.heading || "",
+      description: backendData.description || "",
+      clients: backendData.clients || [],
+      stats: backendData.stats || {
+        happyClients: "",
+        projectsDelivered: "",
+        industriesServed: "",
+        successRate: ""
+      },
+      cta: backendData.cta || {
+        title: "",
+        description: "",
+        buttonText: ""
+      }
     };
   };
 
@@ -150,7 +153,7 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
         return;
       }
 
-      // Otherwise, simulate API fetch with default data
+      // Otherwise, use empty data
       const response = await new Promise<ClientsData>((resolve) =>
         setTimeout(() => resolve(defaultData), 1200)
       );
@@ -398,177 +401,170 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
                 value={displayData.subtitle}
                 onChange={(e) => updateHeading('subtitle', e.target.value)}
                 className="text-lg text-muted-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                placeholder="Subtitle (e.g., Trusted by amazing companies)"
               />
               <input
                 type="text"
                 value={displayData.heading}
                 onChange={(e) => updateHeading('heading', e.target.value)}
                 className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                placeholder="Heading (e.g., Clients & Partners)"
               />
               <textarea
                 value={displayData.description}
                 onChange={(e) => updateHeading('description', e.target.value)}
                 className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
                 rows="2"
+                placeholder="Description"
               />
             </>
           ) : (
             <>
-              <p className="text-lg text-muted-foreground mb-2">
-                {displayData.subtitle}
-              </p>
-              <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
-                {displayData.heading}
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {displayData.description}
-              </p>
+              {displayData.subtitle && (
+                <p className="text-lg text-muted-foreground mb-2">
+                  {displayData.subtitle}
+                </p>
+              )}
+              {displayData.heading && (
+                <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
+                  {displayData.heading}
+                </h2>
+              )}
+              {displayData.description && (
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  {displayData.description}
+                </p>
+              )}
             </>
           )}
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-          {[
-            { key: 'happyClients' as const, label: 'Happy Clients' },
-            { key: 'projectsDelivered' as const, label: 'Projects Delivered' },
-            { key: 'industriesServed' as const, label: 'Industries Served' },
-            { key: 'successRate' as const, label: 'Success Rate' }
-          ].map((stat) => (
-            <div key={stat.key} className="text-center hover:scale-105 transition-transform duration-300">
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={displayData.stats[stat.key]}
-                  onChange={(e) => updateStat(stat.key, e.target.value)}
-                  className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
-                />
-              ) : (
-                <div className="text-3xl sm:text-4xl text-yellow-500 mb-2">{displayData.stats[stat.key]}</div>
-              )}
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={stat.label}
-                  onChange={(e) => {}}
-                  className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
-                  disabled
-                />
-              ) : (
-                <p className="text-muted-foreground">{stat.label}</p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Client Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
-          {displayData.clients.map((client, index) => (
-            <div
-              key={client.id}
-              className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 relative"
-            >
-              {isEditing && (
-                <>
-                  <Button
-                    onClick={() => removeClient(index)}
-                    size='sm'
-                    variant='outline'
-                    className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
-                  >
-                    <Trash2 className='w-3 h-3' />
-                  </Button>
-                  <Button
-                    onClick={() => document.getElementById(`logo-upload-${client.id}`)?.click()}
-                    size='sm'
-                    variant='outline'
-                    className='absolute -top-2 -left-2 bg-blue-50 hover:bg-blue-100 text-blue-700 p-1'
-                  >
-                    <Upload className='w-3 h-3' />
-                  </Button>
-                  <input
-                    id={`logo-upload-${client.id}`}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleLogoUpload(e, client.id)}
-                    className="hidden"
-                  />
-                  {pendingLogoFiles[client.id] && (
-                    <p className='absolute -bottom-2 text-xs text-orange-600 bg-white p-1 rounded'>
-                      Logo selected
-                    </p>
-                  )}
-                </>
-              )}
-              <div className="text-center">
+        {(displayData.stats.happyClients || displayData.stats.projectsDelivered || displayData.stats.industriesServed || displayData.stats.successRate || isEditing) && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+            {[
+              { key: 'happyClients' as const, label: 'Happy Clients' },
+              { key: 'projectsDelivered' as const, label: 'Projects Delivered' },
+              { key: 'industriesServed' as const, label: 'Industries Served' },
+              { key: 'successRate' as const, label: 'Success Rate' }
+            ].map((stat) => (
+              <div key={stat.key} className="text-center hover:scale-105 transition-transform duration-300">
                 {isEditing ? (
-                  <>
-                    <input
-                      type="text"
-                      value={client.name}
-                      onChange={(e) => updateClient(index, 'name', e.target.value)}
-                      className="w-full text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
-                    />
-                    <input
-                      type="text"
-                      value={client.industry}
-                      onChange={(e) => updateClient(index, 'industry', e.target.value)}
-                      className="w-full text-xs text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
-                    />
-                  </>
+                  <input
+                    type="text"
+                    value={displayData.stats[stat.key]}
+                    onChange={(e) => updateStat(stat.key, e.target.value)}
+                    className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                    placeholder="50+"
+                  />
                 ) : (
-                  <>
-                    <div className="text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1">
-                      {client.name}
-                    </div>
-                    <div className="text-xs text-muted-foreground">{client.industry}</div>
-                  </>
+                  displayData.stats[stat.key] && (
+                    <div className="text-3xl sm:text-4xl text-yellow-500 mb-2">{displayData.stats[stat.key]}</div>
+                  )
+                )}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={stat.label}
+                    onChange={(e) => {}}
+                    className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
+                    disabled
+                  />
+                ) : (
+                  displayData.stats[stat.key] && (
+                    <p className="text-muted-foreground">{stat.label}</p>
+                  )
                 )}
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {/* Call to Action */}
-        <div className="text-center bg-gradient-to-r from-yellow-50 to-card dark:from-yellow-900/20 dark:to-card rounded-2xl p-8">
-          {isEditing ? (
-            <>
-              <input
-                type="text"
-                value={displayData.cta.title}
-                onChange={(e) => updateCta('title', e.target.value)}
-                className="w-full text-2xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
-              />
-              <textarea
-                value={displayData.cta.description}
-                onChange={(e) => updateCta('description', e.target.value)}
-                className="w-full text-muted-foreground mb-6 max-w-xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                rows="3"
-              />
-              <input
-                type="text"
-                value={displayData.cta.buttonText}
-                onChange={(e) => updateCta('buttonText', e.target.value)}
-                className="w-40 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500 px-4 py-2 bg-white/80 border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none text-center"
-              />
-            </>
-          ) : (
-            <>
-              <h3 className="text-2xl text-foreground mb-4">
-                {displayData.cta.title}
-              </h3>
-              <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-                {displayData.cta.description}
-              </p>
-              <a
-                href="#contact"
-                className="inline-flex items-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500 hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl"
+        {/* Client Grid */}
+        {displayData.clients.length > 0 || isEditing ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
+            {displayData.clients.map((client, index) => (
+              <div
+                key={client.id}
+                className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 relative"
               >
-                {displayData.cta.buttonText}
-              </a>
-            </>
-          )}
-        </div>
+                {isEditing && (
+                  <>
+                    <Button
+                      onClick={() => removeClient(index)}
+                      size='sm'
+                      variant='outline'
+                      className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
+                    >
+                      <Trash2 className='w-3 h-3' />
+                    </Button>
+                    <Button
+                      onClick={() => document.getElementById(`logo-upload-${client.id}`)?.click()}
+                      size='sm'
+                      variant='outline'
+                      className='absolute -top-2 -left-2 bg-blue-50 hover:bg-blue-100 text-blue-700 p-1'
+                    >
+                      <Upload className='w-3 h-3' />
+                    </Button>
+                    <input
+                      id={`logo-upload-${client.id}`}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleLogoUpload(e, client.id)}
+                      className="hidden"
+                    />
+                    {pendingLogoFiles[client.id] && (
+                      <p className='absolute -bottom-2 text-xs text-orange-600 bg-white p-1 rounded'>
+                        Logo selected
+                      </p>
+                    )}
+                  </>
+                )}
+                <div className="text-center">
+                  {isEditing ? (
+                    <>
+                      <input
+                        type="text"
+                        value={client.name}
+                        onChange={(e) => updateClient(index, 'name', e.target.value)}
+                        className="w-full text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                        placeholder="Client Name"
+                      />
+                      <input
+                        type="text"
+                        value={client.industry}
+                        onChange={(e) => updateClient(index, 'industry', e.target.value)}
+                        className="w-full text-xs text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                        placeholder="Industry"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1">
+                        {client.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{client.industry}</div>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+            {isEditing && displayData.clients.length === 0 && (
+              <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground mb-4">No clients added yet</p>
+                <Button
+                  onClick={addClient}
+                  variant='outline'
+                  size='lg'
+                  className='bg-blue-50 hover:bg-blue-100 text-blue-700'
+                >
+                  <Plus className='w-5 h-5 mr-2' />
+                  Add Your First Client
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : null}
       </div>
     </section>
   );

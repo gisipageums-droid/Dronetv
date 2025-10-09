@@ -1,5 +1,3 @@
-// ye code edit  sampletestimonial.tsx  ka updated code h 
-
 import { Edit2, Loader2, Plus, Quote, Save, Star, Trash2, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -65,40 +63,12 @@ interface TestimonialsData {
   testimonials: Testimonial[];
 }
 
-// Default data for Testimonials section based on your JSON
+// Empty default data for Testimonials section
 const defaultTestimonialsData: TestimonialsData = {
-  subtitle: "client success stories and feedback",
-  heading: "What Clients Say",
-  description: "testimonials from satisfied clients",
-  testimonials: [
-    {
-      id: 1,
-      name: "Rajesh Kumar",
-      position: "Project Manager",
-      content: "Working with Professional transformed our web development process. Their attention to detail and innovative approach helped us launch our site ahead of schedule, resulting in a 30% increase in user engagement.",
-      rating: 5,
-      project: "Web Development",
-      date: "2024"
-    },
-    {
-      id: 2,
-      name: "Piyu Sharma",
-      position: "Business Owner",
-      content: "Professional provided us with a custom solution that exceeded our expectations. Their commitment to quality and excellent customer service made the entire process smooth and enjoyable.",
-      rating: 5,
-      project: "Custom Solution",
-      date: "2024"
-    },
-    {
-      id: 3,
-      name: "Amita Patel",
-      position: "Tech Lead",
-      content: "The technical expertise of Professional was crucial for our project. Their insights and guidance helped us navigate complex challenges, ultimately leading to a successful implementation of our consulting strategies.",
-      rating: 5,
-      project: "Technical Consulting",
-      date: "2024"
-    }
-  ]
+  subtitle: "",
+  heading: "",
+  description: "",
+  testimonials: []
 };
 
 // Props interface
@@ -325,178 +295,210 @@ export function Testimonials({
                 value={displayData.subtitle}
                 onChange={(e) => updateSection('subtitle', e.target.value)}
                 className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
-                placeholder="Subtitle"
+                placeholder="Subtitle (e.g., client success stories and feedback)"
               />
               <input
                 type="text"
                 value={displayData.heading}
                 onChange={(e) => updateSection('heading', e.target.value)}
                 className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
-                placeholder="Heading"
+                placeholder="Heading (e.g., What Clients Say)"
               />
               <textarea
                 value={displayData.description}
                 onChange={(e) => updateSection('description', e.target.value)}
                 className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                 rows={2}
-                placeholder="Description"
+                placeholder="Description (e.g., testimonials from satisfied clients)"
               />
             </>
           ) : (
             <>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="text-lg text-yellow-500 mb-2"
-              >
-                {displayData.subtitle}
-              </motion.p>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="text-3xl sm:text-4xl text-foreground mb-4"
-              >
-                {displayData.heading.split(' ')[0]}{' '}
-                <span className="text-yellow-500">
-                  {displayData.heading.split(' ').slice(1).join(' ')}
-                </span>
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                viewport={{ once: true }}
-                className="text-lg text-muted-foreground max-w-2xl mx-auto"
-              >
-                {displayData.description}
-              </motion.p>
+              {displayData.subtitle && (
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-yellow-500 mb-2"
+                >
+                  {displayData.subtitle}
+                </motion.p>
+              )}
+              {displayData.heading && (
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  viewport={{ once: true }}
+                  className="text-3xl sm:text-4xl text-foreground mb-4"
+                >
+                  {displayData.heading.split(' ')[0]}{' '}
+                  {displayData.heading.split(' ').length > 1 && (
+                    <span className="text-yellow-500">
+                      {displayData.heading.split(' ').slice(1).join(' ')}
+                    </span>
+                  )}
+                </motion.h2>
+              )}
+              {displayData.description && (
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto"
+                >
+                  {displayData.description}
+                </motion.p>
+              )}
             </>
           )}
         </motion.div>
 
         {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayData.testimonials.map((testimonial, index) => (
-            <motion.div
-              key={testimonial.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05 }}
-              className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 relative"
-            >
-              {isEditing && (
-                <Button
-                  onClick={() => removeTestimonial(index)}
-                  size='sm'
-                  variant='outline'
-                  className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10'
-                >
-                  <Trash2 className='w-3 h-3' />
-                </Button>
-              )}
-
-              {/* Quote Icon */}
-              <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
-                <Quote className="w-6 h-6 text-gray-900" />
-              </div>
-
-              {/* Stars */}
-              <div className="flex space-x-1 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => isEditing && updateRating(index, i + 1)}
-                    className={isEditing ? "cursor-pointer" : "cursor-default"}
+        {displayData.testimonials.length > 0 || isEditing ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {displayData.testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.05 }}
+                className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 relative"
+              >
+                {isEditing && (
+                  <Button
+                    onClick={() => removeTestimonial(index)}
+                    size='sm'
+                    variant='outline'
+                    className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10'
                   >
-                    <Star
-                      className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                    <Trash2 className='w-3 h-3' />
+                  </Button>
+                )}
+
+                {/* Quote Icon */}
+                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
+                  <Quote className="w-6 h-6 text-gray-900" />
+                </div>
+
+                {/* Stars */}
+                <div className="flex space-x-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => isEditing && updateRating(index, i + 1)}
+                      className={isEditing ? "cursor-pointer" : "cursor-default"}
+                    >
+                      <Star
+                        className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Review */}
+                {isEditing ? (
+                  <textarea
+                    value={testimonial.content}
+                    onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
+                    className="text-muted-foreground leading-relaxed mb-6 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                    rows={4}
+                    placeholder="Testimonial content"
+                  />
+                ) : (
+                  <p className="text-muted-foreground leading-relaxed mb-6">
+                    "{testimonial.content}"
+                  </p>
+                )}
+
+                {/* Project and Date */}
+                {isEditing ? (
+                  <div className="mb-4 space-y-2">
+                    <input
+                      type="text"
+                      value={testimonial.project}
+                      onChange={(e) => updateTestimonial(index, 'project', e.target.value)}
+                      className="text-sm text-yellow-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                      placeholder="Project type"
                     />
-                  </button>
-                ))}
+                    <input
+                      type="text"
+                      value={testimonial.date}
+                      onChange={(e) => updateTestimonial(index, 'date', e.target.value)}
+                      className="text-sm text-gray-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                      placeholder="Date"
+                    />
+                  </div>
+                ) : (
+                  <div className="mb-4">
+                    <p className="text-sm text-yellow-500">{testimonial.project}</p>
+                    <p className="text-sm text-gray-500">{testimonial.date}</p>
+                  </div>
+                )}
+
+                {/* Client Info */}
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                    <span className="text-gray-900 text-lg">
+                      {testimonial.name.charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    {isEditing ? (
+                      <>
+                        <input
+                          type="text"
+                          value={testimonial.name}
+                          onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
+                          className="text-foreground mb-1 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                          placeholder="Client name"
+                        />
+                        <input
+                          type="text"
+                          value={testimonial.position}
+                          onChange={(e) => updateTestimonial(index, 'position', e.target.value)}
+                          className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                          placeholder="Position"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <h4 className="text-foreground mb-1">{testimonial.name}</h4>
+                        <p className="text-sm text-muted-foreground">{testimonial.position}</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+            {isEditing && displayData.testimonials.length === 0 && (
+              <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground mb-4">No testimonials added yet</p>
+                <Button
+                  onClick={addTestimonial}
+                  variant='outline'
+                  size='lg'
+                  className='bg-blue-50 hover:bg-blue-100 text-blue-700'
+                >
+                  <Plus className='w-5 h-5 mr-2' />
+                  Add Your First Testimonial
+                </Button>
               </div>
-
-              {/* Review */}
-              {isEditing ? (
-                <textarea
-                  value={testimonial.content}
-                  onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
-                  className="text-muted-foreground leading-relaxed mb-6 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                  rows={4}
-                  placeholder="Testimonial content"
-                />
-              ) : (
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  "{testimonial.content}"
-                </p>
-              )}
-
-              {/* Project and Date */}
-              {isEditing ? (
-                <div className="mb-4 space-y-2">
-                  <input
-                    type="text"
-                    value={testimonial.project}
-                    onChange={(e) => updateTestimonial(index, 'project', e.target.value)}
-                    className="text-sm text-yellow-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                    placeholder="Project type"
-                  />
-                  <input
-                    type="text"
-                    value={testimonial.date}
-                    onChange={(e) => updateTestimonial(index, 'date', e.target.value)}
-                    className="text-sm text-gray-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                    placeholder="Date"
-                  />
-                </div>
-              ) : (
-                <div className="mb-4">
-                  <p className="text-sm text-yellow-500">{testimonial.project}</p>
-                  <p className="text-sm text-gray-500">{testimonial.date}</p>
-                </div>
-              )}
-
-              {/* Client Info */}
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                  <span className="text-gray-900 text-lg">
-                    {testimonial.name.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  {isEditing ? (
-                    <>
-                      <input
-                        type="text"
-                        value={testimonial.name}
-                        onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
-                        className="text-foreground mb-1 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                        placeholder="Client name"
-                      />
-                      <input
-                        type="text"
-                        value={testimonial.position}
-                        onChange={(e) => updateTestimonial(index, 'position', e.target.value)}
-                        className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                        placeholder="Position"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <h4 className="text-foreground mb-1">{testimonial.name}</h4>
-                      <p className="text-sm text-muted-foreground">{testimonial.position}</p>
-                    </>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+            )}
+          </div>
+        ) : (
+          !isEditing && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground text-lg">
+                No testimonials to display. Click "Edit" to add testimonials.
+              </p>
+            </div>
+          )
+        )}
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, MapPin, ChevronDown, ArrowRight, Star, Users, Building2, Menu, X, Eye, Edit } from "lucide-react";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUserAuth, useTemplate } from "./context/context";
 import { motion } from "motion/react";
@@ -14,9 +14,9 @@ interface Company {
   previewImage?: string;
   status: string;
 
-  userId:string;
-  publicId:string;
-  draftId:string;
+  userId: string;
+  publicId: string;
+  draftId: string;
 }
 
 interface ApiResponse {
@@ -179,22 +179,22 @@ const Header: React.FC = () => {
     <div className='h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6'>
 
 
-       {/* ===== Always Visible Popup ===== */}
-      <div className="fixed right-12 top-28 z-10 animate-bounce">
-        <div className="px-5 py-8 text-center bg-white rounded-xl border border-yellow-300 shadow-lg">
-          <h2 className="text-base font-semibold text-amber-900 md:text-lg">
+      {/* ===== Always Visible Popup ===== */}
+      <div className="fixed right-4 md:right-12 top-20 md:top-28 z-10 animate-bounce">
+        <div className="px-2 py-3 md:px-5 md:py-8 text-center bg-white rounded-lg md:rounded-xl border border-yellow-300 shadow-lg max-w-xs md:max-w-none">
+          <h2 className="text-xs md:text-base font-semibold text-amber-900 lg:text-lg">
             🎉 Free Trial
           </h2>
-          <p className="mt-1 text-lg font-semibold text-amber-700">
+          <p className="mt-1 text-xs md:text-lg font-semibold text-amber-700">
             You have{" "}
             <span className="font-bold text-amber-600">90</span> free trial days
             remaining.
           </p>
-          <p className="pl-6 mt-4 text-sm text-left text-amber-700">
-            ✅ Create <span className="font-bold text-amber-600">unlimited company templates</span>.
+          <p className="pl-2 md:pl-6 mt-2 md:mt-4 text-xs md:text-sm text-left text-amber-700">
+            ✅ Create <span className="font-bold text-amber-600">unlimited templates</span>.
           </p>
-          <p className="pl-6 mt-1 text-sm text-left text-amber-700">
-            ✅ <span className="font-bold">Edit and customize</span> templates at any time.
+          <p className="pl-2 md:pl-6 mt-1 text-xs md:text-sm text-left text-amber-700">
+            ✅ <span className="font-bold">Edit and customize</span> anytime.
           </p>
         </div>
       </div>
@@ -202,19 +202,19 @@ const Header: React.FC = () => {
 
 
 
-      <div className='text-center max-w-3xl relative w-full'>
+      <div className='text-center max-w-3xl  relative w-full'>
         {/* Geometric Elements */}
         <div className='absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-yellow-200 rounded-full opacity-40'></div>
         <div className='absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-yellow-200 opacity-30 rounded-2xl'></div>
 
-        <div className='relative z-10'>
+        <div className='relative z-10 mt-[100px]'>
           <div className='flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-8'>
             <div className='w-2 h-2 md:w-3 md:h-3 bg-yellow-400 rounded-full'></div>
             <div className='w-4 h-4 md:w-6 md:h-6 border-2 border-amber-400'></div>
             <div className='w-3 h-3 md:w-4 md:h-4 bg-amber-600 rotate-45'></div>
           </div>
 
-          <h1 className='text-3xl md:text-5xl font-light text-amber-900 mb-4 md:mb-6'>
+          <h1 className='text-3xl md:text-5xl font-light text-amber-900 mb-4 md:mb-6 '>
             My Companies
             <span className='block text-xl md:text-3xl font-extralight text-yellow-600 mt-1 md:mt-2'>
               Dashboard
@@ -233,7 +233,7 @@ const Header: React.FC = () => {
               + Add New Company
             </button>
             <div className='w-px h-8 md:h-12 bg-yellow-300 hidden sm:block'></div>
-            <button className='text-amber-700 hover:text-amber-900 transition-colors duration-300 text-sm md:text-base sm:mt-0 mt-2'>
+            <button className='text-amber-700 hover:text-amber-900 transition-colors duration-300 text-sm md:text-base sm:mt-0 mt-2 cursor-default'>
               View Analytics
             </button>
           </div>
@@ -272,11 +272,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                value === option
-                  ? "bg-gray-50 text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
+                ? "bg-gray-50 text-gray-900 font-medium"
+                : "text-gray-700 hover:bg-gray-50"
+                }`}
             >
               {option}
             </button>
@@ -319,7 +318,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       )}
-      
+
       <div className='space-y-6 md:space-y-8'>
         {/* Search Section */}
         <div className='space-y-3'>
@@ -380,20 +379,20 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className='border-t border-gray-100'></div>
 
 
-         <motion.button
-        whileTap={{ scale: [0.9, 1] }}
-        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
-      >
-        <Link to={"/user/professional"}>Professional </Link>
-      </motion.button>
+        <motion.button
+          whileTap={{ scale: [0.9, 1] }}
+          className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+        >
+          <Link to={"/user/professional"}>Professional </Link>
+        </motion.button>
 
 
 
         {/* CTA Section */}
         <div className='space-y-3'>
           <p className='text-sm text-gray-600'>Ready to expand?</p>
-          <button 
-            onClick={()=>navigate("/user/companies/template-selection")}
+          <button
+            onClick={() => navigate("/user/companies/template-selection")}
             className='w-full bg-gray-900 text-white py-3 px-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors'
           >
             Create New Listing
@@ -408,9 +407,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
   // Create a placeholder image using company name
   console.log(company)
-  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
-    company.companyName?.charAt(0) || "C"
-  }%3C/text%3E%3C/svg%3E`;
+  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${company.companyName?.charAt(0) || "C"
+    }%3C/text%3E%3C/svg%3E`;
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -428,10 +426,10 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
 
   // Status badge styling based on status
   const getStatusBadge = (status: string) => {
-    const statusLower = (status ).toLowerCase();
-    
+    const statusLower = (status).toLowerCase();
+
     switch (statusLower) {
-      
+
       case 'active':
         return {
           bg: 'bg-yellow-100',
@@ -460,7 +458,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
   };
 
   const statusStyle = getStatusBadge(company.reviewStatus);
-// console.log("Company Status:", company.reviewStatus); // Debug log
+  // console.log("Company Status:", company.reviewStatus); // Debug log
 
   return (
     // <div className='bg-red-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-pink-500 to-purple-600 group'>
@@ -527,19 +525,19 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
 
 
 
-             <button
-    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-      e.stopPropagation();
-      // Construct the dynamic URL
-      const url = `${window.location.origin}/form/${company.publishedId}/${company.userId}/${company.draftId}`;
-      // const url = `${window.location.origin}/${company.publicId}/${company.userId}/${company.draftId}`;
-      window.open(url, "_blank"); // opens in new tab
-    }}
-    className="px-3 py-2 md:px-4 md:py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2"
-  >
-    <Edit className="w-3 h-3 md:w-4 md:h-4" />
-    Edit Data
-  </button>
+            <button
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                // Construct the dynamic URL
+                const url = `${window.location.origin}/form/${company.publishedId}/${company.userId}/${company.draftId}`;
+                // const url = `${window.location.origin}/${company.publicId}/${company.userId}/${company.draftId}`;
+                window.open(url, "_blank"); // opens in new tab
+              }}
+              className="px-3 py-2 md:px-4 md:py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2"
+            >
+              <Edit className="w-3 h-3 md:w-4 md:h-4" />
+              Edit Data
+            </button>
 
 
             <button
@@ -618,7 +616,7 @@ const MainContent: React.FC<MainContentProps> = ({
   onClearFilters
 }) => {
   const navigate = useNavigate();
-  
+
   if (loading)
     return (
       <div className='flex-1 bg-yellow-50 px-4 md:px-8 py-8'>
@@ -635,7 +633,7 @@ const MainContent: React.FC<MainContentProps> = ({
   return (
     <div className='flex-1 bg-yellow-50 px-4 md:px-8 py-8'>
       {/* Mobile filter button */}
-      <button 
+      <button
         onClick={onOpenMobileSidebar}
         className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200"
       >
@@ -665,7 +663,7 @@ const MainContent: React.FC<MainContentProps> = ({
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'>
           {companies.map((company: Company, index: number) => (
             <div key={company.publishedId || index} className='animate-fadeIn'>
-              <CompanyCard 
+              <CompanyCard
                 company={company}
                 onEdit={onEdit}
                 onPreview={onPreview}
@@ -699,7 +697,7 @@ const MainContent: React.FC<MainContentProps> = ({
               <p className='text-gray-500 mb-6'>
                 You haven't created any company listings yet.
               </p>
-              <button 
+              <button
                 onClick={() => navigate('/user/companies/template-selection')}
                 className='bg-yellow-500 text-black px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition-colors'
               >
@@ -729,9 +727,9 @@ const apiService = {
       const url = new URL('https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards');
       // console.log( "this is the url log",url)
       url.searchParams.append('userId', userId.trim());
-      
+
       console.log('Fetching companies from:', url.toString());
-      
+
       const response = await fetch(url.toString(), {
         method: 'GET',
         headers: {
@@ -748,14 +746,14 @@ const apiService = {
       if (!response.ok) {
         let errorText = 'Unknown error occurred';
         let errorJson = null;
-        
+
         try {
           const contentType = response.headers.get('content-type');
-          
+
           if (contentType && contentType.includes('application/json')) {
             errorJson = await response.json();
             errorText = errorJson.message || errorJson.error || errorJson.errorMessage || `HTTP ${response.status}`;
-            
+
           } else {
             errorText = await response.text();
           }
@@ -763,9 +761,9 @@ const apiService = {
           console.error("Error parsing error response:", parseError);
           errorText = `HTTP ${response.status} - Unable to parse error response`;
         }
-        
+
         console.error("API Error Response:", { status: response.status, error: errorText, details: errorJson });
-        
+
         // Handle specific status codes
         switch (response.status) {
           case 400:
@@ -810,7 +808,7 @@ const apiService = {
 
       // Handle different possible response structures
       const cards = data.cards || data.items || data.companies || [];
-      
+
       // Validate cards array
       if (!Array.isArray(cards)) {
         console.warn("Cards is not an array:", cards);
@@ -834,8 +832,8 @@ const apiService = {
             publishedDate: card.publishedDate || card.createdAt || card.date || new Date().toISOString(),
             previewImage: card.previewImage || card.logo || card.image || '',
             status: String(card.status || 'approved').toLowerCase(),
-            userId: String(card.userId || ''), 
-             draftId: String(card.draftId || '')
+            userId: String(card.userId || ''),
+            draftId: String(card.draftId || '')
           };
         } catch (cardError) {
           console.error(`Error processing card at index ${index}:`, cardError);
@@ -852,32 +850,32 @@ const apiService = {
 
     } catch (error) {
       clearTimeout(timeoutId);
-      
+
       console.error("Error fetching companies:", error);
-      
+
       // Handle different types of errors
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new Error("Network error. Please check your internet connection and try again.");
       }
-      
+
       if (error.name === 'AbortError') {
         throw new Error("Request timed out. Please try again.");
       }
-      
+
       // Re-throw known errors
       if (error instanceof Error) {
         throw error;
       }
-      
+
       // Handle unknown errors
       throw new Error("An unexpected error occurred while fetching companies");
     }
   },
   async fetchPublishedDetails(
-  publishedId: string,
-  userId: string,
-  setFinaleDataReview: (data: PublishedDetailsResponse) => void
-): Promise<PublishedDetailsResponse> {
+    publishedId: string,
+    userId: string,
+    setFinaleDataReview: (data: PublishedDetailsResponse) => void
+  ): Promise<PublishedDetailsResponse> {
     try {
       const response = await fetch(
         `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
@@ -893,7 +891,7 @@ const apiService = {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Published Details API Error:", errorText);
-        
+
         if (response.status === 401) {
           throw new Error("User not authenticated.");
         } else if (response.status === 403) {
@@ -907,7 +905,7 @@ const apiService = {
 
       const data = await response.json();
       // console.log("Published Details Response:", data);
-         setFinaleDataReview(data)
+      setFinaleDataReview(data)
       return data;
     } catch (error) {
       console.error("Error fetching published details:", error);
@@ -920,9 +918,9 @@ const apiService = {
 const CompanyDirectory: React.FC = () => {
   // Get user from context
   const { user }: { user: User | null } = useUserAuth();
-  
-  
-   const { setFinaleDataReview } = useTemplate(); // ✅ bring context setter
+
+
+  const { setFinaleDataReview } = useTemplate(); // ✅ bring context setter
   const navigate = useNavigate();
 
 
@@ -937,14 +935,14 @@ const CompanyDirectory: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("Sort by Name");
   const [currentPage] = useState<number>(1);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
- 
+
   // Navigation handlers
   const handleEdit = async (publishedId: string): Promise<void> => {
     try {
       if (!user?.userData?.email) {
         throw new Error("User not authenticated");
       }
-      
+
       // Fetch the published details
       const details = await apiService.fetchPublishedDetails(
         publishedId,
@@ -954,9 +952,9 @@ const CompanyDirectory: React.FC = () => {
 
       // ✅ Navigate to edit page
 
-      if(details.templateSelection === "template-1"){
+      if (details.templateSelection === "template-1") {
         navigate(`/user/companies/edit/1/${publishedId}`);
-      }else if(details.templateSelection === "template-2"){
+      } else if (details.templateSelection === "template-2") {
         navigate(`/user/companies/edit/2/${publishedId}`);
       }
 
@@ -965,29 +963,29 @@ const CompanyDirectory: React.FC = () => {
       toast.error("Failed to load template for editing. Please try again.");
     }
   };
-// In the handlePreview function, modify the navigation:
-const handlePreview = async (publishedId: string): Promise<void> => {
-  try {
-    if (!user?.userData?.email) {
-      throw new Error("User not authenticated");
-    }
-    const details = await apiService.fetchPublishedDetails(
+  // In the handlePreview function, modify the navigation:
+  const handlePreview = async (publishedId: string): Promise<void> => {
+    try {
+      if (!user?.userData?.email) {
+        throw new Error("User not authenticated");
+      }
+      const details = await apiService.fetchPublishedDetails(
         publishedId,
         user.userData.email,
         setFinaleDataReview // ✅ directly store in context
       );
-    
-    // Include user ID in the URL as a query parameter
-    if(details.templateSelection === "template-1"){
-      navigate(`/user/companies/preview/1/${publishedId}/${user.userData.email}`);
-    }else if(details.templateSelection === "template-2"){
-      navigate(`/user/companies/preview/2/${publishedId}/${user.userData.email}`);
+
+      // Include user ID in the URL as a query parameter
+      if (details.templateSelection === "template-1") {
+        navigate(`/user/companies/preview/1/${publishedId}/${user.userData.email}`);
+      } else if (details.templateSelection === "template-2") {
+        navigate(`/user/companies/preview/2/${publishedId}/${user.userData.email}`);
+      }
+    } catch (error) {
+      console.error("Error loading template for preview:", error);
+      alert("Failed to load template for preview. Please try again.");
     }
-  } catch (error) {
-    console.error("Error loading template for preview:", error);
-    alert("Failed to load template for preview. Please try again.");
-  }
-};
+  };
 
   // Clear filters function
   const handleClearFilters = (): void => {
@@ -1008,15 +1006,15 @@ const handlePreview = async (publishedId: string): Promise<void> => {
         throw new Error("User ID is missing. Please log in again.");
       }
 
-      console.log('Fetching companies for user:', { 
-        userId: user.userData.email, 
+      console.log('Fetching companies for user:', {
+        userId: user.userData.email,
         userType: typeof user.userData.email,
-        userExists: !!user 
+        userExists: !!user
       });
 
       setLoading(true);
       setError(null);
-      
+
       const data = await apiService.fetchCompanies(user.userData.email);
 
       console.log('Companies fetch successful:', {
@@ -1024,23 +1022,23 @@ const handlePreview = async (publishedId: string): Promise<void> => {
         totalCount: data.totalCount,
         hasMore: data.hasMore
       });
-      
+
       setCompanies(data.cards || []);
       // console.log('Companies state updated:', data.cards);
-      
+
       setTotalCount(data.totalCount || 0);
       setHasMore(data.hasMore || false);
-      
+
     } catch (err) {
       console.error('Error in fetchCompanies:', err);
-      
+
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch companies";
       setError(errorMessage);
-      
+
       // If authentication-related error, redirect to login
-      if (errorMessage.includes("not authenticated") || 
-          errorMessage.includes("User ID") || 
-          errorMessage.includes("log in")) {
+      if (errorMessage.includes("not authenticated") ||
+        errorMessage.includes("User ID") ||
+        errorMessage.includes("log in")) {
         console.log('Authentication error detected, redirecting to login...');
 
       }
@@ -1051,12 +1049,12 @@ const handlePreview = async (publishedId: string): Promise<void> => {
 
   // Load data on component mount with improved timing
   useEffect(() => {
-    console.log('CompanyDirectory useEffect triggered:', { 
-      user: !!user, 
+    console.log('CompanyDirectory useEffect triggered:', {
+      user: !!user,
       userId: user?.userData?.email,
       timestamp: new Date().toISOString()
     });
-    
+
     // Add a small delay to ensure user context is fully loaded
     const initializeData = async () => {
       // Wait a bit for user context to stabilize
@@ -1070,11 +1068,11 @@ const handlePreview = async (publishedId: string): Promise<void> => {
         console.log('No authenticated user found');
         setError("Please log in to view your companies");
         setLoading(false);
-          
+
       }
       // If user is undefined, keep waiting (context is still loading)
     };
-    
+
     initializeData();
   }, [user]); // Re-run when user changes
 
@@ -1086,17 +1084,17 @@ const handlePreview = async (publishedId: string): Promise<void> => {
 
   // Filter and sort companies
   const filteredCompanies = companies.filter((company: Company) => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       (company.companyName && company.companyName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (company.location && company.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (company.sectors && company.sectors.some((sector: string) =>
         sector.toLowerCase().includes(searchTerm.toLowerCase())
       ));
-    
+
     const matchesSector =
       industryFilter === "All Sectors" ||
       (company.sectors && company.sectors.includes(industryFilter));
-    
+
     return matchesSearch && matchesSector;
   });
 

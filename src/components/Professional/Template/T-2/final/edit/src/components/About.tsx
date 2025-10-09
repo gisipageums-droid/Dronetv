@@ -47,15 +47,14 @@ const Button = ({
 };
 
 interface AboutData {
-  title: string;
-  highlightedText: string;
+  heading: string;
+  subtitle: string;
   description1: string;
   description2: string;
   skills: string[];
-  buttonText: string;
-  imageUrl: string;
+  imageSrc: string;
+  buttonText?: string;
 }
-
 
 interface AboutProps {
   aboutData?: AboutData;
@@ -81,38 +80,40 @@ export function About({
   const aboutRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Pending image file for S3 upload - SAME PATTERN AS HERO
+  // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
 
-  const defaultData = {
-  title: "About",
-  highlightedText: "Me",
-  description1:aboutData.description1||
-    "I'm a passionate full-stack developer with over 3 years of experience creating digital solutions that make a difference. I specialize in modern web technologies and love turning complex problems into simple, beautiful designs.",
-  description2:aboutData.description2||
-    "When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or sharing my knowledge through technical writing and mentoring.",
-  skills: aboutData.skills||[
-    "Frontend: React, Vue.js, TypeScript",
-    "Backend: Node.js, Python, PostgreSQL",
-    "Cloud: AWS, Docker, Kubernetes",
-  ],
-  buttonText: "Let's Work Together",
-  imageUrl:aboutData.imageSrc||
-    "https://images.unsplash.com/photo-1695634621121-691d54259d37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBwb3J0Zm9saW8lMjBkZXNpZ258ZW58MXx8fHwxNzU3NDg4OTI1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-};
-
+  // Default data structure matching the provided format
+  const defaultData: AboutData = {
+    heading: aboutData?.heading ||"",
+    subtitle: aboutData?.subtitle || "",
+    description1: aboutData?.description1 || "",
+    description2: aboutData?.description2 || "",
+    skills: aboutData?.skills || [''],
+    imageSrc: aboutData?.imageSrc || "",
+    buttonText: aboutData?.buttonText || ""
+  };
 
   const [data, setData] = useState<AboutData>(defaultData);
   const [tempData, setTempData] = useState<AboutData>(defaultData);
 
-  // Notify parent of state changes - SAME AS HERO
+  // Initialize with provided aboutData
   useEffect(() => {
-    if (onStateChange) {
+    if (aboutData) {
+      setData(aboutData);
+      setTempData(aboutData);
+      setDataLoaded(true);
+    }
+  }, [aboutData]);
+
+  // Notify parent of state changes
+  useEffect(() => {
+    if (onStateChange && dataLoaded) {
       onStateChange(data);
     }
-  }, [data]);
+  }, [data, dataLoaded]);
 
-  // Intersection observer - SAME AS HERO
+  // Intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -124,7 +125,7 @@ export function About({
     };
   }, []);
 
-  // Fake API fetch - SAME LOGIC AS HERO
+  // Fake API fetch
   const fetchAboutData = async () => {
     setIsLoading(true);
     try {
@@ -148,10 +149,10 @@ export function About({
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingImageFile(null); // Clear pending file - SAME AS HERO
+    setPendingImageFile(null);
   };
 
-  // Save function with S3 upload - SAME PATTERN AS HERO
+  // Save function with S3 upload
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -187,14 +188,14 @@ export function About({
         }
       }
 
-      // Clear pending file - SAME AS HERO
+      // Clear pending file
       setPendingImageFile(null);
 
       // Save the updated data with S3 URL
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
 
-      // Update both states with the new URL - SAME AS HERO
+      // Update both states with the new URL
       setData(updatedData);
       setTempData(updatedData);
 
@@ -212,30 +213,30 @@ export function About({
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingImageFile(null); // Clear pending file - SAME AS HERO
+    setPendingImageFile(null);
     setIsEditing(false);
   };
 
-  // Image upload handler with validation - SAME PATTERN AS HERO
+  // Image upload handler with validation
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size - SAME AS HERO
+    // Validate file type and size
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit - SAME AS HERO
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
       toast.error('File size must be less than 5MB');
       return;
     }
 
-    // Store the file for upload on Save - SAME PATTERN AS HERO
+    // Store the file for upload on Save
     setPendingImageFile(file);
 
-    // Show immediate local preview - SAME AS HERO
+    // Show immediate local preview
     const reader = new FileReader();
     reader.onload = (e) => {
       setTempData((prev) => ({
@@ -246,7 +247,7 @@ export function About({
     reader.readAsDataURL(file);
   };
 
-  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  // Stable update functions with useCallback
   const updateTempContent = useCallback((field: keyof AboutData, value: string) => {
     setTempData((prev) => ({ ...prev, [field]: value }));
   }, []);
@@ -273,7 +274,7 @@ export function About({
     setTempData(prev => ({ ...prev, skills: updatedSkills }));
   }, [tempData.skills]);
 
-  // Memoized EditableText component - SAME PATTERN AS HERO
+  // Memoized EditableText component
   const EditableText = useMemo(() => {
     return ({
       value,
@@ -330,9 +331,8 @@ export function About({
   }, [updateTempContent, updateSkill]);
 
   const displayData = isEditing ? tempData : data;
-  // console.log("----------ii", displayData)
 
-  // Loading state - SAME PATTERN AS HERO
+  // Loading state
   if (isLoading) {
     return (
       <section ref={aboutRef} id="about" className="relative py-20 bg-background">
@@ -346,9 +346,9 @@ export function About({
 
   return (
     <section ref={aboutRef} id="about" className="relative py-20 bg-background">
-      <div className="max-w-7xl mx-auto  px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
-        <div className='text-right z-50  mb-20'>
+        <div className='text-right z-50 mb-20'>
           {!isEditing ? (
             <Button
               onClick={handleEdit}
@@ -458,34 +458,38 @@ export function About({
             className="space-y-6 relative"
           >
             {/* Heading */}
-            <motion.h2
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl text-foreground"
             >
               {isEditing ? (
-                <div className="flex items-center">
+                <div className="space-y-4">
                   <EditableText
-                    value={displayData.title}
-                    field="title"
-                    className="mr-2"
-                    placeholder="Title"
+                    value={displayData.heading}
+                    field="heading"
+                    className="text-3xl sm:text-4xl font-bold text-foreground"
+                    placeholder="Main heading"
                   />
                   <EditableText
-                    value={displayData.highlightedText}
-                    field="highlightedText"
-                    className="mr-2"
-                    placeholder="Title"
+                    value={displayData.subtitle}
+                    field="subtitle"
+                    className="text-xl text-yellow-500 font-semibold"
+                    placeholder="Subtitle"
                   />
                 </div>
               ) : (
-                <>
-                  {displayData.heading}<span className="text-yellow-500">{displayData.highlightedText}</span>
-                </>
+                <div>
+                  <h2 className="text-3xl sm:text-4xl text-foreground font-bold">
+                    {displayData.heading}
+                  </h2>
+                  <p className="text-xl text-yellow-500 font-semibold mt-2">
+                    {displayData.subtitle}
+                  </p>
+                </div>
               )}
-            </motion.h2>
+            </motion.div>
 
             {/* Description 1 */}
             <motion.div
@@ -577,7 +581,7 @@ export function About({
               viewport={{ once: true }}
             >
               <AnimatedButton href="#contact" size="lg">
-                Let's Connect
+                {displayData.buttonText || "Let's Connect"}
               </AnimatedButton>
             </motion.div>
           </motion.div>

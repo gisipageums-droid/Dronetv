@@ -69,42 +69,13 @@ interface ProjectsData {
   categories: string[];
 }
 
-// Default data for Projects section based on your JSON
+// Empty default data for Projects section
 const defaultProjectsData: ProjectsData = {
-  subtitle: "showcasing expertise through innovative solutions",
-  heading: "Featured Projects",
-  description: "selection of work demonstrating technical skills",
-  projects: [
-    {
-      id: 1,
-      title: "Professional Project 1",
-      description: "A web application built using React and Node.js that streamlines project management for teams, enhancing collaboration and productivity.",
-      longDescription: "A web application built using React and Node.js that streamlines project management for teams, enhancing collaboration and productivity.",
-      image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
-      tags: ["React", "Node.js", "MongoDB"],
-      github: "https://github.com/project1",
-      live: "https://project1-demo.com",
-      date: "2024",
-      category: "Development",
-      featured: true,
-      client: ""
-    },
-    {
-      id: 2,
-      title: "Professional Project 2",
-      description: "A mobile application developed with Flutter that allows users to track their fitness goals and progress through an intuitive interface.",
-      longDescription: "A mobile application developed with Flutter that allows users to track their fitness goals and progress through an intuitive interface.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop",
-      tags: ["Flutter", "Dart", "Firebase"],
-      github: "https://github.com/project2",
-      live: "https://project2-demo.com",
-      date: "2024",
-      category: "Application",
-      featured: false,
-      client: ""
-    }
-  ],
-  categories: ["All", "Development", "Application"]
+  subtitle: "",
+  heading: "",
+  description: "",
+  projects: [],
+  categories: []
 };
 
 // Props interface
@@ -326,7 +297,7 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
       title: 'New Project',
       description: 'Add a short description for your project here.',
       longDescription: 'Add a detailed description for your project here.',
-      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop',
+      image: '',
       tags: ['Technology 1', 'Technology 2'],
       github: 'https://github.com/username/project',
       live: 'https://project-demo.com',
@@ -478,15 +449,17 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
             </>
           ) : (
             <>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="text-lg text-yellow-500 mb-2"
-              >
-                {displayData.subtitle}
-              </motion.p>
+              {displayData.subtitle && (
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-yellow-500 mb-2"
+                >
+                  {displayData.subtitle}
+                </motion.p>
+              )}
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -496,21 +469,23 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
               >
                 {renderHeading()}
               </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                viewport={{ once: true }}
-                className="text-lg text-muted-foreground max-w-2xl mx-auto"
-              >
-                {displayData.description}
-              </motion.p>
+              {displayData.description && (
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto"
+                >
+                  {displayData.description}
+                </motion.p>
+              )}
             </>
           )}
         </motion.div>
 
         {/* Categories Filter */}
-        {!isEditing && (
+        {!isEditing && displayData.categories.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -570,211 +545,220 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
         )}
 
         {/* Projects Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {filteredProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -10 }}
-              className="bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-border relative"
-            >
-              {isEditing && (
-                <Button
-                  onClick={() => removeProject(index)}
-                  size='sm'
-                  variant='outline'
-                  className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10'
-                >
-                  <Trash2 className='w-3 h-3' />
-                </Button>
-              )}
+        {filteredProjects.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+            {filteredProjects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -10 }}
+                className="bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-border relative"
+              >
+                {isEditing && (
+                  <Button
+                    onClick={() => removeProject(index)}
+                    size='sm'
+                    variant='outline'
+                    className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10'
+                  >
+                    <Trash2 className='w-3 h-3' />
+                  </Button>
+                )}
 
-              {/* Project Image */}
-              <div className="relative overflow-hidden">
-                <motion.div transition={{ duration: 0.3 }}>
-                  {isEditing && (
-                    <div className="absolute top-2 left-2 z-10">
-                      <Button
-                        onClick={() => fileInputRefs.current[project.id.toString()]?.click()}
-                        size="sm"
-                        variant="outline"
-                        className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
+                {/* Project Image */}
+                <div className="relative overflow-hidden">
+                  <motion.div transition={{ duration: 0.3 }}>
+                    {isEditing && (
+                      <div className="absolute top-2 left-2 z-10">
+                        <Button
+                          onClick={() => fileInputRefs.current[project.id.toString()]?.click()}
+                          size="sm"
+                          variant="outline"
+                          className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
+                        >
+                          <Upload className="w-4 h-4 mr-2 text-black" />
+                          Upload
+                        </Button>
+                        <input
+                          ref={el => fileInputRefs.current[project.id.toString()] = el as HTMLInputElement}
+                          type='file'
+                          accept='image/*'
+                          onChange={(e) => handleImageUpload(e, project.id.toString())}
+                          className='hidden'
+                        />
+                        {pendingImageFiles[project.id.toString()] && (
+                          <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
+                            {pendingImageFiles[project.id.toString()].name}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    <ImageWithFallback
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-48 object-cover"
+                      fallbackSrc=""
+                    />
+                  </motion.div>
+                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                    <div className="opacity-0 hover:opacity-100 transition-all duration-300 flex space-x-4">
+                      <motion.a
+                        href={project.live}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="bg-yellow-400 text-gray-900 p-2 rounded-full"
                       >
-                        <Upload className="w-4 h-4 mr-2 text-black" />
-                        Upload
-                      </Button>
+                        <ExternalLink size={20} />
+                      </motion.a>
+                      <motion.a
+                        href={project.github}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="bg-white text-gray-900 p-2 rounded-full"
+                      >
+                        <Github size={20} />
+                      </motion.a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Project Content */}
+                <div className="p-6">
+                  {/* Project Title */}
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={project.title}
+                      onChange={(e) => updateProject(index, 'title', e.target.value)}
+                      className="text-xl text-foreground mb-2 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                    />
+                  ) : (
+                    <h3 className="text-xl text-foreground mb-2">{project.title}</h3>
+                  )}
+
+                  {/* Project Description */}
+                  {isEditing ? (
+                    <textarea
+                      value={project.description}
+                      onChange={(e) => updateProject(index, 'description', e.target.value)}
+                      className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                      rows={3}
+                    />
+                  ) : (
+                    <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
+                  )}
+
+                  {/* Project Tags */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.tags.map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm flex items-center gap-2"
+                      >
+                        {isEditing ? (
+                          <>
+                            <input
+                              type="text"
+                              value={tag}
+                              onChange={(e) => updateTag(index, tagIndex, e.target.value)}
+                              className="bg-transparent border-none outline-none w-20"
+                            />
+                            <button
+                              onClick={() => removeTag(index, tagIndex)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </>
+                        ) : (
+                          tag
+                        )}
+                      </span>
+                    ))}
+                    {isEditing && (
+                      <button
+                        onClick={() => addTag(index)}
+                        className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition-all duration-300"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Project Meta */}
+                  {isEditing ? (
+                    <div className="grid grid-cols-2 gap-2 mb-4">
                       <input
-                        ref={el => fileInputRefs.current[project.id.toString()] = el as HTMLInputElement}
-                        type='file'
-                        accept='image/*'
-                        onChange={(e) => handleImageUpload(e, project.id.toString())}
-                        className='hidden'
+                        type="text"
+                        value={project.category}
+                        onChange={(e) => updateProject(index, 'category', e.target.value)}
+                        placeholder="Category"
+                        className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
                       />
-                      {pendingImageFiles[project.id.toString()] && (
-                        <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
-                          {pendingImageFiles[project.id.toString()].name}
-                        </p>
-                      )}
+                      <input
+                        type="text"
+                        value={project.date}
+                        onChange={(e) => updateProject(index, 'date', e.target.value)}
+                        placeholder="Date"
+                        className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex justify-between items-center mb-4 text-sm text-muted-foreground">
+                      <span className="bg-gray-100 px-3 py-1 rounded-full">{project.category}</span>
+                      <span>{project.date}</span>
                     </div>
                   )}
-                  <ImageWithFallback
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-48 object-cover"
-                  />
-                </motion.div>
-                <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                  <div className="opacity-0 hover:opacity-100 transition-all duration-300 flex space-x-4">
-                    <motion.a
-                      href={project.live}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-yellow-400 text-gray-900 p-2 rounded-full"
-                    >
-                      <ExternalLink size={20} />
-                    </motion.a>
-                    <motion.a
-                      href={project.github}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-white text-gray-900 p-2 rounded-full"
-                    >
-                      <Github size={20} />
-                    </motion.a>
-                  </div>
-                </div>
-              </div>
 
-              {/* Project Content */}
-              <div className="p-6">
-                {/* Project Title */}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={project.title}
-                    onChange={(e) => updateProject(index, 'title', e.target.value)}
-                    className="text-xl text-foreground mb-2 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                  />
-                ) : (
-                  <h3 className="text-xl text-foreground mb-2">{project.title}</h3>
-                )}
-
-                {/* Project Description */}
-                {isEditing ? (
-                  <textarea
-                    value={project.description}
-                    onChange={(e) => updateProject(index, 'description', e.target.value)}
-                    className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                    rows={3}
-                  />
-                ) : (
-                  <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
-                )}
-
-                {/* Project Tags */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tags.map((tag, tagIndex) => (
-                    <span
-                      key={tagIndex}
-                      className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm flex items-center gap-2"
-                    >
-                      {isEditing ? (
-                        <>
-                          <input
-                            type="text"
-                            value={tag}
-                            onChange={(e) => updateTag(index, tagIndex, e.target.value)}
-                            className="bg-transparent border-none outline-none w-20"
-                          />
-                          <button
-                            onClick={() => removeTag(index, tagIndex)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </>
-                      ) : (
-                        tag
-                      )}
-                    </span>
-                  ))}
-                  {isEditing && (
-                    <button
-                      onClick={() => addTag(index)}
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition-all duration-300"
-                    >
-                      <Plus className="w-3 h-3" />
-                    </button>
+                  {/* Project Links */}
+                  {isEditing ? (
+                    <div className="flex flex-col space-y-2">
+                      <input
+                        type="text"
+                        value={project.live}
+                        onChange={(e) => updateProject(index, 'live', e.target.value)}
+                        placeholder="Live Demo URL"
+                        className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={project.github}
+                        onChange={(e) => updateProject(index, 'github', e.target.value)}
+                        placeholder="GitHub URL"
+                        className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex space-x-3">
+                      <a
+                        href={project.live}
+                        className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-1"
+                      >
+                        Live Demo
+                      </a>
+                      <a
+                        href={project.github}
+                        className="inline-flex items-center justify-center px-4 py-2 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors flex-1"
+                      >
+                        <Github className="w-4 h-4 mr-2" />
+                        Code
+                      </a>
+                    </div>
                   )}
                 </div>
-
-                {/* Project Meta */}
-                {isEditing ? (
-                  <div className="grid grid-cols-2 gap-2 mb-4">
-                    <input
-                      type="text"
-                      value={project.category}
-                      onChange={(e) => updateProject(index, 'category', e.target.value)}
-                      placeholder="Category"
-                      className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      value={project.date}
-                      onChange={(e) => updateProject(index, 'date', e.target.value)}
-                      placeholder="Date"
-                      className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex justify-between items-center mb-4 text-sm text-muted-foreground">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full">{project.category}</span>
-                    <span>{project.date}</span>
-                  </div>
-                )}
-
-                {/* Project Links */}
-                {isEditing ? (
-                  <div className="flex flex-col space-y-2">
-                    <input
-                      type="text"
-                      value={project.live}
-                      onChange={(e) => updateProject(index, 'live', e.target.value)}
-                      placeholder="Live Demo URL"
-                      className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      value={project.github}
-                      onChange={(e) => updateProject(index, 'github', e.target.value)}
-                      placeholder="GitHub URL"
-                      className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex space-x-3">
-                    <a
-                      href={project.live}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-1"
-                    >
-                      Live Demo
-                    </a>
-                    <a
-                      href={project.github}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors flex-1"
-                    >
-                      <Github className="w-4 h-4 mr-2" />
-                      Code
-                    </a>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          !isEditing && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground text-lg">No projects to display. Click "Edit" to add projects.</p>
+            </div>
+          )
+        )}
       </div>
     </section>
   );

@@ -18,7 +18,7 @@ import {
   Clock,
   AlertCircle,
 } from "lucide-react";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
 import { motion, AnimatePresence } from 'motion/react';
@@ -151,7 +151,7 @@ const Header: React.FC = () => {
         <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full border border-blue-200 opacity-40 md:-top-20 md:-left-20 md:w-40 md:h-40"></div>
         <div className="absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-blue-200 opacity-30 rounded-2xl"></div>
 
-        <div className="relative z-10">
+        <div className="relative z-10 mt-[30px]">
           <div className="flex gap-2 justify-center items-center mb-4 md:gap-4 md:mb-8">
             <div className="w-2 h-2 bg-blue-400 rounded-full md:w-3 md:h-3"></div>
             <div className="w-4 h-4 border-2 border-blue-400 md:w-6 md:h-6"></div>
@@ -169,10 +169,11 @@ const Header: React.FC = () => {
             Review and manage all company listings, credentials, and approvals.
           </p>
 
-          <div className="flex flex-col gap-4 justify-center items-center sm:flex-row">
+
+          {/* <div className="flex flex-col gap-4 justify-center items-center sm:flex-row">
             <button
               onClick={() => navigate("/admin/analytics")}
-              className="px-6 py-3 w-full text-sm font-semibold text-white bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg shadow-lg transition-all duration-300 transform md:px-8 md:py-4 hover:from-blue-500 hover:to-blue-600 hover:shadow-xl hover:-translate-y-1 sm:w-auto md:text-base"
+              className="px-6 py-3 w-full text-sm font-semibold text-[black] bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg shadow-lg transition-all duration-300 transform md:px-8 md:py-4 hover:from-blue-500 hover:to-blue-600 hover:shadow-xl hover:-translate-y-1 sm:w-auto md:text-base"
             >
               Analytics
             </button>
@@ -180,7 +181,7 @@ const Header: React.FC = () => {
             <button className="mt-2 text-sm text-blue-700 transition-colors duration-300 hover:text-blue-900 md:text-base sm:mt-0">
               Export Data
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
@@ -294,12 +295,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         <div className="border-t border-gray-100"></div>
-          <motion.button
-            whileTap={{scale:[0.9,1]}}
-            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200">
-            <Link to={'/admin/professional'} >Professionals </Link>
+        <motion.button
+          whileTap={{ scale: [0.9, 1] }}
+          className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200">
+          <Link to={'/admin/professional'} >Professionals </Link>
 
-            </motion.button>
+        </motion.button>
       </div>
     </div>
   );

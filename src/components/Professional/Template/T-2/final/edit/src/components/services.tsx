@@ -63,35 +63,10 @@ interface ServicesData {
 
 // Default data for Services section
 const defaultServicesData: ServicesData = {
-    subtitle: "professional services",
-    heading: "My Services",
-    description: "Professional services tailored to bring your digital vision to life",
-    services: [
-        {
-            id: 1,
-            title: 'Web Development',
-            issuer: 'Full-Stack Solutions',
-            date: '2020 - Present',
-            image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop',
-            description: 'Custom web applications built with modern technologies'
-        },
-        {
-            id: 2,
-            title: 'Mobile App Development',
-            issuer: 'iOS & Android',
-            date: '2021 - Present',
-            image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop',
-            description: 'Cross-platform mobile applications for iOS and Android'
-        },
-        {
-            id: 3,
-            title: 'Backend Development',
-            issuer: 'Server & API Solutions',
-            date: '2020 - Present',
-            image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=400&fit=crop',
-            description: 'Robust backend systems and API development'
-        }
-    ]
+    subtitle: "",
+    heading: "",
+    description: "",
+    services: []
 };
 
 interface ServicesProps {

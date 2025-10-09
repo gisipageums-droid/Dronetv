@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useTemplate } from "../../../../../context/context";
+import { useTemplate } from "../../../../../../context/context";
 import { About } from './components/About';
 import { Certifications } from './components/Certifications';
 import { Clients } from './components/Clients';
@@ -10,10 +10,10 @@ import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
+import { Services } from './components/services';
 import { Testimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
-import { Services } from './components/services';
 
 // Define types for the component states
 interface ComponentStates {
@@ -27,7 +27,6 @@ interface ComponentStates {
   contactContent?: any;
   footerContent?: any;
   headerContent?: any; // Added missing header property
-  serviceContent?: any; // Added missing serviceContent property
 }
 
 interface AIGenData {
@@ -38,13 +37,13 @@ interface AIGenData {
   content?: ComponentStates;
 }
 
-export default function EditTemp_2() {
+export default function FinalEditTemp_2() {
   const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData, publishProfessionalTemplate } = useTemplate();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [componentStates, setComponentStates] = useState<ComponentStates>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const { userId, draftId } = useParams();
+  const { userId, professionalId } = useParams();
 
   // Memoize the collectComponentState function with proper dependencies
   const collectComponentState = useCallback((componentName: keyof ComponentStates, state: any) => {
@@ -86,17 +85,23 @@ export default function EditTemp_2() {
   useEffect(() => {
     const fetchTemplateData = async () => {
       try {
-        setIsLoading(true);        
-        const response = await fetch(`https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod/api/professional/${userId}/${draftId}?template=template-2`);
+        setIsLoading(true);
+      const response = await fetch(`https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=template2`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
         
         if (response.ok) {
-          const data = await response.json();
-
-          setFinalTemplate(data);
-          setAIGenData(data);
           
-          if (data.content) {
-            setComponentStates(data.content);
+          const data = await response.json();
+          console.log('Response status:', data);
+          setFinalTemplate(data[0]);
+          setAIGenData(data[0]);
+          
+          if (data[0].content) {
+            setComponentStates(data[0].content);
           } else {
             toast.error("No content found in response");
             setComponentStates({});
@@ -113,10 +118,10 @@ export default function EditTemp_2() {
       }
     };
     
-    if (userId && draftId) {
+    if (userId && professionalId) {
       fetchTemplateData();
     }
-  }, [userId, draftId, setFinalTemplate, setAIGenData]);
+  }, [userId,professionalId, setFinalTemplate, setAIGenData]);
 
   const handleDarkModeToggle = useCallback((isDark: boolean) => {
     setIsDarkMode(isDark);
@@ -142,7 +147,6 @@ export default function EditTemp_2() {
     );
   }
 
-  // console.log('Current component states:', componentStates);
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
@@ -151,7 +155,7 @@ export default function EditTemp_2() {
         headerData={componentStates.headerContent}
         onStateChange={createStateChangeHandler('headerContent')}
         userId={AIGenData.userId}
-        publishedId={AIGenData.professionalId}
+        professionalId={AIGenData.professionalId}
         templateSelection={AIGenData.templateSelection}
       />
 
@@ -170,7 +174,7 @@ export default function EditTemp_2() {
           heroData={componentStates.heroContent}
           onStateChange={createStateChangeHandler('heroContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
@@ -179,7 +183,7 @@ export default function EditTemp_2() {
           aboutData={componentStates.aboutContent}
           onStateChange={createStateChangeHandler('aboutContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
@@ -187,30 +191,32 @@ export default function EditTemp_2() {
           skillsData={componentStates.skillContent}
           onStateChange={createStateChangeHandler('skillContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
-<Services
+
+        <Services
           servicesData={componentStates.serviceContent}
           onStateChange={createStateChangeHandler('serviceContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
+
         <Projects 
           projectsData={componentStates.projectContent}
           onStateChange={createStateChangeHandler('projectContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
-        
+
         {/* Certifications Section */}
         <Certifications
           certData={componentStates.certificationsContent}
           onStateChange={createStateChangeHandler('certificationsContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
@@ -220,7 +226,7 @@ export default function EditTemp_2() {
             clientsData={componentStates.clientsContent}
             onStateChange={createStateChangeHandler('clientsContent')}
             userId={AIGenData.userId}
-            publishedId={AIGenData.professionalId}
+            professionalId={AIGenData.professionalId}
             templateSelection={AIGenData.templateSelection}
           />
         </section>
@@ -231,7 +237,7 @@ export default function EditTemp_2() {
             testimonialsData={componentStates.testimonialContent}
             onStateChange={createStateChangeHandler('testimonialContent')}
             userId={AIGenData.userId}
-            publishedId={AIGenData.professionalId}
+            professionalId={AIGenData.professionalId}
             templateSelection={AIGenData.templateSelection}
           />
         </section>
@@ -241,7 +247,7 @@ export default function EditTemp_2() {
           contactData={componentStates.contactContent}
           onStateChange={createStateChangeHandler('contactContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
       </main>
@@ -251,7 +257,7 @@ export default function EditTemp_2() {
         footerData={componentStates.footerContent}
         onStateChange={createStateChangeHandler('footerContent')}
         userId={AIGenData.userId}
-        publishedId={AIGenData.professionalId}
+        professionalId={AIGenData.professionalId}
         templateSelection={AIGenData.templateSelection}
       />
       
