@@ -15,6 +15,8 @@ const Navbar: React.FC = () => {
       { href: "#about", label: "About" },
       { href: "#skills", label: "Skills" },
       { href: "#projects", label: "Projects" },
+      { href: "#services", label: "Services" },
+      { href: "#testimonials", label: "Testimonials" },
       { href: "#contact", label: "Contact" },
     ],
     []
@@ -78,17 +80,17 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="flex items-center space-x-2 cursor-pointer"
+            className="flex items-center space-x-2 cursor-pointer text-blue-500 dark:text-orange-500"
             onClick={() => scrollToSection("#home")}
           >
-            <Code className="w-8 h-8 text-orange-500" />
-            <span className="text-xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            <Code className="w-8 h-8" />
+            <span className="text-xl font-bold truncate">
               Portfolio
             </span>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => (
               <motion.button
                 key={link.href}
@@ -116,7 +118,7 @@ const Navbar: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={toggleDarkMode}
-            className="hidden md:inline-block p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-accent-yellow/20 transition-colors duration-200"
+            className="hidden md:inline-block p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-accent-yellow/20 transition-colors duration-200"
           >
             {isDarkMode ? (
               <Sun className="w-5 h-5" />

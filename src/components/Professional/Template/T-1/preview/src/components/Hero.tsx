@@ -55,7 +55,7 @@ const Hero: React.FC = () => {
   return (
     <section
       id="home"
-      className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 pt-28"
+      className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 pt-40"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-40 relative">
         <motion.div
@@ -67,11 +67,8 @@ const Hero: React.FC = () => {
           {/* Left Side - Content */}
           <div className="space-y-8">
             <div className="space-y-6">
-              <motion.h1 className="text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight text-gray-900 dark:text-white">
-                Hi, I'm{" "}
-                <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 dark:from-yellow-400 dark:via-orange-500 dark:to-red-500 bg-clip-text text-transparent">
-                  {heroContent.name}
-                </span>
+              <motion.h1 className="text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight text-blue-500 dark:text-orange-500">
+                Hi, I'm{" "}{heroContent.name}
               </motion.h1>
 
               <motion.p className="text-xl lg:text-2xl xl:text-3xl font-semibold text-blue-600 dark:text-orange-400">

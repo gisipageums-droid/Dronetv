@@ -63,13 +63,13 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
 
   const handleSave = () => {
     if (onSave) onSave(editedContent);
-    toast.success("Footer updated successfully")
+    toast.success("Footer updated successfully");
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setEditedContent(content);
-    toast.success("Cancel update")
+    toast.success("Cancel update");
     setIsEditing(false);
   };
 

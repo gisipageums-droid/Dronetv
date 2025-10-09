@@ -71,11 +71,11 @@ interface SkillsProps {
   skillsData?: SkillsData;
   onStateChange?: (data: SkillsData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
-export function Skills({ skillsData, onStateChange, userId, publishedId, templateSelection }: SkillsProps) {
+export function Skills({ skillsData, onStateChange, userId, professionalId, templateSelection }: SkillsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -217,7 +217,7 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
       // Upload icon images for skills with pending files
       for (const [skillId, file] of Object.entries(pendingIconFiles)) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }

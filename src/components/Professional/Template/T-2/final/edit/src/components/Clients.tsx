@@ -83,7 +83,7 @@ const defaultData: ClientsData = {
   }
 };
 
-export function Clients({ clientsData, onStateChange, userId, publishedId, templateSelection }) {
+export function Clients({ clientsData, onStateChange, userId, professionalId, templateSelection }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -187,7 +187,7 @@ export function Clients({ clientsData, onStateChange, userId, publishedId, templ
 
       // Upload logos for clients with pending files
       for (const [clientId, file] of Object.entries(pendingLogoFiles)) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }

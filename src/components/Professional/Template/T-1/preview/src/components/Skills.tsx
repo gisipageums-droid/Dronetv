@@ -95,14 +95,6 @@ const Skills: React.FC = () => {
     visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
   };
 
-  const progressVariants = {
-    hidden: { width: 0 },
-    visible: (level: number) => ({
-      width: `${level}%`,
-      transition: { duration: 1, delay: 0.5 },
-    }),
-  };
-
   return (
     <section
       id="skills"
@@ -138,10 +130,8 @@ const Skills: React.FC = () => {
                 whileHover={{ y: -5 }}
                 className="bg-gray-50 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-orange/50 transition-all duration-300"
               >
-                <div className="flex items-center mb-6">
-                  <div
-                    className={`w-4 h-4 rounded-full bg-gradient-to-r ${category.color} mr-3`}
-                  />
+                <div className="flex items-center mb-6 gap-2">
+                  <Zap className="w-8 h-8" />
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {category.title}
                   </h3>
@@ -152,25 +142,24 @@ const Skills: React.FC = () => {
                     <div key={skillIndex} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <skill.icon className="w-5 h-5 text-accent-orange mr-3" />
+                          <skill.icon className="w-6 h-6 text-orange-500 mr-3" />
                           <span className="text-gray-700 dark:text-gray-200 font-medium">
                             {skill.name}
                           </span>
                         </div>
 
-                        <span className="text-accent-yellow font-semibold">
+                        <span className="text-orange-500 text-lg font-semibold">
                           {skill.level}%
                         </span>
                       </div>
 
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <motion.div
-                          variants={progressVariants}
-                          initial="hidden"
-                          whileInView="visible"
-                          custom={skill.level}
-                          viewport={{ once: true }}
-                          className={`h-2 rounded-full bg-gradient-to-r ${category.color}`}
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
+                        <div
+                          className={`h-full rounded-full bg-orange-500 transition-all duration-1000 ease-out`}
+                          style={{
+                            width: `${skill.level || 0}%`,
+                            transitionDelay: `${0.8 + categoryIndex * 0.1}s`,
+                          }}
                         />
                       </div>
                     </div>
@@ -182,8 +171,8 @@ const Skills: React.FC = () => {
 
           {/* Technologies Showcase */}
           <motion.div variants={itemVariants} className="mt-16">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
-              Technologies I Work With
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8 border-b-2 border-orange-500/50 pb-2 max-w-lg mx-auto">
+              Technologies
             </h3>
 
             <div className="flex flex-wrap justify-center gap-4">
@@ -192,7 +181,7 @@ const Skills: React.FC = () => {
                   key={index}
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-4 py-2 bg-gray-100 dark:bg-white/10 backdrop-blur-sm border border-gray-300 dark:border-gray-600 rounded-full text-gray-700 dark:text-gray-200 hover:border-accent-orange hover:text-accent-orange transition-all duration-200 cursor-pointer"
+                  className="px-5 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
                 >
                   {tech}
                 </motion.div>

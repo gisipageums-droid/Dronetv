@@ -9,7 +9,6 @@ import {
   Zap,
   ArrowRight,
   Check,
-  Star,
 } from "lucide-react";
 
 const Service: React.FC = () => {
@@ -133,10 +132,7 @@ const Service: React.FC = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            My{" "}
-            <span className="text-orange-400">
-              Services
-            </span>
+            My <span className="text-orange-400">Services</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             Comprehensive development solutions tailored to bring your ideas to
@@ -159,7 +155,7 @@ const Service: React.FC = () => {
                 whileHover={{ y: -10, scale: 1.02 }}
                 onHoverStart={() => setHoveredService(service.id)}
                 onHoverEnd={() => setHoveredService(null)}
-                className="group relative bg-white dark:bg-gray-900 rounded-2xl p-2 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
+                className="group relative bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
               >
                 {/* Service Icon */}
                 <div
@@ -229,7 +225,7 @@ const Service: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`w-full bg-gradient-to-r ${service.color} text-black dark:text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-lg`}
+                  className={`w-full bg-orange-500 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-lg`}
                 >
                   <span>Get Started</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -245,7 +241,7 @@ const Service: React.FC = () => {
         </div>
 
         {/* Why Choose Me Section */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -296,7 +292,7 @@ const Service: React.FC = () => {
               </p>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );

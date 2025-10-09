@@ -69,11 +69,11 @@ interface HeroProps {
   heroData?: Partial<HeroData>;
   onStateChange?: (data: HeroData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
-export function Hero({ heroData, onStateChange, userId, publishedId, templateSelection }: HeroProps) {
+export function Hero({ heroData, onStateChange, userId, professionalId, templateSelection }: HeroProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -240,7 +240,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
 
       // Upload image only if there's a pending file
       if (pendingImageFile) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           setIsUploading(false);
           setIsSaving(false);
@@ -659,6 +659,6 @@ Hero.defaultProps = {
   heroData: undefined,
   onStateChange: undefined,
   userId: '',
-  publishedId: '',
+  professionalId: '',
   templateSelection: '',
 };

@@ -60,7 +60,7 @@ interface AboutProps {
   aboutData?: AboutData;
   onStateChange?: (data: AboutData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
@@ -68,7 +68,7 @@ export function About({
   aboutData,
   onStateChange,
   userId,
-  publishedId,
+  professionalId,
   templateSelection,
 }: AboutProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -162,7 +162,7 @@ export function About({
 
       // Upload image if there's a pending file
       if (pendingImageFile) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }

@@ -136,11 +136,11 @@ interface FooterProps {
   footerData?: FooterData;
   onStateChange?: (data: FooterData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
-export function Footer({ footerData, onStateChange, userId, publishedId, templateSelection }: FooterProps) {
+export function Footer({ footerData, onStateChange, userId, professionalId, templateSelection }: FooterProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

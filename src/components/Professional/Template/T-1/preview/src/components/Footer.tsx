@@ -36,10 +36,10 @@ const Footer: React.FC = () => {
           <div className="col-span-1 lg:col-span-2">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="flex items-center space-x-2 mb-4"
+              className="flex items-center space-x-2 mb-4 text-blue-500 dark:text-orange-500"
             >
-              <Code className="w-8 h-8 text-orange-400" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+              <Code className="w-8 h-8" />
+              <span className="text-2xl font-bold">
                 John Doe
               </span>
             </motion.div>

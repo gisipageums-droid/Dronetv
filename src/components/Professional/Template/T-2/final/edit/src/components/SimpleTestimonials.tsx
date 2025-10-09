@@ -76,7 +76,7 @@ interface TestimonialsProps {
   testimonialsData?: TestimonialsData;
   onStateChange?: (data: TestimonialsData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
@@ -84,7 +84,7 @@ export function Testimonials({
   testimonialsData, 
   onStateChange, 
   userId, 
-  publishedId, 
+  professionalId, 
   templateSelection 
 }: TestimonialsProps) {
   const [isEditing, setIsEditing] = useState(false);

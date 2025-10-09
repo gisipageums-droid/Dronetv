@@ -9,12 +9,14 @@ export interface AboutContent {
   description1: string;
   description2: string;
   description3: string;
-  yearsExperience: string;
-  projectsCompleted: string;
-  happyClients: string;
-  countriesServed: string;
-  skills: string[];
   imageSrc: string;
+  skills: string[];
+  stats: {
+    yearsExperience: string;
+    skillsCount: string;
+    projectsCompleted: string;
+    happyClients: string;
+  };
 }
 
 interface AboutProps {
@@ -29,14 +31,12 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [skillsInput, setSkillsInput] = useState("");
 
-  // 🔹 Sync local state with props when content changes
   useEffect(() => {
     if (content) {
       setAboutContent(content);
     }
   }, [content]);
 
-  // 🔹 Sync skillsInput when entering edit mode
   useEffect(() => {
     if (isEditing) {
       setSkillsInput(aboutContent.skills.join(", "));
@@ -47,26 +47,26 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     {
       icon: Calendar,
       label: "Years Experience",
-      value: aboutContent.yearsExperience,
+      value: aboutContent.stats.yearsExperience,
       key: "yearsExperience" as const,
     },
     {
       icon: Award,
       label: "Projects Completed",
-      value: aboutContent.projectsCompleted,
+      value: aboutContent.stats.projectsCompleted,
       key: "projectsCompleted" as const,
     },
     {
       icon: Users,
       label: "Happy Clients",
-      value: aboutContent.happyClients,
+      value: aboutContent.stats.happyClients,
       key: "happyClients" as const,
     },
     {
       icon: MapPin,
       label: "Countries Served",
-      value: aboutContent.countriesServed,
-      key: "countriesServed" as const,
+      value: aboutContent.stats.skillsCount,
+      key: "skillsCount" as const,
     },
   ];
 
@@ -87,21 +87,18 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setAboutContent((prevState) => ({ ...prevState, [name]: value }));
+    setAboutContent((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleStatChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    statKey: keyof Pick<
-      AboutContent,
-      | "yearsExperience"
-      | "projectsCompleted"
-      | "happyClients"
-      | "countriesServed"
-    >
+    statKey: keyof AboutContent["stats"]
   ) => {
     const { value } = e.target;
-    setAboutContent((prevState) => ({ ...prevState, [statKey]: value }));
+    setAboutContent((prev) => ({
+      ...prev,
+      stats: { ...prev.stats, [statKey]: value },
+    }));
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,33 +119,36 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("userId", userId!);
+      formData.append("userId", userId || "");
       formData.append("fieldName", "AboutImage");
 
-      const uploadResponse = await fetch(
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        setAboutContent((prev) => ({
-          ...prev,
-          imageSrc: uploadData.s3Url,
-        }));
-        toast.success("Image uploaded successfully!");
-      } else {
-        const errorData = await uploadResponse.json();
-        toast.error(
-          `Image upload failed: ${errorData.message || "Unknown error"}`
+      try {
+        const uploadResponse = await fetch(
+          `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+          {
+            method: "POST",
+            body: formData,
+          }
         );
-        return;
-      }
 
-      setIsUploading(false);
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          setAboutContent((prev) => ({
+            ...prev,
+            imageSrc: uploadData.s3Url,
+          }));
+          toast.success("Image uploaded successfully!");
+        } else {
+          const errorData = await uploadResponse.json();
+          toast.error(
+            `Image upload failed: ${errorData.message || "Unknown error"}`
+          );
+        }
+      } catch {
+        toast.error("Image upload failed due to network error.");
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -191,7 +191,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                   </button>
                   <button
                     onClick={() => {
-                      setAboutContent(content); // 🔹 Revert to original
+                      setAboutContent(content);
                       setSkillsInput(content.skills.join(", "));
                       setIsEditing(false);
                       toast.info("Changes discarded");
@@ -246,8 +246,9 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
             )}
           </motion.div>
 
+          {/* Content + Image */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Side - Image */}
+            {/* Left - Image */}
             <motion.div variants={itemVariants} className="relative">
               <div className="relative overflow-hidden rounded-2xl">
                 <img
@@ -273,28 +274,14 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                     </motion.label>
                   ) : (
                     <div className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/40 text-white font-semibold text-lg">
-                      <p>Uploading...</p>
+                      Uploading...
                     </div>
                   ))}
               </div>
             </motion.div>
 
-            {/* Right Side - Content */}
+            {/* Right - Descriptions + Skills */}
             <motion.div variants={itemVariants} className="space-y-6">
-              {/* {isEditing ? (
-                <input
-                  type="text"
-                  name="heading"
-                  value={aboutContent.heading}
-                  onChange={handleContentChange}
-                  className="w-full text-3xl font-bold bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                />
-              ) : (
-                <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {aboutContent.heading}
-                </h3>
-              )} */}
-
               <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
                 {isEditing ? (
                   <>

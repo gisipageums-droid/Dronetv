@@ -22,6 +22,7 @@ interface ComponentStates {
   certificationsContent?: any;
   clientsContent?: any;
   skillContent?: any;
+  serviceContent?: any; // Added missing serviceContent property
   projectContent?: any;
   testimonialContent?: any;
   contactContent?: any;

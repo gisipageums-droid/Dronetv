@@ -1,59 +1,69 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Quote, Star } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Quote, Star } from "lucide-react";
 
 const Testimonials: React.FC = () => {
   const testimonials = [
     {
       id: 1,
-      name: 'Sarah Johnson',
-      position: 'CEO, TechStart Inc.',
-      company: 'TechStart Inc.',
-      image: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400',
-      content: 'John delivered an exceptional e-commerce platform that exceeded our expectations. His attention to detail and ability to understand our business needs made the entire process smooth and efficient.',
+      name: "Sarah Johnson",
+      position: "CEO, TechStart Inc.",
+      company: "TechStart Inc.",
+      image:
+        "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400",
+      content:
+        "John delivered an exceptional e-commerce platform that exceeded our expectations. His attention to detail and ability to understand our business needs made the entire process smooth and efficient.",
       rating: 5,
-      project: 'E-Commerce Platform'
+      project: "E-Commerce Platform",
     },
     {
       id: 2,
-      name: 'Michael Chen',
-      position: 'CTO, DataFlow Solutions',
-      company: 'DataFlow Solutions',
-      image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400',
-      content: 'Working with John was a game-changer for our company. He transformed our complex data requirements into an intuitive platform that our team loves using. Highly recommended!',
+      name: "Michael Chen",
+      position: "CTO, DataFlow Solutions",
+      company: "DataFlow Solutions",
+      image:
+        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
+      content:
+        "Working with John was a game-changer for our company. He transformed our complex data requirements into an intuitive platform that our team loves using. Highly recommended!",
       rating: 5,
-      project: 'Data Analytics Dashboard'
+      project: "Data Analytics Dashboard",
     },
     {
       id: 3,
-      name: 'Emily Rodriguez',
-      position: 'Product Manager, InnovateLab',
-      company: 'InnovateLab',
-      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
-      content: 'Johns expertise in both frontend and backend development allowed us to build a cohesive product. His communication skills and proactive approach made our collaboration seamless.',
+      name: "Emily Rodriguez",
+      position: "Product Manager, InnovateLab",
+      company: "InnovateLab",
+      image:
+        "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
+      content:
+        "Johns expertise in both frontend and backend development allowed us to build a cohesive product. His communication skills and proactive approach made our collaboration seamless.",
       rating: 5,
-      project: 'Project Management Tool'
+      project: "Project Management Tool",
     },
     {
       id: 4,
-      name: 'David Thompson',
-      position: 'Founder, EduTech Pro',
-      company: 'EduTech Pro',
-      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
-      content: 'John built our learning management system from the ground up. The scalability and user experience he delivered have been crucial to our success. A true professional!',
+      name: "David Thompson",
+      position: "Founder, EduTech Pro",
+      company: "EduTech Pro",
+      image:
+        "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400",
+      content:
+        "John built our learning management system from the ground up. The scalability and user experience he delivered have been crucial to our success. A true professional!",
       rating: 5,
-      project: 'Learning Management System'
+      project: "Learning Management System",
     },
     {
       id: 5,
-      name: 'Lisa Wang',
-      position: 'Marketing Director, GrowthCo',
-      company: 'GrowthCo',
-      image: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400',
-      content: 'The mobile app John developed for us has received fantastic user feedback. His ability to translate our vision into a beautiful, functional product was impressive.',
+      name: "Lisa Wang",
+      position: "Marketing Director, GrowthCo",
+      company: "GrowthCo",
+      image:
+        "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400",
+      content:
+        "The mobile app John developed for us has received fantastic user feedback. His ability to translate our vision into a beautiful, functional product was impressive.",
       rating: 5,
-      project: 'Mobile Application'
-    }
+      project: "Mobile Application",
+    },
   ];
 
   return (
@@ -68,13 +78,11 @@ const Testimonials: React.FC = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            What Clients{' '}
-            <span className="text-orange-400">
-              Say
-            </span>
+            What Clients <span className="text-orange-400">Say</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Don't just take my word for it. Here's what my clients have to say about working with me.
+            Don't just take my word for it. Here's what my clients have to say
+            about working with me.
           </p>
         </motion.div>
 
@@ -105,7 +113,10 @@ const Testimonials: React.FC = () => {
               {/* Rating */}
               <div className="flex space-x-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-accent-yellow text-accent-yellow" />
+                  <Star
+                    key={i}
+                    className="w-4 h-4 text-yellow-500 fill-yellow-500"
+                  />
                 ))}
               </div>
 
@@ -120,7 +131,7 @@ const Testimonials: React.FC = () => {
                   <h3 className="font-bold text-gray-900 dark:text-white">
                     {testimonial.name}
                   </h3>
-                  <p className="text-accent-orange font-medium text-sm">
+                  <p className="text-orange-500 font-medium text-sm">
                     {testimonial.position}
                   </p>
                   <p className="text-gray-600 dark:text-gray-400 text-xs">
@@ -130,9 +141,9 @@ const Testimonials: React.FC = () => {
               </div>
 
               {/* Project Tag */}
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-accent-yellow/20 to-accent-orange/20 border border-accent-orange/30 rounded-full">
-                  <span className="text-accent-orange font-medium text-sm">
+              <div className="mt-4 pt-4 border-t border-orange-500 dark:border-gray-700">
+                <div className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-accent-yellow/20 to-accent-orange/20 border border-orange-500 rounded-full">
+                  <span className="text-orange-500 font-medium text-sm">
                     {testimonial.project}
                   </span>
                 </div>
@@ -152,9 +163,15 @@ const Testimonials: React.FC = () => {
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
             Trusted by Amazing Companies
           </h3>
-          
+
           <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
-            {['TechStart', 'DataFlow', 'InnovateLab', 'EduTech Pro', 'GrowthCo'].map((company, index) => (
+            {[
+              "TechStart",
+              "DataFlow",
+              "InnovateLab",
+              "EduTech Pro",
+              "GrowthCo",
+            ].map((company, index) => (
               <motion.div
                 key={index}
                 whileHover={{ scale: 1.1, opacity: 1 }}

@@ -83,11 +83,11 @@ interface ProjectsProps {
   projectsData?: ProjectsData;
   onStateChange?: (data: ProjectsData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
-export function Projects({ projectsData, onStateChange, userId, publishedId, templateSelection }: ProjectsProps) {
+export function Projects({ projectsData, onStateChange, userId, professionalId, templateSelection }: ProjectsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -185,7 +185,7 @@ export function Projects({ projectsData, onStateChange, userId, publishedId, tem
 
       // Upload images for projects with pending files
       for (const [projectId, file] of Object.entries(pendingImageFiles)) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }

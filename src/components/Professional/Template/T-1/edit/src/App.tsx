@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { DarkModeProvider } from "./context/DarkModeContext";
-import Navbar from "./components/Header";
+import Navbar, { HeaderContent } from "./components/Header";
 import Hero, { HeroContent } from "./components/Hero";
 import About, { AboutContent } from "./components/About";
 import Skills, { SkillContent } from "./components/Skills";
 import Projects, { ProjectContent } from "./components/Projects";
 import Testimonials, { TestimonialContent } from "./components/Testimonials";
 import Contact, { ContactContent } from "./components/Contact";
-import Footer from "./components/Footer";
+import Footer, { FooterContent } from "./components/Footer";
 import Service, { ServiceContent } from "./components/Service";
 import { useParams } from "react-router-dom";
-import { Loader2, Upload } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 import { useTemplate } from "../../../../../../components/context/context";
+import Publish from "./components/Publish";
 
 interface AIResponse {
   professionalId?: string;
@@ -23,7 +23,7 @@ interface AIResponse {
   lastModified?: Date | null;
   version?: number;
   content: {
-    headerContent: object;
+    headerContent: HeaderContent;
     heroContent: HeroContent;
     aboutContent: AboutContent;
     skillContent: SkillContent;
@@ -31,6 +31,7 @@ interface AIResponse {
     serviceContent: ServiceContent;
     testimonialContent: TestimonialContent;
     contactContent: ContactContent;
+    footerContent: FooterContent;
   };
 }
 
@@ -42,20 +43,53 @@ type SectionContent =
   | ServiceContent
   | TestimonialContent
   | ContactContent
+  | FooterContent
   | object;
+
+/**
+ * We don't get footer json response from api,
+ * so i have added dummy footer data
+ */
+const defaultFooterContent: FooterContent = {
+  personalInfo: {
+    name: "John Doe",
+    description:
+      "Full-Stack Developer passionate about creating exceptional digital experiences. I build modern, scalable applications that make a difference.",
+  },
+  socialLinks: [
+    { name: "Github", href: "#", icon: "Github" },
+    { name: "Linkedin", href: "#", icon: "Linkedin" },
+    { name: "Mail", href: "mailto:john.doe@example.com", icon: "Mail" },
+  ],
+  quickLinks: [
+    { href: "#home", label: "Home" },
+    { href: "#about", label: "About" },
+    { href: "#skills", label: "Skills" },
+    { href: "#projects", label: "Projects" },
+  ],
+  moreLinks: [
+    { href: "#services", label: "Services" },
+    { href: "#testimonials", label: "Testimonials" },
+  ],
+  newsletter: {
+    title: "Stay Updated",
+    description: "Get notified about new projects and insights.",
+    placeholder: "Your email",
+    buttonText: "Join",
+  },
+  bottomSection: {
+    copyrightText: "Made with",
+    afterCopyrightText: "and lots of ☕",
+    privacyPolicy: { href: "#", label: "Privacy Policy" },
+    termsOfService: { href: "#", label: "Terms of Service" },
+  },
+};
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [isPublishing, setIsPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { userId, draftId } = useParams<{ userId: string; draftId: string }>();
-  const {
-    finalTemplate,
-    setFinalTemplate,
-    AIGenData,
-    setAIGenData,
-    publishProfessionalTemplate,
-  } = useTemplate();
+  const { setFinalTemplate, AIGenData, setAIGenData } = useTemplate();
 
   const handleUpdateSection = useCallback(
     (section: keyof AIResponse["content"], updatedContent: SectionContent) => {
@@ -82,7 +116,6 @@ const App: React.FC = () => {
           : prev
       );
     },
-
     [setFinalTemplate, setAIGenData]
   );
 
@@ -107,8 +140,22 @@ const App: React.FC = () => {
         }
 
         const data: AIResponse = await response.json();
-        setFinalTemplate(data);
-        setAIGenData(data);
+
+        // Ensure footerContent exists with default values if not provided
+        const updatedData = {
+          ...data,
+          content: {
+            ...data.content,
+            skillContent: {
+              heading: data.content.skillContent?.heading || "My Skills",
+              ...data.content.skillContent,
+            },
+            footerContent: data.content.footerContent || defaultFooterContent,
+          },
+        };
+
+        setFinalTemplate(updatedData);
+        setAIGenData(updatedData);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError(error instanceof Error ? error.message : "An error occurred");
@@ -119,19 +166,6 @@ const App: React.FC = () => {
 
     fetchData();
   }, [draftId, userId, setAIGenData, setFinalTemplate]);
-
-  const handlePublish = useCallback(() => {
-    if (Object.keys(finalTemplate).length === 0) {
-      toast.error("No content to publish");
-      return;
-    }
-    setIsPublishing(true);
-    publishProfessionalTemplate()
-    .then(() => setIsPublishing(false))
-    // setTimeout(() => {
-    //   setIsPublishing(false);
-    // }, 2000);
-  }, [finalTemplate, publishProfessionalTemplate]);
 
   if (loading) {
     return (
@@ -157,12 +191,18 @@ const App: React.FC = () => {
     );
   }
 
-  // console.log(finalTemplate);
+  console.log("Final Template =>", AIGenData);
 
   return (
     <DarkModeProvider>
       <div className="relative min-h-screen transition-colors duration-300 bg-white dark:bg-gray-900">
-        <Navbar />
+        <Navbar
+          content={AIGenData.content.headerContent}
+          onSave={(updatedHeader) =>
+            handleUpdateSection("headerContent", updatedHeader)
+          }
+          userId={AIGenData.userId}
+        />
         <Hero
           content={AIGenData.content.heroContent}
           onSave={(updatedHero) =>
@@ -208,25 +248,14 @@ const App: React.FC = () => {
             handleUpdateSection("contactContent", updatedContact)
           }
         />
-        <Footer />
+        <Footer
+          content={AIGenData.content.footerContent}
+          onSave={(updatedFooter) =>
+            handleUpdateSection("footerContent", updatedFooter)
+          }
+        />
 
-        <button
-          onClick={handlePublish}
-          className="fixed z-50 flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white transition-all duration-200 bg-orange-500 rounded-full right-10 bottom-20 hover:scale-105 hover:shadow-lg"
-        >
-          {isPublishing ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Publishing...
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Upload className="w-5 h-5" />
-              Publish Update
-            </div>
-          )}
-        </button>
-
+        <Publish />
         <Toaster position="top-right" richColors />
       </div>
     </DarkModeProvider>

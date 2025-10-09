@@ -71,6 +71,10 @@ import FinaleProfessionalTemp2 from "./components/Professional/Template/T-2/fina
 import FinalEditTemp_2 from "./components/Professional/Template/T-2/final/edit/src/App"
 import MainProTemp2 from "./components/mainProfessionalPreview/t2/src/App";
 
+import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/final/preview/src/App";
+import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/final/edit/src/App";
+// import MainProTemp1 from "./components/mainProfessinalPreview/T-1/preview/src/App";
+
 const HomePage = () => (
   <>
     <Hero />
@@ -160,6 +164,10 @@ const AppContent = () => {
           <Route path='/user/professionals/preview/2/:professionalId/:userId' element={<FinaleProfessionalTemp2 />} />
           <Route path='/user/professionals/edit/2/:professionalId/:userId' element={<FinalEditTemp_2 />} />
           <Route path='/professionals/:urlSlug' element={<MainProTemp2 />} />
+
+          <Route path="/user/professionals/preview/1/:professionalId/:userId" element={<FinaleProfessionalTemp1 />} />
+          <Route path="/user/professionals/edit/1/:professionalId/:userId" element={<FinaleProfessionalTemp1Edit />} />
+          {/* <Route path="/professional/:urlSlug" element={<MainProTemp1 />} /> */}
 
         {/* event routes */}
         <Route path='/admin/event/dashboard' element={<EventAdminDashboard />} />

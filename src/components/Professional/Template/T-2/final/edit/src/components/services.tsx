@@ -73,11 +73,11 @@ interface ServicesProps {
     servicesData?: ServicesData;
     onStateChange?: (data: ServicesData) => void;
     userId?: string;
-    publishedId?: string;
+    professionalId?: string;
     templateSelection?: string;
 }
 
-export function Services({ servicesData, onStateChange, userId, publishedId, templateSelection }: ServicesProps) {
+export function Services({ servicesData, onStateChange, userId, professionalId, templateSelection }: ServicesProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -137,7 +137,7 @@ export function Services({ servicesData, onStateChange, userId, publishedId, tem
 
             // Upload images for services with pending files
             for (const [serviceId, file] of Object.entries(pendingImageFiles)) {
-                if (!userId || !publishedId || !templateSelection) {
+                if (!userId || !professionalId || !templateSelection) {
                     toast.error('Missing user information. Please refresh and try again.');
                     return;
                 }

@@ -75,11 +75,11 @@ interface CertificationsProps {
   certData?: CertificationsData;
   onStateChange?: (data: CertificationsData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
-export function Certifications({ certData, onStateChange, userId, publishedId, templateSelection }: CertificationsProps) {
+export function Certifications({ certData, onStateChange, userId, professionalId, templateSelection }: CertificationsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -153,7 +153,7 @@ export function Certifications({ certData, onStateChange, userId, publishedId, t
 
       // Upload images for certifications with pending files
       for (const [certId, file] of Object.entries(pendingImageFiles)) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
