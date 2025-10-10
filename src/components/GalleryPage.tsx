@@ -50,7 +50,7 @@ const GalleryPage = () => {
   });
 
   const imagesPerPage = 24;
-  const categories = ['All', 'Events', 'Collaborations', 'Conferences', 'Interviews', 'Product Launches', 'Team Photos'];
+  const categories = ['All', 'Events', 'Collaborations', 'Conferences', 'Interviews', 'Product Launches', 'Team Photos', 'Gallery', 'Exhibition', 'Demonstration', 'Education', 'Media'];
 
   // Default images - these are the initial images
   const defaultImages: ImageItem[] = [
@@ -317,7 +317,8 @@ const GalleryPage = () => {
       attendees: "160+",
       description: "Discussing convergence of AI and GIS in drone workflows.",
       tags: ["dev", "vamsi", "sandeep", "pranay"]
-    }, {
+    },
+    {
       id: 26,
       src: "/images/1.png",
       title: "DroneWorld Conference 2024 Opening Ceremony",
@@ -576,12 +577,274 @@ const GalleryPage = () => {
       description: "Celebrating major company milestones and achievements.",
       tags: ["Rini Bansal"]
     },
+    // New images (IDs 50-74)
+    {
+      id: 51,
+      src: "/images/NAG_9983.jpg",
+      title: "Drone Showcase",
+      category: "Gallery",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Drone display session featuring advanced UAV technology.",
+      tags: ["Amar"]
+    },
+    {
+      id: 52,
+      src: "/images/NAG_9940.jpg",
+      title: "Interactive Session",
+      category: "Interviews",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "One-on-one interaction with exhibitors and drone innovators.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 53,
+      src: "/images/NAG_0042.jpg",
+      title: "Exhibitor Booths",
+      category: "Exhibition",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Showcasing drone hardware and software solutions from leading brands.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 54,
+      src: "/images/NAG_0024.jpg",
+      title: "Drone Demo",
+      category: "Demonstration",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Live drone flight demonstration at the Drone Expo ground.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 55,
+      src: "/images/NAG_0005.jpg",
+      title: "Visitors Interaction",
+      category: "Gallery",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Attendees exploring new drone technologies and interacting with experts.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 56,
+      src: "/images/ASJ07458.jpg",
+      title: "Drone Launch",
+      category: "Product Launch",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Official unveiling of a new commercial UAV at Drone Expo 2025.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 57,
+      src: "/images/ASJ07430.jpg",
+      title: "Panel Discussion",
+      category: "Conference",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Industry leaders discussing drone regulations and opportunities.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 58,
+      src: "/images/ASJ07352.jpg",
+      title: "Networking Session",
+      category: "Event",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Professionals connecting and sharing ideas in the UAV industry.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 59,
+      src: "/images/NAG_0429.jpg",
+      title: "Drone Display Zone",
+      category: "Exhibition",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Large-scale display of agricultural and defense drones.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 60,
+      src: "/images/NAG_0435.jpg",
+      title: "Training Awareness",
+      category: "Education",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Promoting DGCA-certified pilot training at India Drone Academy booth.",
+      tags: ["India Drone Academy"]
+    },
+    {
+      id: 61,
+      src: "/images/NAG_0443.jpg",
+      title: "Live Demonstration",
+      category: "Demonstration",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Drone simulation and field demonstration conducted for visitors.",
+      tags: ["Drone Simulator Pro"]
+    },
+    {
+      id: 62,
+      src: "/images/NAG_0245.jpg",
+      title: "Industry Showcase",
+      category: "Gallery",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Various UAV industry applications displayed during the expo.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 63,
+      src: "/images/NAG_0089.jpg",
+      title: "Expo Entry Zone",
+      category: "Event",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Attendees arriving at the Drone Expo 2025 entry pavilion.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 64,
+      src: "/images/_SKJ9808.jpg",
+      title: "Keynote Session",
+      category: "Conference",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Keynote speakers addressing drone innovation and growth.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 65,
+      src: "/images/_SKJ9803.jpg",
+      title: "Exhibitor Interaction",
+      category: "Gallery",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Exhibitors engaging with DroneTV crew for interviews.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 66,
+      src: "/images/_SKJ9770.jpg",
+      title: "Aerial Footage Capture",
+      category: "Media",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Behind-the-scenes media capture for DroneTV coverage.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 67,
+      src: "/images/_SKJ9765.jpg",
+      title: "Panel Interaction",
+      category: "Conference",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Drone industry experts engaging in panel discussions.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 68,
+      src: "/images/_SKJ9694.jpg",
+      title: "Product Display",
+      category: "Exhibition",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Latest drone products and accessories displayed.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 69,
+      src: "/images/NAG_9927.jpg",
+      title: "Delegates Visit",
+      category: "Event",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Delegates and guests visiting the DroneTV booth.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 70,
+      src: "/images/NAG_9669.jpg",
+      title: "Drone Showcase Zone",
+      category: "Exhibition",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Professional drones showcased for industrial applications.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 71,
+      src: "/images/_SKJ9421.jpg",
+      title: "Team Interaction",
+      category: "Gallery",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "DroneTV production team interacting with exhibitors.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 72,
+      src: "/images/_SKJ9409.jpg",
+      title: "Crowd Engagement",
+      category: "Event",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Visitors exploring drone technology zones at the expo.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 73,
+      src: "/images/_SKJ9405.jpg",
+      title: "Booth Showcase",
+      category: "Exhibition",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Interactive booths by top drone training organizations.",
+      tags: ["DroneTV"]
+    },
+    {
+      id: 74,
+      src: "/images/_SKJ9401.jpg",
+      title: "Closing Ceremony",
+      category: "Event",
+      date: "September 2025",
+      location: "Mumbai, India",
+      attendees: "N/A",
+      description: "Final moments of Drone Expo 2025 with media highlights.",
+      tags: ["DroneTV"]
+    }
   ];
 
-  const [allImages, setAllImages] = useState<ImageItem[]>([]);
-
-  // localStorage management
-  const STORAGE_KEY = 'droneTV_gallery_images_v3';
+  const [allImages, setAllImages] = useState<ImageItem[]>(defaultImages); // Use defaultImages directly
 
   // Watermark helper function
   async function bakeThumbWatermark(
@@ -594,41 +857,33 @@ const GalleryPage = () => {
       const res = await fetch(src, { mode: 'cors', cache: 'force-cache' });
       if (!res.ok || res.type === 'opaque') throw new Error('CORS blocked');
       const bmp = await createImageBitmap(await res.blob());
-
       // Cover scaling
       const scale = Math.max(targetW / bmp.width, targetH / bmp.height);
       const drawW = Math.round(bmp.width * scale);
       const drawH = Math.round(bmp.height * scale);
       const dx = Math.round((targetW - drawW) / 2); // center crop
       const dy = Math.round((targetH - drawH) / 2);
-
       const c = document.createElement('canvas');
       c.width = targetW;
       c.height = targetH;
       const ctx = c.getContext('2d')!;
-
       // Draw the image
       ctx.drawImage(bmp, dx, dy, drawW, drawH);
-
       // Add watermark (logo image)
       const logo = new Image();
       logo.src = logoSrc;
       await new Promise((resolve) => {
         logo.onload = resolve;
       });
-
       // Calculate watermark size (20% of image width)
       const logoWidth = Math.min(targetW * 0.2, logo.width);
       const logoHeight = (logoWidth / logo.width) * logo.height;
-
       // Position watermark at bottom-right corner with margin
       const margin = 16;
       const x = targetW - logoWidth - margin;
       const y = targetH - logoHeight - margin;
-
       ctx.globalAlpha = 0.65;
       ctx.drawImage(logo, x, y, logoWidth, logoHeight); // Draw watermark logo
-
       return c.toDataURL('image/png');
     } catch (error) {
       console.error(`Error processing image ${src}:`, error);
@@ -636,35 +891,6 @@ const GalleryPage = () => {
       return src;
     }
   }
-
-  // Load images from localStorage on component mount
-  useEffect(() => {
-    const loadImagesFromStorage = () => {
-      try {
-        const savedImages = localStorage.getItem(STORAGE_KEY);
-        if (savedImages) {
-          const parsedImages = JSON.parse(savedImages);
-          if (Array.isArray(parsedImages) && parsedImages.length > 0) {
-            // Use saved images if they exist
-            setAllImages(parsedImages);
-          } else {
-            // Invalid data, use default images
-            setAllImages(defaultImages);
-          }
-        } else {
-          // No saved data, use default images
-          setAllImages(defaultImages);
-        }
-      } catch (error) {
-        console.error('Error loading images from localStorage:', error);
-        // On error, fall back to default images
-        setAllImages(defaultImages);
-      }
-      // Set initial load flag to false after loading
-      isInitialLoad.current = false;
-    };
-    loadImagesFromStorage();
-  }, []);
 
   // Process images to add watermarks when allImages changes
   useEffect(() => {
@@ -684,25 +910,10 @@ const GalleryPage = () => {
           processed[image.id] = image.src; // Fallback to original
         }
       });
-
       await Promise.all(promises);
       setProcessedImages(processed);
     };
-
     processAllImages();
-  }, [allImages]);
-
-  // Save images to localStorage whenever allImages changes (but not on initial load)
-  useEffect(() => {
-    if (!isInitialLoad.current && allImages.length > 0) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allImages));
-        console.log('Images saved to localStorage:', allImages.length, 'images');
-      } catch (error) {
-        console.error('Error saving images to localStorage:', error);
-        alert('Unable to save images. Browser storage might be full.');
-      }
-    }
   }, [allImages]);
 
   // Get current date in readable format
@@ -820,13 +1031,16 @@ const GalleryPage = () => {
       alert('Please fill in all required fields (Title, Description) and upload an image.');
       return;
     }
+
     // Create tags array from comma-separated string
     const tagsArray = formData.tags
       .split(',')
       .map(tag => tag.trim())
       .filter(tag => tag !== '');
+
     // Generate unique ID based on timestamp and random number
     const newId = Date.now() + Math.floor(Math.random() * 1000);
+
     // Create new image object
     const newImage: ImageItem = {
       id: newId,
@@ -839,8 +1053,10 @@ const GalleryPage = () => {
       description: formData.description.trim(),
       tags: tagsArray
     };
+
     // Add new image to the beginning of the array
     setAllImages(prevImages => [newImage, ...prevImages]);
+
     // Reset form
     setFormData({
       title: '',
@@ -852,8 +1068,10 @@ const GalleryPage = () => {
       image: null,
       imagePreview: null
     });
+
     // Close modal
     setShowAddImageModal(false);
+
     // Show success message
     alert('Image added successfully!');
   };
@@ -943,6 +1161,7 @@ const GalleryPage = () => {
           <div className="mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold text-black">Gallery ({filteredImages.length})</h2>
           </div>
+
           {filteredImages.length === 0 ? (
             <div className="text-center py-16">
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 sm:p-12 max-w-md mx-auto">
@@ -990,6 +1209,7 @@ const GalleryPage = () => {
                   );
                 })}
               </div>
+
               {/* Pagination - Centered at bottom */}
               {totalPages > 1 && (
                 <div className="flex justify-center mt-8 sm:mt-12 pb-8">
@@ -1094,6 +1314,7 @@ const GalleryPage = () => {
                   )}
                 </div>
               </div>
+
               {/* Title */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-black mb-2">
@@ -1110,6 +1331,7 @@ const GalleryPage = () => {
                   required
                 />
               </div>
+
               {/* Category */}
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-black mb-2">
@@ -1129,6 +1351,7 @@ const GalleryPage = () => {
                   ))}
                 </select>
               </div>
+
               {/* Date (Auto-generated) */}
               <div>
                 <label className="block text-sm font-medium text-black mb-2">
@@ -1141,6 +1364,7 @@ const GalleryPage = () => {
                   className="w-full px-3 py-2 border border-black/20 rounded-lg bg-gray-100 text-black/60 text-sm"
                 />
               </div>
+
               {/* Description */}
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-black mb-2">
@@ -1157,6 +1381,7 @@ const GalleryPage = () => {
                   required
                 />
               </div>
+
               {/* Location */}
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-black mb-2">
@@ -1172,6 +1397,7 @@ const GalleryPage = () => {
                   placeholder="Enter location"
                 />
               </div>
+
               {/* Attendees */}
               <div>
                 <label htmlFor="attendees" className="block text-sm font-medium text-black mb-2">
@@ -1187,6 +1413,7 @@ const GalleryPage = () => {
                   placeholder="e.g., 100+, 50 people"
                 />
               </div>
+
               {/* Tags */}
               <div>
                 <label htmlFor="tags" className="block text-sm font-medium text-black mb-2">
@@ -1205,6 +1432,7 @@ const GalleryPage = () => {
                   />
                 </div>
               </div>
+
               {/* Submit Buttons */}
               <div className="flex gap-3 sm:gap-4 justify-end">
                 <button
@@ -1237,6 +1465,7 @@ const GalleryPage = () => {
             >
               <X className="h-5 sm:h-6 w-5 sm:w-6" />
             </button>
+
             {/* Navigation Buttons */}
             {filteredImages.length > 1 && (
               <>
@@ -1254,6 +1483,7 @@ const GalleryPage = () => {
                 </button>
               </>
             )}
+
             {/* Image */}
             <div className="relative max-w-full max-h-full">
               <img
@@ -1262,6 +1492,7 @@ const GalleryPage = () => {
                 className="max-w-full max-h-[70vh] sm:max-h-[80vh] object-contain rounded-lg shadow-2xl"
               />
             </div>
+
             {/* Image Info Panel */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 sm:p-6">
               <div className="max-w-4xl mx-auto">
@@ -1318,6 +1549,7 @@ const GalleryPage = () => {
                 </div>
               </div>
             </div>
+
             {/* Image Counter */}
             <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-black/50 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
               {lightboxIndex + 1} / {filteredImages.length}
