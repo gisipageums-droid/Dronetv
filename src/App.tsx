@@ -75,6 +75,9 @@ import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/fina
 import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/final/edit/src/App";
 // import MainProTemp1 from "./components/mainProfessinalPreview/T-1/preview/src/App";
 
+import EventTemplateEdit1 from "./components/event/template/t1/edit/EventTemplate1";
+import EventTemplateEdit2 from "./components/event/template/t2/edit/EventTemplate2"; 
+
 const HomePage = () => (
   <>
     <Hero />
@@ -172,6 +175,10 @@ const AppContent = () => {
         {/* event routes */}
         <Route path='/admin/event/dashboard' element={<EventAdminDashboard />} />
         <Route path='/user/event' element={<UserEvent />} />
+
+        {/* <Route path='/user/event/preview/1/:eventId/:userId' element={<EventPreview1 />} /> */}
+        <Route path='/user/event/edit/1/' element={<EventTemplateEdit1 />} />
+        <Route path='/user/event/edit/2/' element={<EventTemplateEdit2 />} />
         
         {/* excel extraction route */}
         <Route path='/excel' element={<ExcelDataProcessor />} />
