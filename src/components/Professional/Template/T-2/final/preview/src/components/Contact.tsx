@@ -1,49 +1,109 @@
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { Globe, Loader2, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { AnimatedButton } from './AnimatedButton';
+import { toast } from 'sonner';
 
-export function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+interface ContactInfo {
+  icon: string;
+  label: string;
+  value: string;
+  href: string;
+}
+
+interface SocialLink {
+  icon: string;
+  label: string;
+  href: string;
+  color: string;
+}
+
+interface FormField {
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  rows?: number;
+}
+
+interface FormData {
+  submitEndpoint: string;
+  fields: FormField[];
+  submitText: string;
+  successMessage: string;
+  errorMessage: string;
+}
+
+interface Availability {
+  message: string;
+  responseTime: string;
+  status: string;
+}
+
+interface ContactData {
+  subtitle: string;
+  heading: string;
+  description: string;
+  contactInfo: ContactInfo[];
+  socialLinks: SocialLink[];
+  form: FormData;
+  availability: Availability;
+}
+
+interface ContactProps {
+  contactData: ContactData;
+}
+
+// Icon mapping
+const iconMap: { [key: string]: React.ComponentType<any> } = {
+  Mail, Phone, MapPin, Globe, Send, Github: Mail, Linkedin: Phone, Twitter: MapPin, Instagram: Globe
+};
+
+export function Contact({ contactData }: ContactProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<Record<string, string>>({});
+
+  // Initialize form data
+  useState(() => {
+    const initialFormData: Record<string, string> = {};
+    contactData.form.fields.forEach(field => {
+      initialFormData[field.name] = '';
+    });
+    setFormData(initialFormData);
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleFormChange = (fieldName: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [fieldName]: value
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-  };
-
-  const contactInfo = [
-    {
-      icon: Mail,
-      title: 'Email',
-      value: 'john.doe@example.com',
-      href: 'mailto:john.doe@example.com'
-    },
-    {
-      icon: Phone,
-      title: 'Phone',
-      value: '+1 (555) 123-4567',
-      href: 'tel:+15551234567'
-    },
-    {
-      icon: MapPin,
-      title: 'Location',
-      value: 'San Francisco, CA',
-      href: '#'
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call to the submit endpoint
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      console.log('Form submitted:', formData);
+      toast.success(contactData.form.successMessage);
+      
+      // Reset form
+      const resetFormData: Record<string, string> = {};
+      contactData.form.fields.forEach(field => {
+        resetFormData[field.name] = '';
+      });
+      setFormData(resetFormData);
+      
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error(contactData.form.errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
-  ];
+  };
 
   return (
     <section id="contact" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
@@ -55,12 +115,14 @@ export function Contact() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
+          <p className="text-lg uppercase tracking-wider text-muted-foreground mb-4">
+            {contactData.subtitle}
+          </p>
           <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
-            Get In <span className="text-yellow-500">Touch</span>
+            {contactData.heading}
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Have a project in mind or want to collaborate? I'd love to hear from you.
-            Let's create something amazing together!
+          <p className="text-lg text-muted-foreground">
+            {contactData.description}
           </p>
         </motion.div>
 
@@ -73,43 +135,61 @@ export function Contact() {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <div>
-              <h3 className="text-2xl text-foreground mb-6">Let's start a conversation</h3>
-              <p className="text-muted-foreground leading-relaxed mb-8">
-                I'm always open to discussing new opportunities, interesting projects,
-                or just having a chat about technology and innovation.
+            {/* Availability Status */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-card rounded-lg p-6 shadow-md"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`w-3 h-3 rounded-full ${
+                  contactData.availability.status === 'available' 
+                    ? 'bg-green-500' 
+                    : 'bg-yellow-500'
+                }`} />
+                <span className="text-foreground font-medium">
+                  {contactData.availability.message}
+                </span>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                {contactData.availability.responseTime}
               </p>
-            </div>
+            </motion.div>
 
             <div className="space-y-6">
-              {contactInfo.map((info, index) => (
-                <motion.div
-                  key={info.title}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  whileHover={{ x: 10 }}
-                  className="flex items-center space-x-4"
-                >
+              {contactData.contactInfo.map((info, index) => {
+                const IconComponent = iconMap[info.icon] || Mail;
+                return (
                   <motion.div
-                    whileHover={{ scale: 1.1, rotate: 360 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center"
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    whileHover={{ x: 10 }}
+                    className="flex items-center space-x-4"
                   >
-                    <info.icon className="w-6 h-6 text-gray-900" />
-                  </motion.div>
-                  <div>
-                    <h4 className="text-foreground mb-1">{info.title}</h4>
-                    <a
-                      href={info.href}
-                      className="text-muted-foreground hover:text-yellow-500 transition-colors duration-300"
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 360 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center"
                     >
-                      {info.value}
-                    </a>
-                  </div>
-                </motion.div>
-              ))}
+                      <IconComponent className="w-6 h-6 text-gray-900" />
+                    </motion.div>
+                    <div>
+                      <h4 className="text-foreground mb-1">{info.label}</h4>
+                      <a
+                        href={info.href}
+                        className="text-muted-foreground hover:text-yellow-500 transition-colors duration-300"
+                      >
+                        {info.value}
+                      </a>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* Social Links */}
@@ -121,16 +201,16 @@ export function Contact() {
               className="pt-8"
             >
               <h4 className="text-foreground mb-4">Follow me on</h4>
-              <div className="flex space-x-4">
-                {['LinkedIn', 'GitHub', 'Twitter'].map((social, index) => (
+              <div className="flex flex-wrap gap-3">
+                {contactData.socialLinks.map((social, index) => (
                   <motion.a
-                    key={social}
-                    href="#"
-                    whileHover={{ scale: 1.1, y: -3 }}
+                    key={index}
+                    href={social.href}
+                    whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 bg-card text-foreground rounded-lg shadow hover:shadow-md transition-all duration-300"
+                    className={`px-4 py-2 bg-card text-foreground rounded-lg shadow hover:shadow-md transition-all duration-300 ${social.color} border border-border`}
                   >
-                    {social}
+                    {social.label}
                   </motion.a>
                 ))}
               </div>
@@ -146,87 +226,42 @@ export function Contact() {
             className="bg-card rounded-2xl p-8 shadow-lg"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+              {contactData.form.fields.map((field, index) => (
                 <motion.div
+                  key={field.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
+                  transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <label htmlFor="name" className="block text-foreground mb-2">
-                    Name
+                  <label htmlFor={field.name} className="block text-foreground mb-2">
+                    {field.label}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
                   </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
-                    required
-                  />
+
+                  {field.type === 'textarea' ? (
+                    <textarea
+                      id={field.name}
+                      name={field.name}
+                      value={formData[field.name] || ''}
+                      onChange={(e) => handleFormChange(field.name, e.target.value)}
+                      rows={field.rows || 4}
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 resize-none bg-background text-foreground"
+                      required={field.required}
+                    />
+                  ) : (
+                    <input
+                      type={field.type}
+                      id={field.name}
+                      name={field.name}
+                      value={formData[field.name] || ''}
+                      onChange={(e) => handleFormChange(field.name, e.target.value)}
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
+                      required={field.required}
+                    />
+                  )}
                 </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  viewport={{ once: true }}
-                >
-                  <label htmlFor="email" className="block text-foreground mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
-                    required
-                  />
-                </motion.div>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                viewport={{ once: true }}
-              >
-                <label htmlFor="subject" className="block text-foreground mb-2">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
-                  required
-                />
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-              >
-                <label htmlFor="message" className="block text-foreground mb-2">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows={5}
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 resize-none bg-background text-foreground"
-                  required
-                ></textarea>
-              </motion.div>
+              ))}
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -234,9 +269,18 @@ export function Contact() {
                 transition={{ duration: 0.6, delay: 0.5 }}
                 viewport={{ once: true }}
               >
-                <AnimatedButton size="lg" className="w-full">
-                  <Send className="w-5 h-5 mr-2" />
-                  Send Message
+                <AnimatedButton 
+                  size="lg" 
+                  className="w-full" 
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  ) : (
+                    <Send className="w-5 h-5 mr-2" />
+                  )}
+                  {isSubmitting ? "Sending..." : contactData.form.submitText}
                 </AnimatedButton>
               </motion.div>
             </form>

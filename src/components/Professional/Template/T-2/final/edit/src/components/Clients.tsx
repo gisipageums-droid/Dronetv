@@ -155,7 +155,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
 
       // Otherwise, use empty data
       const response = await new Promise<ClientsData>((resolve) =>
-        setTimeout(() => resolve(defaultData), 1200)
+        setTimeout(() => resolve(defaultData), 500)
       );
       setData(response);
       setTempData(response);
@@ -245,7 +245,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   };
 
   // Logo upload handler with validation
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>, clientId: string) => {
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputEvent>, clientId: string) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -327,13 +327,78 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
 
   const displayData = isEditing ? tempData : data;
 
-  // Loading state
-  if (isLoading || !displayData.clients || displayData.clients.length === 0) {
+  // FIXED: Improved hasData logic to properly check for any meaningful data
+  const hasData = data.clients.length > 0 || 
+                  data.subtitle || 
+                  data.heading || 
+                  data.description || 
+                  Object.values(data.stats).some(value => value && value.trim() !== '') ||
+                  Object.values(data.cta).some(value => value && value.trim() !== '');
+
+  console.log('Data check:', {
+    clients: data.clients.length,
+    subtitle: data.subtitle,
+    heading: data.heading,
+    description: data.description,
+    stats: data.stats,
+    cta: data.cta,
+    hasData: hasData,
+    statsHasData: Object.values(data.stats).some(value => value && value.trim() !== ''),
+    ctaHasData: Object.values(data.cta).some(value => value && value.trim() !== '')
+  });
+
+  // Loading state - only show when actually loading
+  if (isLoading && !dataLoaded) {
     return (
       <section ref={clientsRef} className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
           <p className="text-muted-foreground mt-4">Loading clients data...</p>
+        </div>
+      </section>
+    );
+  }
+
+  // No data state - show empty state with option to add data
+  // FIXED: Better condition to show empty state
+  if (!isEditing && !hasData && !isLoading) {
+    return (
+      <section ref={clientsRef} className="py-20 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Edit Controls */}
+          <div className='text-right mb-8'>
+            <Button
+              onClick={handleEdit}
+              size='sm'
+              className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+            >
+              <Edit2 className='w-4 h-4 mr-2' />
+              Add Clients
+            </Button>
+          </div>
+
+          {/* Empty State */}
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                <Plus className="w-12 h-12 text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-semibold text-foreground mb-4">
+                No Clients Data Found
+              </h3>
+              <p className="text-muted-foreground mb-8">
+                Start by adding your clients and partners to showcase your work and collaborations.
+              </p>
+              <Button
+                onClick={handleEdit}
+                size='lg'
+                className='bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'
+              >
+                <Plus className='w-5 h-5 mr-2' />
+                Add Your First Client
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     );
@@ -348,7 +413,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
             <Button
               onClick={handleEdit}
               size='sm'
-              className='bg-red-500 hover:bg-red-600 shadow-md'
+              className='bg-red-500 hover:bg-red-600 shadow-md text-white'
             >
               <Edit2 className='w-4 h-4 mr-2' />
               Edit
@@ -373,7 +438,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
               <Button
                 onClick={handleCancel}
                 size='sm'
-                className='bg-red-500 hover:bg-red-600 shadow-md'
+                className='bg-red-500 hover:bg-red-600 shadow-md text-white'
                 disabled={isSaving || isUploading}
               >
                 <X className='w-4 h-4 mr-2' />
@@ -439,8 +504,8 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
           )}
         </div>
 
-        {/* Stats */}
-        {(displayData.stats.happyClients || displayData.stats.projectsDelivered || displayData.stats.industriesServed || displayData.stats.successRate || isEditing) && (
+        {/* Stats - FIXED: Show if editing OR if any stat has data */}
+        {(isEditing || Object.values(displayData.stats).some(value => value && value.trim() !== '')) && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
             {[
               { key: 'happyClients' as const, label: 'Happy Clients' },
@@ -480,8 +545,8 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
           </div>
         )}
 
-        {/* Client Grid */}
-        {displayData.clients.length > 0 || isEditing ? (
+        {/* Client Grid - FIXED: Show if editing OR if there are clients */}
+        {(isEditing || displayData.clients.length > 0) ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
             {displayData.clients.map((client, index) => (
               <div
@@ -564,7 +629,81 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
               </div>
             )}
           </div>
-        ) : null}
+        ) : (
+          // Show message when there are stats but no clients (only when not editing)
+          !isEditing && hasData && data.clients.length === 0 && (
+            <div className="text-center py-12 mb-12">
+              <div className="max-w-md mx-auto">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <Plus className="w-8 h-8 text-gray-400" />
+                </div>
+                <h4 className="text-lg font-semibold text-foreground mb-2">
+                  No Clients Added
+                </h4>
+                <p className="text-muted-foreground mb-6">
+                  You have content configured but no clients. Add clients to showcase your work.
+                </p>
+                <Button
+                  onClick={handleEdit}
+                  size='md'
+                  className='bg-yellow-500 hover:bg-yellow-600 text-white'
+                >
+                  <Plus className='w-4 h-4 mr-2' />
+                  Add Clients
+                </Button>
+              </div>
+            </div>
+          )
+        )}
+
+        {/* CTA Section */}
+        {(isEditing || Object.values(displayData.cta).some(value => value && value.trim() !== '')) && (
+          <div className="text-center bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl p-8">
+            {isEditing ? (
+              <>
+                <input
+                  type="text"
+                  value={displayData.cta.title}
+                  onChange={(e) => updateCta('title', e.target.value)}
+                  className="text-2xl sm:text-3xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  placeholder="CTA Title"
+                />
+                <textarea
+                  value={displayData.cta.description}
+                  onChange={(e) => updateCta('description', e.target.value)}
+                  className="text-lg text-muted-foreground mb-6 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  rows="2"
+                  placeholder="CTA Description"
+                />
+                <input
+                  type="text"
+                  value={displayData.cta.buttonText}
+                  onChange={(e) => updateCta('buttonText', e.target.value)}
+                  className="inline-block px-8 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors bg-white/80 border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none p-2 text-center"
+                  placeholder="Button Text"
+                />
+              </>
+            ) : (
+              <>
+                {displayData.cta.title && (
+                  <h3 className="text-2xl sm:text-3xl text-foreground mb-4">
+                    {displayData.cta.title}
+                  </h3>
+                )}
+                {displayData.cta.description && (
+                  <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
+                    {displayData.cta.description}
+                  </p>
+                )}
+                {displayData.cta.buttonText && (
+                  <button className="inline-block px-8 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
+                    {displayData.cta.buttonText}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

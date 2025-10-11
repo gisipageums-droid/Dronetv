@@ -10,11 +10,11 @@ import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
-// import { Services } from './components/services';
-import { SimpleTestimonials } from './components/SimpleTestimonials';
+import { Services } from './components/services';
+import { Testimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
-
+import Publish from './components/Publish';
 // Define types for the component states
 interface ComponentStates {
   heroContent?: any;
@@ -150,26 +150,25 @@ export default function EditTemp_2() {
         headerData={componentStates.headerContent}
         onStateChange={createStateChangeHandler('headerContent')}
         userId={AIGenData.userId}
-        publishedId={AIGenData.professionalId}
         templateSelection={AIGenData.templateSelection}
       />
 
       {/* Publish Button */}
-      <div className="fixed top-[9.5rem] left-4 z-50">
+      {/* <div className="fixed top-[9.5rem] left-4 z-50">
         <button
           onClick={handlePublish}
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-300"
         >
           Publish Changes
         </button>
-      </div>
+      </div> */}
 
       <main>
         <Hero
           heroData={componentStates.heroContent}
           onStateChange={createStateChangeHandler('heroContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
@@ -178,7 +177,7 @@ export default function EditTemp_2() {
           aboutData={componentStates.aboutContent}
           onStateChange={createStateChangeHandler('aboutContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
@@ -186,22 +185,22 @@ export default function EditTemp_2() {
           skillsData={componentStates.skillContent}
           onStateChange={createStateChangeHandler('skillContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
-        {/* <Services
+        <Services
           servicesData={componentStates.serviceContent}
           onStateChange={createStateChangeHandler('serviceContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
-        /> */}
+        />
 
         <Projects
           projectsData={componentStates.projectContent}
           onStateChange={createStateChangeHandler('projectContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
@@ -210,7 +209,7 @@ export default function EditTemp_2() {
           certData={componentStates.certificationsContent}
           onStateChange={createStateChangeHandler('certificationsContent')}
           userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
+          professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
 
@@ -220,19 +219,17 @@ export default function EditTemp_2() {
             clientsData={componentStates.clientsContent}
             onStateChange={createStateChangeHandler('clientsContent')}
             userId={AIGenData.userId}
-            publishedId={AIGenData.professionalId}
+            professionalId={AIGenData.professionalId}
             templateSelection={AIGenData.templateSelection}
           />
         </section>
 
         {/* Testimonials Section */}
         <section id="testimonials">
-          <SimpleTestimonials
+          <Testimonials
             testimonialsData={componentStates.testimonialContent}
             onStateChange={createStateChangeHandler('testimonialContent')}
-            userId={AIGenData.userId}
-            publishedId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
+            
           />
         </section>
 
@@ -240,19 +237,16 @@ export default function EditTemp_2() {
         <Contact
           contactData={componentStates.contactContent}
           onStateChange={createStateChangeHandler('contactContent')}
-          userId={AIGenData.userId}
-          publishedId={AIGenData.professionalId}
-          templateSelection={AIGenData.templateSelection}
+         
         />
       </main>
+      <Publish />
 
       {/* Footer */}
       <Footer
         footerData={componentStates.footerContent}
         onStateChange={createStateChangeHandler('footerContent')}
-        userId={AIGenData.userId}
-        publishedId={AIGenData.professionalId}
-        templateSelection={AIGenData.templateSelection}
+        
       />
 
       <Toaster

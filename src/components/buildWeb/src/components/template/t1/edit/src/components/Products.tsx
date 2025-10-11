@@ -544,6 +544,7 @@ if (isLoading) {
 return (
   <section
     ref={sectionRef}
+    id="product"
     className='max-w-7xl mx-auto py-20 bg-gray-50 relative overflow-hidden'
   >
     <div className='container mx-auto px-4'>

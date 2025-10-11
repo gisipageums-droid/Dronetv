@@ -14,6 +14,7 @@ import { Services } from './components/services';
 import { Testimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
+import Publish from './components/Publish';
 
 // Define types for the component states
 interface ComponentStates {
@@ -22,7 +23,6 @@ interface ComponentStates {
   certificationsContent?: any;
   clientsContent?: any;
   skillContent?: any;
-  serviceContent?: any; // Added missing serviceContent property
   projectContent?: any;
   testimonialContent?: any;
   contactContent?: any;
@@ -128,13 +128,13 @@ export default function FinalEditTemp_2() {
     setIsDarkMode(isDark);
   }, []);
 
-  const handlePublish = useCallback(() => {
-    if (Object.keys(componentStates).length === 0) {
-      toast.error("No content to publish");
-      return;
-    }
-    publishProfessionalTemplate();
-  }, [componentStates, publishProfessionalTemplate]);
+  // const handlePublish = useCallback(() => {
+  //   if (Object.keys(componentStates).length === 0) {
+  //     toast.error("No content to publish");
+  //     return;
+  //   }
+  //   publishProfessionalTemplate();
+  // }, [componentStates, publishProfessionalTemplate]);
 
   // Show loading state
   if (isLoading) {
@@ -155,20 +155,18 @@ export default function FinalEditTemp_2() {
         onDarkModeToggle={handleDarkModeToggle}
         headerData={componentStates.headerContent}
         onStateChange={createStateChangeHandler('headerContent')}
-        userId={AIGenData.userId}
-        professionalId={AIGenData.professionalId}
-        templateSelection={AIGenData.templateSelection}
+       
       />
 
       {/* Publish Button */}
-      <div className="fixed top-[9.5rem] left-4 z-50">
+      {/* <div className="fixed top-[9.5rem] left-4 z-50">
         <button
           onClick={handlePublish}
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-300"
         >
           Publish Changes
         </button>
-      </div>
+      </div> */}
 
       <main>
         <Hero
@@ -237,9 +235,7 @@ export default function FinalEditTemp_2() {
           <Testimonials
             testimonialsData={componentStates.testimonialContent}
             onStateChange={createStateChangeHandler('testimonialContent')}
-            userId={AIGenData.userId}
-            professionalId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
+           
           />
         </section>
 
@@ -247,19 +243,15 @@ export default function FinalEditTemp_2() {
         <Contact 
           contactData={componentStates.contactContent}
           onStateChange={createStateChangeHandler('contactContent')}
-          userId={AIGenData.userId}
-          professionalId={AIGenData.professionalId}
-          templateSelection={AIGenData.templateSelection}
+          
         />
       </main>
-
+      <Publish />
       {/* Footer */}
       <Footer 
         footerData={componentStates.footerContent}
         onStateChange={createStateChangeHandler('footerContent')}
-        userId={AIGenData.userId}
-        professionalId={AIGenData.professionalId}
-        templateSelection={AIGenData.templateSelection}
+       
       />
       
       <Toaster 

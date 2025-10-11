@@ -2,7 +2,6 @@ import { Edit2, ExternalLink, Github, Loader2, Plus, Save, Trash2, Upload, X } f
 import { motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
 // Custom Button component
 const Button = ({
@@ -45,7 +44,7 @@ const Button = ({
   );
 };
 
-// Define types for Project data based on your JSON
+// Define types for Project data
 interface Project {
   id: number;
   title: string;
@@ -69,15 +68,6 @@ interface ProjectsData {
   categories: string[];
 }
 
-// Empty default data for Projects section
-const defaultProjectsData: ProjectsData = {
-  subtitle: "",
-  heading: "",
-  description: "",
-  projects: [],
-  categories: []
-};
-
 // Props interface
 interface ProjectsProps {
   projectsData?: ProjectsData;
@@ -89,23 +79,37 @@ interface ProjectsProps {
 
 export function Projects({ projectsData, onStateChange, userId, professionalId, templateSelection }: ProjectsProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
-  const projectsRef = useRef<HTMLDivElement>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
   
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
-  const [data, setData] = useState<ProjectsData>(defaultProjectsData);
-  const [tempData, setTempData] = useState<ProjectsData>(defaultProjectsData);
+  // Initialize with props data or empty structure
+  const [data, setData] = useState<ProjectsData>(projectsData || {
+    subtitle: "",
+    heading: "",
+    description: "",
+    projects: [],
+    categories: []
+  });
+  const [tempData, setTempData] = useState<ProjectsData>(projectsData || {
+    subtitle: "",
+    heading: "",
+    description: "",
+    projects: [],
+    categories: []
+  });
 
-  // Calculate displayData here, before any functions that use it
+  // Calculate displayData based on editing state
   const displayData = isEditing ? tempData : data;
+
+  // Use displayData for filtered projects to ensure consistency
+  const filteredProjects = displayData.projects.filter(project => 
+    activeCategory === "All" || project.category === activeCategory
+  );
 
   // Safe string splitting for heading
   const renderHeading = () => {
@@ -125,10 +129,13 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
     return heading;
   };
 
-  // Filter projects by category
-  const filteredProjects = displayData.projects.filter(project => 
-    activeCategory === "All" || project.category === activeCategory
-  );
+  // Sync with props data when it changes
+  useEffect(() => {
+    if (projectsData) {
+      setData(projectsData);
+      setTempData(projectsData);
+    }
+  }, [projectsData]);
 
   // Notify parent of state changes
   useEffect(() => {
@@ -136,39 +143,6 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
       onStateChange(data);
     }
   }, [data]);
-
-  // Intersection observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0.1 }
-    );
-    if (projectsRef.current) observer.observe(projectsRef.current);
-    return () => {
-      if (projectsRef.current) observer.unobserve(projectsRef.current);
-    };
-  }, []);
-
-  // Fake API fetch
-  const fetchProjectsData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await new Promise<ProjectsData>((resolve) =>
-        setTimeout(() => resolve(projectsData || defaultProjectsData), 1200)
-      );
-      setData(response);
-      setTempData(response);
-      setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isVisible && !dataLoaded && !isLoading) {
-      fetchProjectsData();
-    }
-  }, [isVisible, dataLoaded, isLoading, projectsData]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -212,13 +186,17 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
         }
       }
 
+      // Clear pending files and update state immediately
       setPendingImageFiles({});
-      setIsSaving(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       
+      // Update both data and tempData to ensure UI consistency
       setData(updatedData);
       setTempData(updatedData);
       
+      setIsSaving(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Set editing to false AFTER state updates
       setIsEditing(false);
       toast.success('Projects section saved successfully');
 
@@ -252,44 +230,65 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
       return;
     }
 
+    // Store the file for later S3 upload
     setPendingImageFiles(prev => ({ ...prev, [projectId]: file }));
 
+    // Create preview with FileReader
     const reader = new FileReader();
     reader.onload = (e) => {
-      const updatedProjects = tempData.projects.map(project =>
-        project.id.toString() === projectId ? { ...project, image: e.target?.result as string } : project
-      );
-      setTempData({ ...tempData, projects: updatedProjects });
+      const dataUrl = e.target?.result as string;
+      setTempData(prevData => ({
+        ...prevData,
+        projects: prevData.projects.map(project =>
+          project.id.toString() === projectId 
+            ? { ...project, image: dataUrl } 
+            : project
+        )
+      }));
     };
     reader.readAsDataURL(file);
   };
 
   // Update functions
   const updateProject = useCallback((index: number, field: keyof Project, value: any) => {
-    const updatedProjects = [...tempData.projects];
-    updatedProjects[index] = { ...updatedProjects[index], [field]: value };
-    setTempData({ ...tempData, projects: updatedProjects });
-  }, [tempData]);
+    setTempData(prevData => {
+      const updatedProjects = [...prevData.projects];
+      updatedProjects[index] = { ...updatedProjects[index], [field]: value };
+      return { ...prevData, projects: updatedProjects };
+    });
+  }, []);
 
   const updateTag = useCallback((projectIndex: number, tagIndex: number, value: string) => {
-    const updatedProjects = [...tempData.projects];
-    const updatedTags = [...updatedProjects[projectIndex].tags];
-    updatedTags[tagIndex] = value;
-    updatedProjects[projectIndex].tags = updatedTags;
-    setTempData({ ...tempData, projects: updatedProjects });
-  }, [tempData]);
+    setTempData(prevData => {
+      const updatedProjects = [...prevData.projects];
+      const updatedTags = [...updatedProjects[projectIndex].tags];
+      updatedTags[tagIndex] = value;
+      updatedProjects[projectIndex] = { ...updatedProjects[projectIndex], tags: updatedTags };
+      return { ...prevData, projects: updatedProjects };
+    });
+  }, []);
 
   const addTag = useCallback((projectIndex: number) => {
-    const updatedProjects = [...tempData.projects];
-    updatedProjects[projectIndex].tags.push('New Tag');
-    setTempData({ ...tempData, projects: updatedProjects });
-  }, [tempData]);
+    setTempData(prevData => {
+      const updatedProjects = [...prevData.projects];
+      updatedProjects[projectIndex] = {
+        ...updatedProjects[projectIndex],
+        tags: [...updatedProjects[projectIndex].tags, 'New Tag']
+      };
+      return { ...prevData, projects: updatedProjects };
+    });
+  }, []);
 
   const removeTag = useCallback((projectIndex: number, tagIndex: number) => {
-    const updatedProjects = [...tempData.projects];
-    updatedProjects[projectIndex].tags = updatedProjects[projectIndex].tags.filter((_, i) => i !== tagIndex);
-    setTempData({ ...tempData, projects: updatedProjects });
-  }, [tempData]);
+    setTempData(prevData => {
+      const updatedProjects = [...prevData.projects];
+      updatedProjects[projectIndex] = {
+        ...updatedProjects[projectIndex],
+        tags: updatedProjects[projectIndex].tags.filter((_, i) => i !== tagIndex)
+      };
+      return { ...prevData, projects: updatedProjects };
+    });
+  }, []);
 
   const addProject = useCallback(() => {
     const newProject: Project = {
@@ -306,64 +305,62 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
       featured: false,
       client: ''
     };
-    setTempData({
-      ...tempData,
-      projects: [...tempData.projects, newProject]
-    });
-  }, [tempData]);
+    setTempData(prevData => ({
+      ...prevData,
+      projects: [...prevData.projects, newProject]
+    }));
+  }, []);
 
   const removeProject = useCallback((index: number) => {
-    if (tempData.projects.length <= 1) {
-      toast.error("You must have at least one project");
-      return;
-    }
-    const updatedProjects = tempData.projects.filter((_, i) => i !== index);
-    setTempData({ ...tempData, projects: updatedProjects });
-  }, [tempData]);
+    setTempData(prevData => {
+      if (prevData.projects.length <= 1) {
+        toast.error("You must have at least one project");
+        return prevData;
+      }
+      return {
+        ...prevData,
+        projects: prevData.projects.filter((_, i) => i !== index)
+      };
+    });
+  }, []);
 
   const updateSection = useCallback((field: keyof Omit<ProjectsData, 'projects' | 'categories'>, value: string) => {
-    setTempData({
-      ...tempData,
+    setTempData(prevData => ({
+      ...prevData,
       [field]: value
-    });
-  }, [tempData]);
+    }));
+  }, []);
 
   const updateCategory = useCallback((index: number, value: string) => {
-    const updatedCategories = [...tempData.categories];
-    updatedCategories[index] = value;
-    setTempData({ ...tempData, categories: updatedCategories });
-  }, [tempData]);
+    setTempData(prevData => {
+      const updatedCategories = [...prevData.categories];
+      updatedCategories[index] = value;
+      return { ...prevData, categories: updatedCategories };
+    });
+  }, []);
 
   const addCategory = useCallback(() => {
-    setTempData({
-      ...tempData,
-      categories: [...tempData.categories, 'New Category']
-    });
-  }, [tempData]);
+    setTempData(prevData => ({
+      ...prevData,
+      categories: [...prevData.categories, 'New Category']
+    }));
+  }, []);
 
   const removeCategory = useCallback((index: number) => {
-    if (tempData.categories.length <= 1) {
-      toast.error("You must have at least one category");
-      return;
-    }
-    const updatedCategories = tempData.categories.filter((_, i) => i !== index);
-    setTempData({ ...tempData, categories: updatedCategories });
-  }, [tempData]);
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <section ref={projectsRef} id="projects" className="relative py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-muted-foreground mt-4">Loading projects data...</p>
-        </div>
-      </section>
-    );
-  }
+    setTempData(prevData => {
+      if (prevData.categories.length <= 1) {
+        toast.error("You must have at least one category");
+        return prevData;
+      }
+      return {
+        ...prevData,
+        categories: prevData.categories.filter((_, i) => i !== index)
+      };
+    });
+  }, []);
 
   return (
-    <section ref={projectsRef} id="projects" className="relative py-20 bg-background">
+    <section id="projects" className="relative py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-20'>
@@ -427,20 +424,20 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
             <>
               <input
                 type="text"
-                value={displayData.subtitle || ""}
+                value={tempData.subtitle || ""}
                 onChange={(e) => updateSection('subtitle', e.target.value)}
                 className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                 placeholder="Subtitle"
               />
               <input
                 type="text"
-                value={displayData.heading || ""}
+                value={tempData.heading || ""}
                 onChange={(e) => updateSection('heading', e.target.value)}
                 className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                 placeholder="Heading"
               />
               <textarea
-                value={displayData.description || ""}
+                value={tempData.description || ""}
                 onChange={(e) => updateSection('description', e.target.value)}
                 className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                 rows={2}
@@ -449,7 +446,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
             </>
           ) : (
             <>
-              {displayData.subtitle && (
+              {data.subtitle && (
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -457,7 +454,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                   viewport={{ once: true }}
                   className="text-lg text-yellow-500 mb-2"
                 >
-                  {displayData.subtitle}
+                  {data.subtitle}
                 </motion.p>
               )}
               <motion.h2
@@ -469,7 +466,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
               >
                 {renderHeading()}
               </motion.h2>
-              {displayData.description && (
+              {data.description && (
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -477,7 +474,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                   viewport={{ once: true }}
                   className="text-lg text-muted-foreground max-w-2xl mx-auto"
                 >
-                  {displayData.description}
+                  {data.description}
                 </motion.p>
               )}
             </>
@@ -485,7 +482,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
         </motion.div>
 
         {/* Categories Filter */}
-        {!isEditing && displayData.categories.length > 0 && (
+        {!isEditing && data.categories.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -493,7 +490,17 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
             viewport={{ once: true }}
             className="flex flex-wrap justify-center gap-4 mb-12"
           >
-            {displayData.categories.map((category) => (
+            <button
+              onClick={() => setActiveCategory("All")}
+              className={`px-6 py-2 rounded-full transition-all duration-300 ${
+                activeCategory === "All"
+                  ? 'bg-yellow-400 text-gray-900 shadow-lg'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              All
+            </button>
+            {data.categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
@@ -518,7 +525,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
           >
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <div className="flex flex-wrap gap-2 mb-4">
-              {displayData.categories.map((category, index) => (
+              {tempData.categories.map((category, index) => (
                 <div key={index} className="flex items-center gap-2 bg-white px-3 py-1 rounded-full">
                   <input
                     type="text"
@@ -569,7 +576,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                 )}
 
                 {/* Project Image */}
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden bg-gray-100">
                   <motion.div transition={{ duration: 0.3 }}>
                     {isEditing && (
                       <div className="absolute top-2 left-2 z-10">
@@ -596,12 +603,21 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                         )}
                       </div>
                     )}
-                    <ImageWithFallback
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-48 object-cover"
-                      fallbackSrc=""
-                    />
+                    {project.image ? (
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-48 object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200"%3E%3Crect fill="%23f3f4f6" width="400" height="200"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-48 flex items-center justify-center bg-gray-200">
+                        <p className="text-gray-400 text-sm">No image uploaded</p>
+                      </div>
+                    )}
                   </motion.div>
                   <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                     <div className="opacity-0 hover:opacity-100 transition-all duration-300 flex space-x-4">

@@ -140,7 +140,7 @@ export function Footer({ footerData }: FooterProps) {
             className="space-y-4"
           >
             <h4 className="text-lg font-semibold text-yellow-400">Quick Links</h4>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               {data.quickLinks.map((link, index) => (
                 <motion.a
                   key={index}
@@ -152,7 +152,7 @@ export function Footer({ footerData }: FooterProps) {
                   {link.label}
                 </motion.a>
               ))}
-            </div>
+            </div> */}
           </motion.div>
 
           {/* More Links */}

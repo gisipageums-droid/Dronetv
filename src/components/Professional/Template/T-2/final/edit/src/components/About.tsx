@@ -72,10 +72,8 @@ export function About({
   templateSelection,
 }: AboutProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const aboutRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -83,35 +81,50 @@ export function About({
   // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
 
-  // Default data structure matching the provided format
-  const defaultData: AboutData = {
-    heading: aboutData?.heading ||"",
-    subtitle: aboutData?.subtitle || "",
-    description1: aboutData?.description1 || "",
-    description2: aboutData?.description2 || "",
-    skills: aboutData?.skills || [''],
-    imageSrc: aboutData?.imageSrc || "",
-    buttonText: aboutData?.buttonText || ""
-  };
+  // Initialize with props data or empty structure
+  const [data, setData] = useState<AboutData>(aboutData || {
+    heading: "",
+    subtitle: "",
+    description1: "",
+    description2: "",
+    skills: [''],
+    imageSrc: "",
+    buttonText: ""
+  });
+  const [tempData, setTempData] = useState<AboutData>(aboutData || {
+    heading: "",
+    subtitle: "",
+    description1: "",
+    description2: "",
+    skills: [''],
+    imageSrc: "",
+    buttonText: ""
+  });
 
-  const [data, setData] = useState<AboutData>(defaultData);
-  const [tempData, setTempData] = useState<AboutData>(defaultData);
+  // FIX: Use ref for onStateChange to prevent infinite loops
+  const onStateChangeRef = useRef(onStateChange);
+  useEffect(() => {
+    onStateChangeRef.current = onStateChange;
+  }, [onStateChange]);
 
-  // Initialize with provided aboutData
+  // FIX: Track previous data to avoid unnecessary updates
+  const prevDataRef = useRef<AboutData>();
+
+  // Sync with props data when it changes
   useEffect(() => {
     if (aboutData) {
       setData(aboutData);
       setTempData(aboutData);
-      setDataLoaded(true);
     }
   }, [aboutData]);
 
-  // Notify parent of state changes
+  // FIX: Safe state change notification without infinite loop
   useEffect(() => {
-    if (onStateChange && dataLoaded) {
-      onStateChange(data);
+    if (onStateChangeRef.current && prevDataRef.current !== data) {
+      onStateChangeRef.current(data);
+      prevDataRef.current = data;
     }
-  }, [data, dataLoaded]);
+  }, [data]);
 
   // Intersection observer
   useEffect(() => {
@@ -125,26 +138,8 @@ export function About({
     };
   }, []);
 
-  // Fake API fetch
-  const fetchAboutData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await new Promise<AboutData>((resolve) =>
-        setTimeout(() => resolve(aboutData || defaultData), 1200)
-      );
-      setData(response);
-      setTempData(response);
-      setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isVisible && !dataLoaded && !isLoading) {
-      fetchAboutData();
-    }
-  }, [isVisible, dataLoaded, isLoading, aboutData]);
+  // Calculate displayData based on editing state
+  const displayData = isEditing ? tempData : data;
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -170,7 +165,7 @@ export function About({
         const formData = new FormData();
         formData.append('file', pendingImageFile);
         formData.append('userId', userId);
-        formData.append('fieldName', 'imageSrc');
+        formData.append('fieldName', 'about_image');
 
         const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
           method: 'POST',
@@ -193,14 +188,14 @@ export function About({
 
       // Save the updated data with S3 URL
       setIsSaving(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Update both states with the new URL
       setData(updatedData);
       setTempData(updatedData);
 
       setIsEditing(false);
-      toast.success('About section saved with S3 URL ready for publish');
+      toast.success('About section saved successfully');
 
     } catch (error) {
       console.error('Error saving about section:', error);
@@ -239,7 +234,7 @@ export function About({
     // Show immediate local preview
     const reader = new FileReader();
     reader.onload = (e) => {
-      setTempData((prev) => ({
+      setTempData(prev => ({
         ...prev,
         imageSrc: e.target?.result as string,
       }));
@@ -249,30 +244,36 @@ export function About({
 
   // Stable update functions with useCallback
   const updateTempContent = useCallback((field: keyof AboutData, value: string) => {
-    setTempData((prev) => ({ ...prev, [field]: value }));
+    setTempData(prev => ({ ...prev, [field]: value }));
   }, []);
 
   const updateSkill = useCallback((index: number, value: string) => {
-    const updatedSkills = [...tempData.skills];
-    updatedSkills[index] = value;
-    setTempData(prev => ({ ...prev, skills: updatedSkills }));
-  }, [tempData.skills]);
+    setTempData(prevData => {
+      const updatedSkills = [...prevData.skills];
+      updatedSkills[index] = value;
+      return { ...prevData, skills: updatedSkills };
+    });
+  }, []);
 
   const addSkill = useCallback(() => {
-    setTempData(prev => ({
-      ...prev,
-      skills: [...prev.skills, "New skill"]
+    setTempData(prevData => ({
+      ...prevData,
+      skills: [...prevData.skills, "New skill"]
     }));
   }, []);
 
   const removeSkill = useCallback((index: number) => {
-    if (tempData.skills.length <= 1) {
-      toast.error("You must have at least one skill");
-      return;
-    }
-    const updatedSkills = tempData.skills.filter((_, i) => i !== index);
-    setTempData(prev => ({ ...prev, skills: updatedSkills }));
-  }, [tempData.skills]);
+    setTempData(prevData => {
+      if (prevData.skills.length <= 1) {
+        toast.error("You must have at least one skill");
+        return prevData;
+      }
+      return {
+        ...prevData,
+        skills: prevData.skills.filter((_, i) => i !== index)
+      };
+    });
+  }, []);
 
   // Memoized EditableText component
   const EditableText = useMemo(() => {
@@ -330,15 +331,53 @@ export function About({
     };
   }, [updateTempContent, updateSkill]);
 
-  const displayData = isEditing ? tempData : data;
+  // Check if there's any meaningful data to display
+  const hasData = data.heading || 
+                  data.subtitle || 
+                  data.description1 || 
+                  data.description2 || 
+                  (data.skills.length > 0 && data.skills[0] !== '') ||
+                  data.imageSrc;
 
-  // Loading state
-  if (isLoading) {
+  // No data state - show empty state with option to add data
+  if (!isEditing && !hasData) {
     return (
       <section ref={aboutRef} id="about" className="relative py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-muted-foreground mt-4">Loading about data...</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Edit Controls */}
+          <div className='text-right mb-8'>
+            <Button
+              onClick={handleEdit}
+              size='sm'
+              className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+            >
+              <Edit2 className='w-4 h-4 mr-2' />
+              Add About Content
+            </Button>
+          </div>
+
+          {/* Empty State */}
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="text-2xl">👤</span>
+              </div>
+              <h3 className="text-2xl font-semibold text-foreground mb-4">
+                No About Content Found
+              </h3>
+              <p className="text-muted-foreground mb-8">
+                Tell your story and showcase your skills to help visitors get to know you better.
+              </p>
+              <Button
+                onClick={handleEdit}
+                size='lg'
+                className='bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'
+              >
+                <Edit2 className='w-5 h-5 mr-2' />
+                Add About Content
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     );
@@ -378,7 +417,7 @@ export function About({
               <Button
                 onClick={handleCancel}
                 size='sm'
-                className='bg-red-500 hover:bg-red-600 shadow-md'
+                className='bg-red-500 hover:bg-red-600 shadow-md text-white'
                 disabled={isSaving || isUploading}
               >
                 <X className='w-4 h-4 mr-2' />
@@ -413,7 +452,7 @@ export function About({
                   onClick={() => fileInputRef.current?.click()}
                   size="sm"
                   variant="outline"
-                  className="bg-white/90 backdrop-blur-sm shadow-md"
+                  className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   Change Image
@@ -440,11 +479,21 @@ export function About({
             >
               <div className="absolute inset-0 bg-yellow-400 rounded-3xl transform -rotate-6"></div>
               <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
-                <ImageWithFallback
-                  src={displayData.imageSrc}
-                  alt="About me"
-                  className="w-full h-96 object-cover"
-                />
+                {displayData.imageSrc ? (
+                  <img
+                    src={displayData.imageSrc}
+                    alt="About me"
+                    className="w-full h-96 object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23f3f4f6" width="400" height="400"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EProfile Image%3C/text%3E%3C/svg%3E';
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-96 flex items-center justify-center bg-gray-200">
+                    <p className="text-gray-400 text-sm">No image uploaded</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -481,12 +530,16 @@ export function About({
                 </div>
               ) : (
                 <div>
-                  <h2 className="text-3xl sm:text-4xl text-foreground font-bold">
-                    {displayData.heading}
-                  </h2>
-                  <p className="text-xl text-yellow-500 font-semibold mt-2">
-                    {displayData.subtitle}
-                  </p>
+                  {displayData.heading && (
+                    <h2 className="text-3xl sm:text-4xl text-foreground font-bold">
+                      {displayData.heading}
+                    </h2>
+                  )}
+                  {displayData.subtitle && (
+                    <p className="text-xl text-yellow-500 font-semibold mt-2">
+                      {displayData.subtitle}
+                    </p>
+                  )}
                 </div>
               )}
             </motion.div>
@@ -508,9 +561,11 @@ export function About({
                   placeholder="First description paragraph"
                 />
               ) : (
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  {displayData.description1}
-                </p>
+                displayData.description1 && (
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    {displayData.description1}
+                  </p>
+                )
               )}
             </motion.div>
 
@@ -531,9 +586,11 @@ export function About({
                   placeholder="Second description paragraph"
                 />
               ) : (
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  {displayData.description2}
-                </p>
+                displayData.description2 && (
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    {displayData.description2}
+                  </p>
+                )
               )}
             </motion.div>
 
@@ -567,7 +624,7 @@ export function About({
                       </Button>
                     </div>
                   ) : (
-                    <span className="text-gray-700">{skill}</span>
+                    skill && <span className="text-gray-700">{skill}</span>
                   )}
                 </div>
               ))}

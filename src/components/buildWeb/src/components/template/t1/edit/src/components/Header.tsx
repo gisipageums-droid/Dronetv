@@ -16,14 +16,15 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
     logoSrc: headerData?.logo || logo,
     companyName: headerData?.name || "Your Company",
     navItems: [
-      "Home",
+      "Home ",
       "About",
       "Profile",
       "Product",
       "Services",
       "Testimonials",
       "Blog",
-      "Gallery"
+      "Gallery",
+
     ],
   });
 
@@ -54,7 +55,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
 
     // Store the file for upload on Save
     setPendingLogoFile(file);
-    
+
     // Show immediate local preview
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -75,7 +76,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
-        
+
         const formData = new FormData();
         formData.append('file', pendingLogoFile);
         formData.append('sectionName', 'header');
@@ -100,7 +101,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
           return; // Don't exit edit mode
         }
       }
-      
+
       // Exit edit mode
       setIsEditing(false);
       toast.success('Header section saved with S3 URLs ready for publish');
@@ -152,16 +153,15 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
       >
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative'>
           <div className='flex items-center justify-between h-16'>
-            <div className='absolute top-1 right-2 z-20'>
+            <div className='absolute top-1 right-12 md:right-2 z-20'>
               {isEditing ? (
                 <button
                   onClick={handleSave}
                   disabled={isUploading}
-                  className={`flex items-center gap-1 px-2 py-1 ${
-                    isUploading 
-                      ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-green-500 hover:bg-green-600'
-                  } text-white rounded shadow text-xs`}
+                  className={`flex items-center gap-1 px-2 py-1 ${isUploading
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-green-500 hover:bg-green-600'
+                    } text-white rounded shadow text-xs`}
                 >
                   <Save size={12} /> {isUploading ? 'Uploading...' : 'Save'}
                 </button>

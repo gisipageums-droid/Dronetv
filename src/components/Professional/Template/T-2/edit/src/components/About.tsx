@@ -47,37 +47,20 @@ const Button = ({
 };
 
 interface AboutData {
-  title: string;
-  highlightedText: string;
+  heading: string;
+  subtitle: string;
   description1: string;
   description2: string;
   skills: string[];
-  buttonText: string;
-  imageUrl: string;
+  imageSrc: string;
+  buttonText?: string;
 }
-
-const defaultData: AboutData = {
-  title: "About",
-  highlightedText: "Me",
-  description1:
-    "I'm a passionate full-stack developer with over 3 years of experience creating digital solutions that make a difference. I specialize in modern web technologies and love turning complex problems into simple, beautiful designs.",
-  description2:
-    "When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or sharing my knowledge through technical writing and mentoring.",
-  skills: [
-    "Frontend: React, Vue.js, TypeScript",
-    "Backend: Node.js, Python, PostgreSQL",
-    "Cloud: AWS, Docker, Kubernetes",
-  ],
-  buttonText: "Let's Work Together",
-  imageUrl:
-    "https://images.unsplash.com/photo-1695634621121-691d54259d37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBwb3J0Zm9saW8lMjBkZXNpZ258ZW58MXx8fHwxNzU3NDg4OTI1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-};
 
 interface AboutProps {
   aboutData?: AboutData;
   onStateChange?: (data: AboutData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
@@ -85,32 +68,65 @@ export function About({
   aboutData,
   onStateChange,
   userId,
-  publishedId,
+  professionalId,
   templateSelection,
 }: AboutProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const aboutRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Pending image file for S3 upload - SAME PATTERN AS HERO
+  // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
 
-  const [data, setData] = useState<AboutData>(defaultData);
-  const [tempData, setTempData] = useState<AboutData>(defaultData);
+  // Initialize with props data or empty structure
+  const [data, setData] = useState<AboutData>(aboutData || {
+    heading: "",
+    subtitle: "",
+    description1: "",
+    description2: "",
+    skills: [''],
+    imageSrc: "",
+    buttonText: ""
+  });
+  const [tempData, setTempData] = useState<AboutData>(aboutData || {
+    heading: "",
+    subtitle: "",
+    description1: "",
+    description2: "",
+    skills: [''],
+    imageSrc: "",
+    buttonText: ""
+  });
 
-  // Notify parent of state changes - SAME AS HERO
+  // FIX: Use ref for onStateChange to prevent infinite loops
+  const onStateChangeRef = useRef(onStateChange);
   useEffect(() => {
-    if (onStateChange) {
-      onStateChange(data);
+    onStateChangeRef.current = onStateChange;
+  }, [onStateChange]);
+
+  // FIX: Track previous data to avoid unnecessary updates
+  const prevDataRef = useRef<AboutData>();
+
+  // Sync with props data when it changes
+  useEffect(() => {
+    if (aboutData) {
+      setData(aboutData);
+      setTempData(aboutData);
+    }
+  }, [aboutData]);
+
+  // FIX: Safe state change notification without infinite loop
+  useEffect(() => {
+    if (onStateChangeRef.current && prevDataRef.current !== data) {
+      onStateChangeRef.current(data);
+      prevDataRef.current = data;
     }
   }, [data]);
 
-  // Intersection observer - SAME AS HERO
+  // Intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -122,34 +138,16 @@ export function About({
     };
   }, []);
 
-  // Fake API fetch - SAME LOGIC AS HERO
-  const fetchAboutData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await new Promise<AboutData>((resolve) =>
-        setTimeout(() => resolve(aboutData || defaultData), 1200)
-      );
-      setData(response);
-      setTempData(response);
-      setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isVisible && !dataLoaded && !isLoading) {
-      fetchAboutData();
-    }
-  }, [isVisible, dataLoaded, isLoading, aboutData]);
+  // Calculate displayData based on editing state
+  const displayData = isEditing ? tempData : data;
 
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingImageFile(null); // Clear pending file - SAME AS HERO
+    setPendingImageFile(null);
   };
 
-  // Save function with S3 upload - SAME PATTERN AS HERO
+  // Save function with S3 upload
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -159,7 +157,7 @@ export function About({
 
       // Upload image if there's a pending file
       if (pendingImageFile) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
@@ -167,7 +165,7 @@ export function About({
         const formData = new FormData();
         formData.append('file', pendingImageFile);
         formData.append('userId', userId);
-        formData.append('fieldName', 'imageSrc');
+        formData.append('fieldName', 'about_image');
 
         const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
           method: 'POST',
@@ -176,7 +174,7 @@ export function About({
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          updatedData.imageUrl = uploadData.s3Url;
+          updatedData.imageSrc = uploadData.s3Url;
           console.log('About image uploaded to S3:', uploadData.s3Url);
         } else {
           const errorData = await uploadResponse.json();
@@ -185,19 +183,19 @@ export function About({
         }
       }
 
-      // Clear pending file - SAME AS HERO
+      // Clear pending file
       setPendingImageFile(null);
 
       // Save the updated data with S3 URL
       setIsSaving(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Update both states with the new URL - SAME AS HERO
+      // Update both states with the new URL
       setData(updatedData);
       setTempData(updatedData);
 
       setIsEditing(false);
-      toast.success('About section saved with S3 URL ready for publish');
+      toast.success('About section saved successfully');
 
     } catch (error) {
       console.error('Error saving about section:', error);
@@ -210,68 +208,74 @@ export function About({
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingImageFile(null); // Clear pending file - SAME AS HERO
+    setPendingImageFile(null);
     setIsEditing(false);
   };
 
-  // Image upload handler with validation - SAME PATTERN AS HERO
+  // Image upload handler with validation
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size - SAME AS HERO
+    // Validate file type and size
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit - SAME AS HERO
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
       toast.error('File size must be less than 5MB');
       return;
     }
 
-    // Store the file for upload on Save - SAME PATTERN AS HERO
+    // Store the file for upload on Save
     setPendingImageFile(file);
 
-    // Show immediate local preview - SAME AS HERO
+    // Show immediate local preview
     const reader = new FileReader();
     reader.onload = (e) => {
-      setTempData((prev) => ({
+      setTempData(prev => ({
         ...prev,
-        imageUrl: e.target?.result as string,
+        imageSrc: e.target?.result as string,
       }));
     };
     reader.readAsDataURL(file);
   };
 
-  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  // Stable update functions with useCallback
   const updateTempContent = useCallback((field: keyof AboutData, value: string) => {
-    setTempData((prev) => ({ ...prev, [field]: value }));
+    setTempData(prev => ({ ...prev, [field]: value }));
   }, []);
 
   const updateSkill = useCallback((index: number, value: string) => {
-    const updatedSkills = [...tempData.skills];
-    updatedSkills[index] = value;
-    setTempData(prev => ({ ...prev, skills: updatedSkills }));
-  }, [tempData.skills]);
+    setTempData(prevData => {
+      const updatedSkills = [...prevData.skills];
+      updatedSkills[index] = value;
+      return { ...prevData, skills: updatedSkills };
+    });
+  }, []);
 
   const addSkill = useCallback(() => {
-    setTempData(prev => ({
-      ...prev,
-      skills: [...prev.skills, "New skill"]
+    setTempData(prevData => ({
+      ...prevData,
+      skills: [...prevData.skills, "New skill"]
     }));
   }, []);
 
   const removeSkill = useCallback((index: number) => {
-    if (tempData.skills.length <= 1) {
-      toast.error("You must have at least one skill");
-      return;
-    }
-    const updatedSkills = tempData.skills.filter((_, i) => i !== index);
-    setTempData(prev => ({ ...prev, skills: updatedSkills }));
-  }, [tempData.skills]);
+    setTempData(prevData => {
+      if (prevData.skills.length <= 1) {
+        toast.error("You must have at least one skill");
+        return prevData;
+      }
+      return {
+        ...prevData,
+        skills: prevData.skills.filter((_, i) => i !== index)
+      };
+    });
+  }, []);
 
-  // Memoized EditableText component - SAME PATTERN AS HERO
+  // Memoized EditableText component
   const EditableText = useMemo(() => {
     return ({
       value,
@@ -327,16 +331,53 @@ export function About({
     };
   }, [updateTempContent, updateSkill]);
 
-  const displayData = isEditing ? tempData : data;
-  console.log("----------ii", displayData)
+  // Check if there's any meaningful data to display
+  const hasData = data.heading || 
+                  data.subtitle || 
+                  data.description1 || 
+                  data.description2 || 
+                  (data.skills.length > 0 && data.skills[0] !== '') ||
+                  data.imageSrc;
 
-  // Loading state - SAME PATTERN AS HERO
-  if (isLoading) {
+  // No data state - show empty state with option to add data
+  if (!isEditing && !hasData) {
     return (
       <section ref={aboutRef} id="about" className="relative py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-muted-foreground mt-4">Loading about data...</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Edit Controls */}
+          <div className='text-right mb-8'>
+            <Button
+              onClick={handleEdit}
+              size='sm'
+              className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+            >
+              <Edit2 className='w-4 h-4 mr-2' />
+              Add About Content
+            </Button>
+          </div>
+
+          {/* Empty State */}
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="text-2xl">👤</span>
+              </div>
+              <h3 className="text-2xl font-semibold text-foreground mb-4">
+                No About Content Found
+              </h3>
+              <p className="text-muted-foreground mb-8">
+                Tell your story and showcase your skills to help visitors get to know you better.
+              </p>
+              <Button
+                onClick={handleEdit}
+                size='lg'
+                className='bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'
+              >
+                <Edit2 className='w-5 h-5 mr-2' />
+                Add About Content
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     );
@@ -346,7 +387,7 @@ export function About({
     <section ref={aboutRef} id="about" className="relative py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
-        <div className='text-right mb-8'>
+        <div className='text-right z-50 mb-20'>
           {!isEditing ? (
             <Button
               onClick={handleEdit}
@@ -376,7 +417,7 @@ export function About({
               <Button
                 onClick={handleCancel}
                 size='sm'
-                className='bg-red-500 hover:bg-red-600 shadow-md'
+                className='bg-red-500 hover:bg-red-600 shadow-md text-white'
                 disabled={isSaving || isUploading}
               >
                 <X className='w-4 h-4 mr-2' />
@@ -411,7 +452,7 @@ export function About({
                   onClick={() => fileInputRef.current?.click()}
                   size="sm"
                   variant="outline"
-                  className="bg-white/90 backdrop-blur-sm shadow-md"
+                  className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   Change Image
@@ -438,11 +479,21 @@ export function About({
             >
               <div className="absolute inset-0 bg-yellow-400 rounded-3xl transform -rotate-6"></div>
               <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
-                <ImageWithFallback
-                  src={displayData.imageUrl}
-                  alt="About me"
-                  className="w-full h-96 object-cover"
-                />
+                {displayData.imageSrc ? (
+                  <img
+                    src={displayData.imageSrc}
+                    alt="About me"
+                    className="w-full h-96 object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23f3f4f6" width="400" height="400"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EProfile Image%3C/text%3E%3C/svg%3E';
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-96 flex items-center justify-center bg-gray-200">
+                    <p className="text-gray-400 text-sm">No image uploaded</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -456,34 +507,42 @@ export function About({
             className="space-y-6 relative"
           >
             {/* Heading */}
-            <motion.h2
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl text-foreground"
             >
               {isEditing ? (
-                <div className="flex items-center">
+                <div className="space-y-4">
                   <EditableText
-                    value={displayData.title}
-                    field="title"
-                    className="mr-2"
-                    placeholder="Title"
+                    value={displayData.heading}
+                    field="heading"
+                    className="text-3xl sm:text-4xl font-bold text-foreground"
+                    placeholder="Main heading"
                   />
                   <EditableText
-                    value={displayData.highlightedText}
-                    field="highlightedText"
-                    className="mr-2"
-                    placeholder="Title"
+                    value={displayData.subtitle}
+                    field="subtitle"
+                    className="text-xl text-yellow-500 font-semibold"
+                    placeholder="Subtitle"
                   />
                 </div>
               ) : (
-                <>
-                  {displayData.title}<span className="text-yellow-500">{displayData.highlightedText}</span>
-                </>
+                <div>
+                  {displayData.heading && (
+                    <h2 className="text-3xl sm:text-4xl text-foreground font-bold">
+                      {displayData.heading}
+                    </h2>
+                  )}
+                  {displayData.subtitle && (
+                    <p className="text-xl text-yellow-500 font-semibold mt-2">
+                      {displayData.subtitle}
+                    </p>
+                  )}
+                </div>
               )}
-            </motion.h2>
+            </motion.div>
 
             {/* Description 1 */}
             <motion.div
@@ -502,9 +561,11 @@ export function About({
                   placeholder="First description paragraph"
                 />
               ) : (
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  {displayData.description1}
-                </p>
+                displayData.description1 && (
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    {displayData.description1}
+                  </p>
+                )
               )}
             </motion.div>
 
@@ -525,9 +586,11 @@ export function About({
                   placeholder="Second description paragraph"
                 />
               ) : (
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  {displayData.description2}
-                </p>
+                displayData.description2 && (
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    {displayData.description2}
+                  </p>
+                )
               )}
             </motion.div>
 
@@ -561,7 +624,7 @@ export function About({
                       </Button>
                     </div>
                   ) : (
-                    <span className="text-gray-700">{skill}</span>
+                    skill && <span className="text-gray-700">{skill}</span>
                   )}
                 </div>
               ))}
@@ -575,7 +638,7 @@ export function About({
               viewport={{ once: true }}
             >
               <AnimatedButton href="#contact" size="lg">
-                Let's Connect
+                {displayData.buttonText || "Let's Connect"}
               </AnimatedButton>
             </motion.div>
           </motion.div>

@@ -65,66 +65,17 @@ interface SkillsData {
   };
 }
 
-const defaultData: SkillsData = {
-  skills: [
-    {
-      id: '1',
-      icon: Code,
-      title: 'Frontend Development',
-      description: 'React, Vue.js, TypeScript, Tailwind CSS',
-      level: 95
-    },
-    {
-      id: '2',
-      icon: Database,
-      title: 'Backend Development',
-      description: 'Node.js, Python, PostgreSQL, MongoDB',
-      level: 90
-    },
-    {
-      id: '3',
-      icon: Cloud,
-      title: 'Cloud & DevOps',
-      description: 'AWS, Docker, Kubernetes, CI/CD',
-      level: 85
-    },
-    {
-      id: '4',
-      icon: Smartphone,
-      title: 'Mobile Development',
-      description: 'React Native, Flutter, iOS/Android',
-      level: 80
-    },
-    {
-      id: '5',
-      icon: Globe,
-      title: 'Web Design',
-      description: 'UI/UX, Figma, Adobe XD, Responsive Design',
-      level: 88
-    },
-    {
-      id: '6',
-      icon: Zap,
-      title: 'Performance',
-      description: 'Optimization, SEO, Analytics, Testing',
-      level: 92
-    }
-  ],
-  header: {
-    title: "My Skills",
-    subtitle: "A comprehensive set of technical skills and expertise built through years of hands-on experience and continuous learning."
-  }
-};
+// Remove the defaultData constant since we'll use dynamic data
 
 interface SkillsProps {
   skillsData?: SkillsData;
   onStateChange?: (data: SkillsData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
-export function Skills({ skillsData, onStateChange, userId, publishedId, templateSelection }: SkillsProps) {
+export function Skills({ skillsData, onStateChange, userId, professionalId, templateSelection }: SkillsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -133,21 +84,85 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
   const [isVisible, setIsVisible] = useState(false);
   const skillsRef = useRef<HTMLDivElement>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
-  
-  // Pending icon files for S3 upload - SAME PATTERN AS HERO
+
+  // Pending icon files for S3 upload
   const [pendingIconFiles, setPendingIconFiles] = useState<Record<string, File>>({});
 
-  const [data, setData] = useState<SkillsData>(defaultData);
-  const [tempData, setTempData] = useState<SkillsData>(defaultData);
+  // Initialize with skillsData or empty structure
+  const [data, setData] = useState<SkillsData>(() => 
+    skillsData || {
+      skills: [],
+      header: {
+        title: "My Skills",
+        subtitle: "A comprehensive set of technical skills and expertise built through years of hands-on experience and continuous learning."
+      }
+    }
+  );
+  
+  const [tempData, setTempData] = useState<SkillsData>(() => 
+    skillsData || {
+      skills: [],
+      header: {
+        title: "My Skills",
+        subtitle: "A comprehensive set of technical skills and expertise built through years of hands-on experience and continuous learning."
+      }
+    }
+  );
 
-  // Notify parent of state changes - SAME AS HERO
+  // Helper function to get icon component from string name
+  const getIconComponent = (iconName: string) => {
+    const iconMap: { [key: string]: any } = {
+      Code, Database, Cloud, Smartphone, Globe, Zap, Cpu: Zap // Add Cpu with Zap as fallback
+    };
+    return iconMap[iconName] || Zap; // Fallback to Zap if icon not found
+  };
+
+  // Modified icon rendering logic
+  const renderSkillIcon = (skill: Skill) => {
+    // Priority 1: iconUrl (uploaded image)
+    if (skill.iconUrl) {
+      return (
+        <ImageWithFallback
+          src={skill.iconUrl}
+          alt={skill.title}
+          className="w-8 h-8 object-contain"
+        />
+      );
+    }
+    
+    // Priority 2: icon (can be either component or string)
+    if (skill.icon) {
+      // If icon is a string (from backend), get the component
+      if (typeof skill.icon === 'string') {
+        const IconComponent = getIconComponent(skill.icon);
+        return <IconComponent className="w-8 h-8 text-gray-900" />;
+      }
+      // If icon is already a component (default case)
+      const IconComponent = skill.icon;
+      return <IconComponent className="w-8 h-8 text-gray-900" />;
+    }
+    
+    // Priority 3: fallback icon
+    return <Zap className="w-8 h-8 text-gray-900" />;
+  };
+
+  // Notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(data);
     }
   }, [data]);
 
-  // Intersection observer - SAME AS HERO
+  // Update data when skillsData prop changes
+  useEffect(() => {
+    if (skillsData) {
+      setData(skillsData);
+      setTempData(skillsData);
+      setDataLoaded(true);
+    }
+  }, [skillsData]);
+
+  // Intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -159,18 +174,24 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
     };
   }, []);
 
-  // Fake API fetch - SAME LOGIC AS HERO
+  // Fake API fetch - simplified since we're using props
   const fetchSkillsData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await new Promise<SkillsData>((resolve) =>
-        setTimeout(() => resolve(skillsData || defaultData), 1200)
-      );
-      setData(response);
-      setTempData(response);
+    if (skillsData) {
+      // If skillsData is provided via props, use it directly
+      setData(skillsData);
+      setTempData(skillsData);
       setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
+    } else {
+      // Only show loading if no data is provided
+      setIsLoading(true);
+      try {
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        // If no skillsData provided, keep the empty/default state
+        setDataLoaded(true);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -183,10 +204,10 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingIconFiles({}); // Clear pending files - SAME AS HERO
+    setPendingIconFiles({}); // Clear pending files
   };
 
-  // Save function with S3 upload - SAME PATTERN AS HERO
+  // Save function with S3 upload
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -196,7 +217,7 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
       // Upload icon images for skills with pending files
       for (const [skillId, file] of Object.entries(pendingIconFiles)) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
@@ -225,14 +246,14 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
         }
       }
 
-      // Clear pending files - SAME AS HERO
+      // Clear pending files
       setPendingIconFiles({});
 
       // Save the updated data with S3 URLs
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
       
-      // Update both states with the new URLs - SAME AS HERO
+      // Update both states with the new URLs
       setData(updatedData);
       setTempData(updatedData);
       
@@ -250,16 +271,16 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingIconFiles({}); // Clear pending files - SAME AS HERO
+    setPendingIconFiles({}); // Clear pending files
     setIsEditing(false);
   };
 
-  // Icon upload handler with validation - SAME PATTERN AS HERO
+  // Icon upload handler with validation
   const handleIconUpload = (event: React.ChangeEvent<HTMLInputElement>, skillId: string) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size - SAME AS HERO
+    // Validate file type and size
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
@@ -270,10 +291,10 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
       return;
     }
 
-    // Store the file for upload on Save - SAME PATTERN AS HERO
+    // Store the file for upload on Save
     setPendingIconFiles(prev => ({ ...prev, [skillId]: file }));
 
-    // Show immediate local preview - SAME AS HERO
+    // Show immediate local preview
     const reader = new FileReader();
     reader.onload = (e) => {
       const updatedSkills = tempData.skills.map(skill =>
@@ -284,7 +305,7 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
     reader.readAsDataURL(file);
   };
 
-  // Stable update functions with useCallback - SAME PATTERN AS HERO
+  // Stable update functions with useCallback
   const updateSkill = useCallback((index: number, field: keyof Skill, value: any) => {
     const updatedSkills = [...tempData.skills];
     updatedSkills[index] = { ...updatedSkills[index], [field]: value };
@@ -323,8 +344,8 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
 
   const displayData = isEditing ? tempData : data;
 
-  // Loading state - SAME PATTERN AS HERO
-  if (isLoading || !displayData.skills || displayData.skills.length === 0) {
+  // Loading state - only show if we're actually loading and have no data
+  if ((isLoading && !dataLoaded) || (!dataLoaded && displayData.skills.length === 0)) {
     return (
       <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -474,17 +495,8 @@ export function Skills({ skillsData, onStateChange, userId, publishedId, templat
                   </p>
                 )}
                 
-                {skill.iconUrl ? (
-                  <ImageWithFallback
-                    src={skill.iconUrl}
-                    alt={skill.title}
-                    className="w-8 h-8 object-contain"
-                  />
-                ) : skill.icon ? (
-                  <skill.icon className="w-8 h-8 text-gray-900" />
-                ) : (
-                  <Zap className="w-8 h-8 text-gray-900" />
-                )}
+                {/* Use the new render function */}
+                {renderSkillIcon(skill)}
               </motion.div>
 
               {isEditing ? (

@@ -1,16 +1,70 @@
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { DarkModeToggle } from './DarkModeToggle';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+
+// Custom Button component (consistent with other components)
+const Button = ({
+  children,
+  onClick,
+  variant,
+  size,
+  className,
+  disabled,
+  ...props
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  variant?: string;
+  size?: string;
+  className?: string;
+  disabled?: boolean;
+}) => {
+  const baseClasses =
+    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  const variants: Record<string, string> = {
+    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
+    default: "bg-blue-600 text-white hover:bg-blue-700",
+  };
+  const sizes: Record<string, string> = {
+    sm: "h-8 px-3 text-sm",
+    default: "h-10 px-4",
+  };
+
+  return (
+    <button
+      className={`${baseClasses} ${variants[variant || 'default']} ${
+        sizes[size || 'default']
+      } ${className || ""}`}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+interface NavLink {
+  href: string;
+  label: string;
+}
 
 interface HeaderData {
-  logoUrl: string;
-  portfolioText: string;
+  logoText: string;
+  navLinks: NavLink[];
 }
 
 const defaultHeaderData: HeaderData = {
-  logoUrl: "/images/logo.png",
-  portfolioText: "Portfolio",
+  logoText: "arijit",
+  navLinks: [
+    { href: '#home', label: 'Home' },
+    { href: '#about', label: 'About' },
+    { href: '#skills', label: 'Skills' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#services', label: 'Services' },
+    { href: '#testimonials', label: 'Testimonials' },
+    { href: '#contact', label: 'Contact' },
+  ]
 };
 
 interface HeaderProps {
@@ -20,51 +74,46 @@ interface HeaderProps {
 
 export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Use provided data or default
+  const headerRef = useRef<HTMLDivElement>(null);
+  
   const data = headerData || defaultHeaderData;
 
-  // Static navigation items
-  const navItems = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Skills', href: '#skills' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Clients', href: '#clients' },
-    { name: 'Reviews', href: '#testimonials' },
-    { name: 'Contact', href: '#contact' },
-  ];
+  // Get first character in uppercase for avatar
+  const getAvatarLetter = (text: string) => {
+    return text.charAt(0).toUpperCase();
+  };
 
   return (
-    <header className="fixed top-[4rem] left-0 right-0 z-40 bg-background border-b border-border shadow-lg">
+    <header ref={headerRef} className="fixed top-[4rem] left-0 right-0 z-40 bg-background border-b border-border shadow-lg">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          {/* Logo and Brand */}
-          <div className="text-2xl font-bold text-foreground">
+          {/* Avatar and Brand */}
+          <div className="text-2xl font-bold transition-transform duration-300 text-foreground">
             <div className='flex items-center gap-4'>
-              <ImageWithFallback
-                src={data.logoUrl}
-                alt="Logo"
-                className="w-10 h-10 object-contain"
-              />
-              <span>{data.portfolioText}</span>
+              {/* Display Mode - Only Avatar (No Text) */}
+              <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+                  {getAvatarLetter(data.logoText)}
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="flex items-center space-x-6">
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - Static (Non-editable) */}
             <nav className="hidden space-x-8 md:flex">
-              {navItems.map((item, index) => (
+              {data.navLinks.map((link, index) => (
                 <a
                   key={index}
-                  href={item.href}
+                  href={link.href}
                   className="transition-all duration-300 text-muted-foreground hover:text-yellow-500 hover:scale-110"
                 >
-                  {item.name}
+                  {link.label}
                 </a>
               ))}
             </nav>
 
+            {/* Controls */}
             <div className='flex items-center gap-2'>
               {/* Dark Mode Toggle */}
               <DarkModeToggle onToggle={onDarkModeToggle} />
@@ -80,17 +129,17 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation - Static (Non-editable) */}
         {isMenuOpen && (
           <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
-            {navItems.map((item, index) => (
+            {data.navLinks.map((link, index) => (
               <a
                 key={index}
-                href={item.href}
+                href={link.href}
                 onClick={() => setIsMenuOpen(false)}
                 className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-yellow-500"
               >
-                {item.name}
+                {link.label}
               </a>
             ))}
           </nav>

@@ -44,6 +44,9 @@ const ExcelDataProcessor = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+console.log("excelData", excelData);
+
+  
   // Function to extract Excel data using xlsx library
   const extractExcelData = async (file: File): Promise<ExcelDataItem[]> => {
     return new Promise((resolve, reject) => {

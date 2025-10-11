@@ -1,6 +1,6 @@
 import { Edit2, Loader2, Plus, Quote, Save, Star, Trash2, X } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 // Custom Button component
@@ -63,39 +63,45 @@ interface TestimonialsData {
   testimonials: Testimonial[];
 }
 
-// Empty default data for Testimonials section
-const defaultTestimonialsData: TestimonialsData = {
-  subtitle: "",
-  heading: "",
-  description: "",
-  testimonials: []
-};
-
 // Props interface
 interface TestimonialsProps {
   testimonialsData?: TestimonialsData;
   onStateChange?: (data: TestimonialsData) => void;
-  userId?: string;
-  professionalId?: string;
-  templateSelection?: string;
+
 }
 
 export function Testimonials({ 
   testimonialsData, 
   onStateChange, 
-  userId, 
-  professionalId, 
-  templateSelection 
+  
 }: TestimonialsProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const testimonialsRef = useRef<HTMLDivElement>(null);
 
-  const [data, setData] = useState<TestimonialsData>(defaultTestimonialsData);
-  const [tempData, setTempData] = useState<TestimonialsData>(defaultTestimonialsData);
+  // Initialize with props data or empty structure
+  const [data, setData] = useState<TestimonialsData>(testimonialsData || {
+    subtitle: "",
+    heading: "",
+    description: "",
+    testimonials: []
+  });
+  const [tempData, setTempData] = useState<TestimonialsData>(testimonialsData || {
+    subtitle: "",
+    heading: "",
+    description: "",
+    testimonials: []
+  });
+
+  // Calculate displayData based on editing state
+  const displayData = isEditing ? tempData : data;
+
+  // Sync with props data when it changes
+  useEffect(() => {
+    if (testimonialsData) {
+      setData(testimonialsData);
+      setTempData(testimonialsData);
+    }
+  }, [testimonialsData]);
 
   // Notify parent of state changes
   useEffect(() => {
@@ -103,39 +109,6 @@ export function Testimonials({
       onStateChange(data);
     }
   }, [data]);
-
-  // Intersection observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0.1 }
-    );
-    if (testimonialsRef.current) observer.observe(testimonialsRef.current);
-    return () => {
-      if (testimonialsRef.current) observer.unobserve(testimonialsRef.current);
-    };
-  }, []);
-
-  // Fake API fetch
-  const fetchTestimonialsData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await new Promise<TestimonialsData>((resolve) =>
-        setTimeout(() => resolve(testimonialsData || defaultTestimonialsData), 1200)
-      );
-      setData(response);
-      setTempData(response);
-      setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isVisible && !dataLoaded && !isLoading) {
-      fetchTestimonialsData();
-    }
-  }, [isVisible, dataLoaded, isLoading, testimonialsData]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -147,10 +120,10 @@ export function Testimonials({
     try {
       setIsSaving(true);
       
-      // Save the updated data
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      // Simulate save API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       
-      // Update both states
+      // Update data state
       setData(tempData);
       
       setIsEditing(false);
@@ -171,16 +144,20 @@ export function Testimonials({
 
   // Stable update functions with useCallback
   const updateTestimonial = useCallback((index: number, field: keyof Testimonial, value: any) => {
-    const updatedTestimonials = [...tempData.testimonials];
-    updatedTestimonials[index] = { ...updatedTestimonials[index], [field]: value };
-    setTempData({ ...tempData, testimonials: updatedTestimonials });
-  }, [tempData]);
+    setTempData(prevData => {
+      const updatedTestimonials = [...prevData.testimonials];
+      updatedTestimonials[index] = { ...updatedTestimonials[index], [field]: value };
+      return { ...prevData, testimonials: updatedTestimonials };
+    });
+  }, []);
 
   const updateRating = useCallback((index: number, rating: number) => {
-    const updatedTestimonials = [...tempData.testimonials];
-    updatedTestimonials[index].rating = rating;
-    setTempData({ ...tempData, testimonials: updatedTestimonials });
-  }, [tempData]);
+    setTempData(prevData => {
+      const updatedTestimonials = [...prevData.testimonials];
+      updatedTestimonials[index] = { ...updatedTestimonials[index], rating };
+      return { ...prevData, testimonials: updatedTestimonials };
+    });
+  }, []);
 
   const addTestimonial = useCallback(() => {
     const newTestimonial: Testimonial = {
@@ -192,45 +169,51 @@ export function Testimonials({
       project: 'Project Type',
       date: '2024'
     };
-    setTempData({
-      ...tempData,
-      testimonials: [...tempData.testimonials, newTestimonial]
-    });
-  }, [tempData]);
+    setTempData(prevData => ({
+      ...prevData,
+      testimonials: [...prevData.testimonials, newTestimonial]
+    }));
+  }, []);
 
   const removeTestimonial = useCallback((index: number) => {
-    if (tempData.testimonials.length <= 1) {
-      toast.error("You must have at least one testimonial");
-      return;
-    }
-    
-    const updatedTestimonials = tempData.testimonials.filter((_, i) => i !== index);
-    setTempData({ ...tempData, testimonials: updatedTestimonials });
-  }, [tempData]);
+    setTempData(prevData => {
+      if (prevData.testimonials.length <= 1) {
+        toast.error("You must have at least one testimonial");
+        return prevData;
+      }
+      
+      const updatedTestimonials = prevData.testimonials.filter((_, i) => i !== index);
+      return { ...prevData, testimonials: updatedTestimonials };
+    });
+  }, []);
 
   const updateSection = useCallback((field: keyof Omit<TestimonialsData, 'testimonials'>, value: string) => {
-    setTempData({
-      ...tempData,
+    setTempData(prevData => ({
+      ...prevData,
       [field]: value
-    });
-  }, [tempData]);
+    }));
+  }, []);
 
-  const displayData = isEditing ? tempData : data;
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <section ref={testimonialsRef} id="testimonials" className="relative py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-muted-foreground mt-4">Loading testimonials data...</p>
-        </div>
-      </section>
-    );
-  }
+  // Safe string splitting for heading
+  const renderHeading = () => {
+    const heading = displayData?.heading || "Clients review";
+    const words = heading.split(' ');
+    
+    if (words.length > 1) {
+      return (
+        <>
+          {words[0]}{' '}
+          <span className="text-yellow-500">
+            {words.slice(1).join(' ')}
+          </span>
+        </>
+      );
+    }
+    return heading;
+  };
 
   return (
-    <section ref={testimonialsRef} id="testimonials" className="relative py-20 bg-background">
+    <section id="testimonials" className="relative py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-20'>
@@ -292,29 +275,29 @@ export function Testimonials({
             <>
               <input
                 type="text"
-                value={displayData.subtitle}
+                value={tempData.subtitle || ""}
                 onChange={(e) => updateSection('subtitle', e.target.value)}
                 className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
-                placeholder="Subtitle (e.g., client success stories and feedback)"
+                placeholder="Subtitle"
               />
               <input
                 type="text"
-                value={displayData.heading}
+                value={tempData.heading || ""}
                 onChange={(e) => updateSection('heading', e.target.value)}
                 className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
-                placeholder="Heading (e.g., What Clients Say)"
+                placeholder="Heading"
               />
               <textarea
-                value={displayData.description}
+                value={tempData.description || ""}
                 onChange={(e) => updateSection('description', e.target.value)}
                 className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                 rows={2}
-                placeholder="Description (e.g., testimonials from satisfied clients)"
+                placeholder="Description"
               />
             </>
           ) : (
             <>
-              {displayData.subtitle && (
+              {data.subtitle && (
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -322,26 +305,19 @@ export function Testimonials({
                   viewport={{ once: true }}
                   className="text-lg text-yellow-500 mb-2"
                 >
-                  {displayData.subtitle}
+                  {data.subtitle}
                 </motion.p>
               )}
-              {displayData.heading && (
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  viewport={{ once: true }}
-                  className="text-3xl sm:text-4xl text-foreground mb-4"
-                >
-                  {displayData.heading.split(' ')[0]}{' '}
-                  {displayData.heading.split(' ').length > 1 && (
-                    <span className="text-yellow-500">
-                      {displayData.heading.split(' ').slice(1).join(' ')}
-                    </span>
-                  )}
-                </motion.h2>
-              )}
-              {displayData.description && (
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="text-3xl sm:text-4xl text-foreground mb-4"
+              >
+                {renderHeading()}
+              </motion.h2>
+              {data.description && (
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -349,7 +325,7 @@ export function Testimonials({
                   viewport={{ once: true }}
                   className="text-lg text-muted-foreground max-w-2xl mx-auto"
                 >
-                  {displayData.description}
+                  {data.description}
                 </motion.p>
               )}
             </>
@@ -357,14 +333,14 @@ export function Testimonials({
         </motion.div>
 
         {/* Testimonials Grid */}
-        {displayData.testimonials.length > 0 || isEditing ? (
+        {displayData.testimonials.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayData.testimonials.map((testimonial, index) => (
               <motion.div
                 key={testimonial.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05 }}
                 className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 relative"
@@ -407,7 +383,6 @@ export function Testimonials({
                     onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
                     className="text-muted-foreground leading-relaxed mb-6 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                     rows={4}
-                    placeholder="Testimonial content"
                   />
                 ) : (
                   <p className="text-muted-foreground leading-relaxed mb-6">
@@ -475,27 +450,11 @@ export function Testimonials({
                 </div>
               </motion.div>
             ))}
-            {isEditing && displayData.testimonials.length === 0 && (
-              <div className="col-span-full text-center py-12">
-                <p className="text-muted-foreground mb-4">No testimonials added yet</p>
-                <Button
-                  onClick={addTestimonial}
-                  variant='outline'
-                  size='lg'
-                  className='bg-blue-50 hover:bg-blue-100 text-blue-700'
-                >
-                  <Plus className='w-5 h-5 mr-2' />
-                  Add Your First Testimonial
-                </Button>
-              </div>
-            )}
           </div>
         ) : (
           !isEditing && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">
-                No testimonials to display. Click "Edit" to add testimonials.
-              </p>
+              <p className="text-muted-foreground text-lg">No testimonials to display. Click "Edit" to add testimonials.</p>
             </div>
           )
         )}

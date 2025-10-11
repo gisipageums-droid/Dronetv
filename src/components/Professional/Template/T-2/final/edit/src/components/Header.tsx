@@ -2,7 +2,6 @@ import { Edit2, Loader2, Menu, Save, Upload, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { DarkModeToggle } from './DarkModeToggle';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
 // Custom Button component (consistent with other components)
 const Button = ({
@@ -46,14 +45,27 @@ const Button = ({
   );
 };
 
+interface NavLink {
+  href: string;
+  label: string;
+}
+
 interface HeaderData {
-  logoUrl: string;
-  portfolioText: string;
+  logoText: string;
+  navLinks: NavLink[];
 }
 
 const defaultHeaderData: HeaderData = {
-  logoUrl: "/images/logo.png",
-  portfolioText: "Portfolio",
+  logoText: "arijit",
+  navLinks: [
+    { href: '#home', label: 'Home' },
+    { href: '#about', label: 'About' },
+    { href: '#skills', label: 'Skills' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#services', label: 'Services' },
+    { href: '#testimonials', label: 'Testimonials' },
+    { href: '#contact', label: 'Contact' },
+  ]
 };
 
 interface HeaderProps {
@@ -61,23 +73,18 @@ interface HeaderProps {
   onStateChange?: (data: HeaderData) => void;
   onDarkModeToggle: (isDark: boolean) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
-export function Header({ headerData, onStateChange, onDarkModeToggle, userId, publishedId, templateSelection }: HeaderProps) {
+export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Pending logo file for S3 upload
-  const [pendingLogoFile, setPendingLogoFile] = useState<File | null>(null);
-
   const [data, setData] = useState<HeaderData>(defaultHeaderData);
   const [tempData, setTempData] = useState<HeaderData>(defaultHeaderData);
 
@@ -112,56 +119,15 @@ export function Header({ headerData, onStateChange, onDarkModeToggle, userId, pu
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingLogoFile(null);
   };
 
-  // Save function with S3 upload
+  // Save function
   const handleSave = async () => {
     try {
-      setIsUploading(true);
-      
-      // Create a copy of tempData to update with S3 URL
-      let updatedData = { ...tempData };
-
-      // Upload logo if there's a pending file
-      if (pendingLogoFile) {
-        if (!userId || !publishedId || !templateSelection) {
-          toast.error('Missing user information. Please refresh and try again.');
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', pendingLogoFile);
-        formData.append('userId', userId);
-        formData.append('fieldName', 'headerLogo');
-
-        const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          updatedData.logoUrl = uploadData.s3Url;
-          console.log('Header logo uploaded to S3:', uploadData.s3Url);
-        } else {
-          const errorData = await uploadResponse.json();
-          toast.error(`Logo upload failed: ${errorData.message || 'Unknown error'}`);
-          return;
-        }
-      }
-
-      // Clear pending file
-      setPendingLogoFile(null);
-
-      // Save the updated data with S3 URL
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
-      // Update both states with the new URL
-      setData(updatedData);
-      setTempData(updatedData);
-      
+      setData(tempData);
       setIsEditing(false);
       setIsMenuOpen(false);
       toast.success('Header section saved successfully');
@@ -170,71 +136,36 @@ export function Header({ headerData, onStateChange, onDarkModeToggle, userId, pu
       console.error('Error saving header section:', error);
       toast.error('Error saving changes. Please try again.');
     } finally {
-      setIsUploading(false);
       setIsSaving(false);
     }
   };
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingLogoFile(null);
     setIsEditing(false);
   };
 
-  // Logo upload handler with validation
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('File size must be less than 2MB');
-      return;
-    }
-
-    setPendingLogoFile(file);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setTempData(prev => ({
-        ...prev,
-        logoUrl: e.target?.result as string,
-      }));
-    };
-    reader.readAsDataURL(file);
-  };
-
-  // Update portfolio text
-  const updatePortfolioText = (value: string) => {
+  // Update logo text
+  const updateLogoText = (value: string) => {
     setTempData(prev => ({
       ...prev,
-      portfolioText: value
+      logoText: value
     }));
   };
 
-  const displayData = isEditing ? tempData : data;
+  // Get first character in uppercase for avatar
+  const getAvatarLetter = (text: string) => {
+    return text.charAt(0).toUpperCase();
+  };
 
-  // Static navigation items
-  const navItems = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Skills', href: '#skills' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Clients', href: '#clients' },
-    { name: 'Reviews', href: '#testimonials' },
-    { name: 'Contact', href: '#contact' },
-  ];
+  const displayData = isEditing ? tempData : data;
 
   // Loading state
   if (isLoading) {
     return (
       <header ref={headerRef} className="fixed top-[4rem] left-0 right-0 z-40 bg-background border-b border-border shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center">
-          <Loader2 className="w-6 h-6 animate-spin mx-auto text-yellow-500" />
+          <Loader2 className="w-6 h-6 animate-spin mx-auto text-yellow-400" />
         </div>
       </header>
     );
@@ -244,81 +175,61 @@ export function Header({ headerData, onStateChange, onDarkModeToggle, userId, pu
     <header ref={headerRef} className="fixed top-[4rem] left-0 right-0 z-40 bg-background border-b border-border shadow-lg">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          {/* Logo and Brand - Editable */}
-          <div className="text-2xl font-bold transition-transform duration-300 text-foreground hover:scale-105">
+          {/* Avatar and Brand */}
+          <div className="text-2xl font-bold transition-transform duration-300 text-foreground">
             <div className='flex items-center gap-4'>
               {isEditing ? (
                 <>
-                  {/* Logo Upload */}
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={() => fileInputRef.current?.click()}
-                      size="sm"
-                      variant="outline"
-                      className="bg-white/90 backdrop-blur-sm shadow-md"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload Logo
-                    </Button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      className="hidden"
-                    />
-                    {pendingLogoFile && (
-                      <p className="text-xs text-orange-600 bg-white p-1 rounded">
-                        Logo selected
-                      </p>
-                    )}
+                  {/* Edit Mode */}
+                  <div className="flex items-center gap-4">
+                    {/* Avatar Display */}
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+                        {getAvatarLetter(displayData.logoText)}
+                      </div>
+                    </div>
+                    
+                    {/* Logo Text Input */}
+                    <div className="flex flex-col gap-1">
+                      <input
+                        type="text"
+                        value={displayData.logoText}
+                        onChange={(e) => updateLogoText(e.target.value)}
+                        className="px-3 py-2 text-base bg-white/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48"
+                        placeholder="Enter your name"
+                      />
+                      <p className="text-xs text-gray-500">First letter will be shown in avatar</p>
+                    </div>
                   </div>
-                  
-                  {/* Logo Preview */}
-                  <ImageWithFallback
-                    src={displayData.logoUrl}
-                    alt="Logo"
-                    className="w-10 h-10 object-contain"
-                  />
-                  
-                  {/* Portfolio Text Input */}
-                  <input
-                    type="text"
-                    value={displayData.portfolioText}
-                    onChange={(e) => updatePortfolioText(e.target.value)}
-                    className="px-3 py-2 text-lg bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                    placeholder="Portfolio Text"
-                  />
                 </>
               ) : (
                 <>
-                  {/* Display Mode */}
-                  <ImageWithFallback
-                    src={displayData.logoUrl}
-                    alt="Logo"
-                    className="w-10 h-10 object-contain"
-                  />
-                  <span>{displayData.portfolioText}</span>
+                  {/* Display Mode - Only Avatar (No Text) */}
+                  <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+                                          {getAvatarLetter(displayData.logoText)}
+                    </div>
+                  </div>
                 </>
               )}
             </div>
           </div>
 
           <div className="flex items-center space-x-6">
-            {/* Desktop Navigation - Static */}
+            {/* Desktop Navigation - Static (Non-editable) */}
             <nav className="hidden space-x-8 md:flex">
-              {navItems.map((item, index) => (
+              {data.navLinks.map((link, index) => (
                 <a
                   key={index}
-                  href={item.href}
+                  href={link.href}
                   className="transition-all duration-300 text-muted-foreground hover:text-yellow-500 hover:scale-110"
                 >
-                  {item.name}
+                  {link.label}
                 </a>
               ))}
             </nav>
 
-            {/* Edit/Save Controls - Static */}
+            {/* Edit/Save Controls */}
             <div className='flex items-center gap-2'>
               {!isEditing ? (
                 <Button
@@ -327,7 +238,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle, userId, pu
                   className='bg-red-500 hover:bg-red-600 shadow-md text-white'
                 >
                   <Edit2 className='w-4 h-4 mr-2' />
-                  Edit Header
+                  Edit
                 </Button>
               ) : (
                 <div className='flex gap-2'>
@@ -335,22 +246,20 @@ export function Header({ headerData, onStateChange, onDarkModeToggle, userId, pu
                     onClick={handleSave}
                     size='sm'
                     className='bg-green-600 hover:bg-green-700 text-white shadow-md'
-                    disabled={isSaving || isUploading}
+                    disabled={isSaving}
                   >
-                    {isUploading ? (
-                      <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                    ) : isSaving ? (
+                    {isSaving ? (
                       <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                     ) : (
                       <Save className='w-4 h-4 mr-2' />
                     )}
-                    {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+                    {isSaving ? "Saving..." : "Save"}
                   </Button>
                   <Button
                     onClick={handleCancel}
                     size='sm'
-                    className='bg-red-500 hover:bg-red-600 shadow-md text-white'
-                    disabled={isSaving || isUploading}
+                    className='bg-gray-500 hover:bg-gray-600 shadow-md text-white'
+                    disabled={isSaving}
                   >
                     <X className='w-4 h-4 mr-2' />
                     Cancel
@@ -358,10 +267,10 @@ export function Header({ headerData, onStateChange, onDarkModeToggle, userId, pu
                 </div>
               )}
 
-              {/* Dark Mode Toggle - Static */}
+              {/* Dark Mode Toggle */}
               <DarkModeToggle onToggle={onDarkModeToggle} />
 
-              {/* Mobile menu button - Static */}
+              {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="transition-all duration-300 md:hidden text-muted-foreground hover:text-yellow-500 hover:scale-110"
@@ -372,17 +281,17 @@ export function Header({ headerData, onStateChange, onDarkModeToggle, userId, pu
           </div>
         </div>
 
-        {/* Mobile Navigation - Static */}
+        {/* Mobile Navigation - Static (Non-editable) */}
         {isMenuOpen && (
           <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
-            {navItems.map((item, index) => (
+            {data.navLinks.map((link, index) => (
               <a
                 key={index}
-                href={item.href}
+                href={link.href}
                 onClick={() => setIsMenuOpen(false)}
                 className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-yellow-500"
               >
-                {item.name}
+                {link.label}
               </a>
             ))}
           </nav>

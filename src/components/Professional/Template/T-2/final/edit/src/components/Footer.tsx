@@ -135,12 +135,10 @@ const defaultFooterData: FooterData = {
 interface FooterProps {
   footerData?: FooterData;
   onStateChange?: (data: FooterData) => void;
-  userId?: string;
-  professionalId?: string;
-  templateSelection?: string;
+ 
 }
 
-export function Footer({ footerData, onStateChange, userId, professionalId, templateSelection }: FooterProps) {
+export function Footer({ footerData, onStateChange }: FooterProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

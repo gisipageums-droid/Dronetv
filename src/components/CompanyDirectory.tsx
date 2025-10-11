@@ -312,7 +312,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-xl font-bold">Filters</h2>
+          <h2 className="text-xl font-bold cursor-pointer">Filters</h2>
           <button onClick={onCloseMobileSidebar} className="p-2">
             <X className="w-5 h-5" />
           </button>
@@ -635,16 +635,16 @@ const MainContent: React.FC<MainContentProps> = ({
       {/* Mobile filter button */}
       <button
         onClick={onOpenMobileSidebar}
-        className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200"
+        className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200 cursor-pointer"
       >
         <Menu className="w-4 h-4" />
-        <span>Filters</span>
+        <span className="">Filters</span>
       </button>
 
       {/* Results Header */}
       <div className='flex items-center justify-between mb-6 md:mb-8 flex-wrap gap-3 md:gap-4'>
         <h2 className='text-xl md:text-2xl font-bold text-black'>
-          My Companies ({totalCount || companies.length})
+          My Companies  ({totalCount || companies.length})
         </h2>
         <div className='flex items-center gap-2 md:gap-4'>
           <span className='text-black font-medium text-sm md:text-base'>

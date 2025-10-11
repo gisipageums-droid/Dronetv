@@ -44,88 +44,36 @@ const Button = ({
   );
 };
 
-// Define types for Hero data
+// Define types for Hero data based on backend structure
+interface CTAButton {
+  variant: string;
+  text: string;
+  href: string;
+}
+
 interface HeroData {
   name: string;
   title: string;
   description: string;
-  imageUrl: string;
-  stats: {
-    projects: string;
-    experience: string;
-    satisfaction: string;
-  };
-  buttons: {
+  image: string;
+  // Support both old structure (buttons) and new structure (ctaButtons)
+  buttons?: {
     work: string;
     contact: string;
   };
+  ctaButtons?: CTAButton[];
 }
-
-// Default data for Hero section
-const defaultHeroData: HeroData = {
-  name: "John Doe",
-  title: "Full-Stack Developer",
-  description: "A passionate Full-Stack Developer creating amazing digital experiences with modern technologies and innovative solutions.",
-  imageUrl: "https://images.unsplash.com/photo-1634133472760-e5c2bd346787?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0JTIwZGV2ZWxvcGVyfGVufDF8fHx8MTc1NzQ4OTAwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-  stats: {
-    projects: "50+",
-    experience: "3+",
-    satisfaction: "100%"
-  },
-  buttons: {
-    work: "View My Work",
-    contact: "Get In Touch"
-  }
-};
-
-// Safe data merger function
-const mergeHeroData = (incomingData?: Partial<HeroData>): HeroData => {
-  if (!incomingData) {
-    return defaultHeroData;
-  }
-
-  return {
-    name: incomingData.name || defaultHeroData.name,
-    title: incomingData.title || defaultHeroData.title,
-    description: incomingData.description || defaultHeroData.description,
-    imageUrl: incomingData.imageUrl || defaultHeroData.imageUrl,
-    stats: {
-      projects: incomingData.stats?.projects || defaultHeroData.stats.projects,
-      experience: incomingData.stats?.experience || defaultHeroData.stats.experience,
-      satisfaction: incomingData.stats?.satisfaction || defaultHeroData.stats.satisfaction,
-    },
-    buttons: {
-      work: incomingData.buttons?.work || defaultHeroData.buttons.work,
-      contact: incomingData.buttons?.contact || defaultHeroData.buttons.contact,
-    }
-  };
-};
-
-// Animation variants
-const itemVariants = {
-  hidden: { y: 50, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
-};
-
-const imageVariants = {
-  hidden: { scale: 0.8, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
-};
 
 // Props interface
 interface HeroProps {
   heroData?: Partial<HeroData>;
   onStateChange?: (data: HeroData) => void;
   userId?: string;
-  publishedId?: string;
+  professionalId?: string;
   templateSelection?: string;
 }
 
-export function Hero({ heroData, onStateChange, userId, publishedId, templateSelection }: HeroProps) {
+export function Hero({ heroData, onStateChange, userId, professionalId, templateSelection }: HeroProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -136,29 +84,112 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
   
   const heroRef = useRef<HTMLDivElement>(null);
   
-  // Initialize with safe merged data
-  const [data, setData] = useState<HeroData>(() => mergeHeroData(heroData));
-  const [tempData, setTempData] = useState<HeroData>(() => mergeHeroData(heroData));
+  // Helper function to transform backend data to component format
+  const transformHeroData = useCallback((backendData: Partial<HeroData>): HeroData => {
+    // Handle buttons transformation - convert ctaButtons array to buttons object
+    let buttons = { work: "", contact: "" };
+    
+    if (backendData.ctaButtons && backendData.ctaButtons.length > 0) {
+      // Use the first button for "work" and second for "contact" if available
+      buttons = {
+        work: backendData.ctaButtons[0]?.text || "",
+        contact: backendData.ctaButtons[1]?.text || backendData.ctaButtons[0]?.text || ""
+      };
+    } else if (backendData.buttons) {
+      // Fallback to existing buttons structure
+      buttons = backendData.buttons;
+    }
+    
+    return {
+      name: backendData.name || "",
+      title: backendData.title || "",
+      description: backendData.description || "",
+      image: backendData.image || "",
+      
+      buttons,
+      // Keep original ctaButtons for saving back to backend if needed
+      ctaButtons: backendData.ctaButtons
+    };
+  }, []);
 
-  // Improved data loading effect
+  // Helper function to transform component data back to backend format
+  const transformToBackendFormat = useCallback((componentData: HeroData): HeroData => {
+    // If we had original ctaButtons structure, maintain it
+    if (componentData.ctaButtons) {
+      const updatedCtaButtons = [...componentData.ctaButtons];
+      
+      // Update the text of existing buttons
+      if (updatedCtaButtons[0]) {
+        updatedCtaButtons[0].text = componentData.buttons?.work || updatedCtaButtons[0].text;
+      }
+      if (updatedCtaButtons[1]) {
+        updatedCtaButtons[1].text = componentData.buttons?.contact || updatedCtaButtons[1].text;
+      }
+      
+      return {
+        ...componentData,
+        ctaButtons: updatedCtaButtons
+      };
+    }
+    
+    // If no ctaButtons existed, create them from buttons
+    return {
+      ...componentData,
+      ctaButtons: [
+        {
+          variant: "primary",
+          text: componentData.buttons?.work || "View Work",
+          href: "#projects"
+        },
+        {
+          variant: "secondary", 
+          text: componentData.buttons?.contact || "Contact Me",
+          href: "#contact"
+        }
+      ]
+    };
+  }, []);
+
+  // Initialize with empty data structure
+  const [data, setData] = useState<HeroData>({
+    name: "",
+    title: "",
+    description: "",
+    image: "",
+    buttons: {
+      work: "",
+      contact: ""
+    }
+  });
+  
+  const [tempData, setTempData] = useState<HeroData>({
+    name: "",
+    title: "",
+    description: "",
+    image: "",
+    buttons: {
+      work: "",
+      contact: ""
+    }
+  });
+
+  // Data loading effect
   useEffect(() => {
     if (heroData) {
-      const mergedData = mergeHeroData(heroData);
-      setData(mergedData);
-      setTempData(mergedData);
+      const transformedData = transformHeroData(heroData);
+      setData(transformedData);
+      setTempData(transformedData);
       setDataLoaded(true);
       setIsLoading(false);
     } else if (!dataLoaded) {
       setIsLoading(true);
       const timer = setTimeout(() => {
-        setData(defaultHeroData);
-        setTempData(defaultHeroData);
         setDataLoaded(true);
         setIsLoading(false);
       }, 1200);
       return () => clearTimeout(timer);
     }
-  }, [heroData, dataLoaded]);
+  }, [heroData, dataLoaded, transformHeroData]);
 
   // Intersection observer
   useEffect(() => {
@@ -177,16 +208,18 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     if (isVisible && !dataLoaded && !isLoading) {
       setIsLoading(true);
       const timer = setTimeout(() => {
-        const mergedData = mergeHeroData(heroData);
-        setData(mergedData);
-        setTempData(mergedData);
+        if (heroData) {
+          const transformedData = transformHeroData(heroData);
+          setData(transformedData);
+          setTempData(transformedData);
+        }
         setDataLoaded(true);
         setIsLoading(false);
       }, 500);
       
       return () => clearTimeout(timer);
     }
-  }, [isVisible, dataLoaded, isLoading, heroData]);
+  }, [isVisible, dataLoaded, isLoading, heroData, transformHeroData]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -194,12 +227,11 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     setPendingImageFile(null);
   };
 
-  // Fixed Save function with better error handling
+  // Save function
   const handleSave = async () => {
     try {
       setIsSaving(true);
       
-      // Only set uploading state if there's actually a file to upload
       if (pendingImageFile) {
         setIsUploading(true);
       }
@@ -208,7 +240,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
 
       // Upload image only if there's a pending file
       if (pendingImageFile) {
-        if (!userId || !publishedId || !templateSelection) {
+        if (!userId || !professionalId || !templateSelection) {
           toast.error('Missing user information. Please refresh and try again.');
           setIsUploading(false);
           setIsSaving(false);
@@ -227,7 +259,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          updatedData.imageUrl = uploadData.s3Url;
+          updatedData.image = uploadData.s3Url;
         } else {
           const errorData = await uploadResponse.json();
           toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
@@ -237,6 +269,9 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
         }
       }
 
+      // Transform data back to backend format before saving
+      const backendData = transformToBackendFormat(updatedData);
+
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
@@ -245,9 +280,8 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
       setPendingImageFile(null);
       setIsEditing(false);
       
-      // Notify parent component of state change
       if (onStateChange) {
-        onStateChange(updatedData);
+        onStateChange(backendData);
       }
       
       toast.success(pendingImageFile 
@@ -274,26 +308,23 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+    if (file.size > 5 * 1024 * 1024) {
       toast.error('File size must be less than 5MB');
       return;
     }
 
-    // Store the file for upload on Save
     setPendingImageFile(file);
 
-    // Show immediate local preview
     const reader = new FileReader();
     reader.onload = (e) => {
       setTempData((prev) => ({
         ...prev,
-        imageUrl: e.target?.result as string,
+        image: e.target?.result as string,
       }));
     };
     reader.readAsDataURL(file);
@@ -302,16 +333,16 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
   // Safe data accessor functions
   const getButtons = useCallback(() => {
     return {
-      work: tempData?.buttons?.work || defaultHeroData.buttons.work,
-      contact: tempData?.buttons?.contact || defaultHeroData.buttons.contact,
+      work: tempData?.buttons?.work || "",
+      contact: tempData?.buttons?.contact || "",
     };
   }, [tempData]);
 
   const getStats = useCallback(() => {
     return {
-      projects: tempData?.stats?.projects || defaultHeroData.stats.projects,
-      experience: tempData?.stats?.experience || defaultHeroData.stats.experience,
-      satisfaction: tempData?.stats?.satisfaction || defaultHeroData.stats.satisfaction,
+      projects: tempData?.stats?.projects || "",
+      experience: tempData?.stats?.experience || "",
+      satisfaction: tempData?.stats?.satisfaction || "",
     };
   }, [tempData]);
 
@@ -405,6 +436,21 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
   const displayData = isEditing ? tempData : data;
   const safeButtons = getButtons();
   const safeStats = getStats();
+
+  // Animation variants
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
+  };
+
+  const imageVariants = {
+    hidden: { scale: 0.8, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
 
   if (isLoading) {
     return (
@@ -549,34 +595,6 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
                 </>
               )}
             </motion.div>
-
-            {/* Stats */}
-            <motion.div 
-              className="grid grid-cols-3 gap-8 pt-8"
-              variants={itemVariants}
-            >
-              {(['projects', 'experience', 'satisfaction'] as const).map((stat, index) => (
-                <div key={index} className="text-center">
-                  {isEditing ? (
-                    <EditableText
-                      value={safeStats[stat]}
-                      statField={stat}
-                      className="text-3xl mb-2 p-1 w-16 text-center text-yellow-500 mx-auto"
-                      placeholder="Value"
-                    />
-                  ) : (
-                    <div className="text-3xl text-yellow-500 mb-2">
-                      {safeStats[stat]}
-                    </div>
-                  )}
-                  <p className="text-muted-foreground capitalize">
-                    {stat === 'satisfaction' ? 'Client Satisfaction' :
-                      stat === 'experience' ? 'Years Experience' :
-                        stat}
-                  </p>
-                </div>
-              ))}
-            </motion.div>
           </motion.div>
 
           {/* Right Content - User Image */}
@@ -606,7 +624,7 @@ export function Hero({ heroData, onStateChange, userId, publishedId, templateSel
               >
                 <div className="relative">
                   <img
-                    src={displayData.imageUrl || defaultHeroData.imageUrl}
+                    src={displayData.image}
                     alt={`${displayData.name} - ${displayData.title}`}
                     className="w-full h-96 object-cover object-center transition-transform duration-300 hover:scale-110"
                   />
@@ -641,6 +659,6 @@ Hero.defaultProps = {
   heroData: undefined,
   onStateChange: undefined,
   userId: '',
-  publishedId: '',
+  professionalId: '',
   templateSelection: '',
 };

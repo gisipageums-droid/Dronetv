@@ -1,5 +1,4 @@
 import { motion } from 'motion/react';
-import { AnimatedButton } from './AnimatedButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
 export function Hero({ heroData }) {
@@ -37,15 +36,9 @@ export function Hero({ heroData }) {
           {/* Left Content */}
           <div className="space-y-8">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight">
-              {heroData.title || "Hi, I'm"}{' '}
-              <span className="text-yellow-500">{heroData.name || "Professional"}</span>
+              {"Hi, I'm"}{' '}
+              <span className="text-yellow-500">{heroData.name}</span>
             </h1>
-
-            {heroData.subtitle && (
-              <p className="text-lg text-muted-foreground font-semibold">
-                {heroData.subtitle}
-              </p>
-            )}
 
             <p className="text-xl text-muted-foreground leading-relaxed">
               {heroData.description}
@@ -53,40 +46,19 @@ export function Hero({ heroData }) {
 
             <div className="flex flex-col sm:flex-row gap-4">
               {heroData.ctaButtons && heroData.ctaButtons.map((button, index) => (
-                <AnimatedButton 
+                <a
                   key={index}
-                  href={button.href} 
-                  variant={button.variant} 
-                  size="lg"
+                  href={button.href}
+                  className={`inline-flex items-center justify-center px-6 py-3 rounded-lg transition-colors ${
+                    button.variant === 'primary' 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'bg-transparent text-blue-600 border border-blue-600 hover:bg-blue-50'
+                  }`}
                 >
                   {button.text}
-                </AnimatedButton>
+                </a>
               ))}
             </div>
-
-            {/* Stats */}
-            {heroData.socials && (
-              <div className="grid grid-cols-3 gap-8 pt-8">
-                {heroData.stats?.projectsCompleted && (
-                  <div className="text-center">
-                    <div className="text-3xl text-yellow-500 mb-2">{heroData.stats.projectsCompleted}</div>
-                    <p className="text-muted-foreground">Projects</p>
-                  </div>
-                )}
-                {heroData.stats?.yearsExperience && (
-                  <div className="text-center">
-                    <div className="text-3xl text-yellow-500 mb-2">{heroData.stats.yearsExperience}</div>
-                    <p className="text-muted-foreground">Years Experience</p>
-                  </div>
-                )}
-                {heroData.stats?.successRate && (
-                  <div className="text-center">
-                    <div className="text-3xl text-yellow-500 mb-2">{heroData.stats.successRate}</div>
-                    <p className="text-muted-foreground">Success Rate</p>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Right Content - User Image */}
@@ -115,7 +87,7 @@ export function Hero({ heroData }) {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
                 <ImageWithFallback
-                  src={heroData.image || heroData.backgroundImage}
+                  src={heroData.image}
                   alt={`${heroData.name || "Professional"} - ${heroData.title || "Technology Professional"}`}
                   className="w-full h-96 object-cover object-center transition-transform duration-300 hover:scale-110"
                 />
