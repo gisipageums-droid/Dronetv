@@ -17,6 +17,7 @@ interface Company {
   userId: string;
   publicId: string;
   draftId: string;
+  templateSelection?: string; // <-- Added property
 }
 
 interface ApiResponse {
@@ -145,8 +146,8 @@ interface SidebarProps {
 
 interface CompanyCardProps {
   company: Company;
-  onEdit: (publishedId: string) => void;
-  onPreview: (publishedId: string) => void;
+  onEdit: (publishedId: string, templateSelection: string) => void;
+  onPreview: (publishedId: string, templateSelection: string) => void;
 }
 
 interface MainContentProps {
@@ -159,8 +160,8 @@ interface MainContentProps {
   totalCount: number;
   hasMore: boolean;
   onOpenMobileSidebar: () => void;
-  onEdit: (publishedId: string) => void;
-  onPreview: (publishedId: string) => void;
+  onEdit: (publishedId: string, templateSelection: string) => void;
+  onPreview: (publishedId: string, templateSelection: string) => void;
   searchTerm: string;
   industryFilter: string;
   sortBy: string;
@@ -406,7 +407,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 // Company Card Component with Edit/Preview Buttons
 const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
   // Create a placeholder image using company name
-  console.log(company)
+  console.log("company:", company);
   const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${company.companyName?.charAt(0) || "C"
     }%3C/text%3E%3C/svg%3E`;
 
@@ -461,8 +462,12 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
   // console.log("Company Status:", company.reviewStatus); // Debug log
 
   return (
-    // <div className='bg-red-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-pink-500 to-purple-600 group'>
-    <div className='overflow-hidden w-full h-full bg-red-50 from-pink-500 to-purple-600 rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl border-gradient-to-b group'>
+    <div
+      className='overflow-hidden w-full h-full bg-red-50 from-pink-500 to-purple-600 rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl border-gradient-to-b group'
+      // Add tabIndex and role for accessibility and to ensure click events work
+      tabIndex={0}
+      role="group"
+    >
       <div className='p-4 md:p-6 lg:p-8'>
         <div className='flex items-center justify-between mb-4 md:mb-6'>
           <div className='flex items-center gap-3 md:gap-4'>
@@ -543,7 +548,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                onPreview(company.publishedId);
+                onPreview(company.publishedId, company.templateSelection || "");
               }}
               className='px-3 py-2 md:px-4 md:py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2'
             >
@@ -551,9 +556,15 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
               Preview
             </button>
             <button
+              type="button"
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                onEdit(company.publishedId);
+                // Defensive: ensure templateSelection is present
+                if (company.templateSelection) {
+                  onEdit(company.publishedId, company.templateSelection);
+                } else {
+                  alert("Template selection not found for this company.");
+                }
               }}
               className='px-3 py-2 md:px-4 md:py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2'
             >
@@ -833,7 +844,8 @@ const apiService = {
             previewImage: card.previewImage || card.logo || card.image || '',
             status: String(card.status || 'approved').toLowerCase(),
             userId: String(card.userId || ''),
-            draftId: String(card.draftId || '')
+            draftId: String(card.draftId || ''),
+            templateSelection: String(card.templateSelection || ""), // <-- Add this line
           };
         } catch (cardError) {
           console.error(`Error processing card at index ${index}:`, cardError);
@@ -871,47 +883,7 @@ const apiService = {
       throw new Error("An unexpected error occurred while fetching companies");
     }
   },
-  async fetchPublishedDetails(
-    publishedId: string,
-    userId: string,
-    setFinaleDataReview: (data: PublishedDetailsResponse) => void
-  ): Promise<PublishedDetailsResponse> {
-    try {
-      const response = await fetch(
-        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-User-Id': userId,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Published Details API Error:", errorText);
-
-        if (response.status === 401) {
-          throw new Error("User not authenticated.");
-        } else if (response.status === 403) {
-          throw new Error("You don't have permission to access this template.");
-        } else if (response.status === 404) {
-          throw new Error("Template not found.");
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      }
-
-      const data = await response.json();
-      // console.log("Published Details Response:", data);
-      setFinaleDataReview(data)
-      return data;
-    } catch (error) {
-      console.error("Error fetching published details:", error);
-      throw error;
-    }
-  },
+  
 };
 
 // Main Company Directory Component
@@ -937,25 +909,18 @@ const CompanyDirectory: React.FC = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
   // Navigation handlers
-  const handleEdit = async (publishedId: string): Promise<void> => {
+  const handleEdit = async (publishedId: string, templateSelection: string): Promise<void> => {
     try {
       if (!user?.userData?.email) {
         throw new Error("User not authenticated");
-      }
-
-      // Fetch the published details
-      const details = await apiService.fetchPublishedDetails(
-        publishedId,
-        user.userData.email,
-        setFinaleDataReview // ✅ directly store in context
-      );
+      };
 
       // ✅ Navigate to edit page
 
-      if (details.templateSelection === "template-1") {
-        navigate(`/user/companies/edit/1/${publishedId}`);
-      } else if (details.templateSelection === "template-2") {
-        navigate(`/user/companies/edit/2/${publishedId}`);
+      if (templateSelection === "template-1") {
+        navigate(`/user/companies/edit/1/${publishedId}/${user.userData.email}`);
+      } else if (templateSelection === "template-2") {
+        navigate(`/user/companies/edit/2/${publishedId}/${user.userData.email}`);
       }
 
     } catch (error) {
@@ -964,21 +929,17 @@ const CompanyDirectory: React.FC = () => {
     }
   };
   // In the handlePreview function, modify the navigation:
-  const handlePreview = async (publishedId: string): Promise<void> => {
+  const handlePreview = async (publishedId: string , templateSelection: string): Promise<void> => {
     try {
       if (!user?.userData?.email) {
         throw new Error("User not authenticated");
       }
-      const details = await apiService.fetchPublishedDetails(
-        publishedId,
-        user.userData.email,
-        setFinaleDataReview // ✅ directly store in context
-      );
+     
 
       // Include user ID in the URL as a query parameter
-      if (details.templateSelection === "template-1") {
+      if (templateSelection === "template-1") {
         navigate(`/user/companies/preview/1/${publishedId}/${user.userData.email}`);
-      } else if (details.templateSelection === "template-2") {
+      } else if (templateSelection === "template-2") {
         navigate(`/user/companies/preview/2/${publishedId}/${user.userData.email}`);
       }
     } catch (error) {

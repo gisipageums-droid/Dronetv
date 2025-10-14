@@ -1,23 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  Search,
-  MapPin,
-  ChevronDown,
-  ArrowRight,
-  Star,
-  Users,
-  Building2,
-  Menu,
-  X,
-  Eye,
-  Key,
-  FileText,
-  CheckCircle,
-  XCircle,
-  Trash2,
-  Clock,
-  AlertCircle,
-} from "lucide-react";
+import {Search,MapPin,ChevronDown,ArrowRight,Building2,Menu,X,Eye,Key,CheckCircle,XCircle,Trash2,Clock,AlertCircle,Edit} from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
@@ -93,6 +75,7 @@ interface CompanyCardProps {
   onApprove: (publishedId: string) => void;
   onReject: (publishedId: string) => void;
   onDelete: (publishedId: string) => void;
+  onEdit: (publishedId: string, templateSelection: string) => void;
   disabled?: boolean;
 }
 
@@ -111,6 +94,7 @@ interface MainContentProps {
   onPreview: (publishedId: string) => void;
   onApprove: (publishedId: string) => void;
   onReject: (publishedId: string) => void;
+  onEdit: (publishedId: string, templateSelection: string) => void;
   searchTerm: string;
   industryFilter: string;
   sortBy: string;
@@ -168,7 +152,6 @@ const Header: React.FC = () => {
           <p className="mx-auto mb-6 max-w-xl text-base font-light text-blue-700 md:text-lg md:mb-10">
             Review and manage all company listings, credentials, and approvals.
           </p>
-
 
           {/* <div className="flex flex-col gap-4 justify-center items-center sm:flex-row">
             <button
@@ -314,6 +297,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
   onApprove,
   onReject,
   onDelete,
+  onEdit,
   disabled = false,
 }) => {
   // Use encodeURIComponent for safety inside data URI
@@ -417,6 +401,19 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
             >
               <Key className="w-3 h-3 md:w-4 md:h-4" />
               Credentials
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(company.publishedId, company.templateSelection);
+              }}
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 md:text-sm"
+              aria-label={`Edit ${company.companyName}`}
+              disabled={disabled}
+            >
+              <Edit className="w-3 h-3 md:w-4 md:h-4" />
+              Edit
             </button>
 
             <button
@@ -627,8 +624,9 @@ const RecentCompaniesSection: React.FC<{
   onApprove: (publishedId: string) => void;
   onReject: (publishedId: string) => void;
   onDelete: (publishedId: string) => void;
+  onEdit: (publishedId: string, templateSelection: string) => void;
   disabled?: boolean;
-}> = ({ recentCompanies, onCredentials, onPreview, onApprove, onReject, onDelete, disabled }) => {
+}> = ({ recentCompanies, onCredentials, onPreview, onApprove, onReject, onDelete, onEdit, disabled }) => {
   if (recentCompanies.length === 0) return null;
 
   return (
@@ -655,6 +653,7 @@ const RecentCompaniesSection: React.FC<{
               onApprove={onApprove}
               onReject={onReject}
               onDelete={onDelete}
+              onEdit={onEdit}
               disabled={disabled}
             />
           </div>
@@ -678,20 +677,21 @@ const AdminDashboard: React.FC = () => {
   // loading states
   const [isFetching, setIsFetching] = useState<boolean>(true); // initial fetch
   const [isMutating, setIsMutating] = useState<boolean>(false); // approve/reject/delete
-  const [error, setError] = useState<string | null>(null);
 
   // UI state
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [industryFilter, setIndustryFilter] = useState<string>("All Sectors");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
-  const [currentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(12);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
   const [credentialsModal, setCredentialsModal] = useState<{ isOpen: boolean; data: any }>({ isOpen: false, data: null });
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; publishedId: string | null }>({
     isOpen: false,
     publishedId: null,
   });
+  const [error, setError] = useState<string | null>(null);
 
   // -------------------- Recent Companies Logic --------------------
   const recentCompanies = useMemo(() => {
@@ -742,6 +742,11 @@ const AdminDashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchTerm, industryFilter, sortBy]);
+
   // -------------------- Derived lists (useMemo) --------------------
   const industries = useMemo(() => {
     return ["All Sectors", ...Array.from(new Set(companies.flatMap((c) => c.sectors || []))).sort()];
@@ -786,7 +791,29 @@ const AdminDashboard: React.FC = () => {
     }
   }, [filteredCompanies, sortBy]);
 
-  const totalPages = Math.max(1, Math.ceil(sortedCompanies.length / 12));
+  // Calculate paginated companies
+  const paginatedCompanies = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return sortedCompanies.slice(startIndex, endIndex);
+  }, [sortedCompanies, currentPage, itemsPerPage]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedCompanies.length / itemsPerPage));
+
+  // -------------------- Pagination Handlers --------------------
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   // -------------------- Handlers (mutations with isMutating) --------------------
   const handleCredentials = async (publishedId: string) => {
@@ -826,6 +853,33 @@ const AdminDashboard: React.FC = () => {
     } catch (err) {
       console.error("Error loading template for preview:", err);
       toast.error("Failed to load template for preview");
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  // Add handleEdit function
+  const handleEdit = async (publishedId: string, templateSelection: string) => {
+    try {
+      const company = companies.find((c) => c.publishedId === publishedId);
+      if (!company) {
+        toast.error("Company not found");
+        return;
+      }
+      
+      setIsMutating(true);
+      
+      // Navigate to admin edit page with company's userId
+      if (templateSelection === "template-1") {
+        navigate(`/admin/companies/edit/1/${publishedId}/${company.userId}`);
+      } else if (templateSelection === "template-2") {
+        navigate(`/admin/companies/edit/2/${publishedId}/${company.userId}`);
+      } else {
+        toast.info("Unknown template selection");
+      }
+    } catch (err) {
+      console.error("Error loading template for editing:", err);
+      toast.error("Failed to load template for editing");
     } finally {
       setIsMutating(false);
     }
@@ -1018,6 +1072,7 @@ const AdminDashboard: React.FC = () => {
             onApprove={handleApprove}
             onReject={handleReject}
             onDelete={handleDelete}
+            onEdit={handleEdit}
             disabled={isMutating}
           />
 
@@ -1031,6 +1086,7 @@ const AdminDashboard: React.FC = () => {
             </div>
             <span className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full">
               {sortedCompanies.length} {sortedCompanies.length === 1 ? "company" : "companies"}
+              {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
             </span>
           </div>
 
@@ -1046,7 +1102,7 @@ const AdminDashboard: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
-              {sortedCompanies.map((company) => (
+              {paginatedCompanies.map((company) => (
                 <div key={company.publishedId} className="animate-fadeIn">
                   <CompanyCard
                     company={company}
@@ -1055,6 +1111,7 @@ const AdminDashboard: React.FC = () => {
                     onApprove={handleApprove}
                     onReject={handleReject}
                     onDelete={handleDelete}
+                    onEdit={handleEdit}
                     disabled={isMutating}
                   />
                 </div>
@@ -1066,6 +1123,7 @@ const AdminDashboard: React.FC = () => {
           {totalPages > 1 && (
             <div className="flex justify-center items-center mt-8">
               <button
+                onClick={handlePrevPage}
                 className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={currentPage <= 1}
               >
@@ -1076,6 +1134,7 @@ const AdminDashboard: React.FC = () => {
                 Page {currentPage} of {totalPages}
               </span>
               <button
+                onClick={handleNextPage}
                 className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={currentPage >= totalPages}
               >

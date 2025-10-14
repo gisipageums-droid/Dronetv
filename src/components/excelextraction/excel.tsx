@@ -43,10 +43,11 @@ const ExcelDataProcessor = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [postStatusStore, setPostStatusStore] = useState<string | any>({});
 
-console.log("excelData", excelData);
+  // console.log("excelData", excelData);
+  console.log("postStatus", postStatusStore);
 
-  
   // Function to extract Excel data using xlsx library
   const extractExcelData = async (file: File): Promise<ExcelDataItem[]> => {
     return new Promise((resolve, reject) => {
@@ -288,6 +289,7 @@ const handlePostAllData = async () => {
 
       const result = await response.json();
       console.log(`Successfully posted item ${i + 1}:`, result);
+      setPostStatusStore((prev: Record<string | number, any>) => ({ ...prev, [item._id]: { uploadId: result.uploadId } }));
 
       // Update data with posted status
       setExcelData(prevData =>
@@ -345,49 +347,123 @@ const handlePostAllData = async () => {
   }, 3000);
 };
 
-
   const handleGenerateWebsite = async (id: string | number) => {
     const numericId = typeof id === 'number' ? id : parseInt(String(id));
     setPostingStatus(prev => ({ ...prev, [numericId]: 'generating' }));
     
-    // Simulate website generation
-    setTimeout(() => {
+    try {
+      // Get the uploadId from postStatusStore for this item
+      const uploadId = postStatusStore[numericId]?.uploadId;
+      
+      if (!uploadId) {
+        throw new Error('No uploadId found for this item');
+      }
+
+      const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev/'; // Replace with your actual API
+      
+      // Prepare payload for generate API
+      const payload = {
+        uploadid: uploadId,
+        metadata: {
+          fileName: file?.name || 'unknown',
+          generatedAt: new Date().toISOString(),
+          itemId: numericId
+        }
+      };
+
+      // Call generate API
+      const response = await fetch(GENERATE_API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Successfully generated website:', result);
+
+      // Update data with generated status
       const updatedData = excelData.map(item => 
         item._id === id ? { ...item, _status: 'generated' } : item
       );
       setExcelData(updatedData);
       setPostingStatus(prev => ({ ...prev, [numericId]: 'success' }));
-    }, 1500);
+      
+    } catch (error) {
+      console.error('Error generating website:', error);
+      alert(`Failed to generate website: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setPostingStatus(prev => ({ ...prev, [numericId]: undefined }));
+    }
   };
 
   const handleGenerateAllWebsites = async () => {
-    const postedItems = excelData.filter(item => item._status === 'posted');
-    if (postedItems.length === 0) {
-      alert('No posted items to generate websites for. Please post data first.');
-      return;
+  const postedItems = excelData.filter(item => item._status === 'posted');
+  if (postedItems.length === 0) {
+    alert('No posted items to generate websites for. Please post data first.');
+    return;
+  }
+
+  setPostingStatus(prev => ({
+    ...prev,
+    generateAll: {
+      inProgress: true,
+      completed: 0,
+      total: postedItems.length
     }
+  }));
 
-    setPostingStatus(prev => ({
-      ...prev,
-      generateAll: {
-        inProgress: true,
-        completed: 0,
-        total: postedItems.length
+  const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev'; 
+
+  // Generate websites one by one with actual API calls
+  for (let i = 0; i < postedItems.length; i++) {
+    const item = postedItems[i];
+    const itemId = item._id || i;
+    const numericId = typeof itemId === 'number' ? itemId : i;
+    
+    // Update individual item status
+    setPostingStatus(prev => ({ ...prev, [numericId]: 'generating' }));
+    
+    try {
+      // Get the uploadId from postStatusStore for this item
+      const uploadId = postStatusStore[itemId]?.uploadId;
+      
+      if (!uploadId) {
+        console.warn(`No uploadId found for item ${itemId}, skipping...`);
+        continue;
       }
-    }));
 
-    // Generate websites one by one with progress updates
-    for (let i = 0; i < postedItems.length; i++) {
-      const item = postedItems[i];
-      const itemId = item._id || i;
-      const numericId = typeof itemId === 'number' ? itemId : i;
-      
-      // Update individual item status
-      setPostingStatus(prev => ({ ...prev, [numericId]: 'generating' }));
-      
-      // Simulate generation delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Prepare payload for generate API
+      const payload = {
+        uploadid: uploadId,
+        metadata: {
+          fileName: file?.name || 'unknown',
+          generatedAt: new Date().toISOString(),
+          itemIndex: i + 1,
+          totalItems: postedItems.length
+        }
+      };
+
+      // Call generate API
+      const response = await fetch(GENERATE_API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      }); 
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log(`Successfully generated website for item ${i + 1}:`, result);
+
       // Update data with generated status
       setExcelData(prevData => 
         prevData.map(dataItem => 
@@ -398,34 +474,44 @@ const handlePostAllData = async () => {
       // Update individual item status
       setPostingStatus(prev => ({ ...prev, [numericId]: 'success' }));
       
-      // Update progress
-      setPostingStatus(prev => ({
-        ...prev,
-        generateAll: {
-          ...prev.generateAll!,
-          completed: i + 1
-        }
-      }));
+    } catch (error) {
+      console.error(`Error generating website for item ${i + 1}:`, error);
+      // Continue with next item even if one fails
     }
-
-    // Complete the process
+    
+    // Update progress
     setPostingStatus(prev => ({
       ...prev,
       generateAll: {
-        inProgress: false,
-        completed: postedItems.length,
-        total: postedItems.length
+        ...prev.generateAll!,
+        completed: i + 1
       }
     }));
 
-    // Clear progress after 3 seconds
-    setTimeout(() => {
-      setPostingStatus(prev => {
-        const { generateAll, ...rest } = prev;
-        return rest;
-      });
-    }, 3000);
-  };
+    // Increased delay to avoid overwhelming the API - changed from 500ms to 6000ms (6 seconds)
+    if (i < postedItems.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 6000)); // Increased from 500ms to 6000ms
+    }
+  }
+
+  // Complete the process
+  setPostingStatus(prev => ({
+    ...prev,
+    generateAll: {
+      inProgress: false,
+      completed: postedItems.length,
+      total: postedItems.length
+    }
+  }));
+
+  // Clear progress after 3 seconds
+  setTimeout(() => {
+    setPostingStatus(prev => {
+      const { generateAll, ...rest } = prev;
+      return rest;
+    });
+  }, 3000);
+};
 
   const handleViewWebsite = (website: string) => {
     // In a real app, this would open the generated website

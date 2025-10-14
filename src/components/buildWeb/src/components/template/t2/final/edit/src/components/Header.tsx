@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import logo from "/images/Drone tv .in.jpg";
 
 export default function Header({headerData,onStateChange,publishedId,userId,templateSelection}) {
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);

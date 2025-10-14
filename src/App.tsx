@@ -136,8 +136,8 @@ const AppContent = () => {
           <Route path='/edit/template/t2' element={<EditTemp2 />} />
           <Route path='/user/companies/preview/1/:publishedId/:userId' element={<DashboardPreview1 />} />
            <Route path='/user/companies/preview/2/:publishedId/:userId' element={<DashboardPreview2 />} />
-          <Route path='/user/companies/edit/1/:pub' element={<DashboardEdit1 />} />
-           <Route path='/user/companies/edit/2/:pub' element={<DashboardEdit2 />} />
+          <Route path='/user/companies/edit/1/:pub/:userId' element={<DashboardEdit1 />} />
+           <Route path='/user/companies/edit/2/:pub/:userId' element={<DashboardEdit2 />} />
           {/* login functionality */}
           <Route path='/login' element={<Login />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
@@ -147,7 +147,8 @@ const AppContent = () => {
           <Route path='/admin/company/dashboard' element={<AdminDashboard />} />
           <Route path='/admin/companies/preview/1/:publishedId/:userId' element={<DashboardPreview1 />} />
           <Route path='/admin/companies/preview/2/:publishedId/:userId' element={<DashboardPreview2 />} />
-
+          <Route path='/admin/companies/edit/1/:pub/:userId' element={<DashboardEdit1 />} />
+           <Route path='/admin/companies/edit/2/:pub/:userId' element={<DashboardEdit2 />} />
           {/* main preview routes */}
           <Route path='/company/:urlSlug' element={<MainCompPreviewT1 />} />
           <Route path='/companies/:urlSlug' element={<MainCompPreviewT2 />} />

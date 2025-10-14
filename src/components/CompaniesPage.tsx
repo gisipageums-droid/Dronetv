@@ -85,11 +85,16 @@ const CompaniesPage: React.FC = () => {
       );
     }
 
-    // Sorting by name
+    // Sorting
     filtered = [...filtered].sort((a, b) => {
       switch (sortBy) {
         case 'companyName':
           return (a.companyName || '').localeCompare(b.companyName || '');
+        case 'createdAt':
+          // Sort by creation date (newest first)
+          const dateA = new Date(a.createdAt || 0).getTime();
+          const dateB = new Date(b.createdAt || 0).getTime();
+          return dateB - dateA; // Descending order (newest first)
         default:
           return 0;
       }
@@ -211,10 +216,10 @@ const CompaniesPage: React.FC = () => {
           <div className="absolute right-10 bottom-10 w-40 h-40 rounded-full blur-2xl animate-pulse bg-yellow-600/20" style={{ animationDelay: '2s' }}></div>
         </div>
         <div className="relative z-10 px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
-          <h1 className="mb-2 text-2xl font-black tracking-tight text-black md:text-5xl">
+          <h1 className="mb-2 text-2xl mt-[40px] sm:mt-[0px] font-black tracking-tight text-black md:text-5xl">
             Companies Directory
           </h1>
-          <p className="mx-auto mb-4 max-w-2xl text-xl text-black/80">
+          <p className="mx-auto mb-4 max-w-2xl mt-[15px] text-xl text-black/80">
             Explore top companies leading drone, AI, and geospatial tech.
           </p>
           <div className="mx-auto w-24 h-1 bg-black rounded-full"></div>
@@ -270,6 +275,7 @@ const CompaniesPage: React.FC = () => {
                   className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   <option value="companyName">Sort by Name</option>
+                  <option value="createdAt">Sort by Date (Newest)</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
               </div>

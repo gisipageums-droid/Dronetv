@@ -24,6 +24,7 @@ export default function App() {
    // Function to fetch template data
    async function fetchTemplateData(pubId: string, userId: string) {
      try {
+       window.scrollTo({ top: 0, behavior: 'smooth' });
        setIsLoading(true);
        const response = await fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${pubId}`,{
          method: 'GET',
