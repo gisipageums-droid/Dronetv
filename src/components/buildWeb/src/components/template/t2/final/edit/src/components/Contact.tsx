@@ -9,6 +9,15 @@ import { useState, useEffect } from "react";
 export default function Contact({ onStateChange, contactData }) {
   const [isEditing, setIsEditing] = useState(false);
 
+  // Static options for the subject dropdown
+  const subjectOptions = [
+    "General Inquiry",
+    "Sales Inquiry",
+    "Products Inquiry",
+    "Services Inquiry",
+    "Support Inquiry"
+  ];
+
   // Merged all state into a single object
   const [contactSection, setContactSection] = useState(contactData);
   // Add this useEffect to notify parent of state changes
@@ -362,10 +371,12 @@ export default function Contact({ onStateChange, contactData }) {
                       Subject
                     </span>
                   </Label>
-                  <select className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 ">
-                    <option className="text-black">General Inquiry</option>
-                    <option className="text-black">Strategy Consulting</option>
-                  
+                  <select className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300">
+                    {subjectOptions.map((option, index) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
                 </motion.div>
 
