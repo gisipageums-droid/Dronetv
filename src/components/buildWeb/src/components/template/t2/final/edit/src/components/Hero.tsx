@@ -10,7 +10,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
   const [pendingImageFile, setPendingImageFile] = useState(null);
   const [pendingSmallImageFile, setPendingSmallImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-
+  
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
   const [croppingFor, setCroppingFor] = useState(null); // 'heroImage' or 'hero3Image'
@@ -20,7 +20,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-
+  
   // Consolidated state
   const [heroState, setHeroState] = useState({
     ...heroData,
@@ -92,7 +92,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
       setRotation(0);
     };
     reader.readAsDataURL(file);
-
+    
     // Clear the file input
     e.target.value = '';
   };
@@ -123,7 +123,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
       setRotation(0);
     };
     reader.readAsDataURL(file);
-
+    
     // Clear the file input
     e.target.value = '';
   };
@@ -174,21 +174,21 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         // Create a proper file with original file name or generate one
-        const fileName = originalFile ?
-          `cropped-${originalFile.name}` :
+        const fileName = originalFile ? 
+          `cropped-${originalFile.name}` : 
           `cropped-${croppingFor}-${Date.now()}.jpg`;
-
-        const file = new File([blob], fileName, {
+        
+        const file = new File([blob], fileName, { 
           type: 'image/jpeg',
           lastModified: Date.now()
         });
-
+        
         // Create object URL for preview
         const previewUrl = URL.createObjectURL(blob);
-
-        resolve({
-          file,
-          previewUrl
+        
+        resolve({ 
+          file, 
+          previewUrl 
         });
       }, 'image/jpeg', 0.95); // 95% quality
     });
@@ -203,10 +203,10 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
       }
 
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
-
+      
       // Update preview immediately with blob URL (temporary)
       updateField(croppingFor, previewUrl);
-
+      
       // Set the actual file for upload on save
       if (croppingFor === 'heroImage') {
         setPendingImageFile(file);
@@ -257,11 +257,11 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
-
+        
         const formData = new FormData();
         formData.append('file', pendingImageFile);
         formData.append('sectionName', 'hero');
-        formData.append('imageField', 'heroImage' + Date.now());
+        formData.append('imageField', 'heroImage'+Date.now());
         formData.append('templateSelection', templateSelection);
 
         console.log('Uploading hero image to S3:', pendingImageFile);
@@ -293,7 +293,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
-
+        
         const formData = new FormData();
         formData.append('file', pendingSmallImageFile);
         formData.append('sectionName', 'hero');
@@ -321,7 +321,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
           return;
         }
       }
-
+      
       // Exit edit mode
       setIsEditing(false);
       toast.success('Hero section saved with S3 URLs!');
@@ -335,27 +335,27 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
   };
 
   // Animations
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.2
-      }
-    }
+  const containerVariants = { 
+    hidden: { opacity: 0 }, 
+    visible: { 
+      opacity: 1, 
+      transition: { 
+        staggerChildren: 0.3, 
+        delayChildren: 0.2 
+      } 
+    } 
   };
-
-  const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut"
-      }
-    }
+  
+  const itemVariants = { 
+    hidden: { y: 50, opacity: 0 }, 
+    visible: { 
+      y: 0, 
+      opacity: 1, 
+      transition: { 
+        duration: 0.8, 
+        ease: "easeOut" 
+      } 
+    } 
   };
 
   const imageVariants = {
@@ -366,54 +366,54 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
       transition: { duration: 0.6, ease: "easeOut" },
     },
   };
-
-  const floatingVariants = {
-    animate: {
-      y: [-10, 10, -10],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
+  
+  const floatingVariants = { 
+    animate: { 
+      y: [-10, 10, -10], 
+      transition: { 
+        duration: 4, 
+        repeat: Infinity, 
+        ease: "easeInOut" 
+      } 
+    } 
   };
 
   return (
     <>
       {/* Image Cropper Modal - WhatsApp Style */}
       {showCropper && (
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
         >
-          <motion.div
+          <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
                 Crop Image
               </h3>
-              <button
+              <button 
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
-
+            
             {/* Cropper Area */}
             <div className="flex-1 relative bg-gray-900">
-              <div className="relative h-64 sm:h-72 md:h-80 w-full">
+              <div className="relative h-96 w-full">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
                   zoom={zoom}
                   rotation={rotation}
-                  aspect={croppingFor === 'heroImage' ? 4 / 3 : 1}
+                  aspect={croppingFor === 'heroImage' ? 4/3 : 1}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={onCropComplete}
@@ -433,18 +433,18 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                 />
               </div>
             </div>
-
+            
             {/* Controls - WhatsApp Style */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="space-y-2 sm:space-y-3">
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="space-y-4">
                 {/* Zoom Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1.5 text-gray-700">
-                      <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <ZoomIn className="w-4 h-4" />
                       Zoom
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{zoom.toFixed(1)}x</span>
+                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                   </div>
                   <input
                     type="range"
@@ -453,23 +453,18 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                     max={3}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-                [&::-webkit-slider-thumb]:appearance-none 
-                [&::-webkit-slider-thumb]:h-3.5 
-                [&::-webkit-slider-thumb]:w-3.5 
-                [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
-
+                
                 {/* Rotation Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1.5 text-gray-700">
-                      <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <RotateCw className="w-4 h-4" />
                       Rotation
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{rotation}°</span>
+                    <span className="text-gray-600">{rotation}°</span>
                   </div>
                   <input
                     type="range"
@@ -478,37 +473,31 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                     max={360}
                     step={1}
                     onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-                [&::-webkit-slider-thumb]:appearance-none 
-                [&::-webkit-slider-thumb]:h-3.5 
-                [&::-webkit-slider-thumb]:w-3.5 
-                [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
               </div>
-
+              
               {/* Action Buttons */}
-              <div className="mt-3 flex flex-col sm:flex-row gap-1.5 sm:gap-2 sm:justify-between">
+              <div className="mt-6 flex gap-3 justify-between">
                 <Button
                   variant="outline"
                   onClick={resetCropSettings}
-                  className="w-full sm:w-auto px-2 sm:px-3 py-1.5 border-gray-300 text-sm text-gray-700 hover:bg-gray-100"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
                 >
                   Reset
                 </Button>
-
-                <div className="flex gap-1.5 sm:gap-2">
+                <div className="flex gap-3">
                   <Button
                     variant="outline"
                     onClick={cancelCrop}
-                    className="px-2 sm:px-3 py-1.5 border-gray-300 text-sm text-gray-700 hover:bg-gray-100"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={applyCrop}
-                    className="px-2 sm:px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6"
                   >
                     Apply Crop
                   </Button>
@@ -518,7 +507,6 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
           </motion.div>
         </motion.div>
       )}
-
 
       {/* Rest of your Hero component remains exactly the same */}
       <section id="home" className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition">
@@ -537,10 +525,10 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                 <motion.div className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4" variants={itemVariants}>
                   <CheckCircle className="w-4 h-4 mr-2" />
                   {isEditing ? (
-                    <input
-                      value={heroState.badgeText}
-                      onChange={(e) => updateField("badgeText", e.target.value)}
-                      className="bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none"
+                    <input 
+                      value={heroState.badgeText} 
+                      onChange={(e) => updateField("badgeText", e.target.value)} 
+                      className="bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none" 
                     />
                   ) : (
                     <span className="font-medium text-sm">{heroState.badgeText}</span>
@@ -551,15 +539,15 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                 <motion.div variants={itemVariants}>
                   {isEditing ? (
                     <>
-                      <textarea
-                        value={heroState.heading}
-                        onChange={(e) => updateField("heading", e.target.value)}
-                        className="bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg"
+                      <textarea 
+                        value={heroState.heading} 
+                        onChange={(e) => updateField("heading", e.target.value)} 
+                        className="bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg" 
                       />
-                      <input
-                        value={heroState.highlight}
-                        onChange={(e) => updateField("highlight", e.target.value)}
-                        className="bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none"
+                      <input 
+                        value={heroState.highlight} 
+                        onChange={(e) => updateField("highlight", e.target.value)} 
+                        className="bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none" 
                       />
                     </>
                   ) : (
@@ -573,15 +561,15 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                 <motion.div variants={itemVariants}>
                   {isEditing ? (
                     <>
-                      <textarea
-                        value={heroState.description}
-                        onChange={(e) => updateField("description", e.target.value)}
-                        className="bg-transparent border-b border-muted-foreground text-xl text-muted-foreground outline-none w-full max-w-lg"
+                      <textarea 
+                        value={heroState.description} 
+                        onChange={(e) => updateField("description", e.target.value)} 
+                        className="bg-transparent border-b border-muted-foreground text-xl text-muted-foreground outline-none w-full max-w-lg" 
                       />
-                      <input
-                        value={heroState.highlightDesc}
-                        onChange={(e) => updateField("highlightDesc", e.target.value)}
-                        className="bg-transparent border-b border-red-accent text-xl font-semibold outline-none"
+                      <input 
+                        value={heroState.highlightDesc} 
+                        onChange={(e) => updateField("highlightDesc", e.target.value)} 
+                        className="bg-transparent border-b border-red-accent text-xl font-semibold outline-none" 
                       />
                     </>
                   ) : (
@@ -596,17 +584,17 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
               <motion.div className="flex flex-col sm:flex-row gap-4" variants={itemVariants}>
                 {isEditing ? (
                   <>
-                    <input
-                      value={heroState.primaryBtn}
-                      onChange={(e) => updateField("primaryBtn", e.target.value)}
-                      className="bg-transparent border-b border-primary outline-none max-w-[200px]"
+                    <input 
+                      value={heroState.primaryBtn} 
+                      onChange={(e) => updateField("primaryBtn", e.target.value)} 
+                      className="bg-transparent border-b border-primary outline-none max-w-[200px]" 
                     />
                   </>
                 ) : (
                   <>
                     <Button size="lg" className="bg-primary text-primary-foreground shadow-xl">
                       <a href="#contact">
-                        {heroState.primaryBtn}
+                      {heroState.primaryBtn}
                       </a>
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
@@ -623,10 +611,10 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                     <div className="w-8 h-8 bg-red-accent rounded-full border-2 border-background" />
                   </div>
                   {isEditing ? (
-                    <input
-                      value={heroState.trustText}
-                      onChange={(e) => updateField("trustText", e.target.value)}
-                      className="bg-transparent border-b border-muted-foreground text-sm outline-none"
+                    <input 
+                      value={heroState.trustText} 
+                      onChange={(e) => updateField("trustText", e.target.value)} 
+                      className="bg-transparent border-b border-muted-foreground text-sm outline-none" 
                     />
                   ) : (
                     <span className="text-sm text-muted-foreground">{heroState.trustText}</span>
@@ -640,20 +628,20 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                   <div key={s.id} className="group">
                     {isEditing ? (
                       <div className="flex flex-col gap-1">
-                        <input
-                          value={s.value}
-                          onChange={(e) => updateStat(s.id, "value", e.target.value)}
-                          className="bg-transparent border-b border-foreground font-bold text-2xl outline-none"
+                        <input 
+                          value={s.value} 
+                          onChange={(e) => updateStat(s.id, "value", e.target.value)} 
+                          className="bg-transparent border-b border-foreground font-bold text-2xl outline-none" 
                         />
-                        <input
-                          value={s.label}
-                          onChange={(e) => updateStat(s.id, "label", e.target.value)}
-                          className="bg-transparent border-b border-muted-foreground text-sm outline-none"
+                        <input 
+                          value={s.label} 
+                          onChange={(e) => updateStat(s.id, "label", e.target.value)} 
+                          className="bg-transparent border-b border-muted-foreground text-sm outline-none" 
                         />
-                        <motion.button
-                          whileTap={{ scale: 0.9 }}
-                          whileHover={{ scale: 1.2 }}
-                          onClick={() => removeStat(s.id)}
+                        <motion.button 
+                        whileTap={{scale:0.9}}
+                        whileHover={{scale:1.2}}
+                          onClick={() => removeStat(s.id)} 
                           className="text-red-500 cursor-pointer text-xs"
                         >
                           ✕ Remove
@@ -669,10 +657,10 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                   </div>
                 ))}
                 {isEditing && (
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.2 }}
-                    onClick={addStat}
+                  <motion.button 
+                  whileTap={{scale:0.9}}
+                        whileHover={{scale:1.2}}
+                    onClick={addStat} 
                     className="text-green-600 cursor-pointer shadow-sm  text-sm font-medium"
                   >
                     + Add Stat
@@ -687,9 +675,9 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                 <div className="mb-4 space-y-4 p-2 bg-white/80 rounded shadow">
                   <div>
                     <p className="text-sm mb-1">Change Hero Image:</p>
-                    <input
-                      type="file"
-                      accept="image/*"
+                    <input 
+                      type="file" 
+                      accept="image/*" 
                       onChange={handleHeroImageSelect}
                       className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
                     />
@@ -701,9 +689,9 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                   </div>
                   <div>
                     <p className="text-sm mb-1">Change Small Image:</p>
-                    <input
-                      type="file"
-                      accept="image/*"
+                    <input 
+                      type="file" 
+                      accept="image/*" 
                       onChange={handleSmallImageSelect}
                       className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
                     />
@@ -715,7 +703,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                   </div>
                 </div>
               )}
-
+              
               {/* Main image container */}
               <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
                 <motion.div className="relative" variants={imageVariants}>
@@ -740,7 +728,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                       </label>
                     )}
                   </div>
-
+                  
                   {/* Small overlapping image */}
                   <motion.div
                     className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 lg:-bottom-8 lg:-left-8"
@@ -785,9 +773,9 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mt-6">
             {isEditing ? (
-              <motion.button
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+              <motion.button 
+                whileHover={{y:-1,scaleX:1.1}}
+                whileTap={{scale:0.9}}
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:shadow-2xl'} text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
@@ -795,10 +783,10 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                 {isUploading ? 'Uploading...' : 'Save'}
               </motion.button>
             ) : (
-              <motion.button
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsEditing(true)}
+              <motion.button 
+                whileHover={{y:-1,scaleX:1.1}}
+                whileTap={{scale:0.9}}
+                onClick={() => setIsEditing(true)} 
                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit

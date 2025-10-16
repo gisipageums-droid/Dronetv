@@ -8,7 +8,7 @@ const Profile = ({ profileData }) => {
 
   return (
     <section 
-      id="profile" 
+      id="our-team" 
       className={`py-20 theme-transition ${
         theme === "dark" 
           ? "bg-black text-gray-100" 
@@ -90,6 +90,7 @@ const Profile = ({ profileData }) => {
           ))}
         </div>
 
+        
       </div>
     </section>
   );

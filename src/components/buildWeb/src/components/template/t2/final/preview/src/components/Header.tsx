@@ -6,29 +6,23 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import logo from "/images/Drone tv .in.jpg";
 
-interface NavItem {
-  id: string;
-  href: string;
-  label: string;
-  color: string;
-}
-
-interface HeaderData {
-  companyName: string;
-  logoUrl: string;
-  navItems: NavItem[];
-  ctaText: string;
-  ctaLink?: string;
-}
-
-interface HeaderProps {
-  headerData: HeaderData;
-}
-
-export default function Header({headerData}: HeaderProps) {
+export default function Header({headerData}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
-  console.log("name",headerData.companyName);
+  
+  // Static navigation items
+  const staticNavItems = [
+    { id: 1, label: "Home", href: "#home", color: "primary" },
+    { id: 2, label: "About", href: "#about", color: "primary" },
+    { id: 3, label: "Our Team", href: "#our-team", color: "primary" },
+    { id: 4, label: "Product", href: "#product", color: "primary" },
+    { id: 5, label: "Services", href: "#services", color: "red-accent" },
+    { id: 6, label: "Gallery", href: "#gallery", color: "primary" },
+    { id: 7, label: "Blog", href: "#blog", color: "primary" },
+    { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
+    { id: 9, label: "Clients", href: "#clients", color: "primary" },
+  ];
+
   const menuVariants = {
     closed: { opacity: 0, height: 0, transition: { duration: 0.3 } },
     open: {
@@ -41,41 +35,6 @@ export default function Header({headerData}: HeaderProps) {
   const itemVariants = {
     closed: { opacity: 0, x: -20 },
     open: { opacity: 1, x: 0 },
-  };
-
-  const handleMobileNavClick = (href: string) => {
-    setIsMenuOpen(false);
-    // Use setTimeout to ensure menu closes before scrolling
-    setTimeout(() => {
-      const targetId = href.startsWith('#') ? href.slice(1) : href;
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 100);
-  };
-
-  const handleCtaClick = (href: string) => {
-    // Handle CTA button click for both desktop and mobile
-    if (href.startsWith('#')) {
-      const targetId = href.slice(1);
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        // If element with id not found, try to find element with name attribute
-        const namedElement = document.querySelector(`[name="${targetId}"]`);
-        if (namedElement) {
-          namedElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-          // Fallback: scroll to top of body if no specific target found
-          document.body.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    } else {
-      // For external links, use normal navigation
-      window.location.href = href;
-    }
   };
 
   return (
@@ -91,11 +50,10 @@ export default function Header({headerData}: HeaderProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          
-          <div className="flex items-center">
+          {/* Logo - Limited width to prevent taking too much space */}
+          <div className="flex items-center flex-shrink-0 max-w-[200px]">
             <motion.div
-              className="w-8 h-8  rounded-lg flex items-center justify-center mr-2 "
+              className="w-8 h-8 rounded-lg flex items-center justify-center mr-2 flex-shrink-0"
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6 }}
             >
@@ -105,52 +63,48 @@ export default function Header({headerData}: HeaderProps) {
                   className="w-full h-full object-contain"
                 />
             </motion.div>
-            <motion.span className={`text-xl font-bold ${
-              theme === "dark" ? "text-white" : "text-black"
-            }`}>
+            <motion.span className="text-xl font-bold text-black truncate">
               {headerData.companyName}
             </motion.span>
           </div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-6">
-            {headerData.navItems.map((item: NavItem) => (
-              <motion.a
-                key={item.id}
-                href={item.href}
-                className={`font-medium relative group ${
-                  theme === "dark"
-                    ? "text-gray-300 hover:text-gray-200"
-                    : "text-gray-700 hover:text-primary"
-                }`}
-                whileHover={{ y: -2 }}
-              >
-                {item.label}
-                <motion.span
-                  className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-${item.color} transition-all group-hover:w-full`}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.a>
-            ))}
+          {/* Desktop Nav - Centered with proper spacing */}
+          <nav className="hidden lg:flex items-center justify-center flex-1 mx-8">
+            <div className="flex items-center space-x-6 flex-wrap justify-center">
+              {staticNavItems.map((item) => (
+                <motion.a
+                  key={item.id}
+                  href={item.href}
+                  className={`font-medium relative group whitespace-nowrap ${
+                    theme === "dark"
+                      ? "text-gray-300 hover:text-gray-200"
+                      : "text-gray-700 hover:text-primary"
+                  }`}
+                  whileHover={{ y: -2 }}
+                >
+                  {item.label}
+                  <motion.span
+                    className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-${item.color} transition-all group-hover:w-full`}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.a>
+              ))}
+            </div>
           </nav>
 
-          {/* Right side */}
-          <div className="flex items-center space-x-4">
-            <Button 
-              className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300"
-              onClick={(e) => {
-                e.preventDefault();
-                handleCtaClick(headerData.ctaLink || '#contact');
-              }}
-            >
-              {headerData.ctaText}
+          {/* Right side - Fixed width to prevent shifting */}
+          <div className="flex items-center space-x-4 flex-shrink-0">
+            <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap">
+              <a href="#contact">
+                {headerData.ctaText}
+              </a>
             </Button>
 
             <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
-          <motion.div className="md:hidden">
+          <motion.div className="lg:hidden flex-shrink-0">
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 hover:text-primary transition-colors p-2"
@@ -166,39 +120,30 @@ export default function Header({headerData}: HeaderProps) {
           </motion.div>
         </div>
 
-        {/* Mobile Nav */}
+        {/* Mobile Nav - Using static navigation items */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className="md:hidden border-t border-gray-200 overflow-hidden"
+              className="lg:hidden border-t border-gray-200 overflow-hidden"
               variants={menuVariants}
               initial="closed"
               animate="open"
               exit="closed"
             >
               <motion.nav className="flex flex-col space-y-4 py-4">
-                {headerData.navItems.map((item: NavItem, index: number) => (
+                {staticNavItems.map((item, index) => (
                   <motion.a
                     key={item.id}
                     href={item.href}
                     className={`text-gray-700 hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
-                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                      e.preventDefault();
-                      handleMobileNavClick(item.href);
-                    }}
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
                   </motion.a>
                 ))}
-                <Button 
-                  className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleCtaClick(headerData.ctaLink || '#contact');
-                  }}
-                >
+                <Button className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg">
                   {headerData.ctaText}
                 </Button>
               </motion.nav>

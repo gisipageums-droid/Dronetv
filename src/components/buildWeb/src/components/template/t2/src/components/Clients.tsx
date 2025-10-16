@@ -105,6 +105,7 @@ export default function Clients() {
 
   return (
     <motion.section
+      id="clients"
       className='py-20 bg-background theme-transition'
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
@@ -260,83 +261,6 @@ export default function Clients() {
             )}
           </motion.div>
         </div>
-
-        {/* Client Stats */}
-        <motion.div
-          className='mt-16 text-center'
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          <div className='grid grid-cols-2 md:grid-cols-4 gap-8'>
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className='group cursor-pointer'
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -3 }}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {isEditing ? (
-                    <input
-                      value={stat.value}
-                      onChange={(e) =>
-                        updateStat(index, "value", e.target.value)
-                      }
-                      className='text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors border-b bg-transparent w-full text-center'
-                    />
-                  ) : (
-                    <div className='text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors'>
-                      {stat.value}
-                    </div>
-                  )}
-                </motion.div>
-                {isEditing ? (
-                  <>
-                    <input
-                      value={stat.label}
-                      onChange={(e) =>
-                        updateStat(index, "label", e.target.value)
-                      }
-                      className='text-muted-foreground text-sm border-b bg-transparent w-full text-center'
-                    />
-                    <Button
-                      size='sm'
-                      variant='destructive'
-                      className='mt-2'
-                      onClick={() => removeStat(index)}
-                    >
-                      Remove
-                    </Button>
-                  </>
-                ) : (
-                  <div className='text-muted-foreground text-sm'>
-                    {stat.label}
-                  </div>
-                )}
-                <motion.div
-                  className='w-6 h-1 bg-primary/30 group-hover:bg-primary transition-colors mt-2 mx-auto rounded-full'
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.div>
-            ))}
-            {isEditing && (
-              <div className='flex items-center justify-center'>
-                <Button onClick={addStat} className='text-green-600'>
-                  + Add Stat
-                </Button>
-              </div>
-            )}
-          </div>
-        </motion.div>
       </div>
     </motion.section>
   );

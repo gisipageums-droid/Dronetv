@@ -40,7 +40,7 @@ const Profile = () => {
 
   return (
     <section 
-      id="profile" 
+      id="our-team" 
       className={`py-20 theme-transition ${
         theme === "dark" 
           ? "bg-black text-gray-100" 
@@ -71,10 +71,6 @@ const Profile = () => {
                   alt={member.name}
                   className="w-full h-full object-cover"
                 />
-                <div 
-                  className="absolute bottom-0 left-0 w-full h-16 bg-opacity-90"
-                  style={{ backgroundColor: "#facc15" }}
-                ></div>
               </div>
               <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
@@ -119,23 +115,6 @@ const Profile = () => {
               </div>
             </motion.div>
           ))}
-        </div>
-
-        <div className={`mt-16 p-8 rounded-lg text-center ${
-          theme === "dark" ? "bg-gray-900" : "bg-white"
-        }`}>
-          <h3 className="text-2xl font-bold mb-4">Join Our Team</h3>
-          <p className="mb-6 max-w-2xl mx-auto">
-            We're always looking for talented individuals to join our growing team.
-          </p>
-          <motion.button
-            className="px-6 py-3 rounded-full font-medium text-white"
-            style={{ backgroundColor: "#facc15" }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            View Open Positions
-          </motion.button>
         </div>
       </div>
     </section>

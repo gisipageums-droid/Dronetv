@@ -131,10 +131,9 @@ export default function About({ aboutData }) {
           <motion.div
             whileInView={{ opacity: [0, 1], y: [-20, 0] }}
             transition={{ duration: 0.5, ease: "backInOut" }}
-            className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
-          >
-            <Eye className="w-4 h-4 mr-2" />
-            <span className="font-semibold text-xl">{aboutState.visionBadge}</span>
+            className='inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6'>
+              <Eye className='text-lg mr-2 text-red-500' />
+              <span className='font-medium text-red-500 text-lg'>{aboutState.visionBadge}</span>
           </motion.div>
 
           <motion.h2

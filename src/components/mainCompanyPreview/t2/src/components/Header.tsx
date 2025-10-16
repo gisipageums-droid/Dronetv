@@ -1,15 +1,61 @@
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
-import logo from "/images/Drone tv .in.jpg";
 
-export default function Header({ headerData }) {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
-  const scrollTimer = useRef(null);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [content, setContent] = useState({
+    logoLetter: "C",
+    companyName: "Company",
+    navItems: [
+      { id: 1, label: "Home", href: "#home", color: "primary" },
+      { id: 2, label: "About", href: "#about", color: "primary" },
+      { id: 3, label: "Our Team", href: "#our-team", color: "primary" },
+      { id: 4, label: "Product", href: "#product", color: "primary" },
+      { id: 5, label: "Services", href: "#services", color: "red-accent" },
+      { id: 6, label: "Gallery", href: "#gallery", color: "primary" },
+      { id: 7, label: "Blog", href: "#blog", color: "primary" },
+      { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
+      { id: 9, label: "Clients", href: "#clients", color: "primary" },
+    ],
+    ctaText: "Get Started",
+  });
+
+  const updateContent = (field: string, value: string) => {
+    setContent((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const updateNavItem = (id: number, field: string, value: string) => {
+    setContent((prev) => ({
+      ...prev,
+      navItems: prev.navItems.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      ),
+    }));
+  };
+
+  const addNavItem = () => {
+    setContent((prev) => ({
+      ...prev,
+      navItems: [
+        ...prev.navItems,
+        { id: Date.now(), label: "New", href: "#", color: "primary" },
+      ],
+    }));
+  };
+
+  const removeNavItem = (id: number) => {
+    setContent((prev) => ({
+      ...prev,
+      navItems: prev.navItems.filter((item) => item.id !== id),
+    }));
+  };
 
   const menuVariants = {
     closed: { opacity: 0, height: 0, transition: { duration: 0.3 } },
@@ -25,168 +71,174 @@ export default function Header({ headerData }) {
     open: { opacity: 1, x: 0 },
   };
 
-  // Smooth scroll helper
-  const smoothScrollTo = (href) => {
-    const targetId = href.replace("#", "");
-    const el = document.getElementById(targetId);
-
-    if (!el) {
-      // fallback default hash navigation
-      window.location.hash = href;
-      return;
-    }
-
-    const headerOffset = 128; // fixed header height
-    const y = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-
-    window.scrollTo({
-      top: Math.max(y, 0),
-      behavior: "smooth",
-    });
-  };
-
-  const handleNavClick = (e, href) => {
-    e.preventDefault();
-
-    // prevent multiple pending timers
-    if (scrollTimer.current) clearTimeout(scrollTimer.current);
-
-    const doScroll = () => smoothScrollTo(href);
-
-    if (isMenuOpen) {
-      // close first, wait for exit animation (~300ms), then scroll
-      setIsMenuOpen(false);
-      scrollTimer.current = setTimeout(doScroll, 320);
-    } else {
-      doScroll();
-    }
-  };
-
   return (
     <motion.header
-      className={`fixed top-[4rem] left-0 right-0 border-b z-50 ${theme === "dark"
-        ? "bg-gray-800 border-gray-700 text-gray-300"
-        : "bg-white border-gray-200"
-        }`}
+      className={`fixed top-16 left-0 right-0 border-b z-50 ${
+        theme === "dark"
+          ? "bg-gray-800 border-gray-700 text-gray-300"
+          : "bg-white border-gray-200"
+      }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex justify-between items-center h-16'>
           {/* Logo */}
-          <div className="flex items-center">
+          <div className='flex items-center'>
             <motion.div
-              className="w-8 h-8 rounded-lg flex items-center justify-center mr-2"
+              className='w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-2 shadow-md'
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6 }}
             >
-              <img
-                src={headerData.logoUrl || logo}
-                alt="Logo"
-                className="w-full h-full object-contain"
-              />
+              {isEditing ? (
+                <input
+                  type='text'
+                  value={content.logoLetter}
+                  onChange={(e) =>
+                    updateContent("logoLetter", e.target.value.slice(0, 1))
+                  }
+                  className='w-6 max-w-[32px] text-center bg-transparent border-b border-black font-bold text-lg outline-none'
+                />
+              ) : (
+                <span className='text-black font-bold text-lg'>
+                  {content.logoLetter}
+                </span>
+              )}
             </motion.div>
-            <motion.span
-              className={`text-xl font-bold ${theme === "dark" ? "text-white" : "text-black"
-                }`}
-            >
-              {headerData.companyName}
-            </motion.span>
+            {isEditing ? (
+              <input
+                type='text'
+                value={content.companyName}
+                onChange={(e) => updateContent("companyName", e.target.value)}
+                className='bg-transparent border-b border-primary text-xl font-bold outline-none max-w-[140px] truncate'
+              />
+            ) : (
+              <motion.span className='text-xl font-bold text-black'>
+                {content.companyName}
+              </motion.span>
+            )}
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-6">
-            {headerData.navItems.map((item) => (
-              <motion.a
-                key={item.id}
-                href={item.href}
-                onClick={(e) => handleNavClick(e, item.href)}
-                onTouchEnd={(e) => handleNavClick(e, item.href)}
-                className={`font-medium relative group cursor-pointer ${theme === "dark"
-                  ? "text-gray-300 hover:text-gray-200"
-                  : "text-gray-700 hover:text-primary"
-                  }`}
-                whileHover={{ y: -2 }}
-              >
-                {item.label}
-                <motion.span
-                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.a>
+          <nav className="hidden lg:flex items-center space-x-6 flex-wrap max-w-[700px] overflow-hidden">
+            {content.navItems.map((item) => (
+              <div key={item.id} className='flex items-center space-x-2'>
+                {isEditing ? (
+                  <>
+                    <input
+                      type='text'
+                      value={item.label}
+                      onChange={(e) =>
+                        updateNavItem(item.id, "label", e.target.value)
+                      }
+                      className='bg-white border px-2 py-1 rounded text-sm outline-none max-w-[100px] truncate'
+                    />
+                    <input
+                      type='text'
+                      value={item.href}
+                      onChange={(e) =>
+                        updateNavItem(item.id, "href", e.target.value)
+                      }
+                      className='bg-white border px-2 py-1 rounded text-xs text-gray-500 outline-none max-w-[120px] truncate'
+                      placeholder='URL'
+                    />
+                    <button
+                      onClick={() => removeNavItem(item.id)}
+                      className='text-red-500 text-xs'
+                    >
+                      ✕
+                    </button>
+                  </>
+                ) : (
+                  <motion.a
+                    href={item.href}
+                    className={`font-medium relative group ${
+                      theme === "dark"
+                        ? "text-gray-300 hover:text-gray-200"
+                        : "text-gray-700 hover:text-primary"
+                    }`}
+                    whileHover={{ y: -2 }}
+                  >
+                    {item.label}
+                    <motion.span
+                      className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-${item.color} transition-all group-hover:w-full`}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </motion.a>
+                )}
+              </div>
             ))}
+            {isEditing && (
+              <button
+                onClick={addNavItem}
+                className='text-green-600 text-sm font-medium'
+              >
+                + Add
+              </button>
+            )}
           </nav>
 
-          {/* Right side - Desktop */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300">
-              <a
-                href="#contact"
-                onClick={(e) => handleNavClick(e, "#contact")}
-                onTouchEnd={(e) => handleNavClick(e, "#contact")}
-              >
-                {headerData.ctaText}
-              </a>
-            </Button>
+          {/* Right side */}
+          <div className='flex items-center space-x-4'>
+            {isEditing ? (
+              <input
+                type='text'
+                value={content.ctaText}
+                onChange={(e) => updateContent("ctaText", e.target.value)}
+                className='bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] truncate'
+              />
+            ) : (
+              <Button className='bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300'>
+                {content.ctaText}
+              </Button>
+            )}
+
             <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-2">
-            <ThemeToggle />
+          <motion.div className='lg:hidden'>
             <motion.button
-              onClick={() => setIsMenuOpen((v) => !v)}
-              className={`p-2 ${theme === "dark"
-                ? "text-gray-300 hover:text-gray-100"
-                : "text-gray-700 hover:text-primary"
-                }`}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className='text-gray-700 hover:text-primary transition-colors p-2'
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              aria-label="Toggle menu"
-              aria-expanded={isMenuOpen}
+              animate={{ rotate: isMenuOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <AnimatePresence mode='wait'>
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </AnimatePresence>
             </motion.button>
-          </div>
+          </motion.div>
         </div>
 
         {/* Mobile Nav */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className={`md:hidden border-t overflow-hidden ${theme === "dark" ? "border-gray-700" : "border-gray-200"
-                }`}
+              className='md:hidden border-t border-gray-200 overflow-hidden'
               variants={menuVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
+              initial='closed'
+              animate='open'
+              exit='closed'
             >
-              <motion.nav className="flex flex-col py-4">
-                {headerData.navItems.map((item) => (
+              <motion.nav className='flex flex-col space-y-4 py-4'>
+                {content.navItems.map((item, index) => (
                   <motion.a
                     key={item.id}
                     href={item.href}
-                    onClick={(e) => handleNavClick(e, item.href)}
-                    onTouchEnd={(e) => handleNavClick(e, item.href)}
-                    className={`py-3 px-4 rounded-lg transition-colors cursor-pointer ${theme === "dark"
-                      ? "text-gray-300 hover:text-white hover:bg-gray-700"
-                      : "text-gray-700 hover:text-primary hover:bg-gray-100"
-                      }`}
+                    className={`text-gray-700 hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
                   </motion.a>
                 ))}
-                <Button className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg">
-                  <a
-                    href="#contact"
-                    onClick={(e) => handleNavClick(e, "#contact")}
-                    onTouchEnd={(e) => handleNavClick(e, "#contact")}
-                  >
-                    {headerData.ctaText}
-                  </a>
+                <Button className='bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg'>
+                  {content.ctaText}
                 </Button>
               </motion.nav>
             </motion.div>

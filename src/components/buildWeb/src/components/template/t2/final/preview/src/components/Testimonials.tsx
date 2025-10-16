@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Card, CardContent } from "./ui/card";
-import { Star } from "lucide-react";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion } from "motion/react";
 
-export default function Testimonials({ testimonialsData }) {
+export default function Testimonials({testimonialsData}) {
+  // Duplicate testimonials for marquee loop (showing 3 at a time)
+  const duplicatedTestimonials = [...testimonialsData.testimonials, ...testimonialsData.testimonials];
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -15,20 +16,8 @@ export default function Testimonials({ testimonialsData }) {
     },
   };
 
-  const cardVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut",
-      },
-    },
-  };
-
   return (
-    <motion.section
+    <motion.section 
       id="testimonial"
       className="py-20 bg-background theme-transition"
       initial={{ opacity: 0 }}
@@ -53,115 +42,125 @@ export default function Testimonials({ testimonialsData }) {
           </p>
         </motion.div>
 
-        {/* Testimonials Grid */}
-        <motion.div
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          transition={{duration: 0.8}}
-          animate={{opacity:[0,1],y:[50,0]}}
-          viewport={{ once: true }}
-        >
-          {testimonialsData.testimonials.map((testimonial, index) => (
-            <motion.div
-              key={index}
-              variants={cardVariants}
-              whileHover={{ y: -5 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="bg-card border-border hover:shadow-xl transition-all duration-300 hover:border-primary/30">
-                <CardContent className="p-8">
-                  {/* Rating */}
-                  <div className="flex space-x-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ scale: 0, rotate: -180 }}
-                        whileInView={{ scale: 1, rotate: 0 }}
-                        viewport={{ once: true }}
-                        transition={{
-                          delay: index * 0.1 + i * 0.05,
-                          duration: 0.4,
-                          type: "spring",
-                        }}
-                        whileHover={{ scale: 1.2 }}
-                      >
-                        <Star className="h-5 w-5 fill-primary text-primary" />
-                      </motion.div>
-                    ))}
-                  </div>
+        {/* Testimonials Marquee Container */}
+        <div className="group w-full overflow-hidden">
+          <style>
+            {`
+              @keyframes marquee {
+                0% { transform: translateX(0%); }
+                100% { transform: translateX(-50%); }
+              }
+              .animate-marquee {
+                animation: marquee 60s linear infinite;
+              }
+              .group:hover .animate-marquee {
+                animation-play-state: paused;
+              }
+            `}
+          </style>
 
-                  {/* Quote */}
-                  <blockquote className="text-card-foreground mb-6 leading-relaxed">
-                    <span className="text-card-foreground leading-relaxed">
-                      {testimonial.quote}
-                    </span>
-                  </blockquote>
-
-                  {/* Author */}
-                  <div className="flex items-center space-x-4">
-                    <motion.div
-                      className="w-12 h-12 rounded-full overflow-hidden"
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {/* Note: ImageWithFallback component would be used here if we had it */}
-                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                        {testimonial.name.charAt(0)}
-                      </div>
-                    </motion.div>
-                    <div>
-                      <div className="font-medium text-card-foreground">
-                        {testimonial.name}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {testimonial.role}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Stats section */}
-        <motion.div
-          className="mt-16 pt-16 border-t border-border"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {testimonialsData.stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="group cursor-pointer"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 + index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -3 }}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="text-3xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {stat.value}
-                  </div>
-                </motion.div>
-                <div className="text-muted-foreground">{stat.label}</div>
-                <motion.div
-                  className="w-8 h-1 bg-primary/30 group-hover:bg-primary transition-colors mt-2 mx-auto rounded-full"
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
+          {/* Marquee layout */}
+          <motion.div
+            className="flex gap-8 animate-marquee"
+            variants={containerVariants}
+            transition={{duration: 0.8}}
+            animate={{opacity:[0,1],y:[50,0]}}
+            viewport={{ once: true }}
+          >
+            {duplicatedTestimonials.map((testimonial, index) => (
+              <div key={index} className="flex-shrink-0 w-80 lg:w-96">
+                <TestimonialCard 
+                  testimonial={testimonial}
+                  index={index % testimonialsData.testimonials.length}
                 />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
+// Testimonial Card Component
+function TestimonialCard({ testimonial, index }) {
+  return (
+    <motion.div
+      variants={{
+        hidden: { y: 50, opacity: 0 },
+        visible: {
+          y: 0,
+          opacity: 1,
+          transition: {
+            duration: 0.8,
+            ease: "easeOut",
+          },
+        },
+      }}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.3 }}
+      className="h-full"
+    >
+      <div className="bg-card border-border hover:shadow-xl transition-all duration-300 hover:border-primary/30 h-full flex flex-col rounded-lg border">
+        <div className="p-8 flex flex-col flex-grow">
+          {/* Rating */}
+          <div className="flex space-x-1 mb-4 flex-shrink-0">
+            {[...Array(testimonial.rating)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0, rotate: -180 }}
+                whileInView={{ scale: 1, rotate: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  delay: index * 0.1 + i * 0.05,
+                  duration: 0.4,
+                  type: "spring",
+                }}
+                whileHover={{ scale: 1.2 }}
+              >
+                <svg 
+                  className="h-5 w-5 fill-primary text-primary" 
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
               </motion.div>
             ))}
           </div>
-        </motion.div>
+
+          {/* Quote */}
+          <div className="flex-grow mb-6">
+            <blockquote className="text-card-foreground leading-relaxed min-h-[120px]">
+              <span className="text-card-foreground leading-relaxed line-clamp-6">
+                {testimonial.quote}
+              </span>
+            </blockquote>
+          </div>
+
+          {/* Author */}
+          <div className="flex items-center space-x-4 mt-auto">
+            <motion.div
+              className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ImageWithFallback
+                src={testimonial.image}
+                alt={testimonial.name}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            <div className="flex-grow min-w-0">
+              <div className="font-medium text-card-foreground truncate">
+                {testimonial.name}
+              </div>
+              <div className="text-sm text-muted-foreground truncate">
+                {testimonial.role}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </motion.section>
+    </motion.div>
   );
 }

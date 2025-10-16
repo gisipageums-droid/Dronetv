@@ -307,10 +307,11 @@ export default function Contact() {
                     whileFocus={{ scale: 1.02 }}
                   >
                     <option>General Inquiry</option>
-                    <option>Strategy Consulting</option>
-                    <option>Team Development</option>
-                    <option>Digital Transformation</option>
-                    <option>Performance Optimization</option>
+                    <option>Sales Inquiry</option>
+                    <option>Products Inquiry</option>
+                    <option>Services Inquiry</option>
+                    <option>Support Inquiry</option>
+                    
                   </motion.select>
                 </motion.div>
 

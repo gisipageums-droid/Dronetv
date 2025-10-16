@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from 'react-easy-crop';
 
-export default function Services({ serviceData, onStateChange, userId, publishedId, templateSelection }) {
+export default function Services({serviceData, onStateChange, userId, publishedId, templateSelection}) {
   const [isEditing, setIsEditing] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedServiceIndex, setSelectedServiceIndex] = useState<number | null>(null);
@@ -29,17 +29,17 @@ export default function Services({ serviceData, onStateChange, userId, published
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-
+         
   // Merged all state into a single object
   const [servicesSection, setServicesSection] = useState(serviceData);
-
+  
   // Add this useEffect to notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(servicesSection);
     }
   }, [servicesSection, onStateChange]);
-
+  
   // Get categories from services
   const filteredServices =
     activeCategory === "All"
@@ -54,7 +54,7 @@ export default function Services({ serviceData, onStateChange, userId, published
       ...prev,
       services: prev.services.map((s, i) => (i === index ? { ...s, [field]: value } : s))
     }));
-
+    
     // Update categories if needed
     if (field === "category" && !servicesSection.categories.includes(value)) {
       setServicesSection(prev => ({
@@ -75,11 +75,11 @@ export default function Services({ serviceData, onStateChange, userId, published
       services: prev.services.map((s, i) =>
         i === index
           ? {
-            ...s,
-            [field]: s[field].map((item: string, li: number) =>
-              li === listIndex ? value : item
-            ),
-          }
+              ...s,
+              [field]: s[field].map((item: string, li: number) =>
+                li === listIndex ? value : item
+              ),
+            }
           : s
       )
     }));
@@ -104,9 +104,9 @@ export default function Services({ serviceData, onStateChange, userId, published
       services: prev.services.map((s, i) =>
         i === index
           ? {
-            ...s,
-            [field]: s[field].filter((_: string, li: number) => li !== listIndex),
-          }
+              ...s,
+              [field]: s[field].filter((_: string, li: number) => li !== listIndex),
+            }
           : s
       )
     }));
@@ -138,7 +138,7 @@ export default function Services({ serviceData, onStateChange, userId, published
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
-
+    
     // Clear the file input
     e.target.value = '';
   };
@@ -185,20 +185,20 @@ export default function Services({ serviceData, onStateChange, userId, published
 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
-        const fileName = originalFile ?
-          `cropped-service-${croppingIndex}-${originalFile.name}` :
+        const fileName = originalFile ? 
+          `cropped-service-${croppingIndex}-${originalFile.name}` : 
           `cropped-service-${croppingIndex}-${Date.now()}.jpg`;
-
-        const file = new File([blob], fileName, {
+        
+        const file = new File([blob], fileName, { 
           type: 'image/jpeg',
           lastModified: Date.now()
         });
-
+        
         const previewUrl = URL.createObjectURL(blob);
-
-        resolve({
-          file,
-          previewUrl
+        
+        resolve({ 
+          file, 
+          previewUrl 
         });
       }, 'image/jpeg', 0.95);
     });
@@ -210,10 +210,10 @@ export default function Services({ serviceData, onStateChange, userId, published
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
 
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
-
+      
       // Update preview immediately with blob URL (temporary)
       updateServiceField(croppingIndex, "image", previewUrl);
-
+      
       // Set the actual file for upload on save
       setPendingImages(prev => ({ ...prev, [croppingIndex]: file }));
       console.log('Service image cropped, file ready for upload:', file);
@@ -255,17 +255,17 @@ export default function Services({ serviceData, onStateChange, userId, published
       // Upload all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
-
+        
         if (!userId || !publishedId || !templateSelection) {
           console.error('Missing required props:', { userId, publishedId, templateSelection });
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
-
+        
         const formData = new FormData();
         formData.append('file', file);
         formData.append('sectionName', 'services');
-        formData.append('imageField', `services[${index}].image` + Date.now());
+        formData.append('imageField', `services[${index}].image`+Date.now());
         formData.append('templateSelection', templateSelection);
 
         console.log('Uploading service image to S3:', file);
@@ -287,7 +287,7 @@ export default function Services({ serviceData, onStateChange, userId, published
           return;
         }
       }
-
+      
       // Clear pending images
       setPendingImages({});
       // Exit edit mode
@@ -315,12 +315,12 @@ export default function Services({ serviceData, onStateChange, userId, published
       pricing: "Custom pricing",
       timeline: "TBD",
     };
-
+    
     setServicesSection(prev => ({
       ...prev,
       services: [...prev.services, newService]
     }));
-
+    
     if (!servicesSection.categories.includes("New Category")) {
       setServicesSection(prev => ({
         ...prev,
@@ -351,7 +351,7 @@ export default function Services({ serviceData, onStateChange, userId, published
       setServicesSection(prev => ({
         ...prev,
         categories: prev.categories.filter((c) => c !== cat),
-        services: prev.services.map((s) =>
+        services: prev.services.map((s) => 
           s.category === cat ? { ...s, category: "Uncategorized" } : s
         )
       }));
@@ -372,38 +372,38 @@ export default function Services({ serviceData, onStateChange, userId, published
     <>
       {/* Image Cropper Modal - Same as Hero */}
       {showCropper && (
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
         >
-          <motion.div
+          <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
                 Crop Image
               </h3>
-              <button
+              <button 
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
-
+            
             {/* Cropper Area */}
             <div className="flex-1 relative bg-gray-900">
-              <div className="relative h-56 sm:h-64 md:h-72 w-full">
+              <div className="relative h-96 w-full">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
                   zoom={zoom}
                   rotation={rotation}
-                  aspect={4 / 3}
+                  aspect={4/3}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={onCropComplete}
@@ -423,18 +423,18 @@ export default function Services({ serviceData, onStateChange, userId, published
                 />
               </div>
             </div>
-
-            {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="space-y-2 sm:space-y-3">
+            
+            {/* Controls - Same as Hero */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="space-y-4">
                 {/* Zoom Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1.5 text-gray-700">
-                      <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <ZoomIn className="w-4 h-4" />
                       Zoom
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{zoom.toFixed(1)}x</span>
+                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                   </div>
                   <input
                     type="range"
@@ -443,23 +443,18 @@ export default function Services({ serviceData, onStateChange, userId, published
                     max={3}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-                [&::-webkit-slider-thumb]:appearance-none 
-                [&::-webkit-slider-thumb]:h-3 
-                [&::-webkit-slider-thumb]:w-3 
-                [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
-
+                
                 {/* Rotation Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1.5 text-gray-700">
-                      <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <RotateCw className="w-4 h-4" />
                       Rotation
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{rotation}°</span>
+                    <span className="text-gray-600">{rotation}°</span>
                   </div>
                   <input
                     type="range"
@@ -468,34 +463,29 @@ export default function Services({ serviceData, onStateChange, userId, published
                     max={360}
                     step={1}
                     onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-                [&::-webkit-slider-thumb]:appearance-none 
-                [&::-webkit-slider-thumb]:h-3 
-                [&::-webkit-slider-thumb]:w-3 
-                [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
               </div>
-
+              
               {/* Action Buttons */}
-              <div className="mt-3 flex flex-col sm:flex-row gap-1.5 sm:gap-2 sm:justify-between">
+              <div className="mt-6 flex gap-3 justify-between">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full sm:w-auto px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
                 >
                   Reset
                 </button>
-                <div className="flex gap-1.5 sm:gap-2">
+                <div className="flex gap-3">
                   <button
                     onClick={cancelCrop}
-                    className="px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition-colors"
+                    className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={applyCrop}
-                    className="px-2 py-1 text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
                   >
                     Apply Crop
                   </button>
@@ -506,16 +496,15 @@ export default function Services({ serviceData, onStateChange, userId, published
         </motion.div>
       )}
 
-
       {/* Main Services Section */}
       <motion.section id="services" className="py-20 bg-background theme-transition">
         <div className="max-w-7xl mx-auto px-4">
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mt-6">
             {isEditing ? (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
+              <motion.button 
+                whileTap={{scale:0.9}}
+                whileHover={{y:-1,scaleX:1.1}}
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:shadow-2xl'} text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
@@ -523,10 +512,10 @@ export default function Services({ serviceData, onStateChange, userId, published
                 {isUploading ? 'Uploading...' : 'Save'}
               </motion.button>
             ) : (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={() => setIsEditing(true)}
+              <motion.button 
+                whileTap={{scale:0.9}}
+                whileHover={{y:-1,scaleX:1.1}}
+                onClick={() => setIsEditing(true)} 
                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
@@ -538,22 +527,22 @@ export default function Services({ serviceData, onStateChange, userId, published
           <div className="text-center mb-8">
             {isEditing ? (
               <>
-                <input
-                  type="text"
-                  className="text-3xl font-bold block text-center w-full"
-                  value={servicesSection.heading.head}
+                <input 
+                  type="text" 
+                  className="text-3xl font-bold block text-center w-full"  
+                  value={servicesSection.heading.head} 
                   onChange={(e) => setServicesSection(prev => ({
                     ...prev,
-                    heading: { ...prev.heading, head: e.target.value }
+                    heading: {...prev.heading, head: e.target.value}
                   }))}
                 />
-                <input
-                  type="text"
-                  className="text-muted-foreground block w-full text-center"
-                  value={servicesSection.heading.desc}
+                <input 
+                  type="text" 
+                  className="text-muted-foreground block w-full text-center" 
+                  value={servicesSection.heading.desc} 
                   onChange={(e) => setServicesSection(prev => ({
                     ...prev,
-                    heading: { ...prev.heading, desc: e.target.value }
+                    heading: {...prev.heading, desc: e.target.value}
                   }))}
                 />
               </>
@@ -562,7 +551,7 @@ export default function Services({ serviceData, onStateChange, userId, published
                 <h2 className="text-3xl font-bold">{servicesSection.heading.head}</h2>
                 <p className="text-muted-foreground">{servicesSection.heading.desc}</p>
               </>
-            )}
+            )}          
           </div>
 
           {/* Filter */}
@@ -575,7 +564,7 @@ export default function Services({ serviceData, onStateChange, userId, published
                     onChange={(e) =>
                       setServicesSection(prev => ({
                         ...prev,
-                        categories: prev.categories.map((c, idx) =>
+                        categories: prev.categories.map((c, idx) => 
                           idx === i ? e.target.value : c
                         )
                       }))
@@ -609,8 +598,8 @@ export default function Services({ serviceData, onStateChange, userId, published
             ))}
             {isEditing && (
               <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.1 }}
+                whileTap={{scale:0.9}}
+                whileHover={{scale:1.1}}
                 onClick={addCategory}
                 className="text-green-600 text-sm font-medium"
               >
@@ -740,7 +729,7 @@ export default function Services({ serviceData, onStateChange, userId, published
             )}
           </div>
 
-
+          
         </div>
 
         {/* Modal */}
@@ -806,8 +795,8 @@ export default function Services({ serviceData, onStateChange, userId, published
                             className="border-b w-full"
                           />
                           <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                            whileHover={{scale:1.1}}
+                            whileTap={{scale:0.9}}
                             onClick={() =>
                               removeFromList(selectedServiceIndex, "benefits", bi)
                             }
@@ -848,8 +837,8 @@ export default function Services({ serviceData, onStateChange, userId, published
                             className="border-b w-full"
                           />
                           <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                            whileHover={{scale:1.1}}
+                            whileTap={{scale:0.9}}
                             onClick={() =>
                               removeFromList(selectedServiceIndex, "process", pi)
                             }
@@ -866,8 +855,8 @@ export default function Services({ serviceData, onStateChange, userId, published
                 </ol>
                 {isEditing && (
                   <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{scale:1.1}}
+                    whileTap={{scale:0.9}}
                     onClick={() =>
                       addToList(selectedServiceIndex, "process")
                     }

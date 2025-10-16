@@ -47,7 +47,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
   // Function to process aboutData and ensure icons are proper components
   const processAboutData = (data) => {
     if (!data) return null;
-
+    
     return {
       ...data,
       visionPillars: data.visionPillars && data.visionPillars.map(pillar => ({
@@ -123,7 +123,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
-
+    
     // Clear the file input
     e.target.value = '';
   };
@@ -173,20 +173,20 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
-        const fileName = originalFile ?
-          `cropped-${originalFile.name}` :
+        const fileName = originalFile ? 
+          `cropped-${originalFile.name}` : 
           `cropped-about-${Date.now()}.jpg`;
-
-        const file = new File([blob], fileName, {
+        
+        const file = new File([blob], fileName, { 
           type: 'image/jpeg',
           lastModified: Date.now()
         });
-
+        
         const previewUrl = URL.createObjectURL(blob);
-
-        resolve({
-          file,
-          previewUrl
+        
+        resolve({ 
+          file, 
+          previewUrl 
         });
       }, 'image/jpeg', 0.95);
     });
@@ -201,10 +201,10 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
       }
 
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
-
+      
       // Update preview immediately with blob URL (temporary)
       updateField("imageUrl", previewUrl);
-
+      
       // Set the actual file for upload on save
       setPendingImageFile(file);
       console.log('About image cropped, file ready for upload:', file);
@@ -248,11 +248,11 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
-
+        
         const formData = new FormData();
         formData.append('file', pendingImageFile);
         formData.append('sectionName', 'about');
-        formData.append('imageField', 'imageUrl' + Date.now());
+        formData.append('imageField', 'imageUrl'+Date.now());
         formData.append('templateSelection', templateSelection);
 
         console.log('Uploading about image to S3:', pendingImageFile);
@@ -276,7 +276,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
           return;
         }
       }
-
+      
       // Exit edit mode
       setIsEditing(false);
       toast.success('About section saved with S3 URLs!');
@@ -292,40 +292,39 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
   return (
     <>
       {/* Image Cropper Modal - Same as Hero */}
-
       {showCropper && (
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[9999999] flex items-center justify-center p-2"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
         >
-          <motion.div
+          <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-2xl w-full max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
                 Crop Image
               </h3>
-              <button
+              <button 
                 onClick={cancelCrop}
-                className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
-
+            
             {/* Cropper Area */}
             <div className="flex-1 relative bg-gray-900">
-              <div className="relative h-56 sm:h-72 md:h-80 w-full">
+              <div className="relative h-96 w-full">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
                   zoom={zoom}
                   rotation={rotation}
-                  aspect={4 / 3}
+                  aspect={4/3}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={onCropComplete}
@@ -345,18 +344,18 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                 />
               </div>
             </div>
-
-            {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="space-y-2 sm:space-y-3">
+            
+            {/* Controls - Same as Hero */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="space-y-4">
                 {/* Zoom Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1 text-gray-700">
-                      <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <ZoomIn className="w-4 h-4" />
                       Zoom
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{zoom.toFixed(1)}x</span>
+                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                   </div>
                   <input
                     type="range"
@@ -365,18 +364,18 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                     max={3}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
-
+                
                 {/* Rotation Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1 text-gray-700">
-                      <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <RotateCw className="w-4 h-4" />
                       Rotation
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{rotation}°</span>
+                    <span className="text-gray-600">{rotation}°</span>
                   </div>
                   <input
                     type="range"
@@ -385,29 +384,29 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                     max={360}
                     step={1}
                     onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
               </div>
-
+              
               {/* Action Buttons */}
-              <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-1 sm:gap-2 sm:justify-between">
+              <div className="mt-6 flex gap-3 justify-between">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full sm:w-auto px-2 sm:px-3 py-1.5 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
                 >
                   Reset
                 </button>
-                <div className="flex gap-1 sm:gap-2 w-full sm:w-auto">
+                <div className="flex gap-3">
                   <button
                     onClick={cancelCrop}
-                    className="flex-1 sm:flex-none px-2 sm:px-3 py-1.5 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={applyCrop}
-                    className="flex-1 sm:flex-none px-2 sm:px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-sm transition-colors"
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
                   >
                     Apply Crop
                   </button>
@@ -418,7 +417,6 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
         </motion.div>
       )}
 
-
       {/* Main About Section */}
       <section id="about" className="py-20 bg-secondary theme-transition">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -426,7 +424,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
           <div className="flex justify-end mt-6">
             {isEditing ? (
               <motion.button
-                whileTap={{ scale: 0.9 }}
+                whileTap={{scale:0.9}}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
@@ -436,7 +434,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
               </motion.button>
             ) : (
               <motion.button
-                whileTap={{ scale: 0.9 }}
+                whileTap={{scale:0.9}}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
@@ -539,8 +537,8 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                 ))}
                 {isEditing && (
                   <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.1 }}
+                    whileTap={{scale:0.9}}
+                    whileHover={{scale:1.1}}
                     onClick={addFeature}
                     className="text-green-600 cursor-pointer text-sm mt-2"
                   >
@@ -730,9 +728,9 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
               />
             ) : (
               <motion.h3
-                whileInView={{ opacity: [0, 1], scale: [0, 1], y: [-20, 0] }}
-                transition={{ duration: 1, ease: "backInOut" }}
-                className="text-2xl font-semibold text-foreground mb-6">
+              whileInView={{opacity:[0,1],scale:[0,1],y:[-20,0]}}
+              transition={{duration:1,ease:"backInOut"}}
+              className="text-2xl font-semibold text-foreground mb-6">
                 {aboutState.missionTitle}
               </motion.h3>
             )}
@@ -743,10 +741,10 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                 className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
               />
             ) : (
-              <motion.p
-                whileInView={{ opacity: [0, 1], x: [-40, 0] }}
-                transition={{ duration: 1, ease: "backInOut" }}
-                className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
+              <motion.p 
+              whileInView={{opacity:[0,1],x:[-40,0]}}
+              transition={{duration:1,ease:"backInOut"}}
+              className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
                 {aboutState.missionDesc}
               </motion.p>
             )}

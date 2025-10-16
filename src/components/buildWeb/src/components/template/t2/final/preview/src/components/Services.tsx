@@ -1,21 +1,15 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { X, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
 
-export default function Services({serviceData}) {
+export default function Services({ serviceData }) {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedServiceIndex, setSelectedServiceIndex] = useState<number | null>(null);
+  const [selectedServiceIndex, setSelectedServiceIndex] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
 
-  // Get categories from services
   const filteredServices =
     activeCategory === "All"
       ? serviceData.services
@@ -23,7 +17,7 @@ export default function Services({serviceData}) {
 
   const visibleServices = filteredServices.slice(0, visibleCount);
 
-  const openModal = (index: number) => {
+  const openModal = (index) => {
     setSelectedServiceIndex(index);
     setIsModalOpen(true);
   };
@@ -49,12 +43,12 @@ export default function Services({serviceData}) {
               key={i}
               onClick={() => {
                 setActiveCategory(cat);
-                setVisibleCount(6); // reset load more
+                setVisibleCount(6);
               }}
               className={
                 activeCategory === cat
-                  ? "bg-primary text-white"
-                  : "bg-card text-card-foreground"
+                  ? "bg-primary cursor-pointer text-white"
+                  : "bg-card text-card-foreground cursor-pointer"
               }
             >
               {cat}
@@ -65,31 +59,32 @@ export default function Services({serviceData}) {
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {visibleServices.map((service, index) => (
-            <Card key={index} className="relative">
-              <div className="h-40 overflow-hidden relative">
+            <Card key={index} className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl  shadow-gray-500">
+              <div className="h-40 overflow-hidden relative flex-shrink-0">
                 <img
                   src={service.image}
                   alt={service.title}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <CardHeader>
-                <CardTitle>{service.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {service.description}
-                </p>
-                <p className="text-xs mt-1 italic text-gray-500">
-                  Category: {service.category}
-                </p>
-
-                <div className="mt-4 flex gap-2">
-                  <Button size="sm" onClick={() => openModal(index)}>
+              <div className="flex flex-col flex-grow p-6">
+                <div className="flex-shrink-0 mb-4">
+                  <CardTitle className="line-clamp-2 min-h-[3rem]">{service.title}</CardTitle>
+                </div>
+                <div className="flex-grow mb-4">
+                  <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
+                    {service.description}
+                  </p>
+                  <p className="text-xs mt-1 italic text-gray-500">
+                    Category: {service.category}
+                  </p>
+                </div>
+                <div className="mt-auto">
+                  <Button className="cursor-pointer hover:scale-105 w-full" size="sm" onClick={() => openModal(index)}>
                     View Details
                   </Button>
                 </div>
-              </CardContent>
+              </div>
             </Card>
           ))}
         </div>
@@ -135,7 +130,6 @@ export default function Services({serviceData}) {
               </button>
 
               <h2 className="text-2xl font-bold mb-4">{serviceData.services[selectedServiceIndex].title}</h2>
-
               <p className="text-muted-foreground mb-4">
                 {serviceData.services[selectedServiceIndex].detailedDescription}
               </p>
@@ -143,7 +137,7 @@ export default function Services({serviceData}) {
               {/* Benefits */}
               <h3 className="font-semibold mb-2">Key Benefits</h3>
               <ul className="space-y-2 mb-4">
-                {serviceData.services[selectedServiceIndex].benefits.map((b: string, bi: number) => (
+                {serviceData.services[selectedServiceIndex].benefits.map((b, bi) => (
                   <li key={bi} className="flex gap-2">
                     <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
                     <span>{b}</span>
@@ -154,7 +148,7 @@ export default function Services({serviceData}) {
               {/* Process */}
               <h3 className="font-semibold mb-2">Our Process</h3>
               <ol className="space-y-2 mb-4">
-                {serviceData.services[selectedServiceIndex].process.map((p: string, pi: number) => (
+                {serviceData.services[selectedServiceIndex].process.map((p, pi) => (
                   <li key={pi}>
                     <span>{p}</span>
                   </li>

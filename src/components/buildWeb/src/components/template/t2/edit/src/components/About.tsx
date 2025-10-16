@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import {
   CheckCircle,
@@ -10,13 +10,26 @@ import {
   Heart,
   Shield,
   Lightbulb,
+  X,
+  RotateCw,
+  ZoomIn
 } from "lucide-react";
 import { toast } from "react-toastify";
+import Cropper from 'react-easy-crop';
 
 export default function About({ aboutData, onStateChange, userId, publishedId, templateSelection }) {
   const [isEditing, setIsEditing] = useState(false);
   const [pendingImageFile, setPendingImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Cropping states
+  const [showCropper, setShowCropper] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [originalFile, setOriginalFile] = useState(null);
 
   // Map the emoji icons to Lucide React components
   const iconMap = {
@@ -126,34 +139,145 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
     }));
   };
 
-  // Image selection - only shows local preview, no upload yet
-  const handleImageUpload = (e) => {
+  // Image selection handler - now opens cropper
+  const handleImageSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+    if (file.size > 5 * 1024 * 1024) {
       toast.error('File size must be less than 5MB');
       return;
     }
 
-    // Store the file for upload on Save
-    setPendingImageFile(file);
-    
-    // Show immediate local preview
     const reader = new FileReader();
     reader.onloadend = () => {
-      updateField("imageUrl", reader.result);
+      setImageToCrop(reader.result);
+      setOriginalFile(file);
+      setShowCropper(true);
+      setZoom(1);
+      setRotation(0);
+      setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
+    
+    // Clear the file input
+    e.target.value = '';
   };
 
-  // Updated Save button handler - uploads image and stores S3 URL
+  // Cropper functions
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  // Helper function to create image element
+  const createImage = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener('load', () => resolve(image));
+      image.addEventListener('error', (error) => reject(error));
+      image.setAttribute('crossOrigin', 'anonymous');
+      image.src = url;
+    });
+
+  // Function to get cropped image
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas size to the desired crop size
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    // Translate and rotate the context
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
+    // Draw the cropped image
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        const fileName = originalFile ? 
+          `cropped-${originalFile.name}` : 
+          `cropped-about-${Date.now()}.jpg`;
+        
+        const file = new File([blob], fileName, { 
+          type: 'image/jpeg',
+          lastModified: Date.now()
+        });
+        
+        const previewUrl = URL.createObjectURL(blob);
+        
+        resolve({ 
+          file, 
+          previewUrl 
+        });
+      }, 'image/jpeg', 0.95);
+    });
+  };
+
+  // Apply crop and set pending file
+  const applyCrop = async () => {
+    try {
+      if (!imageToCrop || !croppedAreaPixels) {
+        toast.error('Please select an area to crop');
+        return;
+      }
+
+      const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
+      
+      // Update preview immediately with blob URL (temporary)
+      updateField("imageUrl", previewUrl);
+      
+      // Set the actual file for upload on save
+      setPendingImageFile(file);
+      console.log('About image cropped, file ready for upload:', file);
+
+      toast.success('Image cropped successfully! Click Save to upload to S3.');
+      setShowCropper(false);
+      setImageToCrop(null);
+      setOriginalFile(null);
+    } catch (error) {
+      console.error('Error cropping image:', error);
+      toast.error('Error cropping image. Please try again.');
+    }
+  };
+
+  // Cancel cropping
+  const cancelCrop = () => {
+    setShowCropper(false);
+    setImageToCrop(null);
+    setOriginalFile(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+  };
+
+  // Reset zoom and rotation
+  const resetCropSettings = () => {
+    setZoom(1);
+    setRotation(0);
+    setCrop({ x: 0, y: 0 });
+  };
+
+  // Updated Save button handler - uploads cropped image to S3
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -169,7 +293,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
         const formData = new FormData();
         formData.append('file', pendingImageFile);
         formData.append('sectionName', 'about');
-        formData.append('imageField', 'imageUrl'); // This will map to 'imageUrl' in your PUT lambda
+        formData.append('imageField', 'imageUrl');
         formData.append('templateSelection', templateSelection);
 
         const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
@@ -205,339 +329,467 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
   };
 
   return (
-    <section id="about" className="py-20 bg-secondary theme-transition">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Edit / Save */}
-        <div className="flex justify-end mt-6">
-          {isEditing ? (
-            <motion.button
-              whileTap={{scale:0.9}}
-              whileHover={{ y: -1, scaleX: 1.1 }}
-              onClick={handleSave}
-              disabled={isUploading}
-              className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:shadow-2xl'} text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
-            >
-              {isUploading ? 'Uploading...' : 'Save'}
-            </motion.button>
-          ) : (
-            <motion.button
-              whileTap={{scale:0.9}}
-              whileHover={{ y: -1, scaleX: 1.1 }}
-              onClick={() => setIsEditing(true)}
-              className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
-            >
-              Edit
-            </motion.button>
-          )}
-        </div>
-
-        {/* Main About Section */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-          {/* Image */}
-          <motion.div
-            className="relative rounded-2xl overflow-hidden shadow-xl"
-            whileInView={{ opacity: [0, 1], x: [-50, 0] }}
-            transition={{ duration: 0.8 }}
+    <>
+      {/* Image Cropper Modal */}
+      {showCropper && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+        >
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
-            <img
-              src={aboutState.imageUrl}
-              alt="About"
-              className="w-full h-[400px] object-cover"
-            />
-            {isEditing && (
-              <div className="absolute bottom-4 left-4 bg-white/80 p-2 rounded shadow">
-                <p className="text-sm mb-1">Change About Image:</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Image
+              </h3>
+              <button 
+                onClick={cancelCrop}
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+            
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900">
+              <div className="relative h-96 w-full">
+                <Cropper
+                  image={imageToCrop}
+                  crop={crop}
+                  zoom={zoom}
+                  rotation={rotation}
+                  aspect={4/3}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                  showGrid={false}
+                  cropShape="rect"
+                  style={{
+                    containerStyle: {
+                      position: 'relative',
+                      width: '100%',
+                      height: '100%',
+                    },
+                    cropAreaStyle: {
+                      border: '2px solid white',
+                      borderRadius: '8px',
+                    }
+                  }}
                 />
-                {pendingImageFile && (
-                  <p className="text-xs text-orange-600 mt-1">
-                    Image selected: {pendingImageFile.name} (will upload on save)
-                  </p>
-                )}
               </div>
-            )}
+            </div>
+            
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="space-y-4">
+                {/* Zoom Control */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <ZoomIn className="w-4 h-4" />
+                      Zoom
+                    </span>
+                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  </div>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                </div>
+                
+                {/* Rotation Control */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <RotateCw className="w-4 h-4" />
+                      Rotation
+                    </span>
+                    <span className="text-gray-600">{rotation}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    value={rotation}
+                    min={0}
+                    max={360}
+                    step={1}
+                    onChange={(e) => setRotation(Number(e.target.value))}
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="mt-6 flex gap-3 justify-between">
+                <button
+                  onClick={resetCropSettings}
+                  className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+                >
+                  Reset
+                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={cancelCrop}
+                    className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={applyCrop}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
+                  >
+                    Apply Crop
+                  </button>
+                </div>
+              </div>
+            </div>
           </motion.div>
+        </motion.div>
+      )}
 
-          {/* Content */}
-          <div className="space-y-8">
+      <section id="about" className="py-20 bg-secondary theme-transition">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Edit / Save */}
+          <div className="flex justify-end mt-6">
+            {isEditing ? (
+              <motion.button
+                whileTap={{scale:0.9}}
+                whileHover={{ y: -1, scaleX: 1.1 }}
+                onClick={handleSave}
+                disabled={isUploading}
+                className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:shadow-2xl'} text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+              >
+                {isUploading ? 'Uploading...' : 'Save'}
+              </motion.button>
+            ) : (
+              <motion.button
+                whileTap={{scale:0.9}}
+                whileHover={{ y: -1, scaleX: 1.1 }}
+                onClick={() => setIsEditing(true)}
+                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
+              >
+                Edit
+              </motion.button>
+            )}
+          </div>
+
+          {/* Main About Section */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+            {/* Image */}
             <motion.div
-              className="space-y-4"
-              whileInView={{ opacity: [0, 1], x: [50, 0] }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative rounded-2xl overflow-hidden shadow-xl"
+              whileInView={{ opacity: [0, 1], x: [-50, 0] }}
+              transition={{ duration: 0.8 }}
             >
-              {isEditing ? (
-                <input
-                  value={aboutState.aboutTitle}
-                  onChange={(e) => updateField("aboutTitle", e.target.value)}
-                  className="bg-transparent border-b border-primary text-3xl md:text-4xl text-foreground outline-none"
-                />
-              ) : (
-                <h2 className="text-3xl md:text-4xl text-foreground">
-                  {aboutState.aboutTitle}
-                </h2>
-              )}
-              {isEditing ? (
-                <textarea
-                  value={aboutState.description1}
-                  onChange={(e) => updateField("description1", e.target.value)}
-                  className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
-                />
-              ) : (
-                <p className="text-lg text-muted-foreground">
-                  {aboutState.description1}
-                </p>
-              )}
-              {isEditing ? (
-                <textarea
-                  value={aboutState.description2}
-                  onChange={(e) => updateField("description2", e.target.value)}
-                  className="w-full bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
-                />
-              ) : (
-                <p className="text-muted-foreground">{aboutState.description2}</p>
+              <img
+                src={aboutState.imageUrl}
+                alt="About"
+                className="w-full h-[400px] object-cover"
+              />
+              {isEditing && (
+                <div className="absolute bottom-4 left-4 bg-white/80 p-2 rounded shadow">
+                  <p className="text-sm mb-1">Change About Image:</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
+                  />
+                  {pendingImageFile && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✓ Image cropped and ready to upload
+                    </p>
+                  )}
+                </div>
               )}
             </motion.div>
 
-            {/* Features list */}
-            <motion.div
-              whileInView={{ opacity: [0, 1], x: [-50, 0] }}
-              transition={{ duration: 1, delay: 0.5, ease: "backOut" }}
-              className="space-y-3"
-            >
-              {aboutState.features.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+            {/* Content */}
+            <div className="space-y-8">
+              <motion.div
+                className="space-y-4"
+                whileInView={{ opacity: [0, 1], x: [50, 0] }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                {isEditing ? (
+                  <input
+                    value={aboutState.aboutTitle}
+                    onChange={(e) => updateField("aboutTitle", e.target.value)}
+                    className="bg-transparent border-b border-primary text-3xl md:text-4xl text-foreground outline-none"
+                  />
+                ) : (
+                  <h2 className="text-3xl md:text-4xl text-foreground">
+                    {aboutState.aboutTitle}
+                  </h2>
+                )}
+                {isEditing ? (
+                  <textarea
+                    value={aboutState.description1}
+                    onChange={(e) => updateField("description1", e.target.value)}
+                    className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
+                  />
+                ) : (
+                  <p className="text-lg text-muted-foreground">
+                    {aboutState.description1}
+                  </p>
+                )}
+                {isEditing ? (
+                  <textarea
+                    value={aboutState.description2}
+                    onChange={(e) => updateField("description2", e.target.value)}
+                    className="w-full bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
+                  />
+                ) : (
+                  <p className="text-muted-foreground">{aboutState.description2}</p>
+                )}
+              </motion.div>
+
+              {/* Features list */}
+              <motion.div
+                whileInView={{ opacity: [0, 1], x: [-50, 0] }}
+                transition={{ duration: 1, delay: 0.5, ease: "backOut" }}
+                className="space-y-3"
+              >
+                {aboutState.features.map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                    {isEditing ? (
+                      <input
+                        value={feature}
+                        onChange={(e) => updateFeature(index, e.target.value)}
+                        className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
+                      />
+                    ) : (
+                      <span className="text-muted-foreground">{feature}</span>
+                    )}
+                  </div>
+                ))}
+                {isEditing && (
+                  <motion.button
+                    whileTap={{scale:0.9}}
+                    whileHover={{scale:1.1}}
+                    onClick={addFeature}
+                    className="text-green-600 cursor-pointer text-sm mt-2"
+                  >
+                    + Add Feature
+                  </motion.button>
+                )}
+              </motion.div>
+
+              {/* Company metrics */}
+              <motion.div className="grid grid-cols-2 gap-6 pt-6">
+                <div className="text-center p-4 bg-card rounded-lg shadow-sm">
                   {isEditing ? (
                     <input
-                      value={feature}
-                      onChange={(e) => updateFeature(index, e.target.value)}
+                      value={aboutState.metric1Num}
+                      onChange={(e) => updateField("metric1Num", e.target.value)}
+                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none"
+                    />
+                  ) : (
+                    <motion.div
+                      whileInView={{ opacity: [0, 1], y: [-15, 3, -3, 0] }}
+                      transition={{ duration: 0.8, delay: 0.5 }}
+                      className="text-2xl font-bold text-card-foreground"
+                    >
+                      {aboutState.metric1Num}
+                    </motion.div>
+                  )}
+                  {isEditing ? (
+                    <input
+                      value={aboutState.metric1Label}
+                      onChange={(e) =>
+                        updateField("metric1Label", e.target.value)
+                      }
                       className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
                     />
                   ) : (
-                    <span className="text-muted-foreground">{feature}</span>
+                    <motion.div
+                      whileInView={{ opacity: [0, 1], y: [15, -3, 3, 0] }}
+                      transition={{ duration: 0.8, delay: 0.5 }}
+                      className="text-muted-foreground"
+                    >
+                      {aboutState.metric1Label}
+                    </motion.div>
                   )}
                 </div>
-              ))}
-              {isEditing && (
-                <motion.button
-                  whileTap={{scale:0.9}}
-                  whileHover={{scale:1.1}}
-                  onClick={addFeature}
-                  className="text-green-600 cursor-pointer text-sm mt-2"
-                >
-                  + Add Feature
-                </motion.button>
-              )}
-            </motion.div>
-
-            {/* Company metrics */}
-            <motion.div className="grid grid-cols-2 gap-6 pt-6">
-              <div className="text-center p-4 bg-card rounded-lg shadow-sm">
-                {isEditing ? (
-                  <input
-                    value={aboutState.metric1Num}
-                    onChange={(e) => updateField("metric1Num", e.target.value)}
-                    className="bg-transparent border-b border-foreground text-2xl font-bold outline-none"
-                  />
-                ) : (
-                  <motion.div
-                    whileInView={{ opacity: [0, 1], y: [-15, 3, -3, 0] }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-2xl font-bold text-card-foreground"
-                  >
-                    {aboutState.metric1Num}
-                  </motion.div>
-                )}
-                {isEditing ? (
-                  <input
-                    value={aboutState.metric1Label}
-                    onChange={(e) =>
-                      updateField("metric1Label", e.target.value)
-                    }
-                    className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
-                  />
-                ) : (
-                  <motion.div
-                    whileInView={{ opacity: [0, 1], y: [15, -3, 3, 0] }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-muted-foreground"
-                  >
-                    {aboutState.metric1Label}
-                  </motion.div>
-                )}
-              </div>
-              <div className="text-center p-4 bg-card rounded-lg shadow-sm">
-                {isEditing ? (
-                  <input
-                    value={aboutState.metric2Num}
-                    onChange={(e) => updateField("metric2Num", e.target.value)}
-                    className="bg-transparent border-b border-foreground text-2xl font-bold outline-none"
-                  />
-                ) : (
-                  <motion.div
-                    whileInView={{ opacity: [0, 1], y: [-15, 3, -3, 0] }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-2xl font-bold text-card-foreground"
-                  >
-                    {aboutState.metric2Num}
-                  </motion.div>
-                )}
-                {isEditing ? (
-                  <input
-                    value={aboutState.metric2Label}
-                    onChange={(e) =>
-                      updateField("metric2Label", e.target.value)
-                    }
-                    className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
-                  />
-                ) : (
-                  <motion.div
-                    whileInView={{ opacity: [0, 1], y: [15, -3, 3, 0] }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-muted-foreground"
-                  >
-                    {aboutState.metric2Label}
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Vision Section */}
-        <motion.div className="text-center mb-16">
-          {isEditing ? (
-            <input
-              value={aboutState.visionBadge}
-              onChange={(e) => updateField("visionBadge", e.target.value)}
-              className="bg-transparent border-b border-primary text-primary outline-none"
-            />
-          ) : (
-            <motion.div
-              whileInView={{ opacity: [0, 1], y: [-20, 0] }}
-              transition={{ duration: 0.5, ease: "backInOut" }}
-              className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              <span className="font-semibold text-xl">{aboutState.visionBadge}</span>
-            </motion.div>
-          )}
-
-          {isEditing ? (
-            <input
-              value={aboutState.visionTitle}
-              onChange={(e) => updateField("visionTitle", e.target.value)}
-              className="bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none"
-            />
-          ) : (
-            <motion.h2
-              whileInView={{ opacity: [0, 1], x: [-20, 0] }}
-              transition={{ duration: 1, ease: "backInOut" }}
-              className="text-3xl md:text-4xl text-foreground mb-6"
-            >
-              {aboutState.visionTitle}
-            </motion.h2>
-          )}
-
-          {isEditing ? (
-            <textarea
-              value={aboutState.visionDesc}
-              onChange={(e) => updateField("visionDesc", e.target.value)}
-              className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
-            />
-          ) : (
-            <motion.p
-              whileInView={{ opacity: [0, 1], x: [20, 0] }}
-              transition={{ duration: 1, ease: "backOut" }}
-              className="text-lg text-muted-foreground max-w-3xl mx-auto mb-12"
-            >
-              {aboutState.visionDesc}
-            </motion.p>
-          )}
-
-          {/* Vision Pillars */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {aboutState.visionPillars.map((pillar, index) => {
-              const Icon = pillar.icon;
-              return (
-                <motion.div
-                  whileInView={{ opacity: [0, 1], scale: [0, 1] }}
-                  transition={{ duration: 1, ease: "backInOut" }}
-                  key={index}
-                  className="text-center p-6 bg-card rounded-xl shadow-sm hover:shadow-lg"
-                >
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <Icon className="h-6 w-6 text-primary" />
-                  </div>
+                <div className="text-center p-4 bg-card rounded-lg shadow-sm">
                   {isEditing ? (
                     <input
-                      value={pillar.title}
-                      onChange={(e) =>
-                        updatePillar(index, "title", e.target.value)
-                      }
-                      className="bg-transparent border-b border-foreground font-semibold outline-none"
+                      value={aboutState.metric2Num}
+                      onChange={(e) => updateField("metric2Num", e.target.value)}
+                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none"
                     />
                   ) : (
-                    <h3 className="font-semibold text-card-foreground mb-3">
-                      {pillar.title}
-                    </h3>
+                    <motion.div
+                      whileInView={{ opacity: [0, 1], y: [-15, 3, -3, 0] }}
+                      transition={{ duration: 0.8, delay: 0.5 }}
+                      className="text-2xl font-bold text-card-foreground"
+                    >
+                      {aboutState.metric2Num}
+                    </motion.div>
                   )}
                   {isEditing ? (
-                    <textarea
-                      value={pillar.description}
+                    <input
+                      value={aboutState.metric2Label}
                       onChange={(e) =>
-                        updatePillar(index, "description", e.target.value)
+                        updateField("metric2Label", e.target.value)
                       }
-                      className="w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none"
+                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
                     />
                   ) : (
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {pillar.description}
-                    </p>
+                    <motion.div
+                      whileInView={{ opacity: [0, 1], y: [15, -3, 3, 0] }}
+                      transition={{ duration: 0.8, delay: 0.5 }}
+                      className="text-muted-foreground"
+                    >
+                      {aboutState.metric2Label}
+                    </motion.div>
                   )}
-                </motion.div>
-              );
-            })}
+                </div>
+              </motion.div>
+            </div>
           </div>
-        </motion.div>
 
-        {/* Mission Section */}
-        <motion.div className="bg-gradient-to-r from-primary/5 to-red-accent/5 rounded-2xl p-12 text-center">
-          <Target className="w-12 h-12 text-primary mx-auto mb-6" />
-          {isEditing ? (
-            <input
-              value={aboutState.missionTitle}
-              onChange={(e) => updateField("missionTitle", e.target.value)}
-              className="bg-transparent border-b border-foreground text-2xl font-semibold outline-none"
-            />
-          ) : (
-            <motion.h3
-            whileInView={{opacity:[0,1],scale:[0,1],y:[-20,0]}}
-            transition={{duration:1,ease:"backInOut"}}
-            className="text-2xl font-semibold text-foreground mb-6">
-              {aboutState.missionTitle}
-            </motion.h3>
-          )}
-          {isEditing ? (
-            <textarea
-              value={aboutState.missionDesc}
-              onChange={(e) => updateField("missionDesc", e.target.value)}
-              className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
-            />
-          ) : (
-            <motion.p 
-            whileInView={{opacity:[0,1],x:[-40,0]}}
-            transition={{duration:1,ease:"backInOut"}}
-            className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
-              {aboutState.missionDesc}
-            </motion.p>
-          )}
-        </motion.div>
-      </div>
-    </section>
+          {/* Vision Section */}
+          <motion.div className="text-center mb-16">
+            {isEditing ? (
+              <input
+                value={aboutState.visionBadge}
+                onChange={(e) => updateField("visionBadge", e.target.value)}
+                className="bg-transparent border-b border-primary text-primary outline-none"
+              />
+            ) : (
+              <motion.div
+                whileInView={{ opacity: [0, 1], y: [-20, 0] }}
+                transition={{ duration: 0.5, ease: "backInOut" }}
+                className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                <span className="font-semibold text-xl">{aboutState.visionBadge}</span>
+              </motion.div>
+            )}
+
+            {isEditing ? (
+              <input
+                value={aboutState.visionTitle}
+                onChange={(e) => updateField("visionTitle", e.target.value)}
+                className="bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none"
+              />
+            ) : (
+              <motion.h2
+                whileInView={{ opacity: [0, 1], x: [-20, 0] }}
+                transition={{ duration: 1, ease: "backInOut" }}
+                className="text-3xl md:text-4xl text-foreground mb-6"
+              >
+                {aboutState.visionTitle}
+              </motion.h2>
+            )}
+
+            {isEditing ? (
+              <textarea
+                value={aboutState.visionDesc}
+                onChange={(e) => updateField("visionDesc", e.target.value)}
+                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
+              />
+            ) : (
+              <motion.p
+                whileInView={{ opacity: [0, 1], x: [20, 0] }}
+                transition={{ duration: 1, ease: "backOut" }}
+                className="text-lg text-muted-foreground max-w-3xl mx-auto mb-12"
+              >
+                {aboutState.visionDesc}
+              </motion.p>
+            )}
+
+            {/* Vision Pillars */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {aboutState.visionPillars.map((pillar, index) => {
+                const Icon = pillar.icon;
+                return (
+                  <motion.div
+                    whileInView={{ opacity: [0, 1], scale: [0, 1] }}
+                    transition={{ duration: 1, ease: "backInOut" }}
+                    key={index}
+                    className="text-center p-6 bg-card rounded-xl shadow-sm hover:shadow-lg"
+                  >
+                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <Icon className="h-6 w-6 text-primary" />
+                    </div>
+                    {isEditing ? (
+                      <input
+                        value={pillar.title}
+                        onChange={(e) =>
+                          updatePillar(index, "title", e.target.value)
+                        }
+                        className="bg-transparent border-b border-foreground font-semibold outline-none"
+                      />
+                    ) : (
+                      <h3 className="font-semibold text-card-foreground mb-3">
+                        {pillar.title}
+                      </h3>
+                    )}
+                    {isEditing ? (
+                      <textarea
+                        value={pillar.description}
+                        onChange={(e) =>
+                          updatePillar(index, "description", e.target.value)
+                        }
+                        className="w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none"
+                      />
+                    ) : (
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {pillar.description}
+                      </p>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* Mission Section */}
+          <motion.div className="bg-gradient-to-r from-primary/5 to-red-accent/5 rounded-2xl p-12 text-center">
+            <Target className="w-12 h-12 text-primary mx-auto mb-6" />
+            {isEditing ? (
+              <input
+                value={aboutState.missionTitle}
+                onChange={(e) => updateField("missionTitle", e.target.value)}
+                className="bg-transparent border-b border-foreground text-2xl font-semibold outline-none"
+              />
+            ) : (
+              <motion.h3
+              whileInView={{opacity:[0,1],scale:[0,1],y:[-20,0]}}
+              transition={{duration:1,ease:"backInOut"}}
+              className="text-2xl font-semibold text-foreground mb-6">
+                {aboutState.missionTitle}
+              </motion.h3>
+            )}
+            {isEditing ? (
+              <textarea
+                value={aboutState.missionDesc}
+                onChange={(e) => updateField("missionDesc", e.target.value)}
+                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
+              />
+            ) : (
+              <motion.p 
+              whileInView={{opacity:[0,1],x:[-40,0]}}
+              transition={{duration:1,ease:"backInOut"}}
+              className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
+                {aboutState.missionDesc}
+              </motion.p>
+            )}
+          </motion.div>
+        </div>
+      </section>
+    </>
   );
 }

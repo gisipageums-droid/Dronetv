@@ -4,73 +4,61 @@ import { motion } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 
-const Gallery = ({ galleryData }) => {
+const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const { theme } = useTheme();
   
-  // Use the provided data structure with default fallback
-  const contentState = galleryData || {
-    heading: {
-      title: "Our Work Gallery",
-      description: "Showcasing 0+ years of professional excellence and successful project deliveries"
+  // Sample gallery images - replace with your company images
+  const galleryImages = [
+    {
+      id: 1,
+      src: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      title: "Our Office Space",
+      category: "Work Environment"
     },
-    categories: [
-      "All",
-      "Portfolio",
-      "Professional Services",
-      "Client Projects"
-    ],
-    images: [
-      {
-        id: 1.0,
-        url: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&q=80",
-        title: "Professional Work 1",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 1",
-        isPopular: true
-      },
-      {
-        id: 2.0,
-        url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
-        title: "Professional Work 2",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 2",
-        isPopular: true
-      },
-      {
-        id: 3.0,
-        url: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80",
-        title: "Professional Work 3",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 3",
-        isPopular: false
-      },
-      {
-        id: 4.0,
-        url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
-        title: "Professional Work 4",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 4",
-        isPopular: false
-      },
-      {
-        id: 5.0,
-        url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80",
-        title: "Professional Work 5",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 5",
-        isPopular: false
-      },
-      {
-        id: 6.0,
-        url: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&q=80",
-        title: "Professional Work 6",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 6",
-        isPopular: false
-      }
-    ]
-  };
+    {
+      id: 2,
+      src: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      title: "Team Collaboration",
+      category: "Team"
+    },
+    {
+      id: 3,
+      src: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1332&q=80",
+      title: "Product Development",
+      category: "Products"
+    },
+    {
+      id: 4,
+      src: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1169&q=80",
+      title: "Company Event",
+      category: "Events"
+    },
+    {
+      id: 5,
+      src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1115&q=80",
+      title: "Data Analysis",
+      category: "Work"
+    },
+    {
+      id: 6,
+      src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      title: "Team Meeting",
+      category: "Team"
+    },
+    {
+      id: 7,
+      src: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      title: "Client Presentation",
+      category: "Work"
+    },
+    {
+      id: 8,
+      src: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      title: "Company Celebration",
+      category: "Events"
+    }
+  ];
 
   const openLightbox = (index: number) => {
     setSelectedImage(index);
@@ -82,13 +70,13 @@ const Gallery = ({ galleryData }) => {
 
   const goToNext = () => {
     if (selectedImage !== null) {
-      setSelectedImage((prev) => (prev === contentState.images.length - 1 ? 0 : prev! + 1));
+      setSelectedImage((prev) => (prev === galleryImages.length - 1 ? 0 : prev! + 1));
     }
   };
 
   const goToPrev = () => {
     if (selectedImage !== null) {
-      setSelectedImage((prev) => (prev === 0 ? contentState.images.length - 1 : prev! - 1));
+      setSelectedImage((prev) => (prev === 0 ? galleryImages.length - 1 : prev! - 1));
     }
   };
 
@@ -103,15 +91,15 @@ const Gallery = ({ galleryData }) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-4">{contentState.heading.title}</h2>
+          <h2 className="text-3xl font-bold mb-4">Our Gallery</h2>
           <p className="text-lg max-w-3xl mx-auto">
-            {contentState.heading.description}
+            A glimpse into our company culture, team, and the work we do
           </p>
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {contentState.images.map((image, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {galleryImages.map((image, index) => (
             <motion.div
               key={image.id}
               className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${
@@ -121,20 +109,13 @@ const Gallery = ({ galleryData }) => {
               onClick={() => openLightbox(index)}
             >
               <div className="relative overflow-hidden">
-                {image.url ? (
-                  <img
-                    src={image.url}
-                    alt={image.title}
-                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                ) : (
-                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">No image</span>
-                  </div>
-                )}
-                
+                <img
+                  src={image.src}
+                  alt={image.title}
+                  className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
-                  <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
+                  <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <h3 className="font-semibold">{image.title}</h3>
                     <p className="text-sm">{image.category}</p>
                   </div>
@@ -171,13 +152,13 @@ const Gallery = ({ galleryData }) => {
 
           <div className="max-w-4xl w-full max-h-full">
             <img
-              src={contentState.images[selectedImage].url}
-              alt={contentState.images[selectedImage].title}
+              src={galleryImages[selectedImage].src}
+              alt={galleryImages[selectedImage].title}
               className="w-full h-auto max-h-full object-contain"
             />
             <div className="text-white text-center mt-4">
-              <h3 className="text-xl font-semibold">{contentState.images[selectedImage].title}</h3>
-              <p className="text-gray-300">{contentState.images[selectedImage].category}</p>
+              <h3 className="text-xl font-semibold">{galleryImages[selectedImage].title}</h3>
+              <p className="text-gray-300">{galleryImages[selectedImage].category}</p>
             </div>
           </div>
         </div>

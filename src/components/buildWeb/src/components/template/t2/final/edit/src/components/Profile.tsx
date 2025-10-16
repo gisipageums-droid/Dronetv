@@ -11,7 +11,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
-
+  
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
@@ -21,7 +21,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-
+  
   // Consolidated state
   const [contentState, setContentState] = useState(profileData);
 
@@ -36,7 +36,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
   const updateTeamMemberField = (index, field, value) => {
     setContentState(prev => ({
       ...prev,
-      teamMembers: prev.teamMembers.map((m, i) =>
+      teamMembers: prev.teamMembers.map((m, i) => 
         i === index ? { ...m, [field]: value } : m
       )
     }));
@@ -83,10 +83,10 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
   const updateSocialLink = (index, platform, value) => {
     setContentState(prev => ({
       ...prev,
-      teamMembers: prev.teamMembers.map((m, i) =>
-        i === index ? {
-          ...m,
-          socialLinks: { ...m.socialLinks, [platform]: value }
+      teamMembers: prev.teamMembers.map((m, i) => 
+        i === index ? { 
+          ...m, 
+          socialLinks: { ...m.socialLinks, [platform]: value } 
         } : m
       )
     }));
@@ -118,7 +118,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
-
+    
     // Clear the file input
     e.target.value = '';
   };
@@ -165,20 +165,20 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
-        const fileName = originalFile ?
-          `cropped-profile-${croppingIndex}-${originalFile.name}` :
+        const fileName = originalFile ? 
+          `cropped-profile-${croppingIndex}-${originalFile.name}` : 
           `cropped-profile-${croppingIndex}-${Date.now()}.jpg`;
-
-        const file = new File([blob], fileName, {
+        
+        const file = new File([blob], fileName, { 
           type: 'image/jpeg',
           lastModified: Date.now()
         });
-
+        
         const previewUrl = URL.createObjectURL(blob);
-
-        resolve({
-          file,
-          previewUrl
+        
+        resolve({ 
+          file, 
+          previewUrl 
         });
       }, 'image/jpeg', 0.95);
     });
@@ -190,10 +190,10 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
 
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
-
+      
       // Update preview immediately with blob URL (temporary)
       updateTeamMemberField(croppingIndex, "image", previewUrl);
-
+      
       // Set the actual file for upload on save
       setPendingImages(prev => ({ ...prev, [croppingIndex]: file }));
       console.log('Profile image cropped, file ready for upload:', file);
@@ -235,17 +235,17 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
       // Upload all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
-
+        
         if (!userId || !publishedId || !templateSelection) {
           console.error('Missing required props:', { userId, publishedId, templateSelection });
           toast.error('Missing user information. Please refresh and try again.');
           return;
         }
-
+        
         const formData = new FormData();
         formData.append('file', file);
         formData.append('sectionName', 'profile');
-        formData.append('imageField', `teamMembers[${index}].image` + Date.now());
+        formData.append('imageField', `teamMembers[${index}].image`+Date.now());
         formData.append('templateSelection', templateSelection);
 
         console.log('Uploading profile image to S3:', file);
@@ -267,7 +267,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
           return;
         }
       }
-
+      
       // Clear pending images
       setPendingImages({});
       // Exit edit mode
@@ -286,38 +286,38 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
     <>
       {/* Image Cropper Modal */}
       {showCropper && (
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
         >
-          <motion.div
+          <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
                 Crop Image
               </h3>
-              <button
+              <button 
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
-
+            
             {/* Cropper Area */}
             <div className="flex-1 relative bg-gray-900">
-              <div className="relative h-64 sm:h-72 md:h-80 w-full">
+              <div className="relative h-96 w-full">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
                   zoom={zoom}
                   rotation={rotation}
-                  aspect={3 / 4}
+                  aspect={3/4}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={onCropComplete}
@@ -337,18 +337,18 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                 />
               </div>
             </div>
-
-            {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="space-y-2 sm:space-y-3">
+            
+            {/* Controls - Same as Hero */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="space-y-4">
                 {/* Zoom Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1.5 text-gray-700">
-                      <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <ZoomIn className="w-4 h-4" />
                       Zoom
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{zoom.toFixed(1)}x</span>
+                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                   </div>
                   <input
                     type="range"
@@ -357,23 +357,18 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                     max={3}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-                [&::-webkit-slider-thumb]:appearance-none 
-                [&::-webkit-slider-thumb]:h-3.5 
-                [&::-webkit-slider-thumb]:w-3.5 
-                [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
-
+                
                 {/* Rotation Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1.5 text-gray-700">
-                      <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <RotateCw className="w-4 h-4" />
                       Rotation
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{rotation}°</span>
+                    <span className="text-gray-600">{rotation}°</span>
                   </div>
                   <input
                     type="range"
@@ -382,34 +377,29 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                     max={360}
                     step={1}
                     onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-                [&::-webkit-slider-thumb]:appearance-none 
-                [&::-webkit-slider-thumb]:h-3.5 
-                [&::-webkit-slider-thumb]:w-3.5 
-                [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
               </div>
-
+              
               {/* Action Buttons */}
-              <div className="mt-3 flex flex-col sm:flex-row gap-1.5 sm:gap-2 sm:justify-between">
+              <div className="mt-6 flex gap-3 justify-between">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full sm:w-auto px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
                 >
                   Reset
                 </button>
-                <div className="flex gap-1.5 sm:gap-2">
+                <div className="flex gap-3">
                   <button
                     onClick={cancelCrop}
-                    className="px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition-colors"
+                    className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={applyCrop}
-                    className="px-2 py-1 text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded"
                   >
                     Apply Crop
                   </button>
@@ -420,22 +410,22 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
         </motion.div>
       )}
 
-
       {/* Main Profile Section */}
-      <section
-        id="our-team"
-        className={`py-20 theme-transition ${theme === "dark"
-          ? "bg-black text-gray-100"
-          : "bg-gray-50 text-gray-900"
-          }`}
+      <section 
+        id="our-team" 
+        className={`py-20 theme-transition ${
+          theme === "dark" 
+            ? "bg-black text-gray-100" 
+            : "bg-gray-50 text-gray-900"
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mb-6">
             {isEditing ? (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
+              <motion.button 
+                whileTap={{scale:0.9}}
+                whileHover={{y:-1,scaleX:1.1}}
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:shadow-2xl'} text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
@@ -444,10 +434,10 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                 {isUploading ? 'Uploading...' : 'Save'}
               </motion.button>
             ) : (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={() => setIsEditing(true)}
+              <motion.button 
+                whileTap={{scale:0.9}}
+                whileHover={{y:-1,scaleX:1.1}}
+                onClick={() => setIsEditing(true)} 
                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold flex items-center gap-2"
               >
                 <Edit size={16} />
@@ -467,7 +457,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
             ) : (
               <h2 className="text-3xl font-bold mb-4">{contentState.heading}</h2>
             )}
-
+            
             {isEditing ? (
               <textarea
                 value={contentState.subheading}
@@ -485,8 +475,9 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
             {contentState.teamMembers.map((member, index) => (
               <motion.div
                 key={member.id}
-                className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
-                  }`}
+                className={`rounded-lg overflow-hidden shadow-lg ${
+                  theme === "dark" ? "bg-gray-900" : "bg-white"
+                }`}
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
               >
@@ -496,12 +487,12 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                     alt={member.name}
                     className="w-full h-full object-cover"
                   />
-
+                  
                   {isEditing && (
                     <motion.div
-                      animate={{ opacity: [0, 1], scale: [0.8, 1] }}
+                      animate={{opacity:[0,1], scale:[0.8,1]}}
                       whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
+                      whileTap={{scale:0.9}}
                       transition={{ duration: 0.3 }}
                       className="absolute mx-2 bottom-2 left-2 z-50 bg-white/80 p-1 rounded"
                     >
@@ -529,7 +520,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                   ) : (
                     <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
                   )}
-
+                  
                   {isEditing ? (
                     <input
                       value={member.role}
@@ -538,14 +529,14 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                       style={{ color: "#facc15" }}
                     />
                   ) : (
-                    <p
+                    <p 
                       className="font-medium mb-3"
                       style={{ color: "#facc15" }}
                     >
                       {member.role}
                     </p>
                   )}
-
+                  
                   {isEditing ? (
                     <textarea
                       value={member.bio}
@@ -557,7 +548,7 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                       {member.bio}
                     </p>
                   )}
-
+                  
                   <div className="flex justify-center mt-4 space-x-3">
                     {isEditing ? (
                       <>
@@ -579,10 +570,11 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                         <a
                           href={member.socialLinks.twitter}
                           target="_blank"
-                          className={`p-2 rounded-full ${theme === "dark"
-                            ? "bg-gray-800 hover:bg-gray-500"
-                            : "bg-gray-100 hover:bg-gray-200"
-                            }`}
+                          className={`p-2 rounded-full ${
+                            theme === "dark" 
+                              ? "bg-gray-800 hover:bg-gray-500" 
+                              : "bg-gray-100 hover:bg-gray-200"
+                          }`}
                           aria-label="Twitter"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -592,24 +584,25 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                         <a
                           href={member.socialLinks.linkedin}
                           target="_blank"
-                          className={`p-2 rounded-full ${theme === "dark"
-                            ? "bg-gray-800 hover:bg-gray-500"
-                            : "bg-gray-100 hover:bg-gray-200"
-                            }`}
+                          className={`p-2 rounded-full ${
+                            theme === "dark" 
+                              ? "bg-gray-800 hover:bg-gray-500" 
+                              : "bg-gray-100 hover:bg-gray-200"
+                          }`}
                           aria-label="LinkedIn"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
                           </svg>
                         </a>
                       </>
                     )}
                   </div>
-
+                  
                   {isEditing && (
                     <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
+                      whileHover={{scale:1.1}}
+                      whileTap={{scale:0.9}}
                       onClick={() => removeTeamMember(index)}
                       className="mt-4 text-red-500 text-sm flex items-center justify-center gap-1 mx-auto"
                     >
@@ -620,14 +613,15 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
                 </div>
               </motion.div>
             ))}
-
+            
             {isEditing && (
-              <motion.div
-                className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark" ? "bg-gray-900 border-gray-700" : "bg-white border-gray-300"
-                  } border-2`}
+              <motion.div 
+                className={`rounded-lg flex items-center justify-center border-dashed ${
+                  theme === "dark" ? "bg-gray-900 border-gray-700" : "bg-white border-gray-300"
+                } border-2`}
                 whileHover={{ scale: 1.02 }}
               >
-                <motion.button
+                <motion.button 
                   onClick={addTeamMember}
                   className="flex flex-col items-center p-6 text-green-600"
                   whileHover={{ scale: 1.1 }}
@@ -640,8 +634,9 @@ const Profile = ({ profileData, onStateChange, userId, publishedId, templateSele
             )}
           </div>
 
-          <div className={`mt-16 p-8 rounded-lg text-center ${theme === "dark" ? "bg-gray-900" : "bg-white"
-            }`}>
+          <div className={`mt-16 p-8 rounded-lg text-center ${
+            theme === "dark" ? "bg-gray-900" : "bg-white"
+          }`}>
             {/* Join team section remains the same */}
           </div>
         </div>

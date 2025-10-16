@@ -326,7 +326,7 @@ export default function Services() {
         {/* Services Grid */}
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {visibleServices.map((service, index) => (
-            <Card key={index} className='relative'>
+            <Card key={index} className='relative border-2 shadow-lg hover:shadow-xl  shadow-gray-500' >
               <div className='h-40 overflow-hidden relative'>
                 <img
                   src={service.image}

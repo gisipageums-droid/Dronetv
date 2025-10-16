@@ -197,7 +197,7 @@ export default function Blog() {
           {displayedPosts.map((post, index) => (
             <motion.article
               key={post.id}
-              className='bg-card rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer'
+              className='bg-card rounded-xl shadow-xl  shadow-gray-500 hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer border-2'
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

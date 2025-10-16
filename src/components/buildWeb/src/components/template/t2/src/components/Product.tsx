@@ -328,7 +328,7 @@ export default function Product() {
             return (
               <Card
                 key={index}
-                className='group h-full relative overflow-hidden'
+                className='group h-full relative overflow-hidden border-2 shadow-lg hover:shadow-xl shadow-gray-500'
               >
                 <div className='relative h-32 overflow-hidden'>
                   <ImageWithFallback

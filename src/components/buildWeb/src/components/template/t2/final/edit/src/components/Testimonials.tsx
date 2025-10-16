@@ -7,10 +7,10 @@ import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import Cropper from 'react-easy-crop';
 
-export default function Testimonials({ testimonialsData, onStateChange, userId, publishedId, templateSelection }) {
+export default function Testimonials({testimonialsData, onStateChange, userId, publishedId, templateSelection}) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-
+  
   // Cropping states for testimonial images
   const [showCropper, setShowCropper] = useState(false);
   const [croppingFor, setCroppingFor] = useState(null); // { index, field }
@@ -20,7 +20,7 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-
+  
   // Pending images for upload
   const [pendingTestimonialImages, setPendingTestimonialImages] = useState({});
 
@@ -38,19 +38,19 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
   const updateTestimonial = (idx, field, value) => {
     setTestimonialsSection(prev => ({
       ...prev,
-      testimonials: prev.testimonials.map((t, i) =>
+      testimonials: prev.testimonials.map((t, i) => 
         i === idx ? { ...t, [field]: value } : t
       )
     }));
   };
-
+  
   const removeTestimonial = (idx) => {
     setTestimonialsSection(prev => ({
       ...prev,
       testimonials: prev.testimonials.filter((_, i) => i !== idx)
     }));
   };
-
+  
   const addTestimonial = () => {
     setTestimonialsSection(prev => ({
       ...prev,
@@ -94,7 +94,7 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
       setRotation(0);
     };
     reader.readAsDataURL(file);
-
+    
     // Clear the file input
     e.target.value = '';
   };
@@ -145,21 +145,21 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         // Create a proper file with original file name or generate one
-        const fileName = originalFile ?
-          `cropped-${originalFile.name}` :
+        const fileName = originalFile ? 
+          `cropped-${originalFile.name}` : 
           `cropped-testimonial-${Date.now()}.jpg`;
-
-        const file = new File([blob], fileName, {
+        
+        const file = new File([blob], fileName, { 
           type: 'image/jpeg',
           lastModified: Date.now()
         });
-
+        
         // Create object URL for preview
         const previewUrl = URL.createObjectURL(blob);
-
-        resolve({
-          file,
-          previewUrl
+        
+        resolve({ 
+          file, 
+          previewUrl 
         });
       }, 'image/jpeg', 0.95);
     });
@@ -174,10 +174,10 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
       }
 
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
-
+      
       // Update preview immediately with blob URL (temporary)
       updateTestimonial(croppingFor.index, croppingFor.field, previewUrl);
-
+      
       // Set the actual file for upload on save
       setPendingTestimonialImages(prev => ({
         ...prev,
@@ -258,7 +258,7 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
 
       // Clear pending images
       setPendingTestimonialImages({});
-
+      
       // Exit edit mode
       setIsEditing(false);
       toast.success('Testimonials section saved!');
@@ -301,32 +301,32 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
     <>
       {/* Image Cropper Modal - Same as Hero */}
       {showCropper && (
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
         >
-          <motion.div
+          <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
                 Crop Testimonial Image
               </h3>
-              <button
+              <button 
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
-
+            
             {/* Cropper Area */}
             <div className="flex-1 relative bg-gray-900">
-              <div className="relative h-64 sm:h-72 md:h-80 w-full">
+              <div className="relative h-96 w-full">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
@@ -352,18 +352,18 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
                 />
               </div>
             </div>
-
+            
             {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="space-y-2 sm:space-y-3">
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="space-y-4">
                 {/* Zoom Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1.5 text-gray-700">
-                      <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <ZoomIn className="w-4 h-4" />
                       Zoom
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{zoom.toFixed(1)}x</span>
+                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                   </div>
                   <input
                     type="range"
@@ -372,23 +372,18 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
                     max={3}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-                [&::-webkit-slider-thumb]:appearance-none 
-                [&::-webkit-slider-thumb]:h-3 
-                [&::-webkit-slider-thumb]:w-3 
-                [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
-
+                
                 {/* Rotation Control */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="flex items-center gap-1.5 text-gray-700">
-                      <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <RotateCw className="w-4 h-4" />
                       Rotation
                     </span>
-                    <span className="text-gray-600 text-xs sm:text-sm">{rotation}°</span>
+                    <span className="text-gray-600">{rotation}°</span>
                   </div>
                   <input
                     type="range"
@@ -397,37 +392,31 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
                     max={360}
                     step={1}
                     onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-                [&::-webkit-slider-thumb]:appearance-none 
-                [&::-webkit-slider-thumb]:h-3 
-                [&::-webkit-slider-thumb]:w-3 
-                [&::-webkit-slider-thumb]:rounded-full 
-                [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
               </div>
-
+              
               {/* Action Buttons */}
-              <div className="mt-3 flex flex-col sm:flex-row gap-1.5 sm:gap-2 sm:justify-between">
+              <div className="mt-6 flex gap-3 justify-between">
                 <Button
                   variant="outline"
                   onClick={resetCropSettings}
-                  className="w-full sm:w-auto px-2 py-1 text-xs sm:text-sm border-gray-300 text-gray-700 hover:bg-gray-100"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
                 >
                   Reset
                 </Button>
-
-                <div className="flex gap-1.5 sm:gap-2">
+                <div className="flex gap-3">
                   <Button
                     variant="outline"
                     onClick={cancelCrop}
-                    className="px-2 py-1 text-xs sm:text-sm border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={applyCrop}
-                    className="px-2 py-1 text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6"
                   >
                     Apply Crop
                   </Button>
@@ -437,7 +426,6 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
           </motion.div>
         </motion.div>
       )}
-
 
       <motion.section
         id='testimonial'
@@ -452,9 +440,9 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mt-6">
             {isEditing ? (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
+              <motion.button 
+                whileTap={{scale:0.9}}
+                whileHover={{y:-1,scaleX:1.1}}
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:shadow-2xl'} text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
@@ -462,10 +450,10 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
                 {isUploading ? 'Uploading...' : 'Save'}
               </motion.button>
             ) : (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={() => setIsEditing(true)}
+              <motion.button 
+                whileTap={{scale:0.9}} 
+                whileHover={{y:-1,scaleX:1.1}}
+                onClick={() => setIsEditing(true)} 
                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
@@ -504,13 +492,13 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
             ) : (
               <>
                 <h2 className="text-3xl md:text-4xl text-foreground mb-4">
-                  {testimonialsSection.headline.title}
+                {testimonialsSection.headline.title}
                 </h2>
                 <p className="text-lg text-muted-foreground">
                   {testimonialsSection.headline.description}
                 </p>
               </>
-            )}
+            ) }
           </motion.div>
 
           {/* Testimonials Marquee Container */}
@@ -529,11 +517,11 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
                 }
               `}
             </style>
-
+            
             {isEditing && (
-              <motion.div
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.1 }}
+              <motion.div 
+                whileTap={{scale:0.9}}
+                whileHover={{scale:1.1}}
                 className="flex items-center justify-center mb-8"
               >
                 <Button onClick={addTestimonial} className="text-green-600 cursor-pointer">
@@ -547,12 +535,12 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
               <motion.div
                 className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
                 variants={containerVariants}
-                transition={{ duration: 0.8 }}
-                animate={{ opacity: [0, 1], y: [50, 0] }}
+                transition={{duration: 0.8}}
+                animate={{opacity:[0,1],y:[50,0]}}
                 viewport={{ once: true }}
               >
                 {testimonialsSection.testimonials.map((testimonial, index) => (
-                  <TestimonialCard
+                  <TestimonialCard 
                     key={index}
                     testimonial={testimonial}
                     index={index}
@@ -569,13 +557,13 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
               <motion.div
                 className="flex gap-8 animate-marquee"
                 variants={containerVariants}
-                transition={{ duration: 0.8 }}
-                animate={{ opacity: [0, 1], y: [50, 0] }}
+                transition={{duration: 0.8}}
+                animate={{opacity:[0,1],y:[50,0]}}
                 viewport={{ once: true }}
               >
                 {duplicatedTestimonials.map((testimonial, index) => (
                   <div key={index} className="flex-shrink-0 w-80 lg:w-96">
-                    <TestimonialCard
+                    <TestimonialCard 
                       testimonial={testimonial}
                       index={index % testimonialsSection.testimonials.length}
                       isEditing={isEditing}
@@ -590,7 +578,7 @@ export default function Testimonials({ testimonialsData, onStateChange, userId, 
             )}
           </div>
 
-
+          
         </div>
       </motion.section>
     </>

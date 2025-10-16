@@ -16,10 +16,13 @@ export default function Header() {
     navItems: [
       { id: 1, label: "Home", href: "#home", color: "primary" },
       { id: 2, label: "About", href: "#about", color: "primary" },
-      { id: 3, label: "Services", href: "#services", color: "red-accent" },
+      { id: 3, label: "Our Team", href: "#our-team", color: "primary" },
       { id: 4, label: "Product", href: "#product", color: "primary" },
-      { id: 5, label: "Blog", href: "#blog", color: "primary" },
-      { id: 6, label: "Contact", href: "#contact", color: "primary" },
+      { id: 5, label: "Services", href: "#services", color: "red-accent" },
+      { id: 6, label: "Gallery", href: "#gallery", color: "primary" },
+      { id: 7, label: "Blog", href: "#blog", color: "primary" },
+      { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
+      { id: 9, label: "Clients", href: "#clients", color: "primary" },
     ],
     ctaText: "Get Started",
   });
@@ -118,7 +121,7 @@ export default function Header() {
           </div>
 
           {/* Desktop Nav */}
-          <nav className='hidden md:flex items-center space-x-6 flex-wrap max-w-[600px] overflow-hidden'>
+          <nav className="hidden lg:flex items-center space-x-6 flex-wrap max-w-[700px] overflow-hidden">
             {content.navItems.map((item) => (
               <div key={item.id} className='flex items-center space-x-2'>
                 {isEditing ? (
@@ -195,7 +198,7 @@ export default function Header() {
           </div>
 
           {/* Mobile menu button */}
-          <motion.div className='md:hidden'>
+          <motion.div className='lg:hidden'>
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className='text-gray-700 hover:text-primary transition-colors p-2'

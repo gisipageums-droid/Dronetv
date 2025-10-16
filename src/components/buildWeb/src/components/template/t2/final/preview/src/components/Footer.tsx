@@ -108,53 +108,6 @@ export default function Footer({ footerData }) {
               </motion.div>
               
               <p className="text-gray-400 max-w-md">{footerContent?.companyInfo?.description}</p>
-
-              {/* Contact info */}
-              <div className="space-y-3">
-                <motion.div 
-                  className="flex items-center space-x-3"
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Mail className="h-5 w-5 text-primary" />
-                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent?.companyInfo?.email}</span>
-                </motion.div>
-                <motion.div 
-                  className="flex items-center space-x-3"
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Phone className="h-5 w-5 text-primary" />
-                  <span className={`text-gray-400 relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'} select-none`}>{footerContent?.companyInfo?.phone}</span>
-                </motion.div>
-              </div>
-
-              {/* Social links */}
-              <div className={`flex space-x-4 flex-wrap relative ${isSubscribed ? '' : 'after:absolute after:content-[""] after:-top-0 after:-right-0 after:backdrop-blur-[3px] after:rounded-md after:h-full after:w-full'}`}>
-                {footerContent?.socialLinks?.map((social, index) => {
-                  const IconComponent = social.icon;
-                  return (
-                    <motion.a
-                      key={index}
-                      href={social.href}
-                      className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary hover:text-black transition-colors mb-2"
-                      aria-label={social.name}
-                      whileHover={{ 
-                        scale: 1.1,
-                        rotate: 360
-                      }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ duration: 0.3 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      style={{ transitionDelay: `${index * 0.1}s` }}
-                    >
-                      <IconComponent className="h-5 w-5" />
-                    </motion.a>
-                  );
-                })}
-              </div>
             </motion.div>
 
             {/* Footer links - Filtered to exclude Legal */}

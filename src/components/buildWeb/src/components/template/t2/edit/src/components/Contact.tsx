@@ -385,8 +385,11 @@ export default function Contact({ onStateChange }) {
                     </span>
                   </Label>
                   <select className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 ">
-                    <option className="text-black">General Inquiry</option>
-                    <option className="text-black">Strategy Consulting</option>
+                    <option>General Inquiry</option>
+                    <option>Sales Inquiry</option>
+                    <option>Products Inquiry</option>
+                    <option>Services Inquiry</option>
+                    <option>Support Inquiry</option>
                   </select>
                 </motion.div>
 

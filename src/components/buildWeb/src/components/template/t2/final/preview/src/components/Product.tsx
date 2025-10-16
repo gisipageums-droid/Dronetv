@@ -1,18 +1,10 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import {
-  Monitor,
-  Smartphone,
-  Cloud,
-  BarChart3,
-  Zap,
-  X,
-  CheckCircle,
-} from "lucide-react";
+import { Zap, X } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion, AnimatePresence } from "motion/react";
+import { useState } from "react";
 
 export default function Product({ productData }) {
   const [visibleCount, setVisibleCount] = useState(4);
@@ -48,7 +40,6 @@ export default function Product({ productData }) {
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">
             {productData.heading.heading}
           </h2>
-
           <p className="text-lg text-muted-foreground inline">
             {productData.heading.description}
           </p>
@@ -60,59 +51,57 @@ export default function Product({ productData }) {
 
         {/* Products Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {productData.products.slice(0, visibleCount).map((product, index) => {
-            return (
-              <Card
-                key={index}
-                className="group h-full relative overflow-hidden"
-              >
-                <div className="relative h-32 overflow-hidden">
-                  <ImageWithFallback
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  <div className="absolute top-2 left-2">
-                    <Badge
-                      className={`${product.categoryColor} border-0 text-xs`}
-                    >
-                      {product.category}
-                    </Badge>
-                  </div>
-                  {product.isPopular && (
-                    <div className="absolute top-2 right-2 bg-red-accent text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
-                      <Zap className="w-2 h-2 mr-1" /> Bestseller
-                    </div>
-                  )}
+          {productData.products.slice(0, visibleCount).map((product, index) => (
+            <Card
+              key={index}
+              className="group h-full relative overflow-hidden flex flex-col border-2 shadow-lg hover:shadow-xl  shadow-gray-500"
+            >
+              <div className="relative h-32 overflow-hidden flex-shrink-0">
+                <ImageWithFallback
+                  src={product.image}
+                  alt={product.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <div className="absolute top-2 left-2">
+                  <Badge className={`${product.categoryColor} border-0 text-xs`}>
+                    {product.category}
+                  </Badge>
                 </div>
-                <CardHeader>
-                  <CardTitle>{product.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
+                {product.isPopular && (
+                  <div className="absolute top-2 right-2 bg-red-accent text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
+                    <Zap className="w-2 h-2 mr-1" /> Bestseller
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col flex-grow p-6">
+                <div className="flex-shrink-0 mb-4">
+                  <CardTitle className="line-clamp-2 min-h-[3rem]">{product.title}</CardTitle>
+                </div>
+                <div className="flex-grow mb-4">
+                  <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
                     {product.description}
                   </p>
-                  <ul className="space-y-1 mt-3">
+                  <ul className="space-y-1 mt-3 min-h-[3rem]">
                     {product.features.map((f, fi) => (
                       <li
                         key={fi}
                         className="text-xs text-muted-foreground flex items-center"
                       >
-                        <div className="w-1 h-1 bg-primary rounded-full mr-2" />
-                        <span>{f}</span>
+                        <div className="w-1 h-1 bg-primary rounded-full mr-2 flex-shrink-0" />
+                        <span className="line-clamp-1">{f}</span>
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-4 flex gap-2">
-                    <Button size="sm" className="hover:scale-105" onClick={() => openModal(index)}>
-                      View Details
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                </div>
+                <div className="mt-auto">
+                  <Button size="sm" className="hover:scale-105 w-full" onClick={() => openModal(index)}>
+                    View Details
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
 
         {/* Load More / Show Less */}

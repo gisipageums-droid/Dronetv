@@ -5,13 +5,13 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Button } from './ui/button';
 
 export default function Blog({ blogData }) {
-  const [selectedPost, setSelectedPost] = useState<any | null>(null);
+  const [selectedPost, setSelectedPost] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllPosts, setShowAllPosts] = useState(false);
 
   const displayedPosts = showAllPosts ? blogData.posts : blogData.posts.slice(0, 4);
 
-  const openModal = (post: any) => {
+  const openModal = (post) => {
     setSelectedPost(post);
     setIsModalOpen(true);
     document.body.style.overflow = 'hidden';
@@ -42,17 +42,15 @@ export default function Blog({ blogData }) {
           </motion.div>
           
           <h2 className="text-3xl md:text-4xl text-foreground mb-6">{blogData.header.title}</h2>
-          
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{blogData.header.desc}</p>
         </motion.div>
-        
 
         {/* Blog Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {displayedPosts.map((post, index) => (
             <motion.article
               key={post.id}
-              className="bg-card rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
+              className="bg-card rounded-xl border-2 shadow-lg hover:shadow-xl  shadow-gray-500 transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -60,7 +58,7 @@ export default function Blog({ blogData }) {
               whileHover={{ y: -5 }}
             >
               {/* Image */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-48 overflow-hidden flex-shrink-0">
                 <ImageWithFallback
                   src={post.image}
                   alt={post.title}
@@ -74,35 +72,39 @@ export default function Blog({ blogData }) {
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <div className="flex items-center text-xs text-muted-foreground mb-3">
+              <div className="p-6 flex flex-col flex-grow">
+                <div className="flex items-center text-xs text-muted-foreground mb-3 flex-shrink-0">
                   <Calendar className="w-3 h-3 mr-1" />
                   <span className="text-xs text-muted-foreground mr-4">{post.date}</span>
                   <User className="w-3 h-3 mr-1" />
                   <span className="text-xs text-muted-foreground">{post.author}</span>
                 </div>
 
-                <h3 className="font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
+                <div className="flex-grow mb-4">
+                  <h3 className="font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem]">
+                    {post.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm line-clamp-3 min-h-[4.5rem]">
+                    {post.excerpt}
+                  </p>
+                </div>
 
-                <motion.button
-                  className="w-full mt-4 py-2 bg-primary/10 text-primary rounded-lg font-medium flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => openModal(post)}
-                >
-                  Read More
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </motion.button>
+                <div className="mt-auto">
+                  <motion.button
+                    className="w-full py-2 bg-primary/10 text-primary rounded-lg font-medium flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => openModal(post)}
+                  >
+                    Read More
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </motion.button>
+                </div>
               </div>
             </motion.article>
           ))}
         </div>
-        
+          
         {/* Show More Button */}
         <div className="flex justify-center mt-6">
           {!showAllPosts && blogData.posts.length > 4 && (
@@ -126,14 +128,14 @@ export default function Blog({ blogData }) {
       <AnimatePresence>
         {isModalOpen && selectedPost && (
           <motion.div
-            className="fixed inset-0 backdrop-blur-xl bg-black/30 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 backdrop-blur-xl flex items-center justify-center p-4 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeModal}
           >
             <motion.div
-              className="bg-card relative top-[3.5rem] shadow-2xl rounded-xl max-w-4xl  w-full max-h-[75vh] overflow-y-auto"
+              className="bg-card relative top-[3.5rem] shadow-2xl rounded-xl max-w-4xl w-full max-h-[75vh] overflow-y-auto"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -164,7 +166,6 @@ export default function Blog({ blogData }) {
                 <div className="flex items-center text-sm text-muted-foreground mb-4">
                   <Calendar className="w-4 h-4 mr-1" />
                   <span className="text-sm text-muted-foreground mr-6">{selectedPost.date}</span>
-                  
                   <User className="w-4 h-4 mr-1" />
                   <span className="text-sm text-muted-foreground mr-6">{selectedPost.author}</span>
                 </div>

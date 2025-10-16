@@ -6,6 +6,15 @@ import { Label } from "./ui/label";
 import { motion } from "motion/react";
 
 export default function Contact({ contactData }) {
+  // Static options for the subject dropdown
+  const subjectOptions = [
+    "General Inquiry",
+    "Sales Inquiry",
+    "Products Inquiry",
+    "Services Inquiry",
+    "Support Inquiry"
+  ];
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -176,7 +185,6 @@ export default function Contact({ contactData }) {
                     />
                   </motion.div>
                 </motion.div>
-
                 <motion.div
                   className="space-y-2"
                   variants={itemVariants}
@@ -238,10 +246,12 @@ export default function Contact({ contactData }) {
                       Subject
                     </span>
                   </Label>
-                  <select className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 ">
-                    <option className="text-black">General Inquiry</option>
-                    <option className="text-black">Strategy Consulting</option>
-                  
+                  <select className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300">
+                    {subjectOptions.map((option, index) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
                 </motion.div>
 
@@ -329,7 +339,9 @@ export default function Contact({ contactData }) {
                             {info.title}
                           </h4>
                         </motion.div>
-                        <p className="text-muted-foreground">{info.primary}</p>
+                        <p className="text-muted-foreground">
+                          {info.primary}
+                        </p>
                         <p className="text-muted-foreground text-sm">
                           {info.secondary}
                         </p>
@@ -362,12 +374,6 @@ export default function Contact({ contactData }) {
                   <p className="text-sm mb-4 opacity-90 text-primary-foreground">
                     {contactData.cta.description}
                   </p>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                 
-                  </motion.div>
                 </CardContent>
               </Card>
             </motion.div>
