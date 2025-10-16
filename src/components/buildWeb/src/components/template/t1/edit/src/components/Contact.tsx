@@ -1,32 +1,95 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
+import { Textarea } from "../components/ui/textarea";
+import { Edit2, Save, X, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
-import CTA from "../public/images/CTA/CTA.jpg";
 
-export default function EditableContact({ 
-  content, 
-  onStateChange, 
-  userId, 
-  publishedId, 
-  templateSelection 
+// Define EditableText outside component to prevent re-creation and focus loss
+const EditableText = ({
+  value,
+  onChange,
+  multiline = false,
+  className = "",
+  placeholder = "",
+}) => {
+  const baseClasses =
+    "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+  if (multiline) {
+    return (
+      <textarea
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
+        className={`${baseClasses} p-2 resize-none ${className}`}
+        placeholder={placeholder}
+        rows={3}
+      />
+    );
+  }
+  return (
+    <input
+      type="text"
+      value={value || ""}
+      onChange={(e) => onChange(e.target.value)}
+      className={`${baseClasses} p-1 ${className}`}
+      placeholder={placeholder}
+    />
+  );
+};
+
+export default function EditableContact({
+  content,
+  onStateChange,
+  userId,
+  publishedId,
+  templateSelection,
 }) {
-  // Initialize with data from props only
+  const defaultContent = {
+    title: "Get In Touch",
+    description:
+      "Ready to transform your business? Let's start a conversation about how we can help you achieve your goals with our expert solutions.",
+    formTitle: "Send us a message",
+    formDescription:
+      "We'll get back to you within 24 hours during business days.",
+    ctaButton: "Send Message",
+    businessHoursTitle: "Business Hours",
+    businessHours: [
+      "Mon - Fri: 9:00 AM - 6:00 PM EST",
+      "Sat: 10:00 AM - 2:00 PM EST",
+      "Closed on Sundays",
+    ],
+    consultationTitle: "Ready to Get Started?",
+    consultationDescription:
+      "Schedule a free consultation to discuss your business needs",
+    consultationButton: "Book Free Consultation",
+  };
+
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [contactData, setContactData] = useState(content || {});
-  const [tempData, setTempData] = useState(content || {});
-  const [pendingImage, setPendingImage] = useState<File | null>(null);
-  const fileInputRef = useRef(null);
+  const [contactData, setContactData] = useState(defaultContent);
+  const [tempData, setTempData] = useState(defaultContent);
 
-  // Update state when content prop changes
+  // Safe data access helper
+  const getBusinessHours = (data) => {
+    if (!data.businessHours) return defaultContent.businessHours;
+    if (Array.isArray(data.businessHours)) return data.businessHours;
+    // If it's not an array but exists, wrap it in an array
+    return [data.businessHours];
+  };
+
+  // Update when prop changes
   useEffect(() => {
     if (content) {
-      setContactData(content);
-      setTempData(content);
+      const mergedData = { 
+        ...defaultContent, 
+        ...content,
+        // Ensure businessHours is always an array
+        businessHours: getBusinessHours(content)
+      };
+      setContactData(mergedData);
+      setTempData(mergedData);
     }
   }, [content]);
 
@@ -40,169 +103,87 @@ export default function EditableContact({
   const handleEdit = () => {
     setIsEditing(true);
     setTempData(contactData);
-    setPendingImage(null);
   };
 
   const handleCancel = () => {
     setTempData(contactData);
-    setPendingImage(null);
     setIsEditing(false);
   };
 
-  // Save button handler - uploads image and stores S3 URL
   const handleSave = async () => {
     try {
-      setIsUploading(true);
-
-      // Create a copy of tempData to update with S3 URL
-      let updatedData = { ...tempData };
-
-      // Upload background image if there's a pending image
-      if (pendingImage) {
-        if (!userId || !publishedId || !templateSelection) {
-          console.error('Missing required props:', { userId, publishedId, templateSelection });
-          toast.error('Missing user information. Please refresh and try again.');
-          return;
-        }
-        
-        const formData = new FormData();
-        formData.append('file', pendingImage);
-        formData.append('sectionName', 'contact');
-        formData.append('imageField', 'backgroundImage');
-        formData.append('templateSelection', templateSelection);
-
-        const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Update the background image in our local copy
-          updatedData.backgroundImage = uploadData.imageUrl;
-          console.log('Image uploaded to S3:', uploadData.imageUrl);
-        } else {
-          const errorData = await uploadResponse.json();
-          console.error('Image upload failed:', errorData);
-          toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
-          return; // Don't exit edit mode
-        }
-      }
-      
-      // Clear pending image
-      setPendingImage(null);
-      
-      // Simulate save delay
       setIsSaving(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       
-      // Update both states with the new content including S3 URL
-      setContactData(updatedData);
-      setTempData(updatedData);
+      // Ensure businessHours is an array before saving
+      const dataToSave = {
+        ...tempData,
+        businessHours: getBusinessHours(tempData)
+      };
       
-      // Exit edit mode
+      setContactData(dataToSave);
       setIsEditing(false);
-      toast.success('Contact section saved with S3 URLs ready for publish');
+      toast.success("Contact section saved successfully");
 
+      // Notify parent only after saving
+      if (onStateChange) onStateChange(dataToSave);
     } catch (error) {
-      console.error('Error saving contact section:', error);
-      toast.error('Error saving changes. Please try again.');
-      // Keep in edit mode so user can retry
+      console.error("Error saving contact section:", error);
+      toast.error("Error saving changes. Please try again.");
     } finally {
-      setIsUploading(false);
       setIsSaving(false);
     }
   };
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Validate file type and size
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
-    // Store the file for upload on Save
-    setPendingImage(file);
-
-    // Show immediate local preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setTempData(prev => ({
-        ...prev,
-        backgroundImage: e.target.result
-      }));
-    };
-    reader.readAsDataURL(file);
-  };
-
   const updateField = (field, value) => {
-    setTempData(prev => ({
+    setTempData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
-  const updateBenefit = (index, value) => {
-    setTempData(prev => ({
-      ...prev,
-      benefits: prev.benefits ? prev.benefits.map((benefit, i) => 
-        i === index ? value : benefit
-      ) : [value]
-    }));
-  };
-
-  const addBenefit = () => {
-    setTempData(prev => ({
-      ...prev,
-      benefits: prev.benefits ? [...prev.benefits, "New benefit"] : ["New benefit"]
-    }));
-  };
-
-  const removeBenefit = (index) => {
-    if (tempData.benefits && tempData.benefits.length > 1) {
-      setTempData(prev => ({
+  const updateBusinessHour = (index, value) => {
+    setTempData((prev) => {
+      const currentHours = getBusinessHours(prev);
+      return {
         ...prev,
-        benefits: prev.benefits.filter((_, i) => i !== index)
-      }));
-    }
+        businessHours: currentHours.map((hour, i) =>
+          i === index ? value : hour
+        ),
+      };
+    });
   };
 
-  const EditableText = ({ value, onChange, multiline = false, className = "", placeholder = "" }) => {
-    const baseClasses = "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-    if (multiline) {
-      return (
-        <textarea
-          value={value || ""}
-          onChange={(e) => onChange(e.target.value)}
-          className={`${baseClasses} p-2 resize-none ${className}`}
-          placeholder={placeholder}
-          rows={3}
-        />
-      );
-    }
-    return (
-      <input
-        type='text'
-        value={value || ""}
-        onChange={(e) => onChange(e.target.value)}
-        className={`${baseClasses} p-1 ${className}`}
-        placeholder={placeholder}
-      />
-    );
+  const addBusinessHour = () => {
+    setTempData((prev) => {
+      const currentHours = getBusinessHours(prev);
+      return {
+        ...prev,
+        businessHours: [...currentHours, "New business hour"],
+      };
+    });
   };
+
+  const removeBusinessHour = (index) => {
+    setTempData((prev) => {
+      const currentHours = getBusinessHours(prev);
+      if (currentHours.length > 1) {
+        return {
+          ...prev,
+          businessHours: currentHours.filter((_, i) => i !== index),
+        };
+      }
+      return prev;
+    });
+  };
+
+  const displayData = isEditing ? tempData : contactData;
+  const displayBusinessHours = getBusinessHours(displayData);
 
   return (
     <section
-      id='contact'
-      className='py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative'
+      id="contact"
+      className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-500 scroll-mt-20 relative"
     >
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
@@ -224,14 +205,12 @@ export default function EditableContact({
               className="bg-green-600 hover:bg-green-700 text-white shadow-md"
               disabled={isSaving || isUploading}
             >
-              {isUploading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : isSaving ? (
+              {isSaving ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <Save className="w-4 h-4 mr-2" />
               )}
-              {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+              {isSaving ? "Saving..." : "Save"}
             </Button>
             <Button
               onClick={handleCancel}
@@ -247,190 +226,262 @@ export default function EditableContact({
         )}
       </div>
 
-      <div className='max-w-6xl mx-auto px-6'>
-        <div className='bg-white dark:bg-gray-700 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-3 transition-colors duration-300'>
-          {/* Left: Content + Form (2fr) */}
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Header */}
+        <div className="text-center mb-12">
+          {isEditing ? (
+            <EditableText
+              value={tempData.title}
+              onChange={(val) => updateField("title", val)}
+              className="text-4xl font-bold text-gray-900 dark:text-white mb-3 text-center"
+              placeholder="Section Title"
+            />
+          ) : (
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+              {displayData.title}
+            </h2>
+          )}
+
+          {isEditing ? (
+            <EditableText
+              value={tempData.description}
+              onChange={(val) => updateField("description", val)}
+              multiline
+              className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg text-center"
+              placeholder="Section Description"
+            />
+          ) : (
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg">
+              {displayData.description}
+            </p>
+          )}
+        </div>
+
+        {/* Main Card */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left: Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='col-span-2 p-10 lg:p-14 text-gray-900 dark:text-white'
+            className="col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 lg:p-10"
           >
             {isEditing ? (
               <EditableText
-                value={tempData.title}
-                onChange={(val) => updateField("title", val)}
-                className='text-3xl lg:text-4xl font-bold mb-4'
-                placeholder="Section Title"
+                value={tempData.formTitle}
+                onChange={(val) => updateField("formTitle", val)}
+                className="text-xl font-semibold text-gray-900 dark:text-white mb-2"
+                placeholder="Form Title"
               />
             ) : (
-              <h2 className='text-3xl lg:text-4xl font-bold mb-4 text-gray-900 dark:text-white transition-colors duration-300'>
-                {tempData.title || "Contact Us"}
-              </h2>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                {displayData.formTitle}
+              </h3>
             )}
 
             {isEditing ? (
               <EditableText
-                value={tempData.description}
-                onChange={(val) => updateField("description", val)}
-                multiline
-                className='mb-8 text-gray-600 dark:text-gray-300'
-                placeholder="Section Description"
+                value={tempData.formDescription}
+                onChange={(val) => updateField("formDescription", val)}
+                className="text-gray-500 dark:text-gray-300 mb-6 text-sm"
+                placeholder="Form Description"
               />
             ) : (
-              <p className='mb-8 text-gray-600 dark:text-gray-300 transition-colors duration-300'>
-                {tempData.description || "Ready to take the next step? Let's build your future together."}
+              <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm">
+                {displayData.formDescription}
               </p>
             )}
 
-            {/* Benefits List */}
-            {tempData.benefits && tempData.benefits.length > 0 && (
-              <div className="mb-6">
-                <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">Benefits:</h4>
-                <ul className="space-y-2">
-                  {tempData.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 mt-2 flex-shrink-0"></div>
-                      {isEditing ? (
-                        <div className="flex items-center gap-2 w-full">
-                          <input
-                            value={benefit}
-                            onChange={(e) => updateBenefit(index, e.target.value)}
-                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-sm"
-                          />
+            <div className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    First Name
+                  </label>
+                  <Input
+                    placeholder="John"
+                    className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Last Name
+                  </label>
+                  <Input
+                    placeholder="Doe"
+                    className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Email
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="john@company.com"
+                    className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Company
+                  </label>
+                  <Input
+                    placeholder="Your Company"
+                    className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Subject
+                </label>
+                <select className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 transition-all duration-200">
+                  <option>General Inquiry</option>
+                  <option>Support</option>
+                  <option>Partnership</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Message
+                </label>
+                <Textarea
+                  rows={4}
+                  placeholder="Tell us about your project and how we can help..."
+                  className="resize-none bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                />
+              </div>
+
+              {isEditing ? (
+                <EditableText
+                  value={tempData.ctaButton}
+                  onChange={(val) => updateField("ctaButton", val)}
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-4 px-4 rounded-md transition-colors duration-300 text-lg text-center"
+                  placeholder="Button Text"
+                />
+              ) : (
+                <Button className="w-full bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold py-4 transition-colors duration-300 text-lg">
+                  {displayData.ctaButton}
+                </Button>
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="space-y-6"
+          >
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+              {isEditing ? (
+                <EditableText
+                  value={tempData.businessHoursTitle}
+                  onChange={(val) => updateField("businessHoursTitle", val)}
+                  className="text-lg font-semibold text-gray-900 dark:text-white mb-3"
+                  placeholder="Business Hours Title"
+                />
+              ) : (
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                  {displayData.businessHoursTitle}
+                </h4>
+              )}
+
+              <ul className="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
+                {displayBusinessHours.map((hour, index) => (
+                  <li key={index} className="flex items-center">
+                    {isEditing ? (
+                      <div className="flex items-center gap-2 w-full">
+                        <input
+                          value={hour}
+                          onChange={(e) =>
+                            updateBusinessHour(index, e.target.value)
+                          }
+                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-sm"
+                        />
+                        {displayBusinessHours.length > 1 && (
                           <Button
-                            onClick={() => removeBenefit(index)}
+                            onClick={() => removeBusinessHour(index)}
                             size="sm"
                             variant="outline"
                             className="bg-red-50 hover:bg-red-100 text-red-700"
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
-                        </div>
-                      ) : (
-                        <span className="text-gray-600 dark:text-gray-300 text-sm">{benefit}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                {isEditing && (
-                  <Button
-                    onClick={addBenefit}
-                    size="sm"
-                    variant="outline"
-                    className="mt-3 bg-green-50 hover:bg-green-100 text-green-700"
-                  >
-                    <Plus className="w-3 h-3 mr-1" />
-                    Add Benefit
-                  </Button>
-                )}
-              </div>
-            )}
+                        )}
+                      </div>
+                    ) : (
+                      hour
+                    )}
+                  </li>
+                ))}
+              </ul>
 
-            {isEditing && (!tempData.benefits || tempData.benefits.length === 0) && (
-              <Button
-                onClick={addBenefit}
-                size="sm"
-                variant="outline"
-                className="mb-6 bg-green-50 hover:bg-green-100 text-green-700"
-              >
-                <Plus className="w-3 h-3 mr-1" />
-                Add Benefits Section
-              </Button>
-            )}
-
-            <form className='grid gap-6'>
-              {/* Name + Email */}
-              <div className='grid md:grid-cols-2 gap-6'>
-                <div>
-                  <label className='block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200 transition-colors duration-300'>
-                    Full Name
-                  </label>
-                  <Input
-                    placeholder='John Smith'
-                    className='bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border-gray-300 dark:border-gray-500 transition-colors duration-300'
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200 transition-colors duration-300'>
-                    Email address
-                  </label>
-                  <Input
-                    type='email'
-                    placeholder='me@example.com'
-                    className='bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border-gray-300 dark:border-gray-500 transition-colors duration-300'
-                  />
-                </div>
-              </div>
-
-              {/* Dropdown */}
-              <div>
-                <label className='block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200 transition-colors duration-300'>
-                  Where did you hear from us?
-                </label>
-                <select className='w-full rounded-md border-gray-300 dark:border-gray-500 px-3 py-2 bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-400 transition-colors duration-300'>
-                  <option>Please choose one option:</option>
-                  <option>Friends & Family</option>
-                  <option>Social Media</option>
-                  <option>Advertisement</option>
-                  <option>Other</option>
-                </select>
-              </div>
-
-              {/* Submit */}
-              {isEditing ? (
-                <EditableText
-                  value={tempData.ctaButton}
-                  onChange={(val) => updateField("ctaButton", val)}
-                  className="bg-yellow-400 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white px-6 py-3 rounded-md font-semibold text-center"
-                  placeholder="Button Text"
-                />
-              ) : (
-                <Button className='bg-yellow-400 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white px-6 py-3 rounded-md font-semibold transition-colors duration-300'>
-                  {tempData.ctaButton || "Sign up now"}
+              {isEditing && (
+                <Button
+                  onClick={addBusinessHour}
+                  size="sm"
+                  variant="outline"
+                  className="mt-3 bg-green-50 hover:bg-green-100 text-green-700"
+                >
+                  <Plus className="w-3 h-3 mr-1" />
+                  Add Business Hour
                 </Button>
               )}
-            </form>
-          </motion.div>
+            </div>
 
-          {/* Right: Image (1fr) */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className='h-full col-span-1 relative'
-          >
-            <img
-              src={tempData.backgroundImage || CTA}
-              alt='CTA Illustration'
-              className='w-full h-full object-cover opacity-65 dark:opacity-50 transition-opacity duration-300'
-            />
-            {isEditing && (
-              <>
-                <input
-                  type='file'
-                  accept='image/*'
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  className='hidden'
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 text-center">
+              {isEditing ? (
+                <EditableText
+                  value={tempData.consultationTitle}
+                  onChange={(val) => updateField("consultationTitle", val)}
+                  className="text-lg font-semibold text-gray-900 dark:text-white mb-2"
+                  placeholder="Consultation Title"
                 />
-                <Button
-                  size='sm'
-                  variant='outline'
-                  className='absolute top-2 right-2 bg-white/80'
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Upload className='w-4 h-4' />
+              ) : (
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  {displayData.consultationTitle}
+                </h4>
+              )}
+
+              {isEditing ? (
+                <EditableText
+                  value={tempData.consultationDescription}
+                  onChange={(val) =>
+                    updateField("consultationDescription", val)
+                  }
+                  multiline
+                  className="text-gray-600 dark:text-gray-300 text-sm mb-4 w-full"
+                  placeholder="Consultation Description"
+                />
+              ) : (
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                  {displayData.consultationDescription}
+                </p>
+              )}
+
+              {isEditing ? (
+                <EditableText
+                  value={tempData.consultationButton}
+                  onChange={(val) => updateField("consultationButton", val)}
+                  className="w-full bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-300 text-center"
+                  placeholder="Consultation Button Text"
+                />
+              ) : (
+                <Button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-300">
+                  {displayData.consultationButton}
                 </Button>
-                {pendingImage && (
-                  <p className='absolute bottom-2 left-2 text-xs text-orange-600 bg-white/80 p-1 rounded'>
-                    Image selected: {pendingImage.name}
-                  </p>
-                )}
-              </>
-            )}
+              )}
+            </div>
           </motion.div>
         </div>
       </div>

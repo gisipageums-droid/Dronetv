@@ -1,21 +1,50 @@
-import { motion, useMotionValue } from "framer-motion";
-import { Star, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "motion/react";
+import { Star, CheckCircle, X } from "lucide-react";
+
+// Custom Card Components
+const Card = ({ children, className = "" }) => (
+  <div className={`bg-white rounded-xl shadow-md overflow-hidden ${className}`}>
+    {children}
+  </div>
+);
+
+const CardContent = ({ children, className = "" }) => (
+  <div className={className}>{children}</div>
+);
+
+// Custom Badge Component
+const Badge = ({ children, className = "" }) => (
+  <span
+    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${className}`}
+  >
+    {children}
+  </span>
+);
+
+// Custom Button Component
+const Button = ({ children, onClick, className = "", size = "md" }) => {
+  const sizeClasses = {
+    sm: "px-4 py-2 text-sm",
+    md: "px-6 py-2.5 text-base",
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className={`font-medium rounded-lg transition-all duration-200 bg-yellow-400 text-gray-900 hover:bg-yellow-500 shadow-sm hover:shadow-md ${sizeClasses[size]} ${className}`}
+    >
+      {children}
+    </button>
+  );
+};
 
 export default function Products({ productData }) {
   const [selected, setSelected] = useState("All");
-  const [selectedProductIndex, setSelectedProductIndex] = useState<number | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAll, setShowAll] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const sectionRef = useRef(null);
-
-  // Auto-scroll animation values
-  const x = useMotionValue(0);
-  const speed = 0.5;
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   // Extract data from productData prop
   const content = {
@@ -24,293 +53,367 @@ export default function Products({ productData }) {
     sectionDescription: productData.heading.description,
     trustText: productData.heading.trust,
     products: productData.products,
-    categories: ["All", ...new Set(productData.products.map((p) => p.category))],
+    categories: [
+      "All",
+      ...new Set(productData.products.map((p) => p.category)),
+    ],
     benefits: productData.benefits || [],
   };
 
-  const filtered = selected === "All"
-    ? content.products
-    : content.products.filter((p) => p.category === selected);
+  const filtered =
+    selected === "All"
+      ? content.products
+      : content.products.filter((p) => p.category === selected);
 
-  // Duplicate products for seamless auto-scroll
-  const duplicatedProducts = showAll ? filtered : [...filtered, ...filtered];
-
-  // Auto-scroll animation effect
-  useEffect(() => {
-    if (showAll) return; // stop animation if showing all in grid
-    
-    let animationFrame;
-
-    const animate = () => {
-      if (!isHovered) {
-        x.set(x.get() - speed);
-        // Reset to 0 if fully scrolled (duplicate loop)
-        const productWidth = 320; // approximate card width
-        if (Math.abs(x.get()) >= (filtered.length / 2) * productWidth) x.set(0);
-      }
-      animationFrame = requestAnimationFrame(animate);
-    };
-
-    animate();
-    return () => cancelAnimationFrame(animationFrame);
-  }, [isHovered, x, filtered.length, showAll]);
-
-  const openModal = (index) => {
-    setSelectedProductIndex(index);
+  const openModal = (product) => {
+    setSelectedProduct(product);
     setIsModalOpen(true);
+    document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedProductIndex(null);
-  };
-
-  const renderBenefits = () => {
-    if (!content.benefits || content.benefits.length === 0) return null;
-
-    return (
-      <div className='mt-16 grid grid-cols-1 md:grid-cols-3 gap-8'>
-        {content.benefits.map((benefit, index) => (
-          <div
-            key={index}
-            className='text-center p-6 bg-white rounded-lg shadow-sm'
-          >
-            <div
-              className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 text-2xl font-bold
-                ${
-                  benefit.color === "red-accent"
-                    ? "bg-red-100 text-red-600"
-                    : benefit.color === "primary"
-                    ? "bg-yellow-100 text-yellow-400"
-                    : "bg-yellow-100 text-yellow-400"
-                }`}
-            >
-              {benefit.icon}
-            </div>
-            <h4 className='font-semibold text-lg mb-2'>{benefit.title}</h4>
-            <p className='text-gray-600 text-sm'>{benefit.desc}</p>
-          </div>
-        ))}
-      </div>
-    );
+    setSelectedProduct(null);
+    document.body.style.overflow = "unset";
   };
 
   return (
     <section
-      id="product"    
+      id="product"
       ref={sectionRef}
-      className='max-w-7xl mx-auto py-20 bg-gray-50 relative overflow-hidden'
+      className="py-20 bg-gradient-to-b from-gray-50 to-white scroll-mt-20"
     >
-      <div className='container mx-auto px-4'>
-        <div className='flex justify-between items-center mb-8'>
-          <div>
-            <h2 className='text-4xl font-bold mb-2'>
-              {content.sectionTitle}
-            </h2>
-            <h3 className='text-2xl font-semibold mb-2'>
-              {content.sectionSubtitle}
-            </h3>
-            <p className='text-gray-600'>
-              {content.sectionDescription}
-              {content.trustText && (
-                <span className='font-semibold text-yellow-400'>
-                  {" "}
-                  {content.trustText}
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <span className="inline-block px-4 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium mb-4">
+            Our Products
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+            {content.sectionTitle}
+          </h2>
+          <h3 className="text-2xl font-semibold text-gray-700 mb-4">
+            {content.sectionSubtitle}
+          </h3>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            {content.sectionDescription}
+            {content.trustText && (
+              <span className="font-bold text-yellow-600">
+                {" "}
+                {content.trustText}
+              </span>
+            )}
+          </p>
+        </motion.div>
 
         {/* Categories */}
-        <div className='flex gap-4 justify-center mt-6 flex-wrap mb-16'>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex gap-3 justify-center mb-12 flex-wrap"
+        >
           {content.categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => {
-                setSelected(cat);
-                setShowAll(false);
-              }}
-              className={`px-6 py-2 rounded-full transition-colors ${
+              onClick={() => setSelected(cat)}
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
                 selected === cat
-                  ? "bg-yellow-400 text-gray-900"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
+                  : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
               }`}
             >
               {cat}
             </button>
           ))}
-        </div>
-      </div>
+        </motion.div>
 
-      {/* Products Display */}
-      <div className='container mx-auto px-4'>
-        {showAll ? (
-          // Grid view when "show all" is enabled
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-            {filtered.map((product, index) => (
-              <Card
-                key={product.id}
-                className='shadow-md rounded-xl overflow-hidden relative bg-white hover:shadow-lg transition-shadow duration-300'
-              >
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {filtered.map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.5, delay: 0.1 * index }}
+            >
+              <Card className="h-full flex flex-col hover:shadow-xl transition-all duration-300 group relative">
                 {product.isPopular && (
-                  <div className='absolute top-4 right-4 z-10'>
-                    <Badge className='bg-yellow-400 text-white'>
-                      <Star className='w-3 h-3 mr-1' fill='currentColor' />
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge className="bg-yellow-400 text-gray-900 shadow-md">
+                      <Star className="w-3 h-3 mr-1" fill="currentColor" />
                       Popular
                     </Badge>
                   </div>
                 )}
 
-                <CardContent className='p-0'>
-                  <div className='relative'>
+                <CardContent className="p-0 flex flex-col h-full">
+                  <div className="relative overflow-hidden">
                     <img
                       src={product.image}
                       alt={product.title}
-                      className='w-full h-48 object-cover'
+                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   </div>
 
-                  <div className='p-6'>
-                    <div className='flex items-center justify-between mb-3'>
-                      <Badge className={product.categoryColor}>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="mb-3">
+                      <Badge
+                        className={`${
+                          product.categoryColor || "bg-gray-100 text-gray-700"
+                        }`}
+                      >
                         {product.category}
                       </Badge>
                     </div>
 
-                    <h3 className='text-xl font-bold mb-3'>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
                       {product.title}
                     </h3>
 
-                    <p className='text-gray-600 mb-4'>
-                      {product.description}
+                    <p className="text-gray-600 text-sm mb-4 flex-1">
+                      {product.description.slice(0, 30) + "..."}
                     </p>
 
-                    {product.features && product.features.length > 0 && (
-                      <div className='mb-4'>
-                        <h4 className='font-semibold mb-2 text-sm'>
-                          Features:
+                    {/* {product.features && product.features.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-sm mb-2 text-gray-900">
+                          Key Features:
                         </h4>
-                        <ul className='text-sm text-gray-600 space-y-1'>
-                          {product.features.map((feature, idx) => (
-                            <li key={idx} className='flex items-center'>
-                              <div className='w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 flex-shrink-0'></div>
-                              {feature}
+                        <ul className="text-xs text-gray-600 space-y-1.5">
+                          {product.features.slice(0, 3).map((feature, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                              <span>{feature}</span>
                             </li>
                           ))}
+                          {product.features.length > 3 && (
+                            <li className="text-yellow-600 font-medium text-xs">
+                              +{product.features.length - 3} more features
+                            </li>
+                          )}
                         </ul>
                       </div>
-                    )}
+                    )} */}
 
-                    <Button 
-                      size="sm" 
-                      className="hover:scale-105" 
-                      onClick={() => openModal(index)}
+                    <Button
+                      size="sm"
+                      className="w-full hover:scale-105"
+                      onClick={() => openModal(product)}
                     >
-                      View Details
+                      View Details →
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        ) : (
-          // Auto-scroll view
-          <div
-            className='overflow-x-hidden'
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <motion.div className='flex gap-6' style={{ x }}>
-              {duplicatedProducts.map((product, i) => (
-                <Card
-                  key={`${product.id}-${i}`}
-                  className='group flex-none w-80 overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-xl'
-                >
-                  <div className='relative'>
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className='w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500'
-                    />
-                    {product.isPopular && (
-                      <Badge className='absolute top-4 right-4 bg-yellow-400 text-white'>
-                        <Star className='w-3 h-3 mr-1' fill='currentColor' />
-                        Popular
-                      </Badge>
-                    )}
-                    <Badge className='absolute top-4 left-4 bg-yellow-400 text-gray-900'>
-                      {product.category}
-                    </Badge>
-                  </div>
-                  <CardContent className='p-6 bg-white'>
-                    <h3 className='text-xl font-semibold text-gray-900 mb-2'>
-                      {product.title}
-                    </h3>
-                    <p className='text-gray-600 mb-4'>{product.description}</p>
-                    <button 
-                      className='text-red-500 font-medium hover:text-red-600'
-                      onClick={() => {
-                        const originalIndex = content.products.findIndex(p => p.id === product.id);
-                        if (originalIndex !== -1) openModal(originalIndex);
-                      }}
-                    >
-                      Learn More →
-                    </button>
-                  </CardContent>
-                </Card>
-              ))}
             </motion.div>
-          </div>
-        )}
+          ))}
+        </div>
 
-        {!showAll && (
-          <div className='text-center mt-8'>
-            <button
-              onClick={() => setShowAll(true)}
-              className='px-6 py-2 bg-yellow-400 rounded-full text-gray-900 font-medium hover:bg-yellow-500 transition'
-            >
-              Load More
-            </button>
-          </div>
-        )}
-
-      
+        {/* Benefits Section */}
+        {/* {content.benefits && content.benefits.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-16"
+          >
+            <h3 className="text-3xl font-bold text-center mb-12 text-gray-900">
+              Why Choose Our Products?
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {content.benefits.map((benefit, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={
+                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                  }
+                  transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                  className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                >
+                  <div
+                    className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 text-3xl
+                      ${
+                        benefit.color === "red-accent"
+                          ? "bg-red-100 text-red-600"
+                          : benefit.color === "primary"
+                          ? "bg-yellow-100 text-yellow-600"
+                          : "bg-yellow-100 text-yellow-600"
+                      }`}
+                  >
+                    {benefit.icon}
+                  </div>
+                  <h4 className="font-bold text-lg mb-3 text-gray-900">
+                    {benefit.title}
+                  </h4>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {benefit.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )} */}
       </div>
 
       {/* Modal */}
-      {isModalOpen && selectedProductIndex !== null && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
-          <div className="bg-white rounded-xl w-full max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 bg-gray-500 text-white rounded-full p-2"
-            > 
-              <X className="w-5 h-5" />
-            </button>
-
-            <h2 className="text-2xl font-bold mb-4">
-              {content.products[selectedProductIndex].title}
-            </h2>
-
-            <p className="text-gray-600 mb-4">
-              {content.products[selectedProductIndex].detailedDescription}
-            </p>
-
-            {/* Pricing & Timeline */}
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-2">Pricing</h3>
-                <p>{content.products[selectedProductIndex].pricing}</p>
+      <AnimatePresence>
+        {isModalOpen && selectedProduct && (
+          <motion.div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeModal}
+          >
+            <motion.div
+              className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header with Image */}
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                <button
+                  onClick={closeModal}
+                  className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors shadow-lg"
+                  aria-label="Close modal"
+                >
+                  <X className="w-5 h-5 text-gray-900" />
+                </button>
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Badge
+                      className={`${
+                        selectedProduct.categoryColor ||
+                        "bg-yellow-400 text-gray-900"
+                      }`}
+                    >
+                      {selectedProduct.category}
+                    </Badge>
+                    {selectedProduct.isPopular && (
+                      <Badge className="bg-yellow-400 text-gray-900">
+                        <Star className="w-3 h-3 mr-1" fill="currentColor" />
+                        Popular
+                      </Badge>
+                    )}
+                  </div>
+                  <h2 className="text-3xl font-bold text-white">
+                    {selectedProduct.title}
+                  </h2>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold mb-2">Timeline</h3>
-                <p>{content.products[selectedProductIndex].timeline}</p>
+
+              {/* Modal Content */}
+              <div className="overflow-y-auto max-h-[calc(90vh-16rem)] p-8">
+                {/* Description */}
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    About This Product
+                  </h3>
+                  <p className="text-gray-700 text-base leading-relaxed mb-4">
+                    {selectedProduct.detailedDescription ||
+                      selectedProduct.description}
+                  </p>
+                </div>
+
+                {/* All Features */}
+                {selectedProduct.features &&
+                  selectedProduct.features.length > 0 && (
+                    <div className="mb-8">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <span className="text-yellow-600">✨</span> All Features
+                      </h3>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {selectedProduct.features.map((feature, idx) => (
+                          <div
+                            key={idx}
+                            className="flex gap-3 items-start bg-yellow-50 p-4 rounded-lg"
+                          >
+                            <CheckCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-700">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Specifications */}
+                {selectedProduct.specifications && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span className="text-blue-600">📋</span> Specifications
+                    </h3>
+                    <div className="bg-blue-50 rounded-xl p-6">
+                      <div className="space-y-3">
+                        {Object.entries(selectedProduct.specifications).map(
+                          ([key, value], idx) => (
+                            <div
+                              key={idx}
+                              className="flex justify-between items-center border-b border-blue-100 pb-2 last:border-0"
+                            >
+                              <span className="font-medium text-gray-700">
+                                {key}:
+                              </span>
+                              <span className="text-gray-900">{value}</span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Pricing & Timeline */}
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  {selectedProduct.pricing && (
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-green-600">💰</span> Pricing
+                      </h3>
+                      <p className="text-gray-900 text-xl font-bold">
+                        {selectedProduct.pricing}
+                      </p>
+                    </div>
+                  )}
+                  {selectedProduct.timeline && (
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
+                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="text-purple-600">⏱️</span> Delivery
+                        Timeline
+                      </h3>
+                      <p className="text-gray-900 text-xl font-bold">
+                        {selectedProduct.timeline}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* CTA Button */}
+                <div className="flex justify-center gap-4">
+                  <Button onClick={closeModal} className="px-8">
+                    Got it, thanks!
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

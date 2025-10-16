@@ -1,11 +1,47 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 export default function Header({ headerData }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  console.log("header data", headerData);
+
+  // ✅ Desired navigation order
+  const desiredOrder = [
+    "Home",
+    "About",
+    "Profile",
+    "Services",
+    "Product",
+    "Blog",
+    "Gallery",
+    "Testimonials",
+  ];
+
+  // ✅ Reorder nav items safely and trim extra spaces
+  const orderedNavItems = useMemo(() => {
+    const apiItems = Array.isArray(headerData?.navItems)
+      ? headerData.navItems.map((item) => item.trim()) // trim spaces
+      : [];
+
+    const lowerApiItems = apiItems.map((i) => i.toLowerCase());
+    const lowerDesired = desiredOrder.map((i) => i.toLowerCase());
+
+    // Sort according to desired order
+    const sorted = desiredOrder.filter((item) =>
+      lowerApiItems.includes(item.toLowerCase())
+    );
+
+    // Add any extra items not in desired order
+    const extras = apiItems.filter(
+      (item) => !lowerDesired.includes(item.toLowerCase())
+    );
+
+    return [...sorted, ...extras];
+  }, [headerData]);
 
   const headerStyles: React.CSSProperties = {
     position: "fixed",
@@ -38,20 +74,19 @@ export default function Header({ headerData }) {
     <>
       <motion.header
         style={headerStyles}
-        className='dark:bg-gray-900 dark:border-gray-700'
+        className="dark:bg-gray-900 dark:border-gray-700"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative'>
-          <div className='flex items-center justify-between h-16'>
+        <div className="max-w-7xl mx-auto px-4 md:px-0 relative">
+          <div className="flex items-center justify-between h-16">
             {/* Logo + Company Name */}
             <motion.div
-              className='flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-red-500 dark:text-yellow-400 transition-colors duration-300'
+              className="flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-red-500 dark:text-yellow-400 transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
             >
-              {/* Enhanced Logo with Animations */}
-              <div className='relative'>
+              <div className="relative">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
                   animate={{
@@ -65,17 +100,16 @@ export default function Header({ headerData }) {
                     },
                   }}
                   whileHover={{
-                    scale: 1.2,
+                    scale: 1.0,
                     rotate: 360,
                     transition: { duration: 0.5 },
                   }}
                   whileTap={{ scale: 0.9 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <motion.img
-                    src={headerData.logoSrc}
-                    alt='Logo'
-                    className='h-4 w-4 sm:h-6 sm:w-6 object-contain rounded-full'
+                    src={headerData?.logoSrc}
+                    alt="Logo"
+                    className="h-4 w-4 sm:h-6 sm:w-6 object-contain rounded-full"
                     animate={{
                       y: [0, -5, 0],
                       transition: {
@@ -88,36 +122,36 @@ export default function Header({ headerData }) {
                   />
                 </motion.div>
               </div>
-
-              {/* Company Name */}
-              <span>{headerData.companyName}</span>
+              <span>{headerData?.companyName || "Company"}</span>
             </motion.div>
 
             {/* Desktop Navigation */}
-            <nav className='hidden md:flex items-center space-x-4 mr-20'>
-              {headerData.navItems.map((item, index) => (
-                <a
-                  key={index}
-                  href={`#${item.toLowerCase()}`}
-                    className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
-                >
-                  {item}
-                </a>
-              ))}
-            </nav>
+            <div className="hidden md:flex items-center space-x-4 mr-20">
+              <nav className="flex items-center space-x-4">
+                {orderedNavItems.map((item, index) => (
+                  <a
+                    key={index}
+                    href={`#${item.toLowerCase()}`}
+                    className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                  >
+                    {item}
+                  </a>
+                ))}
+              </nav>
+            </div>
 
             {/* Mobile Menu Button */}
-            <div className='md:hidden flex items-center space-x-2'>
+            <div className="md:hidden flex items-center space-x-2">
               <button
                 onClick={toggleMobileMenu}
-                className='p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700'
+                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
-                  className='h-6 w-6 transition-transform duration-200'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
+                  className="h-6 w-6 transition-transform duration-200"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                   style={{
                     transform: isMobileMenuOpen
                       ? "rotate(90deg)"
@@ -126,17 +160,17 @@ export default function Header({ headerData }) {
                 >
                   {isMobileMenuOpen ? (
                     <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       strokeWidth={2}
-                      d='M6 18L18 6M6 6l12 12'
+                      d="M6 18L18 6M6 6l12 12"
                     />
                   ) : (
                     <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       strokeWidth={2}
-                      d='M4 6h16M4 12h16M4 18h16'
+                      d="M4 6h16M4 12h16M4 18h16"
                     />
                   )}
                 </svg>
@@ -148,21 +182,20 @@ export default function Header({ headerData }) {
 
       {/* Mobile Navigation Menu */}
       <div
-        style={{ ...mobileMenuStyles }}
-        className='md:hidden dark:bg-gray-900 dark:border-gray-700'
+        style={mobileMenuStyles}
+        className="md:hidden dark:bg-gray-900 dark:border-gray-700"
       >
-        <div className='px-4 pt-2 pb-3 space-y-1 sm:px-6'>
-          {headerData.navItems.map((item, index) => (
+        <div className="px-4 pt-2 pb-3 space-y-1 sm:px-6">
+          {orderedNavItems.map((item, index) => (
             <a
               key={index}
               href={`#${item.toLowerCase()}`}
-              className='block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300'
+              className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
               onClick={closeMobileMenu}
             >
               {item}
             </a>
           ))}
-          
         </div>
       </div>
     </>

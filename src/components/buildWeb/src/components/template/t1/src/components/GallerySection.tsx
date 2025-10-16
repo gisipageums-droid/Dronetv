@@ -1,133 +1,271 @@
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
-import { Badge } from "../components/ui/badge";
+import { useEffect, useRef, useState } from "react";
+import { Badge } from "./ui/badge";
+
+const galleryData = {
+  heading: {
+    title: "Moments That Define Us",
+    description:
+      "Explore snapshots of our workspace, team, events, and the innovation that drives us every day.",
+  },
+  images: [
+    {
+      id: 1,
+      url: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&h=600&fit=crop",
+      title: "Innovation Hub",
+      category: "Workspace",
+      description:
+        "Our state-of-the-art innovation lab where ideas come to life",
+    },
+    {
+      id: 2,
+      url: "https://images.unsplash.com/photo-1529533520516-5e45b20d07a5?w=600&h=600&fit=crop",
+      title: "Team Collaboration",
+      category: "Team",
+      description: "Brainstorming sessions that fuel our creative process",
+    },
+    {
+      id: 3,
+      url: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=600&fit=crop",
+      title: "Client Meeting",
+      category: "Business",
+      description: "Strategic discussions that shape successful partnerships",
+    },
+    {
+      id: 4,
+      url: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&h=600&fit=crop",
+      title: "Tech Workshop",
+      category: "Events",
+      description: "Hands-on workshops that push technological boundaries",
+    },
+    {
+      id: 5,
+      url: "https://images.unsplash.com/photo-1560806883-642f26c2825d?w=600&h=600&fit=crop",
+      title: "Product Launch",
+      category: "Milestones",
+      description: "Celebrating the launch of our latest innovative product",
+    },
+    {
+      id: 6,
+      url: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=600&fit=crop",
+      title: "Development Team",
+      category: "Team",
+      description: "Our dedicated team working on cutting-edge solutions",
+    },
+    {
+      id: 7,
+      url: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=600&h=600&fit=crop",
+      title: "Design Studio",
+      category: "Workspace",
+      description: "Where user experience and design excellence meet",
+    },
+    {
+      id: 8,
+      url: "https://images.unsplash.com/photo-1542744173-05336fcc7ad4?w=600&h=600&fit=crop",
+      title: "Strategy Session",
+      category: "Business",
+      description: "Planning the future of digital transformation",
+    },
+    {
+      id: 9,
+      url: "https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=600&h=600&fit=crop",
+      title: "Award Ceremony",
+      category: "Achievements",
+      description: "Recognizing excellence and innovation in our industry",
+    },
+  ],
+};
 
 export default function GallerySection() {
-    const useScrollAnimation = () => {
-        const [ref, setRef] = useState(null);
-        const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-        useEffect(() => {
-            if (!ref) return;
+  const sectionRef = useRef(null);
 
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    setIsVisible(entry.isIntersecting);
-                },
-                { threshold: 0.1 }
-            );
-
-            observer.observe(ref);
-            return () => observer.unobserve(ref);
-        }, [ref]);
-
-        return [setRef, isVisible] as const;
-    };
-
-    const [galleryRef, galleryVisible] = useScrollAnimation();
-
-    // Mock gallery images from Unsplash
-    const galleryImages = [
-        "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1529533520516-5e45b20d07a5?w=600&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1560806883-642f26c2825d?w=600&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=600&fit=crop",
-    ];
-
-    return (
-        <section id="gallery"
-            ref={galleryRef}
-            className="py-24 bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20"
-        >
-            <div className="max-w-7xl mx-auto px-6">
-                {/* Section Header — Animated */}
-                <div className="text-center mb-16">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={galleryVisible ? { opacity: 1, scale: 1 } : {}}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                        className="inline-block mb-4"
-                    >
-                        <Badge className="bg-[#ffeb3b] text-gray-900 px-5 py-2 shadow-md">
-                            Our Gallery
-                        </Badge>
-                    </motion.div>
-
-                    <motion.h2
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={galleryVisible ? { opacity: 1, y: 0 } : {}}
-                        transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
-                        className="text-3xl md:text-4xl font-extrabold text-gray-900"
-                    >
-                        Moments That Define Us
-                    </motion.h2>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={galleryVisible ? { opacity: 1, y: 0 } : {}}
-                        transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                        className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
-                    >
-                        Explore snapshots of our workspace, team, events, and the innovation
-                        that drives us every day.
-                    </motion.p>
-                </div>
-
-                {/* Gallery Grid — with enhanced hover & animations */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                    {galleryImages.map((src, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 50, rotateX: 10 }}
-                            animate={galleryVisible ? { opacity: 1, y: 0, rotateX: 0 } : {}}
-                            transition={{
-                                delay: 0.5 + i * 0.1,
-                                duration: 0.8,
-                                ease: [0.16, 1, 0.3, 1], // easeOutQuart
-                            }}
-                            whileHover={{
-                                scale: 1.05,
-                                y: -10,
-                                rotateX: 0,
-                                boxShadow: "0 30px 40px -15px rgba(0,0,0,0.15)",
-                                transition: { duration: 0.3, ease: "easeOut" },
-                            }}
-                            whileTap={{ scale: 0.98 }}
-                            className="overflow-hidden rounded-2xl bg-white border border-yellow-100 cursor-pointer group"
-                            style={{ willChange: "transform, box-shadow" }}
-                        >
-                            <div className="relative overflow-hidden h-60 md:h-72">
-                                {/* GRADIENT OVERLAY on hover */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                                {/* IMAGE with grayscale → color on hover */}
-                                <img
-                                    src={src}
-                                    alt={`Gallery image ${i + 1}`}
-                                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0 grayscale"
-                                    style={{ backfaceVisibility: "hidden" }}
-                                    onError={(e) => {
-                                        e.currentTarget.src =
-                                            "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&h=600&fit=crop";
-                                    }}
-                                />
-
-                                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <div className="bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                        </svg>
-                                        View
-                                    </div>
-                                </div>
-
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </section>
+  // Intersection Observer for visibility
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
     );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  // Lightbox functions
+  const openLightbox = (index) => {
+    setSelectedImage(index);
+  };
+
+  const closeLightbox = () => {
+    setSelectedImage(null);
+  };
+
+  const goToNext = () => {
+    if (selectedImage !== null) {
+      setSelectedImage((prev) =>
+        prev === galleryData.images.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const goToPrev = () => {
+    if (selectedImage !== null) {
+      setSelectedImage((prev) =>
+        prev === 0 ? galleryData.images.length - 1 : prev - 1
+      );
+    }
+  };
+
+  return (
+    <section
+      id="gallery"
+      ref={sectionRef}
+      className="py-24 bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20"
+    >
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={isVisible ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="inline-block mb-4"
+          >
+            <Badge className="bg-[#ffeb3b] text-gray-900 px-5 py-2 shadow-md">
+              Our Gallery
+            </Badge>
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
+            className="text-3xl md:text-4xl font-extrabold text-gray-900"
+          >
+            {galleryData.heading.title}
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
+            className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
+          >
+            {galleryData.heading.description}
+          </motion.p>
+        </div>
+
+        {/* Gallery Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {galleryData.images.map((image, index) => (
+            <motion.div
+              key={image.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{
+                delay: 0.5 + index * 0.1,
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              whileHover={{
+                y: -5,
+                scale: 1.02,
+              }}
+              className="overflow-hidden rounded-lg shadow-md cursor-pointer group bg-white"
+              onClick={() => openLightbox(index)}
+            >
+              <div className="relative overflow-hidden">
+                {image.url ? (
+                  <img
+                    src={image.url}
+                    alt={image.title}
+                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&h=600&fit=crop";
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">No image</span>
+                  </div>
+                )}
+
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
+                  <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
+                    <h3 className="font-semibold">{image.title}</h3>
+                    <p className="text-sm">{image.category}</p>
+                    <p className="text-xs mt-1 opacity-90">
+                      {image.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Lightbox Modal */}
+      {selectedImage !== null && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed top-[8rem] inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+        >
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+          >
+            <X size={24} />
+          </button>
+
+          <button
+            onClick={goToPrev}
+            className="absolute left-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+          >
+            <ChevronLeft size={32} />
+          </button>
+
+          <button
+            onClick={goToNext}
+            className="absolute right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+          >
+            <ChevronRight size={32} />
+          </button>
+
+          <div className="max-w-4xl w-full max-h-full">
+            <img
+              src={galleryData.images[selectedImage].url}
+              alt={galleryData.images[selectedImage].title}
+              className="w-full h-auto max-h-full object-contain"
+            />
+            <div className="text-white text-center mt-4">
+              <h3 className="text-xl font-semibold">
+                {galleryData.images[selectedImage].title}
+              </h3>
+              <p className="text-gray-300">
+                {galleryData.images[selectedImage].category}
+              </p>
+              <p className="text-gray-400 text-sm mt-2">
+                {galleryData.images[selectedImage].description}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </section>
+  );
 }

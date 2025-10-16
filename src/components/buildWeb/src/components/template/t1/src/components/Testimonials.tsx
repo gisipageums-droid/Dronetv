@@ -1,125 +1,197 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "./ui/card";
-import Cust1 from "../public/images/customers/customer-1.jpg";
-import Cust2 from "../public/images/customers/customer-3.jpg";
-import Cust3 from "../public/images/customers/customer-4.jpg";
-import Cust4 from "../public/images/customers/customer-5.jpg";
+import { useState, useEffect, useRef } from "react";
 
-const testimonials = [
-  {
-    id: 1,
-    company: "BrightWave",
-    testimonial: "Working with them was a game-changer.",
-    author: "Aarav Mehta",
-    position: "CEO",
-    logo: Cust4,
+// Mock icons (replace with actual icons if available)
+const Cust1 = () => <div className="w-8 h-8 bg-blue-500 rounded-full"></div>;
+const Cust2 = () => <div className="w-8 h-8 bg-green-500 rounded-full"></div>;
+const Cust3 = () => <div className="w-8 h-8 bg-purple-500 rounded-full"></div>;
+const Cust4 = () => <div className="w-8 h-8 bg-orange-500 rounded-full"></div>;
+
+const staticTestimonialsData = {
+  headline: {
+    title: "What Our Clients Say",
+    description: "Real experiences from clients who have transformed their operations with our solutions.",
   },
-  {
-    id: 2,
-    company: "TechForward",
-    testimonial: "They helped us 3x growth in 18 months.",
-    author: "Sarah Chen",
-    position: "CTO",
-    logo: Cust2,
-  },
-  {
-    id: 3,
-    company: "InnovateLab",
-    testimonial: "Their expertise transformed our entire business strategy.",
-    author: "Michael Rodriguez",
-    position: "Founder",
-    logo: Cust3,
-  },
-  {
-    id: 4,
-    company: "CloudSync",
-    testimonial: "The results exceeded all our expectations.",
-    author: "Emily Watson",
-    position: "COO",
-    logo: Cust1,
-  },
-];
+  testimonials: [
+    {
+      id: 1,
+      name: "Aarav Mehta",
+      role: "CEO, BrightWave",
+      quote: "Working with them was a game-changer for our business. Their innovative approach helped us achieve results we never thought possible.",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: 2,
+      name: "Sarah Chen",
+      role: "CTO, TechForward",
+      quote: "They helped us achieve 3x growth in just 18 months. Their expertise and dedication are unmatched in the industry.",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: 3,
+      name: "Michael Rodriguez",
+      role: "Founder, InnovateLab",
+      quote: "Their expertise transformed our entire business strategy. The ROI has been phenomenal and the partnership continues to deliver value.",
+      rating: 4,
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: 4,
+      name: "Emily Watson",
+      role: "COO, CloudSync",
+      quote: "The results exceeded all our expectations. Professional, reliable, and truly innovative in their solutions.",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+    }
+  ],
+  stats: [
+    {
+      value: "98%",
+      label: "Client Satisfaction"
+    },
+    {
+      value: "4.9/5",
+      label: "Average Rating"
+    },
+    {
+      value: "200+",
+      label: "Projects Completed"
+    },
+    {
+      value: "50+",
+      label: "Clients Worldwide"
+    }
+  ]
+};
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
+  const sectionRef = useRef(null);
+
+  // Use the static data
+  const testimonialsData = staticTestimonialsData;
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setCurrent((c) => (c + 1) % testimonials.length),
-      5000
-    );
-    return () => clearInterval(interval);
-  }, []);
+    if (testimonialsData.testimonials.length > 0) {
+      const interval = setInterval(
+        () => setCurrent((c) => (c + 1) % testimonialsData.testimonials.length),
+        5000
+      );
+      return () => clearInterval(interval);
+    }
+  }, [testimonialsData.testimonials.length]);
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span
+          key={i}
+          className={i <= rating ? "text-yellow-400" : "text-gray-300"}
+        >
+          ★
+        </span>
+      );
+    }
+    return stars;
+  };
 
   return (
-    <section id='testimonials' className=' bg-gray-50 py-16 scroll-mt-20'>
-      <div className='max-w-4xl mx-auto px-6'>
-        <div className='text-center mb-12'>
-          <h2 className='text-3xl font-bold text-gray-900 mb-4'>
-            What Our Clients Say
+    <section
+      id="testimonials"
+      className="bg-gray-50 py-16 scroll-mt-20 relative"
+      ref={sectionRef}
+    >
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            {testimonialsData.headline.title}
           </h2>
-          <p className='text-gray-600 max-w-2xl mx-auto'>
-            Don't just take our word for it. Here's what our clients have to say
-            about working with us.
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            {testimonialsData.headline.description}
           </p>
         </div>
 
-        <div className='relative overflow-hidden'>
+        {/* Stats Section */}
+        {testimonialsData.stats.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+            {testimonialsData.stats.map((stat, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-lg shadow-sm text-center"
+              >
+                <div className="text-3xl font-bold text-blue-600 mb-2">
+                  {stat.value}
+                </div>
+                <div className="text-gray-600">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Testimonials Carousel */}
+        <div className="relative overflow-hidden">
           <div
-            className='flex transition-transform duration-500 ease-in-out'
+            className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
-            {testimonials.map((testimonial, index) => (
-              <div key={testimonial.id} className='w-full flex-shrink-0'>
-                <Card className='mx-4 bg-white shadow-lg border-0'>
-                  <CardContent className='p-8 text-center'>
-                    <div className='mb-6'>
-                      <div className='w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4'>
+            {testimonialsData.testimonials.map((testimonial, index) => (
+              <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
+                <div className="bg-white shadow-lg border-0 rounded-lg h-full">
+                  <div className="p-8 text-center h-full flex flex-col">
+                    <div className="mb-6 flex-grow">
+                      <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
                         <img
-                          src={testimonial.logo} // 👈 make sure your testimonial object has this field
-                          alt={testimonial.company}
-                          className='w-full h-full object-cover rounded-full'
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face";
+                          }}
                         />
                       </div>
-                      <h3 className='font-semibold text-xl text-gray-900 mb-2'>
-                        {testimonial.company}
+                      <h3 className="font-semibold text-xl text-gray-900 mb-2">
+                        {testimonial.name}
                       </h3>
+                      <div className="flex justify-center mb-2">
+                        {renderStars(testimonial.rating)}
+                      </div>
                     </div>
 
-                    <blockquote className='text-lg text-gray-700 mb-6 italic'>
-                      "{testimonial.testimonial}"
-                    </blockquote>
-
-                    <div className='border-t pt-6'>
-                      <p className='font-medium text-gray-900'>
-                        {testimonial.author}
-                      </p>
-                      <p className='text-gray-600 text-sm'>
-                        {testimonial.position}
-                      </p>
+                    <div className="mb-6 flex-grow">
+                      <blockquote className="text-lg text-gray-700 italic leading-relaxed">
+                        "{testimonial.quote}"
+                      </blockquote>
                     </div>
-                  </CardContent>
-                </Card>
+
+                    <div className="border-t pt-6">
+                      <p className="text-gray-600 font-medium">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Pagination Dots */}
-        <div className='flex justify-center mt-8 space-x-2'>
-          {testimonials.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrent(index)}
-              className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                index === current
-                  ? "bg-[#ffeb3b]"
-                  : "bg-gray-300 hover:bg-gray-400"
-              }`}
-              aria-label={`Go to testimonial ${index + 1}`}
-            />
-          ))}
-        </div>
+        {testimonialsData.testimonials.length > 0 && (
+          <div className="flex justify-center space-x-2 mt-8">
+            {testimonialsData.testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrent(index)}
+                className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+                  index === current
+                    ? "bg-blue-600"
+                    : "bg-gray-300 hover:bg-gray-400"
+                }`}
+                aria-label={`Go to testimonial ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

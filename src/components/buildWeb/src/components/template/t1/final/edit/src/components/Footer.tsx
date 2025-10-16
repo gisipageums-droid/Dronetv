@@ -14,12 +14,55 @@ import {
   Twitter,
   Upload,
   X,
+  Loader2,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import Cropper from "react-easy-crop";
+
+// Crop helper function
+const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const image = new Image();
+  image.src = imageSrc;
+
+  return new Promise((resolve, reject) => {
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
+
+      ctx.drawImage(
+        image,
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        pixelCrop.width,
+        pixelCrop.height
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error("Canvas is empty"));
+            return;
+          }
+          resolve(blob);
+        },
+        "image/jpeg",
+        0.95
+      );
+    };
+    image.onerror = reject;
+  });
+};
 
 export default function EditableFooter({
   content,
@@ -39,6 +82,14 @@ export default function EditableFooter({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
 
+  // Crop modal state
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImage, setCropImage] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [originalFile, setOriginalFile] = useState(null);
+
   // Update state when content prop changes
   useEffect(() => {
     if (content) {
@@ -53,6 +104,50 @@ export default function EditableFooter({
       onStateChange(footerData);
     }
   }, [footerData, onStateChange]);
+
+  // Open crop modal
+  const openCropModal = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropImage(reader.result);
+      setOriginalFile(file);
+      setCropModalOpen(true);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle crop complete
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  // Apply crop
+  const applyCrop = async () => {
+    try {
+      const croppedBlob = await getCroppedImg(cropImage, croppedAreaPixels);
+      const croppedFile = new File([croppedBlob], originalFile.name, {
+        type: "image/jpeg",
+      });
+
+      // Store the cropped file for upload on Save
+      setPendingLogoFile(croppedFile);
+
+      // Show immediate local preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateNestedField("brand.logoUrl", reader.result);
+      };
+      reader.readAsDataURL(croppedFile);
+
+      setCropModalOpen(false);
+      toast.success("Logo cropped successfully");
+    } catch (error) {
+      console.error("Error cropping logo:", error);
+      toast.error("Error cropping logo. Please try again.");
+    }
+  };
 
   const handleLogoUpload = (e) => {
     const file = e.target.files?.[0];
@@ -70,15 +165,8 @@ export default function EditableFooter({
       return;
     }
 
-    // Store the file for upload on Save
-    setPendingLogoFile(file);
-
-    // Show immediate local preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      updateNestedField("brand.logoUrl", reader.result);
-    };
-    reader.readAsDataURL(file);
+    // Open crop modal instead of directly processing
+    openCropModal(file);
   };
 
   const handleEdit = () => {
@@ -116,7 +204,7 @@ export default function EditableFooter({
         const formData = new FormData();
         formData.append("file", pendingLogoFile);
         formData.append("sectionName", "footer");
-        formData.append("imageField", "logoUrl");
+        formData.append("imageField", "logoUrl" + Date.now());
         formData.append("templateSelection", templateSelection);
 
         const uploadResponse = await fetch(
@@ -147,8 +235,8 @@ export default function EditableFooter({
         ...tempData,
         brand: {
           ...tempData.brand,
-          logoUrl: updatedLogoUrl
-        }
+          logoUrl: updatedLogoUrl,
+        },
       };
 
       // Now save the updated data
@@ -182,27 +270,25 @@ export default function EditableFooter({
 
   // Simplified update functions similar to Footer2.tsx
   const updateBrand = (field, value) => {
-    setTempData(prev => ({
+    setTempData((prev) => ({
       ...prev,
-      brand: { ...prev.brand, [field]: value }
+      brand: { ...prev.brand, [field]: value },
     }));
   };
 
- 
-
   const updateContact = (field, value) => {
-    setTempData(prev => ({
+    setTempData((prev) => ({
       ...prev,
-      contact: { ...prev.contact, [field]: value }
+      contact: { ...prev.contact, [field]: value },
     }));
   };
 
   const updateSectionTitle = (sectionIndex, value) => {
-    setTempData(prev => ({
+    setTempData((prev) => ({
       ...prev,
       sections: prev.sections.map((section, index) =>
         index === sectionIndex ? { ...section, title: value } : section
-      )
+      ),
     }));
   };
 
@@ -380,22 +466,23 @@ export default function EditableFooter({
   return (
     <>
       {/* Footer Preview/Edit */}
-      <motion.footer 
-        className='bg-gray-900 border-t border-gray-800 relative'
+      <motion.footer
+        className="bg-gray-900 border-t border-gray-800 relative"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}>
-        <div className='max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-12 relative'>
+        transition={{ duration: 0.8 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-12 relative">
           {/* Edit Toggle - positioned in top right */}
-          <div className='absolute top-4 right-4 z-10'>
+          <div className="absolute top-4 right-4 z-10">
             {!isEditing ? (
               <Button
                 onClick={handleEdit}
                 className="bg-yellow-400 hover:bg-yellow-500 text-black"
-                size='sm'
+                size="sm"
               >
-                <Edit2 className='w-3 h-3 mr-1' />
+                <Edit2 className="w-3 h-3 mr-1" />
                 Edit
               </Button>
             ) : (
@@ -403,58 +490,67 @@ export default function EditableFooter({
                 <Button
                   onClick={handleSave}
                   className="bg-green-600 hover:bg-green-700 text-white"
-                  size='sm'
-                  disabled={isSaving}
+                  size="sm"
+                  disabled={isSaving || isUploading}
                 >
-                  {isSaving ? (
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                  {isUploading ? (
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  ) : isSaving ? (
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
                   ) : (
-                    <Save className='w-3 h-3 mr-1' />
+                    <Save className="w-3 h-3 mr-1" />
                   )}
-                  {isSaving ? (isUploading ? 'Uploading...' : 'Saving...') : 'Save'}
+                  {isUploading
+                    ? "Uploading..."
+                    : isSaving
+                    ? "Saving..."
+                    : "Save"}
                 </Button>
                 <Button
                   onClick={handleCancel}
                   className="bg-gray-600 hover:bg-gray-700 text-white"
-                  size='sm'
+                  size="sm"
+                  disabled={isSaving || isUploading}
                 >
-                  <X className='w-3 h-3 mr-1' />
+                  <X className="w-3 h-3 mr-1" />
                   Cancel
                 </Button>
               </div>
             )}
           </div>
-          
+
           {/* Main Footer Content */}
-          <motion.div 
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-center md:text-left'
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-16 text-center md:text-left"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
             {/* Brand Section */}
-            <motion.div 
-              className='col-span-1 md:col-span-2 lg:col-span-1'
+            <motion.div
+              className="col-span-1 md:col-span-2 lg:col-span-1"
               variants={itemVariants}
             >
-              <div className='flex items-center justify-center md:justify-start space-x-3 mb-4'>
-                <span className='flex flex-row gap-2 text-xl font-bold text-red-500'>
+              <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
+                <span className="flex flex-row gap-2 text-xl font-bold text-red-500">
                   <div className="relative">
                     <img
                       src={tempData.brand.logoUrl}
-                      alt='Logo'
-                      className='h-4 w-4 sm:h-6 sm:w-6 object-contain'
+                      alt="Logo"
+                      className="h-4 w-4 sm:h-6 sm:w-6 object-contain"
                       style={{
                         filter: isEditing ? "brightness(0.7)" : "none",
                       }}
                     />
                     {isEditing && (
                       <div className="absolute -bottom-14 left-0 bg-white/90 p-2 rounded shadow-lg">
-                        <p className="text-xs mb-1 text-gray-600">Upload Logo:</p>
+                        <p className="text-xs mb-1 text-gray-600">
+                          Upload Logo:
+                        </p>
                         <motion.button
                           onClick={() => fileInputRef.current?.click()}
-                          className='flex items-center gap-1 p-1 bg-gray-200 rounded shadow text-xs hover:bg-gray-300'
+                          className="flex items-center gap-1 p-1 bg-gray-200 rounded shadow text-xs hover:bg-gray-300"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                         >
@@ -468,11 +564,11 @@ export default function EditableFooter({
                       </div>
                     )}
                     <input
-                      type='file'
+                      type="file"
                       ref={fileInputRef}
-                      accept='image/*'
+                      accept="image/*"
                       onChange={handleLogoUpload}
-                      className='hidden'
+                      className="hidden"
                     />
                   </div>
                   {isEditing ? (
@@ -490,8 +586,8 @@ export default function EditableFooter({
               </div>
 
               {isEditing ? (
-                <div className='mb-4'>
-                  <label className='block text-xs text-gray-400 mb-1'>
+                <div className="mb-4">
+                  <label className="block text-xs text-gray-400 mb-1">
                     Description:
                   </label>
                   <textarea
@@ -503,28 +599,28 @@ export default function EditableFooter({
                   />
                 </div>
               ) : (
-                <p className='text-gray-300 text-sm leading-relaxed mb-6'>
+                <p className="text-gray-300 text-sm leading-relaxed mb-6">
                   {tempData.brand.description}
                 </p>
               )}
-
-            
             </motion.div>
 
             {/* Dynamic Sections */}
             {tempData.sections.map((section, sectionIndex) => (
-              <motion.div 
-                key={section.id} 
-                className='col-span-1'
+              <motion.div
+                key={section.id}
+                className="col-span-1"
                 variants={itemVariants}
               >
-                <div className='flex items-center justify-center md:justify-start mb-4'>
+                <div className="flex items-center justify-center md:justify-start mb-4">
                   {isEditing ? (
                     <div className="flex items-center w-full">
                       <input
                         type="text"
                         value={section.title}
-                        onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)}
+                        onChange={(e) =>
+                          updateSectionTitle(sectionIndex, e.target.value)
+                        }
                         placeholder="Section title"
                         className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm font-semibold flex-1"
                       />
@@ -540,28 +636,42 @@ export default function EditableFooter({
                       )}
                     </div>
                   ) : (
-                    <h4 className='font-semibold text-white'>
+                    <h4 className="font-semibold text-white">
                       {section.title}
                     </h4>
                   )}
                 </div>
 
-                <ul className='space-y-3 text-sm'>
+                <ul className="space-y-3 text-sm">
                   {section.links.map((link) => (
-                    <li key={link.id} className='flex items-center gap-2'>
+                    <li key={link.id} className="flex items-center gap-2">
                       {isEditing ? (
-                        <div className='flex-1 space-y-1'>
+                        <div className="flex-1 space-y-1">
                           <input
                             type="text"
                             value={link.text}
-                            onChange={(e) => updateSectionLink(section.id, link.id, "text", e.target.value)}
+                            onChange={(e) =>
+                              updateSectionLink(
+                                section.id,
+                                link.id,
+                                "text",
+                                e.target.value
+                              )
+                            }
                             placeholder="Link text"
                             className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
                           />
                           <input
                             type="text"
                             value={link.href}
-                            onChange={(e) => updateSectionLink(section.id, link.id, "href", e.target.value)}
+                            onChange={(e) =>
+                              updateSectionLink(
+                                section.id,
+                                link.id,
+                                "href",
+                                e.target.value
+                              )
+                            }
                             placeholder="Link URL"
                             className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
                           />
@@ -569,7 +679,7 @@ export default function EditableFooter({
                       ) : (
                         <a
                           href={link.href}
-                          className='text-gray-300 hover:text-blue-400 transition-colors duration-200 flex-1'
+                          className="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex-1"
                         >
                           {link.text}
                         </a>
@@ -578,9 +688,9 @@ export default function EditableFooter({
                       {isEditing && (
                         <button
                           onClick={() => removeSectionLink(section.id, link.id)}
-                          className='text-red-400 hover:text-red-300 p-1'
+                          className="text-red-400 hover:text-red-300 p-1"
                         >
-                          <Trash2 className='w-3 h-3' />
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       )}
                     </li>
@@ -590,9 +700,9 @@ export default function EditableFooter({
                     <li>
                       <button
                         onClick={() => addSectionLink(section.id)}
-                        className='text-blue-400 hover:text-blue-300 flex items-center gap-1 text-sm'
+                        className="text-blue-400 hover:text-blue-300 flex items-center gap-1 text-sm"
                       >
-                        <Plus className='w-3 h-3' />
+                        <Plus className="w-3 h-3" />
                         Add Link
                       </button>
                     </li>
@@ -603,7 +713,7 @@ export default function EditableFooter({
 
             {/* Add Section Button */}
             {isEditing && (
-              <motion.div 
+              <motion.div
                 className="col-span-1 flex items-center justify-center"
                 variants={itemVariants}
               >
@@ -620,12 +730,12 @@ export default function EditableFooter({
             )}
 
             {/* Contact & Social Media */}
-            <motion.div 
+            {/* <motion.div 
               className='col-span-1'
               variants={itemVariants}>
               <h4 className='font-semibold text-white mb-4'>Get in Touch</h4>
 
-              {/* Contact Info */}
+              
               <div className='space-y-3 mb-6 text-sm'>
                 <div className='flex items-start justify-center md:justify-start space-x-3 text-gray-300'>
                   <Mail className='w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0' />
@@ -672,10 +782,58 @@ export default function EditableFooter({
                   )}
                 </div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
         </div>
       </motion.footer>
+
+      {/* Crop Modal */}
+      {cropModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h3 className="text-xl font-bold mb-4 text-gray-900">Crop Logo</h3>
+            <div className="relative w-full h-96 bg-gray-900 rounded-lg overflow-hidden">
+              <Cropper
+                image={cropImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={1} // Square aspect ratio for logos
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+              />
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Zoom
+              </label>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(parseFloat(e.target.value))}
+                className="w-full"
+              />
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={applyCrop}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+              >
+                Apply Crop
+              </button>
+              <button
+                onClick={() => setCropModalOpen(false)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

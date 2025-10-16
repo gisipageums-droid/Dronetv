@@ -1,107 +1,142 @@
 import { motion } from "motion/react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
+import { Textarea } from "../components/ui/textarea";
 
 export default function Contact({ content }) {
-  // Use the content prop directly
   const contactData = content;
 
   return (
     <section
-      id='contact'
-      className='py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20'
+      id="contact"
+      className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-500 scroll-mt-20"
     >
-      <div className='max-w-6xl mx-auto px-6'>
-        <div className='bg-white dark:bg-gray-700 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-3 transition-colors duration-300'>
-          {/* Left: Content + Form (2fr) */}
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+            {contactData?.title || "Get In Touch"}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg">
+            {contactData?.description ||
+              "Ready to transform your business? Let's start a conversation about how we can help you achieve your goals with our expert solutions."}
+          </p>
+        </div>
+
+        {/* Main Card */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left: Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='col-span-2 p-10 lg:p-14 text-gray-900 dark:text-white'
+            className="col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 lg:p-10"
           >
-            <h2 className='text-3xl lg:text-4xl font-bold mb-4 text-gray-900 dark:text-white transition-colors duration-300'>
-              {contactData.title}
-            </h2>
-
-            <p className='mb-8 text-gray-600 dark:text-gray-300 transition-colors duration-300'>
-              {contactData.description}
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              Send us a message
+            </h3>
+            <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm">
+              We'll get back to you within 24 hours during business days.
             </p>
 
-            {/* Benefits List */}
-            {contactData.benefits && contactData.benefits.length > 0 && (
-              <div className="mb-6">
-                <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">Benefits:</h4>
-                <ul className="space-y-2">
-                  {contactData.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600 dark:text-gray-300 text-sm">{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <form className='grid gap-6'>
-              {/* Name + Email */}
-              <div className='grid md:grid-cols-2 gap-6'>
+            <form className="space-y-6">
+              {/* First & Last Name */}
+              <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className='block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200 transition-colors duration-300'>
-                    Full Name
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    First Name
                   </label>
-                  <Input
-                    placeholder='John Smith'
-                    className='bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border-gray-300 dark:border-gray-500 transition-colors duration-300'
-                  />
+                  <Input placeholder="John" />
                 </div>
                 <div>
-                  <label className='block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200 transition-colors duration-300'>
-                    Email address
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Last Name
                   </label>
-                  <Input
-                    type='email'
-                    placeholder='me@example.com'
-                    className='bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white border-gray-300 dark:border-gray-500 transition-colors duration-300'
-                  />
+                  <Input placeholder="Doe" />
                 </div>
               </div>
 
-              {/* Dropdown */}
+              {/* Email & Company */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Email
+                  </label>
+                  <Input type="email" placeholder="john@company.com" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Company
+                  </label>
+                  <Input placeholder="Your Company" />
+                </div>
+              </div>
+
+              {/* Subject */}
               <div>
-                <label className='block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200 transition-colors duration-300'>
-                  Where did you hear from us?
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Subject
                 </label>
-                <select className='w-full rounded-md border-gray-300 dark:border-gray-500 px-3 py-2 bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-400 transition-colors duration-300'>
-                  <option>Please choose one option:</option>
-                  <option>Friends & Family</option>
-                  <option>Social Media</option>
-                  <option>Advertisement</option>
+                <select className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 transition-all duration-200">
+                  <option>General Inquiry</option>
+                  <option>Support</option>
+                  <option>Partnership</option>
                   <option>Other</option>
                 </select>
               </div>
 
-              {/* Submit */}
-              <Button className='bg-yellow-400 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white px-6 py-3 rounded-md font-semibold transition-colors duration-300'>
-                {contactData.ctaButton}
+              {/* Message */}
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Message
+                </label>
+                <Textarea
+                  rows={4}
+                  placeholder="Tell us about your project and how we can help..."
+                  className="resize-none bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                />
+              </div>
+
+              {/* Send Message Button */}
+              <Button className="w-full bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold py-4 transition-colors duration-300 text-lg">
+                {contactData?.ctaButton || "Send Message"}
               </Button>
             </form>
           </motion.div>
 
-          {/* Right: Image (1fr) */}
+          {/* Right: Info Panel */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className='h-full col-span-1 relative'
+            className="space-y-6"
           >
-            <img
-              src={contactData.backgroundImage}
-              alt='CTA Illustration'
-              className='w-full h-full object-cover opacity-65 dark:opacity-50 transition-opacity duration-300'
-            />
+            {/* Business Hours Card */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                Business Hours
+              </h4>
+              <ul className="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
+                <li>Mon - Fri: 9:00 AM - 6:00 PM EST</li>
+                <li>Sat: 10:00 AM - 2:00 PM EST</li>
+                <li>Closed on Sundays</li>
+              </ul>
+            </div>
+
+            {/* Consultation Card */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 text-center">
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Ready to Get Started?
+              </h4>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                Schedule a free consultation to discuss your business needs
+              </p>
+              <Button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-300">
+                Book Free Consultation
+              </Button>
+            </div>
           </motion.div>
         </div>
       </div>

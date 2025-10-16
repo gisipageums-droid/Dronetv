@@ -60,23 +60,23 @@ export default function Header() {
     <>
       <motion.header
         style={headerStyles}
-        className='dark:bg-gray-900 dark:border-gray-700'
+        className="dark:bg-gray-900 dark:border-gray-700"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex items-center justify-between h-16'>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             {/* Logo + Name */}
             <motion.a
-              href='#home'
-              className='flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-red-500 dark:text-yellow-400 transition-colors duration-300'
+              href="#home"
+              className="flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-red-500 dark:text-yellow-400 transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
             >
               <motion.img
                 src={logo}
-                alt='Logo'
-                className='h-4 w-4 sm:h-6 sm:w-6 object-contain'
+                alt="Logo"
+                className="h-4 w-4 sm:h-6 sm:w-6 object-contain"
                 initial={{ opacity: 0, scale: 0.5, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.8, type: "spring", stiffness: 120 }}
@@ -100,73 +100,73 @@ export default function Header() {
             </motion.a>
 
             {/* Desktop Navigation — UPDATED with Profile & Gallery */}
-            <nav className='hidden md:flex items-center space-x-6'>
+            <nav className="hidden md:flex items-center space-x-6">
               <a
-                href='#home'
-                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
+                href="#home"
+                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
               >
                 Home
               </a>
               <a
-                href='#about'
-               className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
+                href="#about"
+                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
               >
                 About
               </a>
-              {/* 👇 Added Profile */}
               <a
-                href='#profile'
-                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
+                href="#profile"
+                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
               >
                 Profile
               </a>
               <a
-                href='#product'
-                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
-              >
-                Product
-              </a>
-              <a
-                href='#services'
-                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
+                href="#services"
+                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
               >
                 Services
               </a>
               <a
-                href='#testimonials'
-                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
+                href="#product"
+                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
               >
-                Testimonials
+                Product
               </a>
               <a
-                href='#blog'
-                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'
+                href="#blog"
+                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
               >
                 Blog
               </a>
               {/* 👇 Added Gallery */}
               <a
-                href='#gallery'
-                className='text-black hover:text-yellow-600 transition-colors duration-300 font-medium'              >
+                href="#gallery"
+                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+              >
                 Gallery
+              </a>
+              <a
+                href="#testimonials"
+                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+              >
+                Testimonials
               </a>
             </nav>
 
             {/* Mobile menu button */}
-            <div className='md:hidden flex items-center space-x-2'>
+            <div className="md:hidden flex items-center space-x-2">
               <button
                 onClick={toggleMobileMenu}
                 style={mobileButtonStyles}
-                className='hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500'
-                aria-label='Toggle mobile menu'
-                type='button'
+                className="hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                aria-label="Toggle mobile menu"
+                type="button"
               >
                 <svg
-                  className='h-6 w-6 transition-transform duration-200'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
+                  className="h-6 w-6 transition-transform duration-200"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                   style={{
                     transform: isMobileMenuOpen
                       ? "rotate(90deg)"
@@ -175,17 +175,17 @@ export default function Header() {
                 >
                   {isMobileMenuOpen ? (
                     <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       strokeWidth={2}
-                      d='M6 18L18 6M6 6l12 12'
+                      d="M6 18L18 6M6 6l12 12"
                     />
                   ) : (
                     <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       strokeWidth={2}
-                      d='M4 6h16M4 12h16M4 18h16'
+                      d="M4 6h16M4 12h16M4 18h16"
                     />
                   )}
                 </svg>
@@ -198,9 +198,9 @@ export default function Header() {
       {/* Mobile Navigation Menu — UPDATED */}
       <div
         style={{ ...mobileMenuStyles }}
-        className='md:hidden dark:bg-gray-900 dark:border-gray-700'
+        className="md:hidden dark:bg-gray-900 dark:border-gray-700"
       >
-        <div className='px-4 pt-2 pb-3 space-y-1 sm:px-6'>
+        <div className="px-4 pt-2 pb-3 space-y-1 sm:px-6">
           {[
             "Home",
             "About",
@@ -214,7 +214,7 @@ export default function Header() {
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className='block px-3 py-2.5 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300'
+              className="block px-3 py-2.5 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
               onClick={closeMobileMenu}
             >
               {item}

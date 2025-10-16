@@ -1,132 +1,245 @@
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { X, CheckCircle, Edit2, Save, Upload, Loader2, Plus, Trash2 } from "lucide-react";
+import {
+  X,
+  CheckCircle,
+  Edit2,
+  Save,
+  Upload,
+  Loader2,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
+import Cropper from "react-easy-crop";
 
-export default function Services({serviceData, onStateChange, userId, publishedId, templateSelection}) {
+// Crop helper function
+const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const image = new Image();
+  image.src = imageSrc;
+
+  return new Promise((resolve, reject) => {
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
+
+      ctx.drawImage(
+        image,
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        pixelCrop.width,
+        pixelCrop.height
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error("Canvas is empty"));
+            return;
+          }
+          resolve(blob);
+        },
+        "image/jpeg",
+        0.95
+      );
+    };
+    image.onerror = reject;
+  });
+};
+
+export default function Services({
+  serviceData,
+  onStateChange,
+  userId,
+  publishedId,
+  templateSelection,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedServiceIndex, setSelectedServiceIndex] = useState<number | null>(null);
+  const [selectedServiceIndex, setSelectedServiceIndex] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(3);
-  const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
+  const [pendingImages, setPendingImages] = useState({});
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-         
-  // Merged all state into a single object
+
+  // Crop modal state
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImage, setCropImage] = useState(null);
+  const [cropField, setCropField] = useState(null);
+  const [cropIndex, setCropIndex] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [originalFile, setOriginalFile] = useState(null);
+
+  // Create a temporary state for editing
   const [servicesSection, setServicesSection] = useState(serviceData);
-  
-  // Add this useEffect to notify parent of state changes
+  const [tempServicesSection, setTempServicesSection] = useState(serviceData);
+
+  // Update content when serviceData changes
+  useEffect(() => {
+    if (serviceData) {
+      setServicesSection(serviceData);
+      setTempServicesSection(serviceData);
+    }
+  }, [serviceData]);
+
+  // Notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(servicesSection);
     }
   }, [servicesSection, onStateChange]);
-  
+
   // Get categories from services
   const filteredServices =
     activeCategory === "All"
-      ? servicesSection.services
-      : servicesSection.services.filter((s) => s.category === activeCategory);
+      ? isEditing
+        ? tempServicesSection.services
+        : servicesSection.services
+      : (isEditing
+          ? tempServicesSection.services
+          : servicesSection.services
+        ).filter((s) => s.category === activeCategory);
 
-  const visibleServices = filteredServices.slice(0, visibleCount);
+  // Crop modal functions
+  const openCropModal = (file, field, index = null) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropImage(reader.result);
+      setCropField(field);
+      setCropIndex(index);
+      setOriginalFile(file);
+      setCropModalOpen(true);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const applyCrop = async () => {
+    try {
+      const croppedBlob = await getCroppedImg(cropImage, croppedAreaPixels);
+      const croppedFile = new File([croppedBlob], originalFile.name, {
+        type: "image/jpeg",
+      });
+
+      // For service images
+      if (cropField === "serviceImage") {
+        setPendingImages((prev) => ({ ...prev, [cropIndex]: croppedFile }));
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          setTempServicesSection((prev) => ({
+            ...prev,
+            services: prev.services.map((service, i) =>
+              i === cropIndex ? { ...service, image: reader.result } : service
+            ),
+          }));
+        };
+        reader.readAsDataURL(croppedFile);
+      }
+
+      setCropModalOpen(false);
+      toast.success("Image cropped successfully");
+    } catch (error) {
+      console.error("Error cropping image:", error);
+      toast.error("Error cropping image");
+    }
+  };
 
   // Handlers
-  const updateServiceField = (index: number, field: string, value: any) => {
-    setServicesSection(prev => ({
+  const updateServiceField = (index, field, value) => {
+    setTempServicesSection((prev) => ({
       ...prev,
-      services: prev.services.map((s, i) => (i === index ? { ...s, [field]: value } : s))
+      services: prev.services.map((s, i) =>
+        i === index ? { ...s, [field]: value } : s
+      ),
     }));
-    
+
     // Update categories if needed
-    if (field === "category" && !servicesSection.categories.includes(value)) {
-      setServicesSection(prev => ({
+    if (
+      field === "category" &&
+      !tempServicesSection.categories.includes(value)
+    ) {
+      setTempServicesSection((prev) => ({
         ...prev,
-        categories: [...prev.categories, value]
+        categories: [...prev.categories, value],
       }));
     }
   };
 
-  const updateServiceList = (
-    index: number,
-    field: "features" | "benefits" | "process",
-    listIndex: number,
-    value: string
-  ) => {
-    setServicesSection(prev => ({
+  const updateServiceList = (index, field, listIndex, value) => {
+    setTempServicesSection((prev) => ({
       ...prev,
       services: prev.services.map((s, i) =>
         i === index
           ? {
               ...s,
-              [field]: s[field].map((item: string, li: number) =>
+              [field]: s[field].map((item, li) =>
                 li === listIndex ? value : item
               ),
             }
           : s
-      )
+      ),
     }));
   };
 
-  const addToList = (index: number, field: "features" | "benefits" | "process") => {
-    setServicesSection(prev => ({
+  const addToList = (index, field) => {
+    setTempServicesSection((prev) => ({
       ...prev,
       services: prev.services.map((s, i) =>
         i === index ? { ...s, [field]: [...s[field], "New Item"] } : s
-      )
+      ),
     }));
   };
 
-  const removeFromList = (
-    index: number,
-    field: "features" | "benefits" | "process",
-    listIndex: number
-  ) => {
-    setServicesSection(prev => ({
+  const removeFromList = (index, field, listIndex) => {
+    setTempServicesSection((prev) => ({
       ...prev,
       services: prev.services.map((s, i) =>
         i === index
           ? {
               ...s,
-              [field]: s[field].filter((_: string, li: number) => li !== listIndex),
+              [field]: s[field].filter((_, li) => li !== listIndex),
             }
           : s
-      )
+      ),
     }));
   };
 
-  // Image selection - only shows local preview, no upload yet
-  const handleServiceImageSelect = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  // Updated image selection with crop feature
+  const handleServiceImageSelect = (index, e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     // Validate file type and size
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      toast.error('File size must be less than 5MB');
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB limit
+      toast.error("File size must be less than 5MB");
       return;
     }
 
-    // Store the file for upload on Save
-    setPendingImages(prev => ({ ...prev, [index]: file }));
-    
-    // Show immediate local preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      updateServiceField(index, "image", reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    // Open crop modal instead of directly updating
+    openCropModal(file, "serviceImage", index);
   };
 
   // Updated Save button handler - uploads images and stores S3 URLs
@@ -134,54 +247,74 @@ export default function Services({serviceData, onStateChange, userId, publishedI
     try {
       setIsUploading(true);
 
+      // Create a copy of the current tempServicesSection to update with S3 URLs
+      let updatedServices = { ...tempServicesSection };
+
       // Upload all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
-        
+
         if (!userId || !publishedId || !templateSelection) {
-          console.error('Missing required props:', { userId, publishedId, templateSelection });
-          toast.error('Missing user information. Please refresh and try again.');
+          console.error("Missing required props:", {
+            userId,
+            publishedId,
+            templateSelection,
+          });
+          toast.error(
+            "Missing user information. Please refresh and try again."
+          );
           return;
         }
-        
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('sectionName', 'services');
-        formData.append('imageField', `services[${index}].image`);
-        formData.append('templateSelection', templateSelection);
 
-        const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
-          method: 'POST',
-          body: formData,
-        });
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("sectionName", "services");
+        formData.append("imageField", `services[${index}].image` + Date.now());
+        formData.append("templateSelection", templateSelection);
+
+        const uploadResponse = await fetch(
+          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL
-          updateServiceField(index, "image", uploadData.imageUrl);
-          console.log('Image uploaded to S3:', uploadData.imageUrl);
+          // Update the service image in our local copy
+          updatedServices.services = updatedServices.services.map(
+            (service, i) =>
+              i === index ? { ...service, image: uploadData.imageUrl } : service
+          );
+          console.log("Image uploaded to S3:", uploadData.imageUrl);
         } else {
           const errorData = await uploadResponse.json();
-          console.error('Image upload failed:', errorData);
-          toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
+          console.error("Image upload failed:", errorData);
+          toast.error(
+            `Image upload failed: ${errorData.message || "Unknown error"}`
+          );
           return; // Don't exit edit mode
         }
       }
-      
+
       // Clear pending images
       setPendingImages({});
-      
+
       // Simulate save delay
       setIsSaving(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Update both states with the new content including S3 URLs
+      setServicesSection(updatedServices);
+      setTempServicesSection(updatedServices);
+
       // Exit edit mode
       setIsEditing(false);
-      toast.success('Services section saved with S3 URLs ready for publish');
-
+      toast.success("Services section saved with S3 URLs ready for publish");
     } catch (error) {
-      console.error('Error saving services section:', error);
-      toast.error('Error saving changes. Please try again.');
+      console.error("Error saving services section:", error);
+      toast.error("Error saving changes. Please try again.");
       // Keep in edit mode so user can retry
     } finally {
       setIsUploading(false);
@@ -190,8 +323,9 @@ export default function Services({serviceData, onStateChange, userId, publishedI
   };
 
   const handleCancel = () => {
-    setIsEditing(false);
+    setTempServicesSection(servicesSection);
     setPendingImages({});
+    setIsEditing(false);
   };
 
   const addService = () => {
@@ -207,50 +341,50 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       pricing: "Custom pricing",
       timeline: "TBD",
     };
-    
-    setServicesSection(prev => ({
+
+    setTempServicesSection((prev) => ({
       ...prev,
-      services: [...prev.services, newService]
+      services: [...prev.services, newService],
     }));
-    
-    if (!servicesSection.categories.includes("New Category")) {
-      setServicesSection(prev => ({
+
+    if (!tempServicesSection.categories.includes("New Category")) {
+      setTempServicesSection((prev) => ({
         ...prev,
-        categories: [...prev.categories, "New Category"]
+        categories: [...prev.categories, "New Category"],
       }));
     }
   };
 
-  const removeService = (index: number) => {
-    setServicesSection(prev => ({
+  const removeService = (index) => {
+    setTempServicesSection((prev) => ({
       ...prev,
-      services: prev.services.filter((_, i) => i !== index)
+      services: prev.services.filter((_, i) => i !== index),
     }));
   };
 
   const addCategory = () => {
-    const newCategory = `New Category ${servicesSection.categories.length}`;
-    if (!servicesSection.categories.includes(newCategory)) {
-      setServicesSection(prev => ({
+    const newCategory = `New Category ${tempServicesSection.categories.length}`;
+    if (!tempServicesSection.categories.includes(newCategory)) {
+      setTempServicesSection((prev) => ({
         ...prev,
-        categories: [...prev.categories, newCategory]
+        categories: [...prev.categories, newCategory],
       }));
     }
   };
 
-  const removeCategory = (cat: string) => {
+  const removeCategory = (cat) => {
     if (cat !== "All") {
-      setServicesSection(prev => ({
+      setTempServicesSection((prev) => ({
         ...prev,
         categories: prev.categories.filter((c) => c !== cat),
-        services: prev.services.map((s) => 
+        services: prev.services.map((s) =>
           s.category === cat ? { ...s, category: "Uncategorized" } : s
-        )
+        ),
       }));
     }
   };
 
-  const openModal = (service: any, index: number) => {
+  const openModal = (service, index) => {
     setSelectedServiceIndex(index);
     setIsModalOpen(true);
   };
@@ -260,39 +394,58 @@ export default function Services({serviceData, onStateChange, userId, publishedI
     setSelectedServiceIndex(null);
   };
 
-  // EditableText component for consistent styling
-  const EditableText = ({ value, field, index, multiline = false, className = "", placeholder = "" }) => {
-    const handleChange = (e) => {
-      updateServiceField(index, field, e.target.value);
-    };
-
-    const baseClasses = "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-
-    if (multiline) {
-      return (
-        <textarea
-          value={value}
-          onChange={handleChange}
-          className={`${baseClasses} p-2 resize-none ${className}`}
-          placeholder={placeholder}
-          rows={3}
-        />
-      );
-    }
-
-    return (
-      <input
-        type="text"
-        value={value}
-        onChange={handleChange}
-        className={`${baseClasses} p-1 ${className}`}
-        placeholder={placeholder}
-      />
-    );
+  // Update heading fields
+  const updateHeading = (field, value) => {
+    setTempServicesSection((prev) => ({
+      ...prev,
+      heading: {
+        ...prev.heading,
+        [field]: value,
+      },
+    }));
   };
 
+  // EditableText component for consistent styling
+  const EditableText = useMemo(
+    () =>
+      ({
+        value,
+        onChange,
+        multiline = false,
+        className = "",
+        placeholder = "",
+      }) => {
+        const baseClasses =
+          "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+        if (multiline) {
+          return (
+            <textarea
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              className={`${baseClasses} p-2 resize-none ${className}`}
+              placeholder={placeholder}
+              rows={3}
+            />
+          );
+        }
+        return (
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className={`${baseClasses} p-1 ${className}`}
+            placeholder={placeholder}
+          />
+        );
+      },
+    []
+  );
+
+  // Use the appropriate content based on editing mode
+  const displayContent = isEditing ? tempServicesSection : servicesSection;
+
   return (
-    <motion.section id="services" className="py-20 bg-blue-100 theme-transition relative">
+    <motion.section id="services" className="py-20 theme-transition relative">
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
         {!isEditing ? (
@@ -342,62 +495,62 @@ export default function Services({serviceData, onStateChange, userId, publishedI
           {isEditing ? (
             <>
               <EditableText
-                value={servicesSection.heading.head}
-                field="head"
-                index={-1}
-                className="text-3xl font-bold"
-                onChange={(e) => setServicesSection(prev => ({
-                  ...prev,
-                  heading: {...prev.heading, head: e.target.value}
-                }))}
+                value={tempServicesSection.heading.head}
+                onChange={(val) => updateHeading("head", val)}
+                className="text-3xl font-bold mb-2"
+                placeholder="Section heading"
               />
               <EditableText
-                value={servicesSection.heading.desc}
-                field="desc"
-                index={-1}
-                className="text-muted-foreground mt-2"
-                onChange={(e) => setServicesSection(prev => ({
-                  ...prev,
-                  heading: {...prev.heading, desc: e.target.value}
-                }))}
+                value={tempServicesSection.heading.desc}
+                onChange={(val) => updateHeading("desc", val)}
+                multiline={true}
+                className="text-muted-foreground"
+                placeholder="Section description"
               />
             </>
           ) : (
             <>
-              <h2 className="text-3xl font-bold">{servicesSection.heading.head}</h2>
-              <p className="text-muted-foreground">{servicesSection.heading.desc}</p>
+              <span className="inline-block mx-auto px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
+                Our Services
+              </span>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                {displayContent.heading.head}
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                {displayContent.heading.desc}
+              </p>
             </>
-          )}          
+          )}
         </div>
 
         {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-6">
-          {servicesSection.categories.map((cat, i) => (
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          {displayContent.categories.map((cat, i) => (
             <div key={i} className="flex items-center gap-2">
               {isEditing ? (
                 <input
                   value={cat}
                   onChange={(e) =>
-                    setServicesSection(prev => ({
+                    setTempServicesSection((prev) => ({
                       ...prev,
-                      categories: prev.categories.map((c, idx) => 
+                      categories: prev.categories.map((c, idx) =>
                         idx === i ? e.target.value : c
-                      )
+                      ),
                     }))
                   }
                   className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                 />
               ) : (
                 <Button
+                  key={i}
                   onClick={() => {
                     setActiveCategory(cat);
-                    setVisibleCount(6); // reset load more
                   }}
-                  className={
+                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
                     activeCategory === cat
-                      ? "bg-primary cursor-pointer text-white"
-                      : "bg-card text-card-foreground cursor-pointer"
-                  }
+                      ? "bg-orange-400 text-white shadow-lg scale-105"
+                      : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                  }`}
                 >
                   {cat}
                 </Button>
@@ -427,18 +580,27 @@ export default function Services({serviceData, onStateChange, userId, publishedI
 
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {visibleServices.map((service, index) => (
-            <Card key={index} className="relative">
-              <div className="h-40 overflow-hidden relative">
+          {filteredServices.map((service, index) => (
+            <Card key={index} className="relative overflow-hidden shadow-sm">
+              <div className="h-44 overflow-hidden relative">
                 <img
                   src={service.image}
                   alt={service.title}
                   className="w-full h-full object-cover"
                 />
+                <div className="absolute top-3 right-3">
+                  <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full">
+                    {service.category}
+                  </span>
+                </div>
                 {isEditing && (
                   <div className="absolute bottom-2 left-2 bg-white/80 p-1 rounded">
                     <Button
-                      onClick={() => document.getElementById(`image-upload-${index}`)?.click()}
+                      onClick={() =>
+                        document
+                          .getElementById(`image-upload-${index}`)
+                          ?.click()
+                      }
                       size="sm"
                       variant="outline"
                       className="text-xs"
@@ -465,8 +627,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                 {isEditing ? (
                   <EditableText
                     value={service.title}
-                    field="title"
-                    index={index}
+                    onChange={(val) => updateServiceField(index, "title", val)}
                     className="font-bold"
                     placeholder="Service title"
                   />
@@ -479,8 +640,9 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                   <>
                     <EditableText
                       value={service.description}
-                      field="description"
-                      index={index}
+                      onChange={(val) =>
+                        updateServiceField(index, "description", val)
+                      }
                       multiline={true}
                       placeholder="Service description"
                     />
@@ -490,26 +652,30 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                       </label>
                       <EditableText
                         value={service.category}
-                        field="category"
-                        index={index}
+                        onChange={(val) =>
+                          updateServiceField(index, "category", val)
+                        }
                         placeholder="Service category"
                       />
                     </div>
                   </>
                 ) : (
                   <>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-600 mb-4 flex-1">
                       {service.description}
-                    </p>
-                    <p className="text-xs mt-1 italic text-gray-500">
-                      Category: {service.category}
                     </p>
                   </>
                 )}
 
-                <div className="mt-4 flex gap-2">
-                  <Button className="cursor-pointer hover:scale-105" size="sm" onClick={() => openModal(service, index)}>
-                    View Details
+                <div className="mt-4 flex gap-2 ">
+                  <Button
+                    className={` ${
+                      isEditing ? "" : "w-full"
+                    } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
+                    size="sm"
+                    onClick={() => openModal(service, index)}
+                  >
+                    View Details →
                   </Button>
                   {isEditing && (
                     <Button
@@ -528,36 +694,19 @@ export default function Services({serviceData, onStateChange, userId, publishedI
           ))}
           {isEditing && (
             <Card className="flex items-center justify-center border-dashed">
-              <Button onClick={addService} className="text-green-600 cursor-pointer">
+              <Button
+                onClick={addService}
+                className="text-green-600 cursor-pointer"
+              >
                 <Plus className="w-4 h-4 mr-1" />
                 Add Service
               </Button>
             </Card>
           )}
         </div>
-
-        {/* Load More & Show Less */}
-        <div className="flex justify-center mt-6">
-          {visibleCount < filteredServices.length && (
-            <Button onClick={() => setVisibleCount((prev) => prev + 6)}>
-              Load More
-            </Button>
-          )}
-          {visibleCount >= filteredServices.length && filteredServices.length > 3 && (
-            <Button
-              onClick={() => setVisibleCount(3)}
-              variant="secondary"
-              className="ml-4"
-            >
-              Show Less
-            </Button>
-          )}
-        </div>
-
-        
       </div>
 
-      {/* Modal */}
+      {/* Service Details Modal */}
       <AnimatePresence>
         {isModalOpen && selectedServiceIndex !== null && (
           <motion.div
@@ -568,7 +717,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
             onClick={closeModal}
           >
             <div
-              className="bg-card rounded-xl w-full max-w-3xl p-6 relative top-11 h-[42rem]  z-100 overflow-y-auto max-h-[90vh]"
+              className="bg-card rounded-xl w-full max-w-3xl p-6 relative top-11 h-[42rem] z-100 overflow-y-auto max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -580,68 +729,93 @@ export default function Services({serviceData, onStateChange, userId, publishedI
 
               {isEditing ? (
                 <EditableText
-                  value={servicesSection.services[selectedServiceIndex].title}
-                  field="title"
-                  index={selectedServiceIndex}
+                  value={
+                    tempServicesSection.services[selectedServiceIndex].title
+                  }
+                  onChange={(val) =>
+                    updateServiceField(selectedServiceIndex, "title", val)
+                  }
                   className="text-2xl font-bold mb-4"
                   placeholder="Service title"
                 />
               ) : (
-                <h2 className="text-2xl font-bold mb-4">{servicesSection.services[selectedServiceIndex].title}</h2>
+                <h2 className="text-2xl font-bold mb-4">
+                  {displayContent.services[selectedServiceIndex].title}
+                </h2>
               )}
 
               {isEditing ? (
                 <EditableText
-                  value={servicesSection.services[selectedServiceIndex].detailedDescription}
-                  field="detailedDescription"
-                  index={selectedServiceIndex}
+                  value={
+                    tempServicesSection.services[selectedServiceIndex]
+                      .detailedDescription
+                  }
+                  onChange={(val) =>
+                    updateServiceField(
+                      selectedServiceIndex,
+                      "detailedDescription",
+                      val
+                    )
+                  }
                   multiline={true}
                   className="mb-4"
                   placeholder="Detailed description"
                 />
               ) : (
                 <p className="text-muted-foreground mb-4">
-                  {servicesSection.services[selectedServiceIndex].detailedDescription}
+                  {
+                    displayContent.services[selectedServiceIndex]
+                      .detailedDescription
+                  }
                 </p>
               )}
 
               {/* Benefits */}
               <h3 className="font-semibold mb-2">Key Benefits</h3>
               <ul className="space-y-2 mb-4">
-                {servicesSection.services[selectedServiceIndex].benefits.map((b: string, bi: number) => (
-                  <li key={bi} className="flex gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
-                    {isEditing ? (
-                      <div className="flex gap-2 w-full">
-                        <input
-                          value={b}
-                          onChange={(e) =>
-                            updateServiceList(selectedServiceIndex, "benefits", bi, e.target.value)
-                          }
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                        />
-                        <Button
-                          onClick={() =>
-                            removeFromList(selectedServiceIndex, "benefits", bi)
-                          }
-                          size="sm"
-                          variant="outline"
-                          className="bg-red-50 hover:bg-red-100 text-red-700"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <span>{b}</span>
-                    )}
-                  </li>
-                ))}
+                {displayContent.services[selectedServiceIndex].benefits.map(
+                  (b, bi) => (
+                    <li key={bi} className="flex gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
+                      {isEditing ? (
+                        <div className="flex gap-2 w-full">
+                          <input
+                            value={b}
+                            onChange={(e) =>
+                              updateServiceList(
+                                selectedServiceIndex,
+                                "benefits",
+                                bi,
+                                e.target.value
+                              )
+                            }
+                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                          />
+                          <Button
+                            onClick={() =>
+                              removeFromList(
+                                selectedServiceIndex,
+                                "benefits",
+                                bi
+                              )
+                            }
+                            size="sm"
+                            variant="outline"
+                            className="bg-red-50 hover:bg-red-100 text-red-700"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <span>{b}</span>
+                      )}
+                    </li>
+                  )
+                )}
               </ul>
               {isEditing && (
                 <Button
-                  onClick={() =>
-                    addToList(selectedServiceIndex, "benefits")
-                  }
+                  onClick={() => addToList(selectedServiceIndex, "benefits")}
                   size="sm"
                   variant="outline"
                   className="bg-green-50 hover:bg-green-100 text-green-700 mb-4"
@@ -654,40 +828,49 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               {/* Process */}
               <h3 className="font-semibold mb-2">Our Process</h3>
               <ol className="space-y-2 mb-4">
-                {servicesSection.services[selectedServiceIndex].process.map((p: string, pi: number) => (
-                  <li key={pi} className="flex gap-2">
-                    <span className="font-semibold">{pi + 1}.</span>
-                    {isEditing ? (
-                      <div className="flex gap-2 w-full">
-                        <input
-                          value={p}
-                          onChange={(e) =>
-                            updateServiceList(selectedServiceIndex, "process", pi, e.target.value)
-                          }
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                        />
-                        <Button
-                          onClick={() =>
-                            removeFromList(selectedServiceIndex, "process", pi)
-                          }
-                          size="sm"
-                          variant="outline"
-                          className="bg-red-50 hover:bg-red-100 text-red-700"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <span>{p}</span>
-                    )}
-                  </li>
-                ))}
+                {displayContent.services[selectedServiceIndex].process.map(
+                  (p, pi) => (
+                    <li key={pi} className="flex gap-2">
+                      <span className="font-semibold">{pi + 1}.</span>
+                      {isEditing ? (
+                        <div className="flex gap-2 w-full">
+                          <input
+                            value={p}
+                            onChange={(e) =>
+                              updateServiceList(
+                                selectedServiceIndex,
+                                "process",
+                                pi,
+                                e.target.value
+                              )
+                            }
+                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                          />
+                          <Button
+                            onClick={() =>
+                              removeFromList(
+                                selectedServiceIndex,
+                                "process",
+                                pi
+                              )
+                            }
+                            size="sm"
+                            variant="outline"
+                            className="bg-red-50 hover:bg-red-100 text-red-700"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <span>{p}</span>
+                      )}
+                    </li>
+                  )
+                )}
               </ol>
               {isEditing && (
                 <Button
-                  onClick={() =>
-                    addToList(selectedServiceIndex, "process")
-                  }
+                  onClick={() => addToList(selectedServiceIndex, "process")}
                   size="sm"
                   variant="outline"
                   className="bg-green-50 hover:bg-green-100 text-green-700 mb-4"
@@ -703,26 +886,42 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                   <h3 className="font-semibold mb-2">Pricing</h3>
                   {isEditing ? (
                     <EditableText
-                      value={servicesSection.services[selectedServiceIndex].pricing}
-                      field="pricing"
-                      index={selectedServiceIndex}
+                      value={
+                        tempServicesSection.services[selectedServiceIndex]
+                          .pricing
+                      }
+                      onChange={(val) =>
+                        updateServiceField(selectedServiceIndex, "pricing", val)
+                      }
                       placeholder="Pricing information"
                     />
                   ) : (
-                    <p>{servicesSection.services[selectedServiceIndex].pricing}</p>
+                    <p>
+                      {displayContent.services[selectedServiceIndex].pricing}
+                    </p>
                   )}
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">Timeline</h3>
                   {isEditing ? (
                     <EditableText
-                      value={servicesSection.services[selectedServiceIndex].timeline}
-                      field="timeline"
-                      index={selectedServiceIndex}
+                      value={
+                        tempServicesSection.services[selectedServiceIndex]
+                          .timeline
+                      }
+                      onChange={(val) =>
+                        updateServiceField(
+                          selectedServiceIndex,
+                          "timeline",
+                          val
+                        )
+                      }
                       placeholder="Timeline information"
                     />
                   ) : (
-                    <p>{servicesSection.services[selectedServiceIndex].timeline}</p>
+                    <p>
+                      {displayContent.services[selectedServiceIndex].timeline}
+                    </p>
                   )}
                 </div>
               </div>
@@ -730,6 +929,54 @@ export default function Services({serviceData, onStateChange, userId, publishedI
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Crop Modal */}
+      {cropModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h3 className="text-xl font-bold mb-4 text-gray-900">Crop Image</h3>
+            <div className="relative w-full h-96 bg-gray-900 rounded-lg overflow-hidden">
+              <Cropper
+                image={cropImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={4 / 3}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+              />
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Zoom
+              </label>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(parseFloat(e.target.value))}
+                className="w-full"
+              />
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={applyCrop}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+              >
+                Apply Crop
+              </button>
+              <button
+                onClick={() => setCropModalOpen(false)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.section>
   );
 }
