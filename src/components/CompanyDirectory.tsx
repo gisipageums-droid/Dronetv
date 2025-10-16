@@ -339,6 +339,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Industry Filter */}
+        {/* 
         <div className='space-y-3'>
           <label className='text-sm font-medium text-gray-900 block'>
             Sector
@@ -350,6 +351,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             placeholder='Select sector'
           />
         </div>
+        */}
 
         {/* Sort Filter */}
         <div className='space-y-3'>

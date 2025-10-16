@@ -29,6 +29,7 @@ export default function Testimonials({ testimonialsData }) {
 
   return (
     <motion.section
+      id="testimonial"
       className="py-20 bg-background theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}

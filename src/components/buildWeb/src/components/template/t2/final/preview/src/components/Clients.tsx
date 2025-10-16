@@ -24,6 +24,7 @@ export default function Clients({ clientData }) {
 
   return (
     <motion.section
+    id="clients"
       className="py-20 bg-background theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}

@@ -6,7 +6,26 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import logo from "/images/Drone tv .in.jpg";
 
-export default function Header({headerData}) {
+interface NavItem {
+  id: string;
+  href: string;
+  label: string;
+  color: string;
+}
+
+interface HeaderData {
+  companyName: string;
+  logoUrl: string;
+  navItems: NavItem[];
+  ctaText: string;
+  ctaLink?: string;
+}
+
+interface HeaderProps {
+  headerData: HeaderData;
+}
+
+export default function Header({headerData}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
   console.log("name",headerData.companyName);
@@ -24,6 +43,41 @@ export default function Header({headerData}) {
     open: { opacity: 1, x: 0 },
   };
 
+  const handleMobileNavClick = (href: string) => {
+    setIsMenuOpen(false);
+    // Use setTimeout to ensure menu closes before scrolling
+    setTimeout(() => {
+      const targetId = href.startsWith('#') ? href.slice(1) : href;
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
+
+  const handleCtaClick = (href: string) => {
+    // Handle CTA button click for both desktop and mobile
+    if (href.startsWith('#')) {
+      const targetId = href.slice(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // If element with id not found, try to find element with name attribute
+        const namedElement = document.querySelector(`[name="${targetId}"]`);
+        if (namedElement) {
+          namedElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          // Fallback: scroll to top of body if no specific target found
+          document.body.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    } else {
+      // For external links, use normal navigation
+      window.location.href = href;
+    }
+  };
+
   return (
     <motion.header
       className={`fixed top-[4rem] left-0 right-0 border-b z-50 ${
@@ -38,6 +92,7 @@ export default function Header({headerData}) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
+          
           <div className="flex items-center">
             <motion.div
               className="w-8 h-8  rounded-lg flex items-center justify-center mr-2 "
@@ -50,14 +105,16 @@ export default function Header({headerData}) {
                   className="w-full h-full object-contain"
                 />
             </motion.div>
-            <motion.span className="text-xl font-bold text-black">
+            <motion.span className={`text-xl font-bold ${
+              theme === "dark" ? "text-white" : "text-black"
+            }`}>
               {headerData.companyName}
             </motion.span>
           </div>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-6">
-            {headerData.navItems.map((item) => (
+            {headerData.navItems.map((item: NavItem) => (
               <motion.a
                 key={item.id}
                 href={item.href}
@@ -79,11 +136,14 @@ export default function Header({headerData}) {
 
           {/* Right side */}
           <div className="flex items-center space-x-4">
-            <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300">
-            <a href="#contact">
-
+            <Button 
+              className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300"
+              onClick={(e) => {
+                e.preventDefault();
+                handleCtaClick(headerData.ctaLink || '#contact');
+              }}
+            >
               {headerData.ctaText}
-            </a>
             </Button>
 
             <ThemeToggle />
@@ -117,19 +177,28 @@ export default function Header({headerData}) {
               exit="closed"
             >
               <motion.nav className="flex flex-col space-y-4 py-4">
-                {headerData.navItems.map((item, index) => (
+                {headerData.navItems.map((item: NavItem, index: number) => (
                   <motion.a
                     key={item.id}
                     href={item.href}
                     className={`text-gray-700 hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                      e.preventDefault();
+                      handleMobileNavClick(item.href);
+                    }}
                   >
                     {item.label}
                   </motion.a>
                 ))}
-                <Button className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg">
+                <Button 
+                  className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleCtaClick(headerData.ctaLink || '#contact');
+                  }}
+                >
                   {headerData.ctaText}
                 </Button>
               </motion.nav>

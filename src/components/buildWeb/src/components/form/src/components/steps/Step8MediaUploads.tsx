@@ -240,7 +240,16 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
       console.log("✅ Form submitted successfully:", response.data);
       
-      setDraftDetails(response.data);
+      // setDraftDetails(response.data);
+       setDraftDetails({
+  userId: userIdFromUrl || formData.directorEmail || payload.userId,
+  draftId: draftId || response.data?.draftId,
+  templateSelection:
+    formData?.templateSelection ||
+    formData?.selectedTemplate?.value ||
+    response.data?.templateSelection,
+  ...(response.data || {}),
+});
       setUploadStatus("Form submitted successfully!");
       setUploadProgress(100);
 
