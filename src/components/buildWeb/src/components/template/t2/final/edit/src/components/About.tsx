@@ -296,7 +296,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
