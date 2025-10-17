@@ -47,7 +47,7 @@ import Login from "./components/Login";
 import ForgotPassword from "./components/ForgotPassword";
 import Logout from "./components/Logout";
 import ResetPassword from "./components/ResetPassword";
-// import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
@@ -104,7 +104,7 @@ const AppContent = () => {
           <Route path='/videos' element={<VideosPage />} />
           <Route path='/professionals' element={<ProfessionalsPage />} />
           <Route path='/listed-companies' element={<CompaniesPage />} />
-          <Route path='/user/companies' element={<CompanyDirectory />} />
+          <Route path='/user/companies' element={<ProtectedRoute><CompanyDirectory /></ProtectedRoute>} />
           <Route path='/products' element={<ProductsPage />} />
           <Route path='/services' element={<ServicesPage />} />
           <Route path='/events' element={<EventsPage />} />
