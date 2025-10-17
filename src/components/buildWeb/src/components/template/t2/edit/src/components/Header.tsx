@@ -381,7 +381,11 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
 
       {/* === Updated header: background black + white text === */}
       <motion.header
-        className={`fixed top-[4rem] left-0 right-0 border-b z-50 bg-black text-white border-gray-700`}
+        className={`fixed top-[4rem] left-0 right-0 border-b z-50  ${
+          theme === "dark"
+            ? "bg-gray-800 border-gray-700 text-gray-300"
+            : "bg-white border-gray-200"
+        }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -435,7 +439,11 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                   className="bg-transparent border-b border-white text-xl font-bold outline-none max-w-[140px] truncate text-white"
                 />
               ) : (
-                <motion.span className="text-xl font-bold truncate text-white">
+                <motion.span className={`text-xl font-bold truncate ${
+          theme === "dark"
+            ? "bg-gray-800 border-gray-700 text-gray-300"
+            : "bg-white border-gray-200 "
+        }`}>
                   {content.companyName}
                 </motion.span>
               )}
@@ -449,7 +457,11 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                   <motion.a
                     key={item.id}
                     href={item.href}
-                    className={`font-medium relative group whitespace-nowrap text-white hover:text-gray-300`}
+                    className={`font-medium relative group whitespace-nowrap hover:text-gray-300 ${
+          theme === "dark"
+            ? "bg-gray-800 border-gray-700 text-gray-300"
+            : "bg-white border-gray-200"
+        }`}
                     whileHover={{ y: -2 }}
                   >
                     {item.label}
@@ -463,17 +475,17 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
             </nav>
 
             {/* Right side */}
-            <div className="flex items-center space-x-4 flex-shrink-0">
+            <div className="flex  items-center space-x-4 flex-shrink-0">
               {isEditing ? (
                 <input
                   type="text"
                   value={content.ctaText}
                   onChange={(e) => updateContent("ctaText", e.target.value)}
-                  className="bg-transparent border px-3 py-1 rounded font-medium outline-none max-w-[120px] truncate text-white"
+                  className="bg-transparent  border px-3 py-1 rounded font-medium outline-none max-w-[120px] truncate text-white"
                 />
               ) : (
                 // CTA styled for dark background: transparent with white border & white text
-                <Button className="bg-transparent border border-white text-white hover:bg-white/10 shadow-lg transition-all duration-300 whitespace-nowrap px-4 py-2">
+                <Button className="bg-yellow-400 border border-white text-white hover:bg-white/10 shadow-lg transition-all duration-300 whitespace-nowrap px-4 py-2">
                   <a href="#contact" className="text-white">
                     {content.ctaText}
                   </a>
@@ -502,7 +514,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                   whileTap={{scale:0.9}}
                   whileHover={{y:-1,scaleX:1.1}}
                   onClick={() => setIsEditing(true)}
-                  className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold whitespace-nowrap"
+                  className="bg-yellow-400 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold whitespace-nowrap"
                 >
                  Edit
                 </motion.button>
@@ -513,7 +525,11 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
             <motion.div className="lg:hidden flex-shrink-0">
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-white hover:text-gray-300 transition-colors p-2"
+                className={` hover:text-gray-400 transition-colors p-2 ${
+          theme === "dark"
+            ? "bg-gray-800 border-gray-700 text-gray-300"
+            : "bg-white border-gray-200 text-gray-800"
+        }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 animate={{ rotate: isMenuOpen ? 180 : 0 }}
@@ -530,7 +546,11 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
-                className="lg:hidden border-t border-gray-700 overflow-hidden bg-black"
+                className={`lg:hidden  border-t border-gray-700 overflow-hidden bg-black ${
+          theme === "dark"
+            ? "bg-gray-800 border-gray-700 "
+            : "bg-white border-gray-200 text-black"
+        }`}
                 variants={menuVariants}
                 initial="closed"
                 animate="open"
@@ -541,7 +561,10 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                     <motion.a
                       key={item.id}
                       href={item.href}
-                      className={`text-white hover:text-gray-300 transition-colors py-2 px-4 rounded-lg hover:bg-white/5`}
+                      className={`  hover:text-gray-300 transition-colors py-2 px-4 rounded-lg hover:bg-white/5  ${theme === "dark"
+                        ? "bg-gray-800 border-gray-700 "
+                        : "bg-white border-gray-200 text-black"
+                      }`}
                       variants={itemVariants}
                       whileHover={{ x: 10, scale: 1.02 }}
                       onClick={() => setIsMenuOpen(false)}
@@ -549,7 +572,11 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                       {item.label}
                     </motion.a>
                   ))}
-                  <Button className="bg-transparent border border-white text-white hover:bg-white/10 w-full mt-4 shadow-lg px-4 py-2">
+                  <Button className={` border bg-yellow-400 border-white hover:bg-white/10 w-full mt-4 shadow-lg px-4 py-2 ${
+          theme === "dark"
+            ? "text-black"
+            : " border-gray-200 text-black"
+        }`}>
                     {content.ctaText}
                   </Button>
                 </motion.nav>
