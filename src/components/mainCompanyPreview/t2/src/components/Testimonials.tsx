@@ -1,57 +1,9 @@
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion } from "motion/react";
 
-// Default data for testimonials
-const defaultTestimonialsData = {
-  headline: {
-    title: "What Our Clients Say",
-    description: "Don't just take our word for it. Here's what our satisfied clients have to say about working with us."
-  },
-  testimonials: [
-    {
-      name: "Sarah Johnson",
-      role: "CEO, TechStart Inc.",
-      image: "https://images.unsplash.com/photo-1613473350016-1fe047d6d360?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21hbiUyMGV4ZWN1dGl2ZSUyMHBvcnRyYWl0fGVufDF8fHx8MTc1NTYxODQxNHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      quote: "Working with this company has been a game-changer for our business. Their expertise and dedication to our success is unmatched.",
-      rating: 5,
-    },
-    {
-      name: "Michael Chen",
-      role: "Founder, Innovation Labs",
-      image: "https://images.unsplash.com/photo-1584940120505-117038d90b05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMHBlcnNvbiUyMHBvcnRyYWl0fGVufDF8fHx8MTc1NTU1MzI2OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      quote: "The results speak for themselves. We've seen a 300% increase in efficiency since implementing their solutions.",
-      rating: 5,
-    },
-    {
-      name: "David Rodriguez",
-      role: "Director, Global Enterprises",
-      image: "https://images.unsplash.com/photo-1629507208649-70919ca33793?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG1hbiUyMHN1aXQlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NTU1ODYzOTB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      quote: "Professional, reliable, and results-driven. They've helped us scale our operations beyond what we thought possible.",
-      rating: 5,
-    },
-    {
-      name: "Emily Watson",
-      role: "Marketing Director, GrowthCo",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbiUyMHBvcnRyYWl0fGVufDF8fHx8MTc1NTYxODQxNXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      quote: "Outstanding service and incredible results. The team went above and beyond to deliver exactly what we needed.",
-      rating: 5,
-    },
-    {
-      name: "James Wilson",
-      role: "CTO, TechInnovate",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG1hbiUyMHBvcnRyYWl0fGVufDF8fHx8MTc1NTU4NjM5MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      quote: "Their attention to detail and technical expertise helped us solve complex challenges with elegant solutions.",
-      rating: 4,
-    }
-  ]
-};
-
-export default function Testimonials({testimonialsData = defaultTestimonialsData}) {
-  // Use provided data or default data
-  const data = testimonialsData || defaultTestimonialsData;
-  
+export default function Testimonials({testimonialsData}) {
   // Duplicate testimonials for marquee loop (showing 3 at a time)
-  const duplicatedTestimonials = [...data.testimonials, ...data.testimonials];
+  const duplicatedTestimonials = [...testimonialsData.testimonials, ...testimonialsData.testimonials];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -65,7 +17,8 @@ export default function Testimonials({testimonialsData = defaultTestimonialsData
   };
 
   return (
-    <motion.section
+    <motion.section 
+      id="testimonial"
       className="py-20 bg-background theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
@@ -82,10 +35,10 @@ export default function Testimonials({testimonialsData = defaultTestimonialsData
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">
-            {data.headline.title}
+            {testimonialsData.headline.title}
           </h2>
           <p className="text-lg text-muted-foreground">
-            {data.headline.description}
+            {testimonialsData.headline.description}
           </p>
         </motion.div>
 
@@ -118,7 +71,7 @@ export default function Testimonials({testimonialsData = defaultTestimonialsData
               <div key={index} className="flex-shrink-0 w-80 lg:w-96">
                 <TestimonialCard 
                   testimonial={testimonial}
-                  index={index % data.testimonials.length}
+                  index={index % testimonialsData.testimonials.length}
                 />
               </div>
             ))}
