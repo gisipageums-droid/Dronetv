@@ -259,7 +259,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop Logo
+                Crop Logo hhhh
               </h3>
               <button 
                 onClick={cancelCrop}
