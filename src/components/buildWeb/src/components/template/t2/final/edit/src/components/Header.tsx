@@ -271,7 +271,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
             
             {/* Cropper Area - Made responsive for all devices */}
             <div className="flex-1 relative bg-gray-900">
-              <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-96">
+              <div className="relative w-full h-[50vh] md:h-[60vh] ">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
