@@ -124,20 +124,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
     }));
   };
 
-  const addSocialLink = () => {
-    setFooterContent(prev => ({
-      ...prev,
-      socialLinks: [...prev.socialLinks, { name: "New Social", icon: Facebook, href: "#" }]
-    }));
-  };
-
-  const removeSocialLink = (index) => {
-    setFooterContent(prev => ({
-      ...prev,
-      socialLinks: prev.socialLinks.filter((_, i) => i !== index)
-    }));
-  };
-
+  
   // Logo cropping functionality
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -354,7 +341,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
             className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            {/* <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
                 Crop Logo
               </h3>
@@ -365,9 +352,9 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                 <XIcon className="w-6 h-6 text-gray-600" />
               </button>
             </div>
-            
+             */}
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900">
+            {/* <div className="flex-1 relative bg-gray-900">
               <div className="relative h-96 w-full">
                 <Cropper
                   image={imageToCrop}
@@ -393,7 +380,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                   }}
                 />
               </div>
-            </div>
+            </div> */}
             
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
@@ -533,25 +520,36 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                     transition={{ duration: 0.6 }}
                   >
                     {isEditing ? (
-                      <div className="relative w-full h-full">
+                      // <div className="relative w-full h-full">
+                      //   {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (
+                      //     <img
+                      //       src={footerContent.companyInfo.logoUrl || logo}
+                      //       alt="Logo"
+                      //       className="w-full h-full object-contain"
+                      //     />
+                      //   ) : (
+                      //     <span className="text-black font-bold text-lg">{footerContent.companyInfo.logoUrl}</span>
+                      //   )}
+                      //   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                      //     <button
+                      //       onClick={() => fileInputRef.current?.click()}
+                      //       className="text-white text-xs p-1 bg-blue-500 rounded"
+                      //     >
+                      //       <Upload size={12} />
+                      //     </button>
+                      //   </div>
+                      // </div>
+                       <>
                         {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (
                           <img
-                            src={footerContent.companyInfo.logoUrl || logo}
+                            src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
                             className="w-full h-full object-contain"
                           />
                         ) : (
                           <span className="text-black font-bold text-lg">{footerContent.companyInfo.logoUrl}</span>
                         )}
-                        <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <button
-                            onClick={() => fileInputRef.current?.click()}
-                            className="text-white text-xs p-1 bg-blue-500 rounded"
-                          >
-                            <Upload size={12} />
-                          </button>
-                        </div>
-                      </div>
+                      </>
                     ) : (
                       <>
                         {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (

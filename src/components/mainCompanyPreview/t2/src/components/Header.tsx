@@ -23,6 +23,46 @@ export default function Header({headerData}) {
     { id: 9, label: "Clients", href: "#clients", color: "primary" },
   ];
 
+  // Function to handle smooth scrolling
+  const handleScrollToSection = (href: string) => {
+    setIsMenuOpen(false);
+    
+    // Wait for menu to close before scrolling
+    setTimeout(() => {
+      const targetId = href.replace('#', '');
+      const element = document.getElementById(targetId);
+      
+      if (element) {
+        const headerHeight = 64; // Height of your fixed header (4rem = 64px)
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 300); // Match this with your menu closing animation duration
+  };
+
+  // Function to handle desktop navigation (preserve default anchor behavior)
+  const handleDesktopNavigation = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    
+    if (element) {
+      const headerHeight = 64;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const menuVariants = {
     closed: { opacity: 0, height: 0, transition: { duration: 0.3 } },
     open: {
@@ -63,7 +103,12 @@ export default function Header({headerData}) {
                   className="w-full h-full object-contain"
                 />
             </motion.div>
-            <motion.span className="text-xl font-bold text-black truncate">
+            <motion.span className={`text-xl font-bold text-black truncate
+              ${
+        theme === "dark"
+          ? "bg-gray-800 border-gray-700 text-gray-300"
+          : "bg-white border-gray-200"
+      }`}>
               {headerData.companyName}
             </motion.span>
           </div>
@@ -75,6 +120,7 @@ export default function Header({headerData}) {
                 <motion.a
                   key={item.id}
                   href={item.href}
+                  onClick={(e) => handleDesktopNavigation(e, item.href)}
                   className={`font-medium relative group whitespace-nowrap ${
                     theme === "dark"
                       ? "text-gray-300 hover:text-gray-200"
@@ -95,7 +141,10 @@ export default function Header({headerData}) {
           {/* Right side - Fixed width to prevent shifting */}
           <div className="flex items-center space-x-4 flex-shrink-0">
             <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap">
-              <a href="#contact">
+              <a 
+                href="#contact" 
+                onClick={(e) => handleDesktopNavigation(e, '#contact')}
+              >
                 {headerData.ctaText}
               </a>
             </Button>
@@ -131,19 +180,25 @@ export default function Header({headerData}) {
               exit="closed"
             >
               <motion.nav className="flex flex-col space-y-4 py-4">
-                {staticNavItems.map((item, index) => (
-                  <motion.a
+                {staticNavItems.map((item) => (
+                  <motion.button
                     key={item.id}
-                    href={item.href}
-                    className={`text-gray-700 hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10`}
+                    onClick={() => handleScrollToSection(item.href)}
+                    className={`text-left hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10 ${
+                    theme === "dark"
+                      ? "text-gray-300 hover:text-gray-200"
+                      : "text-gray-700 hover:text-primary"
+                  }`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
-                    onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
-                  </motion.a>
+                  </motion.button>
                 ))}
-                <Button className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg">
+                <Button 
+                  className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
+                  onClick={() => handleScrollToSection('#contact')}
+                >
                   {headerData.ctaText}
                 </Button>
               </motion.nav>

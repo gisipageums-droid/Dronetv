@@ -271,7 +271,7 @@ export default function Blog({blogData, onStateChange , userId, publishedId, tem
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-4"
         >
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
@@ -291,9 +291,9 @@ export default function Blog({blogData, onStateChange , userId, publishedId, tem
               </button>
             </div>
             
-            {/* Cropper Area */}
+            {/* Cropper Area - Made responsive for all devices */}
             <div className="flex-1 relative bg-gray-900">
-              <div className="relative h-96 w-full">
+              <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-96">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
@@ -364,8 +364,8 @@ export default function Blog({blogData, onStateChange , userId, publishedId, tem
                 </div>
               </div>
               
-              {/* Action Buttons */}
-              <div className="mt-6 flex gap-3 justify-between">
+              {/* Action Buttons - Responsive layout */}
+              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-between">
                 <button
                   onClick={resetCropSettings}
                   className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"

@@ -605,21 +605,26 @@ export default function Footer({
                     transition={{ duration: 0.6 }}
                   >
                     {isEditing ? (
-                      <div className="relative w-full h-full">
+                      // <div className="relative w-full h-full">
+                      //   <img
+                      //     src={footerContent.companyInfo.logoText || logo}
+                      //     alt="Logo"
+                      //     className="w-full h-full object-contain"
+                      //   />
+                      //   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                      //     <button
+                      //       onClick={() => fileInputRef.current?.click()}
+                      //       className="text-white text-xs p-1 bg-blue-500 rounded"
+                      //     >
+                      //       <Upload size={12} />
+                      //     </button>
+                      //   </div>
+                      // </div>
                         <img
-                          src={footerContent.companyInfo.logoText || logo}
-                          alt="Logo"
-                          className="w-full h-full object-contain"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <button
-                            onClick={() => fileInputRef.current?.click()}
-                            className="text-white text-xs p-1 bg-blue-500 rounded"
-                          >
-                            <Upload size={12} />
-                          </button>
-                        </div>
-                      </div>
+                        src={footerContent.companyInfo.logoText || logo}
+                        alt="Logo"
+                        className="w-full h-full object-contain"
+                      />
                     ) : (
                       <img
                         src={footerContent.companyInfo.logoText || logo}
