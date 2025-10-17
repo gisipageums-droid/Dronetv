@@ -179,7 +179,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                   onChange={(value) =>
                     updateFormData({ yearEstablished: value })
                   }
-                  required
+                  
                   placeholder="Select incorporation date"
                 />
                 <FormInput
@@ -194,7 +194,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                   label="Promotional Code"
                   value={formData.promoCode}
                   onChange={(value) => updateFormData({ promoCode: value })}
-                  required
+                  
                   placeholder="Enter promotional code"
                 />
               </div>
