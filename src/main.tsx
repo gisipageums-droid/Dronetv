@@ -7,8 +7,10 @@ import './index.css';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
-    <ToastContainer
-      
-    />
+  <ToastContainer
+  position="top-right"
+  autoClose={500}
+  style={{ zIndex: 9999 }}
+/>
   </StrictMode>
 );
