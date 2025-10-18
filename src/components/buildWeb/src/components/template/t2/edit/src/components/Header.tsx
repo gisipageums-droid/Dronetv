@@ -252,132 +252,121 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
   return (
     <>
       {/* Image Cropper Modal */}
-      {showCropper && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-4"
+     {showCropper && (
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2 sm:p-3"
+  >
+    <motion.div 
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+    >
+      {/* Header */}
+      <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+        <h3 className="text-base font-semibold text-gray-800">Crop Logo</h3>
+        <button
+          onClick={cancelCrop}
+          className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+          aria-label="Close cropper"
         >
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+          <XIcon className="w-5 h-5 text-gray-600" />
+        </button>
+      </div>
+
+      {/* Cropper Area */}
+      <div className="flex-1 relative bg-gray-900">
+        <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
+          <Cropper
+            image={imageToCrop}
+            crop={crop}
+            zoom={zoom}
+            rotation={rotation}
+            aspect={1} // Square aspect ratio for logos
+            onCropChange={setCrop}
+            onZoomChange={setZoom}
+            onCropComplete={onCropComplete}
+            showGrid={false}
+            cropShape="rect"
+            style={{
+              containerStyle: { position: "relative", width: "100%", height: "100%" },
+              cropAreaStyle: { border: "2px solid white", borderRadius: "8px" },
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
+        <div className="grid grid-cols-2 gap-2">
+          {/* Zoom */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-sm">
+              <span className="flex items-center gap-2 text-gray-700">
+                <ZoomIn className="w-4 h-4" /> Zoom
+              </span>
+              <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+            </div>
+            <input
+              type="range"
+              value={zoom}
+              min={1}
+              max={3}
+              step={0.1}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+            />
+          </div>
+
+          {/* Rotation */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-sm">
+              <span className="flex items-center gap-2 text-gray-700">
+                <RotateCw className="w-4 h-4" /> Rotation
+              </span>
+              <span className="text-gray-600">{rotation}°</span>
+            </div>
+            <input
+              type="range"
+              value={rotation}
+              min={0}
+              max={360}
+              step={1}
+              onChange={(e) => setRotation(Number(e.target.value))}
+              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Action Buttons - equal width & responsive */}
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button
+            onClick={resetCropSettings}
+            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
           >
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Crop Logo
-              </h3>
-              <button 
-                onClick={cancelCrop}
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-              >
-                <XIcon className="w-6 h-6 text-gray-600" />
-              </button>
-            </div>
-            
-            {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900">
-              <div className="relative h-[50vh] md:h-[60vh] lg:h-96 w-full">
-                <Cropper
-                  image={imageToCrop}
-                  crop={crop}
-                  zoom={zoom}
-                  rotation={rotation}
-                  aspect={1} // Square aspect ratio for logos
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: 'relative',
-                      width: '100%',
-                      height: '100%',
-                    },
-                    cropAreaStyle: {
-                      border: '2px solid white',
-                      borderRadius: '8px',
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            
-            {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
-              <div className="space-y-4">
-                {/* Zoom Control */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" />
-                      Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
-                </div>
-                
-                {/* Rotation Control */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <RotateCw className="w-4 h-4" />
-                      Rotation
-                    </span>
-                    <span className="text-gray-600">{rotation}°</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={rotation}
-                    min={0}
-                    max={360}
-                    step={1}
-                    onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
-                </div>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-between">
-                <Button
-                  variant="outline"
-                  onClick={resetCropSettings}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                >
-                  Reset
-                </Button>
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={cancelCrop}
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={applyCrop}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6"
-                  >
-                    Apply Crop
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
+            Reset
+          </button>
+
+          <button
+            onClick={cancelCrop}
+            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={applyCrop}
+            className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
+          >
+            Apply Crop
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  </motion.div>
+)}
+
 
       {/* === Updated header: background black + white text === */}
       <motion.header
