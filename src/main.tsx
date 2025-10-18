@@ -9,7 +9,7 @@ createRoot(document.getElementById('root')!).render(
     <App />
   <ToastContainer
   position="top-right"
-  autoClose={5000}
+  autoClose={1000}
   style={{ zIndex: 9999999999 }}
 />
   </StrictMode>
