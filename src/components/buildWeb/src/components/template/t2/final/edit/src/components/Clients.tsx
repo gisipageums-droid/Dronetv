@@ -283,33 +283,33 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
   return (
     <>
       {/* Image Cropper Modal */}
-      {showCropper && (
-        <motion.div 
+       {showCropper && (
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
         >
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-base font-semibold text-gray-800">
                 Crop Client Image
               </h3>
-              <button 
+              <button
                 onClick={cancelCrop}
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
               >
-                <X className="w-6 h-6 text-gray-600" />
+                <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
-            
-            {/* Cropper Area - Made responsive for all devices */}
+
+            {/* Cropper Area - Responsive Height */}
             <div className="flex-1 relative bg-gray-900">
-              <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-96">
+              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
@@ -323,24 +323,24 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
                   cropShape="rect"
                   style={{
                     containerStyle: {
-                      position: 'relative',
-                      width: '100%',
-                      height: '100%',
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
                     },
                     cropAreaStyle: {
-                      border: '2px solid white',
-                      borderRadius: '8px',
-                    }
+                      border: "2px solid white",
+                      borderRadius: "8px",
+                    },
                   }}
                 />
               </div>
             </div>
-            
+
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
-              <div className="space-y-4">
+            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
+              <div className="grid grid-cols-2 gap-2">
                 {/* Zoom Control */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="flex items-center gap-2 text-gray-700">
                       <ZoomIn className="w-4 h-4" />
@@ -355,12 +355,12 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
                     max={3}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
-                
+
                 {/* Rotation Control */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="flex items-center gap-2 text-gray-700">
                       <RotateCw className="w-4 h-4" />
@@ -375,41 +375,40 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
                     max={360}
                     step={1}
                     onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
               </div>
-              
-              {/* Action Buttons - Responsive layout */}
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-between">
+
+              {/* Action Buttons - Equal Width & Responsive */}
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <Button
                   variant="outline"
                   onClick={resetCropSettings}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
                 >
                   Reset
                 </Button>
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={cancelCrop}
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={applyCrop}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6"
-                  >
-                    Apply Crop
-                  </Button>
-                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={cancelCrop}
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 text-sm"
+                >
+                  Apply Crop
+                </Button>
               </div>
             </div>
           </motion.div>
         </motion.div>
       )}
-
       <motion.section
         id='clients'
         className="py-20 bg-background theme-transition"
