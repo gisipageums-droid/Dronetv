@@ -256,10 +256,10 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-900">Sector</label>
           <MinimalisticDropdown value={industryFilter} onChange={onIndustryChange} options={industries} placeholder="Select sector" />
-        </div>
+        </div> */}
 
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-900">Sort by</label>
