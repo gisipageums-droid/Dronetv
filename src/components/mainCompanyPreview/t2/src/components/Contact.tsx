@@ -248,7 +248,7 @@ export default function Contact({ contactData }) {
                   </Label>
                   <select className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300">
                     {subjectOptions.map((option, index) => (
-                      <option key={index} value={option}>
+                  <option key={index} value={option} className="text-[black]">
                         {option}
                       </option>
                     ))}
