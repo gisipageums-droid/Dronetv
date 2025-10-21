@@ -727,7 +727,7 @@ export default function EditableUsedBy({
 
       {/* Crop Modal */}
       {cropModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999999]">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
             <h3 className="text-xl font-bold mb-4 text-gray-900">
               Crop Company Logo
