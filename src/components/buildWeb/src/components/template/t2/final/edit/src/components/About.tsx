@@ -461,11 +461,11 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
               {isEditing && (
                 <div className="absolute bottom-4 left-4 bg-white/80 p-2 rounded shadow">
                   <p className="text-sm mb-1">Change About Image:</p>
-                  <input
+                <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageSelect}
-                    className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
+                    className="text-sm cursor-pointer  border-2 border-dashed border-muted-foreground p-2 rounded w-full"
                   />
                   {pendingImageFile && (
                     <p className="text-xs text-green-600 mt-1">
