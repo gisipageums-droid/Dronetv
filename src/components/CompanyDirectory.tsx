@@ -532,7 +532,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
 
 
 
-            <button
+            {/* <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
                 // Construct the dynamic URL
@@ -544,7 +544,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview })
             >
               <Edit className="w-3 h-3 md:w-4 md:h-4" />
               Edit Data
-            </button>
+            </button> */}
 
 
             <button
