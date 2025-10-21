@@ -23,14 +23,14 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(onComplete, 2000);
+          setTimeout(onComplete, 1500);
           return 100;
         }
         // Slower progress: 100% over 180 seconds = ~0.56% per second
         // With 500ms interval, that's ~0.28% per interval
         return prev + 0.28;
       });
-    }, 500); // Keep 500ms interval for smooth progress
+    }, 300); // Keep 300ms interval for smooth progress
 
     const stepInterval = setInterval(() => {
       setCurrentStep((prev) => {
@@ -40,7 +40,7 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
         }
         return prev + 1;
       });
-    }, 30000); // 30 seconds per step (6 steps × 30s = 180s total)
+    }, 20000); // 20 seconds per step (6 steps × 20s = 120s total)
 
     return () => {
       clearInterval(interval);
