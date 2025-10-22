@@ -63,7 +63,7 @@ const GalleryGlimpse = () => {
               <Camera className="h-6 w-6 sm:h-8 sm:w-8 text-black" />
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-black tracking-tight">
-              <span className="bg-gradient-to-r from-black via-gray-800 to-black bg-clip-text text-transparent">
+              <span className="">
                 Photo Gallery
               </span>
             </h2>
