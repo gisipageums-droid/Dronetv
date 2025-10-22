@@ -65,7 +65,7 @@ const BrowseByTopic = () => {
           <div className="w-24 h-1 bg-black mx-auto rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-12 ">
           {topics.map((topic, index) => {
             const IconComponent = topic.icon;
             const isHovered = hoveredCard === topic.id;
@@ -103,7 +103,7 @@ const BrowseByTopic = () => {
                 <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-500 shadow-2xl shadow-yellow-400/40"></div>
 
                 {/* Content */}
-                <div className="relative p-4 sm:p-6 lg:p-8 h-[500px] sm:h-[550px] lg:h-[600px] flex flex-col">
+                <div className="relative p-4 sm:p-6 lg:p-8  flex flex-col">
                   {/* Header */}
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <div className="relative">
