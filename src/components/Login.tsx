@@ -18,6 +18,7 @@ interface SignUpData {
   confirmPassword: string;
   city: string;
   state: string;
+  phone: string; // added phone
 }
 
 interface PasswordErrors {
@@ -54,7 +55,8 @@ export default function Login() {
     password: '',
     confirmPassword: '',
     city: '',
-    state: ''
+    state: '',
+    phone: '' // added phone initial value
   });
   //context
   const {login } = useUserAuth();
@@ -123,7 +125,7 @@ export default function Login() {
       return;
     }
     
-    const { confirmPassword, ...userData } = signUpData;
+    const { confirmPassword, ...userData } = signUpData; // phone included in userData now
     console.log('Sign up successful with data:', userData);
     
     try {
@@ -138,7 +140,6 @@ export default function Login() {
       if (response.ok) {
         const data = await response.json();
         toast(data.message)
-        // console.log('API response:', data);
         setHaveAccount(true); // Switch to login view after successful registration
       } else {
         toast.error('Failed to register user:', response.statusText);
@@ -153,7 +154,8 @@ export default function Login() {
       password: '',
       confirmPassword: '',
       city: '',
-      state: ''
+      state: '',
+      phone: '' // reset phone
     });
   };
 
@@ -370,6 +372,22 @@ export default function Login() {
                     required 
                   />
                 </div>
+
+                {/* NEW: Phone input */}
+                <div className='mb-2'>
+                  <label className='block text-sm font-medium mb-2' htmlFor="phone">Phone</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    value={signUpData.phone} 
+                    onChange={onSignUpChange} 
+                    className='w-full p-1 border border-gray-300 rounded' 
+                    placeholder="+91XXXXXXXXXX"
+                    required 
+                  />
+                </div>
+
                 <div className='mb-2'>
                   <label className='block text-sm font-medium mb-2' htmlFor="password">Password</label>
                   <div className='flex items-center border border-gray-300 rounded'>

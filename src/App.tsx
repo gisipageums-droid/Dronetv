@@ -78,6 +78,14 @@ import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/
 import EventTemplateEdit1 from "./components/event/template/t1/edit/EventTemplate1";
 import EventTemplateEdit2 from "./components/event/template/t2/edit/EventTemplate2"; 
 
+import UserDashboard from "./components/UserDashboard/pages/AdminDashboard";
+import UserCompany from "./components/UserDashboard/pages/Company";
+import Professinal from "./components/UserDashboard/pages/Professinal";
+import Event from "./components/UserDashboard/pages/Event";
+import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
+import CompanyLeads from "./components/UserDashboard/components/common/CompanyLeads";
+import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
+
 const HomePage = () => (
   <>
     <Hero />
@@ -184,6 +192,58 @@ const AppContent = () => {
         {/* excel extraction route */}
         <Route path='/excel' element={<ExcelDataProcessor />} />
         <Route path='/extract-text' element={<DocumentTextExtractor />} />
+
+
+{/* User dashboard routes */}
+<Route
+            path="/user-professionals"
+            element={
+              <UserDashboardLayout>
+                <Professinal />
+              </UserDashboardLayout>
+            }
+          />
+          <Route
+            path="/user-events"
+            element={
+              <UserDashboardLayout>
+                <Event />
+              </UserDashboardLayout>
+            }
+          />
+          <Route
+            path="/user-companies"
+            element={
+              <UserDashboardLayout>
+                <UserCompany />
+              </UserDashboardLayout>
+            }
+          />
+          <Route
+            path="/user-dashboard"
+            element={
+              <UserDashboardLayout>
+                <UserDashboard />
+              </UserDashboardLayout>
+            }
+          />
+          <Route
+            path="/user-profile"
+            element={
+              <UserDashboardLayout>
+                <ProfilePage />
+              </UserDashboardLayout>
+            }
+          />
+          <Route
+            path="/user-company/leads"
+            element={
+              <UserDashboardLayout>
+                <CompanyLeads />
+              </UserDashboardLayout>
+            }
+          />
+
         </Routes>
         {!hideFooter && <Footer />}
         <ScrollingFooter />
