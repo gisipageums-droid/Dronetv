@@ -37,10 +37,9 @@ const ProfilePage: React.FC = () => {
 
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   // const totalTokens = transactions.reduce((sum, t) => sum + t.tokens, 0);
-let totalTokens = 0;
-  useEffect(() => {
-async function getTokenData() {
-  try {
+  const [ totalTokens, setTotalTokens ] = useState();
+  async function getTokenData() {
+    try {
     const response = await fetch(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile?userId=${stored?.email}`, {
       headers: {
         Authorization: `Bearer ${user?.token}`
@@ -50,7 +49,8 @@ async function getTokenData() {
     if (response.ok) {
       const data = await response.json();
       console.log('Token data:', data);
-      totalTokens = data.profile.tokenBalance || 0;
+      setTotalTokens(data || 0);
+      
     } else {
       console.error('Failed to fetch token data:', response.statusText);
     }
@@ -58,6 +58,7 @@ async function getTokenData() {
     console.error('Error fetching token data:', error);
   }
 }
+useEffect(() => {
 getTokenData();
   }, []);
 
@@ -193,7 +194,7 @@ getTokenData();
                 />
               </div>
               <h3 className="text-lg font-medium text-amber-800">Total Tokens</h3>
-              <p className="text-3xl font-bold text-amber-700 mt-1">{totalTokens}</p>
+              <p className="text-3xl font-bold text-amber-700 mt-1">{totalTokens?.profile?.tokenBalance}</p>
             </div>
 
             {/* Recent Transactions */}
