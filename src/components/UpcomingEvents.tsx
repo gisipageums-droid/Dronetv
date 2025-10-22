@@ -34,7 +34,7 @@ const UpcomingEvents = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-black text-black mb-4 tracking-tight">
-            <span className="bg-gradient-to-r from-black via-gray-800 to-black bg-clip-text text-transparent">
+            <span className="">
               Upcoming Events
             </span>
           </h2>
