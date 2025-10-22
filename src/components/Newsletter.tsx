@@ -63,7 +63,7 @@ const Newsletter = () => {
         
         <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-black mb-4 sm:mb-6 tracking-tight">
           Stay Updated with{' '}
-          <span className="bg-gradient-to-r from-black via-gray-800 to-black bg-clip-text text-transparent">
+          <span className="">
             Drone TV!
           </span>
         </h2>
