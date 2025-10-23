@@ -395,8 +395,9 @@ import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { motion } from "motion/react";
 import { toast } from "react-toastify";
+import { useTheme } from "./ThemeProvider";
 
-export default function Contact({ contactData }) {
+export default function Contact({ contactData, publishedId }) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -407,11 +408,11 @@ export default function Contact({ contactData }) {
     message: "",
     category: "Enterprise", // ✅ required field
   });
-
+ const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
 
   // 🔹 constant publishedId (required by API)
-  const publishedId = "pub-nh7sa9cbqvq";
+  // const publishedId = "pub-nh7sa9cbqvq";
 
   const subjectOptions = [
     "General Inquiry",
@@ -610,7 +611,7 @@ export default function Contact({ contactData }) {
                       id="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 text-black"
+                      className={`w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300  ${theme === "dark" ? "bg-[#181818] text-white" : "bg-gray-100 text-black"}`}
                     >
                       {subjectOptions.map((option, index) => (
                         <option key={index} value={option}>

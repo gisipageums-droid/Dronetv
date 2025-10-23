@@ -154,7 +154,7 @@ import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
 import { toast } from "react-toastify";
 
-export default function Contact({ content }) {
+export default function Contact({ content, publishedId }) {
   const contactData = content;
 
   const [formData, setFormData] = useState({
@@ -183,7 +183,7 @@ export default function Contact({ content }) {
     setLoading(true);
 
     const payload = {
-      publishedId: "pub-nh7sa9cbqvq",
+      publishedId: publishedId,
       ...formData,
     };
 

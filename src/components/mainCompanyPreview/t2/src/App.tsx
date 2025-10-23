@@ -123,6 +123,7 @@ export default function App() {
           />
           <Contact 
             contactData={finaleDataReview.content.contact}
+            publishedId={finaleDataReview.publishedId}
           />
         </main>
         <Footer

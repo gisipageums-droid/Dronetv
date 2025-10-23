@@ -127,6 +127,7 @@ export default function App() {
        />
       <Contact
       content={finaleDataReview.content.contact}
+      publishedId={finaleDataReview.publishedId}
       />
       <Footer 
       content={finaleDataReview.content.footer}
