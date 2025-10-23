@@ -180,7 +180,7 @@ export default function Login() {
           login(data); // Store user data
           toast('Google login successful!');
           // alert('Google login successful!');
-          navigate("/user/companies")
+          navigate("/user-companies"); // Navigate to dashboard
         } else {
           toast.error('Google authentication failed:', response.statusText);
         }
@@ -224,7 +224,7 @@ export default function Login() {
           password: ''
         });
 
-        navigate("/user/companies") // Navigate to dashdoard
+        navigate("/user-companies") // Navigate to dashboard
       } else {
         setIsLoading(false);
         toast.error(data.message);
