@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from "react";
-import { Search, MapPin, Building2, Edit, Eye } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
+import { Search, MapPin, Building2, Edit, Eye, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTemplate, useUserAuth } from "../../context/context";
+import { toast } from "sonner";
 
 interface Company {
   publishedId: string;
@@ -14,11 +16,106 @@ interface Company {
   reviewStatus?: string;
 }
 
-const Card: React.FC<{
+interface CompanyCardProps {
   company: Company;
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
-}> = ({ company, onEdit, onPreview }) => {
+}
+
+interface PublishedDetailsResponse {
+  publishedId: string;
+  templateSelection: string;
+  websiteContent: {
+    hero: {
+      headline?: string;
+      subheadline?: string;
+      title?: string;
+      subtitle?: string;
+      description?: string;
+      heroImage?: string;
+      numberOfClients?: string;
+      clientImages?: string[];
+      primaryCta?: string;
+      secondaryCta?: string;
+      features?: string[];
+      keyBenefits?: string[];
+    };
+    about: {
+      companyName?: string;
+      industry?: string;
+      established?: string;
+      headquarters?: string;
+      description1?: string;
+      description2?: string;
+      story?: string;
+      mission?: string;
+      vision?: string;
+      values?: Array<{ title: string; description: string }>;
+      achievements?: string[];
+      certifications?: string[];
+      officeImage?: string;
+      visionPillars?: string[];
+      teamExperience?: string;
+    };
+    services: {
+      headline?: string;
+      description?: string;
+      services?: any[];
+      whyChooseUs?: string[];
+    };
+    products: {
+      headline?: string;
+      description?: string;
+      products?: any[];
+      advantages?: string[];
+    };
+    clients: {
+      headline?: any;
+      clients?: any[];
+      stats?: any[];
+    };
+    testimonials: any[];
+    blog: any;
+    contact: any;
+    faq: {
+      headline?: string;
+      description?: string;
+      faqs?: Array<{ question: string; answer: string }>;
+    };
+    templateMetadata: any;
+  };
+  mediaAssets: {
+    companyLogoUrl?: string;
+    heroBackgroundUrl?: string;
+    officeImageUrl?: string;
+    contactBackgroundUrl?: string;
+    dgcaCertificateUrl?: string;
+  };
+  companyInfo: {
+    name: string;
+    location: string;
+    sectors: string[];
+    yearEstablished: string;
+  };
+  contentSource: string;
+  metadata: {
+    lastModified: string;
+    version: number;
+    hasEdits: boolean;
+    templateOptimized: boolean;
+    ownerId: string;
+  };
+  editHistory?: {
+    version: number;
+    lastModified: string;
+    editedSections?: string[];
+  };
+  publishedAt?: string;
+  createdAt?: string;
+}
+
+// =================== Company card ==============================
+const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
   const placeholderImg = company?.companyName?.charAt(0) || "C";
   const navigate = useNavigate();
 
@@ -138,7 +235,7 @@ const Card: React.FC<{
 
           {/* Action Buttons */}
           <div className="flex gap-2 justify-between">
-            <button
+            {/* <button
               onClick={(e) => {
                 e.stopPropagation();
                 const url = `${window.location.origin}/form/${
@@ -150,7 +247,7 @@ const Card: React.FC<{
             >
               <Edit className="w-4 h-4" />
               Edit Data
-            </button>
+            </button> */}
 
             <button
               onClick={(e) => {
@@ -176,7 +273,7 @@ const Card: React.FC<{
           </div>
 
           <button
-            onClick={() => navigate(`/user-company/leads`)}
+            onClick={() => navigate(`/user-company/leads/${company?.publishedId}`)}
             className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
           >
             <Eye className="w-4 h-4" />
@@ -195,74 +292,145 @@ const Card: React.FC<{
   );
 };
 
+// =================== Company page ==============================
 const CompanyPage: React.FC = () => {
+  const { user } = useUserAuth();
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const { setFinaleDataReview } = useTemplate();
+  const navigate = useNavigate();
 
-  const companies: Company[] = useMemo(
-    () => [
-      {
-        publishedId: "1",
-        userId: "user1",
-        draftId: "draft1",
-        companyName: "TechVision Inc",
-        location: "San Francisco, CA",
-        sectors: ["Technology", "Software"],
-        publishedDate: "2024-10-15",
-        reviewStatus: "approved",
-      },
-      {
-        publishedId: "2",
-        userId: "user2",
-        draftId: "draft2",
-        companyName: "GreenEnerge Solutions",
-        location: "Austin, TX",
-        sectors: ["Energy", "Renewable"],
-        publishedDate: "2024-10-10",
-        reviewStatus: "active",
-      },
-      {
-        publishedId: "3",
-        userId: "user3",
-        draftId: "draft3",
-        companyName: "HealthPlus Medical",
-        location: "Boston, MA",
-        sectors: ["Healthcare", "Medical"],
-        publishedDate: "2024-09-20",
-        reviewStatus: "approved",
-      },
-      {
-        publishedId: "4",
-        userId: "user4",
-        draftId: "draft4",
-        companyName: "FinanceFlow Bank",
-        location: "New York, NY",
-        sectors: ["Finance", "Banking"],
-        publishedDate: "2024-10-05",
-        reviewStatus: "rejected",
-      },
-      {
-        publishedId: "5",
-        userId: "user5",
-        draftId: "draft5",
-        companyName: "CloudSync Services",
-        location: "Seattle, WA",
-        sectors: ["Cloud Computing", "SaaS"],
-        publishedDate: "2024-10-12",
-        reviewStatus: "approved",
-      },
-      {
-        publishedId: "6",
-        userId: "user6",
-        draftId: "draft6",
-        companyName: "EcoDesign Studios",
-        location: "Los Angeles, CA",
-        sectors: ["Design", "Creative"],
-        publishedDate: "2024-10-18",
-        reviewStatus: "active",
-      },
-    ],
-    []
-  );
+  const fetchCompanies = async (userId: string) => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?userId=${userId}`
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch companies");
+
+      const data = await res.json();
+
+      setCompanies(
+        (data.cards || []).map((c: any) => ({
+          publishedId: c.publishedId || "",
+          userId: c.userId || "",
+          draftId: c.draftId || "",
+          companyName: c.companyName || "Unnamed Company",
+          location: c.location || "Location not specified",
+          sectors: Array.isArray(c.sectors)
+            ? c.sectors
+            : c.sectors
+            ? [c.sectors]
+            : ["General"],
+          publishedDate: c.publishedDate || new Date().toISOString(),
+          reviewStatus: c.reviewStatus || "active",
+        }))
+      );
+    } catch (err) {
+      console.error("Error fetching companies:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPublishedCompanyDetails = async (
+    publishedId: string,
+    userId: string,
+    setFinaleDataReview: (data: PublishedDetailsResponse) => void
+  ) => {
+    try {
+      const res = await fetch(
+        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-User-Id": userId,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const messages: Record<number, string> = {
+          401: "User not authenticated.",
+          403: "You don't have permission to access this template.",
+          404: "Template not found.",
+        };
+
+        throw new Error(
+          messages[res.status] || `Failed to fetch data (${res.status})`
+        );
+      }
+
+      const data = await res.json();
+      setFinaleDataReview(data);
+      return data;
+    } catch (err) {
+      console.error("Error fetching published details:", err);
+      throw new Error("Something went wrong while fetching company details.");
+    }
+  };
+
+  const handleEdit = async (publishedId: string): Promise<void> => {
+    try {
+      if (user?.email || !user?.userData?.email) {
+        throw new Error("User not authenticated");
+      }
+
+      // Fetch the published company details
+      const details = await fetchPublishedCompanyDetails(
+        publishedId,
+        user.email || user.userData.email,
+        setFinaleDataReview
+      );
+
+      // Navigate to edit page
+      if (details.templateSelection === "template-1") {
+        navigate(`/user/companies/edit/1/${user.userData.email}`);
+      } else if (details.templateSelection === "template-2") {
+        navigate(`/user/companies/edit/2/${publishedId}/${user.userData.email}`);
+      }
+    } catch (error) {
+      console.error("Error loading template for editing:", error);
+      toast.error("Failed to load template for editing. Please try again.");
+    }
+  };
+
+  const handlePreview = async (publishedId: string): Promise<void> => {
+    try {
+      if (user?.email || !user?.userData?.email) {
+        throw new Error("User not authenticated");
+      }
+
+      // Fetch the published company details
+      const details = await fetchPublishedCompanyDetails(
+        publishedId,
+        user.email || user.userData.email,
+        setFinaleDataReview
+      );
+
+      // Navigate to preview page
+      if (details.templateSelection === "template-1") {
+        navigate(
+          `/user/companies/preview/1/${publishedId}/${user.userData.email}`
+        );
+      } else if (details.templateSelection === "template-2") {
+        navigate(
+          `/user/companies/preview/2/${publishedId}/${user.userData.email}`
+        );
+      }
+    } catch (error) {
+      console.error("Error loading template for preview:", error);
+      toast.error("Failed to load template for preview. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    if (user?.email || user?.userData?.email) {
+      fetchCompanies(user?.email || user?.userData?.email);
+    }
+  }, [user]);
 
   const filteredCompanies = useMemo(() => {
     return companies.filter(
@@ -275,63 +443,112 @@ const CompanyPage: React.FC = () => {
     );
   }, [searchTerm, companies]);
 
-  const handlePreview = (id: string) => {
-    console.log("Preview company:", id);
-  };
-
-  const handleEdit = (id: string) => {
-    console.log("Edit company:", id);
-  };
-
-  return (
-    <div className="min-h-screen bg-linear-to-br from-yellow-50 to-amber-50 p-8">
-      <div className="">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Company Directory
-          </h1>
-          <p className="text-gray-600">Browse and manage company submissions</p>
-        </div>
-
-        <div className="mb-8">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-yellow-500 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search by company name, location, or sector..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-6 py-3 bg-white border-2 border-yellow-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all"
-            />
+  // Skeleton Loading
+  const SkeletonCard: React.FC = () => (
+    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 group animate-pulse p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-xl bg-yellow-100 p-2 flex items-center justify-center" />
+          <div className="flex-1">
+            <div className="h-5 bg-yellow-100 rounded w-3/4 mb-2" />
+            <div className="h-3 bg-yellow-100 rounded w-1/2" />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCompanies.length > 0 ? (
-            filteredCompanies.map((company) => (
-              <Card
-                key={company.publishedId}
-                company={company}
-                onPreview={handlePreview}
-                onEdit={handleEdit}
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-20">
-              <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">
-                No companies found matching "{searchTerm}"
-              </p>
-            </div>
-          )}
-        </div>
+        <div className="w-24 h-7 bg-yellow-100 rounded-full" />
+      </div>
 
-        <div className="mt-8 text-center text-gray-600 text-sm">
-          <p>
-            Showing {filteredCompanies.length} of {companies.length} companies
-          </p>
+      {/* Sectors */}
+      <div className="mb-6">
+        <div className="flex flex-wrap gap-2">
+          <div className="h-6 bg-yellow-100 rounded-full w-20" />
+          <div className="h-6 bg-yellow-100 rounded-full w-16" />
+          <div className="h-6 bg-yellow-100 rounded-full w-24" />
         </div>
       </div>
+
+      {/* Date and Actions */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
+          <div className="h-4 bg-yellow-100 rounded w-32" />
+          <div className="h-3 bg-yellow-100 rounded w-16 ml-auto" />
+        </div>
+
+        <div className="flex gap-2 justify-between">
+          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
+          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
+          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
+        </div>
+
+        <div className="h-10 bg-yellow-100 rounded-lg mt-2" />
+      </div>
+
+      {/* Published ID */}
+      <div className="mt-4 pt-4 border-t border-yellow-200">
+        <div className="h-3 bg-yellow-100 rounded w-1/3" />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-amber-50 p-8">
+      <div className="flex items-center gap-4 justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <Building2 w-6 h-6 />
+            Company Directory
+          </h1>
+          <p className="text-gray-600 mb-8">
+            Browse and manage company submissions
+          </p>
+        </div>
+
+        <button
+          onClick={() => navigate("/user/companies/template-selection")}
+          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
+        >
+          <Plus className="w-5 h-5" />
+          Add New Company
+        </button>
+      </div>
+
+      <div className="mb-8 relative">
+        <Search className="absolute left-4 top-4 text-yellow-500 w-5 h-5" />
+        <input
+          type="text"
+          placeholder="Search by company name, location, or sector..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-12 pr-6 py-3 bg-white border-2 border-yellow-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+        />
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array(6)
+            .fill(0)
+            .map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+        </div>
+      ) : filteredCompanies.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCompanies.map((company) => (
+            <Card
+              key={company.publishedId}
+              company={company}
+              onPreview={handlePreview}
+              onEdit={handleEdit}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-20 text-gray-500">
+          <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
+          No companies found matching “{searchTerm}”
+        </div>
+      )}
     </div>
   );
 };
