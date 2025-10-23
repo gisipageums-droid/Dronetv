@@ -273,7 +273,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
           </div>
 
           <button
-            onClick={() => navigate(`/user-company/leads/${company?.publishedId}`)}
+            onClick={() => navigate(`/user-company/leads/${company?.companyName}`)}
             className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
           >
             <Eye className="w-4 h-4" />

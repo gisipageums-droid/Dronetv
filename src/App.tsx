@@ -236,7 +236,7 @@ const AppContent = () => {
             }
           />
           <Route
-            path="/user-company/leads/:publishedId"
+            path="/user-company/leads/:companyName"
             element={
               <UserDashboardLayout>
                 <CompanyLeads />

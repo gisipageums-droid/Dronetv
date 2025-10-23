@@ -33,7 +33,11 @@ const AdminDashboard: React.FC = () => {
       icon: Users,
       color: "bg-purple-500",
     },
-    { label: "Events", value: 52, icon: Calendar, color: "bg-green-500" },
+    { label: "Events", 
+      value: 52, 
+      icon: Calendar, 
+      color: "bg-green-500" 
+    },
   ];
 
   const visitorData = [
