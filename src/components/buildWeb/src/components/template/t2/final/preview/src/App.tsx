@@ -130,6 +130,7 @@ export default function App() {
           />
           <Contact 
             contactData={finaleDataReview.content.contact}
+            publishedId={publishedId || ''}
           />
         </main>
         <Footer

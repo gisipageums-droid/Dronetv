@@ -54,14 +54,6 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       ...prev,
       services: prev.services.map((s, i) => (i === index ? { ...s, [field]: value } : s))
     }));
-    
-    // Update categories if needed
-    if (field === "category" && !servicesSection.categories.includes(value)) {
-      setServicesSection(prev => ({
-        ...prev,
-        categories: [...prev.categories, value]
-      }));
-    }
   };
 
   const updateServiceList = (
@@ -371,13 +363,13 @@ export default function Services({serviceData, onStateChange, userId, publishedI
   return (
     <>
       {/* Image Cropper Modal - Same as Hero */}
-     {showCropper && (
-  <motion.div
+    {showCropper && (
+  <motion.div 
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2 sm:p-3"
+    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
   >
-    <motion.div
+    <motion.div 
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
@@ -385,16 +377,15 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       {/* Header */}
       <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
         <h3 className="text-base font-semibold text-gray-800">Crop Image</h3>
-        <button
+        <button 
           onClick={cancelCrop}
           className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-          aria-label="Close cropper"
         >
           <X className="w-5 h-5 text-gray-600" />
         </button>
       </div>
 
-      {/* Cropper Area */}
+      {/* Cropper Area - Responsive Heights */}
       <div className="flex-1 relative bg-gray-900">
         <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
           <Cropper
@@ -409,8 +400,15 @@ export default function Services({serviceData, onStateChange, userId, publishedI
             showGrid={false}
             cropShape="rect"
             style={{
-              containerStyle: { position: "relative", width: "100%", height: "100%" },
-              cropAreaStyle: { border: "2px solid white", borderRadius: "8px" },
+              containerStyle: {
+                position: "relative",
+                width: "100%",
+                height: "100%",
+              },
+              cropAreaStyle: {
+                border: "2px solid white",
+                borderRadius: "8px",
+              },
             }}
           />
         </div>
@@ -418,7 +416,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
 
       {/* Controls */}
       <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-        {/* Zoom + Rotation Controls */}
+        {/* Zoom + Rotation in 2-column grid */}
         <div className="grid grid-cols-2 gap-2">
           {/* Zoom */}
           <div className="space-y-1.5">
@@ -435,9 +433,11 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               max={3}
               step={0.1}
               onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 
-              [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full 
+              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer
+              [&::-webkit-slider-thumb]:appearance-none
+              [&::-webkit-slider-thumb]:h-3.5
+              [&::-webkit-slider-thumb]:w-3.5
+              [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:bg-blue-500"
             />
           </div>
@@ -457,15 +457,17 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               max={360}
               step={1}
               onChange={(e) => setRotation(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 
-              [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full 
+              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer
+              [&::-webkit-slider-thumb]:appearance-none
+              [&::-webkit-slider-thumb]:h-3.5
+              [&::-webkit-slider-thumb]:w-3.5
+              [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:bg-blue-500"
             />
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons - Equal width, responsive */}
         <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
           <button
             onClick={resetCropSettings}
@@ -492,6 +494,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
     </motion.div>
   </motion.div>
 )}
+
 
       {/* Main Services Section */}
       <motion.section id="services" className="py-20 bg-background theme-transition">

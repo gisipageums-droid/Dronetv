@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUserAuth } from "../../../context/context";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface Lead {
   leadId: string;
@@ -10,6 +11,12 @@ interface Lead {
   email: string;
   phone: string;
   viewed: boolean;
+  firstName: string;
+  lastName: string;
+  message: string;
+  companyName: string;
+  submittedAt: string;
+  viewedAt?: string;
 }
 
 const LeadsPage: React.FC = () => {
@@ -20,9 +27,11 @@ const LeadsPage: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [totalTokens, setTotalTokens] = useState(0);
   const [showTokenModal, setShowTokenModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [loading, setLoading] = useState(true); // ✅ start as true
+  const [loading, setLoading] = useState(true);
   
 
   // ✅ Fetch user tokens
@@ -56,6 +65,12 @@ const LeadsPage: React.FC = () => {
           email: lead.email,
           phone: lead.phone,
           viewed: lead.viewed,
+          firstName: lead.firstName,
+          lastName: lead.lastName,
+          message: lead.message,
+          companyName: lead.companyName,
+          submittedAt: lead.submittedAt,
+          viewedAt: lead.viewedAt,
         }));
         setLeads(formattedLeads);
       }
@@ -100,6 +115,8 @@ const LeadsPage: React.FC = () => {
         );
         // Optional: update tokens count after viewing
         fetchUserTokens();
+        toast.success("Lead viewed successfully!");
+        fetchLeads(); // Refresh leads to get full details
       } else {
         console.error("Error:", data.message);
       }
@@ -108,7 +125,26 @@ const LeadsPage: React.FC = () => {
     }
   };
 
+  // ✅ Handle view message button click
+  const handleViewMessage = (lead: Lead) => {
+    setSelectedLead(lead);
+    setShowMessageModal(true);
+  };
+
   const closeTokenModal = () => setShowTokenModal(false);
+  const closeMessageModal = () => setShowMessageModal(false);
+
+  // ✅ Format date for display
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   // ✅ Filter leads
   const filteredLeads = leads.filter((lead) => {
@@ -188,7 +224,7 @@ const LeadsPage: React.FC = () => {
             <table className="min-w-full divide-y divide-amber-100">
               <thead className="bg-amber-500">
                 <tr>
-                  {["Company", "Email", "Phone", "Subject", "Action"].map(
+                  {["Company", "Name", "Email", "Phone", "Subject", "Action"].map(
                     (header) => (
                       <th
                         key={header}
@@ -220,6 +256,14 @@ const LeadsPage: React.FC = () => {
                           lead.viewed ? "" : "blur-sm select-none"
                         }`}
                       >
+                        {lead.firstName} {lead.lastName}
+                      </td>
+
+                      <td
+                        className={`px-6 py-4 text-sm text-amber-800 ${
+                          lead.viewed ? "" : "blur-sm select-none"
+                        }`}
+                      >
                         {lead.email}
                       </td>
 
@@ -237,9 +281,14 @@ const LeadsPage: React.FC = () => {
 
                       <td className="px-6 py-4 whitespace-nowrap">
                         {lead.viewed ? (
-                          <button className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm">
-                            Viewed
-                          </button>
+                          <>
+                            <button 
+                              onClick={() => handleViewMessage(lead)}
+                              className="px-4 py-2 mx-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm"
+                            >
+                              View Message
+                            </button>
+                          </>
                         ) : (
                           <button
                             onClick={() => handleViewClick(lead.leadId)}
@@ -254,7 +303,7 @@ const LeadsPage: React.FC = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan={5}
+                      colSpan={6}
                       className="px-6 py-10 text-center text-amber-700"
                     >
                       No leads found...
@@ -293,6 +342,103 @@ const LeadsPage: React.FC = () => {
               <button className="flex-1 py-2 bg-amber-500 text-white rounded-lg">
                 Buy Tokens
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Message Modal */}
+      {showMessageModal && selectedLead && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="bg-amber-500 px-6 py-4 rounded-t-2xl">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-bold text-white">
+                  Lead Details
+                </h3>
+                <button
+                  onClick={closeMessageModal}
+                  className="text-white hover:text-amber-200 transition-colors"
+                >
+                  <i className="fas fa-times text-xl"></i>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                  <h4 className="font-semibold text-amber-800 mb-2">Contact Information</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-amber-600">Name:</span>
+                      <span className="font-medium text-amber-800">
+                        {selectedLead.firstName} {selectedLead.lastName}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-amber-600">Email:</span>
+                      <span className="font-medium text-amber-800">{selectedLead.email}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-amber-600">Phone:</span>
+                      <span className="font-medium text-amber-800">{selectedLead.phone}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-amber-600">Company:</span>
+                      <span className="font-medium text-amber-800">{selectedLead.company}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                  <h4 className="font-semibold text-amber-800 mb-2">Lead Information</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-amber-600">Subject:</span>
+                      <span className="font-medium text-amber-800">{selectedLead.subject}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-amber-600">Category:</span>
+                      <span className="font-medium text-amber-800">{selectedLead.category}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-amber-600">Submitted:</span>
+                      <span className="font-medium text-amber-800">{formatDate(selectedLead.submittedAt)}</span>
+                    </div>
+                    {selectedLead.viewedAt && (
+                      <div className="flex justify-between">
+                        <span className="text-amber-600">Viewed:</span>
+                        <span className="font-medium text-amber-800">{formatDate(selectedLead.viewedAt)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Message Section */}
+              <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                <h4 className="font-semibold text-amber-800 mb-3">Message</h4>
+                <div className="bg-white rounded-lg p-4 border border-amber-100 min-h-[120px]">
+                  <p className="text-amber-800 leading-relaxed whitespace-pre-wrap">
+                    {selectedLead.message || "No message provided."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-3 mt-6 pt-4 border-t border-amber-200">
+                <button
+                  onClick={closeMessageModal}
+                  className="px-6 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg font-medium transition-colors"
+                >
+                  Close
+                </button>
+               
+              </div>
             </div>
           </div>
         </div>

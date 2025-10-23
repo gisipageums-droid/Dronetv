@@ -396,7 +396,7 @@ import { Label } from "./ui/label";
 import { motion } from "motion/react";
 import { toast } from "react-toastify";
 
-export default function Contact({ contactData }) {
+export default function Contact({ contactData, publishedId }) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -411,7 +411,7 @@ export default function Contact({ contactData }) {
   const [loading, setLoading] = useState(false);
 
   // 🔹 constant publishedId (required by API)
-  const publishedId = "pub-nh7sa9cbqvq";
+  // const publishedId = "pub-nh7sa9cbqvq";
 
   const subjectOptions = [
     "General Inquiry",

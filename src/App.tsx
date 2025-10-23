@@ -214,17 +214,21 @@ const AppContent = () => {
           <Route
             path="/user-companies"
             element={
-              <UserDashboardLayout>
-                <UserCompany />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <UserCompany />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/user-dashboard"
             element={
+              <ProtectedRoute>
               <UserDashboardLayout>
                 <UserDashboard />
               </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route

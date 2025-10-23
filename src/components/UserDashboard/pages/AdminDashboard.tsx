@@ -325,7 +325,7 @@ const userDetails = user?.userData;
               <thead>
                 <tr className="border-b border-slate-600">
                   <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                    Company
+                    Name
                   </th>
                   <th className="text-left py-3 px-4 text-slate-300 font-semibold">
                     Category
@@ -347,7 +347,7 @@ const userDetails = user?.userData;
                     key={lead.leadId}
                     className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
                   >
-                    <td className="py-3 px-4 text-white">{lead.companyName}</td>
+                    <td className="py-3 px-4 text-white">{lead.firstName} {lead.lastName}</td>
                     <td className="py-3 px-4 text-slate-300">{lead.category}</td>
                     <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
                     <td className="py-3 px-4">

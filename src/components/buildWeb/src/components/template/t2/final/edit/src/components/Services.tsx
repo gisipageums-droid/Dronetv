@@ -54,14 +54,6 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       ...prev,
       services: prev.services.map((s, i) => (i === index ? { ...s, [field]: value } : s))
     }));
-    
-    // Update categories if needed
-    if (field === "category" && !servicesSection.categories.includes(value)) {
-      setServicesSection(prev => ({
-        ...prev,
-        categories: [...prev.categories, value]
-      }));
-    }
   };
 
   const updateServiceList = (
