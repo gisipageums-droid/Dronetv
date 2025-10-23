@@ -156,7 +156,7 @@ export default function Header({headerData}) {
           <motion.div className="lg:hidden flex-shrink-0">
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-primary transition-colors p-2"
+              className={`transition-colors p-2 ${theme === "dark" ? "text-gray-300 hover:text-gray-200" : "text-gray-700 hover:text-primary"}`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               animate={{ rotate: isMenuOpen ? 180 : 0 }}

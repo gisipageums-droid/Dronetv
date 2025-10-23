@@ -39,6 +39,26 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
     { id: 9, label: "Clients", href: "#clients", color: "primary" },
   ];
 
+  // Smooth scroll function
+  const scrollToSection = (href: string) => {
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  // Handle navigation click
+  const handleNavClick = (href: string) => {
+    setIsMenuOpen(false); // Close mobile menu
+    setTimeout(() => {
+      scrollToSection(href);
+    }, 100); // Small delay to ensure menu is closed before scrolling
+  };
+
   // In each component, add:
   useEffect(() => {
     if (onStateChange) {
@@ -442,7 +462,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                   className="bg-transparent border-b border-primary text-xl font-bold outline-none max-w-[140px] truncate"
                 />
               ) : (
-                <motion.span className="text-xl font-bold text-black truncate">
+                <motion.span className="text-xl font-bold  truncate">
                   {content.companyName}
                 </motion.span>
               )}
@@ -461,6 +481,10 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                         : "text-gray-700 hover:text-primary"
                     }`}
                     whileHover={{ y: -2 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(item.href);
+                    }}
                   >
                     {item.label}
                     <motion.span
@@ -482,10 +506,11 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                   className="bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] truncate"
                 />
               ) : (
-                <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap">
-                  <a href="#contact">
-                    {content.ctaText}
-                  </a>
+                <Button 
+                  className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap"
+                  onClick={() => handleNavClick("#contact")}
+                >
+                  {content.ctaText}
                 </Button>
               )}
 
@@ -522,7 +547,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
             <motion.div className="lg:hidden flex-shrink-0">
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-gray-700 hover:text-primary transition-colors p-2"
+                className={`hover:text-primary transition-colors p-2 ${theme === "dark" ? "text-gray-300 hover:text-gray-200" : "text-gray-700 hover:text-primary"}`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 animate={{ rotate: isMenuOpen ? 180 : 0 }}
@@ -539,7 +564,9 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
-                className="lg:hidden border-t border-gray-200 overflow-hidden"
+                className={`lg:hidden border-t border-gray-200 overflow-hidden ${
+                  theme === "dark" ? "bg-gray-800 text-white" : "bg-white"
+                }`}
                 variants={menuVariants}
                 initial="closed"
                 animate="open"
@@ -550,15 +577,21 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                     <motion.a
                       key={item.id}
                       href={item.href}
-                      className={`text-gray-700 hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10`}
+                      className={`hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10 cursor-pointer`}
                       variants={itemVariants}
                       whileHover={{ x: 10, scale: 1.02 }}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleNavClick(item.href);
+                      }}
                     >
                       {item.label}
                     </motion.a>
                   ))}
-                  <Button className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg">
+                  <Button 
+                    className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
+                    onClick={() => handleNavClick("#contact")}
+                  >
                     {content.ctaText}
                   </Button>
                 </motion.nav>
