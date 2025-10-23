@@ -179,6 +179,9 @@ export default function App() {
           <Testimonials 
             testimonialsData={finaleDataReview.content.testimonials}
             onStateChange={testimonialsStateChange}
+            userId={finaleDataReview.userId}
+            publishedId={finaleDataReview.publishedId}
+            templateSelection={finaleDataReview.templateSelection}
           />
           <Clients 
             clientData={finaleDataReview.content.clients}

@@ -131,6 +131,9 @@ export default function App() {
               (state) => collectComponentState("testimonials", state),
               [collectComponentState]
             )}
+            publishedId={AIGenData.publishedId}
+            userId={AIGenData.userId}
+            templateSelection={AIGenData.templateSelection}
           />
           <Clients
             clientData={AIGenData.content.clients}
