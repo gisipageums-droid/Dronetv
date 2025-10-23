@@ -15,6 +15,7 @@ import {
 import { useTemplate } from "../../../../../../../context/context";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import { useUserAuth } from "../../../../../../../context/context";
 
 // ✅ Updated File Upload API URL (your actual endpoint)
 const FILE_UPLOAD_API_URL = "https://1i8zpm4qu4.execute-api.ap-south-1.amazonaws.com/prod/upload-file";
@@ -112,10 +113,24 @@ const Step8MediaUploads: React.FC<StepProps> = ({
   }>({});
   const [uploadedFiles, setUploadedFiles] = useState<{[key: string]: any}>({});
   const { setDraftDetails } = useTemplate();
-
+  
+  // ✅ Move useUserAuth to component level (FIXED: was inside handleSubmit)
+  const { user, isLogin, accountEmail } = useUserAuth();
+  
+  const location = useLocation();
+  
+  // Extract URL parts
+  const pathParts = location.pathname.split("/").filter(Boolean);
+  // Example pathParts for /form/publicId/userId/draftId => ['form', 'publicId', 'userId', 'draftId']
+  const isDraftLink = pathParts.length === 4; 
+  const publicId = isDraftLink ? pathParts[1] : null;
+  const userIdFromUrl = isDraftLink ? pathParts[2] : null;
+  const draftId = isDraftLink ? pathParts[3] : null;
+  const useremail = user?.userData?.email;
+  
   // ✅ Handle individual file upload (immediate upload on file selection)
   const handleFileUpload = async (file: File, fieldName: string) => {
-    const userId = formData.directorEmail || formData.contactEmail || 'temp-user';
+    const userId = isLogin ? useremail : accountEmail || formData.directorEmail || 'temp-user';
     
     setFileProcessingStatus(prev => ({
       ...prev,
@@ -155,16 +170,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     }
   };
 
-  const location = useLocation();
-
-  // Extract URL parts
-  const pathParts = location.pathname.split("/").filter(Boolean);
-  // Example pathParts for /form/publicId/userId/draftId => ['form', 'publicId', 'userId', 'draftId']
-  const isDraftLink = pathParts.length === 4; 
-  const publicId = isDraftLink ? pathParts[1] : null;
-  const userIdFromUrl = isDraftLink ? pathParts[2] : null;
-  const draftId = isDraftLink ? pathParts[3] : null;
-
   // ✅ Enhanced Form Submit Handler
   const handleSubmit = async () => {
     setIsUploading(true);
@@ -187,9 +192,12 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       setUploadStatus("Submitting form data...");
       setUploadProgress(50);
 
+      // ✅ Use user and isLogin from component level (FIXED)
+
       // ✅ Updated payload structure
       const payload = {
-        userId: formData.directorEmail,
+        userId: isLogin ? useremail : accountEmail || formData.directorEmail,
+        directorEmail: formData.directorEmail,
         templateSelection: formData?.templateSelection || formData?.selectedTemplate?.value || "",
         templateDetails: {
           id: formData?.selectedTemplate?.id || null,
@@ -241,15 +249,16 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       console.log("✅ Form submitted successfully:", response.data);
       
       // setDraftDetails(response.data);
-       setDraftDetails({
-  userId: userIdFromUrl || formData.directorEmail || payload.userId,
-  draftId: draftId || response.data?.draftId,
-  templateSelection:
-    formData?.templateSelection ||
-    formData?.selectedTemplate?.value ||
-    response.data?.templateSelection,
-  ...(response.data || {}),
-});
+      setDraftDetails({
+        userId: isLogin ? useremail : accountEmail || formData.directorEmail,
+        directorEmail: formData.directorEmail,
+        draftId: draftId || response.data?.draftId,
+        templateSelection:
+          formData?.templateSelection ||
+          formData?.selectedTemplate?.value ||
+          response.data?.templateSelection,
+        ...(response.data || {}),
+      });
       setUploadStatus("Form submitted successfully!");
       setUploadProgress(100);
 

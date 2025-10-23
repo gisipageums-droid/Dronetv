@@ -114,7 +114,7 @@ export default function Testimonials() {
         </div>
 
         {/* Stats Section */}
-        {testimonialsData.stats.length > 0 && (
+        {/* {testimonialsData.stats.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
             {testimonialsData.stats.map((stat, index) => (
               <div
@@ -128,7 +128,7 @@ export default function Testimonials() {
               </div>
             ))}
           </div>
-        )}
+        )} */}
 
         {/* Testimonials Carousel */}
         <div className="relative overflow-hidden">

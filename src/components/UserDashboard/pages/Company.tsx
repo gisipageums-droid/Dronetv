@@ -387,7 +387,7 @@ const CompanyPage: React.FC = () => {
 
       // Navigate to edit page
       if (details.templateSelection === "template-1") {
-        navigate(`/user/companies/edit/1/${user.userData.email}`);
+        navigate(`/user/companies/edit/1/${publishedId}/${user.userData.email}`);
       } else if (details.templateSelection === "template-2") {
         navigate(`/user/companies/edit/2/${publishedId}/${user.userData.email}`);
       }

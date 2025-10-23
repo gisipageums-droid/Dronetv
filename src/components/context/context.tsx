@@ -21,6 +21,8 @@ interface UserAuthContextType {
   isLogin: boolean;
   login: (userData: User) => void;
   logout: () => void;
+  accountEmail: string | undefined;
+  setAccountEmail: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const UserAuthContext = createContext<UserAuthContextType | undefined>(
@@ -38,7 +40,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-
+  const [accountEmail, setAccountEmail] = useState<string>();
   const isLogin = !!user;
 
   const login = (userData: User) => {
@@ -56,7 +58,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
   };
 
   return (
-    <UserAuthContext.Provider value={{ user, isLogin, login, logout }}>
+    <UserAuthContext.Provider value={{ user, isLogin, login, logout, accountEmail, setAccountEmail }}>
       {children}
     </UserAuthContext.Provider>
   );
@@ -569,7 +571,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your site is successfully published and now it is under review"
       );
-      navigate("/user/companies");
+      navigate("/user-dashboard");
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -606,7 +608,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your site is successfully published and now it is under review"
       );
-      navigate("/user/companies");
+      navigate("/user-dashboard");
       setFinaleDataReview({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -664,7 +666,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your template is successfully published and now it is under review"
       );
-      navigate("/user/professional");
+      navigate("/user-dashboard");
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);

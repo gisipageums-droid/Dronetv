@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Users, Briefcase, Calendar } from "lucide-react";
+import {useUserAuth} from "../../context/context"
 import {
   PieChart,
   Pie,
@@ -16,10 +17,40 @@ import {
   Line,
 } from "recharts";
 
+interface Lead {
+  leadId: string;
+  companyName: string;
+  publishedId: string;
+  company: string;
+  category: string;
+  subject: string;
+  submittedAt: string;
+  viewed: boolean;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  mode: string;
+  leads: Lead[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  hasMore: boolean;
+  offset: number;
+  limit: number;
+}
+
 const AdminDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data
+  // Mock data (keeping other static data as is for now)
   const stats = [
     {
       label: "Total Companies",
@@ -33,7 +64,8 @@ const AdminDashboard: React.FC = () => {
       icon: Users,
       color: "bg-purple-500",
     },
-    { label: "Events", 
+    { 
+      label: "Events", 
       value: 52, 
       icon: Calendar, 
       color: "bg-green-500" 
@@ -56,61 +88,62 @@ const AdminDashboard: React.FC = () => {
     { name: "Jun", leads: 67, visits: 350 },
   ];
 
-  const recentLeads = [
-    {
-      id: 1,
-      name: "John Doe",
-      company: "Tech Corp",
-      status: "Active",
-      date: "2025-10-21",
-    },
-    {
-      id: 2,
-      name: "Sarah Smith",
-      company: "Digital Solutions",
-      status: "Pending",
-      date: "2025-10-20",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      company: "Innovation Labs",
-      status: "Active",
-      date: "2025-10-19",
-    },
-    {
-      id: 4,
-      name: "Emily Brown",
-      company: "Future Tech",
-      status: "Completed",
-      date: "2025-10-18",
-    },
-    {
-      id: 5,
-      name: "Alex Wilson",
-      company: "Cloud Systems",
-      status: "Active",
-      date: "2025-10-17",
-    },
-  ];
-
   const COLORS = ["#3b82f6", "#a855f7", "#10b981", "#f59e0b"];
+  
+const {user} = useUserAuth();
+const userDetails = user?.userData;
+  // Fetch leads from API
+  useEffect(() => {
+    const fetchRecentCompaniesLeads = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
+        );
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data: ApiResponse = await response.json();
+        
+        if (data.success) {
+          setRecentLeads(data.leads);
+        } else {
+          throw new Error("Failed to fetch leads");
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        console.error("Error fetching leads:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Active":
-        return "bg-green-100 text-green-800";
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "Completed":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+    fetchRecentCompaniesLeads();
+  }, []);
+
+  const getStatusColor = (viewed: boolean) => {
+    return viewed 
+      ? "bg-green-100 text-green-800" 
+      : "bg-yellow-100 text-yellow-800";
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const getStatusText = (viewed: boolean) => {
+    return viewed ? "Viewed" : "Unviewed";
   };
 
   return (
-    <div className="min-h-screen bg-amber-50  p-8">
+    <div className="min-h-screen bg-amber-50 p-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
@@ -270,48 +303,77 @@ const AdminDashboard: React.FC = () => {
 
       {/* Recent Leads List */}
       <div className="bg-slate-700 rounded-lg p-6 shadow-lg">
-        <h2 className="text-xl font-bold text-white mb-4">Recent Leads</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-600">
-                <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                  Name
-                </th>
-                <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                  Company
-                </th>
-                <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                  Status
-                </th>
-                <th className="text-left py-3 px-4 text-slate-300 font-semibold">
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentLeads.map((lead) => (
-                <tr
-                  key={lead.id}
-                  className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
-                >
-                  <td className="py-3 px-4 text-white">{lead.name}</td>
-                  <td className="py-3 px-4 text-slate-300">{lead.company}</td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                        lead.status
-                      )}`}
-                    >
-                      {lead.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-slate-400">{lead.date}</td>
+        <h2 className="text-xl font-bold text-white mb-4">
+          Recent Companies Leads ({recentLeads.length})
+        </h2>
+        
+        {loading && (
+          <div className="text-center py-4">
+            <p className="text-slate-300">Loading leads...</p>
+          </div>
+        )}
+        
+        {error && (
+          <div className="text-center py-4">
+            <p className="text-red-400">Error: {error}</p>
+          </div>
+        )}
+        
+        {!loading && !error && (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-600">
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Company
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Category
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Subject
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Date
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {recentLeads.map((lead) => (
+                  <tr
+                    key={lead.leadId}
+                    className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
+                  >
+                    <td className="py-3 px-4 text-white">{lead.companyName}</td>
+                    <td className="py-3 px-4 text-slate-300">{lead.category}</td>
+                    <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          lead.viewed
+                        )}`}
+                      >
+                        {getStatusText(lead.viewed)}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-400">
+                      {formatDate(lead.submittedAt)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        
+        {!loading && !error && recentLeads.length === 0 && (
+          <div className="text-center py-4">
+            <p className="text-slate-300">No leads found</p>
+          </div>
+        )}
       </div>
     </div>
   );

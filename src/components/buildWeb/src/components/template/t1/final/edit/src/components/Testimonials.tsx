@@ -621,7 +621,7 @@ export default function EditableTestimonials({
         </div>
 
         {/* Stats Section */}
-        {tempData.stats.length > 0 && (
+        {/* {tempData.stats.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
             {tempData.stats.map((stat, index) => (
               <div
@@ -654,7 +654,7 @@ export default function EditableTestimonials({
               </button>
             )}
           </div>
-        )}
+        )} */}
 
         <div className="relative overflow-hidden">
           <div

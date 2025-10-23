@@ -23,14 +23,14 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(onComplete, 1500);
+          setTimeout(onComplete, 500);
           return 100;
         }
-        // Slower progress: 100% over 180 seconds = ~0.56% per second
-        // With 500ms interval, that's ~0.28% per interval
-        return prev + 0.28;
+        // Faster progress: 100% over 90 seconds = ~1.11% per second
+        // With 300ms interval, that's ~0.333% per interval
+        return prev + 0.333;
       });
-    }, 300); // Keep 300ms interval for smooth progress
+    }, 300);
 
     const stepInterval = setInterval(() => {
       setCurrentStep((prev) => {
@@ -40,7 +40,7 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
         }
         return prev + 1;
       });
-    }, 20000); // 20 seconds per step (6 steps × 20s = 120s total)
+    }, 15000); // 15 seconds per step (6 steps × 15s = 90s total)
 
     return () => {
       clearInterval(interval);
@@ -78,7 +78,7 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
           </div>
           <div className="w-full bg-slate-700 rounded-full h-3">
             <div
-              className="bg-blue-500  h-3 rounded-full transition-all duration-300 ease-out"
+              className="bg-blue-500 h-3 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -150,10 +150,10 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-slate-400 text-sm">
-            This usually takes about 3 minutes
+            This usually takes about 90 seconds
           </p>
         </div>
       </div>
     </div>
   );
-};  
+};
