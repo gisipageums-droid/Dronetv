@@ -141,6 +141,7 @@ export default function FinalProTemp2() {
         </section>
         <Contact 
           contactData={finaleDataReview[0].content.contactContent}
+          professionalId={professionalId}
         />
       </main>
       <Footer

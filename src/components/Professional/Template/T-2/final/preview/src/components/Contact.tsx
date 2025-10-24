@@ -2,7 +2,8 @@ import { Globe, Loader2, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { AnimatedButton } from './AnimatedButton';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 interface ContactInfo {
   icon: string;
@@ -52,6 +53,7 @@ interface ContactData {
 
 interface ContactProps {
   contactData: ContactData;
+  professionalId:string;
 }
 
 // Icon mapping
@@ -59,7 +61,7 @@ const iconMap: { [key: string]: React.ComponentType<any> } = {
   Mail, Phone, MapPin, Globe, Send, Github: Mail, Linkedin: Phone, Twitter: MapPin, Instagram: Globe
 };
 
-export function Contact({ contactData }: ContactProps) {
+export function Contact({ contactData ,professionalId}: ContactProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
 
@@ -82,13 +84,17 @@ export function Contact({ contactData }: ContactProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
-      // Simulate API call to the submit endpoint
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      console.log('Form submitted:', formData);
-      toast.success(contactData.form.successMessage);
+      // Send form data as JSON body using POST
+      const res = await axios.post(
+        'https://l7p8i65gl5.execute-api.ap-south-1.amazonaws.com/prod/',
+        { professionalId, ...formData },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      if (res.status === 200) {
+        toast.success("Message sent successfully!");
+      }
       
       // Reset form
       const resetFormData: Record<string, string> = {};

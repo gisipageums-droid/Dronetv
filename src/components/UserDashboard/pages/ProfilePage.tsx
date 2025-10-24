@@ -65,7 +65,7 @@ const ProfilePage: React.FC = () => {
   async function getRecentToken() {
     try {
       // const response = await fetch(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/transactions/recent?userId=ayushchouhan417@gmail.com&publishedId=all&limit=5`);
-      const response = await fetch(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/transactions/recent?userId=${stored?.email}&publishedId=all&limit=10`);
+      const response = await fetch(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5`);
       if (response.ok) {
         const data = await response.json();
         setRecentToken(data);
