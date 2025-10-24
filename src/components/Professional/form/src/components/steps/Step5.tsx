@@ -6,6 +6,13 @@ export const Step5 = ({ step }: { step: any }) => {
   const { data } = useForm();
   const email = data.basicInfo?.email || "unknown@example.com";
 
+
+// export const Step5 = ({ step, templateSelection }: { step: any; templateSelection: number | string }) => {
+//   const { data } = useForm();
+//   const email = data.basicInfo?.email || "unknown@example.com";
+
+
+
   // const userId = email; 
 
 

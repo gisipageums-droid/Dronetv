@@ -2,7 +2,7 @@ import { useForm } from "../../context/FormContext";
 
 export const Summary = () => {
   const { data } = useForm();
-
+console.log("summary payload data", data)
   return (
     <div className="space-y-10">
       {/* Title */}
