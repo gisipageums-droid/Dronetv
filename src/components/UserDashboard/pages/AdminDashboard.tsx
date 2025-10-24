@@ -30,6 +30,7 @@ interface Lead {
   lastName: string;
   email: string;
   phone: string;
+  message?: string;
 }
 
 interface ApiResponse {
@@ -47,8 +48,11 @@ interface ApiResponse {
 const AdminDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
+  const [recentProfessional, setRecentProfessional] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [professionalLoading, setProfessionalLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [professionalError, setProfessionalError] = useState<string | null>(null);
 
   // Mock data (keeping other static data as is for now)
   const stats = [
@@ -90,37 +94,66 @@ const AdminDashboard: React.FC = () => {
 
   const COLORS = ["#3b82f6", "#a855f7", "#10b981", "#f59e0b"];
   
-const {user} = useUserAuth();
-const userDetails = user?.userData;
-  // Fetch leads from API
-  useEffect(() => {
-    const fetchRecentCompaniesLeads = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
-        );
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data: ApiResponse = await response.json();
-        
-        if (data.success) {
-          setRecentLeads(data.leads);
-        } else {
-          throw new Error("Failed to fetch leads");
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-        console.error("Error fetching leads:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {user} = useUserAuth();
+  const userDetails = user?.userData;
 
+  // Fetch leads from API
+  const fetchRecentCompaniesLeads = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data: ApiResponse = await response.json();
+      
+      if (data.success) {
+        setRecentLeads(data.leads);
+      } else {
+        throw new Error("Failed to fetch leads");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      console.error("Error fetching leads:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //api for professional recent leads unviewed :        
+  const fetchRecentProfessionalLeads = async () => {
+    try {
+      setProfessionalLoading(true);
+      const response = await fetch(
+        `https://r5mcwn6b10.execute-api.ap-south-1.amazonaws.com/prod/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data: ApiResponse = await response.json();
+      
+      if (data.success) {
+        setRecentProfessional(data.leads);
+      } else {
+        throw new Error("Failed to fetch leads");
+      }
+    } catch (err) {
+      setProfessionalError(err instanceof Error ? err.message : "An error occurred");
+      console.error("Error fetching leads:", err);
+    } finally {
+      setProfessionalLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchRecentCompaniesLeads();
+    fetchRecentProfessionalLeads();
   }, []);
 
   const getStatusColor = (viewed: boolean) => {
@@ -141,6 +174,7 @@ const userDetails = user?.userData;
   const getStatusText = (viewed: boolean) => {
     return viewed ? "Viewed" : "Unviewed";
   };
+
 
   return (
     <div className="min-h-screen bg-amber-50 p-8">
@@ -301,8 +335,8 @@ const userDetails = user?.userData;
         </ResponsiveContainer>
       </div>
 
-      {/* Recent Leads List */}
-      <div className="bg-slate-700 rounded-lg p-6 shadow-lg">
+      {/* Recent Companies Leads List */}
+      <div className="bg-slate-700 rounded-lg p-6 shadow-lg mb-8">
         <h2 className="text-xl font-bold text-white mb-4">
           Recent Companies Leads ({recentLeads.length})
         </h2>
@@ -372,6 +406,81 @@ const userDetails = user?.userData;
         {!loading && !error && recentLeads.length === 0 && (
           <div className="text-center py-4">
             <p className="text-slate-300">No leads found</p>
+          </div>
+        )}
+      </div>
+
+      {/* Recent Professional Leads List - NEW TABLE */}
+      <div className="bg-slate-700 rounded-lg p-6 shadow-lg">
+        <h2 className="text-xl font-bold text-white mb-4">
+          Recent Professional Leads ({recentProfessional.length})
+        </h2>
+        
+        {professionalLoading && (
+          <div className="text-center py-4">
+            <p className="text-slate-300">Loading professional leads...</p>
+          </div>
+        )}
+        
+        {professionalError && (
+          <div className="text-center py-4">
+            <p className="text-red-400">Error: {professionalError}</p>
+          </div>
+        )}
+        
+        {!professionalLoading && !professionalError && (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-600">
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Name
+                  </th>
+                   <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Phone
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Subject
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentProfessional.map((lead) => (
+                  <tr
+                    key={lead.leadId}
+                    className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
+                  >
+                    <td className="py-3 px-4 text-white">{lead.firstName} </td>
+                    <td className="py-3 px-4 text-white">{lead.phone}</td>
+                    <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          lead.viewed
+                        )}`}
+                      >
+                        {getStatusText(lead.viewed)}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-400">
+                      {formatDate(lead.submittedAt)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        
+        {!professionalLoading && !professionalError && recentProfessional.length === 0 && (
+          <div className="text-center py-4">
+            <p className="text-slate-300">No professional leads found</p>
           </div>
         )}
       </div>

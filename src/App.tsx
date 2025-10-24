@@ -85,6 +85,7 @@ import Event from "./components/UserDashboard/pages/Event";
 import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
 import CompanyLeads from "./components/UserDashboard/components/common/CompanyLeads";
 import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
+import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
 
 const HomePage = () => (
   <>
@@ -244,6 +245,14 @@ const AppContent = () => {
             element={
               <UserDashboardLayout>
                 <CompanyLeads />
+              </UserDashboardLayout>
+            }
+          />
+           <Route
+            path="/user-professional/leads/:ProfessionalName/:professionalId"
+            element={
+              <UserDashboardLayout>
+                <ProfessionalLeads />
               </UserDashboardLayout>
             }
           />

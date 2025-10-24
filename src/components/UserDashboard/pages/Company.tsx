@@ -116,7 +116,8 @@ interface PublishedDetailsResponse {
 
 // =================== Company card ==============================
 const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
-  const placeholderImg = company?.companyName?.charAt(0) || "C";
+  const placeholderImg =
+    company.previewImage || company?.companyName?.charAt(0) || "C";
   const navigate = useNavigate();
 
   const formatDate = (dateString: string): string => {
@@ -176,7 +177,15 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
             {/* Company Image */}
             <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110">
               <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-600">
-                {placeholderImg}
+                {company.previewImage ? (
+                  <img
+                    src={placeholderImg}
+                    alt={company.companyName}
+                    className="w-full h-full object-contain rounded-md"
+                  />
+                ) : (
+                  placeholderImg
+                )}
               </div>
             </div>
 
@@ -330,6 +339,7 @@ const CompanyPage: React.FC = () => {
             : ["General"],
           publishedDate: c.publishedDate || new Date().toISOString(),
           reviewStatus: c.reviewStatus || "active",
+          previewImage: c.previewImage || "",
         }))
       );
     } catch (err) {
