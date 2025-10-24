@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useUserAuth } from "../../../context/context";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface Lead {
@@ -32,8 +32,8 @@ const LeadsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
-  
-
+  const location = useLocation();
+  const publishedId = location.state?.publishedId;
   // ✅ Fetch user tokens
   const fetchUserTokens = async () => {
     if (!userId) return;
@@ -53,7 +53,7 @@ const LeadsPage: React.FC = () => {
     if (!userId) return;
     try {
       const res = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all`
+        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userId}&publishedId=${publishedId}&mode=all&limit=20&offset=0&filter=all`
       );
       const data = await res.json();
       if (data.success && Array.isArray(data.leads)) {
