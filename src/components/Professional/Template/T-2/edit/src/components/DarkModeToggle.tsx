@@ -16,6 +16,17 @@ export function DarkModeToggle({ onToggle }: DarkModeToggleProps) {
 
     setIsDark(shouldBeDark);
     onToggle(shouldBeDark);
+
+    // Apply theme to document
+    if (shouldBeDark) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.setProperty('--background-color', '#000000');
+      document.documentElement.style.setProperty('--text-color', '#ffffff');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.style.setProperty('--background-color', '#ffffff');
+      document.documentElement.style.setProperty('--text-color', '#000000');
+    }
   }, []); // Remove onToggle from dependencies - run only once on mount
 
   const toggleDarkMode = () => {
@@ -23,6 +34,17 @@ export function DarkModeToggle({ onToggle }: DarkModeToggleProps) {
     setIsDark(newIsDark);
     localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
     onToggle(newIsDark);
+
+    // Apply theme to document
+    if (newIsDark) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.setProperty('--background-color', '#000000');
+      document.documentElement.style.setProperty('--text-color', '#ffffff');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.style.setProperty('--background-color', '#ffffff');
+      document.documentElement.style.setProperty('--text-color', '#000000');
+    }
   };
 
   return (
@@ -47,14 +69,12 @@ export function DarkModeToggle({ onToggle }: DarkModeToggleProps) {
       {/* Background icons */}
       <div className="absolute inset-0 flex items-center justify-between px-1.5 pointer-events-none">
         <Sun
-          className={`w-3 h-3 transition-opacity duration-300 text-yellow-500 ${
-            isDark ? 'opacity-30' : 'opacity-60'
-          }`}
+          className={`w-3 h-3 transition-opacity duration-300 text-yellow-500 ${isDark ? 'opacity-30' : 'opacity-60'
+            }`}
         />
         <Moon
-          className={`w-3 h-3 transition-opacity duration-300 text-foreground ${
-            isDark ? 'opacity-60' : 'opacity-30'
-          }`}
+          className={`w-3 h-3 transition-opacity duration-300 text-foreground ${isDark ? 'opacity-60' : 'opacity-30'
+            }`}
         />
       </div>
     </motion.button>
