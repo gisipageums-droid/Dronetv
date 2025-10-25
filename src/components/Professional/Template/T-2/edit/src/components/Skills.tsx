@@ -36,9 +36,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant || 'default']} ${
-        sizes[size || 'default']
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant || 'default']} ${sizes[size || 'default']
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -89,7 +88,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   const [pendingIconFiles, setPendingIconFiles] = useState<Record<string, File>>({});
 
   // Initialize with skillsData or empty structure
-  const [data, setData] = useState<SkillsData>(() => 
+  const [data, setData] = useState<SkillsData>(() =>
     skillsData || {
       skills: [],
       header: {
@@ -98,8 +97,8 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
       }
     }
   );
-  
-  const [tempData, setTempData] = useState<SkillsData>(() => 
+
+  const [tempData, setTempData] = useState<SkillsData>(() =>
     skillsData || {
       skills: [],
       header: {
@@ -129,7 +128,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
         />
       );
     }
-    
+
     // Priority 2: icon (can be either component or string)
     if (skill.icon) {
       // If icon is a string (from backend), get the component
@@ -141,7 +140,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
       const IconComponent = skill.icon;
       return <IconComponent className="w-8 h-8 text-gray-900" />;
     }
-    
+
     // Priority 3: fallback icon
     return <Zap className="w-8 h-8 text-gray-900" />;
   };
@@ -211,7 +210,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   const handleSave = async () => {
     try {
       setIsUploading(true);
-      
+
       // Create a copy of tempData to update with S3 URLs
       let updatedData = { ...tempData };
 
@@ -235,7 +234,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
           // Update the skill icon with the S3 URL
-          updatedData.skills = updatedData.skills.map(skill => 
+          updatedData.skills = updatedData.skills.map(skill =>
             skill.id === skillId ? { ...skill, iconUrl: uploadData.s3Url, icon: undefined } : skill
           );
           console.log('Skill icon uploaded to S3:', uploadData.s3Url);
@@ -252,11 +251,11 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
       // Save the updated data with S3 URLs
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
-      
+
       // Update both states with the new URLs
       setData(updatedData);
       setTempData(updatedData);
-      
+
       setIsEditing(false);
       toast.success('Skills section saved with S3 URLs ready for publish');
 
@@ -337,7 +336,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
       toast.error("You must have at least one skill");
       return;
     }
-    
+
     const updatedSkills = tempData.skills.filter((_, i) => i !== index);
     setTempData({ ...tempData, skills: updatedSkills });
   }, [tempData]);
@@ -347,7 +346,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   // Loading state - only show if we're actually loading and have no data
   if ((isLoading && !dataLoaded) || (!dataLoaded && displayData.skills.length === 0)) {
     return (
-      <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+      <section ref={skillsRef} id="skills" className="py-5 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
           <p className="text-muted-foreground mt-4">Loading skills data...</p>
@@ -357,7 +356,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   }
 
   return (
-    <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section ref={skillsRef} id="skills" className="py-5 bg-yellow-50 dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -488,13 +487,13 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
                     />
                   </Button>
                 )}
-                
+
                 {pendingIconFiles[skill.id] && (
                   <p className='absolute -bottom-6 text-xs text-orange-600 bg-white p-1 rounded'>
                     Icon selected
                   </p>
                 )}
-                
+
                 {/* Use the new render function */}
                 {renderSkillIcon(skill)}
               </motion.div>
