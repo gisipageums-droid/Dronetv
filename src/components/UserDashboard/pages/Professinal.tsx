@@ -146,7 +146,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
                   <img
                     src={placeholderImg}
                     alt={professional.fullName}
-                    className="w-full h-full object-contain rounded-md"
+                    className="w-full h-full object-cover rounded-md"
                   />
                 ) : (
                   placeholderImg

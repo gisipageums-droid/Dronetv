@@ -4,21 +4,25 @@ import { Award, Calendar, MapPin, Users, Edit, Save, X } from "lucide-react";
 import { toast } from "sonner";
 
 export interface AboutContent {
-  subtitle: string;
   heading: string;
+  subtitle: string;
   description1: string;
   description2: string;
   description3: string;
   imageSrc: string;
   skills: string[];
-  stats: {
-    yearsExperience: string;
-    skillsCount: string;
-    projectsCompleted: string;
-    happyClients: string;
-  };
+  // stats
+  projectsCompleted: string;
+  countriesServed: string;
+  yearsExperience: string;
+  happyClients: string;
+  // stats: {
+  //   yearsExperience: string;
+  //   projectsCompleted: string;
+  //   happyClients: string;
+  //   skillsCount: string;
+  // };
 }
-
 interface AboutProps {
   content: AboutContent;
   onSave?: (updated: AboutContent) => void;
@@ -47,26 +51,26 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     {
       icon: Calendar,
       label: "Years Experience",
-      value: aboutContent.stats.yearsExperience,
+      value: aboutContent.yearsExperience,
       key: "yearsExperience" as const,
     },
     {
       icon: Award,
       label: "Projects Completed",
-      value: aboutContent.stats.projectsCompleted,
+      value: aboutContent.projectsCompleted,
       key: "projectsCompleted" as const,
     },
     {
       icon: Users,
       label: "Happy Clients",
-      value: aboutContent.stats.happyClients,
+      value: aboutContent.happyClients,
       key: "happyClients" as const,
     },
     {
       icon: MapPin,
       label: "Countries Served",
-      value: aboutContent.stats.skillsCount,
-      key: "skillsCount" as const,
+      value: aboutContent.countriesServed,
+      key: "countriesServed" as const,
     },
   ];
 
@@ -92,12 +96,12 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
   const handleStatChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    statKey: keyof AboutContent["stats"]
+    statKey: keyof AboutContent
   ) => {
     const { value } = e.target;
     setAboutContent((prev) => ({
       ...prev,
-      stats: { ...prev.stats, [statKey]: value },
+      [statKey]: value,
     }));
   };
 

@@ -181,7 +181,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
                   <img
                     src={placeholderImg}
                     alt={company.companyName}
-                    className="w-full h-full object-contain rounded-md"
+                    className="w-full h-full object-cover rounded-md"
                   />
                 ) : (
                   placeholderImg

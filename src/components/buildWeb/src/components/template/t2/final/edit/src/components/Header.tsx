@@ -7,6 +7,7 @@ import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
 import logo from "/images/Drone tv .in.jpg";
 import Cropper from 'react-easy-crop';
+import Footer from "../components/Footer";
 
 export default function Header({headerData,onStateChange,publishedId,userId,templateSelection}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -213,7 +214,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
         
         const formData = new FormData();
         formData.append('file', pendingLogoFile);
-        formData.append('sectionName', 'header');
+        formData.append('sectionName', 'footer');
         formData.append('imageField', 'logoUrl'+Date.now());
         formData.append('templateSelection', templateSelection);
 

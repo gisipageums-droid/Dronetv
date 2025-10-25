@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -37,10 +36,10 @@ import Form from "./components/buildWeb/src/components/form/src/main";
 import EditTemp2 from "./components/buildWeb/src/components/template/t2/edit/src/main";
 import EditTemp1 from "./components/buildWeb/src/components/template/t1/edit/src/main";
 import Template1 from "./components/buildWeb/src/components/template/t1/src/main";
-import DashboardPreview1 from "./components/buildWeb/src/components/template/t1/final/preview/src/main"
-import DashboardPreview2 from "./components/buildWeb/src/components/template/t2/final/preview/src/main"
-import DashboardEdit1 from "./components/buildWeb/src/components/template/t1/final/edit/src/main"
-import DashboardEdit2 from "./components/buildWeb/src/components/template/t2/final/edit/src/main"
+import DashboardPreview1 from "./components/buildWeb/src/components/template/t1/final/preview/src/main";
+import DashboardPreview2 from "./components/buildWeb/src/components/template/t2/final/preview/src/main";
+import DashboardEdit1 from "./components/buildWeb/src/components/template/t1/final/edit/src/main";
+import DashboardEdit2 from "./components/buildWeb/src/components/template/t2/final/edit/src/main";
 import { CombinedProviders } from "./components/context/context";
 import CompanyDirectory from "./components/CompanyDirectory";
 import Login from "./components/Login";
@@ -54,21 +53,21 @@ import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
 import ProfessionalForm from "./components/Professional/form/src/App";
 import ProfessionalTemplateSelector from "./components/Professional/Select-Template/select";
 import ProTemp2 from "./components/Professional/Template/T-2/src/App";
-import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App"
+import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App";
 // import SignupConfirmation from "./components/Professional/form/form/greeting/greeting";
 import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
-import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main"
-import NotFound from "./components/buildWeb/src/components/form/src/Notfound"
+import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main";
+import NotFound from "./components/buildWeb/src/components/form/src/Notfound";
 import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboard";
 import UserEvent from "./components/UserEvent";
-import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard"
-import UserProfessional from "./components/profissionalDirectory"
+import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard";
+import UserProfessional from "./components/profissionalDirectory";
 
 import ExcelDataProcessor from "./components/excelextraction/excel";
 import DocumentTextExtractor from "./components/excelextraction/extracttext";
 // import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/"
-import FinaleProfessionalTemp2 from "./components/Professional/Template/T-2/final/preview/src/App"
-import FinalEditTemp_2 from "./components/Professional/Template/T-2/final/edit/src/App"
+import FinaleProfessionalTemp2 from "./components/Professional/Template/T-2/final/preview/src/App";
+import FinalEditTemp_2 from "./components/Professional/Template/T-2/final/edit/src/App";
 import MainProTemp2 from "./components/mainProfessionalPreview/t2/src/App";
 
 import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/final/preview/src/App";
@@ -76,7 +75,7 @@ import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/
 // import MainProTemp1 from "./components/mainProfessinalPreview/T-1/preview/src/App";
 
 import EventTemplateEdit1 from "./components/event/template/t1/edit/EventTemplate1";
-import EventTemplateEdit2 from "./components/event/template/t2/edit/EventTemplate2"; 
+import EventTemplateEdit2 from "./components/event/template/t2/edit/EventTemplate2";
 
 import UserDashboard from "./components/UserDashboard/pages/AdminDashboard";
 import UserCompany from "./components/UserDashboard/pages/Company";
@@ -105,98 +104,149 @@ const AppContent = () => {
   const hideFooter = location.pathname.startsWith("/company");
 
   return (
-    <div className='min-h-screen'>
+    <div className="min-h-screen">
       <CombinedProviders>
         <Navigation />
         <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path='/videos' element={<VideosPage />} />
-          <Route path='/professionals' element={<ProfessionalsPage />} />
-          <Route path='/listed-companies' element={<CompaniesPage />} />
-          <Route path='/user/companies' element={<ProtectedRoute><CompanyDirectory /></ProtectedRoute>} />
-          <Route path='/products' element={<ProductsPage />} />
-          <Route path='/services' element={<ServicesPage />} />
-          <Route path='/events' element={<EventsPage />} />
-          <Route path='/news' element={<NewsPage />} />
-          <Route path='/about' element={<AboutPage />} />
-          <Route path='/partner' element={<PartnerPage />} />
-          <Route path='/gallery' element={<GalleryPage />} />
-          <Route path='/contact' element={<ContactPage />} />
-          <Route path='/search' element={<SearchPage />} />
-          <Route path='/product/:id' element={<ProductDetailPage />} />
-          <Route path='/service/:id' element={<ServiceDetailPage />} />
-          <Route path='/event/*' element={<SubApp />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/videos" element={<VideosPage />} />
+          <Route path="/professionals" element={<ProfessionalsPage />} />
+          <Route path="/listed-companies" element={<CompaniesPage />} />
           <Route
-            path='/user/companies/template-selection'
+            path="/user/companies"
+            element={
+              <ProtectedRoute>
+                <CompanyDirectory />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/partner" element={<PartnerPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="/service/:id" element={<ServiceDetailPage />} />
+          <Route path="/event/*" element={<SubApp />} />
+          <Route
+            path="/user/companies/template-selection"
             element={<Select />}
           />
-          <Route
-            path='/companies'
-            element={<Select />}
-          />
-          <Route path='/template/t1' element={<Template1 />} />
-          <Route path='/template/t2' element={<Template2 />} />
-          <Route path='/form' element={<Form />} />
-          <Route path='/form/:publicId/:userId/:draftId' element={<Form />} />
-         {/* AI get not found */}
-          <Route path='/form/notfound' element={<NotFound />} />
+          <Route path="/companies" element={<Select />} />
+          <Route path="/template/t1" element={<Template1 />} />
+          <Route path="/template/t2" element={<Template2 />} />
+          <Route path="/form" element={<Form />} />
+          <Route path="/form/:publicId/:userId/:draftId" element={<Form />} />
+          {/* AI get not found */}
+          <Route path="/form/notfound" element={<NotFound />} />
 
-          <Route path='/edit/template/t1' element={<EditTemp1 />} />
-          <Route path='/edit/template/t2' element={<EditTemp2 />} />
-          <Route path='/user/companies/preview/1/:publishedId/:userId' element={<DashboardPreview1 />} />
-           <Route path='/user/companies/preview/2/:publishedId/:userId' element={<DashboardPreview2 />} />
-          <Route path='/user/companies/edit/1/:pub/:userId' element={<DashboardEdit1 />} />
-           <Route path='/user/companies/edit/2/:pub/:userId' element={<DashboardEdit2 />} />
+          <Route path="/edit/template/t1" element={<EditTemp1 />} />
+          <Route path="/edit/template/t2" element={<EditTemp2 />} />
+          <Route
+            path="/user/companies/preview/1/:publishedId/:userId"
+            element={<DashboardPreview1 />}
+          />
+          <Route
+            path="/user/companies/preview/2/:publishedId/:userId"
+            element={<DashboardPreview2 />}
+          />
+          <Route
+            path="/user/companies/edit/1/:pub/:userId"
+            element={<DashboardEdit1 />}
+          />
+          <Route
+            path="/user/companies/edit/2/:pub/:userId"
+            element={<DashboardEdit2 />}
+          />
           {/* login functionality */}
-          <Route path='/login' element={<Login />} />
-          <Route path='/forgot-password' element={<ForgotPassword />} />
-          <Route path='/logout' element={<Logout />} />
-          <Route path='reset-password/:id' element={<ResetPassword />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="reset-password/:id" element={<ResetPassword />} />
           {/* admin dashboard */}
-          <Route path='/admin/company/dashboard' element={<AdminDashboard />} />
-          <Route path='/admin/companies/preview/1/:publishedId/:userId' element={<DashboardPreview1 />} />
-          <Route path='/admin/companies/preview/2/:publishedId/:userId' element={<DashboardPreview2 />} />
-          <Route path='/admin/companies/edit/1/:pub/:userId' element={<DashboardEdit1 />} />
-           <Route path='/admin/companies/edit/2/:pub/:userId' element={<DashboardEdit2 />} />
+          <Route path="/admin/company/dashboard" element={<AdminDashboard />} />
+          <Route
+            path="/admin/companies/preview/1/:publishedId/:userId"
+            element={<DashboardPreview1 />}
+          />
+          <Route
+            path="/admin/companies/preview/2/:publishedId/:userId"
+            element={<DashboardPreview2 />}
+          />
+          <Route
+            path="/admin/companies/edit/1/:pub/:userId"
+            element={<DashboardEdit1 />}
+          />
+          <Route
+            path="/admin/companies/edit/2/:pub/:userId"
+            element={<DashboardEdit2 />}
+          />
           {/* main preview routes */}
-          <Route path='/company/:urlSlug' element={<MainCompPreviewT1 />} />
-          <Route path='/companies/:urlSlug' element={<MainCompPreviewT2 />} />
+          <Route path="/company/:urlSlug" element={<MainCompPreviewT1 />} />
+          <Route path="/companies/:urlSlug" element={<MainCompPreviewT2 />} />
 
           {/* professionals route */}
 
-<Route path='/professional/form' element={<ProfessionalForm/>} />
-          <Route path='/professional/select' element={<ProfessionalTemplateSelector/>} />
-          <Route path='/professional/t2' element={<ProTemp2/>} />
-          <Route path='/professional/t1' element={<ProTemp1/>} />
+          <Route path="/professional/form" element={<ProfessionalForm />} />
+          <Route
+            path="/professional/select"
+            element={<ProfessionalTemplateSelector />}
+          />
+          <Route path="/professional/t2" element={<ProTemp2 />} />
+          <Route path="/professional/t1" element={<ProTemp1 />} />
 
           {/* <Route path='/professional/Greeting' element={<SignupConfirmation/>} /> */}
-          <Route path='/professional/edit/:draftId/:userId/template=2' element={<EditTemp_2/>} />
-          <Route path='/professional/edit/:draftId/:userId/template=1' element={<EditTemp_1/>} />
+          <Route
+            path="/professional/edit/:draftId/:userId/template=2"
+            element={<EditTemp_2 />}
+          />
+          <Route
+            path="/professional/edit/:draftId/:userId/template=1"
+            element={<EditTemp_1 />}
+          />
           <Route path="/user/professional" element={<UserProfessional />} />
           <Route path="/admin/professional" element={<AdminProfessional />} />
-          <Route path='/user/professionals/preview/2/:professionalId/:userId' element={<FinaleProfessionalTemp2 />} />
-          <Route path='/user/professionals/edit/2/:professionalId/:userId' element={<FinalEditTemp_2 />} />
-          <Route path='/professionals/:urlSlug' element={<MainProTemp2 />} />
+          <Route
+            path="/user/professionals/preview/2/:professionalId/:userId"
+            element={<FinaleProfessionalTemp2 />}
+          />
+          <Route
+            path="/user/professionals/edit/2/:professionalId/:userId"
+            element={<FinalEditTemp_2 />}
+          />
+          <Route path="/professionals/:urlSlug" element={<MainProTemp2 />} />
 
-          <Route path="/user/professionals/preview/1/:professionalId/:userId" element={<FinaleProfessionalTemp1 />} />
-          <Route path="/user/professionals/edit/1/:professionalId/:userId" element={<FinaleProfessionalTemp1Edit />} />
+          <Route
+            path="/user/professionals/preview/1/:professionalId/:userId"
+            element={<FinaleProfessionalTemp1 />}
+          />
+          <Route
+            path="/user/professionals/edit/1/:professionalId/:userId"
+            element={<FinaleProfessionalTemp1Edit />}
+          />
           {/* <Route path="/professional/:urlSlug" element={<MainProTemp1 />} /> */}
 
-        {/* event routes */}
-        <Route path='/admin/event/dashboard' element={<EventAdminDashboard />} />
-        <Route path='/user/event' element={<UserEvent />} />
+          {/* event routes */}
+          <Route
+            path="/admin/event/dashboard"
+            element={<EventAdminDashboard />}
+          />
+          <Route path="/user/event" element={<UserEvent />} />
 
-        {/* <Route path='/user/event/preview/1/:eventId/:userId' element={<EventPreview1 />} /> */}
-        <Route path='/user/event/edit/1/' element={<EventTemplateEdit1 />} />
-        <Route path='/user/event/edit/2/' element={<EventTemplateEdit2 />} />
-        
-        {/* excel extraction route */}
-        <Route path='/excel' element={<ExcelDataProcessor />} />
-        <Route path='/extract-text' element={<DocumentTextExtractor />} />
+          {/* <Route path='/user/event/preview/1/:eventId/:userId' element={<EventPreview1 />} /> */}
+          <Route path="/user/event/edit/1/" element={<EventTemplateEdit1 />} />
+          <Route path="/user/event/edit/2/" element={<EventTemplateEdit2 />} />
 
+          {/* excel extraction route */}
+          <Route path="/excel" element={<ExcelDataProcessor />} />
+          <Route path="/extract-text" element={<DocumentTextExtractor />} />
 
-{/* User dashboard routes */}
-<Route
+          {/* User dashboard routes */}
+          <Route
             path="/user-professionals"
             element={
               <UserDashboardLayout>
@@ -226,9 +276,9 @@ const AppContent = () => {
             path="/user-dashboard"
             element={
               <ProtectedRoute>
-              <UserDashboardLayout>
-                <UserDashboard />
-              </UserDashboardLayout>
+                <UserDashboardLayout>
+                  <UserDashboard />
+                </UserDashboardLayout>
               </ProtectedRoute>
             }
           />
@@ -248,7 +298,7 @@ const AppContent = () => {
               </UserDashboardLayout>
             }
           />
-           <Route
+          <Route
             path="/user-professional/leads/:ProfessionalName/:professionalId"
             element={
               <UserDashboardLayout>
@@ -256,7 +306,6 @@ const AppContent = () => {
               </UserDashboardLayout>
             }
           />
-
         </Routes>
         {!hideFooter && <Footer />}
         <ScrollingFooter />

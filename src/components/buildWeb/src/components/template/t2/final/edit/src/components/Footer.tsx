@@ -341,7 +341,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
             className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            {/* <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
                 Crop Logo
               </h3>
@@ -352,9 +352,9 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                 <XIcon className="w-6 h-6 text-gray-600" />
               </button>
             </div>
-             */}
+             
             {/* Cropper Area */}
-            {/* <div className="flex-1 relative bg-gray-900">
+            <div className="flex-1 relative bg-gray-900">
               <div className="relative h-96 w-full">
                 <Cropper
                   image={imageToCrop}
@@ -380,7 +380,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                   }}
                 />
               </div>
-            </div> */}
+            </div>
             
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">

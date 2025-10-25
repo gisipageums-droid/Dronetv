@@ -8,14 +8,19 @@ export interface AboutContent {
   description1: string;
   description2: string;
   description3: string;
-  skills: string[];
   imageSrc: string;
-  stats: {
-    yearsExperience: string;
-    projectsCompleted: string;
-    happyClients: string;
-    skillsCount: string;
-  };
+  skills: string[];
+  // stats
+  projectsCompleted: string;
+  countriesServed: string;
+  yearsExperience: string;
+  happyClients: string;
+  // stats: {
+  //   yearsExperience: string;
+  //   projectsCompleted: string;
+  //   happyClients: string;
+  //   skillsCount: string;
+  // };
 }
 
 interface AboutProps {
@@ -27,22 +32,22 @@ const About: React.FC<AboutProps> = ({ content }) => {
     {
       icon: Calendar,
       label: "Years Experience",
-      value: content.stats.yearsExperience,
+      value: content.yearsExperience,
     },
     {
       icon: Award,
       label: "Projects Completed",
-      value: content.stats.projectsCompleted,
+      value: content.projectsCompleted,
     },
     {
       icon: Users,
       label: "Happy Clients",
-      value: content.stats.happyClients,
+      value: content.happyClients,
     },
     {
       icon: MapPin,
       label: "Countries Served",
-      value: content.stats.skillsCount,
+      value: content.countriesServed,
     },
   ];
 
