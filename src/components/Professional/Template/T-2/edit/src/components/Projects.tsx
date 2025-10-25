@@ -83,7 +83,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   const [isUploading, setIsUploading] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
-  
+
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
@@ -107,7 +107,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   const displayData = isEditing ? tempData : data;
 
   // Use displayData for filtered projects to ensure consistency
-  const filteredProjects = displayData.projects.filter(project => 
+  const filteredProjects = displayData.projects.filter(project =>
     activeCategory === "All" || project.category === activeCategory
   );
 
@@ -115,7 +115,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   const renderHeading = () => {
     const heading = displayData?.heading || "Featured Projects";
     const words = heading.split(' ');
-    
+
     if (words.length > 1) {
       return (
         <>
@@ -154,7 +154,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   const handleSave = async () => {
     try {
       setIsUploading(true);
-      
+
       let updatedData = { ...tempData };
 
       // Upload images for projects with pending files
@@ -188,14 +188,14 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
 
       // Clear pending files and update state immediately
       setPendingImageFiles({});
-      
+
       // Update both data and tempData to ensure UI consistency
       setData(updatedData);
       setTempData(updatedData);
-      
+
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // Set editing to false AFTER state updates
       setIsEditing(false);
       toast.success('Projects section saved successfully');
@@ -240,8 +240,8 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
       setTempData(prevData => ({
         ...prevData,
         projects: prevData.projects.map(project =>
-          project.id.toString() === projectId 
-            ? { ...project, image: dataUrl } 
+          project.id.toString() === projectId
+            ? { ...project, image: dataUrl }
             : project
         )
       }));
@@ -360,7 +360,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   }, []);
 
   return (
-    <section id="projects" className="relative py-20 bg-background">
+    <section id="projects" className="relative py-5 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-20'>
@@ -492,11 +492,10 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
           >
             <button
               onClick={() => setActiveCategory("All")}
-              className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                activeCategory === "All"
+              className={`px-6 py-2 rounded-full transition-all duration-300 ${activeCategory === "All"
                   ? 'bg-yellow-400 text-gray-900 shadow-lg'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               All
             </button>
@@ -504,11 +503,10 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                  activeCategory === category
+                className={`px-6 py-2 rounded-full transition-all duration-300 ${activeCategory === category
                     ? 'bg-yellow-400 text-gray-900 shadow-lg'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {category}
               </button>
