@@ -599,7 +599,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
               viewport={{ once: true }}
               className="pt-8"
             >
-              <h4 className="text-foreground mb-4">Follow me on</h4>
+              <h4 className="text-sm md:text-base text-foreground mb-4">Follow me on</h4>
               {isEditing ? (
                 <div className="space-y-3">
                   {displayData.socialLinks.map((social, index) => (
@@ -608,14 +608,14 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                         type="text"
                         value={social.label}
                         onChange={(e) => updateSocialLink(index, 'label', e.target.value)}
-                        className="flex-1 px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                        className="flex-1 px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none text-sm"
                         placeholder="Social Media Name"
                       />
                       <input
                         type="text"
                         value={social.href}
                         onChange={(e) => updateSocialLink(index, 'href', e.target.value)}
-                        className="flex-1 px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                        className="flex-1 px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none text-sm"
                         placeholder="Link"
                       />
                     </div>
@@ -629,7 +629,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                       href={social.href}
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`px-4 py-2 bg-card text-foreground rounded-lg shadow hover:shadow-md transition-all duration-300 ${social.color} border border-border`}
+                      className={`px-3 py-1 md:px-4 md:py-2 bg-card text-foreground rounded-lg shadow hover:shadow-md transition-all duration-300 ${social.color} border border-border text-sm md:text-base`}
                     >
                       {social.label}
                     </motion.a>
