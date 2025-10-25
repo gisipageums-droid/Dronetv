@@ -332,17 +332,17 @@ export function About({
   }, [updateTempContent, updateSkill]);
 
   // Check if there's any meaningful data to display
-  const hasData = data.heading || 
-                  data.subtitle || 
-                  data.description1 || 
-                  data.description2 || 
-                  (data.skills.length > 0 && data.skills[0] !== '') ||
-                  data.imageSrc;
+  const hasData = data.heading ||
+    data.subtitle ||
+    data.description1 ||
+    data.description2 ||
+    (data.skills.length > 0 && data.skills[0] !== '') ||
+    data.imageSrc;
 
   // No data state - show empty state with option to add data
   if (!isEditing && !hasData) {
     return (
-      <section ref={aboutRef} id="about" className="relative py-20 bg-background">
+      <section ref={aboutRef} id="about" className="relative py-5 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit Controls */}
           <div className='text-right mb-8'>
@@ -384,7 +384,7 @@ export function About({
   }
 
   return (
-    <section ref={aboutRef} id="about" className="relative py-20 bg-background">
+    <section ref={aboutRef} id="about" className="relative py-5 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right z-50 mb-20'>
