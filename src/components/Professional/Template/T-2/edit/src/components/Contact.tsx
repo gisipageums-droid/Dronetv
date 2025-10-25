@@ -377,7 +377,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   // Loading state
   if (isLoading) {
     return (
-      <section id="contact" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+      <section id="contact" className="py-5 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
           <p className="mt-4 text-muted-foreground">Loading contact section...</p>
@@ -387,7 +387,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   }
 
   return (
-    <section id="contact" className="py-20 bg-yellow-50 dark:bg-yellow-900/20 relative">
+    <section id="contact" className="py-5 bg-yellow-50 dark:bg-yellow-900/20 relative">
       {/* Edit/Save Controls */}
       <div className="absolute top-4 right-4 z-10">
         {!isEditing ? (
