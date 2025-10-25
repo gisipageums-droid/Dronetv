@@ -87,7 +87,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
   const [isVisible, setIsVisible] = useState(false);
   const certificationsRef = useRef<HTMLDivElement>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
-  
+
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
@@ -145,7 +145,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
   const handleSave = async () => {
     try {
       setIsUploading(true);
-      
+
       // Create a copy of tempData to update with S3 URLs
       let updatedData = { ...tempData };
 
@@ -186,11 +186,11 @@ export function Certifications({ certData, onStateChange, userId, professionalId
       // Save the updated data with S3 URLs
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // Update both states with the new URLs
       setData(updatedData);
       setTempData(updatedData);
-      
+
       setIsEditing(false);
       toast.success('Certifications saved successfully');
 
@@ -282,14 +282,14 @@ export function Certifications({ certData, onStateChange, userId, professionalId
         toast.error("You must have at least one certification");
         return prevData;
       }
-      
+
       const updatedCerts = prevData.certifications.filter((_, i) => i !== index);
-      
+
       // Adjust current index if needed
       if (currentIndex >= updatedCerts.length) {
         setCurrentIndex(Math.max(0, updatedCerts.length - 1));
       }
-      
+
       return { ...prevData, certifications: updatedCerts };
     });
   }, [currentIndex]);
@@ -331,15 +331,15 @@ export function Certifications({ certData, onStateChange, userId, professionalId
   };
 
   // Check if there's any meaningful data to display
-  const hasData = data.certifications.length > 0 || 
-                  data.subtitle || 
-                  data.heading || 
-                  data.description;
+  const hasData = data.certifications.length > 0 ||
+    data.subtitle ||
+    data.heading ||
+    data.description;
 
   // No data state - show empty state with option to add data
   if (!isEditing && !hasData) {
     return (
-      <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
+      <section ref={certificationsRef} id="certifications" className="py-5 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit Controls */}
           <div className='text-right mb-8'>
@@ -381,7 +381,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
   }
 
   return (
-    <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
+    <section ref={certificationsRef} id="certifications" className="py-5 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -635,9 +635,9 @@ export function Certifications({ certData, onStateChange, userId, professionalId
                           placeholder="Credential URL (optional)"
                         />
                       ) : displayData.certifications[currentIndex]?.credentialUrl && displayData.certifications[currentIndex]?.credentialUrl !== '#' ? (
-                        <a 
-                          href={displayData.certifications[currentIndex]?.credentialUrl} 
-                          target="_blank" 
+                        <a
+                          href={displayData.certifications[currentIndex]?.credentialUrl}
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center text-yellow-600 hover:text-yellow-700 transition-colors group"
                         >
@@ -696,8 +696,8 @@ export function Certifications({ certData, onStateChange, userId, professionalId
                         key={index}
                         onClick={() => goToSlide(index)}
                         className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
-                            ? 'bg-yellow-500 scale-125'
-                            : 'bg-gray-300 hover:bg-gray-400'
+                          ? 'bg-yellow-500 scale-125'
+                          : 'bg-gray-300 hover:bg-gray-400'
                           }`}
                       />
                     ))}
