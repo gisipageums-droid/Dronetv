@@ -34,9 +34,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant || 'default']} ${
-        sizes[size || 'default']
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant || 'default']} ${sizes[size || 'default']
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -207,7 +206,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  
+
   const [data, setData] = useState<ContactData>(defaultContactData);
   const [tempData, setTempData] = useState<ContactData>(defaultContactData);
 
@@ -259,7 +258,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
     try {
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       setData(tempData);
       setIsEditing(false);
       toast.success('Contact section saved successfully');
@@ -287,21 +286,21 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       // Simulate API call to the submit endpoint
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       console.log('Form submitted:', formData);
       toast.success(data.form.successMessage);
-      
+
       // Reset form
       const resetFormData: Record<string, string> = {};
       data.form.fields.forEach(field => {
         resetFormData[field.name] = '';
       });
       setFormData(resetFormData);
-      
+
     } catch (error) {
       console.error('Error submitting form:', error);
       toast.error(data.form.errorMessage);
@@ -314,7 +313,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   const updateContactInfo = (index: number, field: keyof ContactInfo, value: string) => {
     setTempData(prev => ({
       ...prev,
-      contactInfo: prev.contactInfo.map((item, i) => 
+      contactInfo: prev.contactInfo.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       )
     }));
@@ -324,7 +323,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   const updateSocialLink = (index: number, field: keyof SocialLink, value: string) => {
     setTempData(prev => ({
       ...prev,
-      socialLinks: prev.socialLinks.map((item, i) => 
+      socialLinks: prev.socialLinks.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       )
     }));
@@ -336,7 +335,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
       ...prev,
       form: {
         ...prev.form,
-        fields: prev.form.fields.map((item, i) => 
+        fields: prev.form.fields.map((item, i) =>
           i === index ? { ...item, [field]: value } : item
         )
       }
@@ -438,6 +437,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
         >
           {isEditing ? (
             <div className="space-y-4 max-w-2xl mx-auto">
+
               <input
                 type="text"
                 value={displayData.subtitle}
@@ -512,11 +512,10 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
               ) : (
                 <>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      displayData.availability.status === 'available' 
-                        ? 'bg-green-500' 
-                        : 'bg-yellow-500'
-                    }`} />
+                    <div className={`w-3 h-3 rounded-full ${displayData.availability.status === 'available'
+                      ? 'bg-green-500'
+                      : 'bg-yellow-500'
+                      }`} />
                     <span className="text-foreground font-medium">
                       {displayData.availability.message}
                     </span>
@@ -530,6 +529,8 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
 
             <div className="space-y-6">
               {displayData.contactInfo.map((info, index) => {
+
+
                 const IconComponent = iconMap[info.icon] || Mail;
                 return (
                   <motion.div
@@ -574,11 +575,11 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                           />
                         </div>
                       ) : (
-                        <div>
-                          <h4 className="text-foreground mb-1">{info.label}</h4>
+                        <div className='max-w-[130px] md:max-w-full overflow-hidden'>
+                          <h4 className="text-sm md:text-base text-foreground mb-1">{info.label}</h4>
                           <a
                             href={info.href}
-                            className="text-muted-foreground hover:text-yellow-500 transition-colors duration-300"
+                            className="text-xs md:text-sm w-full text-muted-foreground hover:text-yellow-500 transition-colors duration-300 break-words"
                           >
                             {info.value}
                           </a>
@@ -724,9 +725,9 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                 transition={{ duration: 0.6, delay: 0.5 }}
                 viewport={{ once: true }}
               >
-                <AnimatedButton 
-                  size="lg" 
-                  className="w-full" 
+                <AnimatedButton
+                  size="lg"
+                  className="w-full"
                   type="submit"
                   disabled={isSubmitting || isEditing}
                 >
