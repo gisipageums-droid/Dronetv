@@ -21,7 +21,7 @@ interface ProfessionalProfile {
   experience?: string;
   education?: string[];
   skills?: string[];
-  templateSelection?:string;
+  templateSelection?: string;
 }
 
 interface ApiResponse {
@@ -135,8 +135,8 @@ interface SidebarProps {
 
 interface ProfileCardProps {
   profile: ProfessionalProfile;
-  onEdit: (professionalId: string ,templateSelection: string) => void;
-  onPreview: (professionalId: string,templateSelection: string) => void;
+  onEdit: (professionalId: string, templateSelection: string) => void;
+  onPreview: (professionalId: string, templateSelection: string) => void;
 }
 
 interface MainContentProps {
@@ -149,7 +149,7 @@ interface MainContentProps {
   totalCount: number;
   hasMore: boolean;
   onOpenMobileSidebar: () => void;
-  onEdit: (professionalId: string,templateSelection: string) => void;
+  onEdit: (professionalId: string, templateSelection: string) => void;
   onPreview: (professionalId: string, templateSelection: string) => void;
   searchTerm: string;
   specialtyFilter: string;
@@ -166,22 +166,22 @@ interface ErrorMessageProps {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className='h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6'>
+    <div className='h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6  md:mt-4 pt-[120px] md:pt-[10px]'>
       {/* ===== Always Visible Popup ===== */}
-      <div className="fixed right-12 top-28 z-10 animate-bounce">
-        <div className="px-5 py-8 text-center bg-white rounded-xl border border-yellow-300 shadow-lg">
-          <h2 className="text-base font-semibold text-amber-900 md:text-lg">
+      <div className="fixed right-4 top-20 md:right-12 md:top-28 z-10 animate-bounce">
+        <div className="px-3 py-2 md:px-5 md:py-4 text-center bg-white rounded-xl border border-yellow-300 shadow-lg max-w-[280px] md:max-w-none">
+          <h2 className="text-sm font-semibold text-amber-900 md:text-lg">
             🎉 Free Trial
           </h2>
-          <p className="mt-1 text-lg font-semibold text-amber-700">
+          <p className="mt-1 text-sm md:text-lg font-semibold text-amber-700">
             You have{" "}
             <span className="font-bold text-amber-600">90</span> free trial days
             remaining.
           </p>
-          <p className="pl-6 mt-4 text-sm text-left text-amber-700">
+          <p className="pl-4 mt-2 text-xs md:pl-6 md:mt-4 text-left text-amber-700">
             ✅ Create <span className="font-bold text-amber-600">unlimited professional profiles</span>.
           </p>
-          <p className="pl-6 mt-1 text-sm text-left text-amber-700">
+          <p className="pl-4 mt-1 text-xs md:pl-6 md:mt-1 text-left text-amber-700">
             ✅ <span className="font-bold">Edit and customize</span> profiles at any time.
           </p>
         </div>
@@ -192,8 +192,8 @@ const Header: React.FC = () => {
         <div className='absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-yellow-200 rounded-full opacity-40'></div>
         <div className='absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-yellow-200 opacity-30 rounded-2xl'></div>
 
-        <div className='relative z-10'>
-          <div className='flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-8'>
+        <div className='relative z-10  '>
+          <div className='flex items-center justify-center gap-2 md:gap-4 mb-4 '>
             <div className='w-2 h-2 md:w-3 md:h-3 bg-yellow-400 rounded-full'></div>
             <div className='w-4 h-4 md:w-6 md:h-6 border-2 border-amber-400'></div>
             <div className='w-3 h-3 md:w-4 md:h-4 bg-amber-600 rotate-45'></div>
@@ -256,11 +256,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                value === option
-                  ? "bg-gray-50 text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
+                ? "bg-gray-50 text-gray-900 font-medium"
+                : "text-gray-700 hover:bg-gray-50"
+                }`}
             >
               {option}
             </button>
@@ -303,7 +302,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       )}
-      
+
       <div className='space-y-6 md:space-y-8'>
         {/* Search Section */}
         <div className='space-y-3'>
@@ -364,19 +363,19 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className='border-t border-gray-100'></div>
 
 
-         <motion.button
-        whileTap={{ scale: [0.9, 1] }}
-        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
-      >
-        <Link to={"/user/companies"}>Companies </Link>
-      </motion.button>
+        <motion.button
+          whileTap={{ scale: [0.9, 1] }}
+          className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+        >
+          <Link to={"/user/companies"}>Companies </Link>
+        </motion.button>
 
 
         {/* CTA Section */}
         <div className='space-y-3'>
           <p className='text-sm text-gray-600'>Ready to showcase your expertise?</p>
-          <button 
-            onClick={()=>navigate("/professional/select")}
+          <button
+            onClick={() => navigate("/professional/select")}
             className='w-full bg-gray-900 text-white py-3 px-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors'
           >
             Create New Profile
@@ -390,9 +389,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 // Profile Card Component with Edit/Preview Buttons
 const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview }) => {
   // Create a placeholder image using profile name
-  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
-    profile.professionalName?.charAt(0) || "P"
-  }%3C/text%3E%3C/svg%3E`;
+  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${profile.professionalName?.charAt(0) || "P"
+    }%3C/text%3E%3C/svg%3E`;
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -411,7 +409,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
   // Status badge styling based on status
   const getStatusBadge = (status: string) => {
     const statusLower = (status).toLowerCase();
-    
+
     switch (statusLower) {
       case 'active':
         return {
@@ -555,7 +553,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                onEdit(profile.professionalId, profile.templateSelection || "" );
+                onEdit(profile.professionalId, profile.templateSelection || "");
               }}
               className='px-3 py-2 md:px-4 md:py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2'
             >
@@ -618,7 +616,7 @@ const MainContent: React.FC<MainContentProps> = ({
   onClearFilters
 }) => {
   const navigate = useNavigate();
-  
+
   if (loading)
     return (
       <div className='flex-1 bg-yellow-50 px-4 md:px-8 py-8'>
@@ -635,7 +633,7 @@ const MainContent: React.FC<MainContentProps> = ({
   return (
     <div className='flex-1 bg-yellow-50 px-4 md:px-8 py-8'>
       {/* Mobile filter button */}
-      <button 
+      <button
         onClick={onOpenMobileSidebar}
         className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200"
       >
@@ -665,7 +663,7 @@ const MainContent: React.FC<MainContentProps> = ({
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'>
           {profiles.map((profile: ProfessionalProfile, index: number) => (
             <div key={profile.professionalId || index} className='animate-fadeIn'>
-              <ProfileCard 
+              <ProfileCard
                 profile={profile}
                 onEdit={onEdit}
                 onPreview={onPreview}
@@ -699,7 +697,7 @@ const MainContent: React.FC<MainContentProps> = ({
               <p className='text-gray-500 mb-6'>
                 You haven't created any professional profiles yet.
               </p>
-              <button 
+              <button
                 onClick={() => navigate('/user/professionals/template-selection')}
                 className='bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors'
               >
@@ -722,14 +720,14 @@ const apiService = {
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
-    console.log("userId",userId);
-    
+    console.log("userId", userId);
+
     try {
       const url = new URL(`https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=user&userId=${userId.trim()}`);
       // url.searchParams.append('userId', userId.trim());
-      
+
       // console.log('Fetching profiles from:', url.toString());
-      
+
       const response = await fetch(url.toString(), {
         method: 'GET',
         headers: {
@@ -746,14 +744,14 @@ const apiService = {
       if (!response.ok) {
         let errorText = 'Unknown error occurred';
         let errorJson = null;
-        
+
         try {
           const contentType = response.headers.get('content-type');
-          
+
           if (contentType && contentType.includes('application/json')) {
             errorJson = await response.json();
             errorText = errorJson.message || errorJson.error || errorJson.errorMessage || `HTTP ${response.status}`;
-            
+
           } else {
             errorText = await response.text();
           }
@@ -761,9 +759,9 @@ const apiService = {
           console.error("Error parsing error response:", parseError);
           errorText = `HTTP ${response.status} - Unable to parse error response`;
         }
-        
+
         console.error("API Error Response:", { status: response.status, error: errorText, details: errorJson });
-        
+
         switch (response.status) {
           case 400:
             throw new Error("Invalid request. Please check your user ID and try again.");
@@ -805,7 +803,7 @@ const apiService = {
       }
 
       const cards = data.cards || data.items || data.profiles || [];
-      
+
       if (!Array.isArray(cards)) {
         console.warn("Cards is not an array:", cards);
         return {
@@ -849,21 +847,21 @@ const apiService = {
 
     } catch (error) {
       clearTimeout(timeoutId);
-      
+
       console.error("Error fetching profiles:", error);
-      
+
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new Error("Network error. Please check your internet connection and try again.");
       }
-      
+
       if (error.name === 'AbortError') {
         throw new Error("Request timed out. Please try again.");
       }
-      
+
       if (error instanceof Error) {
         throw error;
       }
-      
+
       throw new Error("An unexpected error occurred while fetching profiles");
     }
   },
@@ -887,23 +885,23 @@ const ProfessionalDirectory: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("Sort by Name");
   const [currentPage] = useState<number>(1);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
- 
+
   // Navigation handlers
-  const handleEdit = async (professionalId: string ,templateSelection:string): Promise<void> => {
+  const handleEdit = async (professionalId: string, templateSelection: string): Promise<void> => {
     try {
       if (!user?.userData?.email) {
         throw new Error("User not authenticated");
       }
-      
+
       // const details = await apiService.fetchPublishedDetails(
       //   professionalId,
       //   user.userData.email,
       //   setFinaleDataReview
       // );
 
-      if(templateSelection === "template-1"){
+      if (templateSelection === "template-1") {
         navigate(`/user/professionals/edit/1/${professionalId}/${user.userData.email}`);
-      }else if(templateSelection === "template-2"){
+      } else if (templateSelection === "template-2") {
         navigate(`/user/professionals/edit/2/${professionalId}/${user.userData.email}`);
       }
 
@@ -913,7 +911,7 @@ const ProfessionalDirectory: React.FC = () => {
     }
   };
 
-  const handlePreview = async (professionalId: string, templateSelection:string): Promise<void> => {
+  const handlePreview = async (professionalId: string, templateSelection: string): Promise<void> => {
     try {
       if (!user?.userData?.email) {
         throw new Error("User not authenticated");
@@ -923,11 +921,11 @@ const ProfessionalDirectory: React.FC = () => {
       //   user.userData.email,
       //   setFinaleDataReview
       // );
-    console.log("template ID",templateSelection);
-    
-      if(templateSelection === "template-1"){
+      console.log("template ID", templateSelection);
+
+      if (templateSelection === "template-1") {
         navigate(`/user/professionals/preview/1/${professionalId}/${user.userData.email}`);
-      }else if(templateSelection === "template-2"){
+      } else if (templateSelection === "template-2") {
         navigate(`/user/professionals/preview/2/${professionalId}/${user.userData.email}`);
       }
     } catch (error) {
@@ -954,15 +952,15 @@ const ProfessionalDirectory: React.FC = () => {
         throw new Error("User ID is missing. Please log in again.");
       }
 
-      console.log('Fetching profiles for user:', { 
-        userId: user.userData.email, 
+      console.log('Fetching profiles for user:', {
+        userId: user.userData.email,
         userType: typeof user.userData.email,
-        userExists: !!user 
+        userExists: !!user
       });
 
       setLoading(true);
       setError(null);
-      
+
       const data = await apiService.fetchProfiles(user.userData.email);
 
       console.log('Profiles fetch successful:', {
@@ -970,20 +968,20 @@ const ProfessionalDirectory: React.FC = () => {
         totalCount: data.totalCount,
         hasMore: data.hasMore
       });
-      
+
       setProfiles(data.cards || []);
       setTotalCount(data.totalCount || 0);
       setHasMore(data.hasMore || false);
-      
+
     } catch (err) {
       console.error('Error in fetchProfiles:', err);
-      
+
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch profiles";
       setError(errorMessage);
-      
-      if (errorMessage.includes("not authenticated") || 
-          errorMessage.includes("User ID") || 
-          errorMessage.includes("log in")) {
+
+      if (errorMessage.includes("not authenticated") ||
+        errorMessage.includes("User ID") ||
+        errorMessage.includes("log in")) {
         console.log('Authentication error detected');
       }
     } finally {
@@ -993,12 +991,12 @@ const ProfessionalDirectory: React.FC = () => {
 
   // Load data on component mount
   useEffect(() => {
-    console.log('ProfessionalDirectory useEffect triggered:', { 
-      user: !!user, 
+    console.log('ProfessionalDirectory useEffect triggered:', {
+      user: !!user,
       userId: user?.userData?.email,
       timestamp: new Date().toISOString()
     });
-    
+
     const initializeData = async () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -1011,7 +1009,7 @@ const ProfessionalDirectory: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     initializeData();
   }, [user]);
 
@@ -1023,18 +1021,18 @@ const ProfessionalDirectory: React.FC = () => {
 
   // Filter and sort profiles
   const filteredProfiles = profiles.filter((profile: ProfessionalProfile) => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       (profile.professionalName && profile.professionalName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (profile.location && profile.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (profile.specialties && profile.specialties.some((specialty: string) =>
         specialty.toLowerCase().includes(searchTerm.toLowerCase())
       )) ||
       (profile.jobTitle && profile.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+
     const matchesSpecialty =
       specialtyFilter === "All Specialties" ||
       (profile.specialties && profile.specialties.includes(specialtyFilter));
-    
+
     return matchesSearch && matchesSpecialty;
   });
 
