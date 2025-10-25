@@ -44,7 +44,7 @@ const ProfessionalsPage: React.FC = () => {
       try {
         const res = await fetch('https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=main');
         const data = await res.json();
-        
+
         // Set professionals from `cards` array
         const professionals = Array.isArray(data.cards) ? data.cards : [];
         setAllProfessionals(professionals);
@@ -219,7 +219,7 @@ const ProfessionalsPage: React.FC = () => {
           <div className="absolute top-10 left-10 w-32 h-32 rounded-full blur-2xl animate-pulse bg-yellow-200/30"></div>
           <div className="absolute right-10 bottom-10 w-40 h-40 rounded-full blur-2xl animate-pulse bg-yellow-600/20" style={{ animationDelay: '2s' }}></div>
         </div>
-        <div className="relative z-10 px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
+        <div className="relative z-10 px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8  mt-[40px] md:mt-[0px]">
           <h1 className="mb-2 text-2xl font-black tracking-tight text-black md:text-5xl">
             Professionals Directory
           </h1>
@@ -236,6 +236,7 @@ const ProfessionalsPage: React.FC = () => {
             List your Profile
           </button>
         </div>
+
       </section>
 
       {/* Filter Section */}
