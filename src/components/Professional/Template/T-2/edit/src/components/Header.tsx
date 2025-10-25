@@ -33,9 +33,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant || 'default']} ${
-        sizes[size || 'default']
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant || 'default']} ${sizes[size || 'default']
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -77,14 +76,14 @@ interface HeaderProps {
   templateSelection?: string;
 }
 
-export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderProps) {
+export function Header({ headerData, onStateChange, onDarkModeToggle }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
-  
+
   const [data, setData] = useState<HeaderData>(defaultHeaderData);
   const [tempData, setTempData] = useState<HeaderData>(defaultHeaderData);
 
@@ -126,7 +125,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
     try {
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       setData(tempData);
       setIsEditing(false);
       setIsMenuOpen(false);
@@ -172,11 +171,11 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
   }
 
   return (
-    <header ref={headerRef} className="fixed top-[4rem] left-0 right-0 z-40 bg-background border-b border-border shadow-lg">
+    <header ref={headerRef} className="fixed top-[4rem] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-lg dark:bg-black dark:border-gray-800">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-1">
           {/* Avatar and Brand */}
-          <div className="text-2xl font-bold transition-transform duration-300 text-foreground">
+          <div className="text-2xl font-bold transition-transform duration-300 text-black dark:text-white">
             <div className='flex items-center gap-4'>
               {isEditing ? (
                 <>
@@ -184,21 +183,22 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
                   <div className="flex items-center gap-4">
                     {/* Avatar Display */}
                     <div className="flex flex-col items-center gap-2">
-                      <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+                      <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg dark:bg-yellow-400 dark:text-gray-900">
                         {getAvatarLetter(displayData.logoText)}
                       </div>
                     </div>
-                    
+
                     {/* Logo Text Input */}
                     <div className="flex flex-col gap-1">
+
                       <input
                         type="text"
                         value={displayData.logoText}
                         onChange={(e) => updateLogoText(e.target.value)}
-                        className="px-3 py-2 text-base bg-white/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48"
+                        className="px-3 py-2 text-base bg-white/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48 text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         placeholder="Enter your name"
                       />
-                      <p className="text-xs text-gray-500">First letter will be shown in avatar</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">First letter will be shown in avatar</p>
                     </div>
                   </div>
                 </>
@@ -206,8 +206,8 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
                 <>
                   {/* Display Mode - Only Avatar (No Text) */}
                   <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
-                                          {getAvatarLetter(displayData.logoText)}
+                    <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg dark:bg-yellow-400 dark:text-gray-900">
+                      {getAvatarLetter(displayData.logoText)}
                     </div>
                   </div>
                 </>
@@ -222,11 +222,12 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
                 <a
                   key={index}
                   href={link.href}
-                  className="transition-all duration-300 text-muted-foreground hover:text-yellow-500 hover:scale-110"
+                  className="transition-all duration-300 text-black hover:text-yellow-500 hover:scale-110 dark:text-white dark:hover:text-yellow-400"
                 >
                   {link.label}
                 </a>
               ))}
+
             </nav>
 
             {/* Edit/Save Controls */}
@@ -273,7 +274,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="transition-all duration-300 md:hidden text-muted-foreground hover:text-yellow-500 hover:scale-110"
+                className="transition-all duration-300 md:hidden text-black hover:text-yellow-500 hover:scale-110 dark:text-white dark:hover:text-yellow-400"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -283,13 +284,13 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
 
         {/* Mobile Navigation - Static (Non-editable) */}
         {isMenuOpen && (
-          <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
+          <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-gray-200 dark:border-gray-800">
             {data.navLinks.map((link, index) => (
               <a
                 key={index}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-yellow-500"
+                className="block py-2 transition-colors duration-300 text-black hover:text-yellow-500 dark:text-white dark:hover:text-yellow-400"
               >
                 {link.label}
               </a>
