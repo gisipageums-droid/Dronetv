@@ -25,9 +25,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant] || variants.default} ${
-        sizes[size] || sizes.default
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant] || variants.default} ${sizes[size] || sizes.default
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -91,7 +90,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const clientsRef = useRef<HTMLDivElement>(null);
-  
+
   // Pending logo files for S3 upload
   const [pendingLogoFiles, setPendingLogoFiles] = useState<Record<string, File>>({});
 
@@ -120,7 +119,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   // Transform backend data to match component structure
   const transformBackendData = (backendData: any): ClientsData => {
     if (!backendData) return defaultData;
-    
+
     return {
       subtitle: backendData.subtitle || "",
       heading: backendData.heading || "",
@@ -181,7 +180,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   const handleSave = async () => {
     try {
       setIsUploading(true);
-      
+
       // Create a copy of tempData to update with S3 URLs
       let updatedData = { ...tempData };
 
@@ -222,11 +221,11 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
       // Save the updated data with S3 URLs
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
-      
+
       // Update both states with the new URLs
       setData(updatedData);
       setTempData(updatedData);
-      
+
       setIsEditing(false);
       toast.success('Clients section saved with S3 URLs ready for publish');
     } catch (error) {
@@ -320,7 +319,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
       toast.error("You must have at least one client");
       return;
     }
-    
+
     const updatedClients = tempData.clients.filter((_, i) => i !== index);
     setTempData({ ...tempData, clients: updatedClients });
   }, [tempData]);
@@ -328,12 +327,12 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   const displayData = isEditing ? tempData : data;
 
   // FIXED: Improved hasData logic to properly check for any meaningful data
-  const hasData = data.clients.length > 0 || 
-                  data.subtitle || 
-                  data.heading || 
-                  data.description || 
-                  Object.values(data.stats).some(value => value && value.trim() !== '') ||
-                  Object.values(data.cta).some(value => value && value.trim() !== '');
+  const hasData = data.clients.length > 0 ||
+    data.subtitle ||
+    data.heading ||
+    data.description ||
+    Object.values(data.stats).some(value => value && value.trim() !== '') ||
+    Object.values(data.cta).some(value => value && value.trim() !== '');
 
   console.log('Data check:', {
     clients: data.clients.length,
@@ -350,7 +349,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   // Loading state - only show when actually loading
   if (isLoading && !dataLoaded) {
     return (
-      <section ref={clientsRef} className="py-20 bg-background">
+      <section ref={clientsRef} className="py-5 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
           <p className="text-muted-foreground mt-4">Loading clients data...</p>
@@ -363,7 +362,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   // FIXED: Better condition to show empty state
   if (!isEditing && !hasData && !isLoading) {
     return (
-      <section ref={clientsRef} className="py-20 bg-background">
+      <section ref={clientsRef} className="py-5 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit Controls */}
           <div className='text-right mb-8'>
@@ -405,7 +404,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   }
 
   return (
-    <section ref={clientsRef} className="py-20 bg-background">
+    <section ref={clientsRef} className="py-5 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -531,7 +530,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                   <input
                     type="text"
                     value={stat.label}
-                    onChange={(e) => {}}
+                    onChange={(e) => { }}
                     className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
                     disabled
                   />
