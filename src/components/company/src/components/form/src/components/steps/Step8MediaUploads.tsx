@@ -314,7 +314,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     bgColor?: string;
   }) => (
     <div className={`${bgColor} rounded-lg p-6`}>
-      <h3 className='text-lg font-bold text-slate-900 mb-4 flex items-center'>
+      <h3 className='flex items-center mb-4 text-lg font-bold text-slate-900'>
         <Icon className='w-6 h-6 mr-3 text-slate-600' />
         {title}
       </h3>
@@ -341,11 +341,12 @@ const Step8MediaUploads: React.FC<StepProps> = ({
   }) => {
     const status = fieldName ? fileProcessingStatus[fieldName] : undefined;
     const uploadedFile = fieldName ? uploadedFiles[fieldName] : null;
+    const [isDragging, setIsDragging] = useState(false);
 
     const getStatusIcon = () => {
       switch (status) {
         case "uploading":
-          return <Loader2 className='w-4 h-4 animate-spin text-blue-500' />;
+          return <Loader2 className='w-4 h-4 text-blue-500 animate-spin' />;
         case "completed":
           return <CheckCircle className='w-4 h-4 text-green-500' />;
         case "error":
@@ -371,27 +372,63 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     const isUploaded = status === "completed" && uploadedFile;
     const fileUrl = uploadedFile?.imageUrl || uploadedFile?.s3Url || (typeof value === 'string' && value.startsWith('http') ? value : null);
 
+    const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+      if (isUploading || status === 'uploading') return;
+
+      const file = e.dataTransfer?.files?.[0];
+      if (!file) return;
+
+      if (file.size > 50 * 1024 * 1024) { // 50MB limit
+        toast.warn('File size must be less than 50MB');
+        return;
+      }
+
+      if (fieldName) {
+        await handleFileUpload(file, fieldName);
+      }
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      if (isUploading || status === 'uploading') return;
+      setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+    };
+
     return (
       <div className='mb-4'>
-        <label className='block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2'>
+        <label className='flex items-center block gap-2 mb-2 text-sm font-semibold text-slate-700'>
           {label}
-          {required && <span className='text-red-500 ml-1'>*</span>}
+          {required && <span className='ml-1 text-red-500'>*</span>}
           {getStatusIcon()}
         </label>
         {description && (
-          <p className='text-sm text-slate-600 mb-2'>{description}</p>
+          <p className='mb-2 text-sm text-slate-600'>{description}</p>
         )}
         
         <div
-          className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-slate-400 transition-colors ${getStatusColor()}`}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragEnter={handleDragOver}
+          onDragLeave={handleDragLeave}
+          className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-slate-400 transition-colors ${getStatusColor()} ${isDragging ? 'border-blue-400 bg-blue-50' : ''}`}
+          aria-label={`${label} upload dropzone`}
         >
-          <Upload className='w-8 h-8 text-slate-400 mx-auto mb-2' />
-          <p className='text-slate-600 mb-2'>
-            {isUploaded
-              ? `File uploaded: ${uploadedFile.fileName} (${uploadedFile.sizeMB}MB)`
-              : "Click to upload or drag and drop"}
+          <Upload className='w-8 h-8 mx-auto mb-2 text-slate-400' />
+          <p className='mb-2 text-slate-600'>
+            {isDragging ? 'Drop file here to upload' : (
+              isUploaded
+                ? `File uploaded: ${uploadedFile.fileName} (${uploadedFile.sizeMB}MB)`
+                : 'Click to upload or drag and drop'
+            )}
           </p>
-          <p className='text-xs text-slate-500 mb-3'>{accept}</p>
+          <p className='mb-3 text-xs text-slate-500'>{accept}</p>
           
           {/* Show file URL for uploaded files */}
           {fileUrl && (
@@ -400,7 +437,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                 href={fileUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className='text-blue-600 hover:text-blue-800 text-sm underline'
+                className='text-sm text-blue-600 underline hover:text-blue-800'
               >
                 View uploaded file
               </a>
@@ -414,7 +451,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
               const file = e.target.files?.[0];
               if (file) {
                 if (file.size > 50 * 1024 * 1024) { // 50MB limit
-                  toast.warn("File size must be less than 50MB");
+                  toast.warn('File size must be less than 50MB');
                   return;
                 }
 
@@ -426,7 +463,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             }}
             className='hidden'
             id={`upload-${label.replace(/\s+/g, "-").toLowerCase()}`}
-            disabled={isUploading || status === "uploading"}
+            disabled={isUploading || status === 'uploading'}
           />
           <label
             htmlFor={`upload-${label.replace(/\s+/g, "-").toLowerCase()}`}
@@ -463,21 +500,21 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       <div className='space-y-8'>
         {/* Upload Progress */}
         {isUploading && (
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6'>
+          <div className='p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50'>
             <div className='flex items-center mb-2'>
-              <Loader2 className='w-5 h-5 animate-spin text-blue-600 mr-2' />
+              <Loader2 className='w-5 h-5 mr-2 text-blue-600 animate-spin' />
               <h3 className='text-lg font-semibold text-blue-800'>
                 Processing Submission...
               </h3>
             </div>
-            <p className='text-blue-700 mb-3'>{uploadStatus}</p>
-            <div className='w-full bg-blue-200 rounded-full h-3'>
+            <p className='mb-3 text-blue-700'>{uploadStatus}</p>
+            <div className='w-full h-3 bg-blue-200 rounded-full'>
               <div
-                className='bg-blue-600 h-3 rounded-full transition-all duration-500 ease-out'
+                className='h-3 transition-all duration-500 ease-out bg-blue-600 rounded-full'
                 style={{ width: `${uploadProgress}%` }}
               ></div>
             </div>
-            <p className='text-sm text-blue-600 mt-2'>
+            <p className='mt-2 text-sm text-blue-600'>
               {uploadProgress}% complete
             </p>
           </div>
@@ -499,7 +536,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
               fieldName='companyLogoUrl'
             />
           </div>
-          <p className='text-sm text-blue-700 mt-4'>
+          <p className='mt-4 text-sm text-blue-700'>
             <strong>Note:</strong> Files are uploaded immediately when selected. AI will generate additional images and design elements for your website automatically.
           </p>
         </FileUploadSection>
@@ -510,7 +547,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           icon={FileText}
           bgColor='bg-green-50'
         >
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <FileUploadBox
               label='DGCA Type Certificate'
               accept='.pdf,.jpg,.jpeg,.png'
@@ -612,11 +649,11 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             />
           </div>
 
-          <div className='mt-6 p-4 bg-purple-100 rounded-lg'>
-            <h4 className='font-semibold text-purple-900 mb-2'>
+          <div className='p-4 mt-6 bg-purple-100 rounded-lg'>
+            <h4 className='mb-2 font-semibold text-purple-900'>
               Video Guidelines:
             </h4>
-            <ul className='text-purple-800 text-sm space-y-1'>
+            <ul className='space-y-1 text-sm text-purple-800'>
               <li>• Videos should be 1080p or higher resolution</li>
               <li>• YouTube, Vimeo, or Google Drive links are preferred</li>
               <li>
@@ -629,13 +666,13 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         </FileUploadSection>
 
         {/* Upload Summary */}
-        <div className='bg-slate-100 rounded-lg p-6'>
-          <h3 className='text-lg font-bold text-slate-900 mb-4'>
+        <div className='p-6 rounded-lg bg-slate-100'>
+          <h3 className='mb-4 text-lg font-bold text-slate-900'>
             Upload Summary
           </h3>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <div>
-              <h4 className='font-semibold text-slate-800 mb-2'>
+              <h4 className='mb-2 font-semibold text-slate-800'>
                 Files Status:
               </h4>
               <ul className='space-y-1 text-sm'>
@@ -644,7 +681,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                 ) : (
                   Object.keys(uploadedFiles).map((fieldName) => (
                     <li key={fieldName} className='flex items-center text-green-600'>
-                      <span className='w-2 h-2 rounded-full mr-2 bg-current'></span>
+                      <span className='w-2 h-2 mr-2 bg-current rounded-full'></span>
                       {fieldName} ✓ Uploaded ({uploadedFiles[fieldName].sizeMB}MB)
                     </li>
                   ))
@@ -653,7 +690,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             </div>
 
             <div>
-              <h4 className='font-semibold text-slate-800 mb-2'>
+              <h4 className='mb-2 font-semibold text-slate-800'>
                 Upload Method:
               </h4>
               <ul className='space-y-1 text-sm text-slate-600'>
@@ -665,11 +702,11 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             </div>
           </div>
 
-          <div className='mt-6 p-4 bg-green-50 rounded-lg border border-green-200'>
-            <h4 className='font-semibold text-green-800 mb-2'>
+          <div className='p-4 mt-6 border border-green-200 rounded-lg bg-green-50'>
+            <h4 className='mb-2 font-semibold text-green-800'>
               🎉 Ready to Generate Your Website!
             </h4>
-            <p className='text-green-700 text-sm'>
+            <p className='text-sm text-green-700'>
               Files are uploaded individually for better performance. Once you click "Submit Form", 
               our AI will create a professional website with all your information, generate additional 
               content, optimize for SEO, and create a beautiful design that matches your industry.
