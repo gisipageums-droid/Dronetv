@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
-import {  Upload } from "lucide-react";
+import { FiSkipBack } from "react-icons/fi";
 export default function Publish() {
   const navigate = useNavigate();
 
@@ -13,7 +13,7 @@ export default function Publish() {
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Upload size={18} />
+          <FiSkipBack size={18} />
           Go back
         </motion.button>
       </motion.div>
