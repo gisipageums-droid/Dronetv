@@ -258,7 +258,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
               Edit Data
             </button> */}
 
-            <button
+            {/* <button
               onClick={(e) => {
                 e.stopPropagation();
                 if (company?.publishedId) onPreview(company.publishedId);
@@ -267,7 +267,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
             >
               <Eye className="w-4 h-4" />
               Preview
-            </button>
+            </button> */}
 
             <button
               onClick={(e) => {

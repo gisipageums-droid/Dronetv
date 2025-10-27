@@ -641,54 +641,72 @@ export default function EditableUsedBy({
           ) : (
             // Auto-scroll animation for non-edit mode
             <motion.div
-              className="w-full overflow-hidden relative"
+              className="w-full overflow-hidden relative py-4"
               initial="hidden"
               animate="visible"
               variants={itemVariants}
             >
               <style>
                 {`
-                  @keyframes marquee {
-                    0% { transform: translateX(0%); }
-                    100% { transform: translateX(-50%); }
+                  @keyframes scroll {
+                    from { transform: translateX(0); }
+                    to { transform: translateX(calc(-50% - 1rem)); }
                   }
-                  .animate-marquee {
-                    animation: marquee 30s linear infinite;
+                  .scroll-container {
+                    display: flex;
+                    width: max-content;
+                    animation: scroll 20s linear infinite;
                   }
-                  .hover-pause:hover .animate-marquee {
+                  .scroll-container:hover {
                     animation-play-state: paused;
                   }
                 `}
               </style>
 
-              <div className="hover-pause">
-                <motion.div
-                  className="flex gap-12 items-center animate-marquee"
-                  transition={{ duration: 0.8 }}
-                >
-                  {duplicatedCompanies.map((company, i) => (
+              <div className="relative flex overflow-x-hidden">
+                <div className="scroll-container">
+                  {/* First set of logos */}
+                  {displayContent.companies.map((company, i) => (
                     <motion.div
-                      key={`${company.id}-${i}`}
-                      className="flex-shrink-0"
+                      key={`first-${company.id}-${i}`}
+                      className="flex-shrink-0 mx-6"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.2 }}
                     >
                       <img
                         src={getImageSrc(company.image)}
                         alt={company.name}
-                        className="h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300"
+                        className="h-12 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300"
                         onError={(e) => {
                           e.target.src = DEFAULT_PLACEHOLDER_IMAGE;
                         }}
                       />
                     </motion.div>
                   ))}
-                </motion.div>
+                  {/* Duplicate set for seamless scrolling */}
+                  {displayContent.companies.map((company, i) => (
+                    <motion.div
+                      key={`second-${company.id}-${i}`}
+                      className="flex-shrink-0 mx-6"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <img
+                        src={getImageSrc(company.image)}
+                        alt={company.name}
+                        className="h-12 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300"
+                        onError={(e) => {
+                          e.target.src = DEFAULT_PLACEHOLDER_IMAGE;
+                        }}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
-              {/* Gradient fade effects on sides */}
-              <div className="absolute top-0 left-0 w-20 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
-              <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
+              {/* Gradient Overlays */}
+              <div className="absolute top-0 left-0 w-24 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-24 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
             </motion.div>
           )}
         </div>

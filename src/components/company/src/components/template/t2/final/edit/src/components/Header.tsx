@@ -39,6 +39,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
     { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
     { id: 9, label: "Clients", href: "#clients", color: "primary" },
   ];
+console.log("header data",content);
 
   // Smooth scroll function
   const scrollToSection = (href: string) => {

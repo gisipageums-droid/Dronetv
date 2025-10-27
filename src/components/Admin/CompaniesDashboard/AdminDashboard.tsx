@@ -400,10 +400,10 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               disabled={disabled}
             >
               <Key className="w-3 h-3 md:w-4 md:h-4" />
-              Credentials
+              Access Details
             </button>
 
-            <button
+            {/* <button
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(company.publishedId, company.templateSelection);
@@ -414,7 +414,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
             >
               <Edit className="w-3 h-3 md:w-4 md:h-4" />
               Edit
-            </button>
+            </button> */}
 
             <button
               onClick={(e) => {

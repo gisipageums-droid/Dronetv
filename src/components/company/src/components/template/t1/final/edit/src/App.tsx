@@ -16,69 +16,67 @@ import UsedBy from "./components/UsedBy";
 import { useParams } from "react-router-dom";
 import Back from "./components/Back";
 
-// import { useEffect } from "react";
-
 export default function App() {
- const { finaleDataReview, setFinalTemplate,setFinaleDataReview } = useTemplate();
- const [componentStates, setComponentStates] = useState({});
- const { pub, userId } = useParams();
-  
+  const { finaleDataReview, setFinalTemplate, setFinaleDataReview } = useTemplate();
+  const [componentStates, setComponentStates] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { pub, userId } = useParams();
+
+  // ✅ Fetch template data when pub/userId changes
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchData() {
- try {
-      const response = await fetch(
-        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${pub}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-User-Id': userId,
-          },
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await fetch(
+          `https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev/templates?publishId=${encodeURIComponent(pub || "")}`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        const data = await response.json();
+
+        if (isMounted) {
+          console.log("Fetched data:", data);
+          setFinaleDataReview(data.data);
+          setIsLoading(false);
         }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Published Details API Error:", errorText);
-
-        if (response.status === 401) {
-          throw new Error("User not authenticated.");
-        } else if (response.status === 403) {
-          throw new Error("You don't have permission to access this template.");
-        } else if (response.status === 404) {
-          throw new Error("Template not found.");
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
+      } catch (err: any) {
+        console.error("Error fetching data:", err);
+        if (isMounted) {
+          setError(err.message);
+          setIsLoading(false);
         }
       }
-
-      const data = await response.json();
-      console.log("Published Details Response:", data);
-      setFinaleDataReview(data);
-      
-      return data;
-    } catch (error) {
-      console.error("Error fetching published details:", error);
-      throw error;
     }
-  }
-    fetchData();
 
-  }, [pub, userId]);
+    if (pub && userId) fetchData();
+    return () => {
+      isMounted = false;
+    };
+  }, [pub, userId, setFinaleDataReview]);
 
-
-
-  // Memoize the collectComponentState function
-  const collectComponentState = useCallback((componentName, state) => {
-    setComponentStates(prev => ({
+  // ✅ Memoized state collector
+  const collectComponentState = useCallback((componentName: string, state: any) => {
+    setComponentStates((prev) => ({
       ...prev,
-      [componentName]: state
+      [componentName]: state,
     }));
   }, []);
 
-  // Update finalTemplate whenever componentStates changes
+  // ✅ Sync collected component state into finalTemplate
   useEffect(() => {
-    setFinalTemplate(prev => ({
+    if (!finaleDataReview) return;
+
+    setFinalTemplate((prev) => ({
       ...prev,
       publishedId: finaleDataReview.publishedId,
       userId: finaleDataReview.userId,
@@ -86,35 +84,28 @@ export default function App() {
       templateSelection: finaleDataReview.templateSelection,
       content: {
         ...prev.content,
-        company:finaleDataReview?.content?.company,
-        ...componentStates
-      }
+        company: finaleDataReview?.content?.company,
+        ...componentStates,
+      },
     }));
   }, [componentStates, setFinalTemplate, finaleDataReview]);
 
-  // Add a loading check for finaleDataReview
-  const isLoading =
-    !finaleDataReview ||
-    !finaleDataReview.content ||
-    Object.keys(finaleDataReview.content).length === 0;
-
-  // Move ALL hooks above any conditional return!
-  // Do NOT call hooks inside if statements or after a conditional return.
-  const headerStateChange = useCallback((state) => collectComponentState('header', state), [collectComponentState]);
-  const heroStateChange = useCallback((state) => collectComponentState('hero', state), [collectComponentState]);
-  const aboutStateChange = useCallback((state) => collectComponentState('about', state), [collectComponentState]);
-  const profileStateChange = useCallback((state) => collectComponentState('profile', state), [collectComponentState]);
-  const productsStateChange = useCallback((state) => collectComponentState('products', state), [collectComponentState]);
-  const servicesStateChange = useCallback((state) => collectComponentState('services', state), [collectComponentState]);
-  const galleryStateChange = useCallback((state) => collectComponentState('gallery', state), [collectComponentState]);
-  const blogStateChange = useCallback((state) => collectComponentState('blog', state), [collectComponentState]);
-  const testimonialsStateChange = useCallback((state) => collectComponentState('testimonials', state), [collectComponentState]);
+  // ✅ Declare ALL hooks before conditional returns
+  const headerStateChange = useCallback((state) => collectComponentState("header", state), [collectComponentState]);
+  const heroStateChange = useCallback((state) => collectComponentState("hero", state), [collectComponentState]);
+  const aboutStateChange = useCallback((state) => collectComponentState("about", state), [collectComponentState]);
+  const profileStateChange = useCallback((state) => collectComponentState("profile", state), [collectComponentState]);
+  const productsStateChange = useCallback((state) => collectComponentState("products", state), [collectComponentState]);
+  const servicesStateChange = useCallback((state) => collectComponentState("services", state), [collectComponentState]);
+  const galleryStateChange = useCallback((state) => collectComponentState("gallery", state), [collectComponentState]);
+  const blogStateChange = useCallback((state) => collectComponentState("blog", state), [collectComponentState]);
+  const testimonialsStateChange = useCallback((state) => collectComponentState("testimonials", state), [collectComponentState]);
   const usedByStateChange = useCallback((state) => collectComponentState("usedBy", state), [collectComponentState]);
-  const contactStateChange = useCallback((state) => collectComponentState('contact', state), [collectComponentState]);
-  const footerStateChange = useCallback((state) => collectComponentState('footer', state), [collectComponentState]);
+  const contactStateChange = useCallback((state) => collectComponentState("contact", state), [collectComponentState]);
+  const footerStateChange = useCallback((state) => collectComponentState("footer", state), [collectComponentState]);
 
-
-  if (isLoading) {
+  // ✅ Conditional rendering after all hooks
+  if (isLoading || !finaleDataReview?.content) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="text-lg text-gray-600">Loading...</div>
@@ -122,8 +113,16 @@ export default function App() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <div className="text-lg text-red-600">Error: {error}</div>
+      </div>
+    );
+  }
+
+  // ✅ Final render
   return (
-    // The className here is no longer needed as the useEffect handles the root element
     <div>
       <Header
         headerData={finaleDataReview.content.header}
@@ -140,80 +139,76 @@ export default function App() {
         templateSelection={finaleDataReview.templateSelection}
       />
       <UsedBy
-        usedByData={finaleDataReview.content.UsedBy}
+        usedByData={finaleDataReview.content.usedBy}
         onStateChange={usedByStateChange}
         publishedId={finaleDataReview.publishedId}
         userId={finaleDataReview.userId}
         templateSelection={finaleDataReview.templateSelection}
       />
-      <About 
+      <About
         aboutData={finaleDataReview.content.about}
         onStateChange={aboutStateChange}
         publishedId={finaleDataReview.publishedId}
         userId={finaleDataReview.userId}
         templateSelection={finaleDataReview.templateSelection}
-      
       />
       <EditableCompanyProfile
-      profileData={finaleDataReview.content.profile}
-      onStateChange={profileStateChange}
-      publishedId={finaleDataReview.publishedId}
-      userId={finaleDataReview.userId}
-      templateSelection={finaleDataReview.templateSelection}
+        profileData={finaleDataReview.content.profile}
+        onStateChange={profileStateChange}
+        publishedId={finaleDataReview.publishedId}
+        userId={finaleDataReview.userId}
+        templateSelection={finaleDataReview.templateSelection}
       />
-      <Services 
-      serviceData={finaleDataReview.content.services}
-      onStateChange={servicesStateChange}
-      publishedId={finaleDataReview.publishedId}
-      userId={finaleDataReview.userId}
-      templateSelection={finaleDataReview.templateSelection}
+      <Services
+        serviceData={finaleDataReview.content.services}
+        onStateChange={servicesStateChange}
+        publishedId={finaleDataReview.publishedId}
+        userId={finaleDataReview.userId}
+        templateSelection={finaleDataReview.templateSelection}
       />
-      <Products 
-      productData={finaleDataReview.content.products} 
-      onStateChange={productsStateChange}
-      publishedId={finaleDataReview.publishedId}
-      userId={finaleDataReview.userId}
-      templateSelection={finaleDataReview.templateSelection}
+      <Products
+        productData={finaleDataReview.content.products}
+        onStateChange={productsStateChange}
+        publishedId={finaleDataReview.publishedId}
+        userId={finaleDataReview.userId}
+        templateSelection={finaleDataReview.templateSelection}
       />
-      <Blog 
-      blogData={finaleDataReview.content.blog}
-      onStateChange={blogStateChange}
-      publishedId={finaleDataReview.publishedId}
-      userId={finaleDataReview.userId}
-      templateSelection={finaleDataReview.templateSelection}
+      <Blog
+        blogData={finaleDataReview.content.blog}
+        onStateChange={blogStateChange}
+        publishedId={finaleDataReview.publishedId}
+        userId={finaleDataReview.userId}
+        templateSelection={finaleDataReview.templateSelection}
       />
       <EditableGallerySection
-      galleryData={finaleDataReview.content.gallery}
-      onStateChange={galleryStateChange}
-      publishedId={finaleDataReview.publishedId}
-      userId={finaleDataReview.userId}
-      templateSelection={finaleDataReview.templateSelection}
-        />
-      
-      <Testimonials 
-      content={finaleDataReview.content.testimonials}
-      onStateChange={testimonialsStateChange}
-      publishedId={finaleDataReview.publishedId}
-      userId={finaleDataReview.userId}
-      templateSelection={finaleDataReview.templateSelection}
+        galleryData={finaleDataReview.content.gallery}
+        onStateChange={galleryStateChange}
+        publishedId={finaleDataReview.publishedId}
+        userId={finaleDataReview.userId}
+        templateSelection={finaleDataReview.templateSelection}
       />
-      
-
+      <Testimonials
+        content={finaleDataReview.content.testimonials}
+        onStateChange={testimonialsStateChange}
+        publishedId={finaleDataReview.publishedId}
+        userId={finaleDataReview.userId}
+        templateSelection={finaleDataReview.templateSelection}
+      />
       <Contact
-      content={finaleDataReview.content.contact}
-      onStateChange={contactStateChange}
-      publishedId={finaleDataReview.publishedId}
-      userId={finaleDataReview.userId}
-      templateSelection={finaleDataReview.templateSelection}
+        content={finaleDataReview.content.contact}
+        onStateChange={contactStateChange}
+        publishedId={finaleDataReview.publishedId}
+        userId={finaleDataReview.userId}
+        templateSelection={finaleDataReview.templateSelection}
       />
       <Publish />
       <Back />
-      <Footer 
-      onStateChange={footerStateChange}
-      content={finaleDataReview.content.footer}
-            publishedId={finaleDataReview.publishedId}
-      userId={finaleDataReview.userId}
-      templateSelection={finaleDataReview.templateSelection}
+      <Footer
+        onStateChange={footerStateChange}
+        content={finaleDataReview.content.footer}
+        publishedId={finaleDataReview.publishedId}
+        userId={finaleDataReview.userId}
+        templateSelection={finaleDataReview.templateSelection}
       />
     </div>
   );
