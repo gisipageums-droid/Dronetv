@@ -36,6 +36,7 @@ export default function App() {
       templateSelection: AIGenData.templateSelection,
       content: {
         ...prev.content,
+        company: AIGenData?.content?.company,
         ...componentStates,
       },
     }));
