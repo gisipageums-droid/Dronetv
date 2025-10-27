@@ -4,35 +4,20 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
-import logo from "/images/Drone tv .in.jpg";
 import { toast } from "react-toastify";
+import logo from "/images/Drone tv .in.jpg";
 import Cropper from 'react-easy-crop';
+import Footer from "../components/Footer";
 
-export default function Header({ headerData, onStateChange, userId, publishedId, templateSelection }) {
+export default function Header({headerData,onStateChange,publishedId,userId,templateSelection}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [content, setContent] = useState(headerData);
   
-  const [content, setContent] = useState({
-    logoLetter: headerData?.logo,
-    companyName: headerData?.name || "Company",
-    navItems: [
-      { id: 1, label: "Home", href: "#home", color: "primary" },
-      { id: 2, label: "About", href: "#about", color: "primary" },
-      { id: 3, label: "Our Team", href: "#our-team", color: "primary" },
-      { id: 4, label: "Product", href: "#product", color: "primary" },
-      { id: 5, label: "Services", href: "#services", color: "red-accent" },
-      { id: 6, label: "Gallery", href: "#gallery", color: "primary" },
-      { id: 7, label: "Blog", href: "#blog", color: "primary" },
-      { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
-      { id: 9, label: "Clients", href: "#clients", color: "primary" },
-    ],
-    ctaText: "Get Started",
-  });
-
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -41,8 +26,41 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  
+  // Static navigation items
+  const staticNavItems = [
+    { id: 1, label: "Home", href: "#home", color: "primary" },
+    { id: 2, label: "About", href: "#about", color: "primary" },
+    { id: 3, label: "Our Team", href: "#our-team", color: "primary" },
+    { id: 4, label: "Product", href: "#product", color: "primary" },
+    { id: 5, label: "Services", href: "#services", color: "red-accent" },
+    { id: 6, label: "Gallery", href: "#gallery", color: "primary" },
+    { id: 7, label: "Blog", href: "#blog", color: "primary" },
+    { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
+    { id: 9, label: "Clients", href: "#clients", color: "primary" },
+  ];
 
-  // Notify parent of state changes
+  // Smooth scroll function
+  const scrollToSection = (href: string) => {
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  // Handle navigation click
+  const handleNavClick = (href: string) => {
+    setIsMenuOpen(false); // Close mobile menu
+    setTimeout(() => {
+      scrollToSection(href);
+    }, 100); // Small delay to ensure menu is closed before scrolling
+  };
+
+  // In each component, add:
   useEffect(() => {
     if (onStateChange) {
       onStateChange(content);
@@ -79,10 +97,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
     };
     reader.readAsDataURL(file);
     
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    e.target.value = '';
   };
 
   // Cropper functions
@@ -154,7 +169,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
       
       // Update preview immediately
-      setContent(prev => ({ ...prev, logoLetter: previewUrl }));
+      setContent(prev => ({ ...prev, logoUrl: previewUrl }));
       
       // Set the file for upload on save
       setPendingLogoFile(file);
@@ -200,7 +215,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
         const formData = new FormData();
         formData.append('file', pendingLogoFile);
         formData.append('sectionName', 'header');
-        formData.append('imageField', 'logoLetter');
+        formData.append('imageField', 'logoUrl'+Date.now());
         formData.append('templateSelection', templateSelection);
 
         const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
@@ -211,7 +226,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
           // Replace local preview with S3 URL
-          setContent(prev => ({ ...prev, logoLetter: uploadData.imageUrl }));
+          setContent(prev => ({ ...prev, logoUrl: uploadData.imageUrl }));
           setPendingLogoFile(null); // Clear pending file
           console.log('Logo uploaded to S3:', uploadData.imageUrl);
         } else {
@@ -224,12 +239,11 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
       
       // Exit edit mode
       setIsEditing(false);
-      toast.success('Header section saved with S3 URLs ready for publish');
+      toast.success('Header section saved with S3 URLs!');
 
     } catch (error) {
       console.error('Error saving header section:', error);
       toast.error('Error saving changes. Please try again.');
-      // Keep in edit mode so user can retry
     } finally {
       setIsUploading(false);
     }
@@ -251,126 +265,134 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
 
   return (
     <>
-      {/* Image Cropper Modal */}
-     {showCropper && (
-  <motion.div 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
-  >
-    <motion.div 
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
-    >
-      {/* Header */}
-      <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-        <h3 className="text-base font-semibold text-gray-800">Crop Logo</h3>
-        <button
-          onClick={cancelCrop}
-          className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-          aria-label="Close cropper"
+        {showCropper && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
         >
-          <XIcon className="w-5 h-5 text-gray-600" />
-        </button>
-      </div>
-
-      {/* Cropper Area */}
-      <div className="flex-1 relative bg-gray-900">
-        <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-          <Cropper
-            image={imageToCrop}
-            crop={crop}
-            zoom={zoom}
-            rotation={rotation}
-            aspect={1} // Square aspect ratio for logos
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-            showGrid={false}
-            cropShape="rect"
-            style={{
-              containerStyle: { position: "relative", width: "100%", height: "100%" },
-              cropAreaStyle: { border: "2px solid white", borderRadius: "8px" },
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-        <div className="grid grid-cols-2 gap-2">
-          {/* Zoom */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-gray-700">
-                <ZoomIn className="w-4 h-4" /> Zoom
-              </span>
-              <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-base font-semibold text-gray-800">
+                Crop Logo
+              </h3>
+              <button
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <XIcon className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
-            <input
-              type="range"
-              value={zoom}
-              min={1}
-              max={3}
-              step={0.1}
-              onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-            />
-          </div>
 
-          {/* Rotation */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-gray-700">
-                <RotateCw className="w-4 h-4" /> Rotation
-              </span>
-              <span className="text-gray-600">{rotation}°</span>
+            {/* Cropper Area - responsive heights but compact spacing */}
+            <div className="flex-1 relative bg-gray-900">
+              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
+                <Cropper
+                  image={imageToCrop}
+                  crop={crop}
+                  zoom={zoom}
+                  rotation={rotation}
+                  aspect={1} // Square aspect ratio for logos
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                  showGrid={false}
+                  cropShape="rect"
+                  style={{
+                    containerStyle: {
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                    },
+                    cropAreaStyle: {
+                      border: "2px solid white",
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </div>
             </div>
-            <input
-              type="range"
-              value={rotation}
-              min={0}
-              max={360}
-              step={1}
-              onChange={(e) => setRotation(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-            />
-          </div>
-        </div>
 
-        {/* Action Buttons - equal width & responsive */}
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <button
-            onClick={resetCropSettings}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
-          >
-            Reset
-          </button>
+            {/* Controls */}
+            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
+              <div className="grid grid-cols-2 gap-2">
+                {/* Zoom Control */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <ZoomIn className="w-4 h-4" />
+                      Zoom
+                    </span>
+                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  </div>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                </div>
 
-          <button
-            onClick={cancelCrop}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
-          >
-            Cancel
-          </button>
+                {/* Rotation Control */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-gray-700">
+                      <RotateCw className="w-4 h-4" />
+                      Rotation
+                    </span>
+                    <span className="text-gray-600">{rotation}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    value={rotation}
+                    min={0}
+                    max={360}
+                    step={1}
+                    onChange={(e) => setRotation(Number(e.target.value))}
+                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                </div>
+              </div>
 
-          <button
-            onClick={applyCrop}
-            className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
-          >
-            Apply Crop
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  </motion.div>
-)}
+              {/* Action Buttons - Responsive layout, reduced gaps/padding */}
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <Button
+                  variant="outline"
+                  onClick={resetCropSettings}
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                >
+                  Reset
+                </Button>
 
+                <Button
+                  variant="outline"
+                  onClick={cancelCrop}
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                >
+                  Cancel
+                </Button>
 
-      {/* === Updated header: background black + white text === */}
+                <Button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 text-sm"
+                >
+                  Apply Crop
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
       <motion.header
-        className={`fixed top-[4rem] left-0 right-0 border-b z-50  ${
+        className={`fixed top-16 left-0 right-0 border-b z-10 ${
           theme === "dark"
             ? "bg-gray-800 border-gray-700 text-gray-300"
             : "bg-white border-gray-200"
@@ -381,21 +403,26 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
+            {/* Logo - Limited width to prevent taking too much space */}
             <div className="flex items-center flex-shrink-0 max-w-[200px]">
               <motion.div
-                className="w-8 h-8 rounded-lg flex items-center justify-center mr-2 flex-shrink-0"
+                className="relative w-8 h-8 rounded-lg flex items-center justify-center mr-2 shadow-md overflow-hidden flex-shrink-0"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
               >
                 {isEditing ? (
                   <div className="relative w-full h-full">
-                    
-                    <img
-                      src={content.logoLetter||logo}
-                      alt="Logo"
-                      className="w-full h-full object-contain"
-                    />
+                    {content.logoUrl && (content.logoUrl.startsWith('data:') || content.logoUrl.startsWith('http')) ? (
+                      <img
+                        src={content.logoUrl || logo}
+                        alt="Logo"
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <span className="text-black font-bold text-lg">
+                        {content.logoUrl}
+                      </span>
+                    )}
                     <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={() => fileInputRef.current?.click()}
@@ -406,11 +433,19 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                     </div>
                   </div>
                 ) : (
-                  <img
-                    src={content.logoLetter||logo}
-                    alt="Logo"
-                    className="w-full h-full object-contain"
-                  />
+                  <>
+                    {content.logoUrl && (content.logoUrl.startsWith('data:') || content.logoUrl.startsWith('http')) ? (
+                      <img
+                        src={content.logoUrl || logo}
+                        alt="Logo"
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <span className="text-black font-bold text-lg">
+                        {content.logoUrl}
+                      </span>
+                    )}
+                  </>
                 )}
                 <input
                   type="file"
@@ -425,37 +460,36 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                   type="text"
                   value={content.companyName}
                   onChange={(e) => updateContent("companyName", e.target.value)}
-                  className="bg-transparent border-b border-white text-xl font-bold outline-none max-w-[140px] truncate text-white"
+                  className="bg-transparent border-b border-primary text-xl font-bold outline-none max-w-[140px] truncate"
                 />
               ) : (
-                <motion.span className={`text-xl font-bold truncate ${
-          theme === "dark"
-            ? "bg-gray-800 border-gray-700 text-gray-300"
-            : "bg-white border-gray-200 "
-        }`}>
+                <motion.span className="text-xl font-bold  truncate">
                   {content.companyName}
                 </motion.span>
               )}
             </div>
 
-            {/* Desktop Nav */}
+            {/* Desktop Nav - Centered with proper spacing */}
             <nav className="hidden lg:flex items-center justify-center flex-1 mx-4">
-              
               <div className="flex items-center space-x-6 flex-wrap justify-center">
-                {content.navItems.map((item) => (
+                {staticNavItems.map((item) => (
                   <motion.a
                     key={item.id}
                     href={item.href}
-                    className={`font-medium relative group whitespace-nowrap hover:text-gray-300 ${
-          theme === "dark"
-            ? "bg-gray-800 border-gray-700 text-gray-300"
-            : "bg-white border-gray-200"
-        }`}
+                    className={`font-medium relative group whitespace-nowrap ${
+                      theme === "dark"
+                        ? "text-gray-300 hover:text-gray-200"
+                        : "text-gray-700 hover:text-primary"
+                    }`}
                     whileHover={{ y: -2 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(item.href);
+                    }}
                   >
                     {item.label}
                     <motion.span
-                      className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all group-hover:w-full`}
+                      className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-${item.color} transition-all group-hover:w-full`}
                       transition={{ duration: 0.3 }}
                     />
                   </motion.a>
@@ -463,21 +497,21 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
               </div>
             </nav>
 
-            {/* Right side */}
-            <div className="flex  items-center space-x-4 flex-shrink-0">
+            {/* Right side - Fixed width to prevent shifting */}
+            <div className="flex items-center space-x-4 flex-shrink-0">
               {isEditing ? (
                 <input
                   type="text"
                   value={content.ctaText}
                   onChange={(e) => updateContent("ctaText", e.target.value)}
-                  className="bg-transparent  border px-3 py-1 rounded font-medium outline-none max-w-[120px] truncate text-white"
+                  className="bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] truncate"
                 />
               ) : (
-                // CTA styled for dark background: transparent with white border & white text
-                <Button className="bg-yellow-400 border border-white text-white hover:bg-white/10 shadow-lg transition-all duration-300 whitespace-nowrap px-4 py-2">
-                  <a href="#contact" className="text-white">
-                    {content.ctaText}
-                  </a>
+                <Button 
+                  className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap"
+                  onClick={() => handleNavClick("#contact")}
+                >
+                  {content.ctaText}
                 </Button>
               )}
 
@@ -502,10 +536,10 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
                 <motion.button 
                   whileTap={{scale:0.9}}
                   whileHover={{y:-1,scaleX:1.1}}
-                  onClick={() => setIsEditing(true)}
-                  className="bg-yellow-400 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold whitespace-nowrap"
+                  onClick={() => setIsEditing(true)} 
+                  className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold whitespace-nowrap"
                 >
-                 Edit
+                  Edit
                 </motion.button>
               )}
             </div>
@@ -514,11 +548,7 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
             <motion.div className="lg:hidden flex-shrink-0">
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={` hover:text-gray-400 transition-colors p-2 ${
-          theme === "dark"
-            ? "bg-gray-800 border-gray-700 text-gray-300"
-            : "bg-white border-gray-200 text-gray-800"
-        }`}
+                className={`hover:text-primary transition-colors p-2 ${theme === "dark" ? "text-gray-300 hover:text-gray-200" : "text-gray-700 hover:text-primary"}`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 animate={{ rotate: isMenuOpen ? 180 : 0 }}
@@ -531,41 +561,38 @@ export default function Header({ headerData, onStateChange, userId, publishedId,
             </motion.div>
           </div>
 
-          {/* Mobile Nav */}
+          {/* Mobile Nav - Using static navigation items */}
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
-                className={`lg:hidden  border-t border-gray-700 overflow-hidden bg-black ${
-          theme === "dark"
-            ? "bg-gray-800 border-gray-700 "
-            : "bg-white border-gray-200 text-black"
-        }`}
+                className={`lg:hidden border-t border-gray-200 overflow-hidden ${
+                  theme === "dark" ? "bg-gray-800 text-white" : "bg-white"
+                }`}
                 variants={menuVariants}
                 initial="closed"
                 animate="open"
                 exit="closed"
               >
-                <motion.nav className="flex flex-col space-y-4 py-4 px-4">
-                  {content.navItems.map((item, index) => (
+                <motion.nav className="flex flex-col space-y-4 py-4">
+                  {staticNavItems.map((item, index) => (
                     <motion.a
                       key={item.id}
                       href={item.href}
-                      className={`  hover:text-gray-300 transition-colors py-2 px-4 rounded-lg hover:bg-white/5  ${theme === "dark"
-                        ? "bg-gray-800 border-gray-700 "
-                        : "bg-white border-gray-200 text-black"
-                      }`}
+                      className={`hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10 cursor-pointer`}
                       variants={itemVariants}
                       whileHover={{ x: 10, scale: 1.02 }}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleNavClick(item.href);
+                      }}
                     >
                       {item.label}
                     </motion.a>
                   ))}
-                  <Button className={` border bg-yellow-400 border-white hover:bg-white/10 w-full mt-4 shadow-lg px-4 py-2 ${
-          theme === "dark"
-            ? "text-black"
-            : " border-gray-200 text-black"
-        }`}>
+                  <Button 
+                    className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
+                    onClick={() => handleNavClick("#contact")}
+                  >
                     {content.ctaText}
                   </Button>
                 </motion.nav>
