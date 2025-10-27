@@ -85,6 +85,7 @@ import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
 import CompanyLeads from "./components/UserDashboard/components/common/CompanyLeads";
 import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
 import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
+import AdminCompanyForm from "./components/AdminCompanyForm";
 
 const HomePage = () => (
   <>
@@ -162,6 +163,9 @@ const AppContent = () => {
             path="/user/companies/edit/2/:pub/:userId"
             element={<DashboardEdit2 />}
           />
+          {/* // company form admin route */}
+                  <Route path="/admin-dashboard/company-form" element={<AdminCompanyForm />} />
+
           {/* login functionality */}
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
