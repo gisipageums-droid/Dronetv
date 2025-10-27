@@ -277,7 +277,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
             className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div className="flex items-center justify-between p-2 border-b border-gray-200 sm:p-3 bg-gray-50">
               <h3 className="text-base font-semibold text-gray-800">
                 Crop Logo
               </h3>
@@ -290,7 +290,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
             </div>
 
             {/* Cropper Area - responsive heights but compact spacing */}
-            <div className="flex-1 relative bg-gray-900">
+            <div className="relative flex-1 bg-gray-900">
               <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
                 <Cropper
                   image={imageToCrop}
@@ -319,7 +319,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
             </div>
 
             {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
+            <div className="p-2 border-t border-gray-200 sm:p-3 bg-gray-50">
               <div className="grid grid-cols-2 gap-2">
                 {/* Zoom Control */}
                 <div className="space-y-1.5">
@@ -363,7 +363,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
               </div>
 
               {/* Action Buttons - Responsive layout, reduced gaps/padding */}
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 gap-2 mt-3 sm:grid-cols-3">
                 <Button
                   variant="outline"
                   onClick={resetCropSettings}
@@ -401,12 +401,12 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             {/* Logo - Limited width to prevent taking too much space */}
             <div className="flex items-center flex-shrink-0 max-w-[200px]">
               <motion.div
-                className="relative w-8 h-8 rounded-lg flex items-center justify-center mr-2 shadow-md overflow-hidden flex-shrink-0"
+                className="relative flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 overflow-hidden rounded-lg shadow-md"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
               >
@@ -416,17 +416,17 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="w-full h-full object-contain"
+                        className="object-contain w-[70px] h-[70px] "
                       />
                     ) : (
-                      <span className="text-black font-bold text-lg">
-                        {content.logoUrl}
+                      <span className="text-lg font-bold text-black">
+                        {content.logoUrl} 
                       </span>
                     )}
-                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100">
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-white text-xs p-1 bg-blue-500 rounded"
+                        className="p-1 text-xs text-white bg-blue-500 rounded"
                       >
                         <Upload size={12} />
                       </button>
@@ -438,10 +438,10 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="w-full h-full object-contain"
+                        className="object-contain w-[70px] h-[70px]"
                       />
                     ) : (
-                      <span className="text-black font-bold text-lg">
+                      <span className="text-lg font-bold text-black">
                         {content.logoUrl}
                       </span>
                     )}
@@ -460,18 +460,20 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                   type="text"
                   value={content.companyName}
                   onChange={(e) => updateContent("companyName", e.target.value)}
-                  className="bg-transparent border-b border-primary text-xl font-bold outline-none max-w-[140px] truncate"
+                  className="bg-transparent border-b border-primary text-xl font-medium outline-none max-w-[140px] "
                 />
               ) : (
-                <motion.span className="text-xl font-bold  truncate">
-                  {content.companyName}
-                </motion.span>
+                <motion.div className="flex flex-wrap items-center gap-2">
+                  <motion.span className="text-xl font-medium max-w-full sm:max-w-[140px] whitespace-normal  break-words">
+                    {content.companyName}
+                  </motion.span>
+                </motion.div>
               )}
             </div>
 
             {/* Desktop Nav - Centered with proper spacing */}
-            <nav className="hidden lg:flex items-center justify-center flex-1 mx-4">
-              <div className="flex items-center space-x-6 flex-wrap justify-center">
+            <nav className="items-center justify-center flex-1 hidden mx-4 lg:flex">
+              <div className="flex flex-wrap items-center justify-center space-x-6">
                 {staticNavItems.map((item) => (
                   <motion.a
                     key={item.id}
@@ -498,17 +500,17 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
             </nav>
 
             {/* Right side - Fixed width to prevent shifting */}
-            <div className="flex items-center space-x-4 flex-shrink-0">
+            <div className="flex items-center flex-shrink-0 space-x-4">
               {isEditing ? (
                 <input
                   type="text"
                   value={content.ctaText}
                   onChange={(e) => updateContent("ctaText", e.target.value)}
-                  className="bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] truncate"
+                  className="bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] "
                 />
               ) : (
                 <Button 
-                  className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap"
+                  className="text-black transition-all duration-300 shadow-lg bg-primary hover:bg-primary/90 whitespace-nowrap"
                   onClick={() => handleNavClick("#contact")}
                 >
                   {content.ctaText}
@@ -537,7 +539,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                   whileTap={{scale:0.9}}
                   whileHover={{y:-1,scaleX:1.1}}
                   onClick={() => setIsEditing(true)} 
-                  className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold whitespace-nowrap"
+                  className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold whitespace-nowrap"
                 >
                   Edit
                 </motion.button>
@@ -545,7 +547,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
             </div>
 
             {/* Mobile menu button */}
-            <motion.div className="lg:hidden flex-shrink-0">
+            <motion.div className="flex-shrink-0 lg:hidden">
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={`hover:text-primary transition-colors p-2 ${theme === "dark" ? "text-gray-300 hover:text-gray-200" : "text-gray-700 hover:text-primary"}`}
@@ -573,7 +575,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                 animate="open"
                 exit="closed"
               >
-                <motion.nav className="flex flex-col space-y-4 py-4">
+                <motion.nav className="flex flex-col py-4 space-y-4">
                   {staticNavItems.map((item, index) => (
                     <motion.a
                       key={item.id}
@@ -590,7 +592,7 @@ export default function Header({headerData,onStateChange,publishedId,userId,temp
                     </motion.a>
                   ))}
                   <Button 
-                    className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
+                    className="w-full mt-4 text-black shadow-lg bg-primary hover:bg-primary/90"
                     onClick={() => handleNavClick("#contact")}
                   >
                     {content.ctaText}
