@@ -26,6 +26,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
     'Real Estate & Photography',
     'Entertainment & Media',
     'Research & Education',
+    "Training",
     'Other'
   ];
 
@@ -43,6 +44,8 @@ const Step3SectorsServed: React.FC<StepProps> = ({
     'Entertainment & Gaming',
     'Agriculture & AgTech',
     'Energy & Utilities',
+        "Training",
+
     'Other'
   ];
 
@@ -60,6 +63,8 @@ const Step3SectorsServed: React.FC<StepProps> = ({
     'Maritime & Coastal',
     'Archaeology & Heritage',
     'Public Health & Epidemiology',
+        "Training",
+
     'Other'
   ];
 
@@ -109,7 +114,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
               <h3 className={`text-sm font-bold ${colors.text} mb-2`}>
                 {category} - Sectors Served
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
                 {sectors.map((sector) => (
                   <label
                     key={sector}
@@ -181,15 +186,15 @@ const Step3SectorsServed: React.FC<StepProps> = ({
         })}
 
         {formData.companyCategory.length === 0 && (
-          <div className="text-center py-4">
+          <div className="py-4 text-center">
             <p className="text-slate-500">Please select company categories in the previous step first</p>
           </div>
         )}
 
         {/* Summary */}
         {formData.sectorsServed && Object.values(formData.sectorsServed).some(arr => arr.length > 0) && (
-          <div className="bg-slate-50 rounded-lg p-2">
-            <h4 className="text-xs font-semibold text-slate-800 mb-2">Selected Sectors Summary</h4>
+          <div className="p-2 rounded-lg bg-slate-50">
+            <h4 className="mb-2 text-xs font-semibold text-slate-800">Selected Sectors Summary</h4>
             {Object.entries(formData.sectorsServed).map(([category, sectors]) => (
               <div key={category} className="mb-2">
                 <h5 className="text-xs font-bold text-slate-700">{category}</h5>
@@ -206,7 +211,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
 
                 {formData.sectorsOther?.[category] && formData.sectorsOther[category].trim() && (
                   <div className="mt-1">
-                    <h6 className="text-xs font-semibold text-slate-700 mb-1">Custom Sectors:</h6>
+                    <h6 className="mb-1 text-xs font-semibold text-slate-700">Custom Sectors:</h6>
                     <div className="flex flex-wrap gap-2">
                       {formData.sectorsOther[category].split(',').map((item, index) => {
                         const trimmedItem = item.trim();
