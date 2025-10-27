@@ -41,7 +41,7 @@ const GOOGLE_CLIENT_ID = "";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [haveAccount, setHaveAccount] = useState<boolean>(true);
+  // const [haveAccount, setHaveAccount] = useState<boolean>(true);
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
   const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({});
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export default function Login() {
     phone: '' // added phone initial value
   });
   //context
-  const {login } = useUserAuth();
+  const {login,haveAccount, setHaveAccount } = useUserAuth();
 
    const navigate = useNavigate();
 
@@ -241,18 +241,18 @@ export default function Login() {
         // Sign In Modal
         <>
           <div className='relative'>
-            <div className='absolute top-0 left-0 w-full h-full bg-black opacity-50 z-10'></div>
-            <img src="./images/3.jpg" className='cover w-full h-42' alt="Login" />
+            <div className='absolute top-0 left-0 z-10 w-full h-full bg-black opacity-50'></div>
+            <img src="./images/3.jpg" className='w-full cover h-42' alt="Login" />
           </div>
-          <div className='absolute top-0 left-0 w-full h-full flex items-center justify-end px-20 z-20'>
-            <div className='bg-white py-5 px-8 rounded-lg shadow-lg max-w-md w-full'>
-              <div className='flex justify-between px-5 items-center mb-6'>
-                <h2 className='text-2xl font-bold mb-4 pt-5'>Sign In</h2>
+          <div className='absolute top-0 left-0 z-20 flex items-center justify-end w-full h-full px-20'>
+            <div className='w-full max-w-md px-8 py-5 bg-white rounded-lg shadow-lg'>
+              <div className='flex items-center justify-between px-5 mb-6'>
+                <h2 className='pt-5 mb-4 text-2xl font-bold'>Sign In</h2>
                 <img src="./images/Drone tv .in.png" alt="logo" className='h-[5.5rem] w-[6rem]'/>
               </div>
               <form onSubmit={handleLoginSubmit}>
                 <div className='mb-4'>
-                  <label className='block text-sm font-medium mb-2' htmlFor="email">Email</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="email">Email</label>
                   <input 
                     type="email" 
                     id="email" 
@@ -264,7 +264,7 @@ export default function Login() {
                   />
                 </div>
                 <div className=''>
-                  <label className='block text-sm font-medium mb-2' htmlFor="password">Password</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="password">Password</label>
                   <div className='flex items-center border border-gray-300 rounded'>
                     <input 
                       type={showPassword ? "text" : "password"} 
@@ -277,35 +277,35 @@ export default function Login() {
                     />
                     <span 
                       onClick={() => setShowPassword(!showPassword)} 
-                      className='cursor-pointer p-2'
+                      className='p-2 cursor-pointer'
                     >
-                      {showPassword ? <FaEye className='text-blue-500 mx-1' /> : <FaEyeSlash className='text-blue-500 mx-1' />}
+                      {showPassword ? <FaEye className='mx-1 text-blue-500' /> : <FaEyeSlash className='mx-1 text-blue-500' />}
                     </span>
                   </div>
                 </div>
-                <p className='mb-4 text-end mx-2 text-blue-700 '>
-                  <Link className='hover:font-semibold cursor-pointer' to="/forgot-password">
+                <p className='mx-2 mb-4 text-blue-700 text-end '>
+                  <Link className='cursor-pointer hover:font-semibold' to="/forgot-password">
                     Forgot Password?
                   </Link>
                 </p>
                 <button 
                   type="submit" 
-                  className='w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600'
+                  className='w-full py-2 text-white bg-blue-500 rounded hover:bg-blue-600'
                 >
                   {isLoading ? "Loading..." : "Login"}
                 </button>
 
                 {/* Google Sign-In Button */}
-                <div className="mt-4 flex flex-col items-center">
-                  <div className="relative w-full flex justify-center">
+                <div className="flex flex-col items-center mt-4">
+                  <div className="relative flex justify-center w-full">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-gray-300"></div>
                     </div>
-                    <div className="relative bg-white px-2 text-sm text-gray-500">
+                    <div className="relative px-2 text-sm text-gray-500 bg-white">
                       Or continue with
                     </div>
                   </div>
-                  <div className="mt-4 w-full">
+                  <div className="w-full mt-4">
                     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
                       <GoogleLogin
                         onSuccess={handleGoogleSuccess}
@@ -337,19 +337,19 @@ export default function Login() {
         // Sign Up Modal
         <>
           <div className='relative'>
-            <div className='absolute top-0 left-0 w-full h-full bg-black opacity-50 z-10'></div>
-            <img src="./images/3.jpg" className='cover w-full h-42' alt="Login" />
+            <div className='absolute top-0 left-0 z-10 w-full h-full bg-black opacity-50'></div>
+            <img src="./images/3.jpg" className='w-full cover h-42' alt="Login" />
           </div>
-          <div className='absolute mt-10 top-0 left-0 w-full h-full flex items-center justify-end px-20 z-20'>
-            <div className='bg-white pb-5 px-8 rounded-lg shadow-lg max-w-md w-full'>
-              <div className='flex justify-between px-5 items-center mb-3'>
-                <h2 className='text-2xl font-bold mb-4 pt-5'>Sign Up</h2>
+          <div className='absolute top-0 left-0 z-20 flex items-center justify-end w-full h-full px-20 mt-10'>
+            <div className='w-full max-w-md px-8 pb-5 bg-white rounded-lg shadow-lg'>
+              <div className='flex items-center justify-between px-5 mb-3'>
+                <h2 className='pt-5 mb-4 text-2xl font-bold'>Sign Up</h2>
                 <img src="./images/logo.png" alt="logo" className='h-10 w-25'/>
               </div>
 
               <form onSubmit={handleSignUpSubmit}>
                 <div className='mb-2'>
-                  <label className='block text-sm font-medium mb-2' htmlFor="email">Email</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="email">Email</label>
                   <input 
                     type="email" 
                     id="email" 
@@ -361,7 +361,7 @@ export default function Login() {
                   />
                 </div>
                 <div className='mb-2'>
-                  <label className='block text-sm font-medium mb-2' htmlFor="fullName">Full Name</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="fullName">Full Name</label>
                   <input 
                     type="text" 
                     id="fullName" 
@@ -375,7 +375,7 @@ export default function Login() {
 
                 {/* NEW: Phone input */}
                 <div className='mb-2'>
-                  <label className='block text-sm font-medium mb-2' htmlFor="phone">Phone</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="phone">Phone</label>
                   <input 
                     type="tel" 
                     id="phone" 
@@ -389,7 +389,7 @@ export default function Login() {
                 </div>
 
                 <div className='mb-2'>
-                  <label className='block text-sm font-medium mb-2' htmlFor="password">Password</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="password">Password</label>
                   <div className='flex items-center border border-gray-300 rounded'>
                     <input 
                       type={showPassword ? "text" : "password"} 
@@ -402,15 +402,15 @@ export default function Login() {
                     />
                     <span 
                       onClick={() => setShowPassword(!showPassword)} 
-                      className='cursor-pointer p-2'
+                      className='p-2 cursor-pointer'
                     >
-                      {showPassword ? <FaEye className='text-blue-500 mx-1' /> : <FaEyeSlash className='text-blue-500 mx-1' />}
+                      {showPassword ? <FaEye className='mx-1 text-blue-500' /> : <FaEyeSlash className='mx-1 text-blue-500' />}
                     </span>
                   </div>
                   {formSubmitted && Object.keys(passwordErrors).length > 0 && (
-                    <div className="text-red-500 text-xs mt-1">
+                    <div className="mt-1 text-xs text-red-500">
                       <p>Password must meet the following requirements:</p>
-                      <ul className="list-disc pl-5">
+                      <ul className="pl-5 list-disc">
                         {Object.values(passwordErrors).map((error, index) => (
                           <li key={index}>{error}</li>
                         ))}
@@ -419,7 +419,7 @@ export default function Login() {
                   )}
                 </div>
                 <div className='mb-2'>
-                  <label className='block text-sm font-medium mb-2' htmlFor="confirmPassword">Confirm Password</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="confirmPassword">Confirm Password</label>
                   <input 
                     type={showPassword ? "text" : "password"} 
                     id="confirmPassword" 
@@ -430,11 +430,11 @@ export default function Login() {
                     required 
                   />
                   {formSubmitted && !passwordMatch && (
-                    <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
+                    <p className="mt-1 text-xs text-red-500">Passwords do not match</p>
                   )}
                 </div>
                 <div className='mb-2'>
-                  <label className='block text-sm font-medium mb-2' htmlFor="city">City</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="city">City</label>
                   <input 
                     type="text" 
                     id="city" 
@@ -446,7 +446,7 @@ export default function Login() {
                   />
                 </div>
                 <div className='mb-2'>
-                  <label className='block text-sm font-medium mb-2' htmlFor="state">State</label>
+                  <label className='block mb-2 text-sm font-medium' htmlFor="state">State</label>
                   <input 
                     type="text" 
                     id="state" 
@@ -459,7 +459,7 @@ export default function Login() {
                 </div>
                 <button 
                   type="submit" 
-                  className='w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 disabled:bg-blue-300'
+                  className='w-full py-2 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-blue-300'
                   disabled={formSubmitted && (!isPasswordValid || !passwordMatch)}
                 >
                   Sign Up
