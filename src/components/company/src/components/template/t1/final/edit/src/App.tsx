@@ -86,6 +86,7 @@ export default function App() {
       templateSelection: finaleDataReview.templateSelection,
       content: {
         ...prev.content,
+        company:finaleDataReview?.content?.company,
         ...componentStates
       }
     }));
