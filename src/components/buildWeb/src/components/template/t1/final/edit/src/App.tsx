@@ -14,6 +14,7 @@ import Services from "./components/Services";
 import Testimonials from "./components/Testimonials";
 import UsedBy from "./components/UsedBy";
 import { useParams } from "react-router-dom";
+import Back from "./components/Back";
 
 // import { useEffect } from "react";
 
@@ -205,6 +206,7 @@ export default function App() {
       templateSelection={finaleDataReview.templateSelection}
       />
       <Publish />
+      <Back />
       <Footer 
       onStateChange={footerStateChange}
       content={finaleDataReview.content.footer}

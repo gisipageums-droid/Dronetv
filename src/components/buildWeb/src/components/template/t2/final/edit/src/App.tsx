@@ -15,6 +15,7 @@ import { useEffect, useState, useCallback } from "react";
 import Publish from "./components/Publish";
 import Profile from "./components/Profile";
 import Gallery from "./components/Gallery";
+import Back from "./components/Back";
 // import { p } from "framer-motion/client";
 
 export default function App() {
@@ -195,6 +196,7 @@ export default function App() {
             onStateChange={contactStateChange}
           />
           <Publish/>
+          <Back />
         </main>
         <Footer
           footerData={finaleDataReview.content.footer} 
