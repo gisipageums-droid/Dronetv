@@ -38,6 +38,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  const [haveAccount, setHaveAccount] = useState<boolean>(true);
 
   const isLogin = !!user;
 
@@ -56,7 +57,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
   };
 
   return (
-    <UserAuthContext.Provider value={{ user, isLogin, login, logout }}>
+    <UserAuthContext.Provider value={{ user, isLogin, login, logout,haveAccount, setHaveAccount }}>
       {children}
     </UserAuthContext.Provider>
   );
