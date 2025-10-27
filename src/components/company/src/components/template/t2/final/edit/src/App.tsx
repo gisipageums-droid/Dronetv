@@ -16,6 +16,7 @@ import Publish from "./components/Publish";
 import Profile from "./components/Profile";
 import Gallery from "./components/Gallery";
 import Back from "./components/Back";
+import { use } from "framer-motion/client";
 // import { p } from "framer-motion/client";
 
 export default function App() {
@@ -72,7 +73,7 @@ export default function App() {
       ...prev,
       [componentName]: state
     }));
-  }, []);
+  }, []); 
 
   // Update finalTemplate whenever componentStates changes
   useEffect(() => {
@@ -84,6 +85,7 @@ export default function App() {
       templateSelection: finaleDataReview.templateSelection,
       content: {
         ...prev.content,
+        company: finaleDataReview?.content?.company,
         ...componentStates
       }
     }));
