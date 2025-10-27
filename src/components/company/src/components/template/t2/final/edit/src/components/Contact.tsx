@@ -82,15 +82,15 @@ export default function Contact({ onStateChange, contactData }) {
   };
 
   return (
-    <motion.section
-      id="contact"
+    <div id="contact">
+ <motion.section
       className="py-5 bg-secondary theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8 }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8"  >
         {/* Edit/Save Buttons */}
         <div className="flex justify-end mt-6">
           {isEditing ? (
@@ -98,7 +98,7 @@ export default function Contact({ onStateChange, contactData }) {
               whileTap={{ scale: 0.9 }}
               whileHover={{ y: -1, scaleX: 1.1 }}
               onClick={() => setIsEditing(false)}
-              className="bg-green-600 cursor-pointer hover:font-semibold hover:shadow-2xl shadow-xl text-white px-4 py-2 rounded"
+              className="px-4 py-2 text-white bg-green-600 rounded shadow-xl cursor-pointer hover:font-semibold hover:shadow-2xl"
             >
               Save
             </motion.button>
@@ -107,7 +107,7 @@ export default function Contact({ onStateChange, contactData }) {
               whileTap={{ scale: 0.9 }}
               whileHover={{ y: -1, scaleX: 1.1 }}
               onClick={() => setIsEditing(true)}
-              className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+              className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
             >
               Edit
             </motion.button>
@@ -116,7 +116,7 @@ export default function Contact({ onStateChange, contactData }) {
 
         {/* Header */}
         <motion.div
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="max-w-3xl mx-auto mb-16 text-center"
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}
@@ -131,16 +131,17 @@ export default function Contact({ onStateChange, contactData }) {
             {isEditing ? (
               <input
                 value={contactSection.header.title}
+                
                 onChange={(e) =>
                   setContactSection((prev) => ({
                     ...prev,
                     header: { ...prev.header, title: e.target.value },
                   }))
                 }
-                className="text-3xl md:text-4xl text-foreground mb-4 w-full text-center border-b bg-transparent font-bold"
+                className="w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground"
               />
             ) : (
-              <h2 className="text-3xl md:text-4xl text-foreground mb-4">
+              <h2 className="mb-4 text-3xl md:text-4xl text-foreground">
                 {contactSection.header.title}
               </h2>
             )}
@@ -164,7 +165,7 @@ export default function Contact({ onStateChange, contactData }) {
                       },
                     }))
                   }
-                  className="text-lg text-muted-foreground border-b bg-transparent w-full text-center mb-2"
+                  className="w-full mb-2 text-lg text-center bg-transparent border-b text-muted-foreground"
                 />
                 <input
                   value={contactSection.header.descriptionPart2}
@@ -177,7 +178,7 @@ export default function Contact({ onStateChange, contactData }) {
                       },
                     }))
                   }
-                  className="text-lg text-red-accent font-semibold border-b bg-transparent w-full text-center mb-2"
+                  className="w-full mb-2 text-lg font-semibold text-center bg-transparent border-b text-red-accent"
                 />
                 <input
                   value={contactSection.header.descriptionPart3}
@@ -190,20 +191,20 @@ export default function Contact({ onStateChange, contactData }) {
                       },
                     }))
                   }
-                  className="text-lg text-muted-foreground border-b bg-transparent w-full text-center"
+                  className="w-full text-lg text-center bg-transparent border-b text-muted-foreground"
                 />
               </div>
             ) : (
               <>
-                <p className="text-lg text-muted-foreground inline">
+                <p className="inline text-lg text-muted-foreground">
                   {contactSection.header.descriptionPart1}
                 </p>
                 <motion.span
-                  className="text-red-accent font-semibold"
+                  className="font-semibold text-red-accent"
                   whileHover={{ scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <span className="text-lg text-red-accent font-semibold">
+                  <span className="text-lg font-semibold text-red-accent">
                     {contactSection.header.descriptionPart2}
                   </span>
                 </motion.span>
@@ -215,7 +216,7 @@ export default function Contact({ onStateChange, contactData }) {
           </motion.div>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid  grid-cols-1 gap-12 max-w-[700px] mx-auto ">
           {/* Contact Form - Keeping this static as requested */}
           <motion.div
             initial={{ x: -100, opacity: 0 }}
@@ -223,7 +224,7 @@ export default function Contact({ onStateChange, contactData }) {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <Card className="bg-card border-border relative overflow-hidden hover-lift">
+            <Card className="relative overflow-hidden bg-card border-border hover-lift">
               <motion.div
                 className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-accent to-primary"
                 initial={{ scaleX: 0 }}
@@ -263,7 +264,7 @@ export default function Contact({ onStateChange, contactData }) {
                       <Input
                         id="firstName"
                         placeholder="John"
-                        className="border-border focus:border-primary transition-all duration-300 bg-input-background"
+                        className="transition-all duration-300 border-border focus:border-primary bg-input-background"
                       />
                     </motion.div>
                   </motion.div>
@@ -280,7 +281,7 @@ export default function Contact({ onStateChange, contactData }) {
                       <Input
                         id="lastName"
                         placeholder="Doe"
-                        className="border-border focus:border-primary transition-all duration-300 bg-input-background"
+                        className="transition-all duration-300 border-border focus:border-primary bg-input-background"
                       />
                     </motion.div>
                   </motion.div>
@@ -306,7 +307,7 @@ export default function Contact({ onStateChange, contactData }) {
                       id="email"
                       type="email"
                       placeholder="john@company.com"
-                      className="border-border focus:border-primary transition-all duration-300 bg-input-background"
+                      className="transition-all duration-300 border-border focus:border-primary bg-input-background"
                     />
                   </motion.div>
                 </motion.div>
@@ -354,7 +355,7 @@ export default function Contact({ onStateChange, contactData }) {
                     <Input
                       id="company"
                       placeholder="Your Company"
-                      className="border-border focus:border-primary transition-all duration-300 bg-input-background"
+                      className="transition-all duration-300 border-border focus:border-primary bg-input-background"
                     />
                   </motion.div>
                 </motion.div>
@@ -412,7 +413,7 @@ export default function Contact({ onStateChange, contactData }) {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <Button className="w-full transition-all duration-300 shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xl">
                     <motion.span
                       animate={{ opacity: [1, 0.8, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
@@ -440,191 +441,11 @@ export default function Contact({ onStateChange, contactData }) {
           </motion.div>
 
           {/* Contact Information */}
-          <motion.div
-            className="space-y-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {contactSection.contactInfo.map((info, index) => {
-              return (
-                <motion.div
-                  key={index}
-                  whileHover={{ scale: 1.02, x: 10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="bg-card border-border hover-lift cursor-pointer">
-                    <CardContent className="p-6">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-full">
-                          {isEditing ? (
-                            <>
-                              <input
-                                value={info.title}
-                                onChange={(e) =>
-                                  updateContactInfo(
-                                    index,
-                                    "title",
-                                    e.target.value
-                                  )
-                                }
-                                className="font-medium text-card-foreground mb-1 border-b bg-transparent w-full"
-                              />
-                              <input
-                                value={info.primary}
-                                onChange={(e) =>
-                                  updateContactInfo(
-                                    index,
-                                    "primary",
-                                    e.target.value
-                                  )
-                                }
-                                className="text-muted-foreground border-b bg-transparent w-full mb-1"
-                              />
-                              <input
-                                value={info.secondary}
-                                onChange={(e) =>
-                                  updateContactInfo(
-                                    index,
-                                    "secondary",
-                                    e.target.value
-                                  )
-                                }
-                                className="text-muted-foreground text-sm border-b bg-transparent w-full mb-1"
-                              />
-                              <input
-                                value={info.color}
-                                onChange={(e) =>
-                                  updateContactInfo(
-                                    index,
-                                    "color",
-                                    e.target.value
-                                  )
-                                }
-                                className="text-muted-foreground border-b bg-transparent w-full"
-                                placeholder="Color class (e.g., red-accent)"
-                              />
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                className="mt-2 cursor-pointer hover:scale-105"
-                                onClick={() => removeContactInfo(index)}
-                              >
-                                Remove
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <motion.div
-                                whileHover={{ color: "var(--color-primary)" }}
-                              >
-                                <h4 className="font-medium text-card-foreground mb-1">
-                                  {info.title}
-                                </h4>
-                              </motion.div>
-                              <p className="text-muted-foreground">
-                                {info.primary}
-                              </p>
-                              <p className="text-muted-foreground text-sm">
-                                {info.secondary}
-                              </p>
-                              <span className="text-muted-foreground">
-                                Closed on Sundays
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-
-            {isEditing && (
-              <motion.div
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.1 }}
-                className="flex items-center justify-center"
-              >
-                <Button
-                  onClick={addContactInfo}
-                  className="cursor-pointer text-green-600"
-                >
-                  + Add Contact Info
-                </Button>
-              </motion.div>
-            )}
-
-            {/* Contact CTA card */}
-            <motion.div
-              variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="bg-primary  text-primary-foreground hover-lift">
-                <CardContent className="p-6 text-center">
-                  {isEditing ? (
-                    <>
-                      <input
-                        value={contactSection.cta.title}
-                        onChange={(e) =>
-                          setContactSection((prev) => ({
-                            ...prev,
-                            cta: { ...prev.cta, title: e.target.value },
-                          }))
-                        }
-                        className="font-bold mb-2 text-primary-foreground border-b bg-transparent w-full text-center bg-primary/50"
-                      />
-                      <input
-                        value={contactSection.cta.description}
-                        onChange={(e) =>
-                          setContactSection((prev) => ({
-                            ...prev,
-                            cta: { ...prev.cta, description: e.target.value },
-                          }))
-                        }
-                        className="text-sm mb-4 opacity-90 text-primary-foreground border-b bg-transparent w-full text-center bg-primary/50"
-                      />
-                      <input
-                        value={contactSection.cta.buttonText}
-                        onChange={(e) =>
-                          setContactSection((prev) => ({
-                            ...prev,
-                            cta: { ...prev.cta, buttonText: e.target.value },
-                          }))
-                        }
-                        className="bg-red-accent text-white hover:bg-red-accent/90 font-bold shadow-lg border-b bg-transparent w-full text-center mb-2"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <motion.div
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        <h4 className="font-bold mb-2 text-primary-foreground">
-                          {contactSection.cta.title}
-                        </h4>
-                      </motion.div>
-                      <p className="text-sm mb-4 opacity-90 text-primary-foreground">
-                        {contactSection.cta.description}
-                      </p>
-                    </>
-                  )}
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                 
-                  </motion.div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>
+       
         </div>
       </div>
     </motion.section>
+    </div>
+   
   );
 }
