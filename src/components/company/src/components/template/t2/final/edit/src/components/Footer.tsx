@@ -341,21 +341,21 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
             className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
                 Crop Logo
               </h3>
               <button 
                 onClick={cancelCrop}
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-2 transition-colors rounded-full hover:bg-gray-200"
               >
                 <XIcon className="w-6 h-6 text-gray-600" />
               </button>
             </div>
              
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900">
-              <div className="relative h-96 w-full">
+            <div className="relative flex-1 bg-gray-900">
+              <div className="relative w-full h-96">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
@@ -383,7 +383,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
             </div>
             
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 border-t border-gray-200 bg-gray-50">
               <div className="space-y-4">
                 {/* Zoom Control */}
                 <div className="space-y-2">
@@ -427,11 +427,11 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
               </div>
               
               {/* Action Buttons */}
-              <div className="mt-6 flex gap-3 justify-between">
+              <div className="flex justify-between gap-3 mt-6">
                 <Button
                   variant="outline"
                   onClick={resetCropSettings}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                  className="text-gray-700 border-gray-300 hover:bg-gray-100"
                 >
                   Reset
                 </Button>
@@ -439,13 +439,13 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                   <Button
                     variant="outline"
                     onClick={cancelCrop}
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="text-gray-700 border-gray-300 hover:bg-gray-100"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={applyCrop}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6"
+                    className="px-6 text-white bg-green-600 hover:bg-green-700"
                   >
                     Apply Crop
                   </Button>
@@ -457,7 +457,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
       )}
 
       <motion.footer 
-        className="bg-black text-white theme-transition"
+        className="text-white bg-black theme-transition"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -484,14 +484,14 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
               whileTap={{scale:0.9}}
               whileHover={{y:-1,scaleX:1.1}}
               onClick={() => setIsEditing(true)} 
-              className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+              className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
             >
               <Edit2 size={16} className="inline mr-1" /> Edit
             </motion.button>
           )}
         </div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           {/* Main footer content */}
           <motion.div 
             className="py-16"
@@ -500,10 +500,10 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <div className="grid lg:grid-cols-5 gap-8">
+            <div className="grid gap-8 lg:grid-cols-5">
               {/* Company info */}
               <motion.div 
-                className="lg:col-span-2 space-y-6"
+                className="space-y-6 lg:col-span-2"
                 variants={itemVariants}
               >
                 <motion.div 
@@ -512,7 +512,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                   transition={{ duration: 0.3 }}
                 >
                   <motion.div 
-                    className="relative w-8 h-8 rounded-lg flex items-center justify-center mr-2 overflow-hidden"
+                    className="relative flex items-center justify-center w-8 h-8 mr-2 overflow-hidden rounded-lg"
                     whileHover={{ 
                       rotate: 360,
                       boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)"
@@ -525,15 +525,15 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                       //     <img
                       //       src={footerContent.companyInfo.logoUrl || logo}
                       //       alt="Logo"
-                      //       className="w-full h-full object-contain"
+                      //       className="object-contain w-full h-full"
                       //     />
                       //   ) : (
-                      //     <span className="text-black font-bold text-lg">{footerContent.companyInfo.logoUrl}</span>
+                      //     <span className="text-lg font-bold text-black">{footerContent.companyInfo.logoUrl}</span>
                       //   )}
-                      //   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                      //   <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100">
                       //     <button
                       //       onClick={() => fileInputRef.current?.click()}
-                      //       className="text-white text-xs p-1 bg-blue-500 rounded"
+                      //       className="p-1 text-xs text-white bg-blue-500 rounded"
                       //     >
                       //       <Upload size={12} />
                       //     </button>
@@ -544,10 +544,10 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                           <img
                             src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
-                            className="w-full h-full object-contain"
+                            className="w-[70px] h-[70px] object-contain"
                           />
                         ) : (
-                          <span className="text-black font-bold text-lg">{footerContent.companyInfo.logoUrl}</span>
+                          <span className="text-lg font-medium text-black">{footerContent.companyInfo.logoUrl}</span>
                         )}
                       </>
                     ) : (
@@ -556,10 +556,10 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                           <img
                             src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
-                            className="w-full h-full object-contain"
+                            className="object-contain w-[70px] h-[70px]"
                           />
                         ) : (
-                          <span className="text-black font-bold text-lg">{footerContent.companyInfo.logoUrl}</span>
+                          <span className="text-lg font-medium text-black">{footerContent.companyInfo.logoUrl}</span>
                         )}
                       </>
                     )}
@@ -575,7 +575,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                     <input
                       value={footerContent.companyInfo.companyName}
                       onChange={(e) => updateCompanyInfo("companyName", e.target.value)}
-                      className="text-xl font-bold text-white bg-transparent border-b w-full"
+                      className="w-full text-xl font-bold text-white bg-transparent border-b"
                     />
                   ) : (
                     <span className="text-xl font-bold text-white">{footerContent.companyInfo.companyName}</span>
@@ -586,11 +586,11 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                   <textarea
                     value={footerContent.companyInfo.description}
                     onChange={(e) => updateCompanyInfo("description", e.target.value)}
-                    className="text-gray-400 max-w-md w-full bg-transparent border-b"
+                    className="w-full max-w-md text-gray-400 bg-transparent border-b"
                     rows={3}
                   />
                 ) : (
-                  <p className="text-gray-400 max-w-md">{footerContent.companyInfo.description}</p>
+                  <p className="max-w-md text-gray-400">{footerContent.companyInfo.description}</p>
                 )}
               </motion.div>
 
@@ -612,10 +612,10 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                           return { ...prev, footerLinks: newLinks };
                         });
                       }}
-                      className="font-medium text-white mb-4 bg-transparent border-b w-full"
+                      className="w-full mb-4 font-medium text-white bg-transparent border-b"
                     />
                   ) : (
-                    <h4 className="font-medium text-white mb-4">{category}</h4>
+                    <h4 className="mb-4 font-medium text-white">{category}</h4>
                   )}
                   <ul className="space-y-3">
                     {links.map((link, linkIndex) => (
@@ -635,12 +635,12 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                             <input
                               value={link.name}
                               onChange={(e) => updateFooterLink(category, linkIndex, "name", e.target.value)}
-                              className="text-gray-400 bg-transparent border-b w-full mr-2"
+                              className="w-full mr-2 text-gray-400 bg-transparent border-b"
                             />
                             <input
                               value={link.href}
                               onChange={(e) => updateFooterLink(category, linkIndex, "href", e.target.value)}
-                              className="text-gray-400 bg-transparent border-b w-full mr-2"
+                              className="w-full mr-2 text-gray-400 bg-transparent border-b"
                             />
                             <Button
                               size="sm"
@@ -653,7 +653,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                         ) : (
                           <a
                             href={link.href}
-                            className="text-gray-400 hover:text-primary transition-colors"
+                            className="text-gray-400 transition-colors hover:text-primary"
                           >
                             {link.name}
                           </a>
