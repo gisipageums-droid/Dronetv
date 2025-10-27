@@ -520,36 +520,36 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                     transition={{ duration: 0.6 }}
                   >
                     {isEditing ? (
-                      // <div className="relative w-full h-full">
-                      //   {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (
-                      //     <img
-                      //       src={footerContent.companyInfo.logoUrl || logo}
-                      //       alt="Logo"
-                      //       className="object-contain w-full h-full"
-                      //     />
-                      //   ) : (
-                      //     <span className="text-lg font-bold text-black">{footerContent.companyInfo.logoUrl}</span>
-                      //   )}
-                      //   <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100">
-                      //     <button
-                      //       onClick={() => fileInputRef.current?.click()}
-                      //       className="p-1 text-xs text-white bg-blue-500 rounded"
-                      //     >
-                      //       <Upload size={12} />
-                      //     </button>
-                      //   </div>
-                      // </div>
-                       <>
+                      <div className="relative w-full h-full">
                         {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (
                           <img
-                            src={footerContent.companyInfo.logoUrl}
+                            src={footerContent.companyInfo.logoUrl || logo}
                             alt="Logo"
-                            className="w-[70px] h-[70px] object-contain"
+                            className="object-contain w-full h-full"
                           />
                         ) : (
-                          <span className="text-lg font-medium text-black">{footerContent.companyInfo.logoUrl}</span>
+                          <span className="text-lg font-bold text-black">{footerContent.companyInfo.logoUrl}</span>
                         )}
-                      </>
+                        <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100">
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="p-1 text-xs text-white bg-blue-500 rounded"
+                          >
+                            <Upload size={12} />
+                          </button>
+                        </div>
+                      </div>
+                      //  <>
+                      //   {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (
+                      //     <img
+                      //       src={footerContent.companyInfo.logoUrl}
+                      //       alt="Logo"
+                      //       className="w-[70px] h-[70px] object-contain"
+                      //     />
+                      //   ) : (
+                      //     <span className="text-lg font-medium text-black">{footerContent.companyInfo.logoUrl}</span>
+                      //   )}
+                      // </>
                     ) : (
                       <>
                         {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (
