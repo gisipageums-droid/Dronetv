@@ -148,15 +148,15 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         <div className="space-y-6">
           {/* Company Category */}
           <div>
-            <h2 className="text-lg font-bold text-slate-900 mb-2">
+            <h2 className="mb-2 text-lg font-bold text-slate-900">
               Company Category
             </h2>
-            <p className="text-sm text-slate-600 mb-4">
+            <p className="mb-4 text-sm text-slate-600">
               Select your company's main business category (you can select
               multiple)
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {categoryOptions.map(({ value, description }) => (
                 <label
                   key={value}
@@ -206,7 +206,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             </div>
 
             {formData.companyCategory.length === 0 && (
-              <div className="text-center py-4">
+              <div className="py-4 text-center">
                 <p className="text-gray-500">
                   Please select at least one category to continue
                 </p>
@@ -216,21 +216,21 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
           {/* Company Basic Details */}
           <div>
-            <h2 className="text-lg font-bold text-slate-900 mb-2">
+            <h2 className="mb-2 text-lg font-bold text-slate-900">
               Company Basic Details
             </h2>
-            <p className="text-sm text-slate-600 mb-4">
+            <p className="mb-4 text-sm text-slate-600">
               Tell us about your company's basic information
             </p>
 
             <div className="space-y-4">
               {/* Director Information */}
-              <div className="bg-yellow-100 rounded-lg p-3 border border-amber-200">
-                <h3 className="text-sm font-bold text-amber-900 mb-2 flex items-center">
+              <div className="p-3 bg-yellow-100 border rounded-lg border-amber-200">
+                <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
                   <User className="w-5 h-5 mr-2" />
                   Director/MD Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <FormInput
                     label="Director Name"
                     value={formData.directorName}
@@ -257,7 +257,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       placeholder="director@company.com"
                     />
                     {!isLogin && (
-                      <p className="text-xs text-blue-600 mt-1">
+                      <p className="mt-1 text-xs text-blue-600">
                         Note: We'll verify this email to ensure it's not already registered
                       </p>
                     )}
@@ -267,12 +267,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
               {/* Rest of your form sections remain the same */}
               {/* Company Information */}
-              <div className="bg-yellow-50 rounded-lg p-3 border border-amber-200">
-                <h3 className="text-sm font-bold text-amber-900 mb-2 flex items-center">
+              <div className="p-3 border rounded-lg bg-yellow-50 border-amber-200">
+                <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
                   <Building2 className="w-5 h-5 mr-2" />
                   Company Information
                 </h3>
-                <div className="grid relative grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="relative grid grid-cols-1 gap-2 md:grid-cols-2">
                   <FormInput
                     label="Company Name"
                     value={formData.companyName}
@@ -306,7 +306,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     </div>
                   )}
                   <FormInput
-                    label="Date of Incorporation"
+                    label="Date of Incorporation "
                     type="date"
                     value={formData.yearEstablished}
                     onChange={(value) =>
@@ -315,7 +315,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     placeholder="Select incorporation date"
                   />
                   <FormInput
-                    label="Website URL"
+                    label="Website URL "
                     type="url"
                     value={formData.websiteUrl}
                     onChange={(value) => updateFormData({ websiteUrl: value })}
@@ -332,8 +332,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               </div>
 
               {/* Legal Information */}
-              <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
-                <h3 className="text-sm font-bold text-amber-900 mb-2">
+              <div className="p-3 border rounded-lg bg-amber-50 border-amber-200">
+                <h3 className="mb-2 text-sm font-bold text-amber-900">
                   Trade Information (Optional)
                 </h3>
                 <div className="space-y-2">
@@ -344,7 +344,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     placeholder="If different from brand name"
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                     <FormInput
                       label="GSTIN"
                       value={formData.gstin || ""}
@@ -361,7 +361,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
                     <FormInput
                       label="CIN"
                       value={formData.socialLinks?.cin || ""}
@@ -397,12 +397,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               </div>
 
               {/* Alternative Contact */}
-              <div className="bg-amber-100 rounded-lg p-3 border border-amber-200">
-                <h3 className="text-sm font-bold text-amber-900 mb-2 flex items-center">
+              <div className="p-3 border rounded-lg bg-amber-100 border-amber-200">
+                <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
                   <Phone className="w-5 h-5 mr-2" />
                   Alternative Contact
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <FormInput
                     label="Contact Person Name"
                     value={formData.altContactName}
@@ -438,8 +438,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               </div>
 
               {/* Address Information */}
-              <div className="bg-yellow-200 rounded-lg p-3 border border-amber-200">
-                <h3 className="text-sm font-bold text-amber-900 mb-2 flex items-center">
+              <div className="p-3 bg-yellow-200 border rounded-lg border-amber-200">
+                <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
                   <Globe className="w-5 h-5 mr-2" />
                   Address Information
                 </h3>
@@ -453,7 +453,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     placeholder="Complete office address"
                     rows={2}
                   />
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4">
                     <Select
                       label="Country"
                       options={countries}
@@ -489,13 +489,13 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               </div>
 
               {/* Social Media Links */}
-              <div className="bg-amber-200 rounded-lg p-3 border border-amber-200">
-                <h3 className="text-sm font-bold text-amber-900 mb-2 flex items-center">
+              <div className="p-3 border rounded-lg bg-amber-200 border-amber-200">
+                <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
                   <Globe className="w-5 h-5 mr-2" />
                   Social Media Links (Optional)
                 </h3>
                 <div className="space-y-2">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                     <FormInput
                       label="LinkedIn Profile"
                       type="url"
@@ -526,7 +526,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                     <FormInput
                       label="Instagram Profile"
                       type="url"
@@ -557,7 +557,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                     <FormInput
                       label="YouTube Channel"
                       type="url"
@@ -583,7 +583,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                     <FormInput
                       label="Support Contact Number"
                       type="tel"
@@ -603,36 +603,36 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
       {/* Email Verification Modal */}
       {showEmailModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <Mail className="w-6 h-6 text-blue-600 mr-2" />
-                <h3 className="text-lg font-bold text-slate-900">
-                  Verify Director Email
+                <Mail className="w-6 h-6 mr-2 text-blue-600" />
+                <h3 className="text-lg font-bold capitalize text-slate-900">
+                  Verify user Email
                 </h3>
               </div>
               <button
                 onClick={handleModalClose}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
+                className="transition-colors text-slate-400 hover:text-slate-600"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="mb-4">
-              <p className="text-sm text-slate-600 mb-4">
+              <p className="mb-4 text-sm text-slate-600">
                 We need to verify if this email is already associated with an existing account. 
-                Please enter the director email to continue.
+                Please enter the User email to continue.
               </p>
 
               <FormInput
-                label="Director Email"
+                label="User Email"
                 type="email"
                 value={tempDirectorEmail}
                 onChange={handleModalEmailChange}
                 required
-                placeholder="director@company.com"
+                placeholder="user@company.com"
                 disabled={checkingEmail}
               />
 
@@ -658,12 +658,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       {emailCheckResult.message}
                     </p>
                     {emailCheckResult.exists && (
-                      <p className="text-xs text-green-600 mt-1">
+                      <p className="mt-1 text-xs text-green-600">
                         Email verified! This will be used for your existing account.
                       </p>
                     )}
                     {!emailCheckResult.exists && (
-                      <p className="text-xs text-blue-600 mt-1">
+                      <p className="mt-1 text-xs text-blue-600">
                         This email is not registered. Click Cancel to use this email for a new account.
                       </p>
                     )}
@@ -675,7 +675,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             <div className="flex justify-end space-x-3">
               <button
                 onClick={handleModalClose}
-                className="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors"
+                className="px-4 py-2 font-medium transition-colors text-slate-600 hover:text-slate-800"
                 disabled={checkingEmail}
               >
                 Cancel
@@ -683,11 +683,11 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               <button
                 onClick={handleModalSubmit}
                 disabled={!tempDirectorEmail || checkingEmail}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors flex items-center"
+                className="flex items-center px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
               >
                 {checkingEmail ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
                     Checking...
                   </>
                 ) : (
