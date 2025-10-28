@@ -338,7 +338,7 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
 
             {/* Controls */}
             <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 {/* Zoom Control */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
@@ -360,7 +360,7 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
                 </div>
 
                 {/* Rotation Control */}
-                <div className="space-y-1.5">
+                {/* <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="flex items-center gap-2 text-gray-700">
                       <RotateCw className="w-4 h-4" />
@@ -377,7 +377,7 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
                     onChange={(e) => setRotation(Number(e.target.value))}
                     className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
-                </div>
+                </div> */}
               </div>
 
               {/* Action Buttons - Equal Width & Responsive */}
@@ -544,7 +544,7 @@ export default function Clients({clientData, onStateChange, userId, publishedId,
                       className="w-full h-full object-cover"
                     />
                     {isEditing && (
-                      <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                      <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
