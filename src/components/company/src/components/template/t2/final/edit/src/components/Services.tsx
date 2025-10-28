@@ -417,7 +417,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       {/* Controls */}
       <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
         {/* Zoom + Rotation in 2-column grid */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2">
           {/* Zoom */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
@@ -443,7 +443,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
           </div>
 
           {/* Rotation */}
-          <div className="space-y-1.5">
+          {/* <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
               <span className="flex items-center gap-2 text-gray-700">
                 <RotateCw className="w-4 h-4" /> Rotation
@@ -464,7 +464,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:bg-blue-500"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Action Buttons - Equal width, responsive */}
@@ -629,7 +629,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                       <input
                         type="file"
                         accept="image/*"
-                        className="text-xs w-full cursor-pointer"
+                        className="text-xs w-full cursor-pointer font-bold"
                         onChange={(e) => handleServiceImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
