@@ -362,7 +362,7 @@ export default function Clients({
 
             {/* Controls */}
             <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 {/* Zoom */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-sm">
