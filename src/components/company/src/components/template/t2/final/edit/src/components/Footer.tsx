@@ -406,7 +406,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                 </div>
                 
                 {/* Rotation Control */}
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="flex items-center gap-2 text-gray-700">
                       <RotateCw className="w-4 h-4" />
@@ -423,7 +423,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                     onChange={(e) => setRotation(Number(e.target.value))}
                     className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
-                </div>
+                </div> */}
               </div>
               
               {/* Action Buttons */}
@@ -568,7 +568,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                       ref={fileInputRef}
                       accept="image/*"
                       onChange={handleLogoUpload}
-                      className="hidden"
+                      className="hidden font-bold"
                     />
                   </motion.div>
                   {isEditing ? (
