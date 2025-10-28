@@ -408,7 +408,7 @@ const Gallery = ({galleryData,onStateChange, userId, publishedId, templateSelect
 
       {/* Controls */}
       <div className="p-2 border-t border-gray-200 sm:p-3 bg-gray-50">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2">
           {/* Zoom */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
@@ -429,7 +429,7 @@ const Gallery = ({galleryData,onStateChange, userId, publishedId, templateSelect
           </div>
 
           {/* Rotation */}
-          <div className="space-y-1.5">
+          {/* <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
               <span className="flex items-center gap-2 text-gray-700">
                 <RotateCw className="w-4 h-4" /> Rotation
@@ -445,7 +445,7 @@ const Gallery = ({galleryData,onStateChange, userId, publishedId, templateSelect
               onChange={(e) => setRotation(Number(e.target.value))}
               className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Action Buttons - equal width */}
@@ -567,12 +567,12 @@ const Gallery = ({galleryData,onStateChange, userId, publishedId, templateSelect
                       whileHover={{ scale: 1.1 }}
                       whileTap={{scale:0.9}}
                       transition={{ duration: 0.3 }}
-                      className="absolute z-50 p-1 mx-2 rounded bottom-2 left-2 bg-white/80"
+                      className="absolute font-bold z-50 p-1 mx-2 rounded top-2 left-2 bg-white/80"
                     >
                       <input
                         type="file"
                         accept="image/*"
-                        className="w-full text-xs cursor-pointer"
+                        className="w-full text-xs cursor-pointer font-bold"
                         onChange={(e) => handleGalleryImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
