@@ -274,7 +274,7 @@ export default function Contact({ onStateChange }) {
                     >
                       <Input
                         id="firstName"
-                        placeholder="John"
+                        placeholder="Rahul"
                         className="transition-all duration-300 border-border focus:border-primary bg-input-background"
                       />
                     </motion.div>
@@ -291,7 +291,7 @@ export default function Contact({ onStateChange }) {
                     >
                       <Input
                         id="lastName"
-                        placeholder="Doe"
+                        placeholder="sharma"
                         className="transition-all duration-300 border-border focus:border-primary bg-input-background"
                       />
                     </motion.div>
@@ -317,7 +317,7 @@ export default function Contact({ onStateChange }) {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="john@company.com"
+                      placeholder="rahul.sharma@example.com"
                       className="transition-all duration-300 border-border focus:border-primary bg-input-background"
                     />
                   </motion.div>
