@@ -436,7 +436,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
       
       {/* Controls */}
       <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2">
           {/* Zoom Control */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
@@ -458,7 +458,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
           </div>
 
           {/* Rotation Control */}
-          <div className="space-y-1.5">
+          {/* <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
               <span className="flex items-center gap-2 text-gray-700">
                 <RotateCw className="w-4 h-4" />
@@ -475,7 +475,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
               onChange={(e) => setRotation(Number(e.target.value))}
               className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Action Buttons - Equal width & responsive */}
@@ -679,7 +679,7 @@ export default function Hero({ heroData, onStateChange, userId, publishedId, tem
                       type="file" 
                       accept="image/*" 
                       onChange={handleHeroImageSelect}
-                      className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
+                      className="text-sm font-bold border-2 border-dashed border-muted-foreground p-2 rounded w-full"
                     />
                     {pendingImageFile && (
                       <p className="text-xs text-green-600 mt-1">
