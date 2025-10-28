@@ -71,6 +71,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       );
 
       const emailExists = response.data.exists;
+      // console.log("Email check response:", emailExists, response.data);
       
       setEmailCheckResult({
         exists: emailExists,

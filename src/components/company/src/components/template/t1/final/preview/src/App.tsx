@@ -25,22 +25,26 @@ export default function App() {
   async function fetchTemplateData(pubId: string, userId: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${pubId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-User-Id': userId,
-        },
-      });
+      const response = await fetch(
+        `https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev/templates?publishId=${encodeURIComponent(
+          pubId ?? ""
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // 'X-User-Id': userId,
+          },
+        }
+      );
 
       if (!response.ok) {
-
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
       console.log("Fetched template data:", data);
-      setFinaleDataReview(data);
+      setFinaleDataReview(data.data);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching template data:", error);
@@ -89,7 +93,9 @@ export default function App() {
       <div className="min-h-screen bg-background text-foreground theme-transition flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">No Data Found</h2>
-          <p className="text-muted-foreground">The requested company page could not be loaded.</p>
+          <p className="text-muted-foreground">
+            The requested company page could not be loaded.
+          </p>
         </div>
       </div>
     );
@@ -98,48 +104,22 @@ export default function App() {
   return (
     // The className here is no longer needed as the useEffect handles the root element
     <div>
-      <Header
-        headerData={finaleDataReview.content.header}
+      <Header headerData={finaleDataReview.content.header} />
+      <Hero heroData={finaleDataReview.content.hero} />
+      <UsedBy usedByData={finaleDataReview.content.usedBy} />
+      <About aboutData={finaleDataReview.content.about} />
+      <CompanyProfile profileData={finaleDataReview.content.profile} />
+      <Services serviceData={finaleDataReview.content.services} />
+      <Products productData={finaleDataReview.content.products} />
+      <Blog blogData={finaleDataReview.content.blog} />
+      <GallerySection galleryData={finaleDataReview.content.gallery} />
 
-      />
-      <Hero
-        heroData={finaleDataReview.content.hero}
-
-      />
-      <UsedBy
-        usedByData={finaleDataReview.content.UsedBy}
-      />
-      <About
-        aboutData={finaleDataReview.content.about}
-      />
-      <CompanyProfile
-        profileData={finaleDataReview.content.profile}
-      />
-      <Services
-        serviceData={finaleDataReview.content.services}
-      />
-      <Products
-        productData={finaleDataReview.content.products}
-
-      />
-      <Blog
-        blogData={finaleDataReview.content.blog}
-
-      />
-      <GallerySection 
-      galleryData={finaleDataReview.content.gallery}/>
-
-      <Testimonials
-        content={finaleDataReview.content.testimonials}
-
-      />
+      <Testimonials content={finaleDataReview.content.testimonials} />
       <Contact
         content={finaleDataReview.content.contact}
         publishId={publishedId || ""}
       />
-      <Footer
-        content={finaleDataReview.content.footer}
-      />
+      <Footer content={finaleDataReview.content.footer} />
     </div>
   );
 }

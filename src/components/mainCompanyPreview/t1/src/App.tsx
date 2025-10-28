@@ -25,14 +25,14 @@ export default function App() {
    async function fetchTemplateData(urlSlug: string) {
      try {
        setIsLoading(true);
-       const response = await fetch(`https://n0yw6muam4.execute-api.ap-south-1.amazonaws.com/prod/company/${urlSlug}`);
+       const response = await fetch(`https://ykcimvca79.execute-api.ap-south-1.amazonaws.com/dev/template?companyName=${urlSlug}`);
        
        if (!response.ok) {
          throw new Error(`HTTP error! status: ${response.status}`);
        }
        
        const data = await response.json();
-       setFinaleDataReview(data);
+       setFinaleDataReview(data.data);
        setIsLoading(false);
      } catch (error) {
        console.error("Error fetching template data:", error);
@@ -99,7 +99,7 @@ export default function App() {
 
       />
       <UsedBy
-       usedByData={finaleDataReview.content.UsedBy}
+       usedByData={finaleDataReview.content.usedBy}
       />
       <About 
         aboutData={finaleDataReview.content.about}

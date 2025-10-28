@@ -183,9 +183,9 @@ const CompaniesPage: React.FC = () => {
           <button
             onClick={() => {
               if (company.templateSelection === 'template-1') {
-                navigate(`/company/${company.urlSlug}`);
+                navigate(`/company/${company.companyName}`);
               } else if (company.templateSelection === 'template-2') {
-                navigate(`/companies/${company.urlSlug}`);
+                navigate(`/companies/${company.companyName}`);
               }
             }}
             className="flex gap-1 justify-center items-center px-3 py-2 w-full text-xs font-medium text-black bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-md border border-orange-200 shadow-sm transition-all duration-300 hover:from-yellow-500 hover:to-yellow-700"

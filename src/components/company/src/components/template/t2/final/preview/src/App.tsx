@@ -26,11 +26,11 @@ export default function App() {
      try {
        window.scrollTo({ top: 0, behavior: 'smooth' });
        setIsLoading(true);
-       const response = await fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${pubId}`,{
+       const response = await fetch(`https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev/templates?publishId=${encodeURIComponent(pubId ?? "")}`,{
          method: 'GET',
          headers: {
            'Content-Type': 'application/json',
-           'X-User-Id': userId,
+          //  'X-User-Id': userId,
          },
        });
        
@@ -39,7 +39,7 @@ export default function App() {
        }
        
        const data = await response.json();
-       setFinaleDataReview(data);
+       setFinaleDataReview(data.data);
        setIsLoading(false);
      } catch (error) {
        console.error("Error fetching template data:", error);

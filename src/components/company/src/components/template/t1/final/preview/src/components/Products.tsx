@@ -46,16 +46,16 @@ export default function Products({ productData }) {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  // Extract data from productData prop
+  // Extract data from productData prop with correct structure
   const content = {
-    sectionTitle: productData.heading.title,
-    sectionSubtitle: productData.heading.heading,
-    sectionDescription: productData.heading.description,
-    trustText: productData.heading.trust,
-    products: productData.products,
+    sectionTitle: productData.sectionTitle || "Our Products",
+    sectionSubtitle: productData.sectionSubtitle || "Featured Products",
+    sectionDescription: productData.sectionDescription || "Discover our amazing products",
+    trustText: productData.trustText || "",
+    products: productData.products || [],
     categories: [
       "All",
-      ...new Set(productData.products.map((p) => p.category)),
+      ...new Set((productData.products || []).map((p) => p.category)),
     ],
     benefits: productData.benefits || [],
   };
@@ -177,29 +177,8 @@ export default function Products({ productData }) {
                     </h3>
 
                     <p className="text-gray-600 text-sm mb-4 flex-1">
-                      {product.description.slice(0, 30) + "..."}
+                      {product.description?.slice(0, 30) + "..." || "No description available"}
                     </p>
-
-                    {/* {product.features && product.features.length > 0 && (
-                      <div className="mb-4">
-                        <h4 className="font-semibold text-sm mb-2 text-gray-900">
-                          Key Features:
-                        </h4>
-                        <ul className="text-xs text-gray-600 space-y-1.5">
-                          {product.features.slice(0, 3).map((feature, idx) => (
-                            <li key={idx} className="flex items-start">
-                              <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                          {product.features.length > 3 && (
-                            <li className="text-yellow-600 font-medium text-xs">
-                              +{product.features.length - 3} more features
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    )} */}
 
                     <Button
                       size="sm"
@@ -214,52 +193,6 @@ export default function Products({ productData }) {
             </motion.div>
           ))}
         </div>
-
-        {/* Benefits Section */}
-        {/* {content.benefits && content.benefits.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-16"
-          >
-            <h3 className="text-3xl font-bold text-center mb-12 text-gray-900">
-              Why Choose Our Products?
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {content.benefits.map((benefit, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                  }
-                  transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-                  className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <div
-                    className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 text-3xl
-                      ${
-                        benefit.color === "red-accent"
-                          ? "bg-red-100 text-red-600"
-                          : benefit.color === "primary"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-yellow-100 text-yellow-600"
-                      }`}
-                  >
-                    {benefit.icon}
-                  </div>
-                  <h4 className="font-bold text-lg mb-3 text-gray-900">
-                    {benefit.title}
-                  </h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {benefit.desc}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )} */}
       </div>
 
       {/* Modal */}
@@ -327,7 +260,8 @@ export default function Products({ productData }) {
                   </h3>
                   <p className="text-gray-700 text-base leading-relaxed mb-4">
                     {selectedProduct.detailedDescription ||
-                      selectedProduct.description}
+                      selectedProduct.description ||
+                      "No description available"}
                   </p>
                 </div>
 

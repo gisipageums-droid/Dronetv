@@ -39,7 +39,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [haveAccount, setHaveAccount] = useState<boolean>(true);
-
+  const [accountEmail, setAccountEmail] = useState<string | null>(null);
   const isLogin = !!user;
 
   const login = (userData: User) => {
@@ -57,7 +57,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
   };
 
   return (
-    <UserAuthContext.Provider value={{ user, isLogin, login, logout,haveAccount, setHaveAccount }}>
+    <UserAuthContext.Provider value={{ user, isLogin, login, logout,haveAccount, setHaveAccount,accountEmail, setAccountEmail }}>
       {children}
     </UserAuthContext.Provider>
   );
