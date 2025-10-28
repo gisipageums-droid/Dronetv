@@ -65,7 +65,7 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ease-out ${isScrolled
+    <nav className={`fixed top-0 w-full z-[9999999] transition-all duration-500 ease-out ${isScrolled
       ? 'bg-yellow-400/95 backdrop-blur-lg shadow-2xl border-b border-yellow-500/20'
       : 'bg-yellow-400'
       }`}>
