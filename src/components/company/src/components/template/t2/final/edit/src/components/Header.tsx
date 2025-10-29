@@ -412,12 +412,12 @@ console.log("header data",content);
                 transition={{ duration: 0.6 }}
               >
                 {isEditing ? (
-                  <div className="relative w-full h-full">
+                  <div className="relative w-[56px] h-[56px]">
                     {content.logoUrl && (content.logoUrl.startsWith('data:') || content.logoUrl.startsWith('http')) ? (
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="object-contain w-[70px] h-[70px] "
+                        className="object-contain w-full h-full "
                       />
                     ) : (
                       <span className="text-lg font-bold text-black">
