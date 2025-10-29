@@ -520,7 +520,7 @@ export default function Footer({onStateChange,footerData,userId,publishedId,temp
                     transition={{ duration: 0.6 }}
                   >
                     {isEditing ? (
-                      <div className="relative w-full h-full">
+                      <div className="relative w-[56px] h-[56px]">
                         {footerContent.companyInfo.logoUrl && (footerContent.companyInfo.logoUrl.startsWith('data:') || footerContent.companyInfo.logoUrl.startsWith('http')) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl || logo}
