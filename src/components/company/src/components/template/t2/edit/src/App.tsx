@@ -46,7 +46,7 @@ export default function App() {
     <ThemeProvider>
       <div className="min-h-screen bg-background text-foreground theme-transition">
         <Header
-          headerData={AIGenData.content.company}
+          headerData={AIGenData?.content?.company}
           onStateChange={useCallback(
             (state) => collectComponentState("header", state),
             [collectComponentState]
@@ -57,7 +57,7 @@ export default function App() {
         />
         <main>
           <Hero
-            heroData={AIGenData.content.hero}
+            heroData={AIGenData?.content?.hero}
             onStateChange={useCallback(
               (state) => collectComponentState("hero", state),
               [collectComponentState]
@@ -67,7 +67,7 @@ export default function App() {
             templateSelection={AIGenData.templateSelection}
           />
           <About
-            aboutData={AIGenData.content.about}
+            aboutData={AIGenData?.content?.about}
             onStateChange={useCallback(
               (state) => collectComponentState("about", state),
               [collectComponentState]
@@ -77,7 +77,7 @@ export default function App() {
             templateSelection={AIGenData.templateSelection}
           />
           <Profile
-            profileData={AIGenData.content.profile}
+            profileData={AIGenData?.content?.profile}
             onStateChange={useCallback(
               (state) => collectComponentState("profile", state),
               [collectComponentState]
@@ -87,7 +87,7 @@ export default function App() {
             templateSelection={AIGenData.templateSelection}
           />
           <Product
-            productData={AIGenData.content.products}
+            productData={AIGenData?.content?.products}
             onStateChange={useCallback(
               (state) => collectComponentState("products", state),
               [collectComponentState]
@@ -97,7 +97,7 @@ export default function App() {
             templateSelection={AIGenData.templateSelection}
           />
           <Services
-            serviceData={AIGenData.content.services}
+            serviceData={AIGenData?.content?.services}
             onStateChange={useCallback(
               (state) => collectComponentState("services", state),
               [collectComponentState]
@@ -107,7 +107,7 @@ export default function App() {
             templateSelection={AIGenData.templateSelection}
           />
           <Gallery
-            galleryData={AIGenData.content.gallery}
+            galleryData={AIGenData?.content?.gallery}
             onStateChange={useCallback(
               (state) => collectComponentState("gallery", state),
               [collectComponentState]
@@ -117,7 +117,7 @@ export default function App() {
             templateSelection={AIGenData.templateSelection}
           />
           <Blog
-            blogData={AIGenData.content.blog}
+            blogData={AIGenData?.content?.blog}
             onStateChange={useCallback(
               (state) => collectComponentState("blog", state),
               [collectComponentState]
@@ -127,7 +127,7 @@ export default function App() {
             templateSelection={AIGenData.templateSelection}
           />
           <Testimonials
-            testimonialsData={AIGenData.content.testimonials}
+            testimonialsData={AIGenData?.content?.testimonials}
             onStateChange={useCallback(
               (state) => collectComponentState("testimonials", state),
               [collectComponentState]
@@ -137,7 +137,7 @@ export default function App() {
             templateSelection={AIGenData.templateSelection}
           />
           <Clients
-            clientData={AIGenData.content.clients}
+            clientData={AIGenData?.content?.clients}
             onStateChange={useCallback(
               (state) => collectComponentState("clients", state),
               [collectComponentState]
@@ -155,8 +155,8 @@ export default function App() {
           <Publish />
         </main>
         <Footer
-          footerData={AIGenData.content.services}
-          footerLogo={AIGenData.content.company}
+          footerData={AIGenData?.content?.services}
+          footerLogo={AIGenData?.content?.company}
           onStateChange={useCallback(
             (state) => collectComponentState("footer", state),
             [collectComponentState]
