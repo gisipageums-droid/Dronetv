@@ -12,7 +12,7 @@ export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState({
     logoLetter: "C",
-    companyName: "Company",
+    companyName: "Company compsny company company",
     navItems: [
       { id: 1, label: "Home", href: "#home", color: "primary" },
       { id: 2, label: "About", href: "#about", color: "primary" },
@@ -75,19 +75,19 @@ export default function Header() {
     <motion.header
       className={`fixed top-16 left-0 right-0 border-b z-50 ${
         theme === "dark"
-          ? "bg-gray-800 border-gray-700 text-gray-300"
-          : "bg-white border-gray-200"
+          ? "bg-gray-800 border-gray-700 text-white"
+          : "bg-white border-gray-200 text-black"
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      <div className='lg:min-w-[1280px]  max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center h-16'>
           {/* Logo */}
           <div className='flex items-center'>
             <motion.div
-              className='w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-2 shadow-md'
+              className='w-14 h-14 bg-primary rounded-lg flex items-center justify-center mr-2 shadow-md'
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6 }}
             >
@@ -102,7 +102,7 @@ export default function Header() {
                 />
               ) : (
                 <span className='text-black font-bold text-lg'>
-                  {content.logoLetter}
+                  {content.logoLetter} 
                 </span>
               )}
             </motion.div>
@@ -111,10 +111,10 @@ export default function Header() {
                 type='text'
                 value={content.companyName}
                 onChange={(e) => updateContent("companyName", e.target.value)}
-                className='bg-transparent border-b border-primary text-xl font-bold outline-none max-w-[140px] truncate'
+                className='bg-transparent border-b border-primary text-xl font-bold outline-none max-w-[140px] '
               />
             ) : (
-              <motion.span className='text-xl font-bold text-black'>
+              <motion.span className={`lg:text-xl md: text-xl text-[10px] whitespace-nowrap font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
                 {content.companyName}
               </motion.span>
             )}
@@ -132,7 +132,7 @@ export default function Header() {
                       onChange={(e) =>
                         updateNavItem(item.id, "label", e.target.value)
                       }
-                      className='bg-white border px-2 py-1 rounded text-sm outline-none max-w-[100px] truncate'
+                      className='bg-white border px-2 py-1 rounded text-sm outline-none max-w-[100px] '
                     />
                     <input
                       type='text'
@@ -140,7 +140,7 @@ export default function Header() {
                       onChange={(e) =>
                         updateNavItem(item.id, "href", e.target.value)
                       }
-                      className='bg-white border px-2 py-1 rounded text-xs text-gray-500 outline-none max-w-[120px] truncate'
+                      className='bg-white border px-2 py-1 rounded text-xs text-gray-500 outline-none max-w-[120px] '
                       placeholder='URL'
                     />
                     <button
@@ -153,10 +153,10 @@ export default function Header() {
                 ) : (
                   <motion.a
                     href={item.href}
-                    className={`font-medium relative group ${
-                      theme === "dark"
-                        ? "text-gray-300 hover:text-gray-200"
-                        : "text-gray-700 hover:text-primary"
+                    className={`font-medium relative group whitespace-nowrap ${
+                      theme == "dark"
+                        ? "text-white hover:text-gray-200"
+                        : "text-black hover:text-primary "
                     }`}
                     whileHover={{ y: -2 }}
                   >
@@ -166,6 +166,7 @@ export default function Header() {
                       transition={{ duration: 0.3 }}
                     />
                   </motion.a>
+                 
                 )}
               </div>
             ))}
@@ -186,10 +187,11 @@ export default function Header() {
                 type='text'
                 value={content.ctaText}
                 onChange={(e) => updateContent("ctaText", e.target.value)}
-                className='bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] truncate'
+                className='bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] '
               />
             ) : (
-              <Button className='bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300'>
+              
+              <Button className='bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300  hidden md:block'>
                 {content.ctaText}
               </Button>
             )}
@@ -229,10 +231,14 @@ export default function Header() {
                   <motion.a
                     key={item.id}
                     href={item.href}
-                    className={`text-gray-700 hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10`}
+                    className={`${
+                      theme === "dark"
+                        ? "text-white hover:text-gray-200"
+                        : "text-black hover:text-primary "
+                    }`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
-                    onClick={() => setIsMenuOpen(false)}
+                    // onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
                   </motion.a>
