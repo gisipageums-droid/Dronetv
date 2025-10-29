@@ -80,9 +80,9 @@ export default function Header({headerData}) {
   return (
     <motion.header
       className={`fixed top-[4rem] left-0 right-0 border-b z-50 ${
-        theme === "dark"
-          ? "bg-gray-800 border-gray-700 text-gray-300"
-          : "bg-white border-gray-200"
+        theme == "dark"
+          ? "bg-gray-800 border-gray-700 text-white"
+          : "bg-white border-gray-200 text-black"
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -93,7 +93,7 @@ export default function Header({headerData}) {
           {/* Logo - Limited width to prevent taking too much space */}
           <div className="flex items-center flex-shrink-0 max-w-[200px]">
             <motion.div
-              className="w-8 h-8 rounded-lg flex items-center justify-center mr-2 flex-shrink-0"
+              className="w-14 h-14 rounded-lg flex items-center justify-center mr-2 flex-shrink-0"
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6 }}
             >
@@ -105,9 +105,9 @@ export default function Header({headerData}) {
             </motion.div>
             <motion.span className={`text-xl font-bold text-black truncate
               ${
-        theme === "dark"
-          ? "bg-gray-800 border-gray-700 text-gray-300"
-          : "bg-white border-gray-200"
+        theme == "dark"
+          ? "bg-gray-800 border-gray-700 text-white"
+          : "bg-white border-gray-200 text-black"
       }`}>
               {headerData.companyName}
             </motion.span>
@@ -122,8 +122,8 @@ export default function Header({headerData}) {
                   href={item.href}
                   onClick={(e) => handleDesktopNavigation(e, item.href)}
                   className={`font-medium relative group whitespace-nowrap ${
-                    theme === "dark"
-                      ? "text-gray-300 hover:text-gray-200"
+                    theme == "dark"
+                      ? "text-white hover:text-gray-200"
                       : "text-gray-700 hover:text-primary"
                   }`}
                   whileHover={{ y: -2 }}
