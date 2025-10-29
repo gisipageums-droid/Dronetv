@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { CheckCircle, X, Upload, AlertCircle, Scale } from "lucide-react";
+import { CheckCircle, X, Upload, AlertCircle } from "lucide-react";
 import { useTemplate } from "../../../../../../../../context/context"; // Adjust path as needed
 export default function Publish() {
   const [model, setModel] = useState(false);
-  const { publishTemplate } = useTemplate(); // Get the publish function from context
+  const { publishTemplate,navigatemodel,navModel } = useTemplate(); // Get the publish function from context
+  
   return (
+
+
     <>
       <motion.div className="fixed bottom-20 right-10 z-50">
         <motion.button
@@ -18,6 +21,13 @@ export default function Publish() {
           Publish Site
         </motion.button>
       </motion.div>
+
+    {/* Show pop-up only if not logged in */}
+   {navModel &&(
+    <div className="">
+     {navigatemodel()}
+    </div>
+   )}
 
       {/* Confirmation Modal */}
       <AnimatePresence>
@@ -87,6 +97,7 @@ export default function Publish() {
                     // Add your publish logic here
                     publishTemplate(); // Call the publish function
                     setModel(false);
+                    checkLogin();
                   }}
                   className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
                 >
@@ -97,6 +108,9 @@ export default function Publish() {
           </motion.div>
         )}
       </AnimatePresence>
+
+
+
     </>
   );
 }
