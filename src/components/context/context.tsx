@@ -115,6 +115,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.error("No content to publish");
       return;
     }
+    // const { isLogin } = useUserAuth();
 
     try {
       const response = await fetch(
@@ -138,7 +139,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your site is successfully published and now it is under review"
       );
-      navigate("/user-companies");
+     
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);

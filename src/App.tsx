@@ -41,7 +41,7 @@ import DashboardPreview2 from "./components/company/src/components/template/t2/f
 import DashboardEdit1 from "./components/company/src/components/template/t1/final/edit/src/main";
 import DashboardEdit2 from "./components/company/src/components/template/t2/final/edit/src/main";
 import { CombinedProviders } from "./components/context/context";
-import CompanyDirectory from "./components/CompanyDirectory";
+// import CompanyDirectory from "./components/CompanyDirectory";
 import Login from "./components/Login";
 import ForgotPassword from "./components/ForgotPassword";
 import Logout from "./components/Logout";
@@ -113,14 +113,7 @@ const AppContent = () => {
           <Route path="/videos" element={<VideosPage />} />
           <Route path="/professionals" element={<ProfessionalsPage />} />
           <Route path="/listed-companies" element={<CompaniesPage />} />
-          <Route
-            path="/user/companies"
-            element={
-              <ProtectedRoute>
-                <CompanyDirectory />
-              </ProtectedRoute>
-            }
-          />
+
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/events" element={<EventsPage />} />

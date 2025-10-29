@@ -1,11 +1,80 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { CheckCircle, X, Upload, AlertCircle, Scale } from "lucide-react";
-import { useTemplate } from "../../../../../../../../context/context"; // Adjust path as needed
+import { CheckCircle, X, Upload, AlertCircle } from "lucide-react";3
+import { useNavigate } from "react-router-dom";
+import { useTemplate,useUserAuth } from "../../../../../../../../context/context"; // Adjust path as needed
 export default function Publish() {
   const [model, setModel] = useState(false);
   const { publishTemplate } = useTemplate(); // Get the publish function from context
+  const { isLogin } = useUserAuth(); // Get the isLogin state from context
+  const [navModel, setNavModel] = useState(false);
+ const navigate = useNavigate();
+function navigatemodel() {
+    if (navModel) {
+      return (
+        <motion.div
+          className="fixed top-0 left-0 w-full h-full bg-black/60 flex items-center justify-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="text-green-600" size={24} />
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Successfully Published!
+                </h3>
+              </div>
+            </div>
+            <div className="mb-6">
+              <p className="text-gray-600">
+                You have successfully published your template.
+              </p>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.1 }}
+                onClick={() => navigate("/")}
+                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
+              >
+                Go to Home
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.1 }}
+                onClick={() => navigate("/login")}
+                className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
+              >
+                Go to Login
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  function checkLogin(){
+    if(isLogin===false){
+      setNavModel(true);
+      navigatemodel();
+    }else{
+     navigate("/user-companies");
+     setNavModel(false);
+    }
+  }
   return (
+
+
     <>
       <motion.div className="fixed bottom-20 right-10 z-50">
         <motion.button
@@ -18,6 +87,13 @@ export default function Publish() {
           Publish Site
         </motion.button>
       </motion.div>
+
+    {/* Show pop-up only if not logged in */}
+   {navModel &&(
+    <div className="fixed top-0 left-0 w-full h-full bg-black/60 flex items-center justify-center z-50">
+     {navigatemodel()}
+    </div>
+   )}
 
       {/* Confirmation Modal */}
       <AnimatePresence>
@@ -87,6 +163,7 @@ export default function Publish() {
                     // Add your publish logic here
                     publishTemplate(); // Call the publish function
                     setModel(false);
+                    checkLogin
                   }}
                   className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
                 >
@@ -97,6 +174,9 @@ export default function Publish() {
           </motion.div>
         )}
       </AnimatePresence>
+
+
+
     </>
   );
 }
