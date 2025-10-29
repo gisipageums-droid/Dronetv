@@ -573,7 +573,7 @@ export default function Footer({
                   transition={{ duration: 0.3 }}
                 >
                   <motion.div
-                    className="relative w-8 h-8 rounded-lg flex items-center justify-center mr-2 overflow-hidden"
+                    className="relative w-14 h-14 rounded-lg flex items-center justify-center mr-2 overflow-hidden"
                     whileHover={{
                       rotate: 360,
                       boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)",
