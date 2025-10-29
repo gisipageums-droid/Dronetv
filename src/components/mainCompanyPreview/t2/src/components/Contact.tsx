@@ -395,7 +395,6 @@ import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { motion } from "motion/react";
 import { toast } from "react-toastify";
-import { useTheme } from "./ThemeProvider";
 
 export default function Contact({ contactData, publishedId }) {
   const [formData, setFormData] = useState({
@@ -408,7 +407,7 @@ export default function Contact({ contactData, publishedId }) {
     message: "",
     category: "Enterprise", // ✅ required field
   });
- const { theme } = useTheme();
+
   const [loading, setLoading] = useState(false);
 
   // 🔹 constant publishedId (required by API)
@@ -521,7 +520,7 @@ export default function Contact({ contactData, publishedId }) {
           </span>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="max-w-[700px] mx-auto">
           {/* ✅ Contact Form with API integration */}
           <motion.div
             initial={{ x: -100, opacity: 0 }}
@@ -547,7 +546,7 @@ export default function Contact({ contactData, publishedId }) {
                       <Label htmlFor="firstName">First Name</Label>
                       <Input
                         id="firstName"
-                        placeholder="John"
+                        placeholder="Rahul"
                         value={formData.firstName}
                         onChange={handleChange}
                         className="border-border focus:border-primary bg-input-background"
@@ -557,7 +556,7 @@ export default function Contact({ contactData, publishedId }) {
                       <Label htmlFor="lastName">Last Name</Label>
                       <Input
                         id="lastName"
-                        placeholder="Doe"
+                        placeholder="Sharma"
                         value={formData.lastName}
                         onChange={handleChange}
                         className="border-border focus:border-primary bg-input-background"
@@ -571,7 +570,7 @@ export default function Contact({ contactData, publishedId }) {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="john@company.com"
+                      placeholder="rahul.sharma@company.com"
                       value={formData.email}
                       onChange={handleChange}
                       required
@@ -585,7 +584,7 @@ export default function Contact({ contactData, publishedId }) {
                     <Input
                       id="phone"
                       type="text"
-                      placeholder="+91 1234567890"
+                      placeholder="Your Number"
                       value={formData.phone}
                       onChange={handleChange}
                       className="border-border focus:border-primary bg-input-background"
@@ -611,7 +610,7 @@ export default function Contact({ contactData, publishedId }) {
                       id="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className={`w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300  ${theme === "dark" ? "bg-[#181818] text-white" : "bg-gray-100 text-black"}`}
+                      className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 text-black"
                     >
                       {subjectOptions.map((option, index) => (
                         <option key={index} value={option}>
@@ -649,47 +648,6 @@ export default function Contact({ contactData, publishedId }) {
                 </CardContent>
               </form>
             </Card>
-          </motion.div>
-
-          {/* Contact Info (unchanged) */}
-          <motion.div
-            className="space-y-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {contactData.contactInfo.map((info, index) => (
-              <motion.div key={index} whileHover={{ scale: 1.02, x: 10 }}>
-                <Card className="bg-card border-border hover-lift cursor-pointer">
-                  <CardContent className="p-6">
-                    <h4 className="font-medium text-card-foreground mb-1">
-                      {info.title}
-                    </h4>
-                    <p className="text-muted-foreground">{info.primary}</p>
-                    <p className="text-muted-foreground text-sm">
-                      {info.secondary}
-                    </p>
-                    <span className="text-muted-foreground">
-                      Closed on Sundays
-                    </span>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <Card className="bg-primary text-primary-foreground hover-lift">
-                <CardContent className="p-6 text-center">
-                  <h4 className="font-bold mb-2 text-primary-foreground">
-                    {contactData.cta.title}
-                  </h4>
-                  <p className="text-sm mb-4 opacity-90 text-primary-foreground">
-                    {contactData.cta.description}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
           </motion.div>
         </div>
       </div>
