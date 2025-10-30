@@ -1,11 +1,37 @@
-// Clients.tsx - Full Updated Code
 import { X, ZoomIn } from "lucide-react";
-import { motion } from "motion/react";
-import { useCallback, useEffect, useState } from "react";
-import Cropper from "react-easy-crop";
+import { motion } from "framer-motion";
+import { useCallback, useEffect, useState, ChangeEvent } from "react";
+import Cropper, { Area } from "react-easy-crop";
 import { toast } from "react-toastify";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
+
+interface Client {
+  name: string;
+  image: string;
+}
+
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface ClientsData {
+  headline: {
+    title: string;
+    description: string;
+  };
+  clients: Client[];
+  stats: Stat[];
+}
+
+interface ClientsProps {
+  clientData: ClientsData;
+  onStateChange: (data: ClientsData) => void;
+  userId: string;
+  publishedId: string;
+  templateSelection: string;
+}
 
 export default function Clients({
   clientData,
@@ -13,24 +39,24 @@ export default function Clients({
   userId,
   publishedId,
   templateSelection,
-}) {
+}: ClientsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
-  const [croppingFor, setCroppingFor] = useState(null); // { index: number }
+  const [croppingFor, setCroppingFor] = useState<{ index: number } | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [imageToCrop, setImageToCrop] = useState(null);
-  const [originalFile, setOriginalFile] = useState(null);
-  const [pendingImages, setPendingImages] = useState({});
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [pendingImages, setPendingImages] = useState<{ [key: number]: File }>({});
   const [aspectRatio, setAspectRatio] = useState(1);
 
   // Merged all state into a single object
-  const [clientsSection, setClientsSection] = useState(clientData);
+  const [clientsSection, setClientsSection] = useState<ClientsData>(clientData);
 
   // Add this useEffect to notify parent of state changes
   useEffect(() => {
@@ -40,7 +66,7 @@ export default function Clients({
   }, [clientsSection, onStateChange]);
 
   // Handlers for clients
-  const updateClient = (idx, field, value) => {
+  const updateClient = (idx: number, field: keyof Client, value: string) => {
     setClientsSection((prev) => ({
       ...prev,
       clients: prev.clients.map((c, i) =>
@@ -49,7 +75,7 @@ export default function Clients({
     }));
   };
 
-  const removeClient = (idx) => {
+  const removeClient = (idx: number) => {
     setClientsSection((prev) => ({
       ...prev,
       clients: prev.clients.filter((_, i) => i !== idx),
@@ -63,32 +89,9 @@ export default function Clients({
     }));
   };
 
-  // Handlers for stats
-  const updateStat = (idx, field, value) => {
-    setClientsSection((prev) => ({
-      ...prev,
-      stats: prev.stats.map((s, i) =>
-        i === idx ? { ...s, [field]: value } : s
-      ),
-    }));
-  };
-
-  const removeStat = (idx) => {
-    setClientsSection((prev) => ({
-      ...prev,
-      stats: prev.stats.filter((_, i) => i !== idx),
-    }));
-  };
-
-  const addStat = () => {
-    setClientsSection((prev) => ({
-      ...prev,
-      stats: [...prev.stats, { value: "New", label: "New Stat" }],
-    }));
-  };
 
   // Image cropping functionality
-  const handleClientImageSelect = (index, e) => {
+  const handleClientImageSelect = (index: number, e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -104,7 +107,7 @@ export default function Clients({
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImageToCrop(reader.result);
+      setImageToCrop(reader.result as string);
       setOriginalFile(file);
       setCroppingFor({ index });
       setShowCropper(true);
@@ -119,11 +122,11 @@ export default function Clients({
   };
 
   // Cropper functions
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+  const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  const createImage = (url) =>
+  const createImage = (url: string): Promise<HTMLImageElement> =>
     new Promise((resolve, reject) => {
       const image = new Image();
       image.addEventListener("load", () => resolve(image));
@@ -132,10 +135,17 @@ export default function Clients({
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const getCroppedImg = async (
+    imageSrc: string,
+    pixelCrop: Area,
+    rotation = 0
+  ): Promise<{ file: File; previewUrl: string } | null> => {
+    if (!originalFile) return null;
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
+
+    if (!ctx) return null;
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
@@ -159,9 +169,11 @@ export default function Clients({
     return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          const fileName = originalFile
-            ? `cropped-${originalFile.name}`
-            : `cropped-client-${Date.now()}.jpg`;
+          if (!blob) {
+            resolve(null);
+            return;
+          }
+          const fileName = `cropped-${originalFile.name}`;
 
           const file = new File([blob], fileName, {
             type: "image/jpeg",
@@ -183,16 +195,23 @@ export default function Clients({
 
   const applyCrop = async () => {
     try {
-      if (!imageToCrop || !croppedAreaPixels) {
+      if (!imageToCrop || !croppedAreaPixels || !croppingFor) {
         toast.error("Please select an area to crop");
         return;
       }
 
-      const { file, previewUrl } = await getCroppedImg(
+      const croppedImage = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels,
         rotation
       );
+
+      if (!croppedImage) {
+        toast.error("Error cropping image. Please try again.");
+        return;
+      }
+
+      const { file, previewUrl } = croppedImage;
 
       // Update preview immediately
       updateClient(croppingFor.index, "image", previewUrl);
