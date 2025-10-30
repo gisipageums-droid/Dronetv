@@ -713,7 +713,7 @@ function TestimonialCard({
         <CardContent className="p-8 flex flex-col flex-grow">
           {/* Rating */}
           <div className="flex space-x-1 mb-4 flex-shrink-0">
-            {[...Array(testimonial.rating)].map((_, i) => (
+            {[...Array(Math.floor(testimonial.rating))].map((_, i) => (
               <motion.div
                 key={i}
                 initial={{ scale: 0, rotate: -180 }}
