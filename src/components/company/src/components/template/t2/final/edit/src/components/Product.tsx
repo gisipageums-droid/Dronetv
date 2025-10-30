@@ -10,8 +10,6 @@ import {
   Zap,
   X,
   CheckCircle,
-  RotateCw,
-  ZoomIn
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion, AnimatePresence } from "motion/react";
@@ -35,6 +33,7 @@ export default function Product({productData, onStateChange,userId, publishedId,
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   // Consolidated state
   const [contentState, setContentState] = useState(productData);
@@ -123,6 +122,7 @@ export default function Product({productData, onStateChange,userId, publishedId,
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
+      setAspectRatio(4 / 3);
       setZoom(1);
       setRotation(0);
       setCrop({ x: 0, y: 0 });
@@ -323,38 +323,6 @@ export default function Product({productData, onStateChange,userId, publishedId,
     }));
   };
 
-  // Update function for benefits
-  const updateBenefit = (index, field, value) => {
-    setContentState(prev => ({
-      ...prev,
-      benefits: prev.benefits.map((b, i) => i === index ? { ...b, [field]: value } : b)
-    }));
-  };
-
-  // Add a new benefit
-  const addBenefit = () => {
-    setContentState(prev => ({
-      ...prev,
-      benefits: [
-        ...prev.benefits,
-        {
-          icon: "",
-          color: "primary",
-          title: "New Benefit",
-          desc: "Benefit description...",
-        },
-      ]
-    }));
-  };
-
-  // Remove a benefit
-  const removeBenefit = (index) => {
-    setContentState(prev => ({
-      ...prev,
-      benefits: prev.benefits.filter((_, i) => i !== index)
-    }));
-  };
-
   const openModal = (index) => {
     setSelectedProductIndex(index);
     setIsModalOpen(true);
@@ -367,122 +335,133 @@ export default function Product({productData, onStateChange,userId, publishedId,
 
   return (
     <>
-      {/* Image Cropper Modal - Same as Hero */}
-    {showCropper && (
+      {/* Image Cropper Modal - Standardized like Clients */}
+      {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Image
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Product Image
               </h3>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                aria-label="Close cropper"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
-            {/* Cropper Area - compact responsive heights */}
-            <div className="flex-1 relative bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop}
-                  crop={crop}
-                  zoom={zoom}
-                  rotation={rotation}
-                  aspect={4 / 3}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
             {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4/3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4/3 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16/9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16/9 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
                 </div>
-
-                {/* Rotation */}
-                {/* <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <RotateCw className="w-4 h-4" /> Rotation
-                    </span>
-                    <span className="text-gray-600">{rotation}°</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={rotation}
-                    min={0}
-                    max={360}
-                    step={1}
-                    onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
-                </div> */}
               </div>
 
-              {/* Action Buttons - equal width & responsive */}
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
-
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
-
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
                 >
                   Apply Crop
                 </button>
@@ -544,11 +523,11 @@ export default function Product({productData, onStateChange,userId, publishedId,
                   type="text"
                   value={contentState.heading.heading}
                   onChange={(e) => updateField("heading", "heading", e.target.value)}
-                  className="border-b font-medium bg-transparent block w-full text-3xl md:text-4xl text-foreground mb-4"
+                  className="border-b font-medium bg-transparent block w-full text-3xl md:text-4xl text-foreground mb-4 text-center"
                 />
                 <input
                   type="text"
-                  className="border-b font-medium bg-transparent block w-full text-3xl md:text-4xl text-foreground mb-4"
+                  className="border-b font-medium bg-transparent block w-full text-3xl md:text-4xl text-foreground mb-4 text-center"
                   value={contentState.heading.description}
                   onChange={(e) => updateField("heading", "description", e.target.value)}
                 />
@@ -557,7 +536,7 @@ export default function Product({productData, onStateChange,userId, publishedId,
                   type="text"
                   value={contentState.heading.trust}
                   onChange={(e) => updateField("heading", "trust", e.target.value)}
-                  className="border-b font-medium bg-transparent block w-full text-3xl md:text-4xl text-foreground mb-4"
+                  className="border-b font-medium bg-transparent block w-full text-3xl md:text-4xl text-foreground mb-4 text-center"
                 />
               </>
             ) : (
@@ -595,28 +574,8 @@ export default function Product({productData, onStateChange,userId, publishedId,
                       alt={product.title}
                       className="w-full h-full object-cover"
                     />
-                    {isEditing && (
-                      <motion.div
-                        animate={{ scale: 1 }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        transition={{ duration: 0.3 }}
-                        className="absolute mx-2 bottom-2 left-2  z-50 bg-white/80 p-1 rounded"
-                      >
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="text-xs w-full cursor-pointer font-bold"
-                          onChange={(e) => handleProductImageSelect(index, e)}
-                        />
-                        {pendingImages[index] && (
-                          <p className="text-xs text-green-600 mt-1">
-                            ✓ Image cropped and ready to upload
-                          </p>
-                        )}
-                      </motion.div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    
+                    {/* Category at the top */}
                     <div className="absolute top-2 left-2">
                       <Badge
                         className={`${product.categoryColor} border-0 text-xs`}
@@ -634,12 +593,39 @@ export default function Product({productData, onStateChange,userId, publishedId,
                         )}
                       </Badge>
                     </div>
+
                     {product.isPopular && (
                       <div className="absolute top-2 right-2 bg-red-accent text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
                         <Zap className="w-2 h-2 mr-1" /> Bestseller
                       </div>
                     )}
-                    
+
+                    {isEditing && (
+                      <motion.div
+                        animate={{ scale: 1 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ duration: 0.3 }}
+                        className="absolute bottom-2 left-2 right-2 bg-white/80 p-2 rounded z-50"
+                      >
+                        {/* Recommendation text connected with select image */}
+                        <div className="text-xs text-gray-600 mb-1 text-center">
+                          Recommended: (16:9 ratio) - WideScreen
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="text-xs w-full cursor-pointer font-bold text-center"
+                          onChange={(e) => handleProductImageSelect(index, e)}
+                        />
+                        {pendingImages[index] && (
+                          <p className="text-xs text-green-600 mt-1 text-center">
+                            ✓ Image cropped and ready to upload
+                          </p>
+                        )}
+                      </motion.div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   </div>
                   <div className="flex flex-col flex-grow p-6">
                     <div className="flex-shrink-0 mb-4">
@@ -649,10 +635,10 @@ export default function Product({productData, onStateChange,userId, publishedId,
                           onChange={(e) =>
                             updateProductField(index, "title", e.target.value)
                           }
-                          className="border-b w-full font-bold text-lg"
+                          className="border-b w-full font-bold text-lg text-center"
                         />
                       ) : (
-                        <CardTitle className="line-clamp-2 min-h-[3rem]">{product.title}</CardTitle>
+                        <CardTitle className="line-clamp-2 min-h-[3rem] text-center">{product.title}</CardTitle>
                       )}
                     </div>
                     <div className="flex-grow mb-4">
@@ -662,10 +648,10 @@ export default function Product({productData, onStateChange,userId, publishedId,
                           onChange={(e) =>
                             updateProductField(index, "description", e.target.value)
                           }
-                          className="border-b w-full min-h-[4rem]"
+                          className="border-b w-full min-h-[4rem] text-center"
                         />
                       ) : (
-                        <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
+                        <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem] text-center">
                           {product.description}
                         </p>
                       )}
@@ -706,7 +692,7 @@ export default function Product({productData, onStateChange,userId, publishedId,
                        whileHover={{scale:1.1}}
                        whileTap={{scale:0.9}}
                         onClick={() => addFeature(index)}
-                        className="text-xs text-green-600 mt-2 mb-4"
+                        className="text-xs text-green-600 mt-2 mb-4 text-center"
                       >
                         + Add Feature
                       </motion.button>
@@ -785,10 +771,10 @@ export default function Product({productData, onStateChange,userId, publishedId,
                     onChange={(e) =>
                       updateProductField(selectedProductIndex, "title", e.target.value)
                     }
-                    className="border-b w-full text-2xl font-bold mb-4"
+                    className="border-b w-full text-2xl font-bold mb-4 text-center"
                   />
                 ) : (
-                  <h2 className="text-2xl font-bold mb-4">
+                  <h2 className="text-2xl font-bold mb-4 text-center">
                     {contentState.products[selectedProductIndex].title}
                   </h2>
                 )}
@@ -799,10 +785,10 @@ export default function Product({productData, onStateChange,userId, publishedId,
                     onChange={(e) =>
                       updateProductField(selectedProductIndex, "detailedDescription", e.target.value)
                     }
-                    className="border-b w-full mb-4"
+                    className="border-b w-full mb-4 text-center"
                   />
                 ) : (
-                  <p className="text-muted-foreground mb-4">
+                  <p className="text-muted-foreground mb-4 text-center">
                     {contentState.products[selectedProductIndex].detailedDescription}
                   </p>
                 )}

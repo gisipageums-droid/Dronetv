@@ -12,6 +12,7 @@ import {
   Shield,
   Cpu
 } from "lucide-react";
+import LoadingScreen from './loadingscreen'; // Adjust the import path as needed
 
 /**
  * Types
@@ -19,7 +20,7 @@ import {
 type RawApiItem = {
   publishedId?: string;
   userId?: string;
-  products?: any; // block (object) that may contain products array / heading / benefits
+  products?: any;
   websiteContent?: any;
   websiteData?: any;
 };
@@ -45,9 +46,10 @@ const ProductsPage: React.FC = () => {
   const [filteredProducts, setFilteredProducts] = useState<ProductShape[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const productsPerPage = 12;
 
-  // Data state (initial static data + will be replaced by API data when available)
+  // Data state
   const [products, setProducts] = useState<ProductShape[]>([]);
 
   // categories & sort options
@@ -59,180 +61,42 @@ const ProductsPage: React.FC = () => {
     { value: "rating", label: "Sort by Rating" }
   ];
 
-  // ------------------------------
-  // Static fallback products (kept same as provided, but typed)
-  // ------------------------------
-  const staticProducts: ProductShape[] = [
-    {
-      id: 1,
-      name: "AGRIBOT A5",
-      description: "India’s 1st Type Certified Agriculture Drone, approved by DGCA.",
-      image: "/images/product1.png",
-      category: "Agriculture Drones",
-      price: "₹4,50,000",
-      rating: 5.0,
-      popularity: 95,
-      features: ["1 Acre Spray in 7 Minutes", "Water Usage: 8-10 Liters per Acre", "3 in 1 Agri Drone: Spray, Broadcast, Crop Health Monitoring"],
-      featured: true
-    },
-    {
-      id: 2,
-      name: "AGRIBOT A6",
-      description: "Advanced Agriculture Drone with DGCA Certification.",
-      image: "/images/product2.png",
-      category: "Agriculture Drones",
-      price: "₹5,50,000",
-      rating: 4.9,
-      popularity: 90,
-      features: ["1 Acre Spray in 7 Minutes", "Water Usage: 8-10 Liters per Acre", "Radar-Based Collision Detection", "Fleet Management Dashboard"],
-      featured: true
-    },
-    {
-      id: 3,
-      name: "Surveybot",
-      description: "Advanced drone for aerial surveys with 16-channel LiDAR for accurate data collection.",
-      image: "/images/product3.png",
-      category: "Survey Drones",
-      price: "₹6,50,000",
-      rating: 4.8,
-      popularity: 89,
-      features: ["16-Channel LiDAR for Precision", "360° 3D High-Speed Scanning", "Battery and Engine Powered", "Terrain Compatibility"],
-      featured: true
-    },
-    {
-      id: 4,
-      name: "Professional Gimbal Camera",
-      description: "3-axis stabilized camera with 4K recording and professional-grade image quality.",
-      image: "https://images.pexels.com/photos/724712/pexels-photo-724712.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Cameras",
-      price: "₹1,299",
-      rating: 4.6,
-      popularity: 85,
-      features: ["3-axis Stabilization", "4K Recording", "Professional Quality"]
-    },
-    {
-      id: 5,
-      name: "Long-Range Battery Pack",
-      description: "Extended flight time battery with intelligent power management and fast charging.",
-      image: "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Batteries",
-      price: "₹199",
-      rating: 4.5,
-      popularity: 78,
-      features: ["60min Flight Time", "Fast Charging", "Smart Management"]
-    },
-    {
-      id: 6,
-      name: "Drone Fleet Management Software",
-      description: "Comprehensive software solution for managing multiple drones and flight operations.",
-      image: "https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Software",
-      price: "₹299/month",
-      rating: 4.8,
-      popularity: 90,
-      features: ["Fleet Management", "Real-time Monitoring", "Analytics Dashboard"]
-    },
-    {
-      id: 7,
-      name: "Thermal Imaging Camera",
-      description: "High-resolution thermal camera for search and rescue, inspection, and surveillance applications.",
-      image: "https://images.pexels.com/photos/442587/pexels-photo-442587.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Cameras",
-      price: "₹3,999",
-      rating: 4.9,
-      popularity: 82,
-      features: ["Thermal Imaging", "High Resolution", "Multiple Applications"]
-    },
-    {
-      id: 8,
-      name: "Precision Landing Pad",
-      description: "Smart landing pad with LED guidance system and automatic drone positioning.",
-      image: "https://images.pexels.com/photos/1034662/pexels-photo-1034662.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Accessories",
-      price: "₹399",
-      rating: 4.4,
-      popularity: 75,
-      features: ["LED Guidance", "Auto Positioning", "Weather Resistant"]
-    },
-    {
-      id: 9,
-      name: "Racing Drone Kit",
-      description: "High-performance racing drone kit with carbon fiber frame and FPV system.",
-      image: "https://images.pexels.com/photos/724712/pexels-photo-724712.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Drones",
-      price: "₹799",
-      rating: 4.7,
-      popularity: 88,
-      features: ["Carbon Fiber", "FPV System", "High Performance"]
-    },
-    {
-      id: 10,
-      name: "Multi-Spectral Sensor",
-      description: "Advanced multi-spectral imaging sensor for precision agriculture and environmental monitoring.",
-      image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Sensors",
-      price: "₹4,999",
-      rating: 4.8,
-      popularity: 79,
-      features: ["Multi-Spectral", "Agriculture Ready", "Environmental Monitoring"]
-    },
-    {
-      id: 11,
-      name: "Drone Carrying Case",
-      description: "Professional-grade carrying case with custom foam inserts and weather protection.",
-      image: "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Accessories",
-      price: "₹149",
-      rating: 4.3,
-      popularity: 70,
-      features: ["Weather Protection", "Custom Foam", "Professional Grade"]
-    },
-    {
-      id: 12,
-      name: "Smart Battery Charger",
-      description: "Intelligent multi-battery charger with safety features and fast charging capabilities.",
-      image: "https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Batteries",
-      price: "₹299",
-      rating: 4.6,
-      popularity: 83,
-      features: ["Multi-Battery", "Safety Features", "Fast Charging"]
-    }
-  ];
 
-  // ------------------------------
-  // Fetch API data on mount (Axios .then/.catch usage)
-  // ------------------------------
+ 
+
+  // Fetch API data on mount
   useEffect(() => {
-    // set static first so UI not empty
-    // setProducts(staticProducts);
-
-    // Replace with your real API endpoint
     const API = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/view";
+
+    // Set a timeout for API call to avoid infinite loading
+    const loadingTimeout = setTimeout(() => {
+      if (loading) {
+        console.warn("API timeout - using static data");
+        setProducts(staticProducts);
+        setLoading(false);
+        setDataLoaded(true);
+      }
+    }, 8000); // 8 second timeout
 
     axios
       .get(API)
       .then((res) => {
-        // expected response structure: { status: true, message: "...", data: [ { publishedId, userId, products: { products: [ ... ] } } ] }
+        clearTimeout(loadingTimeout);
         const payload = res.data;
         if (payload && Array.isArray(payload.data) && payload.data.length > 0) {
-          // flatten API items -> product list
           const apiProducts: ProductShape[] = [];
 
           payload.data.forEach((item: RawApiItem) => {
-            // products may live in item.products.products OR item.websiteContent.products.products OR item.websiteData.content.products
             const content = item.products ?? item.websiteContent ?? item.websiteData?.content ?? {};
-            // the actual array of product entries might be in content.products (based on your earlier screenshot)
             const arr = content.products ?? [];
 
             if (Array.isArray(arr) && arr.length > 0) {
               arr.forEach((p: any, pIndex: number) => {
-                // map possible fields to our ProductShape
                 const mapped: ProductShape = {
-                  id: item.publishedId ?? "api", // Use publishedId as the main ID for API calls
+                  id: item.publishedId ?? `api-${pIndex}`,
                   name: p.title ?? p.name ?? p.heading ?? `Product ${pIndex + 1}`,
                   description: p.description ?? p.detailedDescription ?? p.desc ?? "",
-                  image: p.image ?? p.url ?? p.thumbnail ?? "", // fallback to possible fields
+                  image: p.image ?? p.url ?? p.thumbnail ?? "",
                   category: p.category ?? "Products",
                   price: (p.price && String(p.price)) ?? p.pricing ?? p.priceLabel ?? "₹0",
                   rating: Number(p.rating ?? p.reviews?.avg ?? 4.5) || 4.5,
@@ -243,11 +107,10 @@ const ProductsPage: React.FC = () => {
                 apiProducts.push(mapped);
               });
             } else {
-              // if no array found, attempt to pick single product-like fields
               const maybeSingle = content;
               if (maybeSingle && (maybeSingle.title || maybeSingle.image)) {
                 const mapped: ProductShape = {
-                  id: item.publishedId ?? "api", // Use publishedId as the main ID for API calls
+                  id: item.publishedId ?? "api-single",
                   name: maybeSingle.title ?? "Product",
                   description: maybeSingle.description ?? "",
                   image: maybeSingle.image ?? "",
@@ -263,27 +126,35 @@ const ProductsPage: React.FC = () => {
             }
           });
 
-          // if apiProducts found, replace products state
           if (apiProducts.length > 0) {
             setProducts(apiProducts);
           } else {
-            // no items found in API response; keep staticProducts
-            console.warn("API returned but no products parsed, keeping static fallback.");
+            console.warn("API returned but no products parsed, using static fallback.");
+            setProducts(staticProducts);
           }
         } else {
-          console.warn("API returned no data, keeping static fallback.");
+          console.warn("API returned no data, using static fallback.");
+          setProducts(staticProducts);
         }
       })
       .catch((err) => {
+        clearTimeout(loadingTimeout);
         console.error("API Error:", err);
-        // keep staticProducts as fallback
+        setProducts(staticProducts);
+      })
+      .finally(() => {
+        setLoading(false);
+        setDataLoaded(true);
       });
+
+    // Cleanup timeout
+    return () => clearTimeout(loadingTimeout);
   }, []);
 
-  // ------------------------------
-  // Filtering / Sorting (runs whenever products, selectedCategory, searchQuery, sortBy changes)
-  // ------------------------------
+  // Filtering / Sorting
   useEffect(() => {
+    if (!dataLoaded) return;
+
     let filtered = [...products];
 
     // Filter by category
@@ -307,7 +178,6 @@ const ProductsPage: React.FC = () => {
         case "popularity":
           return (b.popularity || 0) - (a.popularity || 0);
         case "price":
-          // parse numbers from price string
           const aPrice = parseFloat(String(a.price).replace(/[^0-9.]/g, "")) || 0;
           const bPrice = parseFloat(String(b.price).replace(/[^0-9.]/g, "")) || 0;
           return aPrice - bPrice;
@@ -322,7 +192,7 @@ const ProductsPage: React.FC = () => {
 
     setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [products, selectedCategory, sortBy, searchQuery]);
+  }, [products, selectedCategory, sortBy, searchQuery, dataLoaded]);
 
   // Featured / Pagination helpers
   const featuredProducts = products.filter((product) => product.featured);
@@ -365,9 +235,15 @@ const ProductsPage: React.FC = () => {
     }
   };
 
-  // ------------------------------
-  // JSX UI (kept mostly same as your original)
-  // ------------------------------
+  // Show loading screen while data is being fetched
+  if (loading) {
+    return <LoadingScreen 
+      logoSrc="/images/logo.png" 
+      loadingText="Loading Products..." 
+    />;
+  }
+
+  // JSX UI remains the same as your original code
   return (
     <div className="pt-16 min-h-screen bg-yellow-400">
       {/* Hero Section */}

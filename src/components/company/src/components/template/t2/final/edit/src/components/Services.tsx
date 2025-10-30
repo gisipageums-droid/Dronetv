@@ -1,3 +1,4 @@
+// Services.tsx with same cropping functionality as Clients
 import { useState, useEffect, useCallback } from "react";
 import {
   Card,
@@ -6,7 +7,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
-import { X, CheckCircle, RotateCw, ZoomIn } from "lucide-react";
+import { X, CheckCircle, ZoomIn } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from 'react-easy-crop';
@@ -29,6 +30,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4/3);
          
   // Merged all state into a single object
   const [servicesSection, setServicesSection] = useState(serviceData);
@@ -125,9 +127,10 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
+      setAspectRatio(4/3); // Default to 4:3 for services
+      setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
-      setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
     
@@ -362,139 +365,147 @@ export default function Services({serviceData, onStateChange, userId, publishedI
 
   return (
     <>
-      {/* Image Cropper Modal - Same as Hero */}
-    {showCropper && (
-  <motion.div 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
-  >
-    <motion.div 
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
-    >
-      {/* Header */}
-      <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-        <h3 className="text-base font-semibold text-gray-800">Crop Image</h3>
-        <button 
-          onClick={cancelCrop}
-          className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+      {/* Image Cropper Modal - Services (Same as Clients) */}
+      {showCropper && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
-          <X className="w-5 h-5 text-gray-600" />
-        </button>
-      </div>
-
-      {/* Cropper Area - Responsive Heights */}
-      <div className="flex-1 relative bg-gray-900">
-        <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-          <Cropper
-            image={imageToCrop}
-            crop={crop}
-            zoom={zoom}
-            rotation={rotation}
-            aspect={4 / 3}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-            showGrid={false}
-            cropShape="rect"
-            style={{
-              containerStyle: {
-                position: "relative",
-                width: "100%",
-                height: "100%",
-              },
-              cropAreaStyle: {
-                border: "2px solid white",
-                borderRadius: "8px",
-              },
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-        {/* Zoom + Rotation in 2-column grid */}
-        <div className="grid grid-cols-1 gap-2">
-          {/* Zoom */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-gray-700">
-                <ZoomIn className="w-4 h-4" /> Zoom
-              </span>
-              <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Crop Service Image
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Recommended: 1600×900px (16:9 ratio) - WideScreen
+                </p>
+              </div>
+              <button
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
-            <input
-              type="range"
-              value={zoom}
-              min={1}
-              max={3}
-              step={0.1}
-              onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer
-              [&::-webkit-slider-thumb]:appearance-none
-              [&::-webkit-slider-thumb]:h-3.5
-              [&::-webkit-slider-thumb]:w-3.5
-              [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:bg-blue-500"
-            />
-          </div>
 
-          {/* Rotation */}
-          {/* <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-gray-700">
-                <RotateCw className="w-4 h-4" /> Rotation
-              </span>
-              <span className="text-gray-600">{rotation}°</span>
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
-            <input
-              type="range"
-              value={rotation}
-              min={0}
-              max={360}
-              step={1}
-              onChange={(e) => setRotation(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer
-              [&::-webkit-slider-thumb]:appearance-none
-              [&::-webkit-slider-thumb]:h-3.5
-              [&::-webkit-slider-thumb]:w-3.5
-              [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:bg-blue-500"
-            />
-          </div> */}
-        </div>
 
-        {/* Action Buttons - Equal width, responsive */}
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <button
-            onClick={resetCropSettings}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
-          >
-            Reset
-          </button>
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(4/3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4/3 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16/9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16/9 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                </div>
+              </div>
 
-          <button
-            onClick={cancelCrop}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
-          >
-            Cancel
-          </button>
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
 
-          <button
-            onClick={applyCrop}
-            className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
-          >
-            Apply Crop
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  </motion.div>
-)}
-
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={resetCropSettings}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Main Services Section */}
       <motion.section id="services" className="py-20 bg-background theme-transition">
@@ -626,6 +637,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                       transition={{ duration: 0.3 }}
                       className="absolute bottom-2 left-2 bg-white/80 p-1 rounded"
                     >
+                      <div className="text-xs text-gray-600 mb-1">Recommended: 1600×900px (16:9)</div>
                       <input
                         type="file"
                         accept="image/*"
@@ -728,8 +740,6 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               </Button>
             )}
           </div>
-
-          
         </div>
 
         {/* Modal */}

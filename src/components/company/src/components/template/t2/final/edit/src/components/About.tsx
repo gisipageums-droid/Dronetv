@@ -1,3 +1,4 @@
+// About.tsx - Full Updated Code
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import {
@@ -12,13 +13,17 @@ import {
   Lightbulb,
   Handshake,
   X,
-  RotateCw,
-  ZoomIn
 } from "lucide-react";
 import { toast } from "react-toastify";
-import Cropper from 'react-easy-crop';
+import Cropper from "react-easy-crop";
 
-export default function About({ aboutData, onStateChange, userId, publishedId, templateSelection }) {
+export default function About({
+  aboutData,
+  onStateChange,
+  userId,
+  publishedId,
+  templateSelection,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [pendingImageFile, setPendingImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -31,29 +36,32 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   // Map the string icons to Lucide React components
   const iconMap = {
-    "Shield": Shield,
-    "Lightbulb": Lightbulb,
-    "Target": Target,
-    "Handshake": Handshake,
-    "Globe": Globe,
-    "Users": Users,
-    "Rocket": Rocket,
-    "Heart": Heart,
+    Shield: Shield,
+    Lightbulb: Lightbulb,
+    Target: Target,
+    Handshake: Handshake,
+    Globe: Globe,
+    Users: Users,
+    Rocket: Rocket,
+    Heart: Heart,
   };
 
   // Function to process aboutData and ensure icons are proper components
   const processAboutData = (data) => {
     if (!data) return null;
-    
+
     return {
       ...data,
-      visionPillars: data.visionPillars && data.visionPillars.map(pillar => ({
-        ...pillar,
-        icon: iconMap[pillar.icon] || Globe
-      }))
+      visionPillars:
+        data.visionPillars &&
+        data.visionPillars.map((pillar) => ({
+          ...pillar,
+          icon: iconMap[pillar.icon] || Globe,
+        })),
     };
   };
 
@@ -103,13 +111,13 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be less than 5MB');
+      toast.error("File size must be less than 5MB");
       return;
     }
 
@@ -118,14 +126,15 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
       setImageToCrop(reader.result);
       setOriginalFile(file);
       setShowCropper(true);
+      setAspectRatio(4 / 3);
       setZoom(1);
       setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
-    
+
     // Clear the file input
-    e.target.value = '';
+    e.target.value = "";
   };
 
   // Cropper functions
@@ -137,17 +146,17 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
-      image.addEventListener('load', () => resolve(image));
-      image.addEventListener('error', (error) => reject(error));
-      image.setAttribute('crossOrigin', 'anonymous');
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.setAttribute("crossOrigin", "anonymous");
       image.src = url;
     });
 
   // Function to get cropped image
   const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
     // Set canvas size to the desired crop size
     canvas.width = pixelCrop.width;
@@ -172,23 +181,27 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
     );
 
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        const fileName = originalFile ? 
-          `cropped-${originalFile.name}` : 
-          `cropped-about-${Date.now()}.jpg`;
-        
-        const file = new File([blob], fileName, { 
-          type: 'image/jpeg',
-          lastModified: Date.now()
-        });
-        
-        const previewUrl = URL.createObjectURL(blob);
-        
-        resolve({ 
-          file, 
-          previewUrl 
-        });
-      }, 'image/jpeg', 0.95);
+      canvas.toBlob(
+        (blob) => {
+          const fileName = originalFile
+            ? `cropped-${originalFile.name}`
+            : `cropped-about-${Date.now()}.jpg`;
+
+          const file = new File([blob], fileName, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+
+          const previewUrl = URL.createObjectURL(blob);
+
+          resolve({
+            file,
+            previewUrl,
+          });
+        },
+        "image/jpeg",
+        0.95
+      );
     });
   };
 
@@ -196,26 +209,30 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels) {
-        toast.error('Please select an area to crop');
+        toast.error("Please select an area to crop");
         return;
       }
 
-      const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
-      
+      const { file, previewUrl } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels,
+        rotation
+      );
+
       // Update preview immediately with blob URL (temporary)
       updateField("imageUrl", previewUrl);
-      
+
       // Set the actual file for upload on save
       setPendingImageFile(file);
-      console.log('About image cropped, file ready for upload:', file);
+      console.log("About image cropped, file ready for upload:", file);
 
-      toast.success('Image cropped successfully! Click Save to upload to S3.');
+      toast.success("Image cropped successfully! Click Save to upload to S3.");
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
     } catch (error) {
-      console.error('Error cropping image:', error);
-      toast.error('Error cropping image. Please try again.');
+      console.error("Error cropping image:", error);
+      toast.error("Error cropping image. Please try again.");
     }
   };
 
@@ -244,46 +261,56 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
       // If there's a pending image, upload it first
       if (pendingImageFile) {
         if (!userId || !publishedId || !templateSelection) {
-          console.error('Missing required props:', { userId, publishedId, templateSelection });
-          toast.error('Missing user information. Please refresh and try again.');
+          console.error("Missing required props:", {
+            userId,
+            publishedId,
+            templateSelection,
+          });
+          toast.error(
+            "Missing user information. Please refresh and try again."
+          );
           return;
         }
-        
+
         const formData = new FormData();
-        formData.append('file', pendingImageFile);
-        formData.append('sectionName', 'about');
-        formData.append('imageField', 'imageUrl'+Date.now());
-        formData.append('templateSelection', templateSelection);
+        formData.append("file", pendingImageFile);
+        formData.append("sectionName", "about");
+        formData.append("imageField", "imageUrl" + Date.now());
+        formData.append("templateSelection", templateSelection);
 
-        console.log('Uploading about image to S3:', pendingImageFile);
+        console.log("Uploading about image to S3:", pendingImageFile);
 
-        const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
-          method: 'POST',
-          body: formData,
-        });
+        const uploadResponse = await fetch(
+          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
           // Update with actual S3 URL, not blob URL
           updateField("imageUrl", uploadData.imageUrl);
           setPendingImageFile(null);
-          console.log('Image uploaded to S3:', uploadData.imageUrl);
-          toast.success('About image uploaded to S3 successfully!');
+          console.log("Image uploaded to S3:", uploadData.imageUrl);
+          toast.success("About image uploaded to S3 successfully!");
         } else {
           const errorData = await uploadResponse.json();
-          console.error('Image upload failed:', errorData);
-          toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
+          console.error("Image upload failed:", errorData);
+          toast.error(
+            `Image upload failed: ${errorData.message || "Unknown error"}`
+          );
           return;
         }
       }
-      
+
       // Exit edit mode
       setIsEditing(false);
-      toast.success('About section saved with S3 URLs!');
-
+      toast.success("About section saved with S3 URLs!");
     } catch (error) {
-      console.error('Error saving about section:', error);
-      toast.error('Error saving changes. Please try again.');
+      console.error("Error saving about section:", error);
+      toast.error("Error saving changes. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -291,132 +318,143 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
 
   return (
     <>
-      {/* Image Cropper Modal - Same as Hero */}
-     {showCropper && (
-  <motion.div 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
-  >
-    <motion.div 
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
-    >
-      {/* Header */}
-      <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-        <h3 className="text-base font-semibold text-gray-800">
-          Crop Image
-        </h3>
-        <button 
-          onClick={cancelCrop}
-          className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+      {/* Image Cropper Modal - Standardized like Clients */}
+      {showCropper && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
-          <X className="w-5 h-5 text-gray-600" />
-        </button>
-      </div>
-
-      {/* Cropper Area - Compact responsive */}
-      <div className="flex-1 relative bg-gray-900">
-        <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-          <Cropper
-            image={imageToCrop}
-            crop={crop}
-            zoom={zoom}
-            rotation={rotation}
-            aspect={4 / 3}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-            showGrid={false}
-            cropShape="rect"
-            style={{
-              containerStyle: {
-                position: "relative",
-                width: "100%",
-                height: "100%",
-              },
-              cropAreaStyle: {
-                border: "2px solid white",
-                borderRadius: "8px",
-              },
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-        <div className="grid grid-cols-1 gap-2">
-          {/* Zoom Control */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-gray-700">
-                <ZoomIn className="w-4 h-4" />
-                Zoom
-              </span>
-              <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop About Image
+              </h3>
+              <button
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
-            <input
-              type="range"
-              value={zoom}
-              min={1}
-              max={3}
-              step={0.1}
-              onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-            />
-          </div>
 
-          {/* Rotation Control */}
-          {/* <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-gray-700">
-                <RotateCw className="w-4 h-4" />
-                Rotation
-              </span>
-              <span className="text-gray-600">{rotation}°</span>
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
-            <input
-              type="range"
-              value={rotation}
-              min={0}
-              max={360}
-              step={1}
-              onChange={(e) => setRotation(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-            />
-          </div> */}
-        </div>
 
-        {/* Action Buttons - Equal width & responsive */}
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <button
-            onClick={resetCropSettings}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
-          >
-            Reset
-          </button>
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
+                </div>
+              </div>
 
-          <button
-            onClick={cancelCrop}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
-          >
-            Cancel
-          </button>
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
 
-          <button
-            onClick={applyCrop}
-            className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
-          >
-            Apply Crop
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  </motion.div>
-)}
-
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={resetCropSettings}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Main About Section */}
       <section id="about" className="py-20 bg-secondary theme-transition">
@@ -425,17 +463,21 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
           <div className="flex justify-end mt-6">
             {isEditing ? (
               <motion.button
-                whileTap={{scale:0.9}}
+                whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:shadow-2xl'} text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${
+                  isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:shadow-2xl"
+                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
-                {isUploading ? 'Uploading...' : 'Save'}
+                {isUploading ? "Uploading..." : "Save"}
               </motion.button>
             ) : (
               <motion.button
-                whileTap={{scale:0.9}}
+                whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
@@ -453,22 +495,27 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
               whileInView={{ opacity: [0, 1], x: [-50, 0] }}
               transition={{ duration: 0.8 }}
             >
+              {/* Recommended Size Above Image */}
+              {isEditing && (
+                <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                  Recommended: 800×600px (4:3 ratio)
+                </div>
+              )}
               <img
                 src={aboutState.imageUrl}
                 alt="About"
                 className="w-full h-[400px] object-cover"
               />
               {isEditing && (
-                <div className="absolute bottom-4 left-4 bg-white/80 p-2 rounded shadow">
-                  <p className="text-sm mb-1">Change About Image:</p>
-                <input
+                <div className="absolute bottom-4 left-4 right-4 bg-white/80 p-2 rounded shadow z-50">
+                  <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageSelect}
-                    className="text-sm cursor-pointer font-bold  border-2 border-dashed border-muted-foreground p-2 rounded w-full"
+                    className="text-sm cursor-pointer font-bold w-full text-center border-2 border-dashed border-muted-foreground p-2 rounded"
                   />
                   {pendingImageFile && (
-                    <p className="text-xs text-green-600 mt-1">
+                    <p className="text-xs text-green-600 mt-1 text-center">
                       ✓ Image cropped and ready to upload
                     </p>
                   )}
@@ -487,7 +534,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                   <input
                     value={aboutState.aboutTitle}
                     onChange={(e) => updateField("aboutTitle", e.target.value)}
-                    className="bg-transparent border-b border-primary text-3xl md:text-4xl text-foreground outline-none"
+                    className="bg-transparent border-b border-primary text-3xl md:text-4xl text-foreground outline-none w-full"
                   />
                 ) : (
                   <h2 className="text-3xl md:text-4xl text-foreground">
@@ -495,24 +542,80 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                   </h2>
                 )}
                 {isEditing ? (
-                  <textarea
-                    value={aboutState.description1}
-                    onChange={(e) => updateField("description1", e.target.value)}
-                    className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={aboutState.description1}
+                      onChange={(e) =>
+                        updateField("description1", e.target.value)
+                      }
+                      maxLength={500}
+                      className={`w-full bg-transparent border-b text-lg text-muted-foreground outline-none ${
+                        aboutState.description1.length >= 500
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                      }`}
+                    />
+                    <div className="flex justify-between items-center mt-1">
+                      <div>
+                        {aboutState.description1.length >= 500 && (
+                          <span className="text-red-500 text-xs font-bold">
+                            ⚠️ Character limit reached!
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={`text-xs ${
+                          aboutState.description1.length >= 500
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {aboutState.description1.length}/500
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <p className="text-lg text-muted-foreground">
                     {aboutState.description1}
                   </p>
                 )}
                 {isEditing ? (
-                  <textarea
-                    value={aboutState.description2}
-                    onChange={(e) => updateField("description2", e.target.value)}
-                    className="w-full bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={aboutState.description2}
+                      onChange={(e) =>
+                        updateField("description2", e.target.value)
+                      }
+                      maxLength={500}
+                      className={`w-full bg-transparent border-b text-muted-foreground outline-none ${
+                        aboutState.description2.length >= 500
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                      }`}
+                    />
+                    <div className="flex justify-between items-center mt-1">
+                      <div>
+                        {aboutState.description2.length >= 500 && (
+                          <span className="text-red-500 text-xs font-bold">
+                            ⚠️ Character limit reached!
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={`text-xs ${
+                          aboutState.description2.length >= 500
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {aboutState.description2.length}/500
+                      </div>
+                    </div>
+                  </div>
                 ) : (
-                  <p className="text-muted-foreground">{aboutState.description2}</p>
+                  <p className="text-muted-foreground">
+                    {aboutState.description2}
+                  </p>
                 )}
               </motion.div>
 
@@ -529,7 +632,7 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                       <input
                         value={feature}
                         onChange={(e) => updateFeature(index, e.target.value)}
-                        className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
+                        className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full"
                       />
                     ) : (
                       <span className="text-muted-foreground">{feature}</span>
@@ -538,8 +641,8 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                 ))}
                 {isEditing && (
                   <motion.button
-                    whileTap={{scale:0.9}}
-                    whileHover={{scale:1.1}}
+                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.1 }}
                     onClick={addFeature}
                     className="text-green-600 cursor-pointer text-sm mt-2"
                   >
@@ -552,11 +655,28 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
               <motion.div className="grid grid-cols-2 gap-6 pt-6">
                 <div className="text-center p-4 bg-card rounded-lg shadow-sm">
                   {isEditing ? (
-                    <input
-                      value={aboutState.metric1Num}
-                      onChange={(e) => updateField("metric1Num", e.target.value)}
-                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none"
-                    />
+                    <div className="relative">
+                      <input
+                        value={aboutState.metric1Num}
+                        onChange={(e) =>
+                          updateField("metric1Num", e.target.value)
+                        }
+                        maxLength={15}
+                        className={`bg-transparent border-b border-foreground text-2xl font-bold outline-none w-full text-center ${
+                          aboutState.metric1Num.length >= 15
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {aboutState.metric1Num.length}/15
+                        {aboutState.metric1Num.length >= 15 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   ) : (
                     <motion.div
                       whileInView={{ opacity: [0, 1], y: [-15, 3, -3, 0] }}
@@ -567,13 +687,28 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                     </motion.div>
                   )}
                   {isEditing ? (
-                    <input
-                      value={aboutState.metric1Label}
-                      onChange={(e) =>
-                        updateField("metric1Label", e.target.value)
-                      }
-                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
-                    />
+                    <div className="relative mt-2">
+                      <input
+                        value={aboutState.metric1Label}
+                        onChange={(e) =>
+                          updateField("metric1Label", e.target.value)
+                        }
+                        maxLength={25}
+                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${
+                          aboutState.metric1Label.length >= 25
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {aboutState.metric1Label.length}/25
+                        {aboutState.metric1Label.length >= 25 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   ) : (
                     <motion.div
                       whileInView={{ opacity: [0, 1], y: [15, -3, 3, 0] }}
@@ -584,13 +719,31 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                     </motion.div>
                   )}
                 </div>
+
                 <div className="text-center p-4 bg-card rounded-lg shadow-sm">
                   {isEditing ? (
-                    <input
-                      value={aboutState.metric2Num}
-                      onChange={(e) => updateField("metric2Num", e.target.value)}
-                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none"
-                    />
+                    <div className="relative">
+                      <input
+                        value={aboutState.metric2Num}
+                        onChange={(e) =>
+                          updateField("metric2Num", e.target.value)
+                        }
+                        maxLength={15}
+                        className={`bg-transparent border-b border-foreground text-2xl font-bold outline-none w-full text-center ${
+                          aboutState.metric2Num.length >= 15
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {aboutState.metric2Num.length}/15
+                        {aboutState.metric2Num.length >= 15 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   ) : (
                     <motion.div
                       whileInView={{ opacity: [0, 1], y: [-15, 3, -3, 0] }}
@@ -601,13 +754,28 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                     </motion.div>
                   )}
                   {isEditing ? (
-                    <input
-                      value={aboutState.metric2Label}
-                      onChange={(e) =>
-                        updateField("metric2Label", e.target.value)
-                      }
-                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
-                    />
+                    <div className="relative mt-2">
+                      <input
+                        value={aboutState.metric2Label}
+                        onChange={(e) =>
+                          updateField("metric2Label", e.target.value)
+                        }
+                        maxLength={25}
+                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${
+                          aboutState.metric2Label.length >= 25
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {aboutState.metric2Label.length}/25
+                        {aboutState.metric2Label.length >= 25 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   ) : (
                     <motion.div
                       whileInView={{ opacity: [0, 1], y: [15, -3, 3, 0] }}
@@ -625,27 +793,56 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
           {/* Vision Section */}
           <motion.div className="text-center mb-16">
             {isEditing ? (
-              <input
-                value={aboutState.visionBadge}
-                onChange={(e) => updateField("visionBadge", e.target.value)}
-                className="bg-transparent border-b border-primary text-primary outline-none"
-              />
+              <div className="relative">
+                <input
+                  value={aboutState.visionBadge}
+                  onChange={(e) => updateField("visionBadge", e.target.value)}
+                  maxLength={25}
+                  className={`bg-transparent border-b border-primary text-primary outline-none ${
+                    aboutState.visionBadge.length >= 25 ? "border-red-500" : ""
+                  }`}
+                />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {aboutState.visionBadge.length}/25
+                  {aboutState.visionBadge.length >= 25 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Limit reached!
+                    </span>
+                  )}
+                </div>
+              </div>
             ) : (
               <motion.div
                 whileInView={{ opacity: [0, 1], y: [-20, 0] }}
                 transition={{ duration: 0.5, ease: "backInOut" }}
-                className='inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6'>
-                <Eye className='text-lg mr-2 text-red-500' />
-                <span className='font-medium text-red-500 text-lg'>{aboutState.visionBadge}</span>
+                className="inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6"
+              >
+                <Eye className="text-lg mr-2 text-red-500" />
+                <span className="font-medium text-red-500 text-lg">
+                  {aboutState.visionBadge}
+                </span>
               </motion.div>
             )}
 
             {isEditing ? (
-              <input
-                value={aboutState.visionTitle}
-                onChange={(e) => updateField("visionTitle", e.target.value)}
-                className="bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none"
-              />
+              <div className="relative">
+                <input
+                  value={aboutState.visionTitle}
+                  onChange={(e) => updateField("visionTitle", e.target.value)}
+                  maxLength={80}
+                  className={`bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center ${
+                    aboutState.visionTitle.length >= 80 ? "border-red-500" : ""
+                  }`}
+                />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {aboutState.visionTitle.length}/80
+                  {aboutState.visionTitle.length >= 80 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Limit reached!
+                    </span>
+                  )}
+                </div>
+              </div>
             ) : (
               <motion.h2
                 whileInView={{ opacity: [0, 1], x: [-20, 0] }}
@@ -657,11 +854,24 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
             )}
 
             {isEditing ? (
-              <textarea
-                value={aboutState.visionDesc}
-                onChange={(e) => updateField("visionDesc", e.target.value)}
-                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
-              />
+              <div className="relative">
+                <textarea
+                  value={aboutState.visionDesc}
+                  onChange={(e) => updateField("visionDesc", e.target.value)}
+                  maxLength={300}
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center ${
+                    aboutState.visionDesc.length >= 300 ? "border-red-500" : ""
+                  }`}
+                />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {aboutState.visionDesc.length}/300
+                  {aboutState.visionDesc.length >= 300 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Limit reached!
+                    </span>
+                  )}
+                </div>
+              </div>
             ) : (
               <motion.p
                 whileInView={{ opacity: [0, 1], x: [20, 0] }}
@@ -671,7 +881,6 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                 {aboutState.visionDesc}
               </motion.p>
             )}
-
             {/* Vision Pillars */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {aboutState.visionPillars.map((pillar, index) => {
@@ -686,27 +895,57 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
                       <Icon className="h-6 w-6 text-primary" />
                     </div>
+
                     {isEditing ? (
-                      <input
-                        value={pillar.title}
-                        onChange={(e) =>
-                          updatePillar(index, "title", e.target.value)
-                        }
-                        className="bg-transparent border-b border-foreground font-semibold outline-none"
-                      />
+                      <div className="relative mb-4">
+                        <input
+                          value={pillar.title}
+                          onChange={(e) =>
+                            updatePillar(index, "title", e.target.value)
+                          }
+                          maxLength={40}
+                          className={`bg-transparent border-b border-foreground font-semibold outline-none w-full text-center ${
+                            pillar.title.length >= 40 ? "border-red-500" : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {pillar.title.length}/40
+                          {pillar.title.length >= 40 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <h3 className="font-semibold text-card-foreground mb-3">
                         {pillar.title}
                       </h3>
                     )}
+
                     {isEditing ? (
-                      <textarea
-                        value={pillar.description}
-                        onChange={(e) =>
-                          updatePillar(index, "description", e.target.value)
-                        }
-                        className="w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none"
-                      />
+                      <div className="relative">
+                        <textarea
+                          value={pillar.description}
+                          onChange={(e) =>
+                            updatePillar(index, "description", e.target.value)
+                          }
+                          maxLength={150}
+                          className={`w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none text-center ${
+                            pillar.description.length >= 150
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {pillar.description.length}/150
+                          {pillar.description.length >= 150 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <p className="text-muted-foreground text-sm leading-relaxed">
                         {pillar.description}
@@ -721,31 +960,61 @@ export default function About({ aboutData, onStateChange, userId, publishedId, t
           {/* Mission Section */}
           <motion.div className="bg-gradient-to-r from-primary/5 to-red-accent/5 rounded-2xl p-12 text-center">
             <Target className="w-12 h-12 text-primary mx-auto mb-6" />
+
             {isEditing ? (
-              <input
-                value={aboutState.missionTitle}
-                onChange={(e) => updateField("missionTitle", e.target.value)}
-                className="bg-transparent border-b border-foreground text-2xl font-semibold outline-none"
-              />
+              <div className="relative mb-6">
+                <input
+                  value={aboutState.missionTitle}
+                  onChange={(e) => updateField("missionTitle", e.target.value)}
+                  maxLength={60}
+                  className={`bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center ${
+                    aboutState.missionTitle.length >= 60 ? "border-red-500" : ""
+                  }`}
+                />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {aboutState.missionTitle.length}/60
+                  {aboutState.missionTitle.length >= 60 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Limit reached!
+                    </span>
+                  )}
+                </div>
+              </div>
             ) : (
               <motion.h3
-              whileInView={{opacity:[0,1],scale:[0,1],y:[-20,0]}}
-              transition={{duration:1,ease:"backInOut"}}
-              className="text-2xl font-semibold text-foreground mb-6">
+                whileInView={{ opacity: [0, 1], scale: [0, 1], y: [-20, 0] }}
+                transition={{ duration: 1, ease: "backInOut" }}
+                className="text-2xl font-semibold text-foreground mb-6"
+              >
                 {aboutState.missionTitle}
               </motion.h3>
             )}
+
             {isEditing ? (
-              <textarea
-                value={aboutState.missionDesc}
-                onChange={(e) => updateField("missionDesc", e.target.value)}
-                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
-              />
+              <div className="relative">
+                <textarea
+                  value={aboutState.missionDesc}
+                  onChange={(e) => updateField("missionDesc", e.target.value)}
+                  maxLength={400}
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center ${
+                    aboutState.missionDesc.length >= 400 ? "border-red-500" : ""
+                  }`}
+                />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {aboutState.missionDesc.length}/400
+                  {aboutState.missionDesc.length >= 400 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Limit reached!
+                    </span>
+                  )}
+                </div>
+              </div>
             ) : (
-              <motion.p 
-              whileInView={{opacity:[0,1],x:[-40,0]}}
-              transition={{duration:1,ease:"backInOut"}}
-              className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
+              <motion.p
+                whileInView={{ opacity: [0, 1], x: [-40, 0] }}
+                transition={{ duration: 1, ease: "backInOut" }}
+                className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed"
+              >
                 {aboutState.missionDesc}
               </motion.p>
             )}
