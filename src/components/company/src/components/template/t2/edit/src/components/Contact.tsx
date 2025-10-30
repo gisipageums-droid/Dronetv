@@ -17,14 +17,9 @@ export default function Contact({ onStateChange }) {
         "Ready to transform your business? Let's start a conversation about how we can help you achieve your goals with our",
       descriptionPart2: "expert solutions",
       descriptionPart3: ".",
-    },
+    },  
     contactInfo: [
-      {
-        title: "Business Hours",
-        primary: "Mon - Fri: 9:00 AM - 6:00 PM EST",
-        secondary: "Sat: 10:00 AM - 2:00 PM EST",
-        color: "red-accent",
-      },
+    
     ],
     cta: {
       title: "Ready to Get Started?",
