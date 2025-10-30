@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Star, Heart, ShoppingCart, Truck, Shield, Award, Plus, Minus, Share2, Plane } from 'lucide-react';
-
+import LoadingScreen from './loadingscreen';
 interface ProductFeature {
   icon: React.ReactNode;
   text: string;
@@ -151,12 +151,10 @@ const ProductDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center pt-16 min-h-screen bg-yellow-400">
-        <div className="text-center">
-          <div className="mx-auto mb-4 w-32 h-32 rounded-full border-b-2 border-black animate-spin"></div>
-          <p className="text-xl font-semibold text-black">Loading product details...</p>
-        </div>
-      </div>
+    <LoadingScreen
+        logoSrc="images/logo.png"
+        loadingText="Loading Companies..."
+      />
     );
   }
 

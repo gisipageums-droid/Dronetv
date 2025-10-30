@@ -44,6 +44,7 @@ const ProductsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<ProductShape[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [loading, setLoading] = useState(true);
   const productsPerPage = 12;
 
   // Data state (initial static data + will be replaced by API data when available)
@@ -204,7 +205,7 @@ const ProductsPage: React.FC = () => {
   // ------------------------------
   useEffect(() => {
     // set static first so UI not empty
-    setProducts(staticProducts);
+    // setProducts(staticProducts);
 
     // Replace with your real API endpoint
     const API = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/view";

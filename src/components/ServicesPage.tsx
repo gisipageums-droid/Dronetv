@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Search, ChevronDown, Zap as Drone, Brain, Map, Star, Users, MapPin, Building2 } from 'lucide-react';
+import LoadingScreen from './loadingscreen';
 
 interface Service {
   id: string;
@@ -203,12 +204,10 @@ const ServicesPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center pt-16 min-h-screen bg-yellow-400">
-        <div className="text-center">
-          <div className="mx-auto mb-4 w-32 h-32 rounded-full border-b-2 border-black animate-spin"></div>
-          <p className="text-xl font-semibold text-black">Loading services...</p>
-        </div>
-      </div>
+        <LoadingScreen
+        logoSrc="images/logo.png"
+        loadingText="Loading Companies..."
+      />
     );
   }
 
