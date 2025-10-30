@@ -138,8 +138,8 @@ const AppContent = () => {
           {/* AI get not found */}
           <Route path="/form/notfound" element={<NotFound />} />
 
-          <Route path="/edit/template/t1" element={<EditTemp1 />} />
-          <Route path="/edit/template/t2" element={<EditTemp2 />} />
+          <Route path="/edit/template/t1/:draftId/:userId" element={<EditTemp1 />} />
+          <Route path="/edit/template/t2/:draftId/:userId" element={<EditTemp2 />} />
           <Route
             path="/user/companies/preview/1/:publishedId/:userId"
             element={<DashboardPreview1 />}

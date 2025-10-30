@@ -689,7 +689,7 @@ export default function EditableGallerySection({
           ))}
 
           {/* Add new image button in edit mode */}
-          {isEditing && (
+          {displayGalleryData.images.length < 6 && isEditing && (
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
@@ -708,6 +708,13 @@ export default function EditableGallerySection({
             </motion.div>
           )}
         </div>
+
+        {displayGalleryData.images.length >= 6 && isEditing && (
+          <p className="mt-6 w-full border border-gray-200 px-2 py-4 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">
+            You alredy have 6 image's for adding new image you can edit existing
+            images or remove one then add new!
+          </p>
+        )}
       </div>
 
       {/* Lightbox Modal */}

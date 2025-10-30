@@ -599,24 +599,44 @@ function TestimonialCard({ testimonial, index, isEditing, updateTestimonial, rem
     >
       <Card className="bg-card border-border hover:shadow-xl transition-all duration-300 hover:border-primary/30 h-full flex flex-col">
         <CardContent className="p-8 flex flex-col flex-grow">
-          {/* Rating */}
-          <div className="flex space-x-1 mb-4 flex-shrink-0">
-            {[...Array(testimonial.rating)].map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ scale: 0, rotate: -180 }}
-                whileInView={{ scale: 1, rotate: 0 }}
-                viewport={{ once: true }}
-                transition={{
-                  delay: index * 0.1 + i * 0.05,
-                  duration: 0.4,
-                  type: "spring",
-                }}
-                whileHover={{ scale: 1.2 }}
-              >
-                <Star className="h-5 w-5 fill-primary text-primary" />
-              </motion.div>
-            ))}
+         {/* Rating with float support */}
+          <div className="flex flex-shrink-0 mb-4 space-x-1">
+            {[...Array(5)].map((_, i) => {
+              const ratingValue = i + 1;
+              const rating = Math.floor(testimonial.rating) || 5;
+
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ scale: 0, rotate: -180 }}
+                  whileInView={{ scale: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    delay: index * 0.1 + i * 0.05,
+                    duration: 0.4,
+                    type: "spring",
+                  }}
+                  whileHover={{ scale: 1.2 }}
+                  className="relative"
+                >
+                  {/* Empty star background */}
+                  <Star className="w-5 h-5 text-gray-300" />
+
+                  {/* Filled star overlay */}
+                  {ratingValue <= rating ? (
+                    <Star className="absolute top-0 left-0 w-5 h-5 fill-primary text-primary" />
+                  ) : ratingValue === Math.ceil(rating) && rating % 1 !== 0 ? (
+                    // Partial star for decimal ratings
+                    <div
+                      className="absolute top-0 left-0 overflow-hidden"
+                      style={{ width: `${(rating % 1) * 100}%` }}
+                    >
+                      <Star className="w-5 h-5 fill-primary text-primary" />
+                    </div>
+                  ) : null}
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* Quote */}

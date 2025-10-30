@@ -305,9 +305,10 @@ export default function EditableContact({
                 </label>
                 <select className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 transition-all duration-200">
                   <option>General Inquiry</option>
-                  <option>Support</option>
-                  <option>Partnership</option>
-                  <option>Other</option>
+                  <option>Sales Inquiry</option>
+                  <option>Products Inquiry</option>
+                  <option>Services Inquiry</option>
+                  <option>Support Inquiry</option>
                 </select>
               </div>
 
@@ -344,8 +345,8 @@ export default function EditableContact({
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
-              {isEditing ? (
+            {/* <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+              {/* {isEditing ? (
                 <EditableText
                   value={tempData.businessHoursTitle}
                   onChange={(val) => updateField("businessHoursTitle", val)}
@@ -356,9 +357,9 @@ export default function EditableContact({
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                   {displayData.businessHoursTitle}
                 </h4>
-              )}
+              )} */}
 
-              <ul className="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
+              {/* <ul className="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
                 {displayData.businessHours.map((hour, index) => (
                   <li key={index} className="flex items-center">
                     {isEditing ? (
@@ -386,9 +387,9 @@ export default function EditableContact({
                     )}
                   </li>
                 ))}
-              </ul>
+              </ul> */}
 
-              {isEditing && (
+              {/* {isEditing && (
                 <Button
                   onClick={addBusinessHour}
                   size="sm"
@@ -398,8 +399,8 @@ export default function EditableContact({
                   <Plus className="w-3 h-3 mr-1" />
                   Add Business Hour
                 </Button>
-              )}
-            </div>
+              )} */}
+            {/* </div>  */}
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 text-center">
               {isEditing ? (

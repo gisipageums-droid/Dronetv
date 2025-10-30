@@ -82,11 +82,11 @@ export default function EditableContact({
   // Update when prop changes
   useEffect(() => {
     if (content) {
-      const mergedData = { 
-        ...defaultContent, 
+      const mergedData = {
+        ...defaultContent,
         ...content,
         // Ensure businessHours is always an array
-        businessHours: getBusinessHours(content)
+        businessHours: getBusinessHours(content),
       };
       setContactData(mergedData);
       setTempData(mergedData);
@@ -114,13 +114,13 @@ export default function EditableContact({
     try {
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // Ensure businessHours is an array before saving
       const dataToSave = {
         ...tempData,
-        businessHours: getBusinessHours(tempData)
+        businessHours: getBusinessHours(tempData),
       };
-      
+
       setContactData(dataToSave);
       setIsEditing(false);
       toast.success("Contact section saved successfully");
@@ -343,9 +343,10 @@ export default function EditableContact({
                 </label>
                 <select className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 transition-all duration-200">
                   <option>General Inquiry</option>
-                  <option>Support</option>
-                  <option>Partnership</option>
-                  <option>Other</option>
+                  <option>Sales Inquiry</option>
+                  <option>Products Inquiry</option>
+                  <option>Services Inquiry</option>
+                  <option>Support Inquiry</option>
                 </select>
               </div>
 
@@ -382,7 +383,7 @@ export default function EditableContact({
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+            {/* <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
               {isEditing ? (
                 <EditableText
                   value={tempData.businessHoursTitle}
@@ -437,7 +438,7 @@ export default function EditableContact({
                   Add Business Hour
                 </Button>
               )}
-            </div>
+            </div> */}
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 text-center">
               {isEditing ? (

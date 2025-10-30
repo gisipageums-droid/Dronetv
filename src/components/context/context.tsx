@@ -83,7 +83,7 @@ export function useUserAuth() {
   return context;
 }
 
-// Template Management Types and Context
+// In TemplateContextType interface, add the missing function:
 interface TemplateContextType {
   draftDetails: any | [];
   setDraftDetails: React.Dispatch<React.SetStateAction<any | []>>;
@@ -94,11 +94,18 @@ interface TemplateContextType {
   finalTemplate: any | [];
   setFinalTemplate: React.Dispatch<React.SetStateAction<any | []>>;
   publishTemplate: () => void;
-
   finaleDataReview: any | [];
   setFinaleDataReview: React.Dispatch<React.SetStateAction<any | []>>;
   editPublishTemplate: () => void;
   publishProfessionalTemplate: () => void;
+  // Add the missing properties:
+  haveAccount: boolean;
+  setHaveAccount: React.Dispatch<React.SetStateAction<boolean>>;
+  accountEmail: string | null;
+  setAccountEmail: React.Dispatch<React.SetStateAction<string | null>>;
+  navModel: boolean;
+  navigatemodel: () => JSX.Element;
+  getAIgenData: (userId: string, draftId: string, templateSelection: string) => Promise<void>;
 }
 
 const TemplateContext = createContext<TemplateContextType | undefined>(
@@ -112,15 +119,14 @@ interface TemplateProviderProps {
 export const TemplateProvider: React.FC<TemplateProviderProps> = ({
   children,
 }) => {
-  const [draftDetails, setDraftDetails] = useState<any | []>({});
-  const [isPublishedTriggered, setIsPublishedTriggered] =
-    useState<boolean>(false);
+    const [draftDetails, setDraftDetails] = useState<any | []>({});
+  const [isPublishedTriggered, setIsPublishedTriggered] = useState<boolean>(false);
   const [finalTemplate, setFinalTemplate] = useState<any | []>({});
   const [AIGenData, setAIGenData] = useState<any>({});
-
   const [finaleDataReview, setFinaleDataReview] = useState<any | []>({});
   const [navModel, setNavModel] = useState(false);
-
+  const [haveAccount, setHaveAccount] = useState<boolean>(true);
+  const [accountEmail, setAccountEmail] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isLogin } = useUserAuth();
 
@@ -175,6 +181,38 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       );
  
   }
+
+  const API = 'https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft';
+  //get API AI gen data :
+  const getAIgenData = async (userId: string, draftId: string, templateSelection: string) => {
+    if (!userId || !draftId) {
+      console.error("Missing userId or draftId");
+      toast.error("Missing required parameters");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API}/${userId}/${draftId}?template=${templateSelection}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Add validation for the response data
+      if (data && (data.content || data.publishedId)) {
+        toast.success(`AI generated the data successfully`, { toastId: "ai-success2" });
+        setAIGenData(data);
+        console.log("AI Data loaded successfully:", data);
+      } else {
+        throw new Error("Invalid data structure in response");
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error("Failed to load AI generated data");
+    }
+  };
 
   //pulish final template
   async function fetchAPI() {
@@ -334,8 +372,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         finaleDataReview,
         editPublishTemplate,
         navModel,
-        navigatemodel
-        
+        navigatemodel,
+        getAIgenData
       }}
     >
       {children}

@@ -6,9 +6,12 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import logo from "/images/Drone tv .in.jpg";
 
-export default function Header({headerData}) {
+export default function Header({ headerData }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
+  
+  // Add safe access to headerData with fallbacks
+  const safeHeaderData = headerData || {};
   
   // Static navigation items
   const staticNavItems = [
@@ -98,7 +101,7 @@ export default function Header({headerData}) {
               transition={{ duration: 0.6 }}
             >
                <img
-                  src={headerData.logoUrl || logo}
+                  src={safeHeaderData.logoUrl || logo}
                   alt="Logo"
                   className="w-full h-full object-contain"
                 />
@@ -109,7 +112,7 @@ export default function Header({headerData}) {
           ? "bg-gray-800 border-gray-700 text-white"
           : "bg-white border-gray-200 text-black"
       }`}>
-              {headerData.companyName}
+              {safeHeaderData.companyName || "Company Name"}
             </motion.span>
           </div>
 
@@ -145,7 +148,7 @@ export default function Header({headerData}) {
                 href="#contact" 
                 onClick={(e) => handleDesktopNavigation(e, '#contact')}
               >
-                {headerData.ctaText}
+                {safeHeaderData.ctaText || "Get Started"}
               </a>
             </Button>
 
@@ -199,7 +202,7 @@ export default function Header({headerData}) {
                   className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
                   onClick={() => handleScrollToSection('#contact')}
                 >
-                  {headerData.ctaText}
+                  {safeHeaderData.ctaText || "Get Started"}
                 </Button>
               </motion.nav>
             </motion.div>

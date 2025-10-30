@@ -119,12 +119,12 @@ export default function EditableGallerySection({
   const sectionRef = useRef(null);
   const fileInputRefs = useRef([]);
 
-  // Default galleryData structure matching Gallery2.tsx
-  const defaultgalleryData = galleryData;
+  // Default galleryData structure
+  const defaultGalleryData = galleryData;
 
   // Consolidated state
-  const [galleryState, setGalleryState] = useState(defaultgalleryData);
-  const [tempGalleryState, setTempGalleryState] = useState(defaultgalleryData);
+  const [galleryState, setGalleryState] = useState(defaultGalleryData);
+  const [tempGalleryState, setTempGalleryState] = useState(defaultGalleryData);
 
   // Notify parent of state changes
   useEffect(() => {
@@ -446,7 +446,7 @@ export default function EditableGallerySection({
     };
   }, [updateHeaderField]);
 
-  const displaygalleryData = isEditing ? tempGalleryState : galleryState;
+  const displayGalleryData = isEditing ? tempGalleryState : galleryState;
 
   return (
     <section
@@ -459,7 +459,7 @@ export default function EditableGallerySection({
         <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
           <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
             <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-            <span className="text-gray-700">Loading galleryData...</span>
+            <span className="text-gray-700">Loading gallery data...</span>
           </div>
         </div>
       )}
@@ -524,13 +524,13 @@ export default function EditableGallerySection({
           {isEditing ? (
             <div className="space-y-4">
               <EditableText
-                value={displaygalleryData.heading.title}
+                value={displayGalleryData.heading.title}
                 field="title"
                 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center"
                 placeholder="Gallery Title"
               />
               <EditableText
-                value={displaygalleryData.heading.description}
+                value={displayGalleryData.heading.description}
                 field="description"
                 multiline={true}
                 className="text-gray-600 max-w-2xl mx-auto text-lg text-center"
@@ -545,7 +545,7 @@ export default function EditableGallerySection({
                 transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
                 className="text-3xl md:text-4xl font-extrabold text-gray-900"
               >
-                {displaygalleryData.heading.title}
+                {displayGalleryData.heading.title}
               </motion.h2>
 
               <motion.p
@@ -554,7 +554,7 @@ export default function EditableGallerySection({
                 transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
                 className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
               >
-                {displaygalleryData.heading.description}
+                {displayGalleryData.heading.description}
               </motion.p>
             </>
           )}
@@ -562,7 +562,7 @@ export default function EditableGallerySection({
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displaygalleryData.images.map((image, index) => (
+          {displayGalleryData.images.map((image, index) => (
             <motion.div
               key={image.id}
               initial={{ opacity: 0, y: 50 }}
@@ -689,12 +689,12 @@ export default function EditableGallerySection({
           ))}
 
           {/* Add new image button in edit mode */}
-          {isEditing && (
+          {displayGalleryData.images.length < 6 && isEditing && (
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{
-                delay: 0.5 + displaygalleryData.images.length * 0.1,
+                delay: 0.5 + displayGalleryData.images.length * 0.1,
                 duration: 0.8,
                 ease: [0.16, 1, 0.3, 1],
               }}
@@ -708,6 +708,13 @@ export default function EditableGallerySection({
             </motion.div>
           )}
         </div>
+
+        {displayGalleryData.images.length >= 6 && isEditing && (
+          <p className="mt-6 w-full border border-gray-200 px-2 py-4 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">
+            You alredy have 6 image's for adding new image you can edit existing
+            images or remove one then add new!
+          </p>
+        )}
       </div>
 
       {/* Lightbox Modal */}
@@ -740,19 +747,19 @@ export default function EditableGallerySection({
 
           <div className="max-w-4xl w-full max-h-full">
             <img
-              src={displaygalleryData.images[selectedImage].url}
-              alt={displaygalleryData.images[selectedImage].title}
+              src={displayGalleryData.images[selectedImage].url}
+              alt={displayGalleryData.images[selectedImage].title}
               className="w-full h-auto max-h-full object-contain"
             />
             <div className="text-white text-center mt-4">
               <h3 className="text-xl font-semibold">
-                {displaygalleryData.images[selectedImage].title}
+                {displayGalleryData.images[selectedImage].title}
               </h3>
               <p className="text-gray-300">
-                {displaygalleryData.images[selectedImage].category}
+                {displayGalleryData.images[selectedImage].category}
               </p>
               <p className="text-gray-400 text-sm mt-2">
-                {displaygalleryData.images[selectedImage].description}
+                {displayGalleryData.images[selectedImage].description}
               </p>
             </div>
           </div>
@@ -761,7 +768,7 @@ export default function EditableGallerySection({
 
       {/* Crop Modal */}
       {cropModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[999999]">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999999]">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
             <h3 className="text-xl font-bold mb-4 text-gray-900">Crop Image</h3>
             <div className="relative w-full h-96 bg-gray-900 rounded-lg overflow-hidden">

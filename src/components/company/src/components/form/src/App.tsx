@@ -194,27 +194,16 @@ function App() {
     }
   };
 
-  const API = "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft";
+  
 
-  async function handleClick() {
-    try {
-      setIsApiLoading(true);
+   function handleClick() {
+
+    
       console.log("draft Details:",draftDetails);
+      navigate(`/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}/${draftDetails.draftId}/${draftDetails.userId}`);
       
-      const response = await fetch(`${API}/${draftDetails.userId}/${draftDetails.draftId}?template=template-${draftDetails.templateSelection}`);
-      const data = await response.json();
-      if (response.ok) {
-        toast.success(`AI generates the data successfully`, { toastId: "ai-success" });
-        setAIGenData(data);
-        navigate(`/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}`);
-      } else {
-        navigate("/form/notfound")
-        toast.error("AI gen data is not found",{toastId:"not-found"})
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+     
+  
   }
 
   const templateId = location.state?.templateId;
@@ -484,32 +473,7 @@ function App() {
   }
 
   if (isComplete) {
-    if (isApiLoading) {
-      return (
-        <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
-          <div className="text-center">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse mb-6">
-              <svg
-                className="w-12 h-12 text-white animate-spin"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 
-1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Loading Your Website</h1>
-            <p className="text-blue-200 text-lg">This process takes about 3 minutes</p>
-          </div>
-        </div>
-      );
-    }
+   
 
     handleClick();
     return null;

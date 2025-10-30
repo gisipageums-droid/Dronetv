@@ -14,11 +14,14 @@ import { useEffect, useState, useCallback } from "react";
 import Publish from "./components/Publish";
 import Gallery from "./components/Gallery";
 import Profile from "./components/Profile";
+import { useParams } from "react-router-dom";
 export default function App() {
-  const { AIGenData, setFinalTemplate } = useTemplate();
   const [componentStates, setComponentStates] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const { AIGenData, setFinalTemplate, getAIgenData } = useTemplate();
+  const { userId, draftId } = useParams();
 
-  // Memoize the collectComponentState function
+  // ✅ Define all hooks at top
   const collectComponentState = useCallback((componentName, state) => {
     setComponentStates((prev) => ({
       ...prev,
@@ -26,8 +29,26 @@ export default function App() {
     }));
   }, []);
 
-  // Update finalTemplate whenever componentStates changes
   useEffect(() => {
+    const fetchData = async () => {
+      if (userId && draftId) {
+        try {
+          setIsLoading(true);
+          await getAIgenData(userId, draftId, "template-2");
+        } catch (error) {
+          console.error("Failed to load data:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [userId, draftId]);
+
+  useEffect(() => {
+    if (!AIGenData) return;
     setFinalTemplate((prev) => ({
       ...prev,
       publishedId: AIGenData.publishedId,
@@ -42,15 +63,74 @@ export default function App() {
     }));
   }, [componentStates, setFinalTemplate, AIGenData]);
 
+  // ✅ Predefine all callbacks here
+  const handleHeaderChange = useCallback(
+    (state) => collectComponentState("header", state),
+    [collectComponentState]
+  );
+  const handleHeroChange = useCallback(
+    (state) => collectComponentState("hero", state),
+    [collectComponentState]
+  );
+  const handleAboutChange = useCallback(
+    (state) => collectComponentState("about", state),
+    [collectComponentState]
+  );
+  const handleProfileChange = useCallback(
+    (state) => collectComponentState("profile", state),
+    [collectComponentState]
+  );
+  const handleProductsChange = useCallback(
+    (state) => collectComponentState("products", state),
+    [collectComponentState]
+  );
+  const handleServicesChange = useCallback(
+    (state) => collectComponentState("services", state),
+    [collectComponentState]
+  );
+  const handleGalleryChange = useCallback(
+    (state) => collectComponentState("gallery", state),
+    [collectComponentState]
+  );
+  const handleBlogChange = useCallback(
+    (state) => collectComponentState("blog", state),
+    [collectComponentState]
+  );
+  const handleTestimonialsChange = useCallback(
+    (state) => collectComponentState("testimonials", state),
+    [collectComponentState]
+  );
+  const handleClientsChange = useCallback(
+    (state) => collectComponentState("clients", state),
+    [collectComponentState]
+  );
+  const handleContactChange = useCallback(
+    (state) => collectComponentState("contact", state),
+    [collectComponentState]
+  );
+  const handleFooterChange = useCallback(
+    (state) => collectComponentState("footer", state),
+    [collectComponentState]
+  );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-lg">Loading template data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Use callbacks safely here
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-background text-foreground theme-transition">
         <Header
           headerData={AIGenData?.content?.company}
-          onStateChange={useCallback(
-            (state) => collectComponentState("header", state),
-            [collectComponentState]
-          )}
+          onStateChange={handleHeaderChange}
           publishedId={AIGenData.publishedId}
           userId={AIGenData.userId}
           templateSelection={AIGenData.templateSelection}
@@ -58,109 +138,74 @@ export default function App() {
         <main>
           <Hero
             heroData={AIGenData?.content?.hero}
-            onStateChange={useCallback(
-              (state) => collectComponentState("hero", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleHeroChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
           <About
             aboutData={AIGenData?.content?.about}
-            onStateChange={useCallback(
-              (state) => collectComponentState("about", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleAboutChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
           <Profile
             profileData={AIGenData?.content?.profile}
-            onStateChange={useCallback(
-              (state) => collectComponentState("profile", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleProfileChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
           <Product
             productData={AIGenData?.content?.products}
-            onStateChange={useCallback(
-              (state) => collectComponentState("products", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleProductsChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
           <Services
             serviceData={AIGenData?.content?.services}
-            onStateChange={useCallback(
-              (state) => collectComponentState("services", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleServicesChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
           <Gallery
             galleryData={AIGenData?.content?.gallery}
-            onStateChange={useCallback(
-              (state) => collectComponentState("gallery", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleGalleryChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
           <Blog
             blogData={AIGenData?.content?.blog}
-            onStateChange={useCallback(
-              (state) => collectComponentState("blog", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleBlogChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
           <Testimonials
             testimonialsData={AIGenData?.content?.testimonials}
-            onStateChange={useCallback(
-              (state) => collectComponentState("testimonials", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleTestimonialsChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
           <Clients
             clientData={AIGenData?.content?.clients}
-            onStateChange={useCallback(
-              (state) => collectComponentState("clients", state),
-              [collectComponentState]
-            )}
+            onStateChange={handleClientsChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}
             templateSelection={AIGenData.templateSelection}
           />
-          <Contact
-            onStateChange={useCallback(
-              (state) => collectComponentState("contact", state),
-              [collectComponentState]
-            )}
-          />
+          <Contact onStateChange={handleContactChange} />
           <Publish />
         </main>
         <Footer
           footerData={AIGenData?.content?.services}
           footerLogo={AIGenData?.content?.company}
-          onStateChange={useCallback(
-            (state) => collectComponentState("footer", state),
-            [collectComponentState]
-          )}
+          onStateChange={handleFooterChange}
           publishedId={AIGenData.publishedId}
           userId={AIGenData.userId}
           templateSelection={AIGenData.templateSelection}

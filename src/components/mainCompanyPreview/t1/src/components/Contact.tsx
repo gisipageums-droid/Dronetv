@@ -34,7 +34,7 @@
 //             className="col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 lg:p-10"
 //           >
 //             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-//               Send us a message 
+//               Send us a message
 //             </h3>
 //             <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm">
 //               We'll get back to you within 24 hours during business days.
@@ -144,9 +144,6 @@
 //   );
 // }
 
-
-
-
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Input } from "../components/ui/input";
@@ -215,12 +212,14 @@ export default function Contact({ content, publishedId }) {
       } else {
         const err = await response.json();
         // alert("❌ Failed to send message: " + (err.message || "Unknown error"));
-         toast.error("❌ Failed to send message: " + (err.message || "Unknown error"));
+        toast.error(
+          "❌ Failed to send message: " + (err.message || "Unknown error")
+        );
       }
     } catch (error) {
       console.error("Error:", error);
       // alert("❌ Something went wrong while sending your message.");
-       toast.error("❌ Something went wrong while sending your message.");
+      toast.error("❌ Something went wrong while sending your message.");
     } finally {
       setLoading(false);
     }
@@ -342,9 +341,10 @@ export default function Contact({ content, publishedId }) {
                   className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 transition-all duration-200"
                 >
                   <option>General Inquiry</option>
-                  <option>Support</option>
-                  <option>Partnership</option>
-                  <option>Other</option>
+                  <option>Sales Inquiry</option>
+                  <option>Products Inquiry</option>
+                  <option>Services Inquiry</option>
+                  <option>Support Inquiry</option>
                 </select>
               </div>
 
@@ -370,7 +370,9 @@ export default function Contact({ content, publishedId }) {
                 disabled={loading}
                 className="w-full bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold py-4 transition-colors duration-300 text-lg"
               >
-                {loading ? "Sending..." : contactData?.ctaButton || "Send Message"}
+                {loading
+                  ? "Sending..."
+                  : contactData?.ctaButton || "Send Message"}
               </Button>
             </form>
           </motion.div>
@@ -384,7 +386,7 @@ export default function Contact({ content, publishedId }) {
             className="space-y-6"
           >
             {/* Business Hours Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+            {/* <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                 Business Hours
               </h4>
@@ -393,7 +395,7 @@ export default function Contact({ content, publishedId }) {
                 <li>Sat: 10:00 AM - 2:00 PM EST</li>
                 <li>Closed on Sundays</li>
               </ul>
-            </div>
+            </div> */}
 
             {/* Consultation Card */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 text-center">
