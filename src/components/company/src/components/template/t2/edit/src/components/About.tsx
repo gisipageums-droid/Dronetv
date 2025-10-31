@@ -60,7 +60,7 @@ export default function About({
       "Proven track record of success",
       "Customer-first approach",
     ],
-    metric1Num: aboutData.yearsOfExperience,
+    metric1Num: aboutData?.yearsOfExperience,
     metric1Label: "Years Experience",
     metric2Num: "20+",
     metric2Label: "Projects Completed",
@@ -369,7 +369,7 @@ export default function About({
             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
                 Crop About Image
               </h3>
@@ -382,7 +382,7 @@ export default function About({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="relative flex-1 min-h-0 bg-gray-900">
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -409,10 +409,10 @@ export default function About({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 border-t border-gray-200 bg-gray-50">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="mb-2 text-sm font-medium text-gray-700">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
@@ -450,7 +450,7 @@ export default function About({
               </div>
 
               {/* Zoom Control */}
-              <div className="space-y-2 mb-4">
+              <div className="mb-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2 text-gray-700">
                     Zoom
@@ -472,19 +472,19 @@ export default function About({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-100"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                  className="w-full py-2 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700"
                 >
                   Apply Crop
                 </button>
@@ -495,7 +495,7 @@ export default function About({
       )}
 
       <section id="about" className="py-20 bg-secondary theme-transition">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           {/* Edit / Save */}
           <div className="flex justify-end mt-6">
             {isEditing ? (
@@ -517,7 +517,7 @@ export default function About({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
+                className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -525,16 +525,16 @@ export default function About({
           </div>
 
           {/* Main About Section */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+          <div className="grid items-center gap-12 mb-20 lg:grid-cols-2">
             {/* Image */}
             <motion.div
-              className="relative rounded-2xl overflow-hidden shadow-xl"
+              className="relative overflow-hidden shadow-xl rounded-2xl"
               whileInView={{ opacity: [0, 1], x: [-50, 0] }}
               transition={{ duration: 0.8 }}
             >
               {/* Recommended Size Above Image */}
               {isEditing && (
-                <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                <div className="absolute z-10 p-1 text-xs text-center text-white rounded top-2 left-2 right-2 bg-black/70">
                   Recommended: 800×600px (4:3 ratio)
                 </div>
               )}
@@ -544,15 +544,15 @@ export default function About({
                 className="w-full h-[400px] object-cover"
               />
               {isEditing && (
-                <div className="absolute bottom-4 left-4 right-4 bg-white/80 p-2 rounded shadow z-50">
+                <div className="absolute z-50 p-2 rounded shadow bottom-4 left-4 right-4 bg-white/80">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageSelect}
-                    className="text-sm cursor-pointer font-bold w-full text-center border-2 border-dashed border-muted-foreground p-2 rounded"
+                    className="w-full p-2 text-sm font-bold text-center border-2 border-dashed rounded cursor-pointer border-muted-foreground"
                   />
                   {pendingImageFile && (
-                    <p className="text-xs text-green-600 mt-1 text-center">
+                    <p className="mt-1 text-xs text-center text-green-600">
                       ✓ Image cropped and ready to upload
                     </p>
                   )}
@@ -575,9 +575,9 @@ export default function About({
                         updateField("aboutTitle", e.target.value)
                       }
                       maxLength={50}
-                      className="bg-transparent border-b border-primary text-3xl md:text-4xl text-foreground outline-none w-full"
+                      className="w-full text-3xl bg-transparent border-b outline-none border-primary md:text-4xl text-foreground"
                     />
-                    <div className="mt-2 flex items-center justify-between">
+                    <div className="flex items-center justify-between mt-2">
                       {/* Red box message when max length reached */}
                       <div
                         role="status"
@@ -605,26 +605,68 @@ export default function About({
                   </h2>
                 )}
                 {isEditing ? (
-                  <textarea
-                    value={aboutState.description1}
-                    onChange={(e) =>
-                      updateField("description1", e.target.value)
-                    }
-                    className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
-                  />
+                  <>
+                    <textarea
+                      value={aboutState.description1}
+                      onChange={(e) =>
+                        updateField("description1", e.target.value)
+                      }
+                      maxLength={500}
+                      className="w-full text-lg bg-transparent border-b outline-none border-muted-foreground text-muted-foreground"
+                    />
+                    <div className="flex items-center justify-between mt-2">
+                      <div
+                        role="status"
+                        aria-live="polite"
+                        className={`text-sm px-2 py-1 rounded ${
+                          aboutState.description1.length >= 500
+                            ? "bg-red-50 border border-red-300 text-red-700"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {aboutState.description1.length >= 500
+                          ? "Maximum length reached (500)"
+                          : `${aboutState.description1.length}/500`}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {500 - aboutState.description1.length} characters left
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <p className="text-lg text-muted-foreground">
                     {aboutState.description1}
                   </p>
                 )}
                 {isEditing ? (
-                  <textarea
-                    value={aboutState.description2}
-                    onChange={(e) =>
-                      updateField("description2", e.target.value)
-                    }
-                    className="w-full bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
-                  />
+                  <>
+                    <textarea
+                      value={aboutState.description2}
+                      onChange={(e) =>
+                        updateField("description2", e.target.value)
+                      }
+                      maxLength={500}
+                      className="w-full bg-transparent border-b outline-none border-muted-foreground text-muted-foreground"
+                    />
+                    <div className="flex items-center justify-between mt-2">
+                      <div
+                        role="status"
+                        aria-live="polite"
+                        className={`text-sm px-2 py-1 rounded ${
+                          aboutState.description2.length >= 500
+                            ? "bg-red-50 border border-red-300 text-red-700"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {aboutState.description2.length >= 500
+                          ? "Maximum length reached (500)"
+                          : `${aboutState.description2.length}/500`}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {500 - aboutState.description2.length} characters left
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <p className="text-muted-foreground">
                     {aboutState.description2}
@@ -640,13 +682,27 @@ export default function About({
               >
                 {aboutState.features.map((feature, index) => (
                   <div key={index} className="flex items-center space-x-3">
-                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                    <CheckCircle className="flex-shrink-0 w-5 h-5 text-primary" />
                     {isEditing ? (
-                      <input
-                        value={feature}
-                        onChange={(e) => updateFeature(index, e.target.value)}
-                        className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full"
-                      />
+                      <>
+                        <input
+                          value={feature}
+                          onChange={(e) => updateFeature(index, e.target.value)}
+                          maxLength={100}
+                          className="w-full bg-transparent border-b outline-none border-muted-foreground text-muted-foreground"
+                        />
+                        <div className="flex items-center text-sm">
+                          <span
+                            className={`${
+                              feature.length >= 100
+                                ? "text-red-500"
+                                : "text-gray-500"
+                            }`}
+                          >
+                            {feature.length}/100
+                          </span>
+                        </div>
+                      </>
                     ) : (
                       <span className="text-muted-foreground">{feature}</span>
                     )}
@@ -657,7 +713,7 @@ export default function About({
                     whileTap={{ scale: 0.9 }}
                     whileHover={{ scale: 1.1 }}
                     onClick={addFeature}
-                    className="text-green-600 cursor-pointer text-sm mt-2"
+                    className="mt-2 text-sm text-green-600 cursor-pointer"
                   >
                     + Add Feature
                   </motion.button>
@@ -666,15 +722,29 @@ export default function About({
 
               {/* Company metrics */}
               <motion.div className="grid grid-cols-2 gap-6 pt-6">
-                <div className="text-center p-4 bg-card rounded-lg shadow-sm">
+                <div className="p-4 text-center rounded-lg shadow-sm bg-card">
                   {isEditing ? (
-                    <input
-                      value={aboutState.metric1Num}
-                      onChange={(e) =>
-                        updateField("metric1Num", e.target.value)
-                      }
-                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none w-full text-center"
-                    />
+                    <>
+                      <input
+                        value={aboutState.metric1Num}
+                        onChange={(e) =>
+                          updateField("metric1Num", e.target.value)
+                        }
+                        maxLength={10}
+                        className="w-full text-2xl font-bold text-center bg-transparent border-b outline-none border-foreground"
+                      />
+                      <div className="flex items-center justify-center mt-1">
+                        <span
+                          className={`text-xs ${
+                            aboutState.metric1Num.length >= 10
+                              ? "text-red-500"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {aboutState.metric1Num.length}/10
+                        </span>
+                      </div>
+                    </>
                   ) : (
                     <motion.div
                       whileInView={{ opacity: [0, 1], y: [-15, 3, -3, 0] }}
@@ -685,13 +755,27 @@ export default function About({
                     </motion.div>
                   )}
                   {isEditing ? (
-                    <input
-                      value={aboutState.metric1Label}
-                      onChange={(e) =>
-                        updateField("metric1Label", e.target.value)
-                      }
-                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center"
-                    />
+                    <>
+                      <input
+                        value={aboutState.metric1Label}
+                        onChange={(e) =>
+                          updateField("metric1Label", e.target.value)
+                        }
+                        maxLength={20}
+                        className="w-full text-center bg-transparent border-b outline-none border-muted-foreground text-muted-foreground"
+                      />
+                      <div className="flex items-center justify-center mt-1">
+                        <span
+                          className={`text-xs ${
+                            aboutState.metric1Label.length >= 20
+                              ? "text-red-500"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {aboutState.metric1Label.length}/20
+                        </span>
+                      </div>
+                    </>
                   ) : (
                     <motion.div
                       whileInView={{ opacity: [0, 1], y: [15, -3, 3, 0] }}
@@ -702,15 +786,29 @@ export default function About({
                     </motion.div>
                   )}
                 </div>
-                <div className="text-center p-4 bg-card rounded-lg shadow-sm">
+                <div className="p-4 text-center rounded-lg shadow-sm bg-card">
                   {isEditing ? (
-                    <input
-                      value={aboutState.metric2Num}
-                      onChange={(e) =>
-                        updateField("metric2Num", e.target.value)
-                      }
-                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none w-full text-center"
-                    />
+                    <>
+                      <input
+                        value={aboutState.metric2Num}
+                        onChange={(e) =>
+                          updateField("metric2Num", e.target.value)
+                        }
+                        maxLength={10}
+                        className="w-full text-2xl font-bold text-center bg-transparent border-b outline-none border-foreground"
+                      />
+                      <div className="flex items-center justify-center mt-1">
+                        <span
+                          className={`text-xs ${
+                            aboutState.metric2Num.length >= 10
+                              ? "text-red-500"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {aboutState.metric2Num.length}/10
+                        </span>
+                      </div>
+                    </>
                   ) : (
                     <motion.div
                       whileInView={{ opacity: [0, 1], y: [-15, 3, -3, 0] }}
@@ -721,13 +819,27 @@ export default function About({
                     </motion.div>
                   )}
                   {isEditing ? (
-                    <input
-                      value={aboutState.metric2Label}
-                      onChange={(e) =>
-                        updateField("metric2Label", e.target.value)
-                      }
-                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center"
-                    />
+                    <>
+                      <input
+                        value={aboutState.metric2Label}
+                        onChange={(e) =>
+                          updateField("metric2Label", e.target.value)
+                        }
+                        maxLength={20}
+                        className="w-full text-center bg-transparent border-b outline-none border-muted-foreground text-muted-foreground"
+                      />
+                      <div className="flex items-center justify-center mt-1">
+                        <span
+                          className={`text-xs ${
+                            aboutState.metric2Label.length >= 20
+                              ? "text-red-500"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {aboutState.metric2Label.length}/20
+                        </span>
+                      </div>
+                    </>
                   ) : (
                     <motion.div
                       whileInView={{ opacity: [0, 1], y: [15, -3, 3, 0] }}
@@ -743,60 +855,93 @@ export default function About({
           </div>
 
           {/* Vision Section */}
-          <motion.div className="text-center mb-16">
+          <motion.div className="mb-16 text-center">
             {isEditing ? (
-              <input
-                value={aboutState.visionBadge}
-                onChange={(e) => updateField("visionBadge", e.target.value)}
-                className="bg-transparent border-b border-primary text-primary outline-none"
-              />
+              <>
+                <input
+                  value={aboutState.visionBadge}
+                  onChange={(e) => updateField("visionBadge", e.target.value)}
+                  maxLength={20}
+                  className="bg-transparent border-b outline-none border-primary text-primary"
+                />
+                <div className="flex items-center justify-center mt-1">
+                  <span
+                    className={`text-xs ${
+                      aboutState.visionBadge.length >= 20
+                        ? "text-red-500"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {aboutState.visionBadge.length}/20
+                  </span>
+                </div>
+              </>
             ) : (
               <motion.div
                 whileInView={{ opacity: [0, 1], y: [-20, 0] }}
                 transition={{ duration: 0.5, ease: "backInOut" }}
-                className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
+                className="inline-flex items-center px-4 py-2 mb-6 rounded-full bg-primary/10 text-primary"
               >
                 <Eye className="w-4 h-4 mr-2" />
-                <span className="font-semibold text-xl">
+                <span className="text-xl font-semibold">
                   {aboutState.visionBadge}
                 </span>
               </motion.div>
             )}
 
             {isEditing ? (
-              <input
-                value={aboutState.visionTitle}
-                onChange={(e) => updateField("visionTitle", e.target.value)}
-                className="bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center"
-              />
+              <div className="relative">
+                <input
+                  value={aboutState.visionTitle}
+                  onChange={(e) => updateField("visionTitle", e.target.value)}
+                  maxLength={50}
+                  className="w-full text-3xl text-center bg-transparent border-b outline-none border-foreground md:text-4xl"
+                />
+                <div className="absolute right-0 text-sm text-gray-500 -bottom-6">
+                  {aboutState.visionTitle.length}/50
+                </div>
+              </div>
             ) : (
               <motion.h2
                 whileInView={{ opacity: [0, 1], x: [-20, 0] }}
                 transition={{ duration: 1, ease: "backInOut" }}
-                className="text-3xl md:text-4xl text-foreground mb-6"
+                className="mb-6 text-3xl md:text-4xl text-foreground"
               >
                 {aboutState.visionTitle}
               </motion.h2>
             )}
 
             {isEditing ? (
-              <textarea
-                value={aboutState.visionDesc}
-                onChange={(e) => updateField("visionDesc", e.target.value)}
-                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center"
-              />
+              <div className="relative">
+                <textarea
+                  value={aboutState.visionDesc}
+                  onChange={(e) => updateField("visionDesc", e.target.value)}
+                  maxLength={500}
+                  rows={4}
+                  className="w-full text-lg text-center bg-transparent border-b outline-none resize-none border-muted-foreground text-muted-foreground"
+                />
+                <div
+                  className={`absolute right-0 bottom-2 text-sm -bottom-6 ${
+                    aboutState.visionDesc.length > 450
+                      ? "text-red-500"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {aboutState.visionDesc.length}/500
+                </div>
+              </div>
             ) : (
               <motion.p
                 whileInView={{ opacity: [0, 1], x: [20, 0] }}
                 transition={{ duration: 1, ease: "backOut" }}
-                className="text-lg text-muted-foreground max-w-3xl mx-auto mb-12"
+                className="max-w-3xl mx-auto mb-12 text-lg text-muted-foreground"
               >
                 {aboutState.visionDesc}
               </motion.p>
             )}
 
             {/* Vision Pillars */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
               {aboutState.visionPillars.map((pillar, index) => {
                 const Icon = pillar.icon;
                 return (
@@ -804,34 +949,59 @@ export default function About({
                     whileInView={{ opacity: [0, 1], scale: [0, 1] }}
                     transition={{ duration: 1, ease: "backInOut" }}
                     key={index}
-                    className="text-center p-6 bg-card rounded-xl shadow-sm hover:shadow-lg"
+                    className="p-6 text-center shadow-sm bg-card rounded-xl hover:shadow-lg"
                   >
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                      <Icon className="h-6 w-6 text-primary" />
+                    <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-primary/10 rounded-xl">
+                      <Icon className="w-6 h-6 text-primary" />
                     </div>
                     {isEditing ? (
-                      <input
-                        value={pillar.title}
-                        onChange={(e) =>
-                          updatePillar(index, "title", e.target.value)
-                        }
-                        className="bg-transparent border-b border-foreground font-semibold outline-none w-full text-center"
-                      />
+                      <div className="relative">
+                        <input
+                          value={pillar.title}
+                          onChange={(e) =>
+                            updatePillar(index, "title", e.target.value)
+                          }
+                          maxLength={30} // Character limit set kiya
+                          className="w-full font-semibold text-center bg-transparent border-b outline-none border-foreground"
+                        />
+                        <div
+                          className={`absolute right-0 text-xs -bottom-5 ${
+                            pillar.title.length > 25
+                              ? "text-red-500"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {pillar.title.length}/30
+                        </div>
+                      </div>
                     ) : (
-                      <h3 className="font-semibold text-card-foreground mb-3">
+                      <h3 className="mb-3 font-semibold text-card-foreground">
                         {pillar.title}
                       </h3>
                     )}
                     {isEditing ? (
-                      <textarea
-                        value={pillar.description}
-                        onChange={(e) =>
-                          updatePillar(index, "description", e.target.value)
-                        }
-                        className="w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none text-center"
-                      />
+                      <div className="relative">
+                        <textarea
+                          value={pillar.description}
+                          onChange={(e) =>
+                            updatePillar(index, "description", e.target.value)
+                          }
+                          maxLength={200} // Character limit set kiya
+                          rows={3}
+                          className="w-full text-sm text-center bg-transparent border-b outline-none resize-none border-muted-foreground text-muted-foreground"
+                        />
+                        <div
+                          className={`absolute right-0 text-xs -bottom-5 ${
+                            pillar.description.length > 180
+                              ? "text-red-500"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {pillar.description.length}/200
+                        </div>
+                      </div>
                     ) : (
-                      <p className="text-muted-foreground text-sm leading-relaxed">
+                      <p className="text-sm leading-relaxed text-muted-foreground">
                         {pillar.description}
                       </p>
                     )}
@@ -842,34 +1012,59 @@ export default function About({
           </motion.div>
 
           {/* Mission Section */}
-          <motion.div className="bg-gradient-to-r from-primary/5 to-red-accent/5 rounded-2xl p-12 text-center">
-            <Target className="w-12 h-12 text-primary mx-auto mb-6" />
+          <motion.div className="p-12 text-center bg-gradient-to-r from-primary/5 to-red-accent/5 rounded-2xl">
+            <Target className="w-12 h-12 mx-auto mb-6 text-primary" />
             {isEditing ? (
-              <input
-                value={aboutState.missionTitle}
-                onChange={(e) => updateField("missionTitle", e.target.value)}
-                className="bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center"
-              />
+              <div className="relative">
+                <input
+                  value={aboutState.missionTitle}
+                  onChange={(e) => updateField("missionTitle", e.target.value)}
+                  maxLength={50}
+                  className="w-full text-2xl font-semibold text-center bg-transparent border-b outline-none border-foreground"
+                />
+                <div
+                  className={`absolute right-0 bottom-0 text-xs  ${
+                    aboutState.missionTitle.length > 45
+                      ? "text-red-500"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {aboutState.missionTitle.length}/50
+                </div>
+              </div>
             ) : (
               <motion.h3
                 whileInView={{ opacity: [0, 1], scale: [0, 1], y: [-20, 0] }}
                 transition={{ duration: 1, ease: "backInOut" }}
-                className="text-2xl font-semibold text-foreground mb-6"
+                className="mb-6 text-2xl font-semibold text-foreground"
               >
                 {aboutState.missionTitle}
               </motion.h3>
             )}
             {isEditing ? (
-              <textarea
-                value={aboutState.missionDesc}
-                onChange={(e) => updateField("missionDesc", e.target.value)}
-                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center"
-              />
+              <div className="relative">
+                <textarea
+                  value={aboutState.missionDesc}
+                  onChange={(e) => updateField("missionDesc", e.target.value)}
+                  maxLength={300} // Character limit set kiya
+                  rows={4}
+                  className="w-full text-lg text-center bg-transparent border-b outline-none resize-none border-muted-foreground text-muted-foreground"
+                />
+                <div
+                  className={`absolute right-0 text-sm -bottom-6 ${
+                    aboutState.missionDesc.length > 270
+                      ? "text-red-500"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {aboutState.missionDesc.length}/300
+                </div>
+              </div>
             ) : (
               <motion.p
                 whileInView={{ opacity: [0, 1], x: [-40, 0] }}
                 transition={{ duration: 1, ease: "backInOut" }}
-                className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed"
+                className="max-w-3xl mx-auto text-lg leading-relaxed text-muted-foreground"
               >
                 {aboutState.missionDesc}
               </motion.p>
