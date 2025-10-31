@@ -1,21 +1,24 @@
 // Services.tsx with same cropping functionality as Clients
 import { useState, useEffect, useCallback } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { X, CheckCircle, ZoomIn } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
-import Cropper from 'react-easy-crop';
+import Cropper from "react-easy-crop";
 
-export default function Services({serviceData, onStateChange, userId, publishedId, templateSelection}) {
+export default function Services({
+  serviceData,
+  onStateChange,
+  userId,
+  publishedId,
+  templateSelection,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedServiceIndex, setSelectedServiceIndex] = useState<number | null>(null);
+  const [selectedServiceIndex, setSelectedServiceIndex] = useState<
+    number | null
+  >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
@@ -30,18 +33,18 @@ export default function Services({serviceData, onStateChange, userId, publishedI
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4/3);
-         
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
   // Merged all state into a single object
   const [servicesSection, setServicesSection] = useState(serviceData);
-  
+
   // Add this useEffect to notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(servicesSection);
     }
   }, [servicesSection, onStateChange]);
-  
+
   // Get categories from services
   const filteredServices =
     activeCategory === "All"
@@ -52,9 +55,11 @@ export default function Services({serviceData, onStateChange, userId, publishedI
 
   // Handlers
   const updateServiceField = (index: number, field: string, value: any) => {
-    setServicesSection(prev => ({
+    setServicesSection((prev) => ({
       ...prev,
-      services: prev.services.map((s, i) => (i === index ? { ...s, [field]: value } : s))
+      services: prev.services.map((s, i) =>
+        i === index ? { ...s, [field]: value } : s
+      ),
     }));
   };
 
@@ -64,7 +69,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
     listIndex: number,
     value: string
   ) => {
-    setServicesSection(prev => ({
+    setServicesSection((prev) => ({
       ...prev,
       services: prev.services.map((s, i) =>
         i === index
@@ -75,16 +80,19 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               ),
             }
           : s
-      )
+      ),
     }));
   };
 
-  const addToList = (index: number, field: "features" | "benefits" | "process") => {
-    setServicesSection(prev => ({
+  const addToList = (
+    index: number,
+    field: "features" | "benefits" | "process"
+  ) => {
+    setServicesSection((prev) => ({
       ...prev,
       services: prev.services.map((s, i) =>
         i === index ? { ...s, [field]: [...s[field], "New Item"] } : s
-      )
+      ),
     }));
   };
 
@@ -93,31 +101,36 @@ export default function Services({serviceData, onStateChange, userId, publishedI
     field: "features" | "benefits" | "process",
     listIndex: number
   ) => {
-    setServicesSection(prev => ({
+    setServicesSection((prev) => ({
       ...prev,
       services: prev.services.map((s, i) =>
         i === index
           ? {
               ...s,
-              [field]: s[field].filter((_: string, li: number) => li !== listIndex),
+              [field]: s[field].filter(
+                (_: string, li: number) => li !== listIndex
+              ),
             }
           : s
-      )
+      ),
     }));
   };
 
   // Image selection handler - now opens cropper
-  const handleServiceImageSelect = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleServiceImageSelect = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be less than 5MB');
+      toast.error("File size must be less than 5MB");
       return;
     }
 
@@ -127,15 +140,15 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setAspectRatio(4/3); // Default to 4:3 for services
+      setAspectRatio(4 / 3); // Default to 4:3 for services
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
     };
     reader.readAsDataURL(file);
-    
+
     // Clear the file input
-    e.target.value = '';
+    e.target.value = "";
   };
 
   // Cropper functions
@@ -147,17 +160,17 @@ export default function Services({serviceData, onStateChange, userId, publishedI
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
-      image.addEventListener('load', () => resolve(image));
-      image.addEventListener('error', (error) => reject(error));
-      image.setAttribute('crossOrigin', 'anonymous');
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.setAttribute("crossOrigin", "anonymous");
       image.src = url;
     });
 
   // Function to get cropped image
   const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
@@ -179,23 +192,27 @@ export default function Services({serviceData, onStateChange, userId, publishedI
     );
 
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        const fileName = originalFile ? 
-          `cropped-service-${croppingIndex}-${originalFile.name}` : 
-          `cropped-service-${croppingIndex}-${Date.now()}.jpg`;
-        
-        const file = new File([blob], fileName, { 
-          type: 'image/jpeg',
-          lastModified: Date.now()
-        });
-        
-        const previewUrl = URL.createObjectURL(blob);
-        
-        resolve({ 
-          file, 
-          previewUrl 
-        });
-      }, 'image/jpeg', 0.95);
+      canvas.toBlob(
+        (blob) => {
+          const fileName = originalFile
+            ? `cropped-service-${croppingIndex}-${originalFile.name}`
+            : `cropped-service-${croppingIndex}-${Date.now()}.jpg`;
+
+          const file = new File([blob], fileName, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+
+          const previewUrl = URL.createObjectURL(blob);
+
+          resolve({
+            file,
+            previewUrl,
+          });
+        },
+        "image/jpeg",
+        0.95
+      );
     });
   };
 
@@ -204,23 +221,27 @@ export default function Services({serviceData, onStateChange, userId, publishedI
     try {
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
 
-      const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels, rotation);
-      
+      const { file, previewUrl } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels,
+        rotation
+      );
+
       // Update preview immediately with blob URL (temporary)
       updateServiceField(croppingIndex, "image", previewUrl);
-      
-      // Set the actual file for upload on save
-      setPendingImages(prev => ({ ...prev, [croppingIndex]: file }));
-      console.log('Service image cropped, file ready for upload:', file);
 
-      toast.success('Image cropped successfully! Click Save to upload to S3.');
+      // Set the actual file for upload on save
+      setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
+      console.log("Service image cropped, file ready for upload:", file);
+
+      toast.success("Image cropped successfully! Click Save to upload to S3.");
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
       setCroppingIndex(null);
     } catch (error) {
-      console.error('Error cropping image:', error);
-      toast.error('Error cropping image. Please try again.');
+      console.error("Error cropping image:", error);
+      toast.error("Error cropping image. Please try again.");
     }
   };
 
@@ -250,48 +271,58 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       // Upload all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
-        
+
         if (!userId || !publishedId || !templateSelection) {
-          console.error('Missing required props:', { userId, publishedId, templateSelection });
-          toast.error('Missing user information. Please refresh and try again.');
+          console.error("Missing required props:", {
+            userId,
+            publishedId,
+            templateSelection,
+          });
+          toast.error(
+            "Missing user information. Please refresh and try again."
+          );
           return;
         }
-        
+
         const formData = new FormData();
-        formData.append('file', file);
-        formData.append('sectionName', 'services');
-        formData.append('imageField', `services[${index}].image`+Date.now());
-        formData.append('templateSelection', templateSelection);
+        formData.append("file", file);
+        formData.append("sectionName", "services");
+        formData.append("imageField", `services[${index}].image` + Date.now());
+        formData.append("templateSelection", templateSelection);
 
-        console.log('Uploading service image to S3:', file);
+        console.log("Uploading service image to S3:", file);
 
-        const uploadResponse = await fetch(`https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`, {
-          method: 'POST',
-          body: formData,
-        });
+        const uploadResponse = await fetch(
+          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
           // Replace local preview with S3 URL
           updateServiceField(index, "image", uploadData.imageUrl);
-          console.log('Image uploaded to S3:', uploadData.imageUrl);
+          console.log("Image uploaded to S3:", uploadData.imageUrl);
         } else {
           const errorData = await uploadResponse.json();
-          console.error('Image upload failed:', errorData);
-          toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
+          console.error("Image upload failed:", errorData);
+          toast.error(
+            `Image upload failed: ${errorData.message || "Unknown error"}`
+          );
           return;
         }
       }
-      
+
       // Clear pending images
       setPendingImages({});
       // Exit edit mode
       setIsEditing(false);
-      toast.success('Services section saved with S3 URLs!');
-
+      toast.success("Services section saved with S3 URLs!");
     } catch (error) {
-      console.error('Error saving services section:', error);
-      toast.error('Error saving changes. Please try again.');
+      console.error("Error saving services section:", error);
+      toast.error("Error saving changes. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -310,45 +341,45 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       pricing: "Custom pricing",
       timeline: "TBD",
     };
-    
-    setServicesSection(prev => ({
+
+    setServicesSection((prev) => ({
       ...prev,
-      services: [...prev.services, newService]
+      services: [...prev.services, newService],
     }));
-    
+
     if (!servicesSection.categories.includes("New Category")) {
-      setServicesSection(prev => ({
+      setServicesSection((prev) => ({
         ...prev,
-        categories: [...prev.categories, "New Category"]
+        categories: [...prev.categories, "New Category"],
       }));
     }
   };
 
   const removeService = (index: number) => {
-    setServicesSection(prev => ({
+    setServicesSection((prev) => ({
       ...prev,
-      services: prev.services.filter((_, i) => i !== index)
+      services: prev.services.filter((_, i) => i !== index),
     }));
   };
 
   const addCategory = () => {
     const newCategory = `New Category ${servicesSection.categories.length}`;
     if (!servicesSection.categories.includes(newCategory)) {
-      setServicesSection(prev => ({
+      setServicesSection((prev) => ({
         ...prev,
-        categories: [...prev.categories, newCategory]
+        categories: [...prev.categories, newCategory],
       }));
     }
   };
 
   const removeCategory = (cat: string) => {
     if (cat !== "All") {
-      setServicesSection(prev => ({
+      setServicesSection((prev) => ({
         ...prev,
         categories: prev.categories.filter((c) => c !== cat),
-        services: prev.services.map((s) => 
+        services: prev.services.map((s) =>
           s.category === cat ? { ...s, category: "Uncategorized" } : s
-        )
+        ),
       }));
     }
   };
@@ -378,12 +409,12 @@ export default function Services({serviceData, onStateChange, userId, publishedI
             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
                   Crop Service Image
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="mt-1 text-sm text-gray-600">
                   Recommended: 1600×900px (16:9 ratio) - WideScreen
                 </p>
               </div>
@@ -396,7 +427,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="relative flex-1 min-h-0 bg-gray-900">
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -423,27 +454,29 @@ export default function Services({serviceData, onStateChange, userId, publishedI
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 border-t border-gray-200 bg-gray-50">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="mb-2 text-sm font-medium text-gray-700">
+                  Aspect Ratio:
+                </p>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setAspectRatio(4/3)}
+                    onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
+                    onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     16:9 (Widescreen)
@@ -451,9 +484,9 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     1:1 (Square)
@@ -462,7 +495,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               </div>
 
               {/* Zoom Control */}
-              <div className="space-y-2 mb-4">
+              <div className="mb-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2 text-gray-700">
                     <ZoomIn className="w-4 h-4" />
@@ -485,19 +518,19 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+                  className="w-full py-2 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-100"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+                  className="w-full py-2 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm"
+                  className="w-full py-2 text-sm text-white bg-green-600 rounded hover:bg-green-700"
                 >
                   Apply Crop
                 </button>
@@ -508,26 +541,33 @@ export default function Services({serviceData, onStateChange, userId, publishedI
       )}
 
       {/* Main Services Section */}
-      <motion.section id="services" className="py-20 bg-background theme-transition">
-        <div className="max-w-7xl mx-auto px-4">
+      <motion.section
+        id="services"
+        className="py-20 bg-background theme-transition"
+      >
+        <div className="px-4 mx-auto max-w-7xl">
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mt-6">
             {isEditing ? (
-              <motion.button 
-                whileTap={{scale:0.9}}
-                whileHover={{y:-1,scaleX:1.1}}
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:shadow-2xl'} text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${
+                  isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:shadow-2xl"
+                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
-                {isUploading ? 'Uploading...' : 'Save'}
+                {isUploading ? "Uploading..." : "Save"}
               </motion.button>
             ) : (
-              <motion.button 
-                whileTap={{scale:0.9}}
-                whileHover={{y:-1,scaleX:1.1}}
-                onClick={() => setIsEditing(true)} 
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ y: -1, scaleX: 1.1 }}
+                onClick={() => setIsEditing(true)}
+                className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -535,34 +575,82 @@ export default function Services({serviceData, onStateChange, userId, publishedI
           </div>
 
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="mb-8 text-center">
             {isEditing ? (
               <>
-                <input 
-                  type="text" 
-                  className="text-3xl font-bold block text-center w-full"  
-                  value={servicesSection.heading.head} 
-                  onChange={(e) => setServicesSection(prev => ({
-                    ...prev,
-                    heading: {...prev.heading, head: e.target.value}
-                  }))}
-                />
-                <input 
-                  type="text" 
-                  className="text-muted-foreground block w-full text-center" 
-                  value={servicesSection.heading.desc} 
-                  onChange={(e) => setServicesSection(prev => ({
-                    ...prev,
-                    heading: {...prev.heading, desc: e.target.value}
-                  }))}
-                />
+                <div className="relative mb-4">
+                  <input
+                    type="text"
+                    className={`text-3xl font-bold block text-center w-full border-b ${
+                      servicesSection.heading.head.length >= 60
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                    value={servicesSection.heading.head}
+                    onChange={(e) =>
+                      setServicesSection((prev) => ({
+                        ...prev,
+                        heading: { ...prev.heading, head: e.target.value },
+                      }))
+                    }
+                    maxLength={60}
+                  />
+                  <div
+                    className={`absolute right-0 -bottom-5 text-xs ${
+                      servicesSection.heading.head.length >= 60
+                        ? "text-red-500 font-bold animate-pulse"
+                        : servicesSection.heading.head.length > 50
+                        ? "text-red-500"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {servicesSection.heading.head.length >= 60
+                      ? "MAXIMUM LENGTH REACHED"
+                      : `${servicesSection.heading.head.length}/60`}
+                  </div>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    className={`text-muted-foreground block w-full text-center border-b ${
+                      servicesSection.heading.desc.length >= 120
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                    value={servicesSection.heading.desc}
+                    onChange={(e) =>
+                      setServicesSection((prev) => ({
+                        ...prev,
+                        heading: { ...prev.heading, desc: e.target.value },
+                      }))
+                    }
+                    maxLength={120}
+                  />
+                  <div
+                    className={`absolute right-0 -bottom-5 text-xs ${
+                      servicesSection.heading.desc.length >= 120
+                        ? "text-red-500 font-bold animate-pulse"
+                        : servicesSection.heading.desc.length > 100
+                        ? "text-red-500"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {servicesSection.heading.desc.length >= 120
+                      ? "MAXIMUM LENGTH REACHED"
+                      : `${servicesSection.heading.desc.length}/120`}
+                  </div>
+                </div>
               </>
             ) : (
               <>
-                <h2 className="text-3xl font-bold">{servicesSection.heading.head}</h2>
-                <p className="text-muted-foreground">{servicesSection.heading.desc}</p>
+                <h2 className="text-3xl font-bold">
+                  {servicesSection.heading.head}
+                </h2>
+                <p className="text-muted-foreground">
+                  {servicesSection.heading.desc}
+                </p>
               </>
-            )}          
+            )}
           </div>
 
           {/* Filter */}
@@ -570,18 +658,34 @@ export default function Services({serviceData, onStateChange, userId, publishedI
             {servicesSection.categories.map((cat, i) => (
               <div key={i} className="flex items-center gap-2">
                 {isEditing ? (
-                  <input
-                    value={cat}
-                    onChange={(e) =>
-                      setServicesSection(prev => ({
-                        ...prev,
-                        categories: prev.categories.map((c, idx) => 
-                          idx === i ? e.target.value : c
-                        )
-                      }))
-                    }
-                    className="border-b px-2"
-                  />
+                  <div className="relative">
+                    <input
+                      value={cat}
+                      onChange={(e) =>
+                        setServicesSection((prev) => ({
+                          ...prev,
+                          categories: prev.categories.map((c, idx) =>
+                            idx === i ? e.target.value : c
+                          ),
+                        }))
+                      }
+                      maxLength={40}
+                      className={`px-2 border-b pr-10 ${
+                        cat.length >= 40 ? "border-red-500" : ""
+                      }`}
+                    />
+                    <div
+                      className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-[10px] ${
+                        cat.length >= 40
+                          ? "text-red-500 font-bold"
+                          : cat.length > 30
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {cat.length >= 40 ? "MAX" : `${cat.length}`}
+                    </div>
+                  </div>
                 ) : (
                   <Button
                     onClick={() => {
@@ -600,7 +704,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                 {isEditing && cat !== "All" && (
                   <button
                     onClick={() => removeCategory(cat)}
-                    className="text-red-500 text-xs"
+                    className="text-xs text-red-500"
                   >
                     ✕
                   </button>
@@ -609,10 +713,10 @@ export default function Services({serviceData, onStateChange, userId, publishedI
             ))}
             {isEditing && (
               <motion.button
-                whileTap={{scale:0.9}}
-                whileHover={{scale:1.1}}
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.1 }}
                 onClick={addCategory}
-                className="text-green-600 text-sm font-medium"
+                className="text-sm font-medium text-green-600"
               >
                 + Add Category
               </motion.button>
@@ -620,14 +724,17 @@ export default function Services({serviceData, onStateChange, userId, publishedI
           </div>
 
           {/* Services Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {visibleServices.map((service, index) => (
-              <Card key={index} className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl  shadow-gray-500">
-                <div className="h-40 overflow-hidden relative flex-shrink-0">
+              <Card
+                key={index}
+                className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl shadow-gray-500"
+              >
+                <div className="relative flex-shrink-0 h-40 overflow-hidden">
                   <img
                     src={service.image}
                     alt={service.title}
-                    className="w-full h-full object-cover"
+                    className="object-cover w-full h-full"
                   />
                   {isEditing && (
                     <motion.div
@@ -635,17 +742,19 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute bottom-2 left-2 bg-white/80 p-1 rounded"
+                      className="absolute p-1 rounded bottom-2 left-2 bg-white/80"
                     >
-                      <div className="text-xs text-gray-600 mb-1">Recommended: 1600×900px (16:9)</div>
+                      <div className="mb-1 text-xs text-gray-600">
+                        Recommended: 1600×900px (16:9)
+                      </div>
                       <input
                         type="file"
                         accept="image/*"
-                        className="text-xs w-full cursor-pointer font-bold"
+                        className="w-full text-xs font-bold cursor-pointer"
                         onChange={(e) => handleServiceImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="text-xs text-green-600 mt-1">
+                        <p className="mt-1 text-xs text-green-600">
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
@@ -655,49 +764,122 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                 <div className="flex flex-col flex-grow p-6">
                   <div className="flex-shrink-0 mb-4">
                     {isEditing ? (
-                      <input
-                        value={service.title}
-                        onChange={(e) =>
-                          updateServiceField(index, "title", e.target.value)
-                        }
-                        className="border-b w-full font-bold text-lg"
-                      />
+                      <div className="relative">
+                        <input
+                          value={service.title}
+                          onChange={(e) =>
+                            updateServiceField(index, "title", e.target.value)
+                          }
+                          maxLength={50}
+                          className={`border-b w-full font-bold text-lg pr-12 ${
+                            service.title.length >= 50 ? "border-red-500" : ""
+                          }`}
+                        />
+                        <div
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
+                            service.title.length >= 50
+                              ? "text-red-500 font-bold"
+                              : service.title.length > 40
+                              ? "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {service.title.length >= 50
+                            ? "MAX"
+                            : `${service.title.length}/50`}
+                        </div>
+                      </div>
                     ) : (
-                      <CardTitle className="line-clamp-2 min-h-[3rem]">{service.title}</CardTitle>
+                      <CardTitle className="line-clamp-2 min-h-[3rem]">
+                        {service.title}
+                      </CardTitle>
                     )}
                   </div>
                   <div className="flex-grow mb-4">
                     {isEditing ? (
                       <>
-                        <textarea
-                          value={service.description}
-                          onChange={(e) =>
-                            updateServiceField(index, "description", e.target.value)
-                          }
-                          className="border-b w-full min-h-[4rem]"
-                        />
-                        <input
-                          value={service.category}
-                          onChange={(e) =>
-                            updateServiceField(index, "category", e.target.value)
-                          }
-                          className="border-b w-full mt-2"
-                        />
+                        <div className="relative">
+                          <textarea
+                            value={service.description}
+                            onChange={(e) =>
+                              updateServiceField(
+                                index,
+                                "description",
+                                e.target.value
+                              )
+                            }
+                            maxLength={120}
+                            className={`border-b w-full min-h-[4rem] resize-none pr-12 ${
+                              service.description.length >= 120
+                                ? "border-red-500"
+                                : ""
+                            }`}
+                          />
+                          <div
+                            className={`absolute right-2 bottom-1 text-xs ${
+                              service.description.length >= 120
+                                ? "text-red-500 font-bold"
+                                : service.description.length > 100
+                                ? "text-red-500"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            {service.description.length >= 120
+                              ? "MAX"
+                              : `${service.description.length}/120`}
+                          </div>
+                        </div>
+
+                        <div className="relative mt-2">
+                          <input
+                            value={service.category}
+                            onChange={(e) =>
+                              updateServiceField(
+                                index,
+                                "category",
+                                e.target.value
+                              )
+                            }
+                            maxLength={60}
+                            className={`w-full border-b pr-10 ${
+                              service.category.length >= 60
+                                ? "border-red-500"
+                                : ""
+                            }`}
+                          />
+                          <div
+                            className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-xs ${
+                              service.category.length >= 60
+                                ? "text-red-500 font-bold"
+                                : service.category.length > 50
+                                ? "text-red-500"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            {service.category.length >= 60
+                              ? "MAX"
+                              : `${service.category.length}/60`}
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <>
                         <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
                           {service.description}
                         </p>
-                        <p className="text-xs mt-1 italic text-gray-500">
+                        <p className="mt-1 text-xs italic text-gray-500">
                           Category: {service.category}
                         </p>
                       </>
                     )}
                   </div>
 
-                  <div className="mt-auto flex gap-2">
-                    <Button className="cursor-pointer hover:scale-105 flex-1" size="sm" onClick={() => openModal(service, index)}>
+                  <div className="flex gap-2 mt-auto">
+                    <Button
+                      className="flex-1 cursor-pointer hover:scale-105"
+                      size="sm"
+                      onClick={() => openModal(service, index)}
+                    >
                       View Details
                     </Button>
                     {isEditing && (
@@ -716,7 +898,10 @@ export default function Services({serviceData, onStateChange, userId, publishedI
             ))}
             {isEditing && (
               <Card className="flex items-center justify-center border-dashed min-h-[350px]">
-                <Button onClick={addService} className="text-green-600 cursor-pointer hover:scale-105">
+                <Button
+                  onClick={addService}
+                  className="text-green-600 cursor-pointer hover:scale-105"
+                >
                   + Add Service
                 </Button>
               </Card>
@@ -730,15 +915,16 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                 Load More
               </Button>
             )}
-            {visibleCount >= filteredServices.length && filteredServices.length > 3 && (
-              <Button
-                onClick={() => setVisibleCount(3)}
-                variant="secondary"
-                className="ml-4"
-              >
-                Show Less
-              </Button>
-            )}
+            {visibleCount >= filteredServices.length &&
+              filteredServices.length > 3 && (
+                <Button
+                  onClick={() => setVisibleCount(3)}
+                  variant="secondary"
+                  className="ml-4"
+                >
+                  Show Less
+                </Button>
+              )}
           </div>
         </div>
 
@@ -746,7 +932,7 @@ export default function Services({serviceData, onStateChange, userId, publishedI
         <AnimatePresence>
           {isModalOpen && selectedServiceIndex !== null && (
             <motion.div
-              className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50"
+              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -758,119 +944,236 @@ export default function Services({serviceData, onStateChange, userId, publishedI
               >
                 <button
                   onClick={closeModal}
-                  className="absolute top-4 right-4 bg-gray-500 rounded-full p-2"
+                  className="absolute p-2 bg-gray-500 rounded-full top-4 right-4"
                 >
                   <X className="w-5 h-5" />
                 </button>
 
                 {isEditing ? (
-                  <input
-                    value={servicesSection.services[selectedServiceIndex].title}
-                    onChange={(e) =>
-                      updateServiceField(selectedServiceIndex, "title", e.target.value)
-                    }
-                    className="border-b w-full text-2xl font-bold mb-4"
-                  />
+                  <div className="relative">
+                    <input
+                      value={
+                        servicesSection.services[selectedServiceIndex].title
+                      }
+                      onChange={(e) =>
+                        updateServiceField(
+                          selectedServiceIndex,
+                          "title",
+                          e.target.value
+                        )
+                      }
+                      maxLength={60}
+                      className={`border-b w-full text-2xl font-bold mb-4 pr-16 ${
+                        servicesSection.services[selectedServiceIndex].title
+                          .length >= 60
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <div
+                      className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
+                        servicesSection.services[selectedServiceIndex].title
+                          .length >= 60
+                          ? "text-red-500 font-bold animate-pulse"
+                          : servicesSection.services[selectedServiceIndex].title
+                              .length > 50
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {servicesSection.services[selectedServiceIndex].title
+                        .length >= 60
+                        ? "MAX REACHED"
+                        : `${servicesSection.services[selectedServiceIndex].title.length}/60`}
+                    </div>
+                  </div>
                 ) : (
-                  <h2 className="text-2xl font-bold mb-4">{servicesSection.services[selectedServiceIndex].title}</h2>
+                  <h2 className="mb-4 text-2xl font-bold">
+                    {servicesSection.services[selectedServiceIndex].title}
+                  </h2>
                 )}
 
                 {isEditing ? (
-                  <textarea
-                    value={servicesSection.services[selectedServiceIndex].detailedDescription}
-                    onChange={(e) =>
-                      updateServiceField(selectedServiceIndex, "detailedDescription", e.target.value)
-                    }
-                    className="border-b w-full mb-4"
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={
+                        servicesSection.services[selectedServiceIndex]
+                          .detailedDescription
+                      }
+                      onChange={(e) =>
+                        updateServiceField(
+                          selectedServiceIndex,
+                          "detailedDescription",
+                          e.target.value
+                        )
+                      }
+                      maxLength={1000}
+                      rows={4}
+                      className={`border-b w-full mb-4 resize-none pr-16 ${
+                        servicesSection.services[selectedServiceIndex]
+                          .detailedDescription.length >= 1000
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <div
+                      className={`absolute right-2 bottom-2 text-xs ${
+                        servicesSection.services[selectedServiceIndex]
+                          .detailedDescription.length >= 1000
+                          ? "text-red-500 font-bold animate-pulse"
+                          : servicesSection.services[selectedServiceIndex]
+                              .detailedDescription.length > 900
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {servicesSection.services[selectedServiceIndex]
+                        .detailedDescription.length >= 1000
+                        ? "MAX REACHED"
+                        : `${servicesSection.services[selectedServiceIndex].detailedDescription.length}/1000`}
+                    </div>
+                  </div>
                 ) : (
-                  <p className="text-muted-foreground mb-4">
-                    {servicesSection.services[selectedServiceIndex].detailedDescription}
+                  <p className="mb-4 text-muted-foreground">
+                    {
+                      servicesSection.services[selectedServiceIndex]
+                        .detailedDescription
+                    }
                   </p>
                 )}
 
                 {/* Benefits */}
-                <h3 className="font-semibold mb-2">Key Benefits</h3>
-                <ul className="space-y-2 mb-4">
-                  {servicesSection.services[selectedServiceIndex].benefits.map((b: string, bi: number) => (
-                    <li key={bi} className="flex gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
-                      {isEditing ? (
-                        <div className="flex flex-col gap-1 w-full">
-                          <input
-                            value={b}
-                            onChange={(e) =>
-                              updateServiceList(selectedServiceIndex, "benefits", bi, e.target.value)
-                            }
-                            className="border-b w-full"
-                          />
-                          <motion.button
-                            whileHover={{scale:1.1}}
-                            whileTap={{scale:0.9}}
-                            onClick={() =>
-                              removeFromList(selectedServiceIndex, "benefits", bi)
-                            }
-                            className="text-xs text-red-500"
-                          >
-                            ✕ Remove
-                          </motion.button>
-                        </div>
-                      ) : (
-                        <span>{b}</span>
-                      )}
-                    </li>
-                  ))}
+                <h3 className="mb-2 font-semibold">Key Benefits</h3>
+                <ul className="mb-4 space-y-2">
+                  {servicesSection.services[selectedServiceIndex].benefits.map(
+                    (b: string, bi: number) => (
+                      <li key={bi} className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 mt-1 text-green-500" />
+                        {isEditing ? (
+                          <div className="flex flex-col w-full gap-1">
+                            <div className="relative">
+                              <input
+                                value={b}
+                                onChange={(e) =>
+                                  updateServiceList(
+                                    selectedServiceIndex,
+                                    "benefits",
+                                    bi,
+                                    e.target.value
+                                  )
+                                }
+                                maxLength={80}
+                                className={`border-b w-full pr-10 ${
+                                  b.length >= 80 ? "border-red-500" : ""
+                                }`}
+                              />
+                              <div
+                                className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${
+                                  b.length >= 80
+                                    ? "text-red-500 font-bold"
+                                    : b.length > 70
+                                    ? "text-red-500"
+                                    : "text-gray-400"
+                                }`}
+                              >
+                                {b.length >= 80 ? "MAX" : `${b.length}`}
+                              </div>
+                            </div>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() =>
+                                removeFromList(
+                                  selectedServiceIndex,
+                                  "benefits",
+                                  bi
+                                )
+                              }
+                              className="text-xs text-red-500"
+                            >
+                              ✕ Remove
+                            </motion.button>
+                          </div>
+                        ) : (
+                          <span>{b}</span>
+                        )}
+                      </li>
+                    )
+                  )}
                 </ul>
                 {isEditing && (
                   <button
-                    onClick={() =>
-                      addToList(selectedServiceIndex, "benefits")
-                    }
-                    className="text-xs text-green-600 mb-4"
+                    onClick={() => addToList(selectedServiceIndex, "benefits")}
+                    className="mb-4 text-xs text-green-600"
                   >
                     + Add Benefit
                   </button>
                 )}
 
                 {/* Process */}
-                <h3 className="font-semibold mb-2">Our Process</h3>
-                <ol className="space-y-2 mb-4">
-                  {servicesSection.services[selectedServiceIndex].process.map((p: string, pi: number) => (
-                    <li key={pi}>
-                      {isEditing ? (
-                        <div className="flex flex-col gap-1 w-full">
-                          <input
-                            value={p}
-                            onChange={(e) =>
-                              updateServiceList(selectedServiceIndex, "process", pi, e.target.value)
-                            }
-                            className="border-b w-full"
-                          />
-                          <motion.button
-                            whileHover={{scale:1.1}}
-                            whileTap={{scale:0.9}}
-                            onClick={() =>
-                              removeFromList(selectedServiceIndex, "process", pi)
-                            }
-                            className="text-xs text-red-500"
-                          >
-                            ✕ Remove
-                          </motion.button>
-                        </div>
-                      ) : (
-                        <span>{p}</span>
-                      )}
-                    </li>
-                  ))}
+                <h3 className="mb-2 font-semibold">Our Process</h3>
+                <ol className="mb-4 space-y-2">
+                  {servicesSection.services[selectedServiceIndex].process.map(
+                    (p: string, pi: number) => (
+                      <li key={pi}>
+                        {isEditing ? (
+                          <div className="flex flex-col w-full gap-1">
+                            <div className="relative">
+                              <input
+                                value={p}
+                                onChange={(e) =>
+                                  updateServiceList(
+                                    selectedServiceIndex,
+                                    "process",
+                                    pi,
+                                    e.target.value
+                                  )
+                                }
+                                maxLength={80}
+                                className={`border-b w-full pr-10 ${
+                                  p.length >= 80 ? "border-red-500" : ""
+                                }`}
+                              />
+                              <div
+                                className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${
+                                  p.length >= 80
+                                    ? "text-red-500 font-bold"
+                                    : p.length > 70
+                                    ? "text-red-500"
+                                    : "text-gray-400"
+                                }`}
+                              >
+                                {p.length >= 80 ? "MAX" : `${p.length}`}
+                              </div>
+                            </div>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() =>
+                                removeFromList(
+                                  selectedServiceIndex,
+                                  "process",
+                                  pi
+                                )
+                              }
+                              className="text-xs text-red-500"
+                            >
+                              ✕ Remove
+                            </motion.button>
+                          </div>
+                        ) : (
+                          <span>{p}</span>
+                        )}
+                      </li>
+                    )
+                  )}
                 </ol>
                 {isEditing && (
                   <motion.button
-                    whileHover={{scale:1.1}}
-                    whileTap={{scale:0.9}}
-                    onClick={() =>
-                      addToList(selectedServiceIndex, "process")
-                    }
-                    className="text-xs text-green-600 mb-4"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => addToList(selectedServiceIndex, "process")}
+                    className="mb-4 text-xs text-green-600"
                   >
                     + Add Step
                   </motion.button>
@@ -879,31 +1182,100 @@ export default function Services({serviceData, onStateChange, userId, publishedI
                 {/* Pricing & Timeline */}
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <h3 className="font-semibold mb-2">Pricing</h3>
+                    <h3 className="mb-2 font-semibold">Pricing</h3>
                     {isEditing ? (
-                      <input
-                        value={servicesSection.services[selectedServiceIndex].pricing}
-                        onChange={(e) =>
-                          updateServiceField(selectedServiceIndex, "pricing", e.target.value)
-                        }
-                        className="border-b w-full"
-                      />
+                      <div className="relative">
+                        <input
+                          value={
+                            servicesSection.services[selectedServiceIndex]
+                              .pricing
+                          }
+                          onChange={(e) =>
+                            updateServiceField(
+                              selectedServiceIndex,
+                              "pricing",
+                              e.target.value
+                            )
+                          }
+                          maxLength={30}
+                          className={`border-b w-full pr-10 ${
+                            servicesSection.services[selectedServiceIndex]
+                              .pricing.length >= 30
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
+                            servicesSection.services[selectedServiceIndex]
+                              .pricing.length >= 30
+                              ? "text-red-500 font-bold"
+                              : servicesSection.services[selectedServiceIndex]
+                                  .pricing.length > 25
+                              ? "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {servicesSection.services[selectedServiceIndex]
+                            .pricing.length >= 30
+                            ? "MAX"
+                            : `${servicesSection.services[selectedServiceIndex].pricing.length}/30`}
+                        </div>
+                      </div>
                     ) : (
-                      <p>{servicesSection.services[selectedServiceIndex].pricing}</p>
+                      <p>
+                        {servicesSection.services[selectedServiceIndex].pricing}
+                      </p>
                     )}
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-2">Timeline</h3>
+                    <h3 className="mb-2 font-semibold">Timeline</h3>
                     {isEditing ? (
-                      <input
-                        value={servicesSection.services[selectedServiceIndex].timeline}
-                        onChange={(e) =>
-                          updateServiceField(selectedServiceIndex, "timeline", e.target.value)
-                        }
-                        className="border-b w-full"
-                      />
+                      <div className="relative">
+                        <input
+                          value={
+                            servicesSection.services[selectedServiceIndex]
+                              .timeline
+                          }
+                          onChange={(e) =>
+                            updateServiceField(
+                              selectedServiceIndex,
+                              "timeline",
+                              e.target.value
+                            )
+                          }
+                          maxLength={60}
+                          className={`border-b w-full pr-10 ${
+                            servicesSection.services[selectedServiceIndex]
+                              .timeline.length >= 60
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
+                            servicesSection.services[selectedServiceIndex]
+                              .timeline.length >= 60
+                              ? "text-red-500 font-bold"
+                              : servicesSection.services[selectedServiceIndex]
+                                  .timeline.length > 50
+                              ? "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {servicesSection.services[selectedServiceIndex]
+                            .timeline.length >= 60
+                            ? "MAX"
+                            : `${servicesSection.services[selectedServiceIndex].timeline.length}/60`}
+                        </div>
+                      </div>
                     ) : (
-                      <p>{servicesSection.services[selectedServiceIndex].timeline}</p>
+                      <p>
+                        {
+                          servicesSection.services[selectedServiceIndex]
+                            .timeline
+                        }
+                      </p>
                     )}
                   </div>
                 </div>
