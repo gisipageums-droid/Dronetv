@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import user from "/images/user.png"
 
 export default function Testimonials({
   testimonialsData,
@@ -684,7 +685,7 @@ export default function Testimonials({
                     <div className="flex items-center space-x-4">
                       <div className="relative">
                         <ImageWithFallback
-                          src={testimonial.image}
+                          src={testimonial.image || user}
                           alt={testimonial.name}
                           className="w-12 h-12 rounded-full object-cover"
                           fallbackSrc="/api/placeholder/48/48"
