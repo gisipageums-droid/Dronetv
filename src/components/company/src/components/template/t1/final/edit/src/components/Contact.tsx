@@ -13,28 +13,39 @@ const EditableText = ({
   multiline = false,
   className = "",
   placeholder = "",
+  maxLength = 100,
+  showCharCount = false
 }) => {
   const baseClasses =
     "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-  if (multiline) {
-    return (
-      <textarea
-        value={value || ""}
-        onChange={(e) => onChange(e.target.value)}
-        className={`${baseClasses} p-2 resize-none ${className}`}
-        placeholder={placeholder}
-        rows={3}
-      />
-    );
-  }
+  
   return (
-    <input
-      type="text"
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      className={`${baseClasses} p-1 ${className}`}
-      placeholder={placeholder}
-    />
+    <div className="w-full">
+      {multiline ? (
+        <textarea
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          className={`${baseClasses} p-2 resize-none ${className}`}
+          placeholder={placeholder}
+          rows={3}
+          maxLength={maxLength}
+        />
+      ) : (
+        <input
+          type="text"
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          className={`${baseClasses} p-1 ${className}`}
+          placeholder={placeholder}
+          maxLength={maxLength}
+        />
+      )}
+      {showCharCount && (
+        <div className="text-xs text-gray-500 text-right mt-1">
+          {(value || "").length}/{maxLength} characters
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -45,6 +56,20 @@ export default function EditableContact({
   publishedId,
   templateSelection,
 }) {
+  // Character limits
+  const CHAR_LIMITS = {
+    title: 100,
+    description: 200,
+    formTitle: 100,
+    formDescription: 200,
+    ctaButton: 50,
+    businessHoursTitle: 100,
+    businessHour: 100,
+    consultationTitle: 100,
+    consultationDescription: 200,
+    consultationButton: 50,
+  };
+
   const defaultContent = {
     title: "Get In Touch",
     description:
@@ -192,12 +217,16 @@ export default function EditableContact({
         {/* Header */}
         <div className="text-center mb-12">
           {isEditing ? (
-            <EditableText
-              value={tempData.title}
-              onChange={(val) => updateField("title", val)}
-              className="text-4xl font-bold text-gray-900 dark:text-white mb-3 text-center"
-              placeholder="Section Title"
-            />
+            <div className="flex flex-col items-center justify-center">
+              <EditableText
+                value={tempData.title}
+                onChange={(val) => updateField("title", val)}
+                className="text-4xl font-bold text-gray-900 dark:text-white mb-3 text-center"
+                placeholder="Section Title"
+                maxLength={CHAR_LIMITS.title}
+                showCharCount
+              />
+            </div>
           ) : (
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
               {displayData.title}
@@ -205,13 +234,17 @@ export default function EditableContact({
           )}
 
           {isEditing ? (
-            <EditableText
-              value={tempData.description}
-              onChange={(val) => updateField("description", val)}
-              multiline
-              className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg text-center"
-              placeholder="Section Description"
-            />
+            <div className="flex flex-col items-center justify-center">
+              <EditableText
+                value={tempData.description}
+                onChange={(val) => updateField("description", val)}
+                multiline
+                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg text-center"
+                placeholder="Section Description"
+                maxLength={CHAR_LIMITS.description}
+                showCharCount
+              />
+            </div>
           ) : (
             <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg">
               {displayData.description}
@@ -230,12 +263,16 @@ export default function EditableContact({
             className="col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 lg:p-10"
           >
             {isEditing ? (
-              <EditableText
-                value={tempData.formTitle}
-                onChange={(val) => updateField("formTitle", val)}
-                className="text-xl font-semibold text-gray-900 dark:text-white mb-2"
-                placeholder="Form Title"
-              />
+              <div className="mb-2">
+                <EditableText
+                  value={tempData.formTitle}
+                  onChange={(val) => updateField("formTitle", val)}
+                  className="text-xl font-semibold text-gray-900 dark:text-white"
+                  placeholder="Form Title"
+                  maxLength={CHAR_LIMITS.formTitle}
+                  showCharCount
+                />
+              </div>
             ) : (
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 {displayData.formTitle}
@@ -243,12 +280,16 @@ export default function EditableContact({
             )}
 
             {isEditing ? (
-              <EditableText
-                value={tempData.formDescription}
-                onChange={(val) => updateField("formDescription", val)}
-                className="text-gray-500 dark:text-gray-300 mb-6 text-sm"
-                placeholder="Form Description"
-              />
+              <div className="mb-6">
+                <EditableText
+                  value={tempData.formDescription}
+                  onChange={(val) => updateField("formDescription", val)}
+                  className="text-gray-500 dark:text-gray-300 text-sm"
+                  placeholder="Form Description"
+                  maxLength={CHAR_LIMITS.formDescription}
+                  showCharCount
+                />
+              </div>
             ) : (
               <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm">
                 {displayData.formDescription}
@@ -324,12 +365,16 @@ export default function EditableContact({
               </div>
 
               {isEditing ? (
-                <EditableText
-                  value={tempData.ctaButton}
-                  onChange={(val) => updateField("ctaButton", val)}
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-4 px-4 rounded-md transition-colors duration-300 text-lg text-center"
-                  placeholder="Button Text"
-                />
+                <div>
+                  <EditableText
+                    value={tempData.ctaButton}
+                    onChange={(val) => updateField("ctaButton", val)}
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-4 px-4 rounded-md transition-colors duration-300 text-lg text-center"
+                    placeholder="Button Text"
+                    maxLength={CHAR_LIMITS.ctaButton}
+                    showCharCount
+                  />
+                </div>
               ) : (
                 <Button className="w-full bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold py-4 transition-colors duration-300 text-lg">
                   {displayData.ctaButton}
@@ -346,50 +391,60 @@ export default function EditableContact({
             className="space-y-6"
           >
             {/* <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
-              {/* {isEditing ? (
-                <EditableText
-                  value={tempData.businessHoursTitle}
-                  onChange={(val) => updateField("businessHoursTitle", val)}
-                  className="text-lg font-semibold text-gray-900 dark:text-white mb-3"
-                  placeholder="Business Hours Title"
-                />
+              {isEditing ? (
+                <div className="mb-3">
+                  <EditableText
+                    value={tempData.businessHoursTitle}
+                    onChange={(val) => updateField("businessHoursTitle", val)}
+                    className="text-lg font-semibold text-gray-900 dark:text-white"
+                    placeholder="Business Hours Title"
+                    maxLength={CHAR_LIMITS.businessHoursTitle}
+                    showCharCount
+                  />
+                </div>
               ) : (
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                   {displayData.businessHoursTitle}
                 </h4>
-              )} */}
+              )}
 
-              {/* <ul className="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
+              <ul className="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
                 {displayData.businessHours.map((hour, index) => (
                   <li key={index} className="flex items-center">
                     {isEditing ? (
-                      <div className="flex items-center gap-2 w-full">
-                        <input
-                          value={hour}
-                          onChange={(e) =>
-                            updateBusinessHour(index, e.target.value)
-                          }
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-sm"
-                        />
-                        {displayData.businessHours.length > 1 && (
-                          <Button
-                            onClick={() => removeBusinessHour(index)}
-                            size="sm"
-                            variant="outline"
-                            className="bg-red-50 hover:bg-red-100 text-red-700"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        )}
+                      <div className="w-full">
+                        <div className="flex items-center gap-2 w-full">
+                          <input
+                            value={hour}
+                            onChange={(e) =>
+                              updateBusinessHour(index, e.target.value)
+                            }
+                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-sm"
+                            maxLength={CHAR_LIMITS.businessHour}
+                          />
+                          {displayData.businessHours.length > 1 && (
+                            <Button
+                              onClick={() => removeBusinessHour(index)}
+                              size="sm"
+                              variant="outline"
+                              className="bg-red-50 hover:bg-red-100 text-red-700"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500 text-right mt-1">
+                          {hour.length}/{CHAR_LIMITS.businessHour} characters
+                        </div>
                       </div>
                     ) : (
                       hour
                     )}
                   </li>
                 ))}
-              </ul> */}
+              </ul>
 
-              {/* {isEditing && (
+              {isEditing && (
                 <Button
                   onClick={addBusinessHour}
                   size="sm"
@@ -399,17 +454,21 @@ export default function EditableContact({
                   <Plus className="w-3 h-3 mr-1" />
                   Add Business Hour
                 </Button>
-              )} */}
-            {/* </div>  */}
+              )}
+            </div> */}
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 text-center">
               {isEditing ? (
-                <EditableText
-                  value={tempData.consultationTitle}
-                  onChange={(val) => updateField("consultationTitle", val)}
-                  className="text-lg font-semibold text-gray-900 dark:text-white mb-2"
-                  placeholder="Consultation Title"
-                />
+                <div className="mb-2">
+                  <EditableText
+                    value={tempData.consultationTitle}
+                    onChange={(val) => updateField("consultationTitle", val)}
+                    className="text-lg font-semibold text-gray-900 dark:text-white"
+                    placeholder="Consultation Title"
+                    maxLength={CHAR_LIMITS.consultationTitle}
+                    showCharCount
+                  />
+                </div>
               ) : (
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {displayData.consultationTitle}
@@ -417,15 +476,19 @@ export default function EditableContact({
               )}
 
               {isEditing ? (
-                <EditableText
-                  value={tempData.consultationDescription}
-                  onChange={(val) =>
-                    updateField("consultationDescription", val)
-                  }
-                  multiline
-                  className="text-gray-600 dark:text-gray-300 text-sm mb-4 w-full"
-                  placeholder="Consultation Description"
-                />
+                <div className="mb-4">
+                  <EditableText
+                    value={tempData.consultationDescription}
+                    onChange={(val) =>
+                      updateField("consultationDescription", val)
+                    }
+                    multiline
+                    className="text-gray-600 dark:text-gray-300 text-sm w-full"
+                    placeholder="Consultation Description"
+                    maxLength={CHAR_LIMITS.consultationDescription}
+                    showCharCount
+                  />
+                </div>
               ) : (
                 <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                   {displayData.consultationDescription}
@@ -433,12 +496,16 @@ export default function EditableContact({
               )}
 
               {isEditing ? (
-                <EditableText
-                  value={tempData.consultationButton}
-                  onChange={(val) => updateField("consultationButton", val)}
-                  className="w-full bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-300 text-center"
-                  placeholder="Consultation Button Text"
-                />
+                <div>
+                  <EditableText
+                    value={tempData.consultationButton}
+                    onChange={(val) => updateField("consultationButton", val)}
+                    className="w-full bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-300 text-center"
+                    placeholder="Consultation Button Text"
+                    maxLength={CHAR_LIMITS.consultationButton}
+                    showCharCount
+                  />
+                </div>
               ) : (
                 <Button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-300">
                   {displayData.consultationButton}
@@ -447,6 +514,21 @@ export default function EditableContact({
             </div>
           </motion.div>
         </div>
+
+        {/* Instructions for Edit Mode */}
+        {isEditing && (
+          <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800 mb-2">
+              <strong>Edit Mode Active:</strong> You can now edit all text with character limits:
+            </p>
+            <ul className="text-sm text-blue-800 space-y-1">
+              <li>• <strong>Titles:</strong> {CHAR_LIMITS.title} characters</li>
+              <li>• <strong>Descriptions:</strong> {CHAR_LIMITS.description} characters</li>
+              <li>• <strong>Button Text:</strong> {CHAR_LIMITS.ctaButton} characters</li>
+              <li>• <strong>Business Hours:</strong> {CHAR_LIMITS.businessHour} characters per line</li>
+            </ul>
+          </div>
+        )}
       </div>
     </section>
   );

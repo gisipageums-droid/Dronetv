@@ -8,6 +8,8 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  RotateCw,
+  ZoomIn,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -50,44 +52,59 @@ const Button = ({
   );
 };
 
-// Crop helper function
-const getCroppedImg = async (imageSrc, pixelCrop) => {
-  const image = new Image();
-  image.src = imageSrc;
+// Enhanced crop helper function (same as Header)
+const createImage = (url) =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener("load", () => resolve(image));
+    image.addEventListener("error", (error) => reject(error));
+    image.setAttribute("crossOrigin", "anonymous");
+    image.src = url;
+  });
 
-  return new Promise((resolve, reject) => {
-    image.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
 
-      ctx.drawImage(
-        image,
-        pixelCrop.x,
-        pixelCrop.y,
-        pixelCrop.width,
-        pixelCrop.height,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
+  ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+  ctx.rotate((rotation * Math.PI) / 180);
+  ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
 
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            reject(new Error("Canvas is empty"));
-            return;
-          }
-          resolve(blob);
-        },
-        "image/jpeg",
-        0.95
-      );
-    };
-    image.onerror = reject;
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  return new Promise((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        const fileName = `cropped-image-${Date.now()}.jpg`;
+        const file = new File([blob], fileName, {
+          type: "image/jpeg",
+          lastModified: Date.now(),
+        });
+
+        const previewUrl = URL.createObjectURL(blob);
+
+        resolve({
+          file,
+          previewUrl,
+        });
+      },
+      "image/jpeg",
+      0.95
+    );
   });
 };
 
@@ -107,24 +124,26 @@ export default function EditableGallerySection({
   const [selectedImage, setSelectedImage] = useState(null);
   const [pendingImages, setPendingImages] = useState({});
 
-  // Crop modal state
+  // Enhanced crop modal state (same as Header)
   const [cropModalOpen, setCropModalOpen] = useState(false);
-  const [cropImage, setCropImage] = useState(null);
-  const [cropIndex, setCropIndex] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [cropIndex, setCropIndex] = useState(null);
 
   const sectionRef = useRef(null);
   const fileInputRefs = useRef([]);
 
-  // Default galleryData structure
-  const defaultGalleryData = galleryData;
+  // Default galleryData structure matching Gallery2.tsx
+  const defaultgalleryData = galleryData;
 
   // Consolidated state
-  const [galleryState, setGalleryState] = useState(defaultGalleryData);
-  const [tempGalleryState, setTempGalleryState] = useState(defaultGalleryData);
+  const [galleryState, setGalleryState] = useState(defaultgalleryData);
+  const [tempGalleryState, setTempGalleryState] = useState(defaultgalleryData);
 
   // Notify parent of state changes
   useEffect(() => {
@@ -254,21 +273,41 @@ export default function EditableGallerySection({
 
   // Update functions for header
   const updateHeaderField = useCallback((field, value) => {
+    // Apply character limits for header fields
+    let processedValue = value;
+    
+    if (field === "title" && value.length > 100) {
+      processedValue = value.slice(0, 100);
+    } else if (field === "description" && value.length > 200) {
+      processedValue = value.slice(0, 200);
+    }
+
     setTempGalleryState((prev) => ({
       ...prev,
       heading: {
         ...prev.heading,
-        [field]: value,
+        [field]: processedValue,
       },
     }));
   }, []);
 
   // Update functions for images
   const updateImageField = useCallback((index, field, value) => {
+    // Apply character limits based on field type
+    let processedValue = value;
+    
+    if (field === "title" && value.length > 100) {
+      processedValue = value.slice(0, 100);
+    } else if (field === "category" && value.length > 50) {
+      processedValue = value.slice(0, 50);
+    } else if (field === "description" && value.length > 500) {
+      processedValue = value.slice(0, 500);
+    }
+
     setTempGalleryState((prev) => ({
       ...prev,
       images: prev.images.map((img, i) =>
-        i === index ? { ...img, [field]: value } : img
+        i === index ? { ...img, [field]: processedValue } : img
       ),
     }));
   }, []);
@@ -306,44 +345,68 @@ export default function EditableGallerySection({
     });
   }, []);
 
-  // Open crop modal
-  const openCropModal = (file, index) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCropImage(reader.result);
-      setCropIndex(index);
-      setOriginalFile(file);
-      setCropModalOpen(true);
-      setCrop({ x: 0, y: 0 });
-      setZoom(1);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  // Handle crop complete
+  // Enhanced cropper functions (same as Header)
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  // Apply crop
+  // Enhanced image upload handler with crop modal (same as Header)
+  const handleImageUpload = useCallback((index, event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageToCrop(reader.result);
+      setOriginalFile(file);
+      setCropIndex(index);
+      setCropModalOpen(true);
+      setAspectRatio(4/3); // Default aspect ratio for gallery images
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setRotation(0);
+    };
+    reader.readAsDataURL(file);
+
+    if (event.target) {
+      event.target.value = "";
+    }
+  }, []);
+
+  // Apply crop function (same as Header)
   const applyCrop = async () => {
     try {
-      const croppedBlob = await getCroppedImg(cropImage, croppedAreaPixels);
-      const croppedFile = new File([croppedBlob], originalFile.name, {
-        type: "image/jpeg",
-      });
+      if (!imageToCrop || !croppedAreaPixels) {
+        console.error("Please select an area to crop");
+        return;
+      }
+
+      const { file, previewUrl } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels,
+        rotation
+      );
 
       // Store the cropped file for upload on Save
-      setPendingImages((prev) => ({ ...prev, [cropIndex]: croppedFile }));
+      setPendingImages((prev) => ({ ...prev, [cropIndex]: file }));
 
-      // Show immediate local preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        updateImageField(cropIndex, "url", e.target.result);
-      };
-      reader.readAsDataURL(croppedFile);
+      // Show immediate local preview of cropped image
+      updateImageField(cropIndex, "url", previewUrl);
 
       setCropModalOpen(false);
+      setImageToCrop(null);
+      setOriginalFile(null);
       toast.success("Image cropped successfully");
     } catch (error) {
       console.error("Error cropping image:", error);
@@ -351,28 +414,20 @@ export default function EditableGallerySection({
     }
   };
 
-  // Image upload handler with crop
-  const handleImageUpload = useCallback(
-    (index, event) => {
-      const file = event.target.files[0];
-      if (!file) return;
+  const cancelCrop = () => {
+    setCropModalOpen(false);
+    setImageToCrop(null);
+    setOriginalFile(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+  };
 
-      // Validate file type and size
-      if (!file.type.startsWith("image/")) {
-        toast.error("Please select an image file");
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size must be less than 5MB");
-        return;
-      }
-
-      // Open crop modal
-      openCropModal(file, index);
-    },
-    [updateImageField]
-  );
+  const resetCropSettings = () => {
+    setZoom(1);
+    setRotation(0);
+    setCrop({ x: 0, y: 0 });
+  };
 
   // Lightbox functions
   const openLightbox = (index) => {
@@ -401,7 +456,7 @@ export default function EditableGallerySection({
     }
   };
 
-  // Memoized EditableText component
+  // Memoized EditableText component with character limits
   const EditableText = useMemo(() => {
     return ({
       value,
@@ -410,6 +465,7 @@ export default function EditableGallerySection({
       className = "",
       placeholder = "",
       onChange = null,
+      maxLength = null,
     }) => {
       const handleChange = (e) => {
         if (onChange) {
@@ -422,31 +478,54 @@ export default function EditableGallerySection({
       const baseClasses =
         "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
 
+      // Show character count if maxLength is provided
+      const charCount = maxLength ? (
+        <div className="text-xs text-gray-500 text-right mt-1">
+          {value?.length || 0}/{maxLength}
+        </div>
+      ) : null;
+
       if (multiline) {
         return (
-          <textarea
-            value={value || ""}
-            onChange={handleChange}
-            className={`${baseClasses} p-2 resize-none ${className}`}
-            placeholder={placeholder}
-            rows={3}
-          />
+          <div>
+            <textarea
+              value={value || ""}
+              onChange={(e) => {
+                if (!maxLength || e.target.value.length <= maxLength) {
+                  handleChange(e);
+                }
+              }}
+              className={`${baseClasses} p-2 resize-none ${className}`}
+              placeholder={placeholder}
+              rows={3}
+              maxLength={maxLength}
+            />
+            {charCount}
+          </div>
         );
       }
 
       return (
-        <input
-          type="text"
-          value={value || ""}
-          onChange={handleChange}
-          className={`${baseClasses} p-1 ${className}`}
-          placeholder={placeholder}
-        />
+        <div>
+          <input
+            type="text"
+            value={value || ""}
+            onChange={(e) => {
+              if (!maxLength || e.target.value.length <= maxLength) {
+                handleChange(e);
+              }
+            }}
+            className={`${baseClasses} p-1 ${className}`}
+            placeholder={placeholder}
+            maxLength={maxLength}
+          />
+          {charCount}
+        </div>
       );
     };
   }, [updateHeaderField]);
 
-  const displayGalleryData = isEditing ? tempGalleryState : galleryState;
+  const displaygalleryData = isEditing ? tempGalleryState : galleryState;
 
   return (
     <section
@@ -459,7 +538,7 @@ export default function EditableGallerySection({
         <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
           <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
             <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-            <span className="text-gray-700">Loading gallery data...</span>
+            <span className="text-gray-700">Loading galleryData...</span>
           </div>
         </div>
       )}
@@ -524,17 +603,19 @@ export default function EditableGallerySection({
           {isEditing ? (
             <div className="space-y-4">
               <EditableText
-                value={displayGalleryData.heading.title}
+                value={displaygalleryData.heading.title}
                 field="title"
                 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center"
                 placeholder="Gallery Title"
+                maxLength={100}
               />
               <EditableText
-                value={displayGalleryData.heading.description}
+                value={displaygalleryData.heading.description}
                 field="description"
                 multiline={true}
                 className="text-gray-600 max-w-2xl mx-auto text-lg text-center"
                 placeholder="Gallery description"
+                maxLength={200}
               />
             </div>
           ) : (
@@ -545,7 +626,7 @@ export default function EditableGallerySection({
                 transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
                 className="text-3xl md:text-4xl font-extrabold text-gray-900"
               >
-                {displayGalleryData.heading.title}
+                {displaygalleryData.heading.title}
               </motion.h2>
 
               <motion.p
@@ -554,7 +635,7 @@ export default function EditableGallerySection({
                 transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
                 className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
               >
-                {displayGalleryData.heading.description}
+                {displaygalleryData.heading.description}
               </motion.p>
             </>
           )}
@@ -562,7 +643,7 @@ export default function EditableGallerySection({
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayGalleryData.images.map((image, index) => (
+          {displaygalleryData.images.map((image, index) => (
             <motion.div
               key={image.id}
               initial={{ opacity: 0, y: 50 }}
@@ -629,35 +710,53 @@ export default function EditableGallerySection({
                   <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
                     {isEditing ? (
                       <>
-                        <input
-                          value={image.title}
-                          onChange={(e) =>
-                            updateImageField(index, "title", e.target.value)
-                          }
-                          className="font-semibold bg-transparent border-b w-full mb-1 text-white placeholder-gray-300"
-                          placeholder="Image title"
-                        />
-                        <input
-                          value={image.category}
-                          onChange={(e) =>
-                            updateImageField(index, "category", e.target.value)
-                          }
-                          className="text-sm bg-transparent border-b w-full text-white placeholder-gray-300"
-                          placeholder="Image category"
-                        />
-                        <textarea
-                          value={image.description}
-                          onChange={(e) =>
-                            updateImageField(
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          className="text-xs bg-transparent border-b w-full mt-1 text-white placeholder-gray-300 resize-none"
-                          placeholder="Image description"
-                          rows={2}
-                        />
+                        <div>
+                          <input
+                            value={image.title}
+                            onChange={(e) =>
+                              updateImageField(index, "title", e.target.value)
+                            }
+                            className="font-semibold bg-transparent border-b w-full mb-1 text-white placeholder-gray-300"
+                            placeholder="Image title"
+                            maxLength={100}
+                          />
+                          <div className="text-xs text-gray-300 text-right">
+                            {image.title?.length || 0}/100
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            value={image.category}
+                            onChange={(e) =>
+                              updateImageField(index, "category", e.target.value)
+                            }
+                            className="text-sm bg-transparent border-b w-full text-white placeholder-gray-300"
+                            placeholder="Image category"
+                            maxLength={50}
+                          />
+                          <div className="text-xs text-gray-300 text-right">
+                            {image.category?.length || 0}/50
+                          </div>
+                        </div>
+                        <div>
+                          <textarea
+                            value={image.description}
+                            onChange={(e) =>
+                              updateImageField(
+                                index,
+                                "description",
+                                e.target.value
+                              )
+                            }
+                            className="text-xs bg-transparent border-b w-full mt-1 text-white placeholder-gray-300 resize-none"
+                            placeholder="Image description"
+                            rows={2}
+                            maxLength={500}
+                          />
+                          <div className="text-xs text-gray-300 text-right">
+                            {image.description?.length || 0}/500
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -689,12 +788,12 @@ export default function EditableGallerySection({
           ))}
 
           {/* Add new image button in edit mode */}
-          {displayGalleryData.images.length < 6 && isEditing && (
+          {displaygalleryData.images.length < 6 && isEditing && (
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{
-                delay: 0.5 + displayGalleryData.images.length * 0.1,
+                delay: 0.5 + displaygalleryData.images.length * 0.1,
                 duration: 0.8,
                 ease: [0.16, 1, 0.3, 1],
               }}
@@ -709,7 +808,7 @@ export default function EditableGallerySection({
           )}
         </div>
 
-        {displayGalleryData.images.length >= 6 && isEditing && (
+        {displaygalleryData.images.length >= 6 && isEditing && (
           <p className="mt-6 w-full border border-gray-200 px-2 py-4 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">
             You alredy have 6 image's for adding new image you can edit existing
             images or remove one then add new!
@@ -747,71 +846,159 @@ export default function EditableGallerySection({
 
           <div className="max-w-4xl w-full max-h-full">
             <img
-              src={displayGalleryData.images[selectedImage].url}
-              alt={displayGalleryData.images[selectedImage].title}
+              src={displaygalleryData.images[selectedImage].url}
+              alt={displaygalleryData.images[selectedImage].title}
               className="w-full h-auto max-h-full object-contain"
             />
             <div className="text-white text-center mt-4">
               <h3 className="text-xl font-semibold">
-                {displayGalleryData.images[selectedImage].title}
+                {displaygalleryData.images[selectedImage].title}
               </h3>
               <p className="text-gray-300">
-                {displayGalleryData.images[selectedImage].category}
+                {displaygalleryData.images[selectedImage].category}
               </p>
               <p className="text-gray-400 text-sm mt-2">
-                {displayGalleryData.images[selectedImage].description}
+                {displaygalleryData.images[selectedImage].description}
               </p>
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* Crop Modal */}
+      {/* Enhanced Crop Modal (same as Header) */}
       {cropModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999999]">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
-            <h3 className="text-xl font-bold mb-4 text-gray-900">Crop Image</h3>
-            <div className="relative w-full h-96 bg-gray-900 rounded-lg overflow-hidden">
-              <Cropper
-                image={cropImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={4 / 3}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Zoom
-              </label>
-              <input
-                type="range"
-                min={1}
-                max={3}
-                step={0.1}
-                value={zoom}
-                onChange={(e) => setZoom(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
-            <div className="flex gap-3 mt-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Image
+              </h3>
               <button
-                onClick={applyCrop}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
               >
-                Apply Crop
-              </button>
-              <button
-                onClick={() => setCropModalOpen(false)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Cancel
+                <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
-          </div>
-        </div>
+
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <div className="relative w-full h-full">
+                <Cropper
+                  image={imageToCrop}
+                  crop={crop}
+                  zoom={zoom}
+                  rotation={rotation}
+                  aspect={aspectRatio}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                  showGrid={false}
+                  cropShape="rect"
+                  style={{
+                    containerStyle: {
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                    },
+                    cropAreaStyle: {
+                      border: "2px solid white",
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4/3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4/3 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16/9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16/9 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
+                </div>
+              </div>
+
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">Zoom</span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={resetCropSettings}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </section>
   );

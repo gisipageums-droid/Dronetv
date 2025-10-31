@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { Edit2, Save, X, Loader2, Upload } from "lucide-react";
+import { Edit2, Save, X, Loader2, Upload, RotateCw, ZoomIn } from "lucide-react";
 import Cropper from "react-easy-crop";
 import HeroBackground from "../public/images/Hero/HeroBackground.jpg";
 
@@ -38,47 +38,6 @@ const imageVariants = {
   },
 };
 
-// Crop helper function
-const getCroppedImg = async (imageSrc, pixelCrop) => {
-  const image = new Image();
-  image.src = imageSrc;
-
-  return new Promise((resolve, reject) => {
-    image.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
-
-      ctx.drawImage(
-        image,
-        pixelCrop.x,
-        pixelCrop.y,
-        pixelCrop.width,
-        pixelCrop.height,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
-
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            reject(new Error("Canvas is empty"));
-            return;
-          }
-          resolve(blob);
-        },
-        "image/jpeg",
-        0.95
-      );
-    };
-    image.onerror = reject;
-  });
-};
-
 export default function EditableHero({
   heroData,
   onStateChange,
@@ -92,23 +51,6 @@ export default function EditableHero({
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef(null);
-
-  // Crop modal state
-  const [cropModalOpen, setCropModalOpen] = useState(false);
-  const [cropImage, setCropImage] = useState(null);
-  const [cropField, setCropField] = useState(null);
-  const [cropIndex, setCropIndex] = useState(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [originalFile, setOriginalFile] = useState(null);
-
-  // Pending image files for S3 upload
-  const [pendingImageFiles, setPendingImageFiles] = useState({
-    hero1Image: null,
-    hero3Image: null,
-    customerImages: Array(6).fill(null),
-  });
 
   // Default content with images
   const defaultContent = heroData || {
@@ -129,6 +71,25 @@ export default function EditableHero({
   // Consolidated state
   const [heroState, setHeroState] = useState(defaultContent);
   const [tempHeroState, setTempHeroState] = useState(defaultContent);
+
+  // Cropping states (same as Header.tsx)
+  const [showCropper, setShowCropper] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(1);
+  const [cropField, setCropField] = useState(null);
+  const [cropIndex, setCropIndex] = useState(null);
+
+  // Pending image files for S3 upload
+  const [pendingImageFiles, setPendingImageFiles] = useState({
+    hero1Image: null,
+    hero3Image: null,
+    customerImages: Array(6).fill(null),
+  });
 
   useEffect(() => {
     if (onStateChange) {
@@ -172,6 +133,156 @@ export default function EditableHero({
   const handleEdit = () => {
     setIsEditing(true);
     setTempHeroState(heroState);
+  };
+
+  // Logo cropping functionality (same as Header.tsx)
+  const handleImageUpload = (e, field, index = null) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      console.error("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      console.error("File size must be less than 5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageToCrop(reader.result);
+      setOriginalFile(file);
+      setCropField(field);
+      setCropIndex(index);
+      setShowCropper(true);
+      setAspectRatio(field === "customerImage" ? 1 : 4/3); // Square for customer images, standard for others
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setRotation(0);
+    };
+    reader.readAsDataURL(file);
+
+    e.target.value = "";
+  };
+
+  // Cropper functions (same as Header.tsx)
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const createImage = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.setAttribute("crossOrigin", "anonymous");
+      image.src = url;
+    });
+
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          const fileName = originalFile
+            ? `cropped-${originalFile.name}`
+            : `cropped-image-${Date.now()}.jpg`;
+
+          const file = new File([blob], fileName, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+
+          const previewUrl = URL.createObjectURL(blob);
+
+          resolve({
+            file,
+            previewUrl,
+          });
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
+  };
+
+  const applyCrop = async () => {
+    try {
+      if (!imageToCrop || !croppedAreaPixels) {
+        console.error("Please select an area to crop");
+        return;
+      }
+
+      const { file, previewUrl } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels,
+        rotation
+      );
+
+      // Update preview immediately based on field type
+      if (cropField === "hero1Image" || cropField === "hero3Image") {
+        setTempHeroState((prev) => ({ ...prev, [cropField]: previewUrl }));
+        setPendingImageFiles((prev) => ({ ...prev, [cropField]: file }));
+      } else if (cropField === "customerImage" && cropIndex !== null) {
+        const updatedCustomerImages = [...tempHeroState.customerImages];
+        updatedCustomerImages[cropIndex] = previewUrl;
+        setTempHeroState((prev) => ({ 
+          ...prev, 
+          customerImages: updatedCustomerImages 
+        }));
+
+        setPendingImageFiles((prev) => {
+          const updatedCustomerFiles = [...prev.customerImages];
+          updatedCustomerFiles[cropIndex] = file;
+          return { ...prev, customerImages: updatedCustomerFiles };
+        });
+      }
+
+      setShowCropper(false);
+      setImageToCrop(null);
+      setOriginalFile(null);
+    } catch (error) {
+      console.error("Error cropping image:", error);
+    }
+  };
+
+  const cancelCrop = () => {
+    setShowCropper(false);
+    setImageToCrop(null);
+    setOriginalFile(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+  };
+
+  const resetCropSettings = () => {
+    setZoom(1);
+    setRotation(0);
+    setCrop({ x: 0, y: 0 });
   };
 
   const handleSave = async () => {
@@ -325,103 +436,6 @@ export default function EditableHero({
     setIsEditing(false);
   };
 
-  // Open crop modal
-  const openCropModal = (file, field, index = null) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCropImage(reader.result);
-      setCropField(field);
-      setCropIndex(index);
-      setOriginalFile(file);
-      setCropModalOpen(true);
-      setCrop({ x: 0, y: 0 });
-      setZoom(1);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  // Handle crop complete
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
-
-  // Apply crop
-  const applyCrop = async () => {
-    try {
-      const croppedBlob = await getCroppedImg(cropImage, croppedAreaPixels);
-      const croppedFile = new File([croppedBlob], originalFile.name, {
-        type: "image/jpeg",
-      });
-
-      if (cropField === "hero1Image" || cropField === "hero3Image") {
-        setPendingImageFiles((prev) => ({ ...prev, [cropField]: croppedFile }));
-
-        const reader = new FileReader();
-        reader.onload = () => {
-          setTempHeroState((prev) => ({ ...prev, [cropField]: reader.result }));
-        };
-        reader.readAsDataURL(croppedFile);
-      } else if (cropField === "customerImage") {
-        setPendingImageFiles((prev) => {
-          const updatedCustomerFiles = [...prev.customerImages];
-          updatedCustomerFiles[cropIndex] = croppedFile;
-          return { ...prev, customerImages: updatedCustomerFiles };
-        });
-
-        const reader = new FileReader();
-        reader.onload = () => {
-          const updatedCustomerImages = [...tempHeroState.customerImages];
-          updatedCustomerImages[cropIndex] = reader.result;
-          setTempHeroState((prev) => ({
-            ...prev,
-            customerImages: updatedCustomerImages,
-          }));
-        };
-        reader.readAsDataURL(croppedFile);
-      }
-
-      setCropModalOpen(false);
-    } catch (error) {
-      console.error("Error cropping image:", error);
-    }
-  };
-
-  // Image upload handlers with validation
-  const handleImageUpload = (e, field) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      console.error("Invalid file type");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      console.error("File size exceeds 5MB limit");
-      return;
-    }
-
-    openCropModal(file, field);
-  };
-
-  // Customer image upload handler with validation
-  const handleCustomerImageUpload = (e, index) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      console.error("Invalid file type");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      console.error("File size exceeds 5MB limit");
-      return;
-    }
-
-    openCropModal(file, "customerImage", index);
-  };
-
   // Stable update functions with useCallback
   const updateTempContent = useCallback((field, value) => {
     setTempHeroState((prev) => ({ ...prev, [field]: value }));
@@ -435,40 +449,188 @@ export default function EditableHero({
       multiline = false,
       className = "",
       placeholder = "",
+      maxLength = null,
     }) => {
       const handleChange = (e) => {
+        if (maxLength && e.target.value.length > maxLength) {
+          return;
+        }
         updateTempContent(field, e.target.value);
       };
 
       const baseClasses =
         "w-full bg-white/10 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-white placeholder-gray-300";
 
-      if (multiline) {
-        return (
-          <textarea
-            value={value}
-            onChange={handleChange}
-            className={`${baseClasses} p-3 resize-none ${className}`}
-            placeholder={placeholder}
-            rows={4}
-          />
-        );
-      }
-
       return (
-        <input
-          type="text"
-          value={value}
-          onChange={handleChange}
-          className={`${baseClasses} p-2 ${className}`}
-          placeholder={placeholder}
-        />
+        <div className="relative">
+          {multiline ? (
+            <textarea
+              value={value}
+              onChange={handleChange}
+              className={`${baseClasses} p-3 resize-none ${className}`}
+              placeholder={placeholder}
+              rows={4}
+              maxLength={maxLength}
+            />
+          ) : (
+            <input
+              type="text"
+              value={value}
+              onChange={handleChange}
+              className={`${baseClasses} p-2 ${className}`}
+              placeholder={placeholder}
+              maxLength={maxLength}
+            />
+          )}
+          {maxLength && (
+            <div className="text-right text-xs text-gray-300 mt-1">
+              {value.length}/{maxLength}
+            </div>
+          )}
+        </div>
       );
     };
   }, [updateTempContent]);
 
   return (
     <>
+      {/* Cropping Modal - Same as Header.tsx */}
+      {showCropper && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Image
+              </h3>
+              <button
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <div className="relative w-full h-full">
+                <Cropper
+                  image={imageToCrop}
+                  crop={crop}
+                  zoom={zoom}
+                  rotation={rotation}
+                  aspect={aspectRatio}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                  showGrid={false}
+                  cropShape="rect"
+                  style={{
+                    containerStyle: {
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                    },
+                    cropAreaStyle: {
+                      border: "2px solid white",
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Controls - Same as Header.tsx */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4/3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4/3 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16/9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16/9 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
+                </div>
+              </div>
+
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">Zoom</span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={resetCropSettings}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+      
+      {/* Rest of the hero section remains exactly the same */}
       <section
         id="home"
         ref={heroRef}
@@ -555,12 +717,14 @@ export default function EditableHero({
                     field="heading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight"
                     placeholder="Main heading"
+                    maxLength={100}
                   />
                   <EditableText
                     value={tempHeroState.subheading}
                     field="subheading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold text-yellow-400"
                     placeholder="Sub heading"
+                    maxLength={200}
                   />
                 </div>
               )}
@@ -579,6 +743,7 @@ export default function EditableHero({
                   multiline
                   className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed"
                   placeholder="Hero description"
+                  maxLength={500}
                 />
               )}
 
@@ -606,21 +771,25 @@ export default function EditableHero({
                     value={tempHeroState.primaryBtn}
                     field="primaryBtn"
                     placeholder="Primary button text"
+                    maxLength={50}
                   />
                   <EditableText
                     value={tempHeroState.secondaryBtn}
                     field="secondaryBtn"
                     placeholder="Secondary button text"
+                    maxLength={50}
                   />
                   <EditableText
                     value={tempHeroState.primaryButtonLink}
                     field="primaryButtonLink"
                     placeholder="Primary button link"
+                    maxLength={200}
                   />
                   <EditableText
                     value={tempHeroState.secondaryButtonLink}
                     field="secondaryButtonLink"
                     placeholder="Secondary button link"
+                    maxLength={200}
                   />
                 </div>
               )}
@@ -645,7 +814,7 @@ export default function EditableHero({
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={(e) => handleCustomerImageUpload(e, i)}
+                            onChange={(e) => handleImageUpload(e, "customerImage", i)}
                           />
                         </label>
                       )}
@@ -667,6 +836,7 @@ export default function EditableHero({
                     field="trustText"
                     placeholder="Trust text"
                     className="text-sm sm:text-base text-white"
+                    maxLength={100}
                   />
                 )}
               </motion.div>
@@ -703,7 +873,7 @@ export default function EditableHero({
                     )}
                     {isEditing && pendingImageFiles.hero1Image && (
                       <div className="absolute top-2 left-2 text-xs text-orange-300 bg-black/70 px-2 py-1 rounded">
-                        Pending upload: {pendingImageFiles.hero1Image.name}
+                        Pending upload
                       </div>
                     )}
                   </div>
@@ -752,54 +922,6 @@ export default function EditableHero({
           </div>
         </div>
       </section>
-
-      {/* Crop Modal */}
-      {cropModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[999999]">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
-            <h3 className="text-xl font-bold mb-4 text-gray-900">Crop Image</h3>
-            <div className="relative w-full h-96 bg-gray-900 rounded-lg overflow-hidden">
-              <Cropper
-                image={cropImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={cropField === "customerImage" ? 1 : 4 / 3}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Zoom
-              </label>
-              <input
-                type="range"
-                min={1}
-                max={3}
-                step={0.1}
-                value={zoom}
-                onChange={(e) => setZoom(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={applyCrop}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Apply Crop
-              </button>
-              <button
-                onClick={() => setCropModalOpen(false)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
