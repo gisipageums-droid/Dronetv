@@ -958,17 +958,41 @@ export default function Product({
                 </button>
 
                 {isEditing ? (
-                  <input
-                    value={contentState.products[selectedProductIndex].title}
-                    onChange={(e) =>
-                      updateProductField(
-                        selectedProductIndex,
-                        "title",
-                        e.target.value
-                      )
-                    }
-                    className="w-full mb-4 text-2xl font-bold text-center border-b"
-                  />
+                  <div className="relative">
+                    <input
+                      value={contentState.products[selectedProductIndex].title}
+                      onChange={(e) =>
+                        updateProductField(
+                          selectedProductIndex,
+                          "title",
+                          e.target.value
+                        )
+                      }
+                      maxLength={60}
+                      className={`w-full mb-4 text-2xl font-bold text-center border-b pr-16 ${
+                        contentState.products[selectedProductIndex].title
+                          .length >= 60
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <div
+                      className={`absolute top-[-15px] right-0 text-xs ${
+                        contentState.products[selectedProductIndex].title
+                          .length >= 60
+                          ? "text-red-500 font-bold animate-pulse"
+                          : contentState.products[selectedProductIndex].title
+                              .length > 50
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {contentState.products[selectedProductIndex].title
+                        .length >= 60
+                        ? "MAX REACHED"
+                        : `${contentState.products[selectedProductIndex].title.length}/60`}
+                    </div>
+                  </div>
                 ) : (
                   <h2 className="mb-4 text-2xl font-bold text-center">
                     {contentState.products[selectedProductIndex].title}
@@ -976,20 +1000,45 @@ export default function Product({
                 )}
 
                 {isEditing ? (
-                  <textarea
-                    value={
-                      contentState.products[selectedProductIndex]
-                        .detailedDescription
-                    }
-                    onChange={(e) =>
-                      updateProductField(
-                        selectedProductIndex,
-                        "detailedDescription",
-                        e.target.value
-                      )
-                    }
-                    className="w-full mb-4 text-center border-b"
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={
+                        contentState.products[selectedProductIndex]
+                          .detailedDescription
+                      }
+                      onChange={(e) =>
+                        updateProductField(
+                          selectedProductIndex,
+                          "detailedDescription",
+                          e.target.value
+                        )
+                      }
+                      maxLength={1000}
+                      rows={4}
+                      className={`w-full mb-4 text-center border-b resize-none pr-16 ${
+                        contentState.products[selectedProductIndex]
+                          .detailedDescription.length >= 1000
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <div
+                      className={`absolute right-2 bottom-2 text-xs ${
+                        contentState.products[selectedProductIndex]
+                          .detailedDescription.length >= 1000
+                          ? "text-red-500 font-bold animate-pulse"
+                          : contentState.products[selectedProductIndex]
+                              .detailedDescription.length > 1000
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {contentState.products[selectedProductIndex]
+                        .detailedDescription.length >= 1000
+                        ? "MAX REACHED"
+                        : `${contentState.products[selectedProductIndex].detailedDescription.length}/1000`}
+                    </div>
+                  </div>
                 ) : (
                   <p className="mb-4 text-center text-muted-foreground">
                     {
@@ -1004,19 +1053,43 @@ export default function Product({
                   <div>
                     <h3 className="mb-2 font-semibold">Pricing</h3>
                     {isEditing ? (
-                      <input
-                        value={
-                          contentState.products[selectedProductIndex].pricing
-                        }
-                        onChange={(e) =>
-                          updateProductField(
-                            selectedProductIndex,
-                            "pricing",
-                            e.target.value
-                          )
-                        }
-                        className="w-full border-b"
-                      />
+                      <div className="relative">
+                        <input
+                          value={
+                            contentState.products[selectedProductIndex].pricing
+                          }
+                          onChange={(e) =>
+                            updateProductField(
+                              selectedProductIndex,
+                              "pricing",
+                              e.target.value
+                            )
+                          }
+                          maxLength={30}
+                          className={`w-full border-b pr-10 ${
+                            contentState.products[selectedProductIndex].pricing
+                              .length >= 30
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
+                            contentState.products[selectedProductIndex].pricing
+                              .length >= 30
+                              ? "text-red-500 font-bold"
+                              : contentState.products[selectedProductIndex]
+                                  .pricing.length > 25
+                              ? "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {contentState.products[selectedProductIndex].pricing
+                            .length >= 30
+                            ? "MAX"
+                            : `${contentState.products[selectedProductIndex].pricing.length}/30`}
+                        </div>
+                      </div>
                     ) : (
                       <p>
                         {contentState.products[selectedProductIndex].pricing}
@@ -1026,19 +1099,43 @@ export default function Product({
                   <div>
                     <h3 className="mb-2 font-semibold">Timeline</h3>
                     {isEditing ? (
-                      <input
-                        value={
-                          contentState.products[selectedProductIndex].timeline
-                        }
-                        onChange={(e) =>
-                          updateProductField(
-                            selectedProductIndex,
-                            "timeline",
-                            e.target.value
-                          )
-                        }
-                        className="w-full border-b"
-                      />
+                      <div className="relative">
+                        <input
+                          value={
+                            contentState.products[selectedProductIndex].timeline
+                          }
+                          onChange={(e) =>
+                            updateProductField(
+                              selectedProductIndex,
+                              "timeline",
+                              e.target.value
+                            )
+                          }
+                          maxLength={50}
+                          className={`w-full border-b pr-10 ${
+                            contentState.products[selectedProductIndex].timeline
+                              .length >= 50
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
+                            contentState.products[selectedProductIndex].timeline
+                              .length >= 50
+                              ? "text-red-500 font-bold"
+                              : contentState.products[selectedProductIndex]
+                                  .timeline.length > 50
+                              ? "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {contentState.products[selectedProductIndex].timeline
+                            .length >= 50
+                            ? "MAX"
+                            : `${contentState.products[selectedProductIndex].timeline.length}/50`}
+                        </div>
+                      </div>
                     ) : (
                       <p>
                         {contentState.products[selectedProductIndex].timeline}
