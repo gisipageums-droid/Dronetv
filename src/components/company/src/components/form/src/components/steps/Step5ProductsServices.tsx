@@ -206,11 +206,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   </div>
                   <div>
                     <FormInput
-                      label="Service Description (max 200 characters)"
+                      label="Service Description (max 1000 characters)"
                       type="textarea"
                       value={service.description || ""}
                       onChange={(value: string) => {
-                        if (value.length <= 200) {
+                        if (value.length <= 1000) {
                           updateServiceDescription(index, value);
                         }
                       }}
@@ -220,17 +220,17 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
                     <div
                       className={`mt-1 text-xs ${
-                        (service.description || "").length === 200
+                        (service.description || "").length === 1000
                           ? "text-red-500"
-                          : (service.description || "").length >= 190
+                          : (service.description || "").length >= 900
                           ? "text-yellow-500"
                           : "text-slate-500"
                       }`}
                     >
-                      {(service.description || "").length}/200 characters
+                      {(service.description || "").length}/1000 characters
                     </div>
 
-                    {(service.description || "").length === 200 && (
+                    {(service.description || "").length === 1000 && (
                       <div className="mt-1 text-xs text-red-500">
                         You have reached the 200 character limit
                       </div>
@@ -300,11 +300,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   </div>
                   <div>
                     <FormInput
-                      label="Product Description (max 200 characters)"
+                      label="Product Description (max 1000 characters)"
                       type="textarea"
                       value={product.description || ""}
                       onChange={(value: string) => {
-                        if (value.length <= 200) {
+                        if (value.length <= 1000) {
                           updateProductDescription(index, value);
                         }
                       }}
@@ -314,19 +314,19 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
                     <div
                       className={`mt-1 text-xs ${
-                        (product.description || "").length === 200
+                        (product.description || "").length === 1000
                           ? "text-red-500"
-                          : (product.description || "").length >= 190
+                          : (product.description || "").length >= 900
                           ? "text-yellow-500"
                           : "text-slate-500"
                       }`}
                     >
-                      {(product.description || "").length}/200 characters
+                      {(product.description || "").length}/1000 characters
                     </div>
 
-                    {(product.description || "").length === 200 && (
+                    {(product.description || "").length === 1000 && (
                       <div className="mt-1 text-xs text-red-500">
-                        You have reached the 200 character limit
+                        You have reached the 1000 character limit
                       </div>
                     )}
                   </div>

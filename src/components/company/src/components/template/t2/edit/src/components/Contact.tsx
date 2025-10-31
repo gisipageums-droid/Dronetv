@@ -17,10 +17,8 @@ export default function Contact({ onStateChange }) {
         "Ready to transform your business? Let's start a conversation about how we can help you achieve your goals with our",
       descriptionPart2: "expert solutions",
       descriptionPart3: ".",
-    },  
-    contactInfo: [
-    
-    ],
+    },
+    contactInfo: [],
     cta: {
       title: "Ready to Get Started?",
       description:
@@ -136,16 +134,31 @@ export default function Contact({ onStateChange }) {
             transition={{ duration: 0.8, type: "spring" }}
           >
             {isEditing ? (
-              <input
-                value={contactSection.header.title}
-                onChange={(e) =>
-                  setContactSection((prev) => ({
-                    ...prev,
-                    header: { ...prev.header, title: e.target.value },
-                  }))
-                }
-                className="w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground"
-              />
+              <div className="relative">
+                <input
+                  value={contactSection.header.title}
+                  onChange={(e) =>
+                    setContactSection((prev) => ({
+                      ...prev,
+                      header: { ...prev.header, title: e.target.value },
+                    }))
+                  }
+                  maxLength={80}
+                  className={`w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground ${
+                    contactSection.header.title.length >= 80
+                      ? "border-red-500"
+                      : ""
+                  }`}
+                />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {contactSection.header.title.length}/80
+                  {contactSection.header.title.length >= 80 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Limit reached!
+                    </span>
+                  )}
+                </div>
+              </div>
             ) : (
               <h2 className="mb-4 text-3xl md:text-4xl text-foreground">
                 {contactSection.header.title}
@@ -160,45 +173,90 @@ export default function Contact({ onStateChange }) {
           >
             {isEditing ? (
               <div className="flex flex-col items-center">
-                <input
-                  value={contactSection.header.descriptionPart1}
-                  onChange={(e) =>
-                    setContactSection((prev) => ({
-                      ...prev,
-                      header: {
-                        ...prev.header,
-                        descriptionPart1: e.target.value,
-                      },
-                    }))
-                  }
-                  className="w-full mb-2 text-lg text-center bg-transparent border-b text-muted-foreground"
-                />
-                <input
-                  value={contactSection.header.descriptionPart2}
-                  onChange={(e) =>
-                    setContactSection((prev) => ({
-                      ...prev,
-                      header: {
-                        ...prev.header,
-                        descriptionPart2: e.target.value,
-                      },
-                    }))
-                  }
-                  className="w-full mb-2 text-lg font-semibold text-center bg-transparent border-b text-red-accent"
-                />
-                <input
-                  value={contactSection.header.descriptionPart3}
-                  onChange={(e) =>
-                    setContactSection((prev) => ({
-                      ...prev,
-                      header: {
-                        ...prev.header,
-                        descriptionPart3: e.target.value,
-                      },
-                    }))
-                  }
-                  className="w-full text-lg text-center bg-transparent border-b text-muted-foreground"
-                />
+                <div className="relative w-full mb-2">
+                  <input
+                    value={contactSection.header.descriptionPart1}
+                    onChange={(e) =>
+                      setContactSection((prev) => ({
+                        ...prev,
+                        header: {
+                          ...prev.header,
+                          descriptionPart1: e.target.value,
+                        },
+                      }))
+                    }
+                    maxLength={100}
+                    className={`w-full mb-2 text-lg text-center bg-transparent border-b text-muted-foreground ${
+                      contactSection.header.descriptionPart1.length >= 100
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {contactSection.header.descriptionPart1.length}/100
+                    {contactSection.header.descriptionPart1.length >= 100 && (
+                      <span className="ml-2 text-red-500 font-bold">
+                        Limit reached!
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="relative w-full mb-2">
+                  <input
+                    value={contactSection.header.descriptionPart2}
+                    onChange={(e) =>
+                      setContactSection((prev) => ({
+                        ...prev,
+                        header: {
+                          ...prev.header,
+                          descriptionPart2: e.target.value,
+                        },
+                      }))
+                    }
+                    maxLength={30}
+                    className={`w-full mb-2 text-lg font-semibold text-center bg-transparent border-b text-red-accent ${
+                      contactSection.header.descriptionPart2.length >= 30
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {contactSection.header.descriptionPart2.length}/30
+                    {contactSection.header.descriptionPart2.length >= 30 && (
+                      <span className="ml-2 text-red-500 font-bold">
+                        Limit reached!
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="relative w-full">
+                  <input
+                    value={contactSection.header.descriptionPart3}
+                    onChange={(e) =>
+                      setContactSection((prev) => ({
+                        ...prev,
+                        header: {
+                          ...prev.header,
+                          descriptionPart3: e.target.value,
+                        },
+                      }))
+                    }
+                    maxLength={10}
+                    className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${
+                      contactSection.header.descriptionPart3.length >= 10
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {contactSection.header.descriptionPart3.length}/10
+                    {contactSection.header.descriptionPart3.length >= 10 && (
+                      <span className="ml-2 text-red-500 font-bold">
+                        Limit reached!
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             ) : (
               <>

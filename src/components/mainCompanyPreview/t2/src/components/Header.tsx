@@ -6,7 +6,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import logo from "/images/Drone tv .in.jpg";
 
-export default function Header({headerData}) {
+export default function Header({ headerData }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
   
@@ -90,38 +90,37 @@ export default function Header({headerData}) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo - Limited width to prevent taking too much space */}
-          <div className="flex items-center flex-shrink-0 max-w-[200px]">
+          {/* Logo - Improved responsiveness */}
+          <div className="flex items-center flex-shrink-0 max-w-[140px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px]">
             <motion.div
               className="w-8 h-8 rounded-lg flex items-center justify-center mr-2 flex-shrink-0"
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6 }}
             >
-               <img
-                  src={headerData.logoUrl || logo}
-                  alt="Logo"
-                  className="w-full h-full object-contain"
-                />
+              <img
+                src={headerData.logoUrl || logo}
+                alt="Logo"
+                className="w-full h-full object-contain"
+              />
             </motion.div>
-            <motion.span className={`text-xl font-bold text-black truncate
-              ${
-        theme === "dark"
-          ? "bg-gray-800 border-gray-700 text-gray-300"
-          : "bg-white border-gray-200"
-      }`}>
+            <motion.span 
+              className={`text-lg md:text-xl font-bold truncate ${
+                theme === "dark" ? "text-gray-300" : "text-black"
+              }`}
+            >
               {headerData.companyName}
             </motion.span>
           </div>
 
-          {/* Desktop Nav - Centered with proper spacing */}
-          <nav className="hidden lg:flex items-center justify-center flex-1 mx-8">
-            <div className="flex items-center space-x-6 flex-wrap justify-center">
+          {/* Desktop Nav - Improved responsiveness */}
+          <nav className="hidden lg:flex items-center justify-center flex-1 mx-4 xl:mx-8">
+            <div className="flex items-center space-x-4 xl:space-x-6 flex-wrap justify-center">
               {staticNavItems.map((item) => (
                 <motion.a
                   key={item.id}
                   href={item.href}
                   onClick={(e) => handleDesktopNavigation(e, item.href)}
-                  className={`font-medium relative group whitespace-nowrap ${
+                  className={`font-medium relative group whitespace-nowrap text-sm xl:text-base ${
                     theme === "dark"
                       ? "text-gray-300 hover:text-gray-200"
                       : "text-gray-700 hover:text-primary"
@@ -130,7 +129,11 @@ export default function Header({headerData}) {
                 >
                   {item.label}
                   <motion.span
-                    className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-${item.color} transition-all group-hover:w-full`}
+                    className={`absolute -bottom-1 left-0 w-0 h-0.5 ${
+                      item.color === "red-accent" 
+                        ? "bg-red-500" 
+                        : "bg-primary"
+                    } transition-all group-hover:w-full`}
                     transition={{ duration: 0.3 }}
                   />
                 </motion.a>
@@ -138,69 +141,97 @@ export default function Header({headerData}) {
             </div>
           </nav>
 
-          {/* Right side - Fixed width to prevent shifting */}
-          <div className="flex items-center space-x-4 flex-shrink-0">
-            <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap">
+          {/* Right side - Improved responsive spacing and sizing */}
+          <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0">
+            <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap text-sm px-3 py-2 md:px-4 md:py-2">
               <a 
                 href="#contact" 
                 onClick={(e) => handleDesktopNavigation(e, '#contact')}
+                className="text-xs sm:text-sm"
               >
                 {headerData.ctaText}
               </a>
             </Button>
 
-            <ThemeToggle />
+            <div className="hidden xs:block">
+              <ThemeToggle />
+            </div>
           </div>
 
-          {/* Mobile menu button */}
-          <motion.div className="lg:hidden flex-shrink-0">
+          {/* Mobile menu button - Improved visibility */}
+          <motion.div className="lg:hidden flex items-center space-x-2 flex-shrink-0">
+            {/* Show ThemeToggle on mobile when menu is closed */}
+            <AnimatePresence>
+              {!isMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="xs:hidden" // Hide on very small screens when menu is open
+                >
+                  <ThemeToggle />
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-primary transition-colors p-2"
+              className={`p-2 rounded-md transition-colors ${
+                theme === "dark" 
+                  ? "text-gray-300 hover:bg-gray-700" 
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               animate={{ rotate: isMenuOpen ? 180 : 0 }}
               transition={{ duration: 0.3 }}
             >
               <AnimatePresence mode="wait">
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </AnimatePresence>
             </motion.button>
           </motion.div>
         </div>
 
-        {/* Mobile Nav - Using static navigation items */}
+        {/* Mobile Nav - Improved spacing and typography */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className="lg:hidden border-t border-gray-200 overflow-hidden"
+              className={`lg:hidden border-t overflow-hidden ${
+                theme === "dark" ? "border-gray-700" : "border-gray-200"
+              }`}
               variants={menuVariants}
               initial="closed"
               animate="open"
               exit="closed"
             >
-              <motion.nav className="flex flex-col space-y-4 py-4">
+              <motion.nav className="flex flex-col space-y-2 py-4">
                 {staticNavItems.map((item) => (
                   <motion.button
                     key={item.id}
                     onClick={() => handleScrollToSection(item.href)}
-                    className={`text-left hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10 ${
-                    theme === "dark"
-                      ? "text-gray-300 hover:text-gray-200"
-                      : "text-gray-700 hover:text-primary"
-                  }`}
+                    className={`text-left transition-colors py-3 px-4 rounded-lg text-base font-medium ${
+                      theme === "dark"
+                        ? "text-gray-300 hover:text-gray-200 hover:bg-gray-700"
+                        : "text-gray-700 hover:text-primary hover:bg-gray-50"
+                    }`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
                   >
                     {item.label}
                   </motion.button>
                 ))}
-                <Button 
-                  className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
-                  onClick={() => handleScrollToSection('#contact')}
+                <motion.div 
+                  className="px-4 pt-2"
+                  variants={itemVariants}
                 >
-                  {headerData.ctaText}
-                </Button>
+                  <Button 
+                    className="bg-primary text-black hover:bg-primary/90 w-full shadow-lg py-3 text-base font-medium"
+                    onClick={() => handleScrollToSection('#contact')}
+                  >
+                    {headerData.ctaText}
+                  </Button>
+                </motion.div>
               </motion.nav>
             </motion.div>
           )}

@@ -22,10 +22,20 @@ export default function Testimonials({
   const [croppingFor, setCroppingFor] = useState(null); // { index, field }
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  // rotation removed to avoid artifacts; use zoom + crop only
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(1);
+
+  // Text field limits
+  const TEXT_LIMITS = {
+    headlineTitle: 60,
+    headlineDescription: 120,
+    testimonialQuote: 300,
+    testimonialName: 40,
+    testimonialRole: 30,
+  };
 
   // Pending images for upload
   const [pendingTestimonialImages, setPendingTestimonialImages] = useState({});
@@ -95,9 +105,11 @@ export default function Testimonials({
       setOriginalFile(file);
       setCroppingFor({ index, field: "image" });
       setShowCropper(true);
+      setAspectRatio(1); // Default to 1:1 for testimonials
       // Reset crop settings
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -121,18 +133,21 @@ export default function Testimonials({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-
-    if (!ctx) throw new Error("Canvas 2D context not available");
 
     // Set canvas size to the desired crop size
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
 
-    // Draw the cropped image directly (rotation removed)
+    // Translate and rotate the context
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
+    // Draw the cropped image
     ctx.drawImage(
       image,
       pixelCrop.x,
@@ -145,11 +160,9 @@ export default function Testimonials({
       pixelCrop.height
     );
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          if (!blob) return reject(new Error("Failed to create image blob"));
-
           // Create a proper file with original file name or generate one
           const fileName = originalFile
             ? `cropped-${originalFile.name}`
@@ -162,7 +175,11 @@ export default function Testimonials({
 
           // Create object URL for preview
           const previewUrl = URL.createObjectURL(blob);
-          resolve({ file, previewUrl });
+
+          resolve({
+            file,
+            previewUrl,
+          });
         },
         "image/jpeg",
         0.95
@@ -180,7 +197,8 @@ export default function Testimonials({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -211,11 +229,13 @@ export default function Testimonials({
     setCroppingFor(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -312,112 +332,155 @@ export default function Testimonials({
     },
   };
 
+  const cardVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+      },
+    },
+  };
 
   return (
     <>
-      {/* Image Cropper Modal - Same as Hero */}
+      {/* Image Cropper Modal - Testimonials (Same as Clients) */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-2 border-b border-gray-200 sm:p-3 bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Testimonial Image
-              </h3>
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Crop Testimonial Image
+                </h3>
+              </div>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                aria-label="Close cropper"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="relative flex-1 bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop || undefined}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={1} // Square aspect for testimonial images
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
             {/* Controls */}
-            <div className="p-2 border-t border-gray-200 sm:p-3 bg-gray-50">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
                 </div>
-
-                {/* Rotation removed - use zoom + crop only */}
               </div>
 
-              {/* Action Buttons - equal width & responsive */}
-              <div className="grid grid-cols-1 gap-2 mt-3 sm:grid-cols-3">
-                <Button
-                  variant="outline"
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
                   onClick={resetCropSettings}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
                 >
                   Reset
-                </Button>
-
-                <Button
-                  variant="outline"
+                </button>
+                <button
                   onClick={cancelCrop}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
                 >
                   Cancel
-                </Button>
-
-                <Button
+                </button>
+                <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm"
                 >
                   Apply Crop
-                </Button>
+                </button>
               </div>
             </div>
           </motion.div>
@@ -432,7 +495,7 @@ export default function Testimonials({
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
       >
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mt-6">
             {isEditing ? (
@@ -454,343 +517,303 @@ export default function Testimonials({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
+                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
               </motion.button>
             )}
           </div>
 
-          {/* Header */}
+          {/* Headline */}
           <motion.div
-            className="max-w-3xl mx-auto mb-16 text-center"
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
             {isEditing ? (
               <>
-                <input
-                  value={testimonialsSection.headline.title}
-                  onChange={(e) =>
-                    setTestimonialsSection((prev) => ({
-                      ...prev,
-                      headline: { ...prev.headline, title: e.target.value },
-                    }))
-                  }
-                  className="w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground"
-                />
-                <textarea
-                  value={testimonialsSection.headline.description}
-                  onChange={(e) =>
-                    setTestimonialsSection((prev) => ({
-                      ...prev,
-                      headline: {
-                        ...prev.headline,
-                        description: e.target.value,
-                      },
-                    }))
-                  }
-                  className="w-full text-lg text-center bg-transparent border-b text-muted-foreground"
-                  rows={2}
-                />
+                <div className="relative">
+                  <input
+                    value={testimonialsSection.headline.title}
+                    onChange={(e) =>
+                      setTestimonialsSection((prev) => ({
+                        ...prev,
+                        headline: {
+                          ...prev.headline,
+                          title: e.target.value,
+                        },
+                      }))
+                    }
+                    maxLength={TEXT_LIMITS.headlineTitle}
+                    className={`text-3xl md:text-4xl font-bold text-foreground bg-transparent border-b outline-none w-full max-w-2xl mx-auto text-center ${
+                      testimonialsSection.headline.title.length >=
+                      TEXT_LIMITS.headlineTitle
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <div>
+                      {testimonialsSection.headline.title.length >=
+                        TEXT_LIMITS.headlineTitle && (
+                        <span className="text-red-500 font-bold">
+                          ⚠️ Character limit reached!
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      {testimonialsSection.headline.title.length}/
+                      {TEXT_LIMITS.headlineTitle}
+                    </div>
+                  </div>
+                </div>
+                <div className="relative mt-4">
+                  <textarea
+                    value={testimonialsSection.headline.description}
+                    onChange={(e) =>
+                      setTestimonialsSection((prev) => ({
+                        ...prev,
+                        headline: {
+                          ...prev.headline,
+                          description: e.target.value,
+                        },
+                      }))
+                    }
+                    maxLength={TEXT_LIMITS.headlineDescription}
+                    className={`text-lg text-muted-foreground bg-transparent border-b outline-none w-full max-w-3xl mx-auto text-center ${
+                      testimonialsSection.headline.description.length >=
+                      TEXT_LIMITS.headlineDescription
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <div>
+                      {testimonialsSection.headline.description.length >=
+                        TEXT_LIMITS.headlineDescription && (
+                        <span className="text-red-500 font-bold">
+                          ⚠️ Character limit reached!
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      {testimonialsSection.headline.description.length}/
+                      {TEXT_LIMITS.headlineDescription}
+                    </div>
+                  </div>
+                </div>
               </>
             ) : (
               <>
-                <h2 className="mb-4 text-3xl md:text-4xl text-foreground">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                   {testimonialsSection.headline.title}
                 </h2>
-                <p className="text-lg text-muted-foreground">
+                <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
                   {testimonialsSection.headline.description}
                 </p>
               </>
             )}
           </motion.div>
 
-          {/* Testimonials Marquee Container */}
-          <div className="w-full overflow-hidden group">
-            <style>
-              {`
-                @keyframes marquee {
-                  0% { transform: translateX(0%); }
-                  100% { transform: translateX(-50%); }
-                }
-                .animate-marquee {
-                  animation: marquee 60s linear infinite;
-                }
-                .group:hover .animate-marquee {
-                  animation-play-state: paused;
-                }
-              `}
-            </style>
+          {/* Testimonials Grid */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {testimonialsSection.testimonials.map((testimonial, idx) => (
+              <motion.div key={idx} variants={cardVariants}>
+                <Card className="h-full bg-card border-border shadow-lg hover:shadow-xl transition-all duration-300">
+                  <CardContent className="p-6 h-full flex flex-col">
+                    {/* Stars */}
+                    <div className="flex mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-5 h-5 ${
+                            i < testimonial.rating
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
 
+                    {/* Quote */}
+                    {isEditing ? (
+                      <div className="relative mb-6">
+                        <textarea
+                          value={testimonial.quote}
+                          onChange={(e) =>
+                            updateTestimonial(idx, "quote", e.target.value)
+                          }
+                          maxLength={TEXT_LIMITS.testimonialQuote}
+                          className={`flex-1 text-muted-foreground bg-transparent border-b outline-none w-full resize-none min-h-[80px] ${
+                            testimonial.quote.length >=
+                            TEXT_LIMITS.testimonialQuote
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <div>
+                            {testimonial.quote.length >=
+                              TEXT_LIMITS.testimonialQuote && (
+                              <span className="text-red-500 font-bold">
+                                ⚠️ Character limit reached!
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            {testimonial.quote.length}/
+                            {TEXT_LIMITS.testimonialQuote}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="flex-1 text-muted-foreground mb-6">
+                        {testimonial.quote}
+                      </p>
+                    )}
+
+                    {/* Author */}
+                    <div className="flex items-center space-x-4">
+                      <div className="relative">
+                        <ImageWithFallback
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className="w-12 h-12 rounded-full object-cover"
+                          fallbackSrc="/api/placeholder/48/48"
+                        />
+                        {isEditing && (
+                          <div className="absolute -bottom-1 -right-1">
+                            <label className="bg-white border rounded-full p-1 cursor-pointer shadow-sm">
+                              <svg
+                                className="w-3 h-3 text-gray-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) =>
+                                  handleTestimonialImageSelect(e, idx)
+                                }
+                              />
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        {isEditing ? (
+                          <>
+                            <div className="relative">
+                              <input
+                                value={testimonial.name}
+                                onChange={(e) =>
+                                  updateTestimonial(idx, "name", e.target.value)
+                                }
+                                maxLength={TEXT_LIMITS.testimonialName}
+                                className={`font-semibold text-card-foreground bg-transparent border-b outline-none w-full ${
+                                  testimonial.name.length >=
+                                  TEXT_LIMITS.testimonialName
+                                    ? "border-red-500"
+                                    : ""
+                                }`}
+                              />
+                              <div className="text-right text-xs text-gray-500 mt-1">
+                                {testimonial.name.length}/
+                                {TEXT_LIMITS.testimonialName}
+                              </div>
+                            </div>
+                            <div className="relative">
+                              <input
+                                value={testimonial.role}
+                                onChange={(e) =>
+                                  updateTestimonial(idx, "role", e.target.value)
+                                }
+                                maxLength={TEXT_LIMITS.testimonialRole}
+                                className={`text-sm text-muted-foreground bg-transparent border-b outline-none w-full ${
+                                  testimonial.role.length >=
+                                  TEXT_LIMITS.testimonialRole
+                                    ? "border-red-500"
+                                    : ""
+                                }`}
+                              />
+                              <div className="text-right text-xs text-gray-500 mt-1">
+                                {testimonial.role.length}/
+                                {TEXT_LIMITS.testimonialRole}
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h4 className="font-semibold text-card-foreground truncate">
+                              {testimonial.name}
+                            </h4>
+                            <p className="text-sm text-muted-foreground truncate">
+                              {testimonial.role}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Remove button in edit mode */}
+                    {isEditing && (
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        whileHover={{ scale: 1.1 }}
+                        onClick={() => removeTestimonial(idx)}
+                        className="text-red-500 cursor-pointer text-sm mt-4 self-start"
+                      >
+                        ✕ Remove
+                      </motion.button>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+
+            {/* Add testimonial button in edit mode */}
             {isEditing && (
               <motion.div
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.1 }}
-                className="flex items-center justify-center mb-8"
+                variants={cardVariants}
+                className="flex items-center justify-center"
               >
-                <Button
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.1 }}
                   onClick={addTestimonial}
-                  className="text-green-600 cursor-pointer"
+                  className="w-full h-full min-h-[200px] border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
                 >
-                  + Add Testimonial
-                </Button>
+                  <div className="text-2xl mb-2">+</div>
+                  <div>Add Testimonial</div>
+                </motion.button>
               </motion.div>
             )}
-
-            {isEditing ? (
-              // Grid layout for editing
-              <motion.div
-                className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
-                variants={containerVariants}
-                transition={{ duration: 0.8 }}
-                animate={{ opacity: [0, 1], y: [50, 0] }}
-                viewport={{ once: true }}
-              >
-                {testimonialsSection.testimonials.map((testimonial, index) => (
-                  <TestimonialCard
-                    key={index}
-                    testimonial={testimonial}
-                    index={index}
-                    isEditing={isEditing}
-                    updateTestimonial={updateTestimonial}
-                    removeTestimonial={removeTestimonial}
-                    onImageSelect={handleTestimonialImageSelect}
-                    hasPendingImage={pendingTestimonialImages[index]}
-                  />
-                ))}
-              </motion.div>
-            ) : (
-              // Marquee layout for non-editing
-              <motion.div
-                className="flex gap-8 animate-marquee"
-                variants={containerVariants}
-                transition={{ duration: 0.8 }}
-                animate={{ opacity: [0, 1], y: [50, 0] }}
-                viewport={{ once: true }}
-              >
-                {duplicatedTestimonials.map((testimonial, index) => (
-                  <div key={index} className="flex-shrink-0 w-80 lg:w-96">
-                    <TestimonialCard
-                      testimonial={testimonial}
-                      index={index % testimonialsSection.testimonials.length}
-                      isEditing={isEditing}
-                      updateTestimonial={updateTestimonial}
-                      removeTestimonial={removeTestimonial}
-                      onImageSelect={handleTestimonialImageSelect}
-                      hasPendingImage={
-                        pendingTestimonialImages[
-                          index % testimonialsSection.testimonials.length
-                        ]
-                      }
-                    />
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </div>
+          </motion.div>
         </div>
       </motion.section>
     </>
-  );
-}
-
-// Updated Testimonial Card Component with image upload
-function TestimonialCard({
-  testimonial,
-  index,
-  isEditing,
-  updateTestimonial,
-  removeTestimonial,
-  onImageSelect,
-  hasPendingImage,
-}) {
-  return (
-    <motion.div
-      variants={{
-        hidden: { y: 50, opacity: 0 },
-        visible: {
-          y: 0,
-          opacity: 1,
-          transition: {
-            duration: 0.8,
-            ease: "easeOut",
-          },
-        },
-      }}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.3 }}
-      className="h-full"
-    >
-      <Card className="flex flex-col h-full transition-all duration-300 bg-card border-border hover:shadow-xl hover:border-primary/30">
-        <CardContent className="flex flex-col flex-grow p-8">
-          {/* Rating with float support */}
-          <div className="flex flex-shrink-0 mb-4 space-x-1">
-            {[...Array(5)].map((_, i) => {
-              const ratingValue = i + 1;
-              const rating = Math.floor(testimonial.rating) || 5;
-
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ scale: 0, rotate: -180 }}
-                  whileInView={{ scale: 1, rotate: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    delay: index * 0.1 + i * 0.05,
-                    duration: 0.4,
-                    type: "spring",
-                  }}
-                  whileHover={{ scale: 1.2 }}
-                  className="relative"
-                >
-                  {/* Empty star background */}
-                  <Star className="w-5 h-5 text-gray-300" />
-
-                  {/* Filled star overlay */}
-                  {ratingValue <= rating ? (
-                    <Star className="absolute top-0 left-0 w-5 h-5 fill-primary text-primary" />
-                  ) : ratingValue === Math.ceil(rating) && rating % 1 !== 0 ? (
-                    // Partial star for decimal ratings
-                    <div
-                      className="absolute top-0 left-0 overflow-hidden"
-                      style={{ width: `${(rating % 1) * 100}%` }}
-                    >
-                      <Star className="w-5 h-5 fill-primary text-primary" />
-                    </div>
-                  ) : null}
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Quote */}
-          <div className="flex-grow mb-6">
-            {isEditing ? (
-              <textarea
-                value={testimonial.quote}
-                onChange={(e) =>
-                  updateTestimonial(index, "quote", e.target.value)
-                }
-                className="text-card-foreground leading-relaxed w-full border-b bg-transparent min-h-[120px]"
-                rows={4}
-              />
-            ) : (
-              <blockquote className="text-card-foreground leading-relaxed min-h-[120px]">
-                <span className="leading-relaxed text-card-foreground line-clamp-6">
-                  {testimonial.quote}
-                </span>
-              </blockquote>
-            )}
-          </div>
-
-          {/* Author */}
-          <div className="flex items-center mt-auto space-x-4">
-            <motion.div
-              className="relative flex-shrink-0 w-12 h-12 overflow-hidden rounded-full"
-              whileHover={{ scale: 1.1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ImageWithFallback
-                src={testimonial.image}
-                alt={testimonial.name}
-                className="object-cover w-full h-full"
-              />
-              {isEditing && (
-                <label className="absolute inset-0 flex items-center justify-center transition-opacity opacity-0 cursor-pointer bg-black/50 hover:opacity-100">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => onImageSelect(e, index)}
-                  />
-                </label>
-              )}
-              {hasPendingImage && (
-                <div
-                  className="absolute w-4 h-4 bg-green-500 border-2 border-white rounded-full -top-1 -right-1"
-                  title="Image ready for upload"
-                />
-              )}
-            </motion.div>
-            <div className="flex-grow min-w-0">
-              {isEditing ? (
-                <>
-                  <input
-                    value={testimonial.name}
-                    onChange={(e) =>
-                      updateTestimonial(index, "name", e.target.value)
-                    }
-                    className="w-full font-medium bg-transparent border-b text-card-foreground"
-                  />
-                  <input
-                    value={testimonial.role}
-                    onChange={(e) =>
-                      updateTestimonial(index, "role", e.target.value)
-                    }
-                    className="w-full mt-1 text-sm bg-transparent border-b text-muted-foreground"
-                  />
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-sm">Rating:</span>
-                    <input
-                      type="number"
-                      min={1}
-                      max={5}
-                      value={testimonial.rating}
-                      onChange={(e) =>
-                        updateTestimonial(
-                          index,
-                          "rating",
-                          Number(e.target.value)
-                        )
-                      }
-                      className="w-16 px-2 py-1 text-sm border rounded"
-                    />
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      className="ml-2 cursor-pointer hover:scale-105"
-                      onClick={() => removeTestimonial(index)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="font-medium truncate text-card-foreground">
-                    {testimonial.name}
-                  </div>
-                  <div className="text-sm truncate text-muted-foreground">
-                    {testimonial.role}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
   );
 }

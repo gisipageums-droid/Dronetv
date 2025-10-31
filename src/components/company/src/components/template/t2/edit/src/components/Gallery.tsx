@@ -9,7 +9,6 @@ import {
   Save,
   Plus,
   Trash2,
-  ZoomIn,
 } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
@@ -33,9 +32,20 @@ const Gallery = ({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Text field limits
+  const TEXT_LIMITS = {
+    headingTitle: 60,
+    headingDescription: 120,
+    imageTitle: 40,
+    imageCategory: 30,
+    imageDescription: 100,
+  };
 
   // Consolidated state with new structure
   const [contentState, setContentState] = useState(
@@ -127,30 +137,27 @@ const Gallery = ({
     }));
   };
 
-  // Add a new image
+  // Add a new image - with maximum 6 images limit
   const addImage = () => {
-    setContentState((prev) => {
-      // Prevent adding more than 6 images in edit mode
-      if (prev.images.length >= 6) {
-        toast.info("Maximum 6 images allowed");
-        return prev;
-      }
+    if (contentState.images.length >= 6) {
+      toast.error("Maximum 6 images allowed in gallery");
+      return;
+    }
 
-      return {
-        ...prev,
-        images: [
-          ...prev.images,
-          {
-            id: Date.now(),
-            url: null,
-            title: "New Image",
-            category: "Portfolio",
-            description: "New image description",
-            isPopular: false,
-          },
-        ],
-      };
-    });
+    setContentState((prev) => ({
+      ...prev,
+      images: [
+        ...prev.images,
+        {
+          id: Date.now(),
+          url: null,
+          title: "New Image",
+          category: "Portfolio",
+          description: "New image description",
+          isPopular: false,
+        },
+      ],
+    }));
   };
 
   // Remove an image
@@ -193,7 +200,9 @@ const Gallery = ({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
+      setAspectRatio(4 / 3);
       setZoom(1);
+      setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
@@ -218,13 +227,18 @@ const Gallery = ({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
+
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
     ctx.drawImage(
       image,
       pixelCrop.x,
@@ -269,7 +283,8 @@ const Gallery = ({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -298,11 +313,13 @@ const Gallery = ({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -399,104 +416,135 @@ const Gallery = ({
 
   return (
     <>
-      {/* Image Cropper Modal - Same as Hero */}
+      {/* Image Cropper Modal - Standardized like Clients */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-2 border-b border-gray-200 sm:p-3 bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Image
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Gallery Image
               </h3>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                aria-label="Close cropper"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="relative flex-1 bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop || undefined}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={4 / 3}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
             {/* Controls */}
-            <div className="p-2 border-t border-gray-200 sm:p-3 bg-gray-50">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
                 </div>
-
-                {/* Rotation removed - control hidden */}
               </div>
 
-              {/* Action Buttons - equal width & responsive */}
-              <div className="grid grid-cols-1 gap-2 mt-3 sm:grid-cols-3">
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
-
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
-
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
                 >
                   Apply Crop
                 </button>
@@ -549,19 +597,63 @@ const Gallery = ({
           <div className="mb-16 text-center">
             {isEditing ? (
               <>
-                <input
-                  type="text"
-                  value={contentState.heading.title}
-                  onChange={(e) => updateHeaderField("title", e.target.value)}
-                  className="mb-4 text-3xl font-bold text-center border-b"
-                />
-                <textarea
-                  value={contentState.heading.description}
-                  onChange={(e) =>
-                    updateHeaderField("description", e.target.value)
-                  }
-                  className="w-full max-w-3xl mx-auto text-lg text-center border-b"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={contentState.heading.title}
+                    onChange={(e) => updateHeaderField("title", e.target.value)}
+                    maxLength={TEXT_LIMITS.headingTitle}
+                    className={`mb-4 text-3xl font-bold text-center bg-transparent border-b w-full max-w-2xl mx-auto ${
+                      contentState.heading.title.length >=
+                      TEXT_LIMITS.headingTitle
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <div>
+                      {contentState.heading.title.length >=
+                        TEXT_LIMITS.headingTitle && (
+                        <span className="text-red-500 font-bold">
+                          ⚠️ Character limit reached!
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      {contentState.heading.title.length}/
+                      {TEXT_LIMITS.headingTitle}
+                    </div>
+                  </div>
+                </div>
+                <div className="relative">
+                  <textarea
+                    value={contentState.heading.description}
+                    onChange={(e) =>
+                      updateHeaderField("description", e.target.value)
+                    }
+                    maxLength={TEXT_LIMITS.headingDescription}
+                    className={`w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b ${
+                      contentState.heading.description.length >=
+                      TEXT_LIMITS.headingDescription
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <div>
+                      {contentState.heading.description.length >=
+                        TEXT_LIMITS.headingDescription && (
+                        <span className="text-red-500 font-bold">
+                          ⚠️ Character limit reached!
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      {contentState.heading.description.length}/
+                      {TEXT_LIMITS.headingDescription}
+                    </div>
+                  </div>
+                </div>
               </>
             ) : (
               <>
@@ -587,6 +679,13 @@ const Gallery = ({
                 onClick={() => openLightbox(index)}
               >
                 <div className="relative overflow-hidden">
+                  {/* Recommended Size Above Image */}
+                  {isEditing && (
+                    <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                      Recommended: 600×450px (4:3 ratio)
+                    </div>
+                  )}
+
                   {image.url ? (
                     <img
                       src={image.url}
@@ -605,16 +704,16 @@ const Gallery = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute z-20 p-1 mx-2 rounded top-2 left-2 bg-[white] text-[black] font-bold"
+                      className="absolute bottom-2 left-2 right-2 bg-white/80 p-2 rounded z-50"
                     >
                       <input
                         type="file"
                         accept="image/*"
-                        className="w-full text-xs cursor-pointer"
+                        className="w-full text-xs cursor-pointer font-bold"
                         onChange={(e) => handleGalleryImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="mt-1 text-xs text-green-600">
+                        <p className="text-xs text-green-600 mt-1 text-center">
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
@@ -622,27 +721,49 @@ const Gallery = ({
                   )}
 
                   <div className="absolute inset-0 flex items-end transition-all duration-300 bg-black bg-opacity-0 group-hover:bg-opacity-30">
-                    <div className="w-full p-4 text-[black] font-bold transition-opacity duration-300 ">
+                    <div className="w-full p-4 text-white transition-opacity duration-300 opacity-0 group-hover:opacity-100">
                       {isEditing ? (
                         <>
-                          <input
-                            value={image.title}
-                            onChange={(e) =>
-                              updateImageField(index, "title", e.target.value)
-                            }
-                            className="w-full mb-1 font-semibold bg-transparent border-b"
-                          />
-                          <input
-                            value={image.category}
-                            onChange={(e) =>
-                              updateImageField(
-                                index,
-                                "category",
-                                e.target.value
-                              )
-                            }
-                            className="w-full text-sm bg-transparent border-b"
-                          />
+                          <div className="relative mb-1">
+                            <input
+                              value={image.title}
+                              onChange={(e) =>
+                                updateImageField(index, "title", e.target.value)
+                              }
+                              maxLength={TEXT_LIMITS.imageTitle}
+                              className={`w-full font-semibold bg-transparent border-b ${
+                                image.title.length >= TEXT_LIMITS.imageTitle
+                                  ? "border-red-500"
+                                  : ""
+                              }`}
+                            />
+                            <div className="text-right text-xs text-gray-300 mt-1">
+                              {image.title.length}/{TEXT_LIMITS.imageTitle}
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <input
+                              value={image.category}
+                              onChange={(e) =>
+                                updateImageField(
+                                  index,
+                                  "category",
+                                  e.target.value
+                                )
+                              }
+                              maxLength={TEXT_LIMITS.imageCategory}
+                              className={`w-full text-sm bg-transparent border-b ${
+                                image.category.length >=
+                                TEXT_LIMITS.imageCategory
+                                  ? "border-red-500"
+                                  : ""
+                              }`}
+                            />
+                            <div className="text-right text-xs text-gray-300 mt-1">
+                              {image.category.length}/
+                              {TEXT_LIMITS.imageCategory}
+                            </div>
+                          </div>
                         </>
                       ) : (
                         <>
@@ -661,7 +782,7 @@ const Gallery = ({
                         e.stopPropagation();
                         removeImage(index);
                       }}
-                      className="absolute p-1 text-white bg-red-500 rounded-full top-2 right-2"
+                      className="absolute p-1 text-white bg-red-500 rounded-full top-12 right-2"
                     >
                       <Trash2 size={16} />
                     </motion.button>
@@ -670,6 +791,7 @@ const Gallery = ({
               </motion.div>
             ))}
 
+            {/* Show Add Image button only when there are less than 6 images */}
             {isEditing && contentState.images.length < 6 && (
               <motion.div
                 className={`rounded-lg flex items-center justify-center border-dashed ${
@@ -687,6 +809,15 @@ const Gallery = ({
               </motion.div>
             )}
           </div>
+
+          {/* Show message when maximum images reached */}
+          {isEditing && contentState.images.length >= 6 && (
+            <div className="p-4 mt-6 text-center border border-yellow-200 rounded-lg bg-yellow-50">
+              <p className="text-yellow-700">
+                Maximum 6 images reached. Remove an image to add a new one.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Lightbox Modal */}

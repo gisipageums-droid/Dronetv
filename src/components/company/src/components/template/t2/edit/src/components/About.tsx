@@ -31,9 +31,11 @@ export default function About({
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   // Map the emoji icons to Lucide React components
   const iconMap = {
@@ -164,7 +166,9 @@ export default function About({
       setImageToCrop(reader.result);
       setOriginalFile(file);
       setShowCropper(true);
+      setAspectRatio(4 / 3);
       setZoom(1);
+      setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
@@ -189,7 +193,7 @@ export default function About({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -197,6 +201,12 @@ export default function About({
     // Set canvas size to the desired crop size
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
+
+    // Translate and rotate the context
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
     // Draw the cropped image
     ctx.drawImage(
       image,
@@ -245,7 +255,8 @@ export default function About({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -272,11 +283,13 @@ export default function About({
     setOriginalFile(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -343,22 +356,22 @@ export default function About({
 
   return (
     <>
-      {/* Image Cropper Modal */}
+      {/* Image Cropper Modal - Updated to match About1.tsx */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Image
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop About Image
               </h3>
               <button
                 onClick={cancelCrop}
@@ -369,82 +382,109 @@ export default function About({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop || undefined}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={4 / 3}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
             {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer
-              [&::-webkit-slider-thumb]:appearance-none
-              [&::-webkit-slider-thumb]:h-3.5
-              [&::-webkit-slider-thumb]:w-3.5
-              [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
                 </div>
-
-                {/* Rotation removed - use zoom + crop only */}
               </div>
 
-              {/* Buttons - Equal Width Responsive */}
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
-
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
-
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
                 >
                   Apply Crop
                 </button>
@@ -453,6 +493,7 @@ export default function About({
           </motion.div>
         </motion.div>
       )}
+
       <section id="about" className="py-20 bg-secondary theme-transition">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit / Save */}
@@ -491,22 +532,27 @@ export default function About({
               whileInView={{ opacity: [0, 1], x: [-50, 0] }}
               transition={{ duration: 0.8 }}
             >
+              {/* Recommended Size Above Image */}
+              {isEditing && (
+                <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                  Recommended: 800×600px (4:3 ratio)
+                </div>
+              )}
               <img
                 src={aboutState.imageUrl}
                 alt="About"
                 className="w-full h-[400px] object-cover"
               />
               {isEditing && (
-                <div className="absolute bottom-4 left-4 bg-white/80 p-2 rounded shadow">
-                  <p className="text-sm mb-1">Change About Image:</p>
+                <div className="absolute bottom-4 left-4 right-4 bg-white/80 p-2 rounded shadow z-50">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageSelect}
-                    className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
+                    className="text-sm cursor-pointer font-bold w-full text-center border-2 border-dashed border-muted-foreground p-2 rounded"
                   />
                   {pendingImageFile && (
-                    <p className="text-xs text-green-600 mt-1">
+                    <p className="text-xs text-green-600 mt-1 text-center">
                       ✓ Image cropped and ready to upload
                     </p>
                   )}
@@ -522,11 +568,37 @@ export default function About({
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
                 {isEditing ? (
-                  <input
-                    value={aboutState.aboutTitle}
-                    onChange={(e) => updateField("aboutTitle", e.target.value)}
-                    className="bg-transparent border-b border-primary text-3xl md:text-4xl text-foreground outline-none"
-                  />
+                  <>
+                    <input
+                      value={aboutState.aboutTitle}
+                      onChange={(e) =>
+                        updateField("aboutTitle", e.target.value)
+                      }
+                      maxLength={50}
+                      className="bg-transparent border-b border-primary text-3xl md:text-4xl text-foreground outline-none w-full"
+                    />
+                    <div className="mt-2 flex items-center justify-between">
+                      {/* Red box message when max length reached */}
+                      <div
+                        role="status"
+                        aria-live="polite"
+                        className={`text-sm px-2 py-1 rounded ${
+                          aboutState.aboutTitle.length >= 50
+                            ? "bg-red-50 border border-red-300 text-red-700"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {aboutState.aboutTitle.length >= 50
+                          ? "Maximum length reached (50)"
+                          : `${aboutState.aboutTitle.length}/50`}
+                      </div>
+
+                      {/* Remaining characters info */}
+                      <div className="text-sm text-gray-500">
+                        {50 - aboutState.aboutTitle.length} characters left
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <h2 className="text-3xl md:text-4xl text-foreground">
                     {aboutState.aboutTitle}
@@ -573,7 +645,7 @@ export default function About({
                       <input
                         value={feature}
                         onChange={(e) => updateFeature(index, e.target.value)}
-                        className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
+                        className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full"
                       />
                     ) : (
                       <span className="text-muted-foreground">{feature}</span>
@@ -601,7 +673,7 @@ export default function About({
                       onChange={(e) =>
                         updateField("metric1Num", e.target.value)
                       }
-                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none"
+                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none w-full text-center"
                     />
                   ) : (
                     <motion.div
@@ -618,7 +690,7 @@ export default function About({
                       onChange={(e) =>
                         updateField("metric1Label", e.target.value)
                       }
-                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
+                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center"
                     />
                   ) : (
                     <motion.div
@@ -637,7 +709,7 @@ export default function About({
                       onChange={(e) =>
                         updateField("metric2Num", e.target.value)
                       }
-                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none"
+                      className="bg-transparent border-b border-foreground text-2xl font-bold outline-none w-full text-center"
                     />
                   ) : (
                     <motion.div
@@ -654,7 +726,7 @@ export default function About({
                       onChange={(e) =>
                         updateField("metric2Label", e.target.value)
                       }
-                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none"
+                      className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center"
                     />
                   ) : (
                     <motion.div
@@ -695,7 +767,7 @@ export default function About({
               <input
                 value={aboutState.visionTitle}
                 onChange={(e) => updateField("visionTitle", e.target.value)}
-                className="bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none"
+                className="bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center"
               />
             ) : (
               <motion.h2
@@ -711,7 +783,7 @@ export default function About({
               <textarea
                 value={aboutState.visionDesc}
                 onChange={(e) => updateField("visionDesc", e.target.value)}
-                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
+                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center"
               />
             ) : (
               <motion.p
@@ -743,7 +815,7 @@ export default function About({
                         onChange={(e) =>
                           updatePillar(index, "title", e.target.value)
                         }
-                        className="bg-transparent border-b border-foreground font-semibold outline-none"
+                        className="bg-transparent border-b border-foreground font-semibold outline-none w-full text-center"
                       />
                     ) : (
                       <h3 className="font-semibold text-card-foreground mb-3">
@@ -756,7 +828,7 @@ export default function About({
                         onChange={(e) =>
                           updatePillar(index, "description", e.target.value)
                         }
-                        className="w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none"
+                        className="w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none text-center"
                       />
                     ) : (
                       <p className="text-muted-foreground text-sm leading-relaxed">
@@ -776,7 +848,7 @@ export default function About({
               <input
                 value={aboutState.missionTitle}
                 onChange={(e) => updateField("missionTitle", e.target.value)}
-                className="bg-transparent border-b border-foreground text-2xl font-semibold outline-none"
+                className="bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center"
               />
             ) : (
               <motion.h3
@@ -791,7 +863,7 @@ export default function About({
               <textarea
                 value={aboutState.missionDesc}
                 onChange={(e) => updateField("missionDesc", e.target.value)}
-                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none"
+                className="w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center"
               />
             ) : (
               <motion.p

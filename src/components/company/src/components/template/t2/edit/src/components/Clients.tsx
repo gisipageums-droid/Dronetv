@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { motion } from "motion/react";
-import { Button } from "./ui/button";
-import { toast } from "react-toastify";
+// Clients.tsx - Full Updated Code with Text Limitations
 import { X, ZoomIn } from "lucide-react";
+import { motion } from "motion/react";
+import { useCallback, useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
+import { toast } from "react-toastify";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Button } from "./ui/button";
 
 export default function Clients({
   clientData,
@@ -21,11 +22,12 @@ export default function Clients({
   const [croppingFor, setCroppingFor] = useState(null); // { index: number }
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  // rotation removed to avoid black-corner artifacts
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [pendingImages, setPendingImages] = useState({});
+  const [aspectRatio, setAspectRatio] = useState(1);
 
   // Merged all state into a single object
   const [clientsSection, setClientsSection] = useState(clientData);
@@ -106,8 +108,10 @@ export default function Clients({
       setOriginalFile(file);
       setCroppingFor({ index });
       setShowCropper(true);
+      setAspectRatio(1); // Square for client images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -128,17 +132,18 @@ export default function Clients({
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    if (!ctx) throw new Error("Canvas 2D context not available");
-
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
 
-    // Draw the selected area directly (rotation removed)
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
     ctx.drawImage(
       image,
       pixelCrop.x,
@@ -151,11 +156,9 @@ export default function Clients({
       pixelCrop.height
     );
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          if (!blob) return reject(new Error("Failed to create image blob"));
-
           const fileName = originalFile
             ? `cropped-${originalFile.name}`
             : `cropped-client-${Date.now()}.jpg`;
@@ -166,7 +169,11 @@ export default function Clients({
           });
 
           const previewUrl = URL.createObjectURL(blob);
-          resolve({ file, previewUrl });
+
+          resolve({
+            file,
+            previewUrl,
+          });
         },
         "image/jpeg",
         0.95
@@ -183,7 +190,8 @@ export default function Clients({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
       // Update preview immediately
@@ -213,10 +221,12 @@ export default function Clients({
     setCroppingFor(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -311,101 +321,133 @@ export default function Clients({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Client Image
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Client Image (1:1)
               </h3>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                aria-label="Close cropper"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop || undefined}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={1} // Square aspect ratio for client images
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
             {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
                 </div>
-
-                {/* Rotation removed - use zoom + crop only */}
               </div>
 
-              {/* Action Buttons - equal width & responsive */}
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
                 <Button
                   variant="outline"
                   onClick={resetCropSettings}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
                 >
                   Reset
                 </Button>
-
                 <Button
                   variant="outline"
                   onClick={cancelCrop}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
                 >
                   Cancel
                 </Button>
-
                 <Button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
                 >
                   Apply Crop
                 </Button>
@@ -414,7 +456,6 @@ export default function Clients({
           </motion.div>
         </motion.div>
       )}
-
       <motion.section
         id="clients"
         className="py-20 bg-background theme-transition"
@@ -461,30 +502,60 @@ export default function Clients({
           >
             {isEditing ? (
               <>
-                <input
-                  value={clientsSection.headline.title}
-                  onChange={(e) =>
-                    setClientsSection((prev) => ({
-                      ...prev,
-                      headline: { ...prev.headline, title: e.target.value },
-                    }))
-                  }
-                  className="text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent"
-                />
-                <textarea
-                  value={clientsSection.headline.description}
-                  onChange={(e) =>
-                    setClientsSection((prev) => ({
-                      ...prev,
-                      headline: {
-                        ...prev.headline,
-                        description: e.target.value,
-                      },
-                    }))
-                  }
-                  className="text-lg text-muted-foreground w-full text-center border-b bg-transparent"
-                  rows={2}
-                />
+                <div className="relative mb-4">
+                  <input
+                    value={clientsSection.headline.title}
+                    onChange={(e) =>
+                      setClientsSection((prev) => ({
+                        ...prev,
+                        headline: { ...prev.headline, title: e.target.value },
+                      }))
+                    }
+                    maxLength={80}
+                    className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${
+                      clientsSection.headline.title.length >= 80
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {clientsSection.headline.title.length}/80
+                    {clientsSection.headline.title.length >= 80 && (
+                      <span className="ml-2 text-red-500 font-bold">
+                        Limit reached!
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="relative">
+                  <textarea
+                    value={clientsSection.headline.description}
+                    onChange={(e) =>
+                      setClientsSection((prev) => ({
+                        ...prev,
+                        headline: {
+                          ...prev.headline,
+                          description: e.target.value,
+                        },
+                      }))
+                    }
+                    maxLength={200}
+                    className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${
+                      clientsSection.headline.description.length >= 200
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                    rows={2}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {clientsSection.headline.description.length}/200
+                    {clientsSection.headline.description.length >= 200 && (
+                      <span className="ml-2 text-red-500 font-bold">
+                        Limit reached!
+                      </span>
+                    )}
+                  </div>
+                </div>
               </>
             ) : (
               <>
@@ -553,13 +624,16 @@ export default function Clients({
                     }}
                     transition={{ duration: 0.3 }}
                   >
+                    {isEditing && (
+                      <div className="absolute top-0 left-0 bg-black/70 text-white text-xs p-1 rounded z-10"></div>
+                    )}
                     <ImageWithFallback
                       src={client.image}
                       alt={`${client.name} logo`}
                       className="w-full h-full object-cover"
                     />
                     {isEditing && (
-                      <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                      <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
                         <svg
                           className="w-4 h-4 text-white"
                           fill="none"
@@ -600,17 +674,30 @@ export default function Clients({
                   >
                     {isEditing ? (
                       <>
-                        <input
-                          value={client.name}
-                          onChange={(e) =>
-                            updateClient(
-                              index % clientsSection.clients.length,
-                              "name",
-                              e.target.value
-                            )
-                          }
-                          className="text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center"
-                        />
+                        <div className="relative">
+                          <input
+                            value={client.name}
+                            onChange={(e) =>
+                              updateClient(
+                                index % clientsSection.clients.length,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                            maxLength={30}
+                            className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${
+                              client.name.length >= 30 ? "border-red-500" : ""
+                            }`}
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {client.name.length}/30
+                            {client.name.length >= 30 && (
+                              <span className="ml-2 text-red-500 font-bold">
+                                Limit reached!
+                              </span>
+                            )}
+                          </div>
+                        </div>
                         {pendingImages[
                           index % clientsSection.clients.length
                         ] && (

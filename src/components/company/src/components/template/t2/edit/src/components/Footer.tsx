@@ -9,6 +9,7 @@ import {
   Save,
   Upload,
   X as XIcon,
+  RotateCw,
   ZoomIn,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -17,6 +18,17 @@ import { Button } from "./ui/button";
 import logo from "/images/Drone tv .in.jpg";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+
+// Create an icon map to convert string names to actual components
+const iconMap = {
+  Facebook: Facebook,
+  Twitter: Twitter,
+  Linkedin: Linkedin,
+  LinkedIn: Linkedin, // Added alias for LinkedIn
+  Instagram: Instagram,
+  Mail: Mail,
+  Phone: Phone,
+};
 
 export default function Footer({
   onStateChange,
@@ -31,15 +43,17 @@ export default function Footer({
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Cropping states
+  // Cropping states - Updated to match Footer1.tsx
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(1); // Square for logos
 
-  // Merged all state into a single object
+  // Merged all state into a single object - PRESERVING ORIGINAL DATA STRUCTURE
   const [footerContent, setFooterContent] = useState({
     companyInfo: {
       logoText: footerLogo?.logo,
@@ -187,7 +201,7 @@ export default function Footer({
     }));
   };
 
-  // Logo cropping functionality
+  // Logo cropping functionality - Updated to match Footer1.tsx
   const handleLogoUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -210,16 +224,20 @@ export default function Footer({
       setImageToCrop(reader.result);
       setOriginalFile(file);
       setShowCropper(true);
+      setAspectRatio(1); // Square for logos
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setRotation(0);
     };
     reader.readAsDataURL(file);
 
     // Reset file input
-    e.target.value = "";
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
-  // Cropper functions
+  // Cropper functions - Same as Footer1.tsx
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
@@ -233,13 +251,18 @@ export default function Footer({
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
+
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
     ctx.drawImage(
       image,
       pixelCrop.x,
@@ -286,10 +309,11 @@ export default function Footer({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
-      // Update preview immediately
+      // Update preview immediately - using logoText field to preserve data structure
       updateCompanyInfo("logoText", previewUrl);
 
       // Set the file for upload on save
@@ -311,10 +335,12 @@ export default function Footer({
     setOriginalFile(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -340,7 +366,7 @@ export default function Footer({
         const formData = new FormData();
         formData.append("file", pendingLogoFile);
         formData.append("sectionName", "footer");
-        formData.append("imageField", "logoText");
+        formData.append("imageField", "logoText" + Date.now()); // Using logoText field
         formData.append("templateSelection", templateSelection);
 
         const uploadResponse = await fetch(
@@ -353,7 +379,7 @@ export default function Footer({
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL
+          // Replace local preview with S3 URL - using logoText field to preserve data structure
           updateCompanyInfo("logoText", uploadData.imageUrl);
           setPendingLogoFile(null); // Clear pending file
           console.log("Logo uploaded to S3:", uploadData.imageUrl);
@@ -369,11 +395,10 @@ export default function Footer({
 
       // Exit edit mode
       setIsEditing(false);
-      toast.success("Footer section saved with S3 URLs ready for publish");
+      toast.success("Footer section saved with S3 URLs!");
     } catch (error) {
       console.error("Error saving footer section:", error);
       toast.error("Error saving changes. Please try again.");
-      // Keep in edit mode so user can retry
     } finally {
       setIsUploading(false);
     }
@@ -404,104 +429,134 @@ export default function Footer({
 
   return (
     <>
-      {/* Image Cropper Modal */}
+      {/* Image Cropper Modal - Updated to match Footer1.tsx */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-2 sm:p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Logo
-              </h3>
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">Crop Logo</h3>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                aria-label="Close cropper"
               >
                 <XIcon className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop || undefined}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={1} // Square aspect ratio for logos
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
             {/* Controls */}
-            <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
                 </div>
-
-                {/* Rotation removed - control hidden */}
               </div>
 
-              {/* Action Buttons - equal width & responsive */}
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
                 >
                   Reset
                 </button>
-
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
                 >
                   Cancel
                 </button>
-
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm"
                 >
                   Apply Crop
                 </button>
@@ -581,49 +636,85 @@ export default function Footer({
                     transition={{ duration: 0.6 }}
                   >
                     {isEditing ? (
-                      // <div className="relative w-full h-full">
-                      //   <img
-                      //     src={footerContent.companyInfo.logoText || logo}
-                      //     alt="Logo"
-                      //     className="w-full h-full object-contain"
-                      //   />
-                      //   <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                      //     <button
-                      //       onClick={() => fileInputRef.current?.click()}
-                      //       className="text-white text-xs p-1 bg-blue-500 rounded"
-                      //     >
-                      //       <Upload size={12} />
-                      //     </button>
-                      //   </div>
-                      // </div>
-                      <img
-                        src={footerContent.companyInfo.logoText || logo}
-                        alt="Logo"
-                        className="w-full h-full object-contain"
-                      />
+                      <div className="relative w-full h-full">
+                        {footerContent.companyInfo.logoText &&
+                        (footerContent.companyInfo.logoText.startsWith(
+                          "data:"
+                        ) ||
+                          footerContent.companyInfo.logoText.startsWith(
+                            "http"
+                          )) ? (
+                          <img
+                            src={footerContent.companyInfo.logoText || logo}
+                            alt="Logo"
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <span className="text-lg font-bold text-black">
+                            {footerContent.companyInfo.logoText}
+                          </span>
+                        )}
+                        <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100">
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="p-1 text-xs text-white bg-blue-500 rounded"
+                          >
+                            <Upload size={12} />
+                          </button>
+                        </div>
+                      </div>
                     ) : (
-                      <img
-                        src={footerContent.companyInfo.logoText || logo}
-                        alt="Logo"
-                        className="w-full h-full object-contain"
-                      />
+                      <>
+                        {footerContent.companyInfo.logoText &&
+                        (footerContent.companyInfo.logoText.startsWith(
+                          "data:"
+                        ) ||
+                          footerContent.companyInfo.logoText.startsWith(
+                            "http"
+                          )) ? (
+                          <img
+                            src={footerContent.companyInfo.logoText}
+                            alt="Logo"
+                            className="object-contain w-[70px] h-[70px]"
+                          />
+                        ) : (
+                          <span className="text-lg font-medium text-black">
+                            {footerContent.companyInfo.logoText}
+                          </span>
+                        )}
+                      </>
                     )}
                     <input
                       type="file"
                       ref={fileInputRef}
                       accept="image/*"
                       onChange={handleLogoUpload}
-                      className="hidden"
+                      className="hidden font-bold"
                     />
                   </motion.div>
                   {isEditing ? (
-                    <input
-                      value={footerContent.companyInfo.companyName}
-                      onChange={(e) =>
-                        updateCompanyInfo("companyName", e.target.value)
-                      }
-                      className="text-xl font-bold text-white bg-transparent border-b w-full"
-                    />
+                    <div className="relative w-full">
+                      <input
+                        value={footerContent.companyInfo.companyName}
+                        onChange={(e) =>
+                          updateCompanyInfo("companyName", e.target.value)
+                        }
+                        maxLength={30}
+                        className={`text-xl font-bold text-white bg-transparent border-b w-full ${
+                          footerContent.companyInfo.companyName.length >= 30
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {footerContent.companyInfo.companyName.length}/30
+                        {footerContent.companyInfo.companyName.length >= 30 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   ) : (
                     <span className="text-xl font-bold text-white">
                       {footerContent.companyInfo.companyName}
@@ -632,18 +723,91 @@ export default function Footer({
                 </motion.div>
 
                 {isEditing ? (
-                  <textarea
-                    value={footerContent.companyInfo.description}
-                    onChange={(e) =>
-                      updateCompanyInfo("description", e.target.value)
-                    }
-                    className="text-gray-400 max-w-md w-full bg-transparent border-b"
-                    rows={3}
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={footerContent.companyInfo.description}
+                      onChange={(e) =>
+                        updateCompanyInfo("description", e.target.value)
+                      }
+                      maxLength={200}
+                      className={`text-gray-400 max-w-md w-full bg-transparent border-b ${
+                        footerContent.companyInfo.description.length >= 200
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                      rows={3}
+                    />
+                    <div className="text-right text-xs text-gray-500 mt-1">
+                      {footerContent.companyInfo.description.length}/200
+                      {footerContent.companyInfo.description.length >= 200 && (
+                        <span className="ml-2 text-red-500 font-bold">
+                          Limit reached!
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 ) : (
                   <p className="text-gray-400 max-w-md">
                     {footerContent.companyInfo.description}
                   </p>
+                )}
+
+                {isEditing ? (
+                  <>
+                    <div className="relative">
+                      <input
+                        value={footerContent.companyInfo.email}
+                        onChange={(e) =>
+                          updateCompanyInfo("email", e.target.value)
+                        }
+                        maxLength={50}
+                        className={`text-gray-400 bg-transparent border-b w-full ${
+                          footerContent.companyInfo.email.length >= 50
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {footerContent.companyInfo.email.length}/50
+                        {footerContent.companyInfo.email.length >= 50 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <input
+                        value={footerContent.companyInfo.phone}
+                        onChange={(e) =>
+                          updateCompanyInfo("phone", e.target.value)
+                        }
+                        maxLength={20}
+                        className={`text-gray-400 bg-transparent border-b w-full ${
+                          footerContent.companyInfo.phone.length >= 20
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {footerContent.companyInfo.phone.length}/20
+                        {footerContent.companyInfo.phone.length >= 20 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-gray-400">
+                      {footerContent.companyInfo.email}
+                    </p>
+                    <p className="text-gray-400">
+                      {footerContent.companyInfo.phone}
+                    </p>
+                  </>
                 )}
               </motion.div>
 
@@ -652,19 +816,32 @@ export default function Footer({
                 ([category, links], categoryIndex) => (
                   <motion.div key={category} variants={itemVariants}>
                     {isEditing ? (
-                      <input
-                        value={category}
-                        onChange={(e) => {
-                          const newCategory = e.target.value;
-                          setFooterContent((prev) => {
-                            const newLinks = { ...prev.footerLinks };
-                            newLinks[newCategory] = newLinks[category];
-                            delete newLinks[category];
-                            return { ...prev, footerLinks: newLinks };
-                          });
-                        }}
-                        className="font-medium text-white mb-4 bg-transparent border-b w-full"
-                      />
+                      <div className="relative mb-4">
+                        <input
+                          value={category}
+                          onChange={(e) => {
+                            const newCategory = e.target.value;
+                            setFooterContent((prev) => {
+                              const newLinks = { ...prev.footerLinks };
+                              newLinks[newCategory] = newLinks[category];
+                              delete newLinks[category];
+                              return { ...prev, footerLinks: newLinks };
+                            });
+                          }}
+                          maxLength={20}
+                          className={`font-medium text-white mb-4 bg-transparent border-b w-full ${
+                            category.length >= 20 ? "border-red-500" : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {category.length}/20
+                          {category.length >= 20 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <h4 className="font-medium text-white mb-4">
                         {category}
@@ -685,30 +862,60 @@ export default function Footer({
                         >
                           {isEditing ? (
                             <div className="flex items-center">
-                              <input
-                                value={link.name}
-                                onChange={(e) =>
-                                  updateFooterLink(
-                                    category,
-                                    linkIndex,
-                                    "name",
-                                    e.target.value
-                                  )
-                                }
-                                className="text-gray-400 bg-transparent border-b w-full mr-2"
-                              />
-                              <input
-                                value={link.href}
-                                onChange={(e) =>
-                                  updateFooterLink(
-                                    category,
-                                    linkIndex,
-                                    "href",
-                                    e.target.value
-                                  )
-                                }
-                                className="text-gray-400 bg-transparent border-b w-full mr-2"
-                              />
+                              <div className="relative mr-2 flex-1">
+                                <input
+                                  value={link.name}
+                                  onChange={(e) =>
+                                    updateFooterLink(
+                                      category,
+                                      linkIndex,
+                                      "name",
+                                      e.target.value
+                                    )
+                                  }
+                                  maxLength={30}
+                                  className={`text-gray-400 bg-transparent border-b w-full ${
+                                    link.name.length >= 30
+                                      ? "border-red-500"
+                                      : ""
+                                  }`}
+                                />
+                                <div className="text-right text-xs text-gray-500 mt-1">
+                                  {link.name.length}/30
+                                  {link.name.length >= 30 && (
+                                    <span className="ml-2 text-red-500 font-bold">
+                                      Limit reached!
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="relative mr-2 flex-1">
+                                <input
+                                  value={link.href}
+                                  onChange={(e) =>
+                                    updateFooterLink(
+                                      category,
+                                      linkIndex,
+                                      "href",
+                                      e.target.value
+                                    )
+                                  }
+                                  maxLength={100}
+                                  className={`text-gray-400 bg-transparent border-b w-full ${
+                                    link.href.length >= 100
+                                      ? "border-red-500"
+                                      : ""
+                                  }`}
+                                />
+                                <div className="text-right text-xs text-gray-500 mt-1">
+                                  {link.href.length}/100
+                                  {link.href.length >= 100 && (
+                                    <span className="ml-2 text-red-500 font-bold">
+                                      Limit reached!
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
                               <Button
                                 size="sm"
                                 variant="destructive"
@@ -746,6 +953,245 @@ export default function Footer({
                   </motion.div>
                 )
               )}
+
+              {/* Newsletter Section */}
+              <motion.div variants={itemVariants}>
+                {isEditing ? (
+                  <>
+                    <div className="relative mb-4">
+                      <input
+                        value={footerContent.newsletter.title}
+                        onChange={(e) =>
+                          setFooterContent((prev) => ({
+                            ...prev,
+                            newsletter: {
+                              ...prev.newsletter,
+                              title: e.target.value,
+                            },
+                          }))
+                        }
+                        maxLength={50}
+                        className={`font-medium text-white mb-4 bg-transparent border-b w-full ${
+                          footerContent.newsletter.title.length >= 50
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {footerContent.newsletter.title.length}/50
+                        {footerContent.newsletter.title.length >= 50 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="relative mb-4">
+                      <textarea
+                        value={footerContent.newsletter.description}
+                        onChange={(e) =>
+                          setFooterContent((prev) => ({
+                            ...prev,
+                            newsletter: {
+                              ...prev.newsletter,
+                              description: e.target.value,
+                            },
+                          }))
+                        }
+                        maxLength={100}
+                        className={`text-gray-400 bg-transparent border-b w-full ${
+                          footerContent.newsletter.description.length >= 100
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                        rows={2}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {footerContent.newsletter.description.length}/100
+                        {footerContent.newsletter.description.length >= 100 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <input
+                        value={footerContent.newsletter.buttonText}
+                        onChange={(e) =>
+                          setFooterContent((prev) => ({
+                            ...prev,
+                            newsletter: {
+                              ...prev.newsletter,
+                              buttonText: e.target.value,
+                            },
+                          }))
+                        }
+                        maxLength={20}
+                        className={`text-gray-400 bg-transparent border-b w-full ${
+                          footerContent.newsletter.buttonText.length >= 20
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {footerContent.newsletter.buttonText.length}/20
+                        {footerContent.newsletter.buttonText.length >= 20 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Limit reached!
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h4 className="font-medium text-white mb-4">
+                      {footerContent.newsletter.title}
+                    </h4>
+                    <p className="text-gray-400 mb-4">
+                      {footerContent.newsletter.description}
+                    </p>
+                    <Button className="w-full">
+                      {footerContent.newsletter.buttonText}
+                    </Button>
+                  </>
+                )}
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Bottom Footer */}
+          <motion.div
+            className="py-6 border-t border-gray-800"
+            variants={itemVariants}
+          >
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              {isEditing ? (
+                <div className="relative mb-4 md:mb-0">
+                  <input
+                    value={footerContent.bottomFooter.copyright}
+                    onChange={(e) =>
+                      setFooterContent((prev) => ({
+                        ...prev,
+                        bottomFooter: {
+                          ...prev.bottomFooter,
+                          copyright: e.target.value,
+                        },
+                      }))
+                    }
+                    maxLength={100}
+                    className={`text-gray-400 bg-transparent border-b ${
+                      footerContent.bottomFooter.copyright.length >= 100
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {footerContent.bottomFooter.copyright.length}/100
+                    {footerContent.bottomFooter.copyright.length >= 100 && (
+                      <span className="ml-2 text-red-500 font-bold">
+                        Limit reached!
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-400 mb-4 md:mb-0">
+                  {footerContent.bottomFooter.copyright}
+                </p>
+              )}
+
+              <div className="flex space-x-6">
+                {footerContent.bottomFooter.links.map((link, index) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {isEditing ? (
+                      <div className="flex items-center">
+                        <div className="relative mr-2">
+                          <input
+                            value={link.name}
+                            onChange={(e) => {
+                              const newLinks = [
+                                ...footerContent.bottomFooter.links,
+                              ];
+                              newLinks[index] = {
+                                ...link,
+                                name: e.target.value,
+                              };
+                              setFooterContent((prev) => ({
+                                ...prev,
+                                bottomFooter: {
+                                  ...prev.bottomFooter,
+                                  links: newLinks,
+                                },
+                              }));
+                            }}
+                            maxLength={30}
+                            className={`text-gray-400 bg-transparent border-b ${
+                              link.name.length >= 30 ? "border-red-500" : ""
+                            }`}
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {link.name.length}/30
+                            {link.name.length >= 30 && (
+                              <span className="ml-2 text-red-500 font-bold">
+                                Limit reached!
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => {
+                            const newLinks =
+                              footerContent.bottomFooter.links.filter(
+                                (_, i) => i !== index
+                              );
+                            setFooterContent((prev) => ({
+                              ...prev,
+                              bottomFooter: {
+                                ...prev.bottomFooter,
+                                links: newLinks,
+                              },
+                            }));
+                          }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-gray-400 hover:text-primary transition-colors text-sm"
+                      >
+                        {link.name}
+                      </a>
+                    )}
+                  </motion.div>
+                ))}
+                {isEditing && (
+                  <Button
+                    onClick={() => {
+                      const newLinks = [
+                        ...footerContent.bottomFooter.links,
+                        { name: "New Link", href: "#" },
+                      ];
+                      setFooterContent((prev) => ({
+                        ...prev,
+                        bottomFooter: { ...prev.bottomFooter, links: newLinks },
+                      }));
+                    }}
+                    className="text-green-600"
+                  >
+                    + Add
+                  </Button>
+                )}
+              </div>
             </div>
           </motion.div>
         </div>

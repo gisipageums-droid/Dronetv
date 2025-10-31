@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
 import { X, Zap, Edit, Save, Plus, Trash2, ZoomIn } from "lucide-react";
-import { FaTwitter } from "react-icons/fa";
 import Cropper from "react-easy-crop";
 
 const Profile = ({
@@ -24,9 +23,21 @@ const Profile = ({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(3 / 4);
+
+  // Text field limits
+  const TEXT_LIMITS = {
+    heading: 60,
+    subheading: 120,
+    memberName: 40,
+    memberRole: 30,
+    memberBio: 150,
+    socialLink: 100,
+  };
 
   // Consolidated state
   const [contentState, setContentState] = useState(profileData);
@@ -45,14 +56,6 @@ const Profile = ({
       teamMembers: prev.teamMembers.map((m, i) =>
         i === index ? { ...m, [field]: value } : m
       ),
-    }));
-  };
-
-  // Update function for join team section
-  const updateJoinTeamField = (field, value) => {
-    setContentState((prev) => ({
-      ...prev,
-      joinTeam: { ...prev.joinTeam, [field]: value },
     }));
   };
 
@@ -105,14 +108,12 @@ const Profile = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
     if (!file.type.startsWith("image/")) {
       toast.error("Please select an image file");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      // 5MB limit
       toast.error("File size must be less than 5MB");
       return;
     }
@@ -123,8 +124,10 @@ const Profile = ({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setZoom(1);
+      setAspectRatio(3 / 4); // Default to 3:4 for profile
       setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -148,7 +151,7 @@ const Profile = ({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -156,7 +159,10 @@ const Profile = ({
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
 
-    // Draw directly from source image to crop canvas (rotation removed)
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
     ctx.drawImage(
       image,
       pixelCrop.x,
@@ -169,23 +175,24 @@ const Profile = ({
       pixelCrop.height
     );
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          if (!blob) return reject(new Error("Canvas is empty"));
-
           const fileName = originalFile
-            ? `cropped-profile-${croppingIndex}-${(originalFile as any).name}`
+            ? `cropped-profile-${croppingIndex}-${originalFile.name}`
             : `cropped-profile-${croppingIndex}-${Date.now()}.jpg`;
 
-          const file = new File([blob as Blob], fileName, {
+          const file = new File([blob], fileName, {
             type: "image/jpeg",
             lastModified: Date.now(),
           });
 
-          const previewUrl = URL.createObjectURL(blob as Blob);
+          const previewUrl = URL.createObjectURL(blob);
 
-          resolve({ file, previewUrl });
+          resolve({
+            file,
+            previewUrl,
+          });
         },
         "image/jpeg",
         0.95
@@ -198,10 +205,11 @@ const Profile = ({
     try {
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
 
-      const { file, previewUrl } = (await getCroppedImg(
-        imageToCrop as string,
-        croppedAreaPixels
-      )) as any;
+      const { file, previewUrl } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels,
+        rotation
+      );
 
       // Update preview immediately with blob URL (temporary)
       updateTeamMemberField(croppingIndex, "image", previewUrl);
@@ -229,11 +237,13 @@ const Profile = ({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
-  // Reset zoom
+  // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -261,7 +271,6 @@ const Profile = ({
         const formData = new FormData();
         formData.append("file", file);
         formData.append("sectionName", "profile");
-        // Append a timestamp to the imageField to ensure the upload creates a unique S3 key
         formData.append(
           "imageField",
           `teamMembers[${index}].image` + Date.now()
@@ -280,12 +289,9 @@ const Profile = ({
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL (add cache-busting query param to force reload)
-          const finalUrl = uploadData.imageUrl.includes("?")
-            ? `${uploadData.imageUrl}&v=${Date.now()}`
-            : `${uploadData.imageUrl}?v=${Date.now()}`;
-          updateTeamMemberField(index, "image", finalUrl);
-          console.log("Image uploaded to S3:", finalUrl);
+          // Replace local preview with S3 URL
+          updateTeamMemberField(index, "image", uploadData.imageUrl);
+          console.log("Image uploaded to S3:", uploadData.imageUrl);
         } else {
           const errorData = await uploadResponse.json();
           console.error("Image upload failed:", errorData);
@@ -311,104 +317,141 @@ const Profile = ({
 
   return (
     <>
-      {/* Image Cropper Modal */}
+      {/* Image Cropper Modal - Profile (Same as Clients) */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-2 border-b border-gray-200 sm:p-3 bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Team Member Image
-              </h3>
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Crop Profile Image
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Recommended: 100×100px (1:1 ratio) - square
+                </p>
+              </div>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                aria-label="Close cropper"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="relative flex-1 bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop || undefined}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={3 / 4} // Square changed to 3/4 as you set
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
             {/* Controls */}
-            <div className="p-2 border-t border-gray-200 sm:p-3 bg-gray-50">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom Control */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-full h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(3 / 4)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 3 / 4
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    3:4 (Portrait)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
                 </div>
-
-                {/* Rotation removed - control hidden */}
               </div>
 
-              {/* Action Buttons - equal width & responsive */}
-              <div className="grid grid-cols-1 gap-2 mt-3 sm:grid-cols-3">
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
                 >
                   Reset
                 </button>
-
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
                 >
                   Cancel
                 </button>
-
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm"
                 >
                   Apply Crop
                 </button>
@@ -420,14 +463,14 @@ const Profile = ({
 
       {/* Main Profile Section */}
       <section
-        id="profile"
+        id="our-team"
         className={`py-20 theme-transition ${
           theme === "dark"
             ? "bg-black text-gray-100"
             : "bg-gray-50 text-gray-900"
         }`}
       >
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mb-6">
             {isEditing ? (
@@ -450,7 +493,7 @@ const Profile = ({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2 px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
+                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold flex items-center gap-2"
               >
                 <Edit size={16} />
                 Edit
@@ -458,44 +501,83 @@ const Profile = ({
             )}
           </div>
 
-          <div className="mb-16 text-center">
+          <div className="text-center mb-16">
             {isEditing ? (
-              <input
-                type="text"
-                value={contentState.heading}
-                onChange={(e) =>
-                  setContentState((prev) => ({
-                    ...prev,
-                    heading: e.target.value,
-                  }))
-                }
-                className="mb-4 text-3xl font-bold text-center bg-transparent border-b"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={contentState.heading}
+                  onChange={(e) =>
+                    setContentState((prev) => ({
+                      ...prev,
+                      heading: e.target.value,
+                    }))
+                  }
+                  maxLength={TEXT_LIMITS.heading}
+                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full max-w-2xl mx-auto ${
+                    contentState.heading.length >= TEXT_LIMITS.heading
+                      ? "border-red-500"
+                      : ""
+                  }`}
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <div>
+                    {contentState.heading.length >= TEXT_LIMITS.heading && (
+                      <span className="text-red-500 font-bold">
+                        ⚠️ Character limit reached!
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    {contentState.heading.length}/{TEXT_LIMITS.heading}
+                  </div>
+                </div>
+              </div>
             ) : (
-              <h2 className="mb-4 text-3xl font-bold">
+              <h2 className="text-3xl font-bold mb-4">
                 {contentState.heading}
               </h2>
             )}
 
             {isEditing ? (
-              <textarea
-                value={contentState.subheading}
-                onChange={(e) =>
-                  setContentState((prev) => ({
-                    ...prev,
-                    subheading: e.target.value,
-                  }))
-                }
-                className="w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b"
-              />
+              <div className="relative">
+                <textarea
+                  value={contentState.subheading}
+                  onChange={(e) =>
+                    setContentState((prev) => ({
+                      ...prev,
+                      subheading: e.target.value,
+                    }))
+                  }
+                  maxLength={TEXT_LIMITS.subheading}
+                  className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${
+                    contentState.subheading.length >= TEXT_LIMITS.subheading
+                      ? "border-red-500"
+                      : ""
+                  }`}
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <div>
+                    {contentState.subheading.length >=
+                      TEXT_LIMITS.subheading && (
+                      <span className="text-red-500 font-bold">
+                        ⚠️ Character limit reached!
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    {contentState.subheading.length}/{TEXT_LIMITS.subheading}
+                  </div>
+                </div>
+              </div>
             ) : (
-              <p className="max-w-3xl mx-auto text-lg">
+              <p className="text-lg max-w-3xl mx-auto">
                 {contentState.subheading}
               </p>
             )}
           </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {contentState.teamMembers.map((member, index) => (
               <motion.div
                 key={member.id}
@@ -505,11 +587,11 @@ const Profile = ({
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="relative overflow-hidden h-60">
+                <div className="relative h-60 overflow-hidden">
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="object-cover w-full h-full"
+                    className="w-full h-full object-cover"
                   />
 
                   {isEditing && (
@@ -518,16 +600,19 @@ const Profile = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute mx-2 bottom-2 left-2 z-50 bg-white/80 p-1 rounded text-[black] font-bold"
+                      className="absolute mx-2 bottom-2 left-2 z-50 bg-white/80 p-1 rounded"
                     >
+                      <div className="text-xs text-gray-600 mb-1">
+                        Recommended: 100×100px (1:1)
+                      </div>
                       <input
                         type="file"
                         accept="image/*"
-                        className="w-full text-xs cursor-pointer"
+                        className="text-xs w-full cursor-pointer font-bold"
                         onChange={(e) => handleTeamMemberImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="mt-1 text-xs text-green-600">
+                        <p className="text-xs text-green-600 mt-1">
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
@@ -536,44 +621,77 @@ const Profile = ({
                 </div>
                 <div className="p-6 text-center">
                   {isEditing ? (
-                    <input
-                      value={member.name}
-                      onChange={(e) =>
-                        updateTeamMemberField(index, "name", e.target.value)
-                      }
-                      className="w-full mb-1 text-xl font-semibold text-center bg-transparent border-b"
-                    />
+                    <div className="relative mb-1">
+                      <input
+                        value={member.name}
+                        onChange={(e) =>
+                          updateTeamMemberField(index, "name", e.target.value)
+                        }
+                        maxLength={TEXT_LIMITS.memberName}
+                        className={`text-xl font-semibold border-b bg-transparent text-center w-full ${
+                          member.name.length >= TEXT_LIMITS.memberName
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {member.name.length}/{TEXT_LIMITS.memberName}
+                      </div>
+                    </div>
                   ) : (
-                    <h3 className="mb-1 text-xl font-semibold">
+                    <h3 className="text-xl font-semibold mb-1">
                       {member.name}
                     </h3>
                   )}
 
                   {isEditing ? (
-                    <input
-                      value={member.role}
-                      onChange={(e) =>
-                        updateTeamMemberField(index, "role", e.target.value)
-                      }
-                      className="w-full mb-3 font-medium text-center bg-transparent border-b"
-                      style={{ color: "#facc15" }}
-                    />
+                    <div className="relative mb-3">
+                      <input
+                        value={member.role}
+                        onChange={(e) =>
+                          updateTeamMemberField(index, "role", e.target.value)
+                        }
+                        maxLength={TEXT_LIMITS.memberRole}
+                        className={`font-medium border-b bg-transparent text-center w-full ${
+                          member.role.length >= TEXT_LIMITS.memberRole
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                        style={{ color: "#facc15" }}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {member.role.length}/{TEXT_LIMITS.memberRole}
+                      </div>
+                    </div>
                   ) : (
-                    <p className="mb-3 font-bold" style={{ color: "#facc15" }}>
+                    <p
+                      className="font-medium mb-3"
+                      style={{ color: "#facc15" }}
+                    >
                       {member.role}
                     </p>
                   )}
 
                   {isEditing ? (
-                    <textarea
-                      value={member.bio}
-                      onChange={(e) =>
-                        updateTeamMemberField(index, "bio", e.target.value)
-                      }
-                      className={`text-sm border-b bg-transparent text-center w-full ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-600"
-                      }`}
-                    />
+                    <div className="relative">
+                      <textarea
+                        value={member.bio}
+                        onChange={(e) =>
+                          updateTeamMemberField(index, "bio", e.target.value)
+                        }
+                        maxLength={TEXT_LIMITS.memberBio}
+                        className={`text-sm border-b bg-transparent text-center w-full ${
+                          theme === "dark" ? "text-gray-300" : "text-gray-600"
+                        } ${
+                          member.bio.length >= TEXT_LIMITS.memberBio
+                            ? "border-red-500"
+                            : ""
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {member.bio.length}/{TEXT_LIMITS.memberBio}
+                      </div>
+                    </div>
                   ) : (
                     <p
                       className={`text-sm ${
@@ -587,22 +705,50 @@ const Profile = ({
                   <div className="flex justify-center mt-4 space-x-3">
                     {isEditing ? (
                       <>
-                        <input
-                          value={member.socialLinks.twitter}
-                          onChange={(e) =>
-                            updateSocialLink(index, "twitter", e.target.value)
-                          }
-                          className="w-20 text-xs text-center bg-transparent border-b"
-                          placeholder="Twitter URL"
-                        />
-                        <input
-                          value={member.socialLinks.linkedin}
-                          onChange={(e) =>
-                            updateSocialLink(index, "linkedin", e.target.value)
-                          }
-                          className="w-20 text-xs text-center bg-transparent border-b"
-                          placeholder="LinkedIn URL"
-                        />
+                        <div className="relative">
+                          <input
+                            value={member.socialLinks.twitter}
+                            onChange={(e) =>
+                              updateSocialLink(index, "twitter", e.target.value)
+                            }
+                            maxLength={TEXT_LIMITS.socialLink}
+                            className={`text-xs border-b bg-transparent text-center w-20 ${
+                              member.socialLinks.twitter.length >=
+                              TEXT_LIMITS.socialLink
+                                ? "border-red-500"
+                                : ""
+                            }`}
+                            placeholder="Twitter URL"
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {member.socialLinks.twitter.length}/
+                            {TEXT_LIMITS.socialLink}
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <input
+                            value={member.socialLinks.linkedin}
+                            onChange={(e) =>
+                              updateSocialLink(
+                                index,
+                                "linkedin",
+                                e.target.value
+                              )
+                            }
+                            maxLength={TEXT_LIMITS.socialLink}
+                            className={`text-xs border-b bg-transparent text-center w-20 ${
+                              member.socialLinks.linkedin.length >=
+                              TEXT_LIMITS.socialLink
+                                ? "border-red-500"
+                                : ""
+                            }`}
+                            placeholder="LinkedIn URL"
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {member.socialLinks.linkedin.length}/
+                            {TEXT_LIMITS.socialLink}
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -616,17 +762,12 @@ const Profile = ({
                           }`}
                           aria-label="Twitter"
                         >
-                          {/* <FaTwitter className="w-4 h-4" /> */}
                           <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0px"
-                            y="0px"
-                            viewBox="0 0 50 50"
-                            className={`w-6 h-6 ${
-                              theme === "dark" ? "bg-white" : ""
-                            }`}
+                            className="w-4 h-4"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
                           >
-                            <path d="M 11 4 C 7.134 4 4 7.134 4 11 L 4 39 C 4 42.866 7.134 46 11 46 L 39 46 C 42.866 46 46 42.866 46 39 L 46 11 C 46 7.134 42.866 4 39 4 L 11 4 z M 13.085938 13 L 21.023438 13 L 26.660156 21.009766 L 33.5 13 L 36 13 L 27.789062 22.613281 L 37.914062 37 L 29.978516 37 L 23.4375 27.707031 L 15.5 37 L 13 37 L 22.308594 26.103516 L 13.085938 13 z M 16.914062 15 L 31.021484 35 L 34.085938 35 L 19.978516 15 L 16.914062 15 z"></path>
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
                           </svg>
                         </a>
                         <a
@@ -640,7 +781,7 @@ const Profile = ({
                           aria-label="LinkedIn"
                         >
                           <svg
-                            className="w-6 h-6"
+                            className="w-4 h-4"
                             fill="currentColor"
                             viewBox="0 0 24 24"
                           >
@@ -656,7 +797,7 @@ const Profile = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => removeTeamMember(index)}
-                      className="flex items-center justify-center gap-1 mx-auto mt-4 text-sm text-red-500"
+                      className="mt-4 text-red-500 text-sm flex items-center justify-center gap-1 mx-auto"
                     >
                       <Trash2 size={14} />
                       Remove
@@ -687,12 +828,6 @@ const Profile = ({
               </motion.div>
             )}
           </div>
-
-          <div
-            className={`mt-16 p-8 rounded-lg text-center ${
-              theme === "dark" ? "bg-gray-900" : "bg-white"
-            }`}
-          ></div>
         </div>
       </section>
     </>
@@ -717,42 +852,7 @@ Profile.defaultProps = {
           linkedin: "#",
         },
       },
-      {
-        id: 2,
-        name: "Sarah Johnson",
-        role: "Creative Director",
-        image:
-          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
-        bio: "Award-winning designer with a passion for innovative solutions.",
-        socialLinks: {
-          twitter: "#",
-          linkedin: "#",
-        },
-      },
-      {
-        id: 3,
-        name: "Michael Chen",
-        role: "Lead Developer",
-        image:
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-        bio: "Full-stack developer specializing in modern web technologies.",
-        socialLinks: {
-          twitter: "#",
-          linkedin: "#",
-        },
-      },
-      {
-        id: 4,
-        name: "Emma Rodriguez",
-        role: "Marketing Director",
-        image:
-          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-        bio: "Digital marketing expert with a track record of successful campaigns.",
-        socialLinks: {
-          twitter: "#",
-          linkedin: "#",
-        },
-      },
+      // ... other team members
     ],
     joinTeam: {
       title: "Join Our Team",

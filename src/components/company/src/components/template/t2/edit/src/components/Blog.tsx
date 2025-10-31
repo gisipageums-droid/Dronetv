@@ -1,6 +1,7 @@
+// Blog.tsx - Full Updated Code with Text Limitations
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Calendar, User, ArrowRight, ZoomIn } from "lucide-react";
+import { X, Calendar, User, ArrowRight } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
@@ -25,10 +26,11 @@ export default function Blog({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  // rotation removed due to artifacts (use zoom + crop only)
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   // Merged all state into a single object
   const [blogSection, setBlogSection] = useState(blogData);
@@ -93,7 +95,9 @@ export default function Blog({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
+      setAspectRatio(4 / 3);
       setZoom(1);
+      setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
@@ -118,18 +122,18 @@ export default function Blog({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    if (!ctx) throw new Error("Canvas 2D context not available");
-
-    // Set canvas size to the crop size
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
 
-    // Draw the selected area directly -- rotation intentionally removed
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
     ctx.drawImage(
       image,
       pixelCrop.x,
@@ -142,11 +146,9 @@ export default function Blog({
       pixelCrop.height
     );
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          if (!blob) return reject(new Error("Failed to create image blob"));
-
           const fileName = originalFile
             ? `cropped-blog-${croppingIndex}-${originalFile.name}`
             : `cropped-blog-modal-${Date.now()}.jpg`;
@@ -157,7 +159,11 @@ export default function Blog({
           });
 
           const previewUrl = URL.createObjectURL(blob);
-          resolve({ file, previewUrl });
+
+          resolve({
+            file,
+            previewUrl,
+          });
         },
         "image/jpeg",
         0.95
@@ -172,7 +178,8 @@ export default function Blog({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -209,11 +216,13 @@ export default function Blog({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -294,22 +303,22 @@ export default function Blog({
 
   return (
     <>
-      {/* Image Cropper Modal - Same as Hero */}
+      {/* Image Cropper Modal - Standardized like Clients */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-2 border-b border-gray-200 sm:p-3 bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Image
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Blog Image
               </h3>
               <button
                 onClick={cancelCrop}
@@ -319,83 +328,110 @@ export default function Blog({
               </button>
             </div>
 
-            {/* Cropper Area - Fully Responsive */}
-            <div className="relative flex-1 bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop || undefined}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={4 / 3}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
             {/* Controls */}
-            <div className="p-2 border-t border-gray-200 sm:p-3 bg-gray-50">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom Control */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer 
-              [&::-webkit-slider-thumb]:appearance-none 
-              [&::-webkit-slider-thumb]:h-3.5 
-              [&::-webkit-slider-thumb]:w-3.5 
-              [&::-webkit-slider-thumb]:rounded-full 
-              [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
                 </div>
-
-                {/* Rotation removed - use zoom + crop only */}
               </div>
 
-              {/* Action Buttons - Equal Width & Responsive */}
-              <div className="grid grid-cols-1 gap-2 mt-3 sm:grid-cols-3">
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
-
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
-
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
                 >
                   Apply Crop
                 </button>
@@ -404,9 +440,10 @@ export default function Blog({
           </motion.div>
         </motion.div>
       )}
+
       {/* Main Blog Section */}
       <section id="blog" className="py-20 bg-background theme-transition">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mt-6">
             {isEditing ? (
@@ -428,7 +465,7 @@ export default function Blog({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
+                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -437,78 +474,123 @@ export default function Blog({
 
           {/* Header */}
           <motion.div
-            className="mb-16 text-center"
+            className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
             <motion.div
-              className="inline-flex items-center px-4 py-2 mb-6 rounded-full bg-primary/10 text-primary"
+              className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
               whileHover={{ scale: 1.05 }}
             >
               {isEditing ? (
-                <input
-                  type="text"
-                  value={blogSection.header.badge}
-                  onChange={(e) =>
-                    setBlogSection((prev) => ({
-                      ...prev,
-                      header: { ...prev.header, badge: e.target.value },
-                    }))
-                  }
-                  className="font-medium text-center bg-transparent border-b"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={blogSection.header.badge}
+                    onChange={(e) =>
+                      setBlogSection((prev) => ({
+                        ...prev,
+                        header: { ...prev.header, badge: e.target.value },
+                      }))
+                    }
+                    maxLength={25}
+                    className={`font-medium bg-transparent border-b text-center ${
+                      blogSection.header.badge.length >= 25
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {blogSection.header.badge.length}/25
+                    {blogSection.header.badge.length >= 25 && (
+                      <span className="ml-2 text-red-500 font-bold">
+                        Limit reached!
+                      </span>
+                    )}
+                  </div>
+                </div>
               ) : (
-                <span className="text-lg font-semibold">
+                <span className="font-semibold text-lg">
                   {blogSection.header.badge}
                 </span>
               )}
             </motion.div>
 
             {isEditing ? (
-              <input
-                type="text"
-                value={blogSection.header.title}
-                onChange={(e) =>
-                  setBlogSection((prev) => ({
-                    ...prev,
-                    header: { ...prev.header, title: e.target.value },
-                  }))
-                }
-                className="w-full mb-6 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={blogSection.header.title}
+                  onChange={(e) =>
+                    setBlogSection((prev) => ({
+                      ...prev,
+                      header: { ...prev.header, title: e.target.value },
+                    }))
+                  }
+                  maxLength={80}
+                  className={`text-3xl md:text-4xl text-foreground mb-6 w-full text-center bg-transparent border-b font-bold ${
+                    blogSection.header.title.length >= 80
+                      ? "border-red-500"
+                      : ""
+                  }`}
+                />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {blogSection.header.title.length}/80
+                  {blogSection.header.title.length >= 80 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Limit reached!
+                    </span>
+                  )}
+                </div>
+              </div>
             ) : (
-              <h2 className="mb-6 text-3xl md:text-4xl text-foreground">
+              <h2 className="text-3xl md:text-4xl text-foreground mb-6">
                 {blogSection.header.title}
               </h2>
             )}
 
             {isEditing ? (
-              <textarea
-                value={blogSection.header.desc}
-                onChange={(e) =>
-                  setBlogSection((prev) => ({
-                    ...prev,
-                    header: { ...prev.header, desc: e.target.value },
-                  }))
-                }
-                className="w-full max-w-2xl mx-auto text-lg text-center bg-transparent border-b text-muted-foreground"
-                rows={2}
-              />
+              <div className="relative">
+                <textarea
+                  value={blogSection.header.desc}
+                  onChange={(e) =>
+                    setBlogSection((prev) => ({
+                      ...prev,
+                      header: { ...prev.header, desc: e.target.value },
+                    }))
+                  }
+                  maxLength={200}
+                  className={`text-lg text-muted-foreground max-w-2xl mx-auto w-full text-center bg-transparent border-b ${
+                    blogSection.header.desc.length >= 200
+                      ? "border-red-500"
+                      : ""
+                  }`}
+                  rows={2}
+                />
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {blogSection.header.desc.length}/200
+                  {blogSection.header.desc.length >= 200 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Limit reached!
+                    </span>
+                  )}
+                </div>
+              </div>
             ) : (
-              <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 {blogSection.header.desc}
               </p>
             )}
           </motion.div>
 
           {/* Blog Grid */}
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {displayedPosts.map((post, index) => (
               <motion.article
                 key={post.id}
-                className="flex flex-col h-full overflow-hidden transition-all duration-300 border-2 shadow-lg cursor-pointer bg-card rounded-xl hover:shadow-xl shadow-gray-500 group"
+                className="bg-card rounded-xl border-2 shadow-lg hover:shadow-xl  shadow-gray-500 transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -516,93 +598,141 @@ export default function Blog({
                 whileHover={{ y: -5 }}
               >
                 {/* Image */}
-                <div className="relative flex-shrink-0 h-48 overflow-hidden">
+                <div className="relative h-48 overflow-hidden flex-shrink-0">
                   <ImageWithFallback
                     src={post.image}
                     alt={post.title}
-                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
+
+                  {/* Category at the top */}
+                  <div className="absolute top-2 left-2">
+                    <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
+                      {isEditing ? (
+                        <div className="relative">
+                          <input
+                            value={post.category}
+                            onChange={(e) =>
+                              setBlogSection((prev) => ({
+                                ...prev,
+                                posts: prev.posts.map((p, i) =>
+                                  i === index
+                                    ? { ...p, category: e.target.value }
+                                    : p
+                                ),
+                              }))
+                            }
+                            maxLength={20}
+                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b ${
+                              post.category.length >= 20 ? "border-red-500" : ""
+                            }`}
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {post.category.length}/20
+                            {post.category.length >= 20 && (
+                              <span className="ml-2 text-red-500 font-bold">
+                                Limit reached!
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        post.category
+                      )}
+                    </span>
+                  </div>
+
                   {isEditing && (
                     <motion.div
                       animate={{ scale: 1 }}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute p-1 rounded bottom-2 left-2 bg-white/80"
+                      className="absolute bottom-2 left-2 right-2 bg-white/80 p-2 rounded z-50"
                     >
+                      {/* Recommendation text connected with select image */}
+                      <div className="text-xs text-gray-600 mb-1 text-center">
+                        Recommended: 400×300px (4:3 ratio)
+                      </div>
                       <input
                         type="file"
                         accept="image/*"
-                        className="w-full text-xs cursor-pointer"
+                        className="text-xs font-bold w-full cursor-pointer text-center"
                         onChange={(e) => handleBlogImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="mt-1 text-xs text-green-600">
+                        <p className="text-xs text-green-600 mt-1 text-center">
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
                     </motion.div>
                   )}
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 text-xs font-medium rounded-full bg-primary text-primary-foreground">
-                      {isEditing ? (
+                </div>
+
+                {/* Content */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex items-center text-xs text-muted-foreground mb-3 flex-shrink-0">
+                    <Calendar className="w-3 h-3 mr-1" />
+                    {isEditing ? (
+                      <div className="relative mr-4">
                         <input
-                          value={post.category}
+                          value={post.date}
                           onChange={(e) =>
                             setBlogSection((prev) => ({
                               ...prev,
                               posts: prev.posts.map((p, i) =>
-                                i === index
-                                  ? { ...p, category: e.target.value }
-                                  : p
+                                i === index ? { ...p, date: e.target.value } : p
                               ),
                             }))
                           }
-                          className="text-xs font-medium bg-transparent border-b text-primary-foreground"
+                          maxLength={20}
+                          className={`text-xs text-muted-foreground bg-transparent border-b ${
+                            post.date.length >= 20 ? "border-red-500" : ""
+                          }`}
                         />
-                      ) : (
-                        post.category
-                      )}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-col flex-grow p-6">
-                  <div className="flex items-center flex-shrink-0 mb-3 text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    {isEditing ? (
-                      <input
-                        value={post.date}
-                        onChange={(e) =>
-                          setBlogSection((prev) => ({
-                            ...prev,
-                            posts: prev.posts.map((p, i) =>
-                              i === index ? { ...p, date: e.target.value } : p
-                            ),
-                          }))
-                        }
-                        className="mr-4 text-xs bg-transparent border-b text-muted-foreground"
-                      />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {post.date.length}/20
+                          {post.date.length >= 20 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
-                      <span className="mr-4 text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground mr-4">
                         {post.date}
                       </span>
                     )}
                     <User className="w-3 h-3 mr-1" />
                     {isEditing ? (
-                      <input
-                        value={post.author}
-                        onChange={(e) =>
-                          setBlogSection((prev) => ({
-                            ...prev,
-                            posts: prev.posts.map((p, i) =>
-                              i === index ? { ...p, author: e.target.value } : p
-                            ),
-                          }))
-                        }
-                        className="text-xs bg-transparent border-b text-muted-foreground"
-                      />
+                      <div className="relative">
+                        <input
+                          value={post.author}
+                          onChange={(e) =>
+                            setBlogSection((prev) => ({
+                              ...prev,
+                              posts: prev.posts.map((p, i) =>
+                                i === index
+                                  ? { ...p, author: e.target.value }
+                                  : p
+                              ),
+                            }))
+                          }
+                          maxLength={30}
+                          className={`text-xs text-muted-foreground bg-transparent border-b ${
+                            post.author.length >= 30 ? "border-red-500" : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {post.author.length}/30
+                          {post.author.length >= 30 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <span className="text-xs text-muted-foreground">
                         {post.author}
@@ -613,34 +743,60 @@ export default function Blog({
                   <div className="flex-grow mb-4">
                     {isEditing ? (
                       <>
-                        <input
-                          value={post.title}
-                          onChange={(e) =>
-                            setBlogSection((prev) => ({
-                              ...prev,
-                              posts: prev.posts.map((p, i) =>
-                                i === index
-                                  ? { ...p, title: e.target.value }
-                                  : p
-                              ),
-                            }))
-                          }
-                          className="font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 w-full border-b bg-transparent min-h-[3rem]"
-                        />
-                        <textarea
-                          value={post.excerpt}
-                          onChange={(e) =>
-                            setBlogSection((prev) => ({
-                              ...prev,
-                              posts: prev.posts.map((p, i) =>
-                                i === index
-                                  ? { ...p, excerpt: e.target.value }
-                                  : p
-                              ),
-                            }))
-                          }
-                          className="text-muted-foreground text-sm line-clamp-3 w-full border-b bg-transparent min-h-[4.5rem]"
-                        />
+                        <div className="relative mb-3">
+                          <input
+                            value={post.title}
+                            onChange={(e) =>
+                              setBlogSection((prev) => ({
+                                ...prev,
+                                posts: prev.posts.map((p, i) =>
+                                  i === index
+                                    ? { ...p, title: e.target.value }
+                                    : p
+                                ),
+                              }))
+                            }
+                            maxLength={100}
+                            className={`font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 w-full border-b bg-transparent min-h-[3rem] ${
+                              post.title.length >= 100 ? "border-red-500" : ""
+                            }`}
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {post.title.length}/100
+                            {post.title.length >= 100 && (
+                              <span className="ml-2 text-red-500 font-bold">
+                                Limit reached!
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <textarea
+                            value={post.excerpt}
+                            onChange={(e) =>
+                              setBlogSection((prev) => ({
+                                ...prev,
+                                posts: prev.posts.map((p, i) =>
+                                  i === index
+                                    ? { ...p, excerpt: e.target.value }
+                                    : p
+                                ),
+                              }))
+                            }
+                            maxLength={200}
+                            className={`text-muted-foreground text-sm line-clamp-3 w-full border-b bg-transparent min-h-[4.5rem] ${
+                              post.excerpt.length >= 200 ? "border-red-500" : ""
+                            }`}
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {post.excerpt.length}/200
+                            {post.excerpt.length >= 200 && (
+                              <span className="ml-2 text-red-500 font-bold">
+                                Limit reached!
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -656,7 +812,7 @@ export default function Blog({
 
                   <div className="mt-auto">
                     <motion.button
-                      className="flex items-center justify-center w-full gap-2 py-2 font-medium transition-all duration-300 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"
+                      className="w-full py-2 bg-primary/10 text-primary rounded-lg font-medium flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => openModal(post)}
@@ -668,7 +824,7 @@ export default function Blog({
                       <Button
                         size="sm"
                         variant="destructive"
-                        className="w-full mt-2 hover:scale-105"
+                        className="mt-2 w-full hover:scale-105"
                         onClick={() =>
                           setBlogSection((prev) => ({
                             ...prev,
@@ -737,7 +893,7 @@ export default function Blog({
         <AnimatePresence>
           {isModalOpen && selectedPost && (
             <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xl"
+              className="fixed inset-0 backdrop-blur-xl flex items-center justify-center p-4 z-50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -755,27 +911,43 @@ export default function Blog({
                   <ImageWithFallback
                     src={selectedPost.image}
                     alt={selectedPost.title}
-                    className="object-cover w-full h-64"
+                    className="w-full h-64 object-cover"
                   />
                   <button
                     onClick={closeModal}
-                    className="absolute flex items-center justify-center w-8 h-8 transition-colors bg-white rounded-full shadow-md top-4 right-4 hover:bg-gray-100"
+                    className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
+                  {/* Category at the top in modal */}
                   <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 text-sm font-medium rounded-full bg-primary text-primary-foreground">
+                    <span className="px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-full">
                       {isEditing ? (
-                        <input
-                          value={selectedPost.category}
-                          onChange={(e) =>
-                            setSelectedPost((s: any) => ({
-                              ...s,
-                              category: e.target.value,
-                            }))
-                          }
-                          className="text-sm font-medium bg-transparent border-b text-primary-foreground"
-                        />
+                        <div className="relative">
+                          <input
+                            value={selectedPost.category}
+                            onChange={(e) =>
+                              setSelectedPost((s: any) => ({
+                                ...s,
+                                category: e.target.value,
+                              }))
+                            }
+                            maxLength={20}
+                            className={`text-sm font-medium text-primary-foreground bg-transparent border-b ${
+                              selectedPost.category.length >= 20
+                                ? "border-red-500"
+                                : ""
+                            }`}
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {selectedPost.category.length}/20
+                            {selectedPost.category.length >= 20 && (
+                              <span className="ml-2 text-red-500 font-bold">
+                                Limit reached!
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       ) : (
                         <span className="text-sm font-medium text-primary-foreground">
                           {selectedPost.category}
@@ -787,39 +959,69 @@ export default function Blog({
 
                 {/* Modal Content */}
                 <div className="p-8">
-                  <div className="flex items-center mb-4 text-sm text-muted-foreground">
+                  <div className="flex items-center text-sm text-muted-foreground mb-4">
                     <Calendar className="w-4 h-4 mr-1" />
                     {isEditing ? (
-                      <input
-                        value={selectedPost.date}
-                        onChange={(e) =>
-                          setSelectedPost((s: any) => ({
-                            ...s,
-                            date: e.target.value,
-                          }))
-                        }
-                        className="mr-6 text-sm bg-transparent border-b text-muted-foreground"
-                      />
+                      <div className="relative mr-6">
+                        <input
+                          value={selectedPost.date}
+                          onChange={(e) =>
+                            setSelectedPost((s: any) => ({
+                              ...s,
+                              date: e.target.value,
+                            }))
+                          }
+                          maxLength={20}
+                          className={`text-sm text-muted-foreground bg-transparent border-b ${
+                            selectedPost.date.length >= 20
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {selectedPost.date.length}/20
+                          {selectedPost.date.length >= 20 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
-                      <span className="mr-6 text-sm text-muted-foreground">
+                      <span className="text-sm text-muted-foreground mr-6">
                         {selectedPost.date}
                       </span>
                     )}
 
                     <User className="w-4 h-4 mr-1" />
                     {isEditing ? (
-                      <input
-                        value={selectedPost.author}
-                        onChange={(e) =>
-                          setSelectedPost((s: any) => ({
-                            ...s,
-                            author: e.target.value,
-                          }))
-                        }
-                        className="mr-6 text-sm bg-transparent border-b text-muted-foreground"
-                      />
+                      <div className="relative mr-6">
+                        <input
+                          value={selectedPost.author}
+                          onChange={(e) =>
+                            setSelectedPost((s: any) => ({
+                              ...s,
+                              author: e.target.value,
+                            }))
+                          }
+                          maxLength={30}
+                          className={`text-sm text-muted-foreground bg-transparent border-b ${
+                            selectedPost.author.length >= 30
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {selectedPost.author.length}/30
+                          {selectedPost.author.length >= 30 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
-                      <span className="mr-6 text-sm text-muted-foreground">
+                      <span className="text-sm text-muted-foreground mr-6">
                         {selectedPost.author}
                       </span>
                     )}
@@ -827,32 +1029,62 @@ export default function Blog({
 
                   {isEditing ? (
                     <>
-                      <input
-                        value={selectedPost.title}
-                        onChange={(e) =>
-                          setSelectedPost((s: any) => ({
-                            ...s,
-                            title: e.target.value,
-                          }))
-                        }
-                        className="w-full mb-4 text-2xl font-bold bg-transparent border-b text-card-foreground"
-                      />
+                      <div className="relative mb-4">
+                        <input
+                          value={selectedPost.title}
+                          onChange={(e) =>
+                            setSelectedPost((s: any) => ({
+                              ...s,
+                              title: e.target.value,
+                            }))
+                          }
+                          maxLength={100}
+                          className={`text-2xl font-bold text-card-foreground mb-4 w-full bg-transparent border-b ${
+                            selectedPost.title.length >= 100
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {selectedPost.title.length}/100
+                          {selectedPost.title.length >= 100 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
-                      <textarea
-                        value={selectedPost.content}
-                        onChange={(e) =>
-                          setSelectedPost((s: any) => ({
-                            ...s,
-                            content: e.target.value,
-                          }))
-                        }
-                        className="w-full h-48 p-2 mb-4 prose bg-transparent border prose-gray max-w-none text-card-foreground"
-                      />
+                      <div className="relative">
+                        <textarea
+                          value={selectedPost.content}
+                          onChange={(e) =>
+                            setSelectedPost((s: any) => ({
+                              ...s,
+                              content: e.target.value,
+                            }))
+                          }
+                          maxLength={5000}
+                          className={`prose prose-gray max-w-none text-card-foreground w-full h-48 mb-4 border bg-transparent p-2 ${
+                            selectedPost.content.length >= 5000
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {selectedPost.content.length}/5000
+                          {selectedPost.content.length >= 5000 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
                       <div className="mb-4">
-                        <label className="block mb-1 text-sm">
-                          Change Image
-                        </label>
+                        <div className="text-xs text-gray-600 mb-1">
+                          Recommended: 800×600px (4:3 ratio)
+                        </div>
                         <input
                           type="file"
                           accept="image/*"
@@ -860,7 +1092,7 @@ export default function Blog({
                           className="text-sm"
                         />
                         {pendingImages["modal"] && (
-                          <p className="mt-1 text-xs text-green-600">
+                          <p className="text-xs text-green-600 mt-1">
                             ✓ Image cropped and ready to upload
                           </p>
                         )}
@@ -868,7 +1100,7 @@ export default function Blog({
                     </>
                   ) : (
                     <>
-                      <h2 className="mb-6 text-2xl font-bold text-card-foreground">
+                      <h2 className="text-2xl font-bold text-card-foreground mb-6">
                         {selectedPost.title}
                       </h2>
                       <div
@@ -886,7 +1118,7 @@ export default function Blog({
                   {isEditing && (
                     <Button
                       onClick={() => saveModalChanges()}
-                      className="text-white bg-green-600"
+                      className="bg-green-600 text-white"
                     >
                       Save Changes
                     </Button>

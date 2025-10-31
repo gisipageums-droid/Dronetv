@@ -29,9 +29,24 @@ export default function Hero({
   const [croppingFor, setCroppingFor] = useState(null); // 'heroImage' or 'smallImage'
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Text field limits
+  const TEXT_LIMITS = {
+    badgeText: 40,
+    heading: 60,
+    highlight: 30,
+    description: 120,
+    highlightDesc: 40,
+    primaryBtn: 25,
+    trustText: 40,
+    statValue: 15,
+    statLabel: 25,
+  };
 
   // Consolidated state - updated to include smallImage and remove cardText
   const [heroState, setHeroState] = useState({
@@ -117,9 +132,12 @@ export default function Hero({
       setOriginalFile(file);
       setCroppingFor("heroImage");
       setShowCropper(true);
+      // Set aspect ratio for hero image
+      setAspectRatio(4 / 3);
       // Reset crop settings
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -147,9 +165,12 @@ export default function Hero({
       setOriginalFile(file);
       setCroppingFor("hero3Image");
       setShowCropper(true);
+      // Set aspect ratio for small image
+      setAspectRatio(1);
       // Reset crop settings
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -173,7 +194,7 @@ export default function Hero({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -181,6 +202,12 @@ export default function Hero({
     // Set canvas size to the desired crop size
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
+
+    // Translate and rotate the context
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
     // Draw the cropped image
     ctx.drawImage(
       image,
@@ -231,7 +258,8 @@ export default function Hero({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -265,11 +293,13 @@ export default function Hero({
     setCroppingFor(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -420,115 +450,146 @@ export default function Hero({
 
   return (
     <>
-      {/* Image Cropper Modal - WhatsApp Style */}
+      {/* Image Cropper Modal - Updated to match Hero1.tsx */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-2 sm:p-3"
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full max-h-[86vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-2 border-b border-gray-200 sm:p-3 bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">
-                Crop Image
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop{" "}
+                {croppingFor === "heroImage" ? "Hero Image" : "Small Image"}
               </h3>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                aria-label="Close cropper"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="relative flex-1 bg-gray-900">
-              <div className="relative w-full h-[44vh] sm:h-[50vh] md:h-[56vh] lg:h-[60vh]">
-                <Cropper
-                  image={imageToCrop || undefined}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={croppingFor === "heroImage" ? 4 / 3 : 1}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
-            {/* Controls - compact responsive */}
-            <div className="p-2 border-t border-gray-200 sm:p-3 bg-gray-50">
-              <div className="grid grid-cols-1 gap-2">
-                {/* Zoom */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" /> Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
                 </div>
-
-                {/* Rotation removed - use zoom + crop only */}
               </div>
 
-              {/* Action Buttons - equal width & responsive */}
-              <div className="grid grid-cols-1 gap-2 mt-3 sm:grid-cols-3">
-                <Button
-                  variant="outline"
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
                   onClick={resetCropSettings}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Reset
-                </Button>
-
-                <Button
-                  variant="outline"
+                </button>
+                <button
                   onClick={cancelCrop}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 py-1.5 text-sm"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
                   Cancel
-                </Button>
-
-                <Button
+                </button>
+                <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 text-sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
                 >
                   Apply Crop
-                </Button>
+                </button>
               </div>
             </div>
           </motion.div>
         </motion.div>
       )}
 
+      {/* Rest of the Hero component remains exactly the same */}
       <section
         id="home"
         className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition"
@@ -567,11 +628,23 @@ export default function Hero({
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   {isEditing ? (
-                    <input
-                      value={heroState.badgeText}
-                      onChange={(e) => updateField("badgeText", e.target.value)}
-                      className="text-sm bg-transparent border-b outline-none hover:bg-blue-200 border-primary"
-                    />
+                    <div className="relative">
+                      <input
+                        value={heroState.badgeText}
+                        onChange={(e) =>
+                          updateField("badgeText", e.target.value)
+                        }
+                        maxLength={TEXT_LIMITS.badgeText}
+                        className={`text-sm bg-transparent border-b outline-none hover:bg-blue-200 ${
+                          heroState.badgeText.length >= TEXT_LIMITS.badgeText
+                            ? "border-red-500"
+                            : "border-primary"
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {heroState.badgeText.length}/{TEXT_LIMITS.badgeText}
+                      </div>
+                    </div>
                   ) : (
                     <span className="text-sm font-medium">
                       {heroState.badgeText}
@@ -583,18 +656,50 @@ export default function Hero({
                 <motion.div variants={itemVariants}>
                   {isEditing ? (
                     <>
-                      <textarea
-                        value={heroState.heading}
-                        onChange={(e) => updateField("heading", e.target.value)}
-                        className="w-full max-w-lg text-4xl leading-tight bg-transparent border-b outline-none border-foreground md:text-6xl"
-                      />
-                      <input
-                        value={heroState.highlight}
-                        onChange={(e) =>
-                          updateField("highlight", e.target.value)
-                        }
-                        className="text-4xl bg-transparent border-b outline-none border-primary md:text-6xl text-primary"
-                      />
+                      <div className="relative mb-4">
+                        <textarea
+                          value={heroState.heading}
+                          onChange={(e) =>
+                            updateField("heading", e.target.value)
+                          }
+                          maxLength={TEXT_LIMITS.heading}
+                          className={`w-full max-w-lg text-4xl leading-tight bg-transparent border-b outline-none md:text-6xl ${
+                            heroState.heading.length >= TEXT_LIMITS.heading
+                              ? "border-red-500"
+                              : "border-foreground"
+                          }`}
+                        />
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <div>
+                            {heroState.heading.length >=
+                              TEXT_LIMITS.heading && (
+                              <span className="text-red-500 font-bold">
+                                ⚠️ Character limit reached!
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            {heroState.heading.length}/{TEXT_LIMITS.heading}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <input
+                          value={heroState.highlight}
+                          onChange={(e) =>
+                            updateField("highlight", e.target.value)
+                          }
+                          maxLength={TEXT_LIMITS.highlight}
+                          className={`text-4xl bg-transparent border-b outline-none md:text-6xl text-primary ${
+                            heroState.highlight.length >= TEXT_LIMITS.highlight
+                              ? "border-red-500"
+                              : "border-primary"
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {heroState.highlight.length}/{TEXT_LIMITS.highlight}
+                        </div>
+                      </div>
                     </>
                   ) : (
                     <h1 className="text-4xl leading-tight md:text-6xl text-foreground">
@@ -610,20 +715,54 @@ export default function Hero({
                 <motion.div variants={itemVariants}>
                   {isEditing ? (
                     <>
-                      <textarea
-                        value={heroState.description}
-                        onChange={(e) =>
-                          updateField("description", e.target.value)
-                        }
-                        className="w-full max-w-lg text-xl bg-transparent border-b outline-none border-muted-foreground text-muted-foreground"
-                      />
-                      <input
-                        value={heroState.highlightDesc}
-                        onChange={(e) =>
-                          updateField("highlightDesc", e.target.value)
-                        }
-                        className="text-xl font-semibold bg-transparent border-b outline-none border-red-accent"
-                      />
+                      <div className="relative mb-4">
+                        <textarea
+                          value={heroState.description}
+                          onChange={(e) =>
+                            updateField("description", e.target.value)
+                          }
+                          maxLength={TEXT_LIMITS.description}
+                          className={`w-full max-w-lg text-xl bg-transparent border-b outline-none text-muted-foreground ${
+                            heroState.description.length >=
+                            TEXT_LIMITS.description
+                              ? "border-red-500"
+                              : "border-muted-foreground"
+                          }`}
+                        />
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <div>
+                            {heroState.description.length >=
+                              TEXT_LIMITS.description && (
+                              <span className="text-red-500 font-bold">
+                                ⚠️ Character limit reached!
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            {heroState.description.length}/
+                            {TEXT_LIMITS.description}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <input
+                          value={heroState.highlightDesc}
+                          onChange={(e) =>
+                            updateField("highlightDesc", e.target.value)
+                          }
+                          maxLength={TEXT_LIMITS.highlightDesc}
+                          className={`text-xl font-semibold bg-transparent border-b outline-none ${
+                            heroState.highlightDesc.length >=
+                            TEXT_LIMITS.highlightDesc
+                              ? "border-red-500"
+                              : "border-red-accent"
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {heroState.highlightDesc.length}/
+                          {TEXT_LIMITS.highlightDesc}
+                        </div>
+                      </div>
                     </>
                   ) : (
                     <p className="inline max-w-lg text-xl text-muted-foreground">
@@ -643,15 +782,23 @@ export default function Hero({
                 variants={itemVariants}
               >
                 {isEditing ? (
-                  <>
+                  <div className="relative">
                     <input
                       value={heroState.primaryBtn}
                       onChange={(e) =>
                         updateField("primaryBtn", e.target.value)
                       }
-                      className="bg-transparent border-b border-primary outline-none max-w-[200px]"
+                      maxLength={TEXT_LIMITS.primaryBtn}
+                      className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
+                        heroState.primaryBtn.length >= TEXT_LIMITS.primaryBtn
+                          ? "border-red-500"
+                          : ""
+                      }`}
                     />
-                  </>
+                    <div className="text-right text-xs text-gray-500 mt-1">
+                      {heroState.primaryBtn.length}/{TEXT_LIMITS.primaryBtn}
+                    </div>
+                  </div>
                 ) : (
                   <>
                     <Button
@@ -677,11 +824,23 @@ export default function Hero({
                     <div className="w-8 h-8 border-2 rounded-full bg-red-accent border-background" />
                   </div>
                   {isEditing ? (
-                    <input
-                      value={heroState.trustText}
-                      onChange={(e) => updateField("trustText", e.target.value)}
-                      className="text-sm bg-transparent border-b outline-none border-muted-foreground"
-                    />
+                    <div className="relative">
+                      <input
+                        value={heroState.trustText}
+                        onChange={(e) =>
+                          updateField("trustText", e.target.value)
+                        }
+                        maxLength={TEXT_LIMITS.trustText}
+                        className={`text-sm bg-transparent border-b outline-none ${
+                          heroState.trustText.length >= TEXT_LIMITS.trustText
+                            ? "border-red-500"
+                            : "border-muted-foreground"
+                        }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {heroState.trustText.length}/{TEXT_LIMITS.trustText}
+                      </div>
+                    </div>
                   ) : (
                     <span className="text-sm text-muted-foreground">
                       {heroState.trustText}
@@ -699,20 +858,40 @@ export default function Hero({
                   <div key={s.id} className="group">
                     {isEditing ? (
                       <div className="flex flex-col gap-1">
-                        <input
-                          value={s.value}
-                          onChange={(e) =>
-                            updateStat(s.id, "value", e.target.value)
-                          }
-                          className="text-2xl font-bold bg-transparent border-b outline-none border-foreground"
-                        />
-                        <input
-                          value={s.label}
-                          onChange={(e) =>
-                            updateStat(s.id, "label", e.target.value)
-                          }
-                          className="text-sm bg-transparent border-b outline-none border-muted-foreground"
-                        />
+                        <div className="relative">
+                          <input
+                            value={s.value}
+                            onChange={(e) =>
+                              updateStat(s.id, "value", e.target.value)
+                            }
+                            maxLength={TEXT_LIMITS.statValue}
+                            className={`text-2xl font-bold bg-transparent border-b outline-none ${
+                              s.value.length >= TEXT_LIMITS.statValue
+                                ? "border-red-500"
+                                : "border-foreground"
+                            }`}
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {s.value.length}/{TEXT_LIMITS.statValue}
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <input
+                            value={s.label}
+                            onChange={(e) =>
+                              updateStat(s.id, "label", e.target.value)
+                            }
+                            maxLength={TEXT_LIMITS.statLabel}
+                            className={`text-sm bg-transparent border-b outline-none ${
+                              s.label.length >= TEXT_LIMITS.statLabel
+                                ? "border-red-500"
+                                : "border-muted-foreground"
+                            }`}
+                          />
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {s.label.length}/{TEXT_LIMITS.statLabel}
+                          </div>
+                        </div>
                         <motion.button
                           whileTap={{ scale: 0.9 }}
                           whileHover={{ scale: 1.2 }}
@@ -760,6 +939,10 @@ export default function Hero({
               {isEditing && (
                 <div className="p-2 mb-4 space-y-4 rounded shadow bg-white/80">
                   <div>
+                    {/* Recommended Size Above Hero Image */}
+                    <div className="mb-2 bg-black/70 text-white text-xs p-1 rounded text-center">
+                      Recommended: 1200×900px (4:3 ratio)
+                    </div>
                     <p className="mb-1 text-sm">Change Hero Image:</p>
                     <input
                       type="file"
@@ -774,6 +957,10 @@ export default function Hero({
                     )}
                   </div>
                   <div>
+                    {/* Recommended Size Above Small Image */}
+                    <div className="mb-2 bg-black/70 text-white text-xs p-1 rounded text-center">
+                      Recommended: 400×400px (1:1 ratio)
+                    </div>
                     <p className="mb-1 text-sm">Change Small Image:</p>
                     <input
                       type="file"
