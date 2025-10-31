@@ -56,12 +56,11 @@ export default function Footer({
   // Merged all state into a single object - PRESERVING ORIGINAL DATA STRUCTURE
   const [footerContent, setFooterContent] = useState({
     companyInfo: {
-      logoText: footerLogo?.logo,
+      logoUrl: footerLogo?.logo,
       companyName: footerLogo?.name || "Company",
       description:
         "We help businesses transform and grow with innovative solutions, expert guidance, and proven strategies that deliver exceptional results.",
-      email: "hello@company.com",
-      phone: "+1 (555) 123-4567",
+    
     },
     footerLinks: {
       Company: [
@@ -174,32 +173,7 @@ export default function Footer({
     }));
   };
 
-  // Handlers for social links
-  const updateSocialLink = (index, field, value) => {
-    setFooterContent((prev) => ({
-      ...prev,
-      socialLinks: prev.socialLinks.map((link, i) =>
-        i === index ? { ...link, [field]: value } : link
-      ),
-    }));
-  };
-
-  const addSocialLink = () => {
-    setFooterContent((prev) => ({
-      ...prev,
-      socialLinks: [
-        ...prev.socialLinks,
-        { name: "New Social", icon: Facebook, href: "#" },
-      ],
-    }));
-  };
-
-  const removeSocialLink = (index) => {
-    setFooterContent((prev) => ({
-      ...prev,
-      socialLinks: prev.socialLinks.filter((_, i) => i !== index),
-    }));
-  };
+ 
 
   // Logo cropping functionality - Updated to match Footer1.tsx
   const handleLogoUpload = (e) => {
@@ -313,8 +287,8 @@ export default function Footer({
         rotation
       );
 
-      // Update preview immediately - using logoText field to preserve data structure
-      updateCompanyInfo("logoText", previewUrl);
+      // Update preview immediately - using logoUrl field to preserve data structure
+      updateCompanyInfo("logoUrl", previewUrl);
 
       // Set the file for upload on save
       setPendingLogoFile(file);
@@ -366,7 +340,7 @@ export default function Footer({
         const formData = new FormData();
         formData.append("file", pendingLogoFile);
         formData.append("sectionName", "footer");
-        formData.append("imageField", "logoText" + Date.now()); // Using logoText field
+        formData.append("imageField", "logoUrl" + Date.now()); // Using logoUrl field
         formData.append("templateSelection", templateSelection);
 
         const uploadResponse = await fetch(
@@ -379,8 +353,8 @@ export default function Footer({
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL - using logoText field to preserve data structure
-          updateCompanyInfo("logoText", uploadData.imageUrl);
+          // Replace local preview with S3 URL - using logoUrl field to preserve data structure
+          updateCompanyInfo("logoUrl", uploadData.imageUrl);
           setPendingLogoFile(null); // Clear pending file
           console.log("Logo uploaded to S3:", uploadData.imageUrl);
         } else {
@@ -637,21 +611,21 @@ export default function Footer({
                   >
                     {isEditing ? (
                       <div className="relative w-full h-full">
-                        {footerContent.companyInfo.logoText &&
-                        (footerContent.companyInfo.logoText.startsWith(
+                        {footerContent.companyInfo.logoUrl &&
+                        (footerContent.companyInfo.logoUrl.startsWith(
                           "data:"
                         ) ||
-                          footerContent.companyInfo.logoText.startsWith(
+                          footerContent.companyInfo.logoUrl.startsWith(
                             "http"
                           )) ? (
                           <img
-                            src={footerContent.companyInfo.logoText || logo}
+                            src={footerContent.companyInfo.logoUrl || logo}
                             alt="Logo"
                             className="w-full h-full object-contain"
                           />
                         ) : (
                           <span className="text-lg font-bold text-black">
-                            {footerContent.companyInfo.logoText}
+                            {footerContent.companyInfo.logoUrl}
                           </span>
                         )}
                         <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100">
@@ -665,21 +639,21 @@ export default function Footer({
                       </div>
                     ) : (
                       <>
-                        {footerContent.companyInfo.logoText &&
-                        (footerContent.companyInfo.logoText.startsWith(
+                        {footerContent.companyInfo.logoUrl &&
+                        (footerContent.companyInfo.logoUrl.startsWith(
                           "data:"
                         ) ||
-                          footerContent.companyInfo.logoText.startsWith(
+                          footerContent.companyInfo.logoUrl.startsWith(
                             "http"
                           )) ? (
                           <img
-                            src={footerContent.companyInfo.logoText}
+                            src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
                             className="object-contain w-[70px] h-[70px]"
                           />
                         ) : (
                           <span className="text-lg font-medium text-black">
-                            {footerContent.companyInfo.logoText}
+                            {footerContent.companyInfo.logoUrl}
                           </span>
                         )}
                       </>
@@ -954,246 +928,10 @@ export default function Footer({
                 )
               )}
 
-              {/* Newsletter Section */}
-              <motion.div variants={itemVariants}>
-                {isEditing ? (
-                  <>
-                    <div className="relative mb-4">
-                      <input
-                        value={footerContent.newsletter.title}
-                        onChange={(e) =>
-                          setFooterContent((prev) => ({
-                            ...prev,
-                            newsletter: {
-                              ...prev.newsletter,
-                              title: e.target.value,
-                            },
-                          }))
-                        }
-                        maxLength={50}
-                        className={`font-medium text-white mb-4 bg-transparent border-b w-full ${
-                          footerContent.newsletter.title.length >= 50
-                            ? "border-red-500"
-                            : ""
-                        }`}
-                      />
-                      <div className="text-right text-xs text-gray-500 mt-1">
-                        {footerContent.newsletter.title.length}/50
-                        {footerContent.newsletter.title.length >= 50 && (
-                          <span className="ml-2 text-red-500 font-bold">
-                            Limit reached!
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="relative mb-4">
-                      <textarea
-                        value={footerContent.newsletter.description}
-                        onChange={(e) =>
-                          setFooterContent((prev) => ({
-                            ...prev,
-                            newsletter: {
-                              ...prev.newsletter,
-                              description: e.target.value,
-                            },
-                          }))
-                        }
-                        maxLength={100}
-                        className={`text-gray-400 bg-transparent border-b w-full ${
-                          footerContent.newsletter.description.length >= 100
-                            ? "border-red-500"
-                            : ""
-                        }`}
-                        rows={2}
-                      />
-                      <div className="text-right text-xs text-gray-500 mt-1">
-                        {footerContent.newsletter.description.length}/100
-                        {footerContent.newsletter.description.length >= 100 && (
-                          <span className="ml-2 text-red-500 font-bold">
-                            Limit reached!
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <input
-                        value={footerContent.newsletter.buttonText}
-                        onChange={(e) =>
-                          setFooterContent((prev) => ({
-                            ...prev,
-                            newsletter: {
-                              ...prev.newsletter,
-                              buttonText: e.target.value,
-                            },
-                          }))
-                        }
-                        maxLength={20}
-                        className={`text-gray-400 bg-transparent border-b w-full ${
-                          footerContent.newsletter.buttonText.length >= 20
-                            ? "border-red-500"
-                            : ""
-                        }`}
-                      />
-                      <div className="text-right text-xs text-gray-500 mt-1">
-                        {footerContent.newsletter.buttonText.length}/20
-                        {footerContent.newsletter.buttonText.length >= 20 && (
-                          <span className="ml-2 text-red-500 font-bold">
-                            Limit reached!
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h4 className="font-medium text-white mb-4">
-                      {footerContent.newsletter.title}
-                    </h4>
-                    <p className="text-gray-400 mb-4">
-                      {footerContent.newsletter.description}
-                    </p>
-                    <Button className="w-full">
-                      {footerContent.newsletter.buttonText}
-                    </Button>
-                  </>
-                )}
-              </motion.div>
             </div>
           </motion.div>
 
-          {/* Bottom Footer */}
-          <motion.div
-            className="py-6 border-t border-gray-800"
-            variants={itemVariants}
-          >
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              {isEditing ? (
-                <div className="relative mb-4 md:mb-0">
-                  <input
-                    value={footerContent.bottomFooter.copyright}
-                    onChange={(e) =>
-                      setFooterContent((prev) => ({
-                        ...prev,
-                        bottomFooter: {
-                          ...prev.bottomFooter,
-                          copyright: e.target.value,
-                        },
-                      }))
-                    }
-                    maxLength={100}
-                    className={`text-gray-400 bg-transparent border-b ${
-                      footerContent.bottomFooter.copyright.length >= 100
-                        ? "border-red-500"
-                        : ""
-                    }`}
-                  />
-                  <div className="text-right text-xs text-gray-500 mt-1">
-                    {footerContent.bottomFooter.copyright.length}/100
-                    {footerContent.bottomFooter.copyright.length >= 100 && (
-                      <span className="ml-2 text-red-500 font-bold">
-                        Limit reached!
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-gray-400 mb-4 md:mb-0">
-                  {footerContent.bottomFooter.copyright}
-                </p>
-              )}
-
-              <div className="flex space-x-6">
-                {footerContent.bottomFooter.links.map((link, index) => (
-                  <motion.div
-                    key={index}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {isEditing ? (
-                      <div className="flex items-center">
-                        <div className="relative mr-2">
-                          <input
-                            value={link.name}
-                            onChange={(e) => {
-                              const newLinks = [
-                                ...footerContent.bottomFooter.links,
-                              ];
-                              newLinks[index] = {
-                                ...link,
-                                name: e.target.value,
-                              };
-                              setFooterContent((prev) => ({
-                                ...prev,
-                                bottomFooter: {
-                                  ...prev.bottomFooter,
-                                  links: newLinks,
-                                },
-                              }));
-                            }}
-                            maxLength={30}
-                            className={`text-gray-400 bg-transparent border-b ${
-                              link.name.length >= 30 ? "border-red-500" : ""
-                            }`}
-                          />
-                          <div className="text-right text-xs text-gray-500 mt-1">
-                            {link.name.length}/30
-                            {link.name.length >= 30 && (
-                              <span className="ml-2 text-red-500 font-bold">
-                                Limit reached!
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => {
-                            const newLinks =
-                              footerContent.bottomFooter.links.filter(
-                                (_, i) => i !== index
-                              );
-                            setFooterContent((prev) => ({
-                              ...prev,
-                              bottomFooter: {
-                                ...prev.bottomFooter,
-                                links: newLinks,
-                              },
-                            }));
-                          }}
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    ) : (
-                      <a
-                        href={link.href}
-                        className="text-gray-400 hover:text-primary transition-colors text-sm"
-                      >
-                        {link.name}
-                      </a>
-                    )}
-                  </motion.div>
-                ))}
-                {isEditing && (
-                  <Button
-                    onClick={() => {
-                      const newLinks = [
-                        ...footerContent.bottomFooter.links,
-                        { name: "New Link", href: "#" },
-                      ];
-                      setFooterContent((prev) => ({
-                        ...prev,
-                        bottomFooter: { ...prev.bottomFooter, links: newLinks },
-                      }));
-                    }}
-                    className="text-green-600"
-                  >
-                    + Add
-                  </Button>
-                )}
-              </div>
-            </div>
-          </motion.div>
+       
         </div>
       </motion.footer>
     </>
