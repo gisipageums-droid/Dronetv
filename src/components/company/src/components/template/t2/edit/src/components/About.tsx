@@ -525,7 +525,7 @@ export default function About({
           </div>
 
           {/* Main About Section */}
-          <div className="grid items-center gap-12 mb-20 lg:grid-cols-2">
+          <div className="grid items-start gap-12 mb-20 lg:grid-cols-2">
             {/* Image */}
             <motion.div
               className="relative overflow-hidden shadow-xl rounded-2xl"
