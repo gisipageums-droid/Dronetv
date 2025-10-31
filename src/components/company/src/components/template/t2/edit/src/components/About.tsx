@@ -60,7 +60,7 @@ export default function About({
       "Proven track record of success",
       "Customer-first approach",
     ],
-    metric1Num: "5+",
+    metric1Num: aboutData.yearsOfExperience,
     metric1Label: "Years Experience",
     metric2Num: "20+",
     metric2Label: "Projects Completed",

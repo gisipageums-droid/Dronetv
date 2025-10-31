@@ -34,7 +34,7 @@ const ForgotPassword: React.FC = () => {
 
     setIsLoading(true)
     try {
-      const response = await fetch('https://rr1wdel8sg.execute-api.ap-south-1.amazonaws.com/prod/forgot_post', {
+      const response = await fetch('https://ly8r7e8131.execute-api.ap-south-1.amazonaws.com/dev/forgot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

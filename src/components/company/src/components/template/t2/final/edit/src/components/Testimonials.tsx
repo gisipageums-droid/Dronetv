@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import user from "/images/user.png"
 
 export default function Testimonials({
   testimonialsData,
@@ -772,7 +773,7 @@ function TestimonialCard({
               transition={{ duration: 0.3 }}
             >
               <ImageWithFallback
-                src={testimonial.image}
+                src={testimonial.image|| user}
                 alt={testimonial.name}
                 className="w-full h-full object-cover"
               />

@@ -377,7 +377,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            <button
+            {/* <button
               onClick={(e) => {
                 e.stopPropagation();
                 onPreview(company.publishedId);
@@ -388,7 +388,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
             >
               <Eye className="w-3 h-3 md:w-4 md:h-4" />
               Preview
-            </button>
+            </button> */}
 
             <button
               onClick={(e) => {
@@ -403,7 +403,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               Access Details
             </button>
 
-            {/* <button
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(company.publishedId, company.templateSelection);
@@ -413,8 +413,8 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               disabled={disabled}
             >
               <Edit className="w-3 h-3 md:w-4 md:h-4" />
-              Edit
-            </button> */}
+              Edit/preview
+            </button>
 
             <button
               onClick={(e) => {

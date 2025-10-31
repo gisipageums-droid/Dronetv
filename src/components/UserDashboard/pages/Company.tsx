@@ -277,7 +277,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
               className="flex-1 px-3 py-2 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-500"
             >
               <Edit className="w-4 h-4" />
-              Edit
+              Edit/Preview
             </button>
           </div>
 
