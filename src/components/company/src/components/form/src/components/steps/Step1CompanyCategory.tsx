@@ -371,66 +371,6 @@ React.useEffect(() => {
                       {companyNameStatus.message}
                     </div>
                   )}
-{/*                   
-                  <FormInput
-                    label="Date of Incorporation "
-                    type="date"
-                    value={formData.yearEstablished}
-                    onChange={(value) =>
-                      updateFormData({ yearEstablished: value })
-                    }
-                    placeholder="Select incorporation date"
-                  /> */}
-
-
-
-                  {/* Date of Incorporation */}
-{/* <div className="flex flex-col gap-2">
-  <label className="text-sm font-medium">Date of Incorporation</label>
-  <div className="flex gap-2"> */}
-    {/* Day */}
-    {/* <select
-      className="border p-2 rounded-md flex-1 bg-white"
-      value={day || ""}
-      onChange={(e) => handleChange("day", e.target.value)}
-    >
-      <option value="">Day</option>
-      {days.map((d) => (
-        <option key={d} value={String(d).padStart(2, "0")}>
-          {d}
-        </option>
-      ))}
-    </select> */}
-
-    {/* Month */}
-    {/* <select
-      className="border p-2 rounded-md flex-1 bg-white"
-      value={month || ""}
-      onChange={(e) => handleChange("month", e.target.value)}
-    >
-      <option value="">Month</option>
-      {months.map((m, i) => (
-        <option key={i} value={String(i + 1).padStart(2, "0")}>
-          {m}
-        </option>
-      ))}
-    </select> */}
-
-    {/* Year */}
-    {/* <select
-      className="border p-2 rounded-md flex-1 bg-white"
-      value={year || ""}
-      onChange={(e) => handleChange("year", e.target.value)}
-    >
-      <option value="">Year</option>
-      {years.map((y) => (
-        <option key={y} value={y}>
-          {y}
-        </option>
-      ))}
-    </select>
-  </div>
-</div> */}
 
 
 
@@ -443,7 +383,7 @@ React.useEffect(() => {
     {/* Day */}
     <select
       className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
-      value={day || ""}
+      value={day || new Date().getDate().toString().padStart(2, "0")}
       onChange={(e) => handleChange("day", e.target.value)}
     >
       <option value="">Day</option>
@@ -456,12 +396,9 @@ React.useEffect(() => {
 
     {/* Month */}
     <select
-      className={`border border-amber-200 p-2 rounded-md flex-1 bg-white transition-all ${
-        !day ? "opacity-60 cursor-not-allowed" : ""
-      }`}
-      value={month || ""}
-      onChange={(e) => day && handleChange("month", e.target.value)}
-      disabled={!day}
+      className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
+      value={month || String(new Date().getMonth() + 1).padStart(2, "0")}
+      onChange={(e) => handleChange("month", e.target.value)}
     >
       <option value="">Month</option>
       {months.map((m, i) => (
@@ -473,17 +410,14 @@ React.useEffect(() => {
 
     {/* Year */}
     <select
-      className={`border border-amber-200 p-2 rounded-md flex-1 bg-white transition-all ${
-        !month ? "opacity-60 cursor-not-allowed" : ""
-      }`}
-      value={year || ""}
-      onChange={(e) => month && handleChange("year", e.target.value)}
-      disabled={!month}
+      className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
+      value={year || new Date().getFullYear().toString()}
+      onChange={(e) => handleChange("year", e.target.value)}
     >
       <option value="">Year</option>
       {years
         .slice()
-        .reverse() // 🔁 shows older years on top, latest on bottom
+        .reverse()
         .map((y) => (
           <option key={y} value={y}>
             {y}
@@ -499,9 +433,7 @@ React.useEffect(() => {
       const selectedDate =
         year && month && day
           ? new Date(`${year}-${month}-${day}`)
-          : null;
-
-      if (!selectedDate) return "";
+          : new Date(); // Use current date as default
 
       const isToday =
         selectedDate.toDateString() === today.toDateString();
@@ -511,10 +443,10 @@ React.useEffect(() => {
       const isThisYear =
         selectedDate.getFullYear() === today.getFullYear();
 
-      if (isToday) return "📅 This is today’s date.";
+      if (isToday) return "📅 This is today's date.";
       if (isThisMonth) return "🗓 This month is ongoing.";
       if (isThisYear) return "📆 This year is currently ongoing.";
-      return "";
+      return "📅 Default set to today's date";
     })()}
   </p>
 </div>
