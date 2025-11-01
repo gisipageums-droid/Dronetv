@@ -325,7 +325,7 @@ export default function Hero({
         const formData = new FormData();
         formData.append("file", pendingImageFile);
         formData.append("sectionName", "hero");
-        formData.append("imageField", "heroImage");
+        formData.append("imageField", `heroImage_${Date.now()}`);
         formData.append("templateSelection", templateSelection);
 
         console.log("Uploading hero image to S3:", pendingImageFile);
@@ -513,31 +513,28 @@ export default function Hero({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -635,11 +632,10 @@ export default function Hero({
                           updateField("badgeText", e.target.value)
                         }
                         maxLength={TEXT_LIMITS.badgeText}
-                        className={`text-sm bg-transparent border-b outline-none hover:bg-blue-200 ${
-                          heroState.badgeText.length >= TEXT_LIMITS.badgeText
-                            ? "border-red-500"
-                            : "border-primary"
-                        }`}
+                        className={`text-sm bg-transparent border-b outline-none hover:bg-blue-200 ${heroState.badgeText.length >= TEXT_LIMITS.badgeText
+                          ? "border-red-500"
+                          : "border-primary"
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.badgeText.length}/{TEXT_LIMITS.badgeText}
@@ -663,20 +659,19 @@ export default function Hero({
                             updateField("heading", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.heading}
-                          className={`w-full max-w-lg text-4xl leading-tight bg-transparent border-b outline-none md:text-6xl ${
-                            heroState.heading.length >= TEXT_LIMITS.heading
-                              ? "border-red-500"
-                              : "border-foreground"
-                          }`}
+                          className={`w-full max-w-lg text-4xl leading-tight bg-transparent border-b outline-none md:text-6xl ${heroState.heading.length >= TEXT_LIMITS.heading
+                            ? "border-red-500"
+                            : "border-foreground"
+                            }`}
                         />
                         <div className="flex justify-between text-xs text-gray-500 mt-1">
                           <div>
                             {heroState.heading.length >=
                               TEXT_LIMITS.heading && (
-                              <span className="text-red-500 font-bold">
-                                ⚠️ Character limit reached!
-                              </span>
-                            )}
+                                <span className="text-red-500 font-bold">
+                                  ⚠️ Character limit reached!
+                                </span>
+                              )}
                           </div>
                           <div>
                             {heroState.heading.length}/{TEXT_LIMITS.heading}
@@ -690,11 +685,10 @@ export default function Hero({
                             updateField("highlight", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.highlight}
-                          className={`text-4xl bg-transparent border-b outline-none md:text-6xl text-primary ${
-                            heroState.highlight.length >= TEXT_LIMITS.highlight
-                              ? "border-red-500"
-                              : "border-primary"
-                          }`}
+                          className={`text-4xl bg-transparent border-b outline-none md:text-6xl text-primary ${heroState.highlight.length >= TEXT_LIMITS.highlight
+                            ? "border-red-500"
+                            : "border-primary"
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.highlight.length}/{TEXT_LIMITS.highlight}
@@ -722,21 +716,20 @@ export default function Hero({
                             updateField("description", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.description}
-                          className={`w-full max-w-lg text-xl bg-transparent border-b outline-none text-muted-foreground ${
-                            heroState.description.length >=
+                          className={`w-full max-w-lg text-xl bg-transparent border-b outline-none text-muted-foreground ${heroState.description.length >=
                             TEXT_LIMITS.description
-                              ? "border-red-500"
-                              : "border-muted-foreground"
-                          }`}
+                            ? "border-red-500"
+                            : "border-muted-foreground"
+                            }`}
                         />
                         <div className="flex justify-between text-xs text-gray-500 mt-1">
                           <div>
                             {heroState.description.length >=
                               TEXT_LIMITS.description && (
-                              <span className="text-red-500 font-bold">
-                                ⚠️ Character limit reached!
-                              </span>
-                            )}
+                                <span className="text-red-500 font-bold">
+                                  ⚠️ Character limit reached!
+                                </span>
+                              )}
                           </div>
                           <div>
                             {heroState.description.length}/
@@ -751,12 +744,11 @@ export default function Hero({
                             updateField("highlightDesc", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.highlightDesc}
-                          className={`text-xl font-semibold bg-transparent border-b outline-none ${
-                            heroState.highlightDesc.length >=
+                          className={`text-xl font-semibold bg-transparent border-b outline-none ${heroState.highlightDesc.length >=
                             TEXT_LIMITS.highlightDesc
-                              ? "border-red-500"
-                              : "border-red-accent"
-                          }`}
+                            ? "border-red-500"
+                            : "border-red-accent"
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.highlightDesc.length}/
@@ -789,11 +781,10 @@ export default function Hero({
                         updateField("primaryBtn", e.target.value)
                       }
                       maxLength={TEXT_LIMITS.primaryBtn}
-                      className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
-                        heroState.primaryBtn.length >= TEXT_LIMITS.primaryBtn
-                          ? "border-red-500"
-                          : ""
-                      }`}
+                      className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= TEXT_LIMITS.primaryBtn
+                        ? "border-red-500"
+                        : ""
+                        }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {heroState.primaryBtn.length}/{TEXT_LIMITS.primaryBtn}
@@ -831,11 +822,10 @@ export default function Hero({
                           updateField("trustText", e.target.value)
                         }
                         maxLength={TEXT_LIMITS.trustText}
-                        className={`text-sm bg-transparent border-b outline-none ${
-                          heroState.trustText.length >= TEXT_LIMITS.trustText
-                            ? "border-red-500"
-                            : "border-muted-foreground"
-                        }`}
+                        className={`text-sm bg-transparent border-b outline-none ${heroState.trustText.length >= TEXT_LIMITS.trustText
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.trustText.length}/{TEXT_LIMITS.trustText}
@@ -865,11 +855,10 @@ export default function Hero({
                               updateStat(s.id, "value", e.target.value)
                             }
                             maxLength={TEXT_LIMITS.statValue}
-                            className={`text-2xl font-bold bg-transparent border-b outline-none ${
-                              s.value.length >= TEXT_LIMITS.statValue
-                                ? "border-red-500"
-                                : "border-foreground"
-                            }`}
+                            className={`text-2xl font-bold bg-transparent border-b outline-none ${s.value.length >= TEXT_LIMITS.statValue
+                              ? "border-red-500"
+                              : "border-foreground"
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.value.length}/{TEXT_LIMITS.statValue}
@@ -882,11 +871,10 @@ export default function Hero({
                               updateStat(s.id, "label", e.target.value)
                             }
                             maxLength={TEXT_LIMITS.statLabel}
-                            className={`text-sm bg-transparent border-b outline-none ${
-                              s.label.length >= TEXT_LIMITS.statLabel
-                                ? "border-red-500"
-                                : "border-muted-foreground"
-                            }`}
+                            className={`text-sm bg-transparent border-b outline-none ${s.label.length >= TEXT_LIMITS.statLabel
+                              ? "border-red-500"
+                              : "border-muted-foreground"
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.label.length}/{TEXT_LIMITS.statLabel}
@@ -1059,11 +1047,10 @@ export default function Hero({
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
