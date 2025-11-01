@@ -60,7 +60,8 @@ export default function Footer({
       companyName: footerLogo?.name || "Company",
       description:
         "We help businesses transform and grow with innovative solutions, expert guidance, and proven strategies that deliver exceptional results.",
-    
+      email: "", // Added email property
+      phone: "", // Added phone property
     },
     footerLinks: {
       Company: [
@@ -172,8 +173,6 @@ export default function Footer({
       },
     }));
   };
-
- 
 
   // Logo cropping functionality - Updated to match Footer1.tsx
   const handleLogoUpload = (e) => {
@@ -775,12 +774,16 @@ export default function Footer({
                   </>
                 ) : (
                   <>
-                    <p className="text-gray-400">
-                      {footerContent.companyInfo.email}
-                    </p>
-                    <p className="text-gray-400">
-                      {footerContent.companyInfo.phone}
-                    </p>
+                    {footerContent.companyInfo.email && (
+                      <p className="text-gray-400">
+                        {footerContent.companyInfo.email}
+                      </p>
+                    )}
+                    {footerContent.companyInfo.phone && (
+                      <p className="text-gray-400">
+                        {footerContent.companyInfo.phone}
+                      </p>
+                    )}
                   </>
                 )}
               </motion.div>
@@ -927,11 +930,8 @@ export default function Footer({
                   </motion.div>
                 )
               )}
-
             </div>
           </motion.div>
-
-       
         </div>
       </motion.footer>
     </>
