@@ -282,115 +282,6 @@ export default function Hero({
   };
 
   // Updated Save button handler - uploads cropped images to S3 - FIXED
-  // const handleSave = async () => {
-  //   try {
-  //     setIsUploading(true);
-
-  //     // Upload main image if cropped
-  //     if (pendingImageFile) {
-  //       if (!userId || !publishedId || !templateSelection) {
-  //         console.error("Missing required props:", {
-  //           userId,
-  //           publishedId,
-  //           templateSelection,
-  //         });
-  //         toast.error(
-  //           "Missing user information. Please refresh and try again."
-  //         );
-  //         return;
-  //       }
-
-  //       const formData = new FormData();
-  //       formData.append("file", pendingImageFile);
-  //       formData.append("sectionName", "hero");
-  //       formData.append("imageField", "heroImage" + Date.now());
-  //       formData.append("templateSelection", templateSelection);
-
-  //       console.log("Uploading hero image to S3:", pendingImageFile);
-
-  //       const uploadResponse = await fetch(
-  //         `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-  //         {
-  //           method: "POST",
-  //           body: formData,
-  //         }
-  //       );
-
-  //       if (uploadResponse.ok) {
-  //         const uploadData = await uploadResponse.json();
-  //         // Update with actual S3 URL, not blob URL
-  //         updateField("heroImage", uploadData.imageUrl);
-  //         setPendingImageFile(null);
-  //         console.log("Main image uploaded to S3:", uploadData.imageUrl);
-  //         toast.success("Hero image uploaded to S3 successfully!");
-  //       } else {
-  //         const errorData = await uploadResponse.json();
-  //         console.error("Main image upload failed:", errorData);
-  //         toast.error(
-  //           `Main image upload failed: ${errorData.message || "Unknown error"}`
-  //         );
-  //         return;
-  //       }
-  //     }
-
-  //     // Upload small image if cropped
-  //     if (pendingSmallImageFile) {
-  //       if (!userId || !publishedId || !templateSelection) {
-  //         console.error("Missing required props:", {
-  //           userId,
-  //           publishedId,
-  //           templateSelection,
-  //         });
-  //         toast.error(
-  //           "Missing user information. Please refresh and try again."
-  //         );
-  //         return;
-  //       }
-
-  //       const formData = new FormData();
-  //       formData.append("file", pendingSmallImageFile);
-  //       formData.append("sectionName", "hero");
-  //       formData.append("imageField", "hero3Image");
-  //       formData.append("templateSelection", templateSelection);
-
-  //       console.log("Uploading small image to S3:", pendingSmallImageFile);
-
-  //       const uploadResponse = await fetch(
-  //         `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-  //         {
-  //           method: "POST",
-  //           body: formData,
-  //         }
-  //       );
-
-  //       if (uploadResponse.ok) {
-  //         const uploadData = await uploadResponse.json();
-  //         // Update with actual S3 URL, not blob URL
-  //         updateField("hero3Image", uploadData.imageUrl);
-  //         setPendingSmallImageFile(null);
-  //         console.log("Small image uploaded to S3:", uploadData.imageUrl);
-  //         toast.success("Small image uploaded to S3 successfully!");
-  //       } else {
-  //         const errorData = await uploadResponse.json();
-  //         console.error("Small image upload failed:", errorData);
-  //         toast.error(
-  //           `Small image upload failed: ${errorData.message || "Unknown error"}`
-  //         );
-  //         return;
-  //       }
-  //     }
-
-  //     // Exit edit mode
-  //     setIsEditing(false);
-  //     toast.success("Hero section saved with S3 URLs!");
-  //   } catch (error) {
-  //     console.error("Error saving hero section:", error);
-  //     toast.error("Error saving changes. Please try again.");
-  //   } finally {
-  //     setIsUploading(false);
-  //   }
-  // };
-  // Updated Save button handler - uploads cropped images to S3 - FIXED
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -501,6 +392,7 @@ export default function Hero({
       setIsUploading(false);
     }
   };
+
   // Animations
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -610,28 +502,31 @@ export default function Hero({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -729,10 +624,11 @@ export default function Hero({
                           updateField("badgeText", e.target.value)
                         }
                         maxLength={25}
-                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${
+                          heroState.badgeText.length >= 25
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
                         {heroState.badgeText.length >= 25 && "Limit reached!"}
@@ -756,10 +652,11 @@ export default function Hero({
                             updateField("heading", e.target.value)
                           }
                           maxLength={80}
-                          className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80
-                            ? "border-red-500"
-                            : ""
-                            }`}
+                          className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${
+                            heroState.heading.length >= 80
+                              ? "border-red-500"
+                              : ""
+                          }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.heading.length}/80
@@ -778,10 +675,11 @@ export default function Hero({
                             updateField("highlight", e.target.value)
                           }
                           maxLength={30}
-                          className={`bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none ${heroState.highlight.length >= 30
-                            ? "border-red-500"
-                            : ""
-                            }`}
+                          className={`bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none ${
+                            heroState.highlight.length >= 30
+                              ? "border-red-500"
+                              : ""
+                          }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.highlight.length}/30
@@ -813,16 +711,18 @@ export default function Hero({
                           updateField("description", e.target.value)
                         }
                         maxLength={500}
-                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
-                          ? "border-red-500"
-                          : "border-muted-foreground"
-                          }`}
+                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${
+                          heroState.description.length >= 500
+                            ? "border-red-500"
+                            : "border-muted-foreground"
+                        }`}
                       />
                       <div
-                        className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
-                          ? "text-red-500"
-                          : "text-gray-500"
-                          }`}
+                        className={`absolute right-0 top-full mt-1 text-xs ${
+                          heroState.description.length >= 500
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}
                       >
                         {heroState.description.length}/500
                         {heroState.description.length >= 500 && (
@@ -858,10 +758,11 @@ export default function Hero({
                           updateField("primaryBtn", e.target.value)
                         }
                         maxLength={30}
-                        className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
+                          heroState.primaryBtn.length >= 30
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.primaryBtn.length}/30
@@ -905,10 +806,11 @@ export default function Hero({
                           updateField("trustText", e.target.value)
                         }
                         maxLength={60}
-                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
+                          heroState.trustText.length >= 60
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.trustText.length}/60
@@ -943,8 +845,9 @@ export default function Hero({
                               updateStat(s.id, "value", e.target.value)
                             }
                             maxLength={15}
-                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
-                              }`}
+                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${
+                              s.value.length >= 15 ? "border-red-500" : ""
+                            }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.value.length}/15
@@ -963,8 +866,9 @@ export default function Hero({
                               updateStat(s.id, "label", e.target.value)
                             }
                             maxLength={25}
-                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
-                              }`}
+                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
+                              s.label.length >= 25 ? "border-red-500" : ""
+                            }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.label.length}/25
@@ -1059,62 +963,35 @@ export default function Hero({
                 </div>
               )}
 
-              {/* Main image container */}
-              <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
-                <motion.div className="relative" variants={imageVariants}>
-                  <div className="relative">
-                    <img
-                      src={heroState.heroImage}
-                      alt="Modern business team collaborating"
-                      className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-3xl shadow-2xl"
-                    />
-                    {isEditing && (
-                      <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleHeroImageSelect}
-                        />
-                      </label>
-                    )}
-                  </div>
-
-                  {/* Small overlapping image */}
-                  <motion.div
-                    className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 lg:-bottom-8 lg:-left-8"
-                    variants={imageVariants}
-                    transition={{ delay: 0.3 }}
-                  >
+              {/* Main image container - UPDATED FOR AUTO-ADJUST SIZE */}
+              <div className="relative w-full">
+                <motion.div 
+                  className="relative"
+                  variants={imageVariants}
+                >
+                  <div className="relative flex justify-center">
+                    {/* Main Hero Image - Updated for auto-adjust */}
                     <div className="relative">
+                      {/* Recommended Size Above Image */}
+                      {isEditing && (
+                        <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                          Recommended: 1200×900px (4:3 ratio)
+                        </div>
+                      )}
                       <img
-                        src={heroState.hero3Image}
-                        alt="Additional business context"
-                        className="w-48 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 object-cover rounded-2xl shadow-xl border-4 border-white"
+                        src={heroState.heroImage}
+                        alt="Modern business team collaborating"
+                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
+                        style={{ 
+                          maxHeight: '500px',
+                          width: 'auto',
+                          margin: '0 auto'
+                        }}
                       />
                       {isEditing && (
-                        <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
+                        <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
                           <svg
-                            className="w-3 h-3"
+                            className="w-4 h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1136,20 +1013,74 @@ export default function Hero({
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={handleSmallImageSelect}
+                            onChange={handleHeroImageSelect}
                           />
                         </label>
                       )}
                     </div>
-                  </motion.div>
 
-                  {/* Decorative circle */}
-                  <motion.div
-                    className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-                  />
+                    {/* Small overlapping image - Updated for auto-adjust */}
+                    <motion.div
+                      className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 lg:-bottom-8 lg:-left-8"
+                      variants={imageVariants}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <div className="relative">
+                        {/* Recommended Size Above Image */}
+                        {isEditing && (
+                          <div className="absolute -top-6 left-0 right-0 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                            Recommended: 400×400px (1:1 ratio)
+                          </div>
+                        )}
+                        <img
+                          src={heroState.hero3Image}
+                          alt="Additional business context"
+                          className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
+                          style={{ 
+                            maxWidth: '200px',
+                            maxHeight: '200px'
+                          }}
+                        />
+                        {isEditing && (
+                          <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
+                            <svg
+                              className="w-3 h-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleSmallImageSelect}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    </motion.div>
+
+                    {/* Decorative circle */}
+                    <motion.div
+                      className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
+                    />
+                  </div>
                 </motion.div>
               </div>
             </motion.div>
@@ -1157,17 +1088,17 @@ export default function Hero({
 
           {/* Edit/Save Buttons */}
           <div className="absolute top-4 right-4">
-            {/* <div className="flex justify-end mt-6"> */}
             {isEditing ? (
               <motion.button
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:shadow-2xl"
-                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${
+                  isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:shadow-2xl"
+                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
