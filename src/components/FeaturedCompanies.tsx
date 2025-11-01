@@ -135,7 +135,7 @@ const FeaturedCompanies: React.FC = () => {
                     }}
                     onMouseEnter={() => setHoveredCard(company.companyName)}
                     onMouseLeave={() => setHoveredCard(null)}
-                    onClick={() => navigate(`/company/${company.companyName || companySlug}`)}
+                    onClick={() => navigate(`${company.templateSelection=="template-1"?`/company/${company.companyName || companySlug}`:`/companies/${company.companyName || companySlug}`}`)}
                     role="button"
                     tabIndex={0}
                   >
