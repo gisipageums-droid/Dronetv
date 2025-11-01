@@ -1035,11 +1035,7 @@ export default function Hero({
                         <img
                           src={heroState.hero3Image}
                           alt="Additional business context"
-                          className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
-                          style={{ 
-                            maxWidth: '200px',
-                            maxHeight: '200px'
-                          }}
+                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
                         />
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
