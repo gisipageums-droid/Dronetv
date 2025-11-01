@@ -858,7 +858,7 @@ export default function EditableHero({
                           : heroState.hero1Image
                       }
                       alt="Innovation showcase"
-                      className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-3xl shadow-2xl"
+                      className="w-full h-auto max-h-[70vh] object-contain rounded-3xl shadow-2xl"
                     />
                     {isEditing && (
                       <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
@@ -890,7 +890,7 @@ export default function EditableHero({
                             : heroState.hero3Image
                         }
                         alt="Tech innovation"
-                        className="w-48 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 object-cover rounded-2xl shadow-xl border-4 border-white"
+                        className="w-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] h-auto object-contain rounded-2xl shadow-xl border-4 border-white"
                       />
                       {isEditing && (
                         <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
