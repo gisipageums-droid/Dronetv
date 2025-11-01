@@ -106,7 +106,7 @@ export default function Hero({ heroData }) {
               <motion.div className='relative' variants={imageVariants}>
                 <div className='relative'>
                   <img
-                    src={heroData.hero1Image}
+                    src={heroData.hero1Image||'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800'}
                     alt='Innovation showcase'
                     className='w-full h-auto object-contain rounded-3xl shadow-2xl'
                     style={{ maxHeight: '70vh' }}
@@ -120,7 +120,7 @@ export default function Hero({ heroData }) {
                 >
                   <div className='relative'>
                     <img
-                      src={heroData.hero3Image}
+                      src={heroData.hero3Image||'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400'}
                       alt='Tech innovation'
                       className='block w-auto h-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] object-contain rounded-2xl shadow-xl border-4 border-white'
                     />

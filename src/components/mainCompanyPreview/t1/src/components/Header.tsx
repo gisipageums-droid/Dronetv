@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useState, useMemo } from "react";
-
+import logo from"/logos/logo.svg"
 export default function Header({ headerData }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -103,7 +103,7 @@ export default function Header({ headerData }) {
                   whileTap={{ scale: 0.9 }}
                 >
                   <motion.img
-                    src={headerData?.logoSrc}
+                    src={headerData?.logoSrc|| logo}
                     alt="Logo"
                     className="h-4 w-4 sm:h-6 sm:w-6 object-contain rounded-full"
                     animate={{

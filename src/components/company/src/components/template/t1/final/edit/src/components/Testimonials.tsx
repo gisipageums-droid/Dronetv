@@ -15,7 +15,7 @@ import { Button } from "../components/ui/button";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
 import { motion } from "motion/react";
-
+import user from "/images/user.png"
 export default function EditableTestimonials({
   content,
   onStateChange,
@@ -768,7 +768,7 @@ export default function EditableTestimonials({
                     <div className="mb-6">
                       <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden relative">
                         <img
-                          src={testimonial.image}
+                          src={testimonial.image || user}
                           alt={testimonial.name}
                           className="w-full h-full object-cover"
                         />
