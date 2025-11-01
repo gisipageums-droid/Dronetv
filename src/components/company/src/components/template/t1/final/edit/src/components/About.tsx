@@ -461,8 +461,9 @@ export default function EditableAbout({
 
   // Helper function to extract URL from different image formats
   const getImageUrl = (image) => {
-    if (!image) return "https://via.placeholder.com/500x300?text=Office+Image";
-    
+    // Prefer local bundled image as fallback to avoid external DNS failures
+    if (!image) return img;
+
     if (typeof image === "string") {
       return image;
     } else if (image.src) {
@@ -470,8 +471,8 @@ export default function EditableAbout({
     } else if (image.url) {
       return image.url;
     }
-    
-    return "https://via.placeholder.com/500x300?text=Office+Image";
+
+    return img;
   };
 
   // Stable update function with useCallback
@@ -1112,7 +1113,11 @@ export default function EditableAbout({
                   className="w-full h-auto object-cover transition-opacity duration-300"
                   onError={(e) => {
                     console.error("Image failed to load:", e);
-                    e.target.src = "https://via.placeholder.com/500x300?text=Office+Image";
+                    const target = e.currentTarget as HTMLImageElement;
+                    // Prevent infinite loop if fallback also fails
+                    target.onerror = null;
+                    // Use bundled local image as safe fallback
+                    target.src = getImageUrl(img);
                   }}
                 />
                 {isEditing && (

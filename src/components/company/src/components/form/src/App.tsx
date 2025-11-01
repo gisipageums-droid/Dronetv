@@ -131,8 +131,35 @@ function App() {
   const [companyNameStatus, setCompanyNameStatus] = useState<null | { available: boolean; suggestions?: string[]; message: string }>(null);
   const [isCheckingName, setIsCheckingName] = useState(false);
 
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<FormData>(initialFormData);
+  // Initialize from localStorage synchronously so values are present on first render
+  const [currentStep, setCurrentStep] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem("companyFormDraft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.step && Number.isInteger(parsed.step)) {
+          return parsed.step as number;
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read step from localStorage on init", e);
+    }
+    return 1;
+  });
+  const [formData, setFormData] = useState<FormData>(() => {
+    try {
+      const saved = localStorage.getItem("companyFormDraft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.formData && typeof parsed.formData === "object") {
+          return { ...initialFormData, ...parsed.formData } as FormData;
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read formData from localStorage on init", e);
+    }
+    return initialFormData;
+  });
 
   const { draftDetails, setAIGenData, AIGenData } = useTemplate();
   const navigate = useNavigate();
@@ -173,6 +200,33 @@ function App() {
 
     fetchDraftData();
   }, [publicId, urlUserId, urlDraftId, setAIGenData]);
+
+  // Persist form data and step to localStorage so data survives refresh until submission
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("companyFormDraft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.formData && typeof parsed.formData === "object") {
+          setFormData((prev) => ({ ...prev, ...parsed.formData }));
+        }
+        if (parsed?.step && Number.isInteger(parsed.step)) {
+          setCurrentStep(parsed.step);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load saved draft from localStorage", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const payload = JSON.stringify({ formData, step: currentStep });
+      localStorage.setItem("companyFormDraft", payload);
+    } catch (e) {
+      console.error("Failed to save draft to localStorage", e);
+    }
+  }, [formData, currentStep]);
 
   // function to check company name availability
   const checkCompanyName = async (name: string) => {

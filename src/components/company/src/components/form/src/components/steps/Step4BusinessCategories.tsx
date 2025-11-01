@@ -54,6 +54,37 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
     }
   }, [selectedSubSubcategories, formData.subSubCategories, updateFormData]);
 
+  // Pull persisted formData back into local UI state when formData changes (e.g., after reload)
+  React.useEffect(() => {
+    // Sync main categories
+    if (
+      Array.isArray(formData.mainCategories) &&
+      JSON.stringify(formData.mainCategories) !== JSON.stringify(selectedMainCategories)
+    ) {
+      setSelectedMainCategories(formData.mainCategories);
+    }
+  }, [formData.mainCategories]);
+
+  React.useEffect(() => {
+    // Sync subcategories
+    if (
+      formData.subCategories &&
+      JSON.stringify(formData.subCategories) !== JSON.stringify(selectedSubcategories)
+    ) {
+      setSelectedSubcategories(formData.subCategories);
+    }
+  }, [formData.subCategories]);
+
+  React.useEffect(() => {
+    // Sync sub-subcategories
+    if (
+      formData.subSubCategories &&
+      JSON.stringify(formData.subSubCategories) !== JSON.stringify(selectedSubSubcategories)
+    ) {
+      setSelectedSubSubcategories(formData.subSubCategories);
+    }
+  }, [formData.subSubCategories]);
+
   // Main business categories
   const mainCategories = [
     "Drone Manufacturing",

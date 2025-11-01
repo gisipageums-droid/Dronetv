@@ -48,7 +48,7 @@ export default function EditableProducts({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
   const [cropField, setCropField] = useState(null);
   const [cropIndex, setCropIndex] = useState(null);
 
@@ -218,7 +218,7 @@ export default function EditableProducts({
       setCropModalOpen(true);
       setCropField("productImage");
       setCropIndex(productId);
-      setAspectRatio(4/3); // Standard aspect ratio for product images
+      setAspectRatio(4 / 3); // Standard aspect ratio for product images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -401,19 +401,25 @@ export default function EditableProducts({
   const updateProductField = (productId, field, value) => {
     // Apply character limits based on field type
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
+      toast.warning("Product title limited to 100 characters");
     } else if (field === "description" && value.length > 500) {
       processedValue = value.slice(0, 500);
+      toast.warning("Product description limited to 500 characters");
     } else if (field === "detailedDescription" && value.length > 1000) {
       processedValue = value.slice(0, 1000);
+      toast.warning("Detailed description limited to 1000 characters");
     } else if (field === "category" && value.length > 50) {
       processedValue = value.slice(0, 50);
+      toast.warning("Category limited to 50 characters");
     } else if (field === "pricing" && value.length > 100) {
       processedValue = value.slice(0, 100);
+      toast.warning("Pricing information limited to 100 characters");
     } else if (field === "timeline" && value.length > 100) {
       processedValue = value.slice(0, 100);
+      toast.warning("Timeline limited to 100 characters");
     }
 
     setTempContent((prev) => ({
@@ -429,6 +435,7 @@ export default function EditableProducts({
     let processedValue = value;
     if (value.length > 200) {
       processedValue = value.slice(0, 200);
+      toast.warning("Feature limited to 200 characters");
     }
 
     setTempContent((prev) => ({
@@ -436,11 +443,11 @@ export default function EditableProducts({
       products: prev.products.map((product) =>
         product.id === productId
           ? {
-              ...product,
-              features: product.features.map((f, fi) =>
-                fi === fIndex ? processedValue : f
-              ),
-            }
+            ...product,
+            features: product.features.map((f, fi) =>
+              fi === fIndex ? processedValue : f
+            ),
+          }
           : product
       ),
     }));
@@ -463,9 +470,9 @@ export default function EditableProducts({
       products: prev.products.map((product) =>
         product.id === productId
           ? {
-              ...product,
-              features: product.features.filter((_, fi) => fi !== fIndex),
-            }
+            ...product,
+            features: product.features.filter((_, fi) => fi !== fIndex),
+          }
           : product
       ),
     }));
@@ -503,6 +510,10 @@ export default function EditableProducts({
 
   const addCategory = () => {
     const newCategory = prompt("Enter new category name:");
+    if (newCategory && newCategory.length > 50) {
+      toast.warning("Category name cannot exceed 50 characters");
+      return;
+    }
     if (newCategory && !tempContent.categories.includes(newCategory)) {
       setTempContent((prev) => ({
         ...prev,
@@ -547,11 +558,14 @@ export default function EditableProducts({
       }) => {
         const baseClasses =
           "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-        
+
+        const isAtLimit = maxLength && value.length >= maxLength;
+
         // Show character count if maxLength is provided
         const charCount = maxLength ? (
-          <div className="text-xs text-gray-500 text-right mt-1">
+          <div className={`text-xs mt-1 text-right ${isAtLimit ? 'text-red-500 font-medium' : 'text-gray-500'}`}>
             {value.length}/{maxLength}
+            {isAtLimit && ' - Character limit reached'}
           </div>
         ) : null;
 
@@ -563,9 +577,12 @@ export default function EditableProducts({
                 onChange={(e) => {
                   if (!maxLength || e.target.value.length <= maxLength) {
                     onChange(e.target.value);
+                  } else {
+                    // Still update but show warning in character count
+                    onChange(e.target.value.slice(0, maxLength));
                   }
                 }}
-                className={`${baseClasses} p-2 resize-none ${className}`}
+                className={`${baseClasses} p-2 resize-none ${className} ${isAtLimit ? 'border-red-300' : ''}`}
                 placeholder={placeholder}
                 rows={3}
                 maxLength={maxLength}
@@ -582,9 +599,12 @@ export default function EditableProducts({
               onChange={(e) => {
                 if (!maxLength || e.target.value.length <= maxLength) {
                   onChange(e.target.value);
+                } else {
+                  // Still update but show warning in character count
+                  onChange(e.target.value.slice(0, maxLength));
                 }
               }}
-              className={`${baseClasses} p-1 ${className}`}
+              className={`${baseClasses} p-1 ${className} ${isAtLimit ? 'border-red-300' : ''}`}
               placeholder={placeholder}
               maxLength={maxLength}
             />
@@ -598,13 +618,16 @@ export default function EditableProducts({
   const updateBenefitField = (index, field, value) => {
     // Apply character limits for benefits
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
+      toast.warning("Benefit title limited to 100 characters");
     } else if (field === "desc" && value.length > 200) {
       processedValue = value.slice(0, 200);
+      toast.warning("Benefit description limited to 200 characters");
     } else if (field === "icon" && value.length > 10) {
       processedValue = value.slice(0, 10);
+      toast.warning("Icon limited to 10 characters");
     }
 
     setTempContent((prev) => ({
@@ -643,74 +666,99 @@ export default function EditableProducts({
 
     return (
       <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {benefits.map((benefit, index) => (
-          <div
-            key={index}
-            className="text-center p-6 bg-white rounded-lg shadow-sm relative"
-          >
+        {benefits.map((benefit, index) => {
+          const isTitleAtLimit = benefit.title.length >= 100;
+          const isDescAtLimit = benefit.desc.length >= 200;
+          const isIconAtLimit = benefit.icon.length >= 10;
+
+          return (
             <div
-              className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 text-2xl font-bold
-              ${
-                benefit.color === "red-accent"
-                  ? "bg-red-100 text-red-600"
-                  : benefit.color === "primary"
-                  ? "bg-yellow-100 text-yellow-400"
-                  : "bg-yellow-100 text-yellow-400"
-              }`}
+              key={index}
+              className="text-center p-6 bg-white rounded-lg shadow-sm relative"
             >
+              <div
+                className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 text-2xl font-bold
+                ${benefit.color === "red-accent"
+                    ? "bg-red-100 text-red-600"
+                    : benefit.color === "primary"
+                      ? "bg-yellow-100 text-yellow-400"
+                      : "bg-yellow-100 text-yellow-400"
+                  }`}
+              >
+                {isEditing ? (
+                  <div className="w-full">
+                    <input
+                      value={benefit.icon}
+                      onChange={(e) =>
+                        updateBenefitField(index, "icon", e.target.value)
+                      }
+                      className={`w-full text-2xl text-center bg-transparent border-b ${isIconAtLimit ? 'border-red-300' : ''}`}
+                      placeholder="Icon (emoji or SVG)"
+                      maxLength={10}
+                    />
+                    {isEditing && (
+                      <div className={`text-xs mt-1 ${isIconAtLimit ? 'text-red-500' : 'text-gray-500'}`}>
+                        {benefit.icon.length}/10
+                        {isIconAtLimit && ' - Character limit reached'}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  benefit.icon
+                )}
+              </div>
               {isEditing ? (
-                <input
-                  value={benefit.icon}
-                  onChange={(e) =>
-                    updateBenefitField(index, "icon", e.target.value)
-                  }
-                  className="w-full text-2xl text-center bg-transparent border-b"
-                  placeholder="Icon (emoji or SVG)"
-                  maxLength={10}
-                />
+                <div className="mb-2">
+                  <input
+                    value={benefit.title}
+                    onChange={(e) =>
+                      updateBenefitField(index, "title", e.target.value)
+                    }
+                    className={`font-semibold text-lg w-full text-center bg-transparent border-b ${isTitleAtLimit ? 'border-red-300' : ''}`}
+                    placeholder="Benefit Title"
+                    maxLength={100}
+                  />
+                  <div className={`text-xs mt-1 ${isTitleAtLimit ? 'text-red-500' : 'text-gray-500'}`}>
+                    {benefit.title.length}/100
+                    {isTitleAtLimit && ' - Character limit reached'}
+                  </div>
+                </div>
               ) : (
-                benefit.icon
+                <h4 className="font-semibold text-lg mb-2">{benefit.title}</h4>
+              )}
+              {isEditing ? (
+                <div>
+                  <textarea
+                    value={benefit.desc}
+                    onChange={(e) =>
+                      updateBenefitField(index, "desc", e.target.value)
+                    }
+                    className={`text-gray-600 text-sm w-full bg-transparent border-b ${isDescAtLimit ? 'border-red-300' : ''}`}
+                    placeholder="Benefit Description"
+                    rows={2}
+                    maxLength={200}
+                  />
+                  <div className={`text-xs mt-1 ${isDescAtLimit ? 'text-red-500' : 'text-gray-500'}`}>
+                    {benefit.desc.length}/200
+                    {isDescAtLimit && ' - Character limit reached'}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-600 text-sm">{benefit.desc}</p>
+              )}
+              {isEditing && (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="absolute top-2 right-2"
+                  onClick={() => removeBenefit(index)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               )}
             </div>
-            {isEditing ? (
-              <input
-                value={benefit.title}
-                onChange={(e) =>
-                  updateBenefitField(index, "title", e.target.value)
-                }
-                className="font-semibold text-lg mb-2 w-full text-center bg-transparent border-b"
-                placeholder="Benefit Title"
-                maxLength={100}
-              />
-            ) : (
-              <h4 className="font-semibold text-lg mb-2">{benefit.title}</h4>
-            )}
-            {isEditing ? (
-              <textarea
-                value={benefit.desc}
-                onChange={(e) =>
-                  updateBenefitField(index, "desc", e.target.value)
-                }
-                className="text-gray-600 text-sm w-full bg-transparent border-b"
-                placeholder="Benefit Description"
-                rows={2}
-                maxLength={200}
-              />
-            ) : (
-              <p className="text-gray-600 text-sm">{benefit.desc}</p>
-            )}
-            {isEditing && (
-              <Button
-                size="sm"
-                variant="destructive"
-                className="absolute top-2 right-2"
-                onClick={() => removeBenefit(index)}
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
-        ))}
+          );
+        })}
         {isEditing && (
           <Button
             onClick={addBenefit}
@@ -852,11 +900,10 @@ export default function EditableProducts({
             <button
               key={cat}
               onClick={() => setSelected(cat)}
-              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
-                selected === cat
-                  ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
-                  : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-              }`}
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${selected === cat
+                ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
+                : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                }`}
             >
               {cat}
               {isEditing && cat !== "All" && (
@@ -937,12 +984,8 @@ export default function EditableProducts({
 
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <Badge
-                      className={
-                        product.categoryColor || "bg-gray-100 text-gray-800"
-                      }
-                    >
-                      {isEditing ? (
+                    {isEditing ? (
+                      <div className="w-full">
                         <input
                           value={product.category}
                           onChange={(e) =>
@@ -955,10 +998,20 @@ export default function EditableProducts({
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs"
                           maxLength={50}
                         />
-                      ) : (
-                        product.category
-                      )}
-                    </Badge>
+                        <div className={`text-xs mt-1 ${product.category.length >= 50 ? 'text-red-500' : 'text-gray-500'}`}>
+                          {product.category.length}/50
+                          {product.category.length >= 50 && ' - Character limit reached'}
+                        </div>
+                      </div>
+                    ) : (
+                      <Badge
+                        className={
+                          product.categoryColor || "bg-gray-100 text-gray-800"
+                        }
+                      >
+                        {product.category}
+                      </Badge>
+                    )}
                   </div>
 
                   {isEditing ? (
@@ -982,7 +1035,7 @@ export default function EditableProducts({
                       }
                       multiline
                       className="text-gray-600 mb-4"
-                      maxLength={1000}
+                      maxLength={500}
                     />
                   ) : (
                     <p className="text-gray-600 mb-4">
@@ -1005,18 +1058,24 @@ export default function EditableProducts({
                             )}
                             {isEditing ? (
                               <div className="flex items-center gap-2 w-full">
-                                <input
-                                  value={feature}
-                                  onChange={(e) =>
-                                    updateFeature(
-                                      product.id,
-                                      idx,
-                                      e.target.value
-                                    )
-                                  }
-                                  className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs"
-                                  maxLength={200}
-                                />
+                                <div className="flex-1">
+                                  <input
+                                    value={feature}
+                                    onChange={(e) =>
+                                      updateFeature(
+                                        product.id,
+                                        idx,
+                                        e.target.value
+                                      )
+                                    }
+                                    className={`w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs ${feature.length >= 200 ? 'border-red-300' : ''}`}
+                                    maxLength={200}
+                                  />
+                                  <div className={`text-xs mt-1 ${feature.length >= 200 ? 'text-red-500' : 'text-gray-500'}`}>
+                                    {feature.length}/200
+                                    {feature.length >= 200 && ' - Character limit reached'}
+                                  </div>
+                                </div>
                                 <Button
                                   onClick={() => removeFeature(product.id, idx)}
                                   size="sm"
@@ -1027,7 +1086,7 @@ export default function EditableProducts({
                                 </Button>
                               </div>
                             ) : (
-                              ""
+                              feature
                             )}
                           </li>
                         ))}
@@ -1173,6 +1232,9 @@ export default function EditableProducts({
         </div>
       )}
 
+      {/* Benefits Section */}
+      {renderBenefits()}
+
       {/* Enhanced Crop Modal (same as Header.tsx) */}
       {cropModalOpen && (
         <motion.div
@@ -1235,31 +1297,28 @@ export default function EditableProducts({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>

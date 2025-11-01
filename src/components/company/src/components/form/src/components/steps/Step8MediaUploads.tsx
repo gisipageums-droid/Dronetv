@@ -1169,6 +1169,13 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       setUploadStatus("Form submitted successfully!");
       setUploadProgress(100);
 
+      // Clear any locally saved draft now that submission succeeded
+      try {
+        localStorage.removeItem("companyFormDraft");
+      } catch (e) {
+        console.error("Failed to clear local draft after submit", e);
+      }
+
       setTimeout(() => {
         toast.success(
           "Form submitted successfully! AI is generating your website..."

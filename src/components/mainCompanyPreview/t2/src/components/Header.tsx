@@ -91,7 +91,7 @@ export default function Header({ headerData }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo - Improved responsiveness */}
-          <div className="flex items-center flex-shrink-0 max-w-[140px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px]">
+          <div className="flex rounded-lg items-center flex-shrink-0 max-w-[140px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px]">
             <motion.div
               className="w-8 h-8 rounded-lg flex items-center justify-center mr-2 flex-shrink-0"
               whileHover={{ rotate: 360 }}

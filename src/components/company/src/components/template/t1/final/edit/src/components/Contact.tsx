@@ -18,7 +18,7 @@ const EditableText = ({
 }) => {
   const baseClasses =
     "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-  
+
   return (
     <div className="w-full">
       {multiline ? (
@@ -303,7 +303,7 @@ export default function EditableContact({
                     First Name
                   </label>
                   <Input
-                    placeholder="John"
+                    placeholder="Rahul"
                     className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
                   />
                 </div>
@@ -312,7 +312,7 @@ export default function EditableContact({
                     Last Name
                   </label>
                   <Input
-                    placeholder="Doe"
+                    placeholder="sharma"
                     className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
                   />
                 </div>
@@ -325,7 +325,7 @@ export default function EditableContact({
                   </label>
                   <Input
                     type="email"
-                    placeholder="john@company.com"
+                    placeholder="Rahul@company.com"
                     className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
                   />
                 </div>
@@ -516,7 +516,7 @@ export default function EditableContact({
         </div>
 
         {/* Instructions for Edit Mode */}
-        {isEditing && (
+        {/* {isEditing && (
           <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-800 mb-2">
               <strong>Edit Mode Active:</strong> You can now edit all text with character limits:
@@ -528,7 +528,7 @@ export default function EditableContact({
               <li>• <strong>Business Hours:</strong> {CHAR_LIMITS.businessHour} characters per line</li>
             </ul>
           </div>
-        )}
+        )} */}
       </div>
     </section>
   );

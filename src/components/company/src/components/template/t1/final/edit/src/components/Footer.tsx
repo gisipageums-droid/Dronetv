@@ -90,18 +90,18 @@ export default function EditableFooter({
 }) {
   // Character limits
   const CHAR_LIMITS = {
-    brandName: 100,
-    brandDescription: 200,
-    sectionTitle: 100,
-    linkText: 100,
-    linkUrl: 500,
-    contactEmail: 100,
+    brandName: 50,
+    brandDescription: 50,
+    sectionTitle: 50,
+    linkText: 50,
+    linkUrl: 50,
+    contactEmail: 50,
     contactPhone: 50,
-    contactAddress: 200,
+    contactAddress: 50,
     socialName: 50,
-    socialUrl: 500,
-    legalText: 100,
-    legalUrl: 500,
+    socialUrl: 50,
+    legalText: 50,
+    legalUrl: 50,
   };
 
   // Initialize with data from props or use default structure
@@ -352,16 +352,16 @@ export default function EditableFooter({
       sections: prev.sections.map((section) =>
         section.id === sectionId
           ? {
-              ...section,
-              links: [
-                ...section.links,
-                {
-                  id: Date.now(),
-                  text: "New Link",
-                  href: "#new",
-                },
-              ],
-            }
+            ...section,
+            links: [
+              ...section.links,
+              {
+                id: Date.now(),
+                text: "New Link",
+                href: "#new",
+              },
+            ],
+          }
           : section
       ),
     }));
@@ -373,9 +373,9 @@ export default function EditableFooter({
       sections: prev.sections.map((section) =>
         section.id === sectionId
           ? {
-              ...section,
-              links: section.links.filter((link) => link.id !== linkId),
-            }
+            ...section,
+            links: section.links.filter((link) => link.id !== linkId),
+          }
           : section
       ),
     }));
@@ -387,11 +387,11 @@ export default function EditableFooter({
       sections: prev.sections.map((section) =>
         section.id === sectionId
           ? {
-              ...section,
-              links: section.links.map((link) =>
-                link.id === linkId ? { ...link, [field]: value } : link
-              ),
-            }
+            ...section,
+            links: section.links.map((link) =>
+              link.id === linkId ? { ...link, [field]: value } : link
+            ),
+          }
           : section
       ),
     }));
@@ -567,7 +567,7 @@ export default function EditableFooter({
             </div>
           )}
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-12 relative">
           {/* Main Footer Content */}
           <motion.div
@@ -882,7 +882,7 @@ export default function EditableFooter({
           </motion.div>
 
           {/* Edit Mode Instructions */}
-          {isEditing && (
+          {/* {isEditing && (
             <motion.div
               className="mt-8 p-4 bg-blue-900/50 rounded-lg border border-blue-700"
               initial={{ opacity: 0 }}
@@ -899,7 +899,7 @@ export default function EditableFooter({
                 <li>• <strong>Link URLs:</strong> {CHAR_LIMITS.linkUrl} characters</li>
               </ul>
             </motion.div>
-          )}
+          )} */}
         </div>
       </motion.footer>
 
@@ -965,31 +965,28 @@ export default function EditableFooter({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
