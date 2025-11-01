@@ -108,8 +108,10 @@ export default function Hero({ heroData }) {
                   <img
                     src={heroData.hero1Image}
                     alt='Innovation showcase'
-                    className='w-full h-64 sm:h-80 lg:h-96 object-cover rounded-3xl shadow-2xl'
+                    className='w-full h-auto object-contain rounded-3xl shadow-2xl'
+                    style={{ maxHeight: '70vh' }}
                   />
+
                 </div>
                 <motion.div
                   className='absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 lg:-bottom-8 lg:-left-8'
@@ -120,8 +122,9 @@ export default function Hero({ heroData }) {
                     <img
                       src={heroData.hero3Image}
                       alt='Tech innovation'
-                      className='w-48 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 object-cover rounded-2xl shadow-xl border-4 border-white'
+                      className='block w-auto h-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] object-contain rounded-2xl shadow-xl border-4 border-white'
                     />
+
                   </div>
                 </motion.div>
                 <motion.div
