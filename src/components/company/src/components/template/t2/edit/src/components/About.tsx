@@ -60,7 +60,7 @@ export default function About({
       aboutData?.description2 ||
       "Founded with the vision of transforming how companies operate in the digital age, we combine cutting-edge technology with deep industry expertise to deliver exceptional results for our clients.",
     features: [
-      "10+ years of industry experience",
+      `${aboutData?.yearsOfExperience}+ years of industry experience`,
       "Award-winning team of experts",
       "Proven track record of success",
       "Customer-first approach",
