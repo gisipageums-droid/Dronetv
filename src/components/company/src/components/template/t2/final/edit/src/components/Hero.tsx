@@ -271,6 +271,115 @@ export default function Hero({
   };
 
   // Updated Save button handler - uploads cropped images to S3 - FIXED
+  // const handleSave = async () => {
+  //   try {
+  //     setIsUploading(true);
+
+  //     // Upload main image if cropped
+  //     if (pendingImageFile) {
+  //       if (!userId || !publishedId || !templateSelection) {
+  //         console.error("Missing required props:", {
+  //           userId,
+  //           publishedId,
+  //           templateSelection,
+  //         });
+  //         toast.error(
+  //           "Missing user information. Please refresh and try again."
+  //         );
+  //         return;
+  //       }
+
+  //       const formData = new FormData();
+  //       formData.append("file", pendingImageFile);
+  //       formData.append("sectionName", "hero");
+  //       formData.append("imageField", "heroImage" + Date.now());
+  //       formData.append("templateSelection", templateSelection);
+
+  //       console.log("Uploading hero image to S3:", pendingImageFile);
+
+  //       const uploadResponse = await fetch(
+  //         `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+  //         {
+  //           method: "POST",
+  //           body: formData,
+  //         }
+  //       );
+
+  //       if (uploadResponse.ok) {
+  //         const uploadData = await uploadResponse.json();
+  //         // Update with actual S3 URL, not blob URL
+  //         updateField("heroImage", uploadData.imageUrl);
+  //         setPendingImageFile(null);
+  //         console.log("Main image uploaded to S3:", uploadData.imageUrl);
+  //         toast.success("Hero image uploaded to S3 successfully!");
+  //       } else {
+  //         const errorData = await uploadResponse.json();
+  //         console.error("Main image upload failed:", errorData);
+  //         toast.error(
+  //           `Main image upload failed: ${errorData.message || "Unknown error"}`
+  //         );
+  //         return;
+  //       }
+  //     }
+
+  //     // Upload small image if cropped
+  //     if (pendingSmallImageFile) {
+  //       if (!userId || !publishedId || !templateSelection) {
+  //         console.error("Missing required props:", {
+  //           userId,
+  //           publishedId,
+  //           templateSelection,
+  //         });
+  //         toast.error(
+  //           "Missing user information. Please refresh and try again."
+  //         );
+  //         return;
+  //       }
+
+  //       const formData = new FormData();
+  //       formData.append("file", pendingSmallImageFile);
+  //       formData.append("sectionName", "hero");
+  //       formData.append("imageField", "hero3Image");
+  //       formData.append("templateSelection", templateSelection);
+
+  //       console.log("Uploading small image to S3:", pendingSmallImageFile);
+
+  //       const uploadResponse = await fetch(
+  //         `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+  //         {
+  //           method: "POST",
+  //           body: formData,
+  //         }
+  //       );
+
+  //       if (uploadResponse.ok) {
+  //         const uploadData = await uploadResponse.json();
+  //         // Update with actual S3 URL, not blob URL
+  //         updateField("hero3Image", uploadData.imageUrl);
+  //         setPendingSmallImageFile(null);
+  //         console.log("Small image uploaded to S3:", uploadData.imageUrl);
+  //         toast.success("Small image uploaded to S3 successfully!");
+  //       } else {
+  //         const errorData = await uploadResponse.json();
+  //         console.error("Small image upload failed:", errorData);
+  //         toast.error(
+  //           `Small image upload failed: ${errorData.message || "Unknown error"}`
+  //         );
+  //         return;
+  //       }
+  //     }
+
+  //     // Exit edit mode
+  //     setIsEditing(false);
+  //     toast.success("Hero section saved with S3 URLs!");
+  //   } catch (error) {
+  //     console.error("Error saving hero section:", error);
+  //     toast.error("Error saving changes. Please try again.");
+  //   } finally {
+  //     setIsUploading(false);
+  //   }
+  // };
+  // Updated Save button handler - uploads cropped images to S3 - FIXED
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -292,7 +401,8 @@ export default function Hero({
         const formData = new FormData();
         formData.append("file", pendingImageFile);
         formData.append("sectionName", "hero");
-        formData.append("imageField", "heroImage" + Date.now());
+        // Use unique filename with timestamp to avoid conflicts
+        formData.append("imageField", `heroImage_${Date.now()}`);
         formData.append("templateSelection", templateSelection);
 
         console.log("Uploading hero image to S3:", pendingImageFile);
@@ -339,7 +449,8 @@ export default function Hero({
         const formData = new FormData();
         formData.append("file", pendingSmallImageFile);
         formData.append("sectionName", "hero");
-        formData.append("imageField", "hero3Image");
+        // Use unique filename with timestamp to avoid conflicts
+        formData.append("imageField", `hero3Image_${Date.now()}`);
         formData.append("templateSelection", templateSelection);
 
         console.log("Uploading small image to S3:", pendingSmallImageFile);
@@ -379,7 +490,6 @@ export default function Hero({
       setIsUploading(false);
     }
   };
-
   // Animations
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -489,31 +599,28 @@ export default function Hero({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -611,11 +718,10 @@ export default function Hero({
                           updateField("badgeText", e.target.value)
                         }
                         maxLength={25}
-                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${
-                          heroState.badgeText.length >= 25
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
                         {heroState.badgeText.length >= 25 && "Limit reached!"}
@@ -639,11 +745,10 @@ export default function Hero({
                             updateField("heading", e.target.value)
                           }
                           maxLength={80}
-                          className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${
-                            heroState.heading.length >= 80
-                              ? "border-red-500"
-                              : ""
-                          }`}
+                          className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80
+                            ? "border-red-500"
+                            : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.heading.length}/80
@@ -662,11 +767,10 @@ export default function Hero({
                             updateField("highlight", e.target.value)
                           }
                           maxLength={30}
-                          className={`bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none ${
-                            heroState.highlight.length >= 30
-                              ? "border-red-500"
-                              : ""
-                          }`}
+                          className={`bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none ${heroState.highlight.length >= 30
+                            ? "border-red-500"
+                            : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.highlight.length}/30
@@ -698,18 +802,16 @@ export default function Hero({
                           updateField("description", e.target.value)
                         }
                         maxLength={500}
-                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${
-                          heroState.description.length >= 500
-                            ? "border-red-500"
-                            : "border-muted-foreground"
-                        }`}
+                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                          }`}
                       />
                       <div
-                        className={`absolute right-0 top-full mt-1 text-xs ${
-                          heroState.description.length >= 500
-                            ? "text-red-500"
-                            : "text-gray-500"
-                        }`}
+                        className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
+                          ? "text-red-500"
+                          : "text-gray-500"
+                          }`}
                       >
                         {heroState.description.length}/500
                         {heroState.description.length >= 500 && (
@@ -745,11 +847,10 @@ export default function Hero({
                           updateField("primaryBtn", e.target.value)
                         }
                         maxLength={30}
-                        className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
-                          heroState.primaryBtn.length >= 30
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.primaryBtn.length}/30
@@ -793,11 +894,10 @@ export default function Hero({
                           updateField("trustText", e.target.value)
                         }
                         maxLength={60}
-                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-                          heroState.trustText.length >= 60
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.trustText.length}/60
@@ -832,9 +932,8 @@ export default function Hero({
                               updateStat(s.id, "value", e.target.value)
                             }
                             maxLength={15}
-                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${
-                              s.value.length >= 15 ? "border-red-500" : ""
-                            }`}
+                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.value.length}/15
@@ -853,9 +952,8 @@ export default function Hero({
                               updateStat(s.id, "label", e.target.value)
                             }
                             maxLength={25}
-                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-                              s.label.length >= 25 ? "border-red-500" : ""
-                            }`}
+                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.label.length}/25
@@ -1055,11 +1153,10 @@ export default function Hero({
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
