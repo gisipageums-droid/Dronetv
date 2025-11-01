@@ -1,54 +1,13 @@
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { Edit2, Save, X, Plus, Trash2, Loader2, Upload } from "lucide-react";
+import { Edit2, Save, X, Plus, Trash2, Loader2, Upload, RotateCw, ZoomIn } from "lucide-react";
 import blog1 from "../public/images/blog/blog1.jpg";
 import blog2 from "../public/images/blog/blog2.jpg";
 import blog3 from "../public/images/blog/blog3.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-
-// Crop helper function (same as in Hero.tsx)
-const getCroppedImg = async (imageSrc, pixelCrop) => {
-  const image = new Image();
-  image.src = imageSrc;
-
-  return new Promise((resolve, reject) => {
-    image.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
-
-      ctx.drawImage(
-        image,
-        pixelCrop.x,
-        pixelCrop.y,
-        pixelCrop.width,
-        pixelCrop.height,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
-
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            reject(new Error("Canvas is empty"));
-            return;
-          }
-          resolve(blob);
-        },
-        "image/jpeg",
-        0.95
-      );
-    };
-    image.onerror = reject;
-  });
-};
 
 // Animation variants
 const containerVariants = {
@@ -309,15 +268,16 @@ export default function Blog({
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
   const sectionRef = useRef(null);
 
-  // Crop modal state (same as in Hero.tsx)
+  // Enhanced crop modal state
   const [cropModalOpen, setCropModalOpen] = useState(false);
-  const [cropImage, setCropImage] = useState(null);
-  const [cropField, setCropField] = useState(null);
-  const [cropIndex, setCropIndex] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [cropIndex, setCropIndex] = useState(null);
 
   // Update content when blogData changes
   useEffect(() => {
@@ -332,54 +292,148 @@ export default function Blog({
     }
   }, [content, onStateChange]);
 
-  // Crop modal functions (same as in Hero.tsx)
-  const openCropModal = (file, field, index = null) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCropImage(reader.result);
-      setCropField(field);
-      setCropIndex(index);
-      setOriginalFile(file);
-      setCropModalOpen(true);
-      setCrop({ x: 0, y: 0 });
-      setZoom(1);
-    };
-    reader.readAsDataURL(file);
-  };
-
+  // Enhanced cropper functions
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
+  const createImage = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.setAttribute("crossOrigin", "anonymous");
+      image.src = url;
+    });
+
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          const fileName = originalFile
+            ? `cropped-${originalFile.name}`
+            : `cropped-image-${Date.now()}.jpg`;
+
+          const file = new File([blob], fileName, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+
+          const previewUrl = URL.createObjectURL(blob);
+
+          resolve({
+            file,
+            previewUrl,
+          });
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
+  };
+
   const applyCrop = async () => {
     try {
-      const croppedBlob = await getCroppedImg(cropImage, croppedAreaPixels);
-      const croppedFile = new File([croppedBlob], originalFile.name, {
-        type: "image/jpeg",
-      });
-
-      // For blog images
-      if (cropField === "blogImage") {
-        setPendingImages((prev) => ({ ...prev, [cropIndex]: croppedFile }));
-
-        const reader = new FileReader();
-        reader.onload = () => {
-          setTempContent((prev) => ({
-            ...prev,
-            posts: prev.posts.map((post) =>
-              post.id === cropIndex ? { ...post, image: reader.result } : post
-            ),
-          }));
-        };
-        reader.readAsDataURL(croppedFile);
+      if (!imageToCrop || !croppedAreaPixels) {
+        console.error("Please select an area to crop");
+        return;
       }
 
+      const { file, previewUrl } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels,
+        rotation
+      );
+
+      // Store the cropped file for upload on Save
+      setPendingImages((prev) => ({ ...prev, [cropIndex]: file }));
+
+      // Show immediate local preview of cropped image
+      setTempContent((prev) => ({
+        ...prev,
+        posts: prev.posts.map((post) =>
+          post.id === cropIndex ? { ...post, image: previewUrl } : post
+        ),
+      }));
+
       setCropModalOpen(false);
+      setImageToCrop(null);
+      setOriginalFile(null);
       toast.success("Image cropped successfully");
     } catch (error) {
       console.error("Error cropping image:", error);
-      toast.error("Error cropping image");
+      toast.error("Error cropping image. Please try again.");
     }
+  };
+
+  const cancelCrop = () => {
+    setCropModalOpen(false);
+    setImageToCrop(null);
+    setOriginalFile(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+  };
+
+  const resetCropSettings = () => {
+    setZoom(1);
+    setRotation(0);
+    setCrop({ x: 0, y: 0 });
+  };
+
+  // Enhanced image upload handler
+  const handleImageUpload = (id: number, event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageToCrop(reader.result);
+      setOriginalFile(file);
+      setCropIndex(id);
+      setCropModalOpen(true);
+      setAspectRatio(4/3); // Standard aspect ratio for blog images
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setRotation(0);
+    };
+    reader.readAsDataURL(file);
+
+    event.target.value = "";
   };
 
   // EditableText component following Services.tsx pattern
@@ -391,28 +445,53 @@ export default function Blog({
         multiline = false,
         className = "",
         placeholder = "",
+        maxLength = null,
       }) => {
         const baseClasses =
           "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+        
+        // Show character count if maxLength is provided
+        const charCount = maxLength ? (
+          <div className="text-xs text-gray-500 text-right mt-1">
+            {value.length}/{maxLength}
+          </div>
+        ) : null;
+
         if (multiline) {
           return (
-            <textarea
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              className={`${baseClasses} p-2 resize-none ${className}`}
-              placeholder={placeholder}
-              rows={3}
-            />
+            <div>
+              <textarea
+                value={value}
+                onChange={(e) => {
+                  if (!maxLength || e.target.value.length <= maxLength) {
+                    onChange(e.target.value);
+                  }
+                }}
+                className={`${baseClasses} p-2 resize-none ${className}`}
+                placeholder={placeholder}
+                rows={3}
+                maxLength={maxLength}
+              />
+              {charCount}
+            </div>
           );
         }
         return (
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className={`${baseClasses} p-1 ${className}`}
-            placeholder={placeholder}
-          />
+          <div>
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => {
+                if (!maxLength || e.target.value.length <= maxLength) {
+                  onChange(e.target.value);
+                }
+              }}
+              className={`${baseClasses} p-1 ${className}`}
+              placeholder={placeholder}
+              maxLength={maxLength}
+            />
+            {charCount}
+          </div>
         );
       },
     []
@@ -427,27 +506,6 @@ export default function Blog({
     setIsEditing(false);
     setTempContent(content);
     setPendingImages({});
-  };
-
-  // Updated image upload handler with crop feature
-  const handleImageUpload = (id: number, event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Validate file type and size
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      // 5MB limit
-      toast.error("File size must be less than 5MB");
-      return;
-    }
-
-    // Open crop modal instead of directly updating
-    openCropModal(file, "blogImage", id);
   };
 
   const handleSave = async () => {
@@ -560,20 +618,48 @@ export default function Blog({
   };
 
   const updateBlogField = useCallback((id, field, value) => {
+    // Apply character limits based on field type
+    let processedValue = value;
+    
+    if (field === "title" && value.length > 100) {
+      processedValue = value.slice(0, 100);
+    } else if (field === "excerpt" && value.length > 500) {
+      processedValue = value.slice(0, 500);
+    } else if (field === "content" && value.length > 1000) {
+      processedValue = value.slice(0, 1000);
+    } else if (field === "category" && value.length > 50) {
+      processedValue = value.slice(0, 50);
+    } else if (field === "author" && value.length > 50) {
+      processedValue = value.slice(0, 50);
+    } else if (field === "readTime" && value.length > 20) {
+      processedValue = value.slice(0, 20);
+    } else if (field === "date" && value.length > 20) {
+      processedValue = value.slice(0, 20);
+    }
+
     setTempContent((prev) => ({
       ...prev,
       posts: prev.posts.map((b) =>
-        b.id === id ? { ...b, [field]: value } : b
+        b.id === id ? { ...b, [field]: processedValue } : b
       ),
     }));
   }, []);
 
   const updateHeaderField = (field, value) => {
+    // Apply character limits for header fields
+    let processedValue = value;
+    
+    if (field === "title" && value.length > 100) {
+      processedValue = value.slice(0, 100);
+    } else if (field === "desc" && value.length > 200) {
+      processedValue = value.slice(0, 200);
+    }
+
     setTempContent((prev) => ({
       ...prev,
       header: {
         ...prev.header,
-        [field]: value,
+        [field]: processedValue,
       },
     }));
   };
@@ -606,14 +692,14 @@ export default function Blog({
               size="sm"
             >
               <Edit2 className="w-4 h-4 mr-2" />
-              Edit Blogs
+              Edit
             </Button>
           ) : (
             <>
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 text-white"
+                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
                 disabled={isSaving || isUploading}
               >
                 {isUploading ? (
@@ -629,7 +715,7 @@ export default function Blog({
                 onClick={handleCancel}
                 variant="outline"
                 size="sm"
-                className="bg-white"
+                className="bg-white hover:bg-gray-50 shadow-md"
                 disabled={isSaving || isUploading}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -638,7 +724,7 @@ export default function Blog({
               <Button
                 onClick={handleAddBlog}
                 size="sm"
-                className="bg-blue-600 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md"
               >
                 <Plus className="w-4 h-4 mr-2" /> Add Blog
               </Button>
@@ -661,6 +747,7 @@ export default function Blog({
                   onChange={(val) => updateHeaderField("title", val)}
                   className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
                   placeholder="Blog section title"
+                  maxLength={100}
                 />
                 <EditableText
                   value={tempContent.header.desc}
@@ -668,6 +755,7 @@ export default function Blog({
                   className="text-gray-600 dark:text-gray-600"
                   multiline
                   placeholder="Blog section description"
+                  maxLength={200}
                 />
               </>
             ) : (
@@ -752,6 +840,7 @@ export default function Blog({
                                 }
                                 placeholder="Date"
                                 className="text-sm"
+                                maxLength={20}
                               />
                               <EditableText
                                 value={b.readTime}
@@ -760,6 +849,7 @@ export default function Blog({
                                 }
                                 placeholder="Read time"
                                 className="text-sm"
+                                maxLength={20}
                               />
                             </div>
                             <EditableText
@@ -768,6 +858,7 @@ export default function Blog({
                                 updateBlogField(b.id, "category", val)
                               }
                               placeholder="Category"
+                              maxLength={50}
                             />
                             <EditableText
                               value={b.author}
@@ -775,6 +866,7 @@ export default function Blog({
                                 updateBlogField(b.id, "author", val)
                               }
                               placeholder="Author"
+                              maxLength={50}
                             />
                             <EditableText
                               value={b.title}
@@ -783,6 +875,7 @@ export default function Blog({
                               }
                               placeholder="Blog title"
                               className="font-bold"
+                              maxLength={100}
                             />
                             <EditableText
                               value={b.excerpt}
@@ -791,6 +884,7 @@ export default function Blog({
                               }
                               multiline
                               placeholder="Blog excerpt"
+                              maxLength={500}
                             />
                             <EditableText
                               value={b.content}
@@ -799,6 +893,7 @@ export default function Blog({
                                 updateBlogField(b.id, "content", val)
                               }
                               placeholder="Blog content"
+                              maxLength={1000}
                             />
 
                             {/* Delete Button */}
@@ -810,7 +905,7 @@ export default function Blog({
                                 onClick={() => handleDeleteBlog(b.id)}
                                 variant="outline"
                                 size="sm"
-                                className="bg-red-600 text-white mt-2"
+                                className="bg-red-600 hover:bg-red-700 text-white mt-2"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Delete
@@ -870,52 +965,159 @@ export default function Blog({
         <BlogModal blog={selectedBlog} onClose={() => setSelectedBlog(null)} />
       )}
 
-      {/* Crop Modal */}
+      {/* Enhanced Crop Modal */}
       {cropModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999999]">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
-            <h3 className="text-xl font-bold mb-4 text-gray-900">Crop Image</h3>
-            <div className="relative w-full h-96 bg-gray-900 rounded-lg overflow-hidden">
-              <Cropper
-                image={cropImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={4 / 3}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Zoom
-              </label>
-              <input
-                type="range"
-                min={1}
-                max={3}
-                step={0.1}
-                value={zoom}
-                onChange={(e) => setZoom(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
-            <div className="flex gap-3 mt-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Blog Image
+              </h3>
               <button
-                onClick={applyCrop}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
               >
-                Apply Crop
-              </button>
-              <button
-                onClick={() => setCropModalOpen(false)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Cancel
+                <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
-          </div>
-        </div>
+
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <div className="relative w-full h-full">
+                <Cropper
+                  image={imageToCrop}
+                  crop={crop}
+                  zoom={zoom}
+                  rotation={rotation}
+                  aspect={aspectRatio}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onRotationChange={setRotation}
+                  onCropComplete={onCropComplete}
+                  showGrid={false}
+                  cropShape="rect"
+                  style={{
+                    containerStyle: {
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                    },
+                    cropAreaStyle: {
+                      border: "2px solid white",
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4/3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4/3 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16/9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16/9 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
+                </div>
+              </div>
+
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">Zoom</span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Rotation Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">Rotation</span>
+                  <span className="text-gray-600">{rotation}°</span>
+                </div>
+                <input
+                  type="range"
+                  value={rotation}
+                  min={0}
+                  max={360}
+                  step={1}
+                  onChange={(e) => setRotation(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={resetCropSettings}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium flex items-center justify-center gap-2"
+                >
+                  <RotateCw className="w-4 h-4" />
+                  Reset
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </>
   );

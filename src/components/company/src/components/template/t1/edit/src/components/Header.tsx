@@ -4,55 +4,6 @@ import { motion } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
 
-const getCroppedImg = async (
-  imageSrc: string,
-  pixelCrop: { x: number; y: number; width: number; height: number }
-): Promise<Blob> => {
-  const image = new Image();
-  image.src = imageSrc;
-  // allow CORS-safe images if needed
-  image.crossOrigin = "anonymous";
-
-  return new Promise<Blob>((resolve, reject) => {
-    image.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        reject(new Error("Could not get canvas context"));
-        return;
-      }
-
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
-
-      ctx.drawImage(
-        image,
-        pixelCrop.x,
-        pixelCrop.y,
-        pixelCrop.width,
-        pixelCrop.height,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
-
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            reject(new Error("Canvas is empty"));
-            return;
-          }
-          resolve(blob);
-        },
-        "image/jpeg",
-        0.95
-      );
-    };
-    image.onerror = (err) => reject(err);
-  });
-};
-
 interface HeaderProps {
   headerData?: {
     logo?: string;
@@ -71,24 +22,27 @@ export default function Header({
   publishedId,
   templateSelection,
 }: HeaderProps) {
+  // Character limits
+  const CHAR_LIMITS = {
+    companyName: 100,
+    navItem: 50,
+  };
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [pendingLogoFile, setPendingLogoFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Crop modal state
+  // Enhanced crop modal state
   const [cropModalOpen, setCropModalOpen] = useState(false);
-  const [cropImage, setCropImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  } | null>(null);
+  const [rotation, setRotation] = useState(0);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [aspectRatio, setAspectRatio] = useState(1);
 
   // Combined state
   const [headerState, setHeaderState] = useState({
@@ -106,47 +60,142 @@ export default function Header({
     ],
   });
 
+  // Notify parent of state changes
   useEffect(() => {
-    if (onStateChange) onStateChange(headerState);
+    if (onStateChange) {
+      onStateChange(headerState);
+    }
   }, [headerState, onStateChange]);
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen((v) => !v);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  const openCropModal = (file: File) => {
+  // Enhanced image upload handler
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
     const reader = new FileReader();
-    reader.onload = () => {
-      setCropImage(reader.result as string);
+    reader.onloadend = () => {
+      setImageToCrop(reader.result as string);
       setOriginalFile(file);
       setCropModalOpen(true);
+      setAspectRatio(1); // Square for logo
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setRotation(0);
     };
     reader.readAsDataURL(file);
+
+    e.target.value = "";
   };
 
-  const onCropComplete = useCallback((_: any, croppedAreaPixelsParam: any) => {
-    setCroppedAreaPixels(croppedAreaPixelsParam);
+  // Enhanced cropper functions
+  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
   }, []);
+
+  const createImage = (url: string): Promise<HTMLImageElement> =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.setAttribute("crossOrigin", "anonymous");
+      image.src = url;
+    });
+
+  const getCroppedImg = async (imageSrc: string, pixelCrop: any, rotation = 0) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("Could not get canvas context");
+    }
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise<{ file: File; previewUrl: string }>((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            throw new Error("Canvas is empty");
+          }
+          const fileName = originalFile
+            ? `cropped-${originalFile.name}`
+            : `cropped-image-${Date.now()}.jpg`;
+
+          const file = new File([blob], fileName, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+
+          const previewUrl = URL.createObjectURL(blob);
+
+          resolve({
+            file,
+            previewUrl,
+          });
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
+  };
 
   const applyCrop = async () => {
     try {
-      if (!cropImage || !croppedAreaPixels) return;
-      const croppedBlob = await getCroppedImg(cropImage, croppedAreaPixels);
-      if (!originalFile) return;
-      const croppedFile = new File([croppedBlob], originalFile.name, {
-        type: "image/jpeg",
-      });
+      if (!imageToCrop || !croppedAreaPixels) {
+        console.error("Please select an area to crop");
+        return;
+      }
 
-      setPendingLogoFile(croppedFile);
+      const { file, previewUrl } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels,
+        rotation
+      );
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setHeaderState((prev) => ({ ...prev, logoSrc: reader.result as string }));
-      };
-      reader.readAsDataURL(croppedFile);
+      // Store the cropped file for upload on Save
+      setPendingLogoFile(file);
+
+      // Show immediate local preview of cropped image
+      setHeaderState((prev) => ({
+        ...prev,
+        logoSrc: previewUrl,
+      }));
 
       setCropModalOpen(false);
+      setImageToCrop(null);
+      setOriginalFile(null);
       toast.success("Logo cropped successfully");
     } catch (error) {
       console.error("Error cropping image:", error);
@@ -154,24 +203,19 @@ export default function Header({
     }
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const cancelCrop = () => {
+    setCropModalOpen(false);
+    setImageToCrop(null);
+    setOriginalFile(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+  };
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      e.target.value = "";
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
-      e.target.value = "";
-      return;
-    }
-
-    e.target.value = "";
-    openCropModal(file);
+  const resetCropSettings = () => {
+    setZoom(1);
+    setRotation(0);
+    setCrop({ x: 0, y: 0 });
   };
 
   const handleEdit = () => {
@@ -182,17 +226,24 @@ export default function Header({
   const handleCancel = () => {
     setIsEditing(false);
     setPendingLogoFile(null);
-    // Optionally revert preview if you kept an unsaved preview; currently we keep previous headerState.logoSrc
   };
 
+  // Updated Save button handler - uploads image and stores S3 URL
   const handleSave = async () => {
     try {
       setIsUploading(true);
 
+      // If there's a pending logo, upload it first
       if (pendingLogoFile) {
         if (!userId || !publishedId || !templateSelection) {
-          console.error("Missing required props:", { userId, publishedId, templateSelection });
-          toast.error("Missing user information. Please refresh and try again.");
+          console.error("Missing required props:", {
+            userId,
+            publishedId,
+            templateSelection,
+          });
+          toast.error(
+            "Missing user information. Please refresh and try again."
+          );
           return;
         }
 
@@ -212,75 +263,169 @@ export default function Header({
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          setHeaderState((prev) => ({ ...prev, logoSrc: uploadData.imageUrl }));
-          setPendingLogoFile(null);
+          // Replace local preview with S3 URL
+          setHeaderState((prev) => ({
+            ...prev,
+            logoSrc: uploadData.imageUrl,
+          }));
+          setPendingLogoFile(null); // Clear pending file
           console.log("Logo uploaded to S3:", uploadData.imageUrl);
         } else {
-          const errorData = await uploadResponse.json().catch(() => ({}));
+          const errorData = await uploadResponse.json();
           console.error("Logo upload failed:", errorData);
-          toast.error(`Logo upload failed: ${errorData.message || "Unknown error"}`);
+          toast.error(
+            `Logo upload failed: ${errorData.message || "Unknown error"}`
+          );
           return;
         }
       }
 
+      // Exit edit mode
       setIsEditing(false);
-      toast.success("Header section saved");
+      toast.success("Header section saved with S3 URLs ready for publish");
     } catch (error) {
       console.error("Error saving header section:", error);
       toast.error("Error saving changes. Please try again.");
+      // Keep in edit mode so user can retry
     } finally {
       setIsUploading(false);
     }
   };
 
+  const headerStyles: React.CSSProperties = {
+    position: "fixed",
+    top: "56px",
+    left: "0",
+    right: "0",
+    width: "100%",
+    zIndex: 1000,
+    backgroundColor: "white",
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+    borderBottom: "1px solid #e5e7eb",
+    transition: "all 0.5s ease",
+  };
+
+  const mobileMenuStyles: React.CSSProperties = {
+    position: "fixed",
+    top: "112px",
+    left: "0",
+    right: "0",
+    zIndex: 999,
+    backgroundColor: "white",
+    borderTop: "1px solid #e5e7eb",
+    maxHeight: isMobileMenuOpen ? "384px" : "0",
+    opacity: isMobileMenuOpen ? "1" : "0",
+    overflow: "hidden",
+    transition: "all 0.3s ease-in-out",
+  };
+
   return (
     <>
       <motion.header
-        className="fixed top-14 left-0 right-0 w-full z-50 bg-white shadow-md border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700"
+        style={headerStyles}
+        className="dark:bg-gray-900 dark:border-gray-700"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.45 }}
+        transition={{ duration: 0.6 }}
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-          {/* 3-column layout: left (logo), center (nav), right (controls) */}
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* LEFT: Logo + Company */}
-            <div className="flex items-center gap-3 min-w-0">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 mx-auto max-w-7xl">
+            {/* Responsive Edit/Save Button Container */}
+            <div className="absolute md:right-0 right-[60px] z-[999999999]">
+              {isEditing ? (
+                <button
+                  onClick={handleSave}
+                  disabled={isUploading}
+                  className={`flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 ${
+                    isUploading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-500 hover:bg-green-600"
+                  } text-white rounded-lg shadow text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]`}
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      <span className="hidden xs:inline">Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      <span className="hidden xs:inline">Save</span>
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={handleEdit}
+                  className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
+                >
+                  <Edit2 size={16} />
+                  <span className="hidden xs:inline">Edit</span>
+                </button>
+              )}
+            </div>
+
+            {/* Logo + Company Name */}
+            <motion.div
+              className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
+              whileHover={{ scale: 1.05 }}
+            >
+              {/* Enhanced Logo with Animations */}
               <div className="relative">
                 <motion.div
-                  className="flex items-center justify-center"
-                  initial={{ opacity: 0, scale: 0.7 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    rotate: 0,
+                    transition: {
+                      duration: 0.8,
+                      type: "spring",
+                      stiffness: 120,
+                    },
+                  }}
+                  whileHover={{
+                    scale: 1.2,
+                    rotate: 360,
+                    transition: { duration: 0.5 },
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <motion.img
                     src={headerState.logoSrc}
                     alt="Logo"
-                    className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 object-contain rounded-full"
+                    className="object-contain w-8 h-8 rounded-full sm:h-8 sm:w-8 md:h-10 md:w-10"
                     animate={{
-                      y: [0, -4, 0],
-                      transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                      y: [0, -5, 0],
+                      transition: {
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut",
+                      },
                     }}
                   />
                 </motion.div>
 
-                {/* Upload popover appears below logo while editing */}
                 {isEditing && (
-                  <div className="absolute left-[50px] top-full mt-2 bg-white/95 p-2 rounded shadow border border-gray-200 w-44">
-                    <p className="text-xs mb-1 text-gray-600 text-center">Upload Logo</p>
-                    <button
+                  <div className="absolute left-0 z-30 p-2 rounded shadow-lg -bottom-16 bg-white/90">
+                    <p className="mb-1 text-xs text-gray-600">Upload Logo:</p>
+                    <motion.button
                       onClick={() => fileInputRef.current?.click()}
-                      className="flex items-center justify-center gap-2 w-full px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                      className="flex items-center justify-center w-full gap-1 p-2 text-xs bg-gray-200 rounded shadow hover:bg-gray-300"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <Upload size={14} /> Choose
-                    </button>
+                      <Upload size={12} /> Choose File
+                    </motion.button>
                     {pendingLogoFile && (
-                      <p className="text-xs text-orange-600 mt-1 text-center truncate px-1">
-                        {pendingLogoFile.name}
+                      <p className="text-xs text-orange-600 mt-1 max-w-[120px] truncate">
+                        Selected: {pendingLogoFile.name}
                       </p>
                     )}
                   </div>
                 )}
-
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -290,46 +435,62 @@ export default function Header({
                 />
               </div>
 
-              <div className="min-w-0">
-                {isEditing ? (
+              {/* Editable Company Name */}
+              {isEditing ? (
+                <div className="flex flex-col">
                   <input
                     type="text"
                     value={headerState.companyName}
                     onChange={(e) =>
-                      setHeaderState((prev) => ({ ...prev, companyName: e.target.value }))
+                      setHeaderState((prev) => ({
+                        ...prev,
+                        companyName: e.target.value,
+                      }))
                     }
-                    className="px-2 py-1 border rounded bg-white text-sm w-28 sm:w-36 md:w-48 max-w-full"
-                    placeholder="Company name"
+                    className="table w-32 px-3 py-2 text-sm bg-white border rounded md:text-base"
+                    placeholder="Company Name"
+                    maxLength={CHAR_LIMITS.companyName}
                   />
-                ) : (
-                  <span className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100 truncate">
-                    {headerState.companyName}
-                  </span>
-                )}
-              </div>
-            </div>
+                  <div className="text-xs text-gray-500 text-right mt-1">
+                    {headerState.companyName.length}/{CHAR_LIMITS.companyName} characters
+                  </div>
+                </div>
+              ) : (
+                <span className="text-lg sm:text-xl md:text-2xl">
+                  {headerState.companyName}
+                </span>
+              )}
+            </motion.div>
 
-            {/* CENTER: Desktop nav (centered). Hidden on small screens. */}
-            <nav className="hidden md:flex items-center gap-4 lg:gap-6 flex-1 justify-center px-4">
+            {/* Desktop Navigation */}
+            <nav className="items-center hidden mr-16 space-x-4 md:flex lg:space-x-6 lg:mr-20">
               {headerState.navItems.map((item, index) =>
                 isEditing ? (
-                  <input
-                    key={index}
-                    type="text"
-                    value={item}
-                    onChange={(e) => {
-                      const updated = [...headerState.navItems];
-                      updated[index] = e.target.value;
-                      setHeaderState((prev) => ({ ...prev, navItems: updated }));
-                    }}
-                    className="px-2 py-1 border rounded text-sm w-20 lg:w-24 bg-white"
-                    placeholder={`Nav ${index + 1}`}
-                  />
+                  <div key={index} className="flex flex-col">
+                    <input
+                      type="text"
+                      value={item}
+                      onChange={(e) => {
+                        const updated = [...headerState.navItems];
+                        updated[index] = e.target.value;
+                        setHeaderState((prev) => ({
+                          ...prev,
+                          navItems: updated,
+                        }));
+                      }}
+                      className="w-24 px-3 py-2 text-sm bg-white border rounded lg:w-28"
+                      placeholder={`Nav ${index + 1}`}
+                      maxLength={CHAR_LIMITS.navItem}
+                    />
+                    <div className="text-xs text-gray-500 text-right mt-1">
+                      {item.length}/{CHAR_LIMITS.navItem} characters
+                    </div>
+                  </div>
                 ) : (
                   <a
                     key={index}
                     href={`#${item.toLowerCase()}`}
-                    className="text-gray-700 hover:text-yellow-600 transition-colors duration-200 font-medium text-sm lg:text-base whitespace-nowrap"
+                    className="text-sm font-medium text-black transition-colors duration-300 hover:text-yellow-600 lg:text-base"
                   >
                     {item}
                   </a>
@@ -337,79 +498,55 @@ export default function Header({
               )}
             </nav>
 
-            {/* RIGHT: Controls + mobile menu button */}
-            <div className="flex items-center gap-3">
-              {/* Edit / Save / Cancel Controls */}
-              <div className="flex items-center">
-                {isEditing ? (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleSave}
-                      disabled={isUploading}
-                      className={`flex items-center gap-2 px-3 py-1.5 ${
-                        isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"
-                      } text-white rounded-md text-sm transition-all`}
-                    >
-                      {isUploading ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-                      <span className="hidden sm:inline">{isUploading ? "Uploading..." : "Save"}</span>
-                    </button>
-
-                    <button
-                      onClick={handleCancel}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-gray-300 hover:bg-gray-400 text-gray-900 rounded-md text-sm"
-                    >
-                      <X size={14} />
-                      <span className="hidden sm:inline">Cancel</span>
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleEdit}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md text-sm"
-                  >
-                    <Edit2 size={14} />
-                    <span className="hidden sm:inline">Edit</span>
-                  </button>
-                )}
-              </div>
-
-              {/* Mobile menu toggle */}
-              <div className="md:hidden">
-                <button
-                  onClick={toggleMobileMenu}
-                  className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  aria-label="Toggle menu"
+            {/* Mobile Menu Button */}
+            <div className="flex items-center space-x-2 md:hidden">
+              <button
+                onClick={toggleMobileMenu}
+                className="p-2 transition-colors duration-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <svg
+                  className="w-6 h-6 transition-transform duration-200"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  style={{
+                    transform: isMobileMenuOpen
+                      ? "rotate(90deg)"
+                      : "rotate(0deg)",
+                  }}
                 >
-                  <svg
-                    className="h-5 w-5 sm:h-6 sm:w-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    {isMobileMenuOpen ? (
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    ) : (
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    )}
-                  </svg>
-                </button>
-              </div>
+                  {isMobileMenuOpen ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  )}
+                </svg>
+              </button>
             </div>
           </div>
         </div>
       </motion.header>
 
-      {/* Mobile nav panel */}
+      {/* Mobile Navigation Menu */}
       <div
-        className={`fixed top-14 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-t border-gray-200 transition-all duration-300 md:hidden ${
-          isMobileMenuOpen ? "max-h-96 opacity-100 shadow-lg" : "max-h-0 opacity-0 pointer-events-none"
-        } overflow-y-auto`}
+        style={{ ...mobileMenuStyles }}
+        className="md:hidden dark:bg-gray-900 dark:border-gray-700"
       >
-        <div className="px-4 pt-3 pb-4 space-y-2">
+        <div className="flex gap-1 w-[100%] flex-col ">
           {headerState.navItems.map((item, index) =>
             isEditing ? (
-              <div key={index} className="flex items-center">
+              <div key={index} className="flex flex-col p-2">
                 <input
                   type="text"
                   value={item}
@@ -418,75 +555,196 @@ export default function Header({
                     updated[index] = e.target.value;
                     setHeaderState((prev) => ({ ...prev, navItems: updated }));
                   }}
-                  className="w-full px-3 py-2 border rounded text-base bg-white"
-                  placeholder={`Nav ${index + 1}`}
+                  className="w-full px-3 py-2 text-base bg-white border rounded"
+                  placeholder={`Navigation Item ${index + 1}`}
+                  maxLength={CHAR_LIMITS.navItem}
                 />
+                <div className="text-xs text-gray-500 text-right mt-1">
+                  {item.length}/{CHAR_LIMITS.navItem} characters
+                </div>
               </div>
             ) : (
               <a
                 key={index}
                 href={`#${item.toLowerCase()}`}
-                className="block px-3 py-2 text-gray-700 hover:text-yellow-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-medium text-base"
-                onClick={() => {
-                  closeMobileMenu();
-                }}
+                className="px-3 py-2 font-medium text-black transition-colors duration-300 rounded-lg hover:text-yellow-600 hover:bg-gray-50"
+                onClick={closeMobileMenu}
               >
                 {item}
               </a>
             )
           )}
         </div>
+
+        {/* Edit Mode Instructions */}
+        {isEditing && (
+          <div className="p-4 bg-blue-50 border-t border-blue-200">
+            <p className="text-sm text-blue-800 mb-2">
+              <strong>Edit Mode Active:</strong> Character limits:
+            </p>
+            <ul className="text-xs text-blue-800 space-y-1">
+              <li>• <strong>Company Name:</strong> {CHAR_LIMITS.companyName} characters</li>
+              <li>• <strong>Navigation Items:</strong> {CHAR_LIMITS.navItem} characters each</li>
+            </ul>
+          </div>
+        )}
       </div>
 
       {/* Spacer so content doesn't hide under fixed header */}
-      <div className="h-14 sm:h-16" />
+      <div className="h-16" />
 
-      {/* Crop Modal */}
+      {/* Enhanced Crop Modal */}
       {cropModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[99999999] p-4">
-          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-2xl mx-auto">
-            <h3 className="text-lg sm:text-xl font-bold mb-4 text-gray-900">Crop Logo</h3>
-            <div className="relative w-full h-64 sm:h-80 md:h-96 bg-gray-900 rounded-lg overflow-hidden">
-              <Cropper
-                image={cropImage || ""}
-                crop={crop}
-                zoom={zoom}
-                aspect={1}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-              />
-            </div>
-
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Zoom</label>
-              <input
-                type="range"
-                min={1}
-                max={3}
-                step={0.1}
-                value={zoom}
-                onChange={(e) => setZoom(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 mt-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Logo
+              </h3>
               <button
-                onClick={applyCrop}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
               >
-                Apply Crop
-              </button>
-              <button
-                onClick={() => setCropModalOpen(false)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Cancel
+                <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
-          </div>
-        </div>
+
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <div className="relative w-full h-full">
+                <Cropper
+                  image={imageToCrop || ""}
+                  crop={crop}
+                  zoom={zoom}
+                  rotation={rotation}
+                  aspect={aspectRatio}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onRotationChange={setRotation}
+                  onCropComplete={onCropComplete}
+                  showGrid={false}
+                  cropShape="rect"
+                  style={{
+                    containerStyle: {
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                    },
+                    cropAreaStyle: {
+                      border: "2px solid white",
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4/3)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4/3 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16/9)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16/9 
+                        ? 'bg-blue-500 text-white border-blue-500' 
+                        : 'bg-white text-gray-700 border-gray-300'
+                    }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
+                </div>
+              </div>
+
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">Zoom</span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Rotation Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">Rotation</span>
+                  <span className="text-gray-600">{rotation}°</span>
+                </div>
+                <input
+                  type="range"
+                  value={rotation}
+                  min={-180}
+                  max={180}
+                  step={1}
+                  onChange={(e) => setRotation(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={resetCropSettings}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </>
   );
