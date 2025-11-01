@@ -28,16 +28,26 @@ export default function Hero({
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
- 
   // Consolidated state
   const [heroState, setHeroState] = useState({
-    ...heroData,
+    badgeText: "Trusted by 20+ Companies",
+    heading: heroData?.title || "Transform Your Business with",
+    highlight: "Innovation",
+    description:
+      heroData?.subtitle ||
+      "We help companies scale and grow with cutting-edge solutions, expert guidance, and proven strategies that deliver",
+    highlightDesc: "exceptional results",
+    primaryBtn: heroData?.primaryAction?.text || "Get Started Today",
+    trustText: "Join 20+ satisfied clients",
+    stats: [
+      { id: 1, value: "20+", label: "Happy Clients", color: "red-accent" },
+      { id: 2, value: "80%", label: "Success Rate", color: "red-accent" },
+      { id: 3, value: "24/7", label: "Support", color: "primary" },
+    ],
     heroImage:
-      heroData?.heroImage ||
       heroData?.heroImage ||
       "https://images.unsplash.com/photo-1698047682129-c3e217ac08b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBidXNpbmVzcyUyMHRlYW0lMjBvZmZpY2V8ZW58MXx8fHwxNzU1NjE4MzQ4fDA&ixlib=rb-4.1.0&q=80&w=1080",
     hero3Image:
-      heroData?.smallImage ||
       heroData?.hero3Image ||
       "https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG1lZXRpbmd8ZW58MXx8fHwxNzU1NjE5MDEzfDA&ixlib=rb-4.1.0&q=80&w=400",
   });
@@ -492,31 +502,28 @@ export default function Hero({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -614,11 +621,10 @@ export default function Hero({
                           updateField("badgeText", e.target.value)
                         }
                         maxLength={25}
-                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${
-                          heroState.badgeText.length >= 25
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
                         {heroState.badgeText.length >= 25 && "Limit reached!"}
@@ -642,11 +648,10 @@ export default function Hero({
                             updateField("heading", e.target.value)
                           }
                           maxLength={80}
-                          className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${
-                            heroState.heading.length >= 80
-                              ? "border-red-500"
-                              : ""
-                          }`}
+                          className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80
+                            ? "border-red-500"
+                            : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.heading.length}/80
@@ -665,11 +670,10 @@ export default function Hero({
                             updateField("highlight", e.target.value)
                           }
                           maxLength={30}
-                          className={`bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none ${
-                            heroState.highlight.length >= 30
-                              ? "border-red-500"
-                              : ""
-                          }`}
+                          className={`bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none ${heroState.highlight.length >= 30
+                            ? "border-red-500"
+                            : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.highlight.length}/30
@@ -701,18 +705,16 @@ export default function Hero({
                           updateField("description", e.target.value)
                         }
                         maxLength={500}
-                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${
-                          heroState.description.length >= 500
-                            ? "border-red-500"
-                            : "border-muted-foreground"
-                        }`}
+                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                          }`}
                       />
                       <div
-                        className={`absolute right-0 top-full mt-1 text-xs ${
-                          heroState.description.length >= 500
-                            ? "text-red-500"
-                            : "text-gray-500"
-                        }`}
+                        className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
+                          ? "text-red-500"
+                          : "text-gray-500"
+                          }`}
                       >
                         {heroState.description.length}/500
                         {heroState.description.length >= 500 && (
@@ -748,11 +750,10 @@ export default function Hero({
                           updateField("primaryBtn", e.target.value)
                         }
                         maxLength={30}
-                        className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
-                          heroState.primaryBtn.length >= 30
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.primaryBtn.length}/30
@@ -796,11 +797,10 @@ export default function Hero({
                           updateField("trustText", e.target.value)
                         }
                         maxLength={60}
-                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-                          heroState.trustText.length >= 60
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.trustText.length}/60
@@ -835,9 +835,8 @@ export default function Hero({
                               updateStat(s.id, "value", e.target.value)
                             }
                             maxLength={15}
-                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${
-                              s.value.length >= 15 ? "border-red-500" : ""
-                            }`}
+                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.value.length}/15
@@ -856,9 +855,8 @@ export default function Hero({
                               updateStat(s.id, "label", e.target.value)
                             }
                             maxLength={25}
-                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-                              s.label.length >= 25 ? "border-red-500" : ""
-                            }`}
+                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.label.length}/25
@@ -955,7 +953,7 @@ export default function Hero({
 
               {/* Main image container - UPDATED FOR AUTO-ADJUST SIZE */}
               <div className="relative w-full">
-                <motion.div 
+                <motion.div
                   className="relative"
                   variants={imageVariants}
                 >
@@ -972,7 +970,7 @@ export default function Hero({
                         src={heroState.heroImage}
                         alt="Modern business team collaborating"
                         className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
-                        style={{ 
+                        style={{
                           maxHeight: '500px',
                           width: 'auto',
                           margin: '0 auto'
@@ -1025,11 +1023,7 @@ export default function Hero({
                         <img
                           src={heroState.hero3Image}
                           alt="Additional business context"
-                          className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
-                          style={{ 
-                            maxWidth: '200px',
-                            maxHeight: '200px'
-                          }}
+                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
                         />
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
@@ -1084,11 +1078,10 @@ export default function Hero({
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
