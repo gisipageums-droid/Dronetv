@@ -2,21 +2,26 @@ import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Edit2, Save, X, Loader2, Upload, RotateCw, ZoomIn } from "lucide-react";
-import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-
-// Sample images (replace with your actual imports)
-import Hero1 from "../public/images/Hero/Hero1.jpg";
-import Hero3 from "../public/images/Hero/Hero3.jpg";
-import Cust1 from "../public/images/customers/customer-1.jpg";
-import Cust2 from "../public/images/customers/customer-3.jpg";
-import Cust3 from "../public/images/customers/customer-4.jpg";
-import Cust4 from "../public/images/customers/customer-5.jpg";
-import Cust5 from "../public/images/customers/customer-6.jpg";
-import Cust6 from "../public/images/customers/ben.jpg";
 import HeroBackground from "../public/images/Hero/HeroBackground.jpg";
 
-// Customer images
+// Sample images (replace with your actual imports)
+const Hero1 = "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800";
+const Hero3 =
+  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400";
+const Cust1 =
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100";
+const Cust2 =
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100";
+const Cust3 =
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100";
+const Cust4 =
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100";
+const Cust5 =
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100";
+const Cust6 =
+  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100";
+
 const customerImages = [Cust1, Cust2, Cust3, Cust4, Cust5, Cust6];
 
 const itemVariants = {
@@ -33,62 +38,6 @@ const imageVariants = {
   },
 };
 
-// Enhanced crop helper function
-const createImage = (url) =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener("load", () => resolve(image));
-    image.addEventListener("error", (error) => reject(error));
-    image.setAttribute("crossOrigin", "anonymous");
-    image.src = url;
-  });
-
-const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
-  const image = await createImage(imageSrc);
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
-
-  ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-  ctx.rotate((rotation * Math.PI) / 180);
-  ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
-
-  ctx.drawImage(
-    image,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
-    0,
-    0,
-    pixelCrop.width,
-    pixelCrop.height
-  );
-
-  return new Promise((resolve) => {
-    canvas.toBlob(
-      (blob) => {
-        const fileName = `cropped-image-${Date.now()}.jpg`;
-        const file = new File([blob], fileName, {
-          type: "image/jpeg",
-          lastModified: Date.now(),
-        });
-
-        const previewUrl = URL.createObjectURL(blob);
-
-        resolve({
-          file,
-          previewUrl,
-        });
-      },
-      "image/jpeg",
-      0.95
-    );
-  });
-};
-
 export default function EditableHero({
   heroData,
   onStateChange,
@@ -96,18 +45,6 @@ export default function EditableHero({
   publishedId,
   templateSelection,
 }) {
-  // Character limits
-  const CHAR_LIMITS = {
-    heading: 100,
-    subheading: 200,
-    description: 500,
-    primaryBtn: 50,
-    secondaryBtn: 50,
-    primaryButtonLink: 200,
-    secondaryButtonLink: 200,
-    trustText: 100,
-  };
-
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -136,8 +73,8 @@ export default function EditableHero({
   const [heroState, setHeroState] = useState(defaultContent);
   const [tempHeroState, setTempHeroState] = useState(defaultContent);
 
-  // Enhanced crop modal state
-  const [cropModalOpen, setCropModalOpen] = useState(false);
+  // Cropping states (same as Header.tsx)
+  const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -155,22 +92,6 @@ export default function EditableHero({
     customerImages: Array(6).fill(null),
   });
 
-  // Update state when content prop changes
-  useEffect(() => {
-    if (heroData) {
-      const updatedData = {
-        ...defaultContent,
-        ...heroData,
-        hero1Image: heroData.hero1Image || defaultContent.hero1Image,
-        hero3Image: heroData.hero3Image || defaultContent.hero3Image,
-        customerImages: heroData.customerImages || defaultContent.customerImages,
-      };
-      setHeroState(updatedData);
-      setTempHeroState(updatedData);
-    }
-  }, [heroData]);
-
-  // Notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(heroState);
@@ -215,18 +136,18 @@ export default function EditableHero({
     setTempHeroState(heroState);
   };
 
-  // Enhanced image upload handler with crop modal
+  // Logo cropping functionality (same as Header.tsx)
   const handleImageUpload = (e, field, index = null) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
+      console.error("Please select an image file");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
+      console.error("File size must be less than 5MB");
       return;
     }
 
@@ -236,23 +157,79 @@ export default function EditableHero({
       setOriginalFile(file);
       setCropField(field);
       setCropIndex(index);
-      setCropModalOpen(true);
-      setAspectRatio(field === "customerImage" ? 1 : 4/3); // Square for customer images, standard for others
+      setShowCropper(true);
+      setAspectRatio(field === "customerImage" ? 1 : 4 / 3); // Square for customer images, standard for others
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
     };
     reader.readAsDataURL(file);
 
-    if (e.target) {
-      e.target.value = "";
-    }
+    e.target.value = "";
   };
 
-  // Cropper functions
+  // Cropper functions (same as Header.tsx)
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
+
+  const createImage = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.setAttribute("crossOrigin", "anonymous");
+      image.src = url;
+    });
+
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          const fileName = originalFile
+            ? `cropped-${originalFile.name}`
+            : `cropped-image-${Date.now()}.jpg`;
+
+          const file = new File([blob], fileName, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+
+          const previewUrl = URL.createObjectURL(blob);
+
+          resolve({
+            file,
+            previewUrl,
+          });
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
+  };
 
   const applyCrop = async () => {
     try {
@@ -274,9 +251,9 @@ export default function EditableHero({
       } else if (cropField === "customerImage" && cropIndex !== null) {
         const updatedCustomerImages = [...tempHeroState.customerImages];
         updatedCustomerImages[cropIndex] = previewUrl;
-        setTempHeroState((prev) => ({ 
-          ...prev, 
-          customerImages: updatedCustomerImages 
+        setTempHeroState((prev) => ({
+          ...prev,
+          customerImages: updatedCustomerImages
         }));
 
         setPendingImageFiles((prev) => {
@@ -286,18 +263,16 @@ export default function EditableHero({
         });
       }
 
-      setCropModalOpen(false);
+      setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
-      toast.success("Image cropped successfully");
     } catch (error) {
       console.error("Error cropping image:", error);
-      toast.error("Error cropping image. Please try again.");
     }
   };
 
   const cancelCrop = () => {
-    setCropModalOpen(false);
+    setShowCropper(false);
     setImageToCrop(null);
     setOriginalFile(null);
     setCrop({ x: 0, y: 0 });
@@ -314,7 +289,6 @@ export default function EditableHero({
   const handleSave = async () => {
     if (!userId || !publishedId || !templateSelection) {
       console.error("Missing user information for upload");
-      toast.error("Missing user information. Please refresh and try again.");
       return;
     }
 
@@ -347,8 +321,7 @@ export default function EditableHero({
             } else {
               const errorData = await response.json();
               console.error(
-                `Hero1 image upload failed: ${
-                  errorData.message || "Unknown error"
+                `Hero1 image upload failed: ${errorData.message || "Unknown error"
                 }`
               );
               throw new Error(`Hero1 upload failed`);
@@ -380,8 +353,7 @@ export default function EditableHero({
             } else {
               const errorData = await response.json();
               console.error(
-                `Hero3 image upload failed: ${
-                  errorData.message || "Unknown error"
+                `Hero3 image upload failed: ${errorData.message || "Unknown error"
                 }`
               );
               throw new Error(`Hero3 upload failed`);
@@ -396,7 +368,7 @@ export default function EditableHero({
           const formData = new FormData();
           formData.append("file", pendingImageFiles.customerImages[i]);
           formData.append("sectionName", "hero");
-          formData.append("imageField", `customerImage${i}` + Date.now());
+          formData.append("imageField", `customerImage` + Date.now());
           formData.append("templateSelection", templateSelection);
 
           uploadPromises.push(
@@ -417,8 +389,7 @@ export default function EditableHero({
               } else {
                 const errorData = await response.json();
                 console.error(
-                  `Customer image ${i} upload failed: ${
-                    errorData.message || "Unknown error"
+                  `Customer image ${i} upload failed: ${errorData.message || "Unknown error"
                   }`
                 );
                 throw new Error(`Customer image ${i} upload failed`);
@@ -445,10 +416,9 @@ export default function EditableHero({
       setTempHeroState(updatedState);
 
       setIsEditing(false);
-      toast.success("Hero section saved successfully");
+      console.log("Hero section saved successfully");
     } catch (error) {
       console.error("Error saving hero section:", error);
-      toast.error("Error saving changes. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -522,8 +492,8 @@ export default function EditableHero({
 
   return (
     <>
-      {/* Enhanced Crop Modal */}
-      {cropModalOpen && (
+      {/* Cropping Modal - Same as Header.tsx */}
+      {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -576,7 +546,7 @@ export default function EditableHero({
               </div>
             </div>
 
-            {/* Controls */}
+            {/* Controls - Same as Header.tsx */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
@@ -584,31 +554,28 @@ export default function EditableHero({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -657,8 +624,8 @@ export default function EditableHero({
           </motion.div>
         </motion.div>
       )}
-      
-      {/* Hero Section */}
+
+      {/* Rest of the hero section remains exactly the same */}
       <section
         id="home"
         ref={heroRef}
@@ -745,14 +712,14 @@ export default function EditableHero({
                     field="heading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight"
                     placeholder="Main heading"
-                    maxLength={CHAR_LIMITS.heading}
+                    maxLength={100}
                   />
                   <EditableText
                     value={tempHeroState.subheading}
                     field="subheading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold text-yellow-400"
                     placeholder="Sub heading"
-                    maxLength={CHAR_LIMITS.subheading}
+                    maxLength={200}
                   />
                 </div>
               )}
@@ -771,7 +738,7 @@ export default function EditableHero({
                   multiline
                   className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed"
                   placeholder="Hero description"
-                  maxLength={CHAR_LIMITS.description}
+                  maxLength={500}
                 />
               )}
 
@@ -799,25 +766,25 @@ export default function EditableHero({
                     value={tempHeroState.primaryBtn}
                     field="primaryBtn"
                     placeholder="Primary button text"
-                    maxLength={CHAR_LIMITS.primaryBtn}
+                    maxLength={50}
                   />
                   <EditableText
                     value={tempHeroState.secondaryBtn}
                     field="secondaryBtn"
                     placeholder="Secondary button text"
-                    maxLength={CHAR_LIMITS.secondaryBtn}
+                    maxLength={50}
                   />
                   <EditableText
                     value={tempHeroState.primaryButtonLink}
                     field="primaryButtonLink"
                     placeholder="Primary button link"
-                    maxLength={CHAR_LIMITS.primaryButtonLink}
+                    maxLength={200}
                   />
                   <EditableText
                     value={tempHeroState.secondaryButtonLink}
                     field="secondaryButtonLink"
                     placeholder="Secondary button link"
-                    maxLength={CHAR_LIMITS.secondaryButtonLink}
+                    maxLength={200}
                   />
                 </div>
               )}
@@ -864,7 +831,7 @@ export default function EditableHero({
                     field="trustText"
                     placeholder="Trust text"
                     className="text-sm sm:text-base text-white"
-                    maxLength={CHAR_LIMITS.trustText}
+                    maxLength={100}
                   />
                 )}
               </motion.div>
@@ -886,7 +853,7 @@ export default function EditableHero({
                           : heroState.hero1Image
                       }
                       alt="Innovation showcase"
-                      className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-3xl shadow-2xl"
+                      className="w-full h-auto max-h-[70vh] object-contain rounded-3xl shadow-2xl"
                     />
                     {isEditing && (
                       <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
@@ -918,7 +885,7 @@ export default function EditableHero({
                             : heroState.hero3Image
                         }
                         alt="Tech innovation"
-                        className="w-48 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 object-cover rounded-2xl shadow-xl border-4 border-white"
+                        className="w-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] h-auto object-contain rounded-2xl shadow-xl border-4 border-white"
                       />
                       {isEditing && (
                         <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
