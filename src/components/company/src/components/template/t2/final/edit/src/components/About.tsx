@@ -489,7 +489,7 @@ export default function About({
 
           {/* Main About Section */}
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-            {/* Image */}
+            {/* Image - Updated for auto-adjust size */}
             <motion.div
               className="relative rounded-2xl overflow-hidden shadow-xl"
               whileInView={{ opacity: [0, 1], x: [-50, 0] }}
@@ -501,11 +501,29 @@ export default function About({
                   Recommended: 800×600px (4:3 ratio)
                 </div>
               )}
-              <img
-                src={aboutState.imageUrl}
-                alt="About"
-                className="w-full h-[400px] object-cover"
-              />
+              
+              {/* Updated Image Container for Auto-Adjust */}
+              <div className="relative w-full">
+                <motion.div 
+                  className="relative"
+                  whileInView={{ opacity: [0, 1], scale: [0.8, 1] }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                  <div className="relative flex justify-center">
+                    <img
+                      src={aboutState.imageUrl}
+                      alt="About"
+                      className="w-full max-w-full h-auto object-contain rounded-2xl shadow-2xl"
+                      style={{ 
+                        maxHeight: '500px',
+                        width: 'auto',
+                        margin: '0 auto'
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              </div>
+
               {isEditing && (
                 <div className="absolute bottom-4 left-4 right-4 bg-white/80 p-2 rounded shadow z-50">
                   <input
