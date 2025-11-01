@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import Cropper from "react-easy-crop";
-
+import logo from"/logos/logo.svg"
 // Enhanced crop helper function (same as Header)
 const createImage = (url) =>
   new Promise((resolve, reject) => {
@@ -239,7 +239,7 @@ export default function EditableFooter({
     setIsUploading(true);
 
     try {
-      let updatedLogoUrl = tempData.brand.logoUrl;
+      let updatedLogoUrl = tempData.brand.logoUrl ;
 
       // If there's a pending logo, upload it first
       if (pendingLogoFile) {
@@ -583,10 +583,10 @@ export default function EditableFooter({
               variants={itemVariants}
             >
               <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                <span className="flex flex-row gap-2 text-xl font-bold text-red-500">
+                <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400">
                   <div className="relative">
                     <img
-                      src={tempData.brand.logoUrl}
+                      src={tempData.brand.logoUrl || logo}
                       alt="Logo"
                       className="h-4 w-4 sm:h-6 sm:w-6 object-contain"
                       style={{

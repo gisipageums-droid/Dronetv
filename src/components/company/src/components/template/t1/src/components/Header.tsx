@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useState } from "react";
-import logo from "../public/images/logos/logo.svg";
+import logo from"/logos/logo.svg"
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

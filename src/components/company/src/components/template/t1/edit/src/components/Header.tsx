@@ -3,7 +3,7 @@ import { Edit2, Save, Upload, X, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-
+import logo from"/logos/logo.svg"
 interface HeaderProps {
   headerData?: {
     logo?: string;
@@ -52,11 +52,11 @@ export default function Header({
       "Home",
       "About",
       "Profile",
-      "Product",
       "Services",
-      "Testimonials",
-      "Blog",
+      "Product",
       "Gallery",
+      "Blog",
+      "Testimonials",
     ],
   });
 
@@ -393,7 +393,7 @@ export default function Header({
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <motion.img
-                    src={headerState.logoSrc}
+                    src={headerState.logoSrc || logo}
                     alt="Logo"
                     className="object-contain w-8 h-8 rounded-full sm:h-8 sm:w-8 md:h-10 md:w-10"
                     animate={{

@@ -10,16 +10,15 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
-
+import logo from"/logos/logo.svg"
 export default function Footer() {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   // Static footer data matching the exact UI structure
   const footerData = {
     brand: {
-      logoUrl:
-        "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=100&h=100&fit=crop",
-      name: "InnovateX",
+      logoUrl: logo,
+      name: "Innovative Labs",
       description:
         "Transforming businesses with cutting-edge technology solutions. We help companies innovate, grow, and succeed in the digital age.",
     },

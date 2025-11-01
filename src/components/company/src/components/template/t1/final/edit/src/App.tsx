@@ -173,16 +173,16 @@ export default function App() {
         userId={finaleDataReview.userId}
         templateSelection={finaleDataReview.templateSelection}
       />
-      <Blog
-        blogData={finaleDataReview.content.blog}
-        onStateChange={blogStateChange}
+      <EditableGallerySection
+        galleryData={finaleDataReview.content.gallery}
+        onStateChange={galleryStateChange}
         publishedId={finaleDataReview.publishedId}
         userId={finaleDataReview.userId}
         templateSelection={finaleDataReview.templateSelection}
       />
-      <EditableGallerySection
-        galleryData={finaleDataReview.content.gallery}
-        onStateChange={galleryStateChange}
+      <Blog
+        blogData={finaleDataReview.content.blog}
+        onStateChange={blogStateChange}
         publishedId={finaleDataReview.publishedId}
         userId={finaleDataReview.userId}
         templateSelection={finaleDataReview.templateSelection}

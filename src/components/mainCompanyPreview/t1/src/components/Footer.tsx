@@ -74,7 +74,7 @@ export default function Footer({ content }) {
             variants={itemVariants}
           >
             <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-              <span className="flex flex-row gap-2 text-xl font-bold text-red-500">
+              <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400">
                 <img
                   src={footerData.brand.logoUrl || logo}
                   alt="Logo"
