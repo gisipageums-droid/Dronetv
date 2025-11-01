@@ -53,60 +53,60 @@ const ExcelDataProcessor = () => {
     return new Promise((resolve, reject) => {
       setIsLoading(true);
       setError(null);
-      
+
       const reader = new FileReader();
-      
+
       reader.onload = (e) => {
         try {
           const data = new Uint8Array(e.target?.result as ArrayBuffer);
           const workbook = XLSX.read(data, { type: 'array' });
-          
+
           // Get the first worksheet
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
-          
+
           // Convert to JSON
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, {
             header: 1, // Use first row as header
             defval: '' // Default value for empty cells
           }) as (string | number)[][];
-          
+
           if (jsonData.length === 0) {
             throw new Error('Excel file is empty');
           }
-          
+
           // Extract headers from first row
           const headers = jsonData[0].map(header => String(header).trim());
           setColumns(headers);
-          
+
           // Convert rows to objects
           const rows: ExcelDataItem[] = jsonData.slice(1).map((row, index) => {
             const rowData: ExcelDataItem = { _id: index + 1 }; // Add unique ID
-            
+
             headers.forEach((header, colIndex) => {
               const cellValue = row[colIndex];
               rowData[header] = cellValue !== undefined ? cellValue : '';
             });
-            
+
             return rowData;
           }).filter(row => {
             // Filter out completely empty rows
             // Check if any column (except _id) has meaningful content
             return Object.entries(row).some(([key, value]) => {
               if (key === '_id') return false; // Skip the internal ID field
-              
+
               // Check if value has meaningful content
               if (value === null || value === undefined || value === '') return false;
-              
+
               // Handle whitespace-only strings
               if (typeof value === 'string' && value.trim() === '') return false;
-              
+
               // Handle zero values (0 is considered valid data)
               if (value === 0) return true;
-              
+
               // Handle boolean false (false is considered valid data)
               if (value === false) return true;
-              
+
               // Any other non-empty value is considered valid
               return true;
             });
@@ -114,19 +114,19 @@ const ExcelDataProcessor = () => {
             ...row,
             _id: index + 1 // Re-assign sequential IDs after filtering
           }));
-          
+
           // Log filtering results for debugging
           const totalRowsBeforeFilter = jsonData.length - 1; // Subtract header row
           const filteredRowsCount = totalRowsBeforeFilter - rows.length;
           console.log(`Excel processing: ${totalRowsBeforeFilter} total rows, ${filteredRowsCount} empty rows filtered out, ${rows.length} rows with data`);
-          
+
           // Set processing info for user feedback
           if (filteredRowsCount > 0) {
             setProcessingInfo(`Processed ${totalRowsBeforeFilter} rows, filtered out ${filteredRowsCount} empty rows. Showing ${rows.length} rows with data.`);
           } else {
             setProcessingInfo(`Processed ${rows.length} rows with data.`);
           }
-          
+
           setIsLoading(false);
           resolve(rows);
         } catch (error) {
@@ -136,14 +136,14 @@ const ExcelDataProcessor = () => {
           reject(new Error(errorMessage));
         }
       };
-      
+
       reader.onerror = () => {
         setIsLoading(false);
         const errorMessage = 'Failed to read file';
         setError(errorMessage);
         reject(new Error(errorMessage));
       };
-      
+
       reader.readAsArrayBuffer(file);
     });
   };
@@ -152,20 +152,20 @@ const ExcelDataProcessor = () => {
     const uploadedFile = event.target.files?.[0];
     if (uploadedFile) {
       // Validate file type
-      const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
-                         'application/vnd.ms-excel', 
-                         'text/csv'];
-      
-      if (!validTypes.includes(uploadedFile.type) && 
-          !uploadedFile.name.match(/\.(xlsx|xls|csv)$/i)) {
+      const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel',
+        'text/csv'];
+
+      if (!validTypes.includes(uploadedFile.type) &&
+        !uploadedFile.name.match(/\.(xlsx|xls|csv)$/i)) {
         setError('Please select a valid Excel file (.xlsx, .xls, or .csv)');
         return;
       }
-      
+
       setFile(uploadedFile);
       setError(null);
       setProcessingInfo(null);
-      
+
       try {
         const data = await extractExcelData(uploadedFile);
         setExcelData(data);
@@ -178,109 +178,37 @@ const ExcelDataProcessor = () => {
     }
   };
 
-const handlePostData = async () => {
-  // Legacy function - posts all data at once
-  setPostingStatus({ loading: true });
+  const handlePostData = async () => {
+    // Legacy function - posts all data at once
+    setPostingStatus({ loading: true });
 
-  const API_ENDPOINT = 'https://3qw4mfji02.execute-api.ap-south-1.amazonaws.com/prod/ingest';
-
-  try {
-    // Prepare all data for batch posting
-    const dataToPost = excelData.map(item => {
-      const { _id, _status, ...cleanData } = item;
-      return cleanData;
-    });
-
-    // Create metadata for the batch request
-    const uploadedAtIso = new Date().toISOString();
-    const safeFileName = (file?.name || 'excel').replace(/[^\x00-\x7F]/g, '_'); // Replace non-ASCII chars
-    const metadata = {
-      uploadedAt: uploadedAtIso,
-      fileName: file?.name || 'unknown',
-      batchSize: dataToPost.length,
-      isBatch: true
-    };
-
-    // Make API call to post all data with required format (ARRAY, not array-of-array)
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Idempotency-Key': `${safeFileName}:${uploadedAtIso}`
-      },
-      body: JSON.stringify({ data: dataToPost, metadata }) // ✅ send array directly
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log('Successfully posted all data:', result);
-
-    // Update all data with posted status
-    const updatedData = excelData.map(item => ({
-      ...item,
-      _status: 'posted' as const
-    }));
-    setExcelData(updatedData);
-    setPostingStatus({ success: true, loading: false });
-
-  } catch (error) {
-    console.error('Error posting data:', error);
-    alert(`Failed to post data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    setPostingStatus({ loading: false });
-  }
-};
-
-
-const handlePostAllData = async () => {
-  const pendingItems = excelData.filter(item => !item._status || item._status === 'pending');
-  if (pendingItems.length === 0) {
-    alert('No pending items to post.');
-    return;
-  }
-
-  setPostingStatus(prev => ({
-    ...prev,
-    postAll: {
-      inProgress: true,
-      completed: 0,
-      total: pendingItems.length,
-      errors: 0
-    }
-  }));
-
-  const API_ENDPOINT = 'https://3qw4mfji02.execute-api.ap-south-1.amazonaws.com/prod/ingest';
-
-  // 🔑 Stabilize idempotency for the whole run
-  const batchUploadedAtIso = new Date().toISOString();
-  const safeFileName = (file?.name || 'excel').replace(/[^\x00-\x7F]/g, '_');
-
-  // Post items one by one with actual API calls
-  for (let i = 0; i < pendingItems.length; i++) {
-    const item = pendingItems[i];
+    const API_ENDPOINT = 'https://3qw4mfji02.execute-api.ap-south-1.amazonaws.com/prod/ingest';
 
     try {
-      // Prepare data for API (exclude internal fields)
-      const { _id, _status, ...dataToPost } = item;
+      // Prepare all data for batch posting
+      const dataToPost = excelData.map(item => {
+        const { _id, _status, ...cleanData } = item;
+        return cleanData;
+      });
 
-      // Create metadata for the request
+      // Create metadata for the batch request
+      const uploadedAtIso = new Date().toISOString();
+      const safeFileName = (file?.name || 'excel').replace(/[^\x00-\x7F]/g, '_'); // Replace non-ASCII chars
       const metadata = {
-        uploadedAt: batchUploadedAtIso,          // ✅ fixed for the batch
+        uploadedAt: uploadedAtIso,
         fileName: file?.name || 'unknown',
-        rowIndex: i + 1,
-        totalRows: pendingItems.length
+        batchSize: dataToPost.length,
+        isBatch: true
       };
 
-      // Make API call to post data with required format (ARRAY with one item)
+      // Make API call to post all data with required format (ARRAY, not array-of-array)
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Idempotency-Key': `${safeFileName}:${batchUploadedAtIso}:${i + 1}` // 👈 unique per row // ✅ fixed for the batch
+          'Idempotency-Key': `${safeFileName}:${uploadedAtIso}`
         },
-        body: JSON.stringify({ data: [dataToPost], metadata })        // ✅ wrap per-row object in array
+        body: JSON.stringify({ data: dataToPost, metadata }) // ✅ send array directly
       });
 
       if (!response.ok) {
@@ -288,79 +216,151 @@ const handlePostAllData = async () => {
       }
 
       const result = await response.json();
-      console.log(`Successfully posted item ${i + 1}:`, result);
-      setPostStatusStore((prev: Record<string | number, any>) => ({ ...prev, [item._id]: { uploadId: result.uploadId } }));
+      console.log('Successfully posted all data:', result);
 
-      // Update data with posted status
-      setExcelData(prevData =>
-        prevData.map(dataItem =>
-          dataItem._id === item._id ? { ...dataItem, _status: 'posted' } : dataItem
-        )
-      );
+      // Update all data with posted status
+      const updatedData = excelData.map(item => ({
+        ...item,
+        _status: 'posted' as const
+      }));
+      setExcelData(updatedData);
+      setPostingStatus({ success: true, loading: false });
 
     } catch (error) {
-      console.error(`Error posting item ${i + 1}:`, error);
+      console.error('Error posting data:', error);
+      alert(`Failed to post data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setPostingStatus({ loading: false });
+    }
+  };
 
-      // Increment error count
+
+  const handlePostAllData = async () => {
+    const pendingItems = excelData.filter(item => !item._status || item._status === 'pending');
+    if (pendingItems.length === 0) {
+      alert('No pending items to post.');
+      return;
+    }
+
+    setPostingStatus(prev => ({
+      ...prev,
+      postAll: {
+        inProgress: true,
+        completed: 0,
+        total: pendingItems.length,
+        errors: 0
+      }
+    }));
+
+    const API_ENDPOINT = 'https://3qw4mfji02.execute-api.ap-south-1.amazonaws.com/prod/ingest';
+
+    // 🔑 Stabilize idempotency for the whole run
+    const batchUploadedAtIso = new Date().toISOString();
+    const safeFileName = (file?.name || 'excel').replace(/[^\x00-\x7F]/g, '_');
+
+    // Post items one by one with actual API calls
+    for (let i = 0; i < pendingItems.length; i++) {
+      const item = pendingItems[i];
+
+      try {
+        // Prepare data for API (exclude internal fields)
+        const { _id, _status, ...dataToPost } = item;
+
+        // Create metadata for the request
+        const metadata = {
+          uploadedAt: batchUploadedAtIso,          // ✅ fixed for the batch
+          fileName: file?.name || 'unknown',
+          rowIndex: i + 1,
+          totalRows: pendingItems.length
+        };
+
+        // Make API call to post data with required format (ARRAY with one item)
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Idempotency-Key': `${safeFileName}:${batchUploadedAtIso}:${i + 1}` // 👈 unique per row // ✅ fixed for the batch
+          },
+          body: JSON.stringify({ data: [dataToPost], metadata })        // ✅ wrap per-row object in array
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log(`Successfully posted item ${i + 1}:`, result);
+        setPostStatusStore((prev: Record<string | number, any>) => ({ ...prev, [item._id]: { uploadId: result.uploadId } }));
+
+        // Update data with posted status
+        setExcelData(prevData =>
+          prevData.map(dataItem =>
+            dataItem._id === item._id ? { ...dataItem, _status: 'posted' } : dataItem
+          )
+        );
+
+      } catch (error) {
+        console.error(`Error posting item ${i + 1}:`, error);
+
+        // Increment error count
+        setPostingStatus(prev => ({
+          ...prev,
+          postAll: {
+            ...prev.postAll!,
+            errors: (prev.postAll?.errors || 0) + 1
+          }
+        }));
+
+        // Continue to next item
+      }
+
+      // Update progress
       setPostingStatus(prev => ({
         ...prev,
         postAll: {
           ...prev.postAll!,
-          errors: (prev.postAll?.errors || 0) + 1
+          completed: i + 1
         }
       }));
 
-      // Continue to next item
+      // Small delay to avoid overwhelming the API
+      if (i < pendingItems.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
     }
 
-    // Update progress
+    // Complete the process
     setPostingStatus(prev => ({
       ...prev,
       postAll: {
-        ...prev.postAll!,
-        completed: i + 1
+        inProgress: false,
+        completed: pendingItems.length,
+        total: pendingItems.length
       }
     }));
 
-    // Small delay to avoid overwhelming the API
-    if (i < pendingItems.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-  }
-
-  // Complete the process
-  setPostingStatus(prev => ({
-    ...prev,
-    postAll: {
-      inProgress: false,
-      completed: pendingItems.length,
-      total: pendingItems.length
-    }
-  }));
-
-  // Clear progress after 3 seconds
-  setTimeout(() => {
-    setPostingStatus(prev => {
-      const { postAll, ...rest } = prev;
-      return rest;
-    });
-  }, 3000);
-};
+    // Clear progress after 3 seconds
+    setTimeout(() => {
+      setPostingStatus(prev => {
+        const { postAll, ...rest } = prev;
+        return rest;
+      });
+    }, 3000);
+  };
 
   const handleGenerateWebsite = async (id: string | number) => {
     const numericId = typeof id === 'number' ? id : parseInt(String(id));
     setPostingStatus(prev => ({ ...prev, [numericId]: 'generating' }));
-    
+
     try {
       // Get the uploadId from postStatusStore for this item
       const uploadId = postStatusStore[numericId]?.uploadId;
-      
+
       if (!uploadId) {
         throw new Error('No uploadId found for this item');
       }
 
       const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev/'; // Replace with your actual API
-      
+
       // Prepare payload for generate API
       const payload = {
         uploadid: uploadId,
@@ -388,12 +388,12 @@ const handlePostAllData = async () => {
       console.log('Successfully generated website:', result);
 
       // Update data with generated status
-      const updatedData = excelData.map(item => 
+      const updatedData = excelData.map(item =>
         item._id === id ? { ...item, _status: 'generated' } : item
       );
       setExcelData(updatedData);
       setPostingStatus(prev => ({ ...prev, [numericId]: 'success' }));
-      
+
     } catch (error) {
       console.error('Error generating website:', error);
       alert(`Failed to generate website: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -402,116 +402,116 @@ const handlePostAllData = async () => {
   };
 
   const handleGenerateAllWebsites = async () => {
-  const postedItems = excelData.filter(item => item._status === 'posted');
-  if (postedItems.length === 0) {
-    alert('No posted items to generate websites for. Please post data first.');
-    return;
-  }
-
-  setPostingStatus(prev => ({
-    ...prev,
-    generateAll: {
-      inProgress: true,
-      completed: 0,
-      total: postedItems.length
+    const postedItems = excelData.filter(item => item._status === 'posted');
+    if (postedItems.length === 0) {
+      alert('No posted items to generate websites for. Please post data first.');
+      return;
     }
-  }));
 
-  const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev'; 
-
-  // Generate websites one by one with actual API calls
-  for (let i = 0; i < postedItems.length; i++) {
-    const item = postedItems[i];
-    const itemId = item._id || i;
-    const numericId = typeof itemId === 'number' ? itemId : i;
-    
-    // Update individual item status
-    setPostingStatus(prev => ({ ...prev, [numericId]: 'generating' }));
-    
-    try {
-      // Get the uploadId from postStatusStore for this item
-      const uploadId = postStatusStore[itemId]?.uploadId;
-      
-      if (!uploadId) {
-        console.warn(`No uploadId found for item ${itemId}, skipping...`);
-        continue;
-      }
-
-      // Prepare payload for generate API
-      const payload = {
-        uploadid: uploadId,
-        metadata: {
-          fileName: file?.name || 'unknown',
-          generatedAt: new Date().toISOString(),
-          itemIndex: i + 1,
-          totalItems: postedItems.length
-        }
-      };
-
-      // Call generate API
-      const response = await fetch(GENERATE_API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      }); 
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log(`Successfully generated website for item ${i + 1}:`, result);
-
-      // Update data with generated status
-      setExcelData(prevData => 
-        prevData.map(dataItem => 
-          dataItem._id === itemId ? { ...dataItem, _status: 'generated' } : dataItem
-        )
-      );
-      
-      // Update individual item status
-      setPostingStatus(prev => ({ ...prev, [numericId]: 'success' }));
-      
-    } catch (error) {
-      console.error(`Error generating website for item ${i + 1}:`, error);
-      // Continue with next item even if one fails
-    }
-    
-    // Update progress
     setPostingStatus(prev => ({
       ...prev,
       generateAll: {
-        ...prev.generateAll!,
-        completed: i + 1
+        inProgress: true,
+        completed: 0,
+        total: postedItems.length
       }
     }));
 
-    // Increased delay to avoid overwhelming the API - changed from 500ms to 6000ms (6 seconds)
-    if (i < postedItems.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 6000)); // Increased from 500ms to 6000ms
-    }
-  }
+    const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev';
 
-  // Complete the process
-  setPostingStatus(prev => ({
-    ...prev,
-    generateAll: {
-      inProgress: false,
-      completed: postedItems.length,
-      total: postedItems.length
-    }
-  }));
+    // Generate websites one by one with actual API calls
+    for (let i = 0; i < postedItems.length; i++) {
+      const item = postedItems[i];
+      const itemId = item._id || i;
+      const numericId = typeof itemId === 'number' ? itemId : i;
 
-  // Clear progress after 3 seconds
-  setTimeout(() => {
-    setPostingStatus(prev => {
-      const { generateAll, ...rest } = prev;
-      return rest;
-    });
-  }, 3000);
-};
+      // Update individual item status
+      setPostingStatus(prev => ({ ...prev, [numericId]: 'generating' }));
+
+      try {
+        // Get the uploadId from postStatusStore for this item
+        const uploadId = postStatusStore[itemId]?.uploadId;
+
+        if (!uploadId) {
+          console.warn(`No uploadId found for item ${itemId}, skipping...`);
+          continue;
+        }
+
+        // Prepare payload for generate API
+        const payload = {
+          uploadid: uploadId,
+          metadata: {
+            fileName: file?.name || 'unknown',
+            generatedAt: new Date().toISOString(),
+            itemIndex: i + 1,
+            totalItems: postedItems.length
+          }
+        };
+
+        // Call generate API
+        const response = await fetch(GENERATE_API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log(`Successfully generated website for item ${i + 1}:`, result);
+
+        // Update data with generated status
+        setExcelData(prevData =>
+          prevData.map(dataItem =>
+            dataItem._id === itemId ? { ...dataItem, _status: 'generated' } : dataItem
+          )
+        );
+
+        // Update individual item status
+        setPostingStatus(prev => ({ ...prev, [numericId]: 'success' }));
+
+      } catch (error) {
+        console.error(`Error generating website for item ${i + 1}:`, error);
+        // Continue with next item even if one fails
+      }
+
+      // Update progress
+      setPostingStatus(prev => ({
+        ...prev,
+        generateAll: {
+          ...prev.generateAll!,
+          completed: i + 1
+        }
+      }));
+
+      // Increased delay to avoid overwhelming the API - changed from 500ms to 6000ms (6 seconds)
+      if (i < postedItems.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 6000)); // Increased from 500ms to 6000ms
+      }
+    }
+
+    // Complete the process
+    setPostingStatus(prev => ({
+      ...prev,
+      generateAll: {
+        inProgress: false,
+        completed: postedItems.length,
+        total: postedItems.length
+      }
+    }));
+
+    // Clear progress after 3 seconds
+    setTimeout(() => {
+      setPostingStatus(prev => {
+        const { generateAll, ...rest } = prev;
+        return rest;
+      });
+    }, 3000);
+  };
 
   const handleViewWebsite = (website: string) => {
     // In a real app, this would open the generated website
@@ -528,15 +528,15 @@ const handlePostAllData = async () => {
 
   const sortedData = React.useMemo(() => {
     if (!sortConfig.key) return excelData;
-    
+
     return [...excelData].sort((a, b) => {
       const aValue = a[sortConfig.key!];
       const bValue = b[sortConfig.key!];
-      
+
       // Handle different data types
       const aString = String(aValue || '').toLowerCase();
       const bString = String(bValue || '').toLowerCase();
-      
+
       if (aString < bString) {
         return sortConfig.direction === 'asc' ? -1 : 1;
       }
@@ -594,7 +594,7 @@ const handlePostAllData = async () => {
           <div className="flex flex-col items-center justify-center">
             <Upload className="w-16 h-16 text-yellow-500 mb-4" />
             <h2 className="text-2xl font-semibold text-yellow-800 mb-4">Upload Excel File</h2>
-            
+
             <input
               type="file"
               ref={fileInputRef}
@@ -602,7 +602,7 @@ const handlePostAllData = async () => {
               accept=".xlsx,.xls,.csv"
               className="hidden"
             />
-            
+
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
@@ -611,19 +611,19 @@ const handlePostAllData = async () => {
               <FileText className="w-5 h-5" />
               {isLoading ? 'Processing...' : 'Choose File'}
             </button>
-            
+
             {file && (
               <p className="text-green-600 font-medium mb-4">
                 Selected: {file.name}
               </p>
             )}
-            
+
             {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                 <p className="font-medium">Error: {error}</p>
               </div>
             )}
-            
+
             {processingInfo && (
               <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 <p className="text-sm">
@@ -632,18 +632,17 @@ const handlePostAllData = async () => {
                 </p>
               </div>
             )}
-            
+
             {excelData.length > 0 && (
               <div className="flex flex-col sm:flex-row gap-3 items-center">
                 {/* Post All Data Button */}
                 <button
                   onClick={handlePostAllData}
                   disabled={postingStatus.postAll?.inProgress || excelData.every(item => item._status === 'posted' || item._status === 'generated')}
-                  className={`${
-                    postingStatus.postAll?.inProgress || excelData.every(item => item._status === 'posted' || item._status === 'generated')
-                      ? 'bg-red-400 cursor-not-allowed' 
-                      : 'bg-red-500 hover:bg-red-600'
-                  } text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center gap-2`}
+                  className={`${postingStatus.postAll?.inProgress || excelData.every(item => item._status === 'posted' || item._status === 'generated')
+                    ? 'bg-red-400 cursor-not-allowed'
+                    : 'bg-red-500 hover:bg-red-600'
+                    } text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center gap-2`}
                 >
                   {postingStatus.postAll?.inProgress ? (
                     <>
@@ -667,9 +666,9 @@ const handlePostAllData = async () => {
                     </>
                   )}
                 </button>
-                
+
                 {/* Legacy Single Post Button (Optional - for individual posting) */}
-                <button
+                {/* <button
                   onClick={handlePostData}
                   disabled={postingStatus.loading}
                   className={`${
@@ -691,18 +690,17 @@ const handlePostAllData = async () => {
                   ) : (
                     'Post All (Legacy)'
                   )}
-                </button>
-                
+                </button> */}
+
                 {/* Generate All Button */}
                 {excelData.some(item => item._status === 'posted') && (
                   <button
                     onClick={handleGenerateAllWebsites}
                     disabled={postingStatus.generateAll?.inProgress}
-                    className={`${
-                      postingStatus.generateAll?.inProgress
-                        ? 'bg-blue-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700'
-                    } text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center gap-2`}
+                    className={`${postingStatus.generateAll?.inProgress
+                      ? 'bg-blue-400 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                      } text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center gap-2`}
                   >
                     {postingStatus.generateAll?.inProgress ? (
                       <>
@@ -743,7 +741,7 @@ const handlePostAllData = async () => {
                     className="w-full pl-10 pr-4 py-2 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                   />
                 </div>
-                
+
                 {/* Items per page selector */}
                 <div className="flex items-center gap-2">
                   <label className="text-sm text-yellow-700 whitespace-nowrap">Items per page:</label>
@@ -759,14 +757,14 @@ const handlePostAllData = async () => {
                   </select>
                 </div>
               </div>
-              
+
               {/* Results info and pagination */}
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="text-sm text-yellow-700">
                   Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length} records
                   {filteredData.length < excelData.length && ` (filtered from ${excelData.length} total)`}
                 </div>
-                
+
                 {/* Progress Indicators */}
                 <div className="flex flex-col gap-2">
                   {/* Posting Progress Indicator */}
@@ -781,17 +779,17 @@ const handlePostAllData = async () => {
                           )}
                         </span>
                         <div className="w-32 bg-red-200 rounded-full h-2 mt-1">
-                          <div 
+                          <div
                             className="bg-red-600 h-2 rounded-full transition-all duration-300"
-                            style={{ 
-                              width: `${(postingStatus.postAll.completed / postingStatus.postAll.total) * 100}%` 
+                            style={{
+                              width: `${(postingStatus.postAll.completed / postingStatus.postAll.total) * 100}%`
                             }}
                           ></div>
                         </div>
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Generation Progress Indicator */}
                   {postingStatus.generateAll?.inProgress && (
                     <div className="flex items-center gap-3 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
@@ -801,10 +799,10 @@ const handlePostAllData = async () => {
                           Generating Websites: {postingStatus.generateAll.completed}/{postingStatus.generateAll.total}
                         </span>
                         <div className="w-32 bg-blue-200 rounded-full h-2 mt-1">
-                          <div 
+                          <div
                             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                            style={{ 
-                              width: `${(postingStatus.generateAll.completed / postingStatus.generateAll.total) * 100}%` 
+                            style={{
+                              width: `${(postingStatus.generateAll.completed / postingStatus.generateAll.total) * 100}%`
                             }}
                           ></div>
                         </div>
@@ -812,22 +810,21 @@ const handlePostAllData = async () => {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === 1
-                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                          : 'bg-yellow-500 text-white hover:bg-yellow-600'
-                      }`}
+                      className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${currentPage === 1
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                        }`}
                     >
                       Previous
                     </button>
-                    
+
                     {/* Page numbers */}
                     <div className="flex items-center gap-1">
                       {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -841,31 +838,29 @@ const handlePostAllData = async () => {
                         } else {
                           pageNum = currentPage - 2 + i;
                         }
-                        
+
                         return (
                           <button
                             key={pageNum}
                             onClick={() => handlePageChange(pageNum)}
-                            className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                              currentPage === pageNum
-                                ? 'bg-yellow-600 text-white'
-                                : 'bg-white text-yellow-600 hover:bg-yellow-100 border border-yellow-300'
-                            }`}
+                            className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${currentPage === pageNum
+                              ? 'bg-yellow-600 text-white'
+                              : 'bg-white text-yellow-600 hover:bg-yellow-100 border border-yellow-300'
+                              }`}
                           >
                             {pageNum}
                           </button>
                         );
                       })}
                     </div>
-                    
+
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === totalPages
-                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                          : 'bg-yellow-500 text-white hover:bg-yellow-600'
-                      }`}
+                      className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${currentPage === totalPages
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                        }`}
                     >
                       Next
                     </button>
@@ -884,7 +879,7 @@ const handlePostAllData = async () => {
                         Actions
                       </th>
                       {columns.map((column) => (
-                        <th 
+                        <th
                           key={column}
                           className="px-3 py-3 text-left text-yellow-800 font-semibold cursor-pointer hover:bg-yellow-200 transition-colors text-xs uppercase tracking-wider min-w-[120px] whitespace-nowrap"
                           onClick={() => handleSort(column)}
@@ -915,16 +910,15 @@ const handlePostAllData = async () => {
                                     <Eye className="w-3 h-3" />
                                   </button>
                                 )}
-                                
+
                                 {row._status === 'posted' && (
                                   <button
                                     onClick={() => handleGenerateWebsite(numericRowId)}
                                     disabled={postingStatus[numericRowId] === 'generating'}
-                                    className={`${
-                                      postingStatus[numericRowId] === 'generating'
-                                        ? 'bg-yellow-400 cursor-not-allowed'
-                                        : 'bg-yellow-500 hover:bg-yellow-600'
-                                    } text-white px-2 py-1 rounded-md transition-colors duration-200 text-xs font-medium`}
+                                    className={`${postingStatus[numericRowId] === 'generating'
+                                      ? 'bg-yellow-400 cursor-not-allowed'
+                                      : 'bg-yellow-500 hover:bg-yellow-600'
+                                      } text-white px-2 py-1 rounded-md transition-colors duration-200 text-xs font-medium`}
                                   >
                                     {postingStatus[numericRowId] === 'generating' ? (
                                       <span className="flex items-center gap-1">
@@ -941,13 +935,13 @@ const handlePostAllData = async () => {
                                     )}
                                   </button>
                                 )}
-                                
+
                                 {row._status === 'generated' && (
                                   <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
                                     ✓
                                   </span>
                                 )}
-                                
+
                                 {(!row._status || row._status === 'pending') && (
                                   <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
                                     ⏳
