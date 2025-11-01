@@ -27,9 +27,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant] || variants.default} ${
-        sizes[size] || sizes.default
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant] || variants.default} ${sizes[size] || sizes.default
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -72,7 +71,7 @@ export default function EditableCompanyProfile({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState(null);
@@ -248,7 +247,7 @@ export default function EditableCompanyProfile({
       setImageToCrop(reader.result);
       setOriginalFile(file);
       setCropModalOpen(true);
-      setAspectRatio(4/3); // Standard aspect ratio for company images
+      setAspectRatio(4 / 3); // Standard aspect ratio for company images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -529,10 +528,10 @@ export default function EditableCompanyProfile({
   const displayContent = isEditing ? tempProfileState : profileState;
   const displayCounters = isEditing
     ? {
-        growth: displayContent.growthThisYear,
-        team: displayContent.teamSize,
-        projects: displayContent.projectsDelivered,
-      }
+      growth: displayContent.growthThisYear,
+      team: displayContent.teamSize,
+      projects: displayContent.projectsDelivered,
+    }
     : animatedCounters;
 
   return (
@@ -598,13 +597,13 @@ export default function EditableCompanyProfile({
         )}
 
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* LEFT SIDE — Company Image - Full Width & Height */}
             <motion.div
               initial={{ opacity: 0, x: -60 }}
               animate={isVisible ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative w-full h-full min-h-[500px] lg:min-h-[600px]"
+              className="relative flex justify-center"
             >
               {isEditing && (
                 <div className="absolute top-4 right-4 z-10">
@@ -632,16 +631,17 @@ export default function EditableCompanyProfile({
                   <div className="truncate">{pendingImageFile.name}</div>
                 </div>
               )}
-              <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100 w-full h-full">
+              <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100 w-full max-w-[900px]">
                 <img
                   src={
                     displayContent.imageUrl ||
                     "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=600&fit=crop"
                   }
                   alt={`${displayContent.companyName} Office`}
-                  className="w-full h-full object-cover"
+                  className="block w-full h-auto max-h-[75vh] object-contain"
                   onError={(e) => {
                     // Fallback if image fails
+                    e.currentTarget.onerror = null;
                     e.currentTarget.src =
                       "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=600&fit=crop";
                   }}
@@ -922,31 +922,28 @@ export default function EditableCompanyProfile({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
