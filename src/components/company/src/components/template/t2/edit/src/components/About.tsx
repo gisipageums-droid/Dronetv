@@ -533,7 +533,7 @@ export default function About({
           </div>
 
           {/* Main About Section */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-start mb-20">
             {/* Image - Updated for auto-adjust size */}
             <motion.div
               className="relative rounded-2xl overflow-hidden shadow-xl"
