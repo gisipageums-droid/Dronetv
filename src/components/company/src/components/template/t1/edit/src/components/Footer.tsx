@@ -24,7 +24,6 @@ import { toast } from "react-toastify";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import Cropper from "react-easy-crop";
-import logo from"/logos/logo.svg"
 
 // Enhanced crop helper function
 const createImage = (url) =>
@@ -89,20 +88,20 @@ export default function EditableFooter({
   publishedId,
   templateSelection,
 }) {
-  // Character limits
+  // Character limits - applied from your requirements
   const CHAR_LIMITS = {
-    brandName: 100,
-    brandDescription: 200,
-    sectionTitle: 100,
-    linkText: 100,
-    linkUrl: 500,
-    contactEmail: 100,
+    brandName: 50,
+    brandDescription: 50,
+    sectionTitle: 50,
+    linkText: 50,
+    linkUrl: 50,
+    contactEmail: 50,
     contactPhone: 50,
-    contactAddress: 200,
+    contactAddress: 50,
     socialName: 50,
-    socialUrl: 500,
-    legalText: 100,
-    legalUrl: 500,
+    socialUrl: 50,
+    legalText: 50,
+    legalUrl: 50,
   };
 
   // Initialize with data from props or use default structure
@@ -430,16 +429,16 @@ export default function EditableFooter({
       sections: prev.sections.map((section) =>
         section.id === sectionId
           ? {
-              ...section,
-              links: [
-                ...section.links,
-                {
-                  id: Date.now(),
-                  text: "New Link",
-                  href: "#new",
-                },
-              ],
-            }
+            ...section,
+            links: [
+              ...section.links,
+              {
+                id: Date.now(),
+                text: "New Link",
+                href: "#new",
+              },
+            ],
+          }
           : section
       ),
     }));
@@ -451,9 +450,9 @@ export default function EditableFooter({
       sections: prev.sections.map((section) =>
         section.id === sectionId
           ? {
-              ...section,
-              links: section.links.filter((link) => link.id !== linkId),
-            }
+            ...section,
+            links: section.links.filter((link) => link.id !== linkId),
+          }
           : section
       ),
     }));
@@ -465,11 +464,11 @@ export default function EditableFooter({
       sections: prev.sections.map((section) =>
         section.id === sectionId
           ? {
-              ...section,
-              links: section.links.map((link) =>
-                link.id === linkId ? { ...link, [field]: value } : link
-              ),
-            }
+            ...section,
+            links: section.links.map((link) =>
+              link.id === linkId ? { ...link, [field]: value } : link
+            ),
+          }
           : section
       ),
     }));
@@ -645,7 +644,7 @@ export default function EditableFooter({
             </div>
           )}
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-12 relative">
           {/* Main Footer Content */}
           <motion.div
@@ -661,12 +660,12 @@ export default function EditableFooter({
               variants={itemVariants}
             >
               <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400">
+                <span className="flex flex-row gap-2 text-xl font-bold text-red-500">
                   <div className="relative">
                     <img
-                      src={isEditing ? tempData.brand.logoUrl : footerData.brand.logoUrl || logo}
+                      src={isEditing ? tempData.brand.logoUrl : footerData.brand.logoUrl}
                       alt="Logo"
-                    className="object-contain w-[40px] h-[40px] "
+                      className="object-contain w-[40px] h-[40px] "
                       style={{
                         filter: isEditing ? "brightness(0.7)" : "none",
                       }}
@@ -700,14 +699,19 @@ export default function EditableFooter({
                     />
                   </div>
                   {isEditing ? (
-                    <input
-                      type="text"
-                      value={tempData.brand.name}
-                      onChange={(e) => updateBrand("name", e.target.value)}
-                      placeholder="Brand name"
-                      className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm"
-                      maxLength={CHAR_LIMITS.brandName}
-                    />
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={tempData.brand.name}
+                        onChange={(e) => updateBrand("name", e.target.value)}
+                        placeholder="Brand name"
+                        className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm"
+                        maxLength={CHAR_LIMITS.brandName}
+                      />
+                      <div className="text-xs text-gray-500 text-right mt-1">
+                        {tempData.brand.name.length}/{CHAR_LIMITS.brandName} characters
+                      </div>
+                    </div>
                   ) : (
                     footerData.brand.name
                   )}
@@ -727,6 +731,9 @@ export default function EditableFooter({
                     rows={3}
                     maxLength={CHAR_LIMITS.brandDescription}
                   />
+                  <div className="text-xs text-gray-500 text-right mt-1">
+                    {tempData.brand.description.length}/{CHAR_LIMITS.brandDescription} characters
+                  </div>
                 </div>
               ) : (
                 <p className="text-gray-300 text-sm leading-relaxed mb-6">
@@ -745,16 +752,21 @@ export default function EditableFooter({
                 <div className="flex items-center justify-center md:justify-start mb-4">
                   {isEditing ? (
                     <div className="flex items-center w-full">
-                      <input
-                        type="text"
-                        value={section.title}
-                        onChange={(e) =>
-                          updateSectionTitle(sectionIndex, e.target.value)
-                        }
-                        placeholder="Section title"
-                        className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm font-semibold flex-1"
-                        maxLength={CHAR_LIMITS.sectionTitle}
-                      />
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={section.title}
+                          onChange={(e) =>
+                            updateSectionTitle(sectionIndex, e.target.value)
+                          }
+                          placeholder="Section title"
+                          className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm font-semibold"
+                          maxLength={CHAR_LIMITS.sectionTitle}
+                        />
+                        <div className="text-xs text-gray-500 text-right mt-1">
+                          {section.title.length}/{CHAR_LIMITS.sectionTitle} characters
+                        </div>
+                      </div>
                       {tempData.sections.length > 1 && (
                         <Button
                           onClick={() => removeSection(section.id)}
@@ -778,36 +790,46 @@ export default function EditableFooter({
                     <li key={link.id} className="flex items-center gap-2">
                       {isEditing ? (
                         <div className="flex-1 space-y-1">
-                          <input
-                            type="text"
-                            value={link.text}
-                            onChange={(e) =>
-                              updateSectionLink(
-                                section.id,
-                                link.id,
-                                "text",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Link text"
-                            className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
-                            maxLength={CHAR_LIMITS.linkText}
-                          />
-                          <input
-                            type="text"
-                            value={link.href}
-                            onChange={(e) =>
-                              updateSectionLink(
-                                section.id,
-                                link.id,
-                                "href",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Link URL"
-                            className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
-                            maxLength={CHAR_LIMITS.linkUrl}
-                          />
+                          <div>
+                            <input
+                              type="text"
+                              value={link.text}
+                              onChange={(e) =>
+                                updateSectionLink(
+                                  section.id,
+                                  link.id,
+                                  "text",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Link text"
+                              className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
+                              maxLength={CHAR_LIMITS.linkText}
+                            />
+                            <div className="text-xs text-gray-500 text-right mt-1">
+                              {link.text.length}/{CHAR_LIMITS.linkText} characters
+                            </div>
+                          </div>
+                          <div>
+                            <input
+                              type="text"
+                              value={link.href}
+                              onChange={(e) =>
+                                updateSectionLink(
+                                  section.id,
+                                  link.id,
+                                  "href",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Link URL"
+                              className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
+                              maxLength={CHAR_LIMITS.linkUrl}
+                            />
+                            <div className="text-xs text-gray-500 text-right mt-1">
+                              {link.href.length}/{CHAR_LIMITS.linkUrl} characters
+                            </div>
+                          </div>
                         </div>
                       ) : (
                         <a
@@ -864,7 +886,7 @@ export default function EditableFooter({
           </motion.div>
 
           {/* Edit Mode Instructions */}
-          {/* {isEditing && (
+          {isEditing && (
             <motion.div
               className="mt-8 p-4 bg-blue-900/50 rounded-lg border border-blue-700"
               initial={{ opacity: 0 }}
@@ -881,7 +903,7 @@ export default function EditableFooter({
                 <li>• <strong>Link URLs:</strong> {CHAR_LIMITS.linkUrl} characters</li>
               </ul>
             </motion.div>
-          )} */}
+          )}
         </div>
       </motion.footer>
 
@@ -947,31 +969,28 @@ export default function EditableFooter({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
