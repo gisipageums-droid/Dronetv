@@ -109,7 +109,7 @@ export default function Header({ headerData }) {
                   <motion.img
                     src={headerData?.logoSrc}
                     alt="Logo"
-                    className="h-4 w-4 sm:h-6 sm:w-6 object-contain rounded-full"
+                    className="object-contain w-[40px] h-[40px] "
                     animate={{
                       y: [0, -5, 0],
                       transition: {
