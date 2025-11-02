@@ -588,7 +588,7 @@ export default function EditableFooter({
                     <img
                       src={tempData.brand.logoUrl || logo}
                       alt="Logo"
-                      className="h-4 w-4 sm:h-6 sm:w-6 object-contain"
+                    className="object-contain w-[40px] h-[40px] "
                       style={{
                         filter: isEditing ? "brightness(0.7)" : "none",
                       }}
