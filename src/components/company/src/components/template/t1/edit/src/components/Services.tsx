@@ -44,7 +44,7 @@ export default function Services({
   const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   // Create a temporary state for editing
   const [servicesSection, setServicesSection] = useState(serviceData);
@@ -72,9 +72,9 @@ export default function Services({
         ? tempServicesSection.services
         : servicesSection.services
       : (isEditing
-          ? tempServicesSection.services
-          : servicesSection.services
-        ).filter((s) => s.category === activeCategory);
+        ? tempServicesSection.services
+        : servicesSection.services
+      ).filter((s) => s.category === activeCategory);
 
   // Enhanced image upload handler
   const handleServiceImageSelect = (index, e) => {
@@ -99,7 +99,7 @@ export default function Services({
       setCropIndex(index);
       setOriginalFile(file);
       setCropModalOpen(true);
-      setAspectRatio(4/3); // Standard aspect ratio for service images
+      setAspectRatio(4 / 3); // Standard aspect ratio for service images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -227,7 +227,7 @@ export default function Services({
   const updateServiceField = (index, field, value) => {
     // Apply character limits based on field type
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "description" && value.length > 500) {
@@ -273,11 +273,11 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-              ...s,
-              [field]: s[field].map((item, li) =>
-                li === listIndex ? processedValue : item
-              ),
-            }
+            ...s,
+            [field]: s[field].map((item, li) =>
+              li === listIndex ? processedValue : item
+            ),
+          }
           : s
       ),
     }));
@@ -298,9 +298,9 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-              ...s,
-              [field]: s[field].filter((_, li) => li !== listIndex),
-            }
+            ...s,
+            [field]: s[field].filter((_, li) => li !== listIndex),
+          }
           : s
       ),
     }));
@@ -461,7 +461,7 @@ export default function Services({
   // Update heading fields with character limits
   const updateHeading = (field, value) => {
     let processedValue = value;
-    
+
     if (field === "head" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "desc" && value.length > 200) {
@@ -490,7 +490,7 @@ export default function Services({
       }) => {
         const baseClasses =
           "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-        
+
         // Show character count if maxLength is provided
         const charCount = maxLength ? (
           <div className="text-xs text-gray-500 text-right mt-1">
@@ -648,11 +648,10 @@ export default function Services({
                   onClick={() => {
                     setActiveCategory(cat);
                   }}
-                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
-                    activeCategory === cat
-                      ? "bg-orange-400 text-white shadow-lg scale-105"
-                      : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-                  }`}
+                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${activeCategory === cat
+                    ? "bg-orange-400 text-white shadow-lg scale-105"
+                    : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                    }`}
                 >
                   {cat}
                 </Button>
@@ -774,9 +773,8 @@ export default function Services({
 
                 <div className="mt-4 flex gap-2 ">
                   <Button
-                    className={` ${
-                      isEditing ? "" : "w-full"
-                    } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
+                    className={` ${isEditing ? "" : "w-full"
+                      } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
                     size="sm"
                     onClick={() => openModal(service, index)}
                   >
@@ -815,7 +813,7 @@ export default function Services({
       <AnimatePresence>
         {isModalOpen && selectedServiceIndex !== null && (
           <motion.div
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50"
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-[9999999] max-h-[90vh] overflow-y-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -936,7 +934,7 @@ export default function Services({
               )}
 
               {/* Process */}
-              <h3 className="font-semibold mb-2">Our Process</h3>
+              <h3 className="font-semibold mb-2">Our Process </h3>
               <ol className="space-y-2 mb-4">
                 {displayContent.services[selectedServiceIndex].process.map(
                   (p, pi) => (
@@ -1108,31 +1106,28 @@ export default function Services({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
