@@ -78,7 +78,7 @@ export default function Footer({ content }) {
                 <img
                   src={footerData.brand.logoUrl}
                   alt="Logo"
-                  className="h-4 w-4 sm:h-6 sm:w-6 object-contain"
+                  className="object-contain w-[40px] h-[40px] "
                 />
                 {footerData.brand.name}
               </span>
