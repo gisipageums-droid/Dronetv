@@ -69,13 +69,13 @@ const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
   });
 };
 
-export default function EditableUsedBy({ 
-  usedByData, 
-  onStateChange, 
-  userId, 
-  publishedId, 
-  templateSelection, 
-  isPublished = false 
+export default function EditableUsedBy({
+  usedByData,
+  onStateChange,
+  userId,
+  publishedId,
+  templateSelection,
+  isPublished = false
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -488,7 +488,7 @@ export default function EditableUsedBy({
   // Safe image source
   const getImageSrc = (image) => {
     if (!image) return DEFAULT_PLACEHOLDER_IMAGE;
-    
+
     if (typeof image === "string") {
       return image;
     } else if (image.src) {
@@ -496,7 +496,7 @@ export default function EditableUsedBy({
     } else if (image.url) {
       return image.url;
     }
-    
+
     return DEFAULT_PLACEHOLDER_IMAGE;
   };
 
@@ -566,31 +566,28 @@ export default function EditableUsedBy({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -700,8 +697,8 @@ export default function EditableUsedBy({
                   {isUploading
                     ? "Uploading..."
                     : isSaving
-                    ? "Saving..."
-                    : "Save"}
+                      ? "Saving..."
+                      : "Save"}
                 </Button>
                 <Button
                   onClick={handleCancel}
@@ -938,7 +935,7 @@ export default function EditableUsedBy({
         </div>
 
         {/* Editing Instructions */}
-        {isEditing && !isPublished && (
+        {/* {isEditing && !isPublished && (
           <div className="max-w-7xl mx-auto px-4 mt-8">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-700 text-center">
@@ -948,7 +945,7 @@ export default function EditableUsedBy({
               </p>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Published Mode Notice */}
         {isPublished && (
