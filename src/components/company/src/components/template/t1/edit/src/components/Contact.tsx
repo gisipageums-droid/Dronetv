@@ -510,7 +510,7 @@ const EditableText = ({
 }) => {
   const baseClasses =
     "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-  
+
   return (
     <div className="w-full">
       {multiline ? (
@@ -833,7 +833,7 @@ export default function EditableContact({
                     First Name
                   </label>
                   <Input
-                    placeholder="John"
+                    placeholder="rahul"
                     className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
                   />
                 </div>
@@ -842,7 +842,7 @@ export default function EditableContact({
                     Last Name
                   </label>
                   <Input
-                    placeholder="Doe"
+                    placeholder="sharma"
                     className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
                   />
                 </div>
@@ -855,7 +855,7 @@ export default function EditableContact({
                   </label>
                   <Input
                     type="email"
-                    placeholder="john@company.com"
+                    placeholder="rahul@company.com"
                     className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
                   />
                 </div>
