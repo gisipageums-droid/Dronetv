@@ -87,7 +87,7 @@ export default function FinalEditTemp_2() {
     const fetchTemplateData = async () => {
       try {
         setIsLoading(true);
-      const response = await fetch(`https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=template2`, {
+      const response = await fetch(`https://l5fb7y1eij.execute-api.ap-south-1.amazonaws.com/dev/get-teme?userId=${userId}&professionalId=${professionalId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'

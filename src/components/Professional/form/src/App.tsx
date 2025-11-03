@@ -13,8 +13,9 @@ import { useFormSteps } from "./hooks/useFormSteps";
 import { Loader } from "./components/Loader";
 import { AdminEditor } from "./admin/AdminEditor";
 import axios from "axios";
-
+import { useUserAuth } from "../../../context/context";
 function AppInner() {
+  const {isLogin,user} = useUserAuth();
   const { current, next, prev, goTo } = useFormSteps(7); // 6 steps + summary
   const [steps, setSteps] = useState<any[]>([]);
   const [resumeData, setResumeData] = useState(null);
@@ -108,7 +109,7 @@ useEffect(() => {
 const handleSubmit = async () => {
   setLoading(true);
   setSuccess(false);
-  const email = data.basicInfo?.email || "unknown@example.com";
+  const email =isLogin ? user?.userData?.email : data.basicInfo?.email || "unknown@example.com";
 
   try {
     // ✅ Use existing submissionId (if editing) or generate a new one (if creating)
@@ -126,7 +127,7 @@ const handleSubmit = async () => {
       resumeData: resumeData || {},
       processingMethod: "separate_upload",
       status: "ai_processing",
-      templateSelection: data.templateSelection || templateIdFromState || "",
+      templateSelection:templateIdFromState || "",
       updatedAt: Date.now(),
       version: "2.4",
     };
@@ -153,7 +154,9 @@ const handleSubmit = async () => {
     setTimeout(() => setLoading(false), 30000);
 
     setTimeout(() => {
-      navigate(`/professional/edit/${finalSubmissionId}/${email}/template=${data.templateSelection}`);
+      console.log("temps id",templateIdFromState);
+      navigate(`/professional/edit/${finalSubmissionId}/${email}/template=${templateIdFromState}`);
+      
     }, 30000);
   } catch (err) {
     console.error(err);
