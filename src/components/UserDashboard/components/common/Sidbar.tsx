@@ -10,10 +10,11 @@ import {
   LogOut,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useUserAuth } from "../../../context/context";
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
-
+ const {user} = useUserAuth();
 const navLinks = [
     { icon: User, label: "Dashboard", href: "/user-dashboard" },
     { icon: Building2, label: "Companies", href: "/user-companies" },
@@ -79,10 +80,10 @@ const navLinks = [
               {isOpen && (
                 <div className="min-w-0">
                   <p className="font-medium text-sm truncate text-gray-900">
-                    John Doe
+                    {user?.userData?.fullName}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
-                    john@example.com
+                    {user?.userData?.email}
                   </p>
                 </div>
               )}
