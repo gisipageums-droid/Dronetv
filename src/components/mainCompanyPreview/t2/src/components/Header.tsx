@@ -9,7 +9,7 @@ import logo from "/images/Drone tv .in.jpg";
 export default function Header({ headerData }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
-  
+
   // Static navigation items
   const staticNavItems = [
     { id: 1, label: "Home", href: "#home", color: "primary" },
@@ -26,12 +26,12 @@ export default function Header({ headerData }) {
   // Function to handle smooth scrolling
   const handleScrollToSection = (href: string) => {
     setIsMenuOpen(false);
-    
+
     // Wait for menu to close before scrolling
     setTimeout(() => {
       const targetId = href.replace('#', '');
       const element = document.getElementById(targetId);
-      
+
       if (element) {
         const headerHeight = 64; // Height of your fixed header (4rem = 64px)
         const elementPosition = element.getBoundingClientRect().top;
@@ -50,7 +50,7 @@ export default function Header({ headerData }) {
     e.preventDefault();
     const targetId = href.replace('#', '');
     const element = document.getElementById(targetId);
-    
+
     if (element) {
       const headerHeight = 64;
       const elementPosition = element.getBoundingClientRect().top;
@@ -76,22 +76,28 @@ export default function Header({ headerData }) {
     closed: { opacity: 0, x: -20 },
     open: { opacity: 1, x: 0 },
   };
+  const containerMaxClass =
+    (headerData?.companyName || "").trim().length > 30 /* threshold */
+      ? "lg:min-w-[1270px]"
+      : "max-w-7xl";
 
   return (
     <motion.header
-      className={`fixed top-[4rem] left-0 right-0 border-b z-50 ${
-        theme === "dark"
-          ? "bg-gray-800 border-gray-700 text-gray-300"
-          : "bg-white border-gray-200"
-      }`}
+      className={`fixed top-[4rem] left-0 right-0 border-b z-50 ${theme === "dark"
+        ? "bg-gray-800 border-gray-700 text-gray-300"
+        : "bg-white border-gray-200"
+        }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> */}
+      <div
+        className={`px-4 mx-auto w-full ${containerMaxClass} sm:px-6 lg:px-16`}
+      >
         <div className="flex justify-between items-center h-16">
           {/* Logo - Improved responsiveness */}
-          <div className="flex rounded-lg items-center flex-shrink-0 max-w-[140px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px]">
+          <div className="flex rounded-lg items-center min-w-0 max-w-[140px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px]">
             <motion.div
               className="w-8 h-8 rounded-lg flex items-center justify-center mr-2 flex-shrink-0"
               whileHover={{ rotate: 360 }}
@@ -103,37 +109,34 @@ export default function Header({ headerData }) {
                 className="w-full h-full object-contain"
               />
             </motion.div>
-            <motion.span 
-              className={`text-lg md:text-xl font-bold truncate ${
-                theme === "dark" ? "text-gray-300" : "text-black"
-              }`}
+            <motion.span
+              className={`text-base sm:text-lg md:text-xl font-bold whitespace-nowrap ${theme === "dark" ? "text-gray-300" : "text-black"}`}
+              title={headerData.companyName}
             >
               {headerData.companyName}
             </motion.span>
           </div>
 
           {/* Desktop Nav - Improved responsiveness */}
-          <nav className="hidden lg:flex items-center justify-center flex-1 mx-4 xl:mx-8">
-            <div className="flex items-center space-x-4 xl:space-x-6 flex-wrap justify-center">
+          <nav className="items-center justify-center flex-1 hidden mx-4 lg:flex min-w-0">
+            <div className="flex items-center justify-center space-x-3">
               {staticNavItems.map((item) => (
                 <motion.a
                   key={item.id}
                   href={item.href}
                   onClick={(e) => handleDesktopNavigation(e, item.href)}
-                  className={`font-medium relative group whitespace-nowrap text-sm xl:text-base ${
-                    theme === "dark"
-                      ? "text-gray-300 hover:text-gray-200"
-                      : "text-gray-700 hover:text-primary"
-                  }`}
+                  className={`font-medium relative group whitespace-nowrap text-sm xl:text-base ${theme === "dark"
+                    ? "text-gray-300 hover:text-gray-200"
+                    : "text-gray-700 hover:text-primary"
+                    }`}
                   whileHover={{ y: -2 }}
                 >
                   {item.label}
                   <motion.span
-                    className={`absolute -bottom-1 left-0 w-0 h-0.5 ${
-                      item.color === "red-accent" 
-                        ? "bg-red-500" 
-                        : "bg-primary"
-                    } transition-all group-hover:w-full`}
+                    className={`absolute -bottom-1 left-0 w-0 h-0.5 ${item.color === "red-accent"
+                      ? "bg-red-500"
+                      : "bg-primary"
+                      } transition-all group-hover:w-full`}
                     transition={{ duration: 0.3 }}
                   />
                 </motion.a>
@@ -142,24 +145,26 @@ export default function Header({ headerData }) {
           </nav>
 
           {/* Right side - Improved responsive spacing and sizing */}
-          <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0">
-            <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap text-sm px-3 py-2 md:px-4 md:py-2">
-              <a 
-                href="#contact" 
-                onClick={(e) => handleDesktopNavigation(e, '#contact')}
-                className="text-xs sm:text-sm"
-              >
-                {headerData.ctaText}
-              </a>
-            </Button>
+          <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0 ">
+            <div className="hidden lg:block">
+              <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap text-sm px-3 py-2 md:px-4 md:py-2  ">
+                <a
+                  href="#contact"
+                  onClick={(e) => handleDesktopNavigation(e, '#contact')}
+                  className="text-xs sm:text-sm "
+                >
+                  {headerData.ctaText}
+                </a>
+              </Button>
+            </div>
 
-            <div className="hidden xs:block">
+            <div className="hidden lg:block">
               <ThemeToggle />
             </div>
           </div>
 
           {/* Mobile menu button - Improved visibility */}
-          <motion.div className="lg:hidden flex items-center space-x-2 flex-shrink-0">
+          <motion.div className=" flex items-center space-x-2 flex-shrink-0 lg:hidden">
             {/* Show ThemeToggle on mobile when menu is closed */}
             <AnimatePresence>
               {!isMenuOpen && (
@@ -167,20 +172,19 @@ export default function Header({ headerData }) {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="xs:hidden" // Hide on very small screens when menu is open
+                  className="" // Hide on very small screens when menu is open
                 >
                   <ThemeToggle />
                 </motion.div>
               )}
             </AnimatePresence>
-            
+
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`p-2 rounded-md transition-colors ${
-                theme === "dark" 
-                  ? "text-gray-300 hover:bg-gray-700" 
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
+              className={`p-2 rounded-md transition-colors ${theme === "dark"
+                ? "text-gray-300 hover:bg-gray-700"
+                : "text-gray-700 hover:bg-gray-100"
+                }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               animate={{ rotate: isMenuOpen ? 180 : 0 }}
@@ -197,9 +201,8 @@ export default function Header({ headerData }) {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className={`lg:hidden border-t overflow-hidden ${
-                theme === "dark" ? "border-gray-700" : "border-gray-200"
-              }`}
+              className={`lg:hidden border-t overflow-hidden ${theme === "dark" ? "border-gray-700" : "border-gray-200"
+                }`}
               variants={menuVariants}
               initial="closed"
               animate="open"
@@ -210,23 +213,22 @@ export default function Header({ headerData }) {
                   <motion.button
                     key={item.id}
                     onClick={() => handleScrollToSection(item.href)}
-                    className={`text-left transition-colors py-3 px-4 rounded-lg text-base font-medium ${
-                      theme === "dark"
-                        ? "text-gray-300 hover:text-gray-200 hover:bg-gray-700"
-                        : "text-gray-700 hover:text-primary hover:bg-gray-50"
-                    }`}
+                    className={`text-left transition-colors py-3 px-4 rounded-lg text-base font-medium ${theme === "dark"
+                      ? "text-gray-300 hover:text-gray-200 hover:bg-gray-700"
+                      : "text-gray-700 hover:text-primary hover:bg-gray-50"
+                      }`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
                   >
                     {item.label}
                   </motion.button>
                 ))}
-                <motion.div 
+                <motion.div
                   className="px-4 pt-2"
                   variants={itemVariants}
                 >
-                  <Button 
-                    className="bg-primary text-black hover:bg-primary/90 w-full shadow-lg py-3 text-base font-medium"
+                  <Button
+                    className="bg-primary text-black hover:bg-primary/90 w-full shadow-lg py-3 text-base font-medium  "
                     onClick={() => handleScrollToSection('#contact')}
                   >
                     {headerData.ctaText}
