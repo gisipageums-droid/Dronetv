@@ -97,12 +97,13 @@ export default function FinalEditTemp_2() {
         if (response.ok) {
           
           const data = await response.json();
-          console.log('Response status:', data);
-          setFinalTemplate(data[0]);
-          setAIGenData(data[0]);
+        
+          setFinalTemplate(data.data);
+          setAIGenData(data.data);
+          console.log("AIGenData",data.data);
           
-          if (data[0].content) {
-            setComponentStates(data[0].content);
+          if (data.data.content) {
+            setComponentStates(data.data.content);
           } else {
             toast.error("No content found in response");
             setComponentStates({});
