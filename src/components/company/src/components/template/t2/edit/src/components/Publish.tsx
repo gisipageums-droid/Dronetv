@@ -97,7 +97,7 @@ export default function Publish() {
                     // Add your publish logic here
                     publishTemplate(); // Call the publish function
                     setModel(false);
-                    checkLogin();
+                    
                   }}
                   className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
                 >

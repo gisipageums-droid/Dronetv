@@ -133,96 +133,96 @@ export default function App() {
     // The className here is no longer needed as the useEffect handles the root element
     <div>
       <Header
-        headerData={AIGenData.content.company}
+        headerData={AIGenData?.content?.company}
         onStateChange={handleHeaderChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
       <Hero
-        heroData={AIGenData.content.hero}
+        heroData={AIGenData?.content?.hero}
         onStateChange={handleHeroChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
       <UsedBy
-        usedByData={AIGenData.content.usedBy}
+        usedByData={AIGenData?.content?.usedBy}
         onStateChange={handleUsedByChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
       <About
-        aboutData={AIGenData.content.about}
+        aboutData={AIGenData?.content?.about}
         onStateChange={handleAboutChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
 
       {/* Add the EditableCompanyProfile component */}
       <EditableCompanyProfile
-        profileData={AIGenData.content.profile}
+        profileData={AIGenData?.content?.profile}
         onStateChange={handleProfileChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
 
       <Services
-        serviceData={AIGenData.content.services}
+        serviceData={AIGenData?.content?.services}
         onStateChange={handleServicesChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
       <Products
-        productData={AIGenData.content.products}
+        productData={AIGenData?.content?.products}
         onStateChange={handleProductsChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
 
       {/* Add the EditableGallerySection component */}
       <EditableGallerySection
         onStateChange={handleGalleryChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
-        galleryData={AIGenData.content.gallery}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
+        galleryData={AIGenData?.content?.gallery}
       />
 
       <Blog
-        blogData={AIGenData.content.blog}
+        blogData={AIGenData?.content?.blog}
         onStateChange={handleBlogChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
 
       <Testimonials
-        content={AIGenData.content.testimonials}
+        content={AIGenData?.content?.testimonials}
         onStateChange={handleTestimonialsChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
       <Contact
-        content={AIGenData.content.contact}
+        content={AIGenData?.content?.contact}
         onStateChange={handleContactChange}
-        publishedId={AIGenData.publishedId}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
+        publishedId={AIGenData?.publishedId}
+        userId={AIGenData?.userId}
+        templateSelection={AIGenData?.templateSelection}
       />
       <Publish />
       <Footer
         onStateChange={handleFooterChange}
-        content={AIGenData.content.company}
-        userId={AIGenData.userId}
-        publishedId={AIGenData.publishedId}
-        templateSelection={AIGenData.templateSelection}
+        content={AIGenData?.content?.company}
+        userId={AIGenData?.userId}
+        publishedId={AIGenData?.publishedId}
+        templateSelection={AIGenData?.templateSelection}
       />
     </div>
   );
