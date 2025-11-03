@@ -109,7 +109,7 @@ useEffect(() => {
 const handleSubmit = async () => {
   setLoading(true);
   setSuccess(false);
-  const email =isLogin ? user?.userData?.email : data.basicInfo?.email || "unknown@example.com";
+  const email =isLogin ? user?.userData?.email : data.basicInfo?.email;
 
   try {
     // ✅ Use existing submissionId (if editing) or generate a new one (if creating)

@@ -347,7 +347,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your template is successfully published and now it is under review"
       );
-      navigate("/user/professional");
+      navigate("/user-professionals");
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
