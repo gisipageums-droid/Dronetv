@@ -172,7 +172,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
     <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-yellow-400 group">
       <div className="p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="grid grid-cols-1 items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             {/* Company Image */}
             <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110">
@@ -281,17 +281,17 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
             </button>
           </div>
 
-         <button
-  onClick={() =>
-    navigate(`/user-company/leads/${company?.companyName}`, {
-      state: { publishedId: company?.publishedId },
-    })
-  }
-  className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
->
-  <Eye className="w-4 h-4" />
-  View leads
-</button>
+          <button
+            onClick={() =>
+              navigate(`/user-company/leads/${company?.companyName}`, {
+                state: { publishedId: company?.publishedId },
+              })
+            }
+            className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
+          >
+            <Eye className="w-4 h-4" />
+            View leads
+          </button>
         </div>
 
         {/* Published ID */}
@@ -335,8 +335,8 @@ const CompanyPage: React.FC = () => {
           sectors: Array.isArray(c.sectors)
             ? c.sectors
             : c.sectors
-            ? [c.sectors]
-            : ["General"],
+              ? [c.sectors]
+              : ["General"],
           publishedDate: c.publishedDate || new Date().toISOString(),
           reviewStatus: c.reviewStatus || "active",
           previewImage: c.previewImage || "",
