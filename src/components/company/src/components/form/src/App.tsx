@@ -377,14 +377,6 @@ function App() {
 
   // Step 5 validation logic
   const validateStep5 = () => {
-    if (!formData.services || formData.services.length === 0) {
-      toast.error("Please add at least one service.");
-      return false;
-    }
-    if (!formData.products || formData.products.length === 0) {
-      toast.error("Please add at least one product.");
-      return false;
-    }
     return true;
   };
 
@@ -408,7 +400,7 @@ function App() {
   };
 
   const nextStep = () => {
-    // Only validate on step 1, 3, 4, 5, 7, and 8
+    // Only validate on step 1, 3, 4, 7, and 8
     if (currentStep === 1) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (!validateStep1()) return;
