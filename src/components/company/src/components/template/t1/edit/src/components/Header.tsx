@@ -1,47 +1,36 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Edit2, Save, Upload, X, Loader2 } from "lucide-react";
+import { Edit2, Save, Upload, X, Loader2, RotateCw, ZoomIn } from "lucide-react";
 import { motion } from "motion/react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import logo from"/logos/logo.svg"
-interface HeaderProps {
-  headerData?: {
-    logo?: string;
-    name?: string;
-  };
-  onStateChange?: (state: any) => void;
-  userId?: string;
-  publishedId?: string;
-  templateSelection?: string;
-}
-
+import logo from "/logos/logo.svg"
 export default function Header({
   headerData,
   onStateChange,
   userId,
   publishedId,
   templateSelection,
-}: HeaderProps) {
+}) {
   // Character limits
   const CHAR_LIMITS = {
-    companyName: 100,
+    companyName: 50,
     navItem: 50,
   };
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [pendingLogoFile, setPendingLogoFile] = useState<File | null>(null);
+  const [pendingLogoFile, setPendingLogoFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Enhanced crop modal state
+  // Enhanced crop modal state (same as Hero.tsx)
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
-  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
-  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(1);
 
   // Combined state
@@ -59,8 +48,7 @@ export default function Header({
       "Testimonials",
     ],
   });
-
-  // Notify parent of state changes
+  // Add this useEffect to notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(headerState);
@@ -70,7 +58,7 @@ export default function Header({
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  // Enhanced image upload handler
+  // Enhanced image upload handler (same as Hero.tsx)
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -88,7 +76,7 @@ export default function Header({
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImageToCrop(reader.result as string);
+      setImageToCrop(reader.result);
       setOriginalFile(file);
       setCropModalOpen(true);
       setAspectRatio(1); // Square for logo
@@ -101,12 +89,12 @@ export default function Header({
     e.target.value = "";
   };
 
-  // Enhanced cropper functions
-  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+  // Enhanced cropper functions (same as Hero.tsx)
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  const createImage = (url: string): Promise<HTMLImageElement> =>
+  const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
       image.addEventListener("load", () => resolve(image));
@@ -115,14 +103,10 @@ export default function Header({
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc: string, pixelCrop: any, rotation = 0) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-
-    if (!ctx) {
-      throw new Error("Could not get canvas context");
-    }
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
@@ -143,12 +127,9 @@ export default function Header({
       pixelCrop.height
     );
 
-    return new Promise<{ file: File; previewUrl: string }>((resolve) => {
+    return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          if (!blob) {
-            throw new Error("Canvas is empty");
-          }
           const fileName = originalFile
             ? `cropped-${originalFile.name}`
             : `cropped-image-${Date.now()}.jpg`;
@@ -218,16 +199,6 @@ export default function Header({
     setCrop({ x: 0, y: 0 });
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-    setPendingLogoFile(null);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setPendingLogoFile(null);
-  };
-
   // Updated Save button handler - uploads image and stores S3 URL
   const handleSave = async () => {
     try {
@@ -267,6 +238,7 @@ export default function Header({
           setHeaderState((prev) => ({
             ...prev,
             logoSrc: uploadData.imageUrl,
+            logoUrl: uploadData.imageUrl,
           }));
           setPendingLogoFile(null); // Clear pending file
           console.log("Logo uploaded to S3:", uploadData.imageUrl);
@@ -329,35 +301,33 @@ export default function Header({
         transition={{ duration: 0.6 }}
       >
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 mx-auto max-w-7xl">
+          <div className="flex items-center justify-center gap-[60px] h-16 mx-auto min-w-7xl ">
             {/* Responsive Edit/Save Button Container */}
-            <div className="absolute md:right-0 right-[60px] z-[999999999]">
+            <div className="absolute md:right-0 right-[60px]  z-[999999999]">
               {isEditing ? (
                 <button
                   onClick={handleSave}
                   disabled={isUploading}
-                  className={`flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 ${
-                    isUploading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-500 hover:bg-green-600"
-                  } text-white rounded-lg shadow text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]`}
+                  className={`flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 ${isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600"
+                    } text-white rounded-lg shadow text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]`}
                 >
                   {isUploading ? (
                     <>
                       <Loader2 size={16} className="animate-spin" />
-                      <span className="hidden xs:inline">Saving...</span>
+                      <span className="">Saving...</span>
                     </>
                   ) : (
                     <>
-                      <Save size={16} />
-                      <span className="hidden xs:inline">Save</span>
+                      <span className="">Save</span>
                     </>
                   )}
                 </button>
               ) : (
                 <button
-                  onClick={handleEdit}
-                  className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 w-[30px] md:min-w-[40px]"
                 >
                   <Edit2 size={16} />
                   <span className="hidden xs:inline">Edit</span>
@@ -366,12 +336,13 @@ export default function Header({
             </div>
 
             {/* Logo + Company Name */}
+            {/* Logo + Company Name - Fixed Layout */}
             <motion.div
               className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
               whileHover={{ scale: 1.05 }}
             >
               {/* Enhanced Logo with Animations */}
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
                   animate={{
@@ -395,7 +366,7 @@ export default function Header({
                   <motion.img
                     src={headerState.logoSrc || logo}
                     alt="Logo"
-                    className="object-contain w-[40px] h-[40px] "
+                    className="object-contain w-[40px] h-[40px] flex-shrink-0"
                     animate={{
                       y: [0, -5, 0],
                       transition: {
@@ -435,9 +406,9 @@ export default function Header({
                 />
               </div>
 
-              {/* Editable Company Name */}
+              {/* Editable Company Name - Fixed width to prevent layout shift */}
               {isEditing ? (
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-[120px]">
                   <input
                     type="text"
                     value={headerState.companyName}
@@ -447,16 +418,21 @@ export default function Header({
                         companyName: e.target.value,
                       }))
                     }
-                    className="table w-32 px-3 py-2 text-sm bg-white border rounded md:text-base"
+                    className="w-full px-3 py-2 text-sm bg-white border rounded md:text-base min-w-[120px]"
                     placeholder="Company Name"
                     maxLength={CHAR_LIMITS.companyName}
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      maxWidth: "200px"
+                    }}
                   />
                   <div className="text-xs text-gray-500 text-right mt-1">
                     {headerState.companyName.length}/{CHAR_LIMITS.companyName} characters
                   </div>
                 </div>
               ) : (
-                <span className="text-lg sm:text-xl md:text-2xl">
+                <span className="text-lg sm:text-xl md:text-2xl flex-shrink-0">
                   {headerState.companyName}
                 </span>
               )}
@@ -590,10 +566,7 @@ export default function Header({
         )}
       </div>
 
-      {/* Spacer so content doesn't hide under fixed header */}
-      <div className="h-16" />
-
-      {/* Enhanced Crop Modal */}
+      {/* Enhanced Crop Modal (same as Hero.tsx) */}
       {cropModalOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -622,14 +595,13 @@ export default function Header({
             <div className="flex-1 relative bg-gray-900 min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
-                  image={imageToCrop || ""}
+                  image={imageToCrop}
                   crop={crop}
                   zoom={zoom}
                   rotation={rotation}
                   aspect={aspectRatio}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
-                  onRotationChange={setRotation}
                   onCropComplete={onCropComplete}
                   showGrid={false}
                   cropShape="rect"
@@ -656,31 +628,28 @@ export default function Header({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -700,23 +669,6 @@ export default function Header({
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
-              </div>
-
-              {/* Rotation Control */}
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Rotation</span>
-                  <span className="text-gray-600">{rotation}°</span>
-                </div>
-                <input
-                  type="range"
-                  value={rotation}
-                  min={-180}
-                  max={180}
-                  step={1}
-                  onChange={(e) => setRotation(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                 />
               </div>
