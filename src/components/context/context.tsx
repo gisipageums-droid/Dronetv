@@ -328,7 +328,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        `https://tlpun4lz89.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${AIGenData.userId}/update/${AIGenData.professionalId}?template=${AIGenData.templateSelection}`,
+        `https://bre0tniae1.execute-api.ap-south-1.amazonaws.com/prod/`,
         {
           method: "PUT",
           headers: {

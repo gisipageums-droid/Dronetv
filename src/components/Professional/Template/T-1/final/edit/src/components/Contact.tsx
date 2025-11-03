@@ -108,6 +108,23 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isSectionEditing, setIsSectionEditing] = useState(false);
 
+  // Character limits
+  const CHAR_LIMITS = {
+    heading: 100,
+    description: 500,
+    contactLabel: 50,
+    contactValue: 100,
+    contactHref: 500,
+    socialLabel: 50,
+    socialHref: 500,
+    availabilityMessage: 100,
+    availabilityResponseTime: 100,
+    formName: 100,
+    formEmail: 100,
+    formSubject: 200,
+    formMessage: 2000,
+  };
+
   const iconMap: { [key: string]: React.ComponentType<any> } = {
     Mail,
     Phone,
@@ -134,6 +151,12 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+
+  const getCharCountColor = (current: number, max: number) => {
+    if (current >= max) return "text-red-500";
+    if (current >= max * 0.9) return "text-yellow-500";
+    return "text-gray-500";
+  };
 
   const handleContentChange = (field: keyof ContactContent, value: any) => {
     const updated = { ...contactContent, [field]: value };
@@ -310,24 +333,47 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
           <motion.div variants={itemVariants} className="mb-16 text-center">
             {isSectionEditing ? (
               <div className="space-y-4">
-                <input
-                  type="text"
-                  value={contactContent.heading}
-                  onChange={(e) =>
-                    handleContentChange("heading", e.target.value)
-                  }
-                  className="w-full max-w-2xl p-2 mx-auto text-4xl font-bold text-gray-800 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-gray-100 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                  placeholder="Section heading"
-                />
-                <textarea
-                  value={contactContent.description}
-                  onChange={(e) =>
-                    handleContentChange("description", e.target.value)
-                  }
-                  className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-300 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                  rows={2}
-                  placeholder="Section description"
-                />
+                <div className="space-y-1">
+                  <input
+                    type="text"
+                    value={contactContent.heading}
+                    onChange={(e) =>
+                      handleContentChange("heading", e.target.value)
+                    }
+                    maxLength={CHAR_LIMITS.heading}
+                    className="w-full max-w-2xl p-2 mx-auto text-4xl font-bold text-gray-800 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-gray-100 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    placeholder="Section heading"
+                  />
+                  <div
+                    className={`text-sm text-right max-w-2xl mx-auto ${getCharCountColor(
+                      contactContent.heading.length,
+                      CHAR_LIMITS.heading
+                    )}`}
+                  >
+                    {contactContent.heading.length}/{CHAR_LIMITS.heading}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <textarea
+                    value={contactContent.description}
+                    onChange={(e) =>
+                      handleContentChange("description", e.target.value)
+                    }
+                    maxLength={CHAR_LIMITS.description}
+                    className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-300 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    rows={2}
+                    placeholder="Section description"
+                  />
+                  <div
+                    className={`text-sm text-right max-w-3xl mx-auto ${getCharCountColor(
+                      contactContent.description.length,
+                      CHAR_LIMITS.description
+                    )}`}
+                  >
+                    {contactContent.description.length}/
+                    {CHAR_LIMITS.description}
+                  </div>
+                </div>
               </div>
             ) : (
               <>
@@ -354,7 +400,7 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div>
+                    <div className="space-y-1">
                       <label
                         htmlFor="name"
                         className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
@@ -367,13 +413,22 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                         name="name"
                         value={formData.name}
                         onChange={handleFormChange}
+                        maxLength={CHAR_LIMITS.formName}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
                         placeholder="John Doe"
                       />
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          formData.name.length,
+                          CHAR_LIMITS.formName
+                        )}`}
+                      >
+                        {formData.name.length}/{CHAR_LIMITS.formName}
+                      </div>
                     </div>
 
-                    <div>
+                    <div className="space-y-1">
                       <label
                         htmlFor="email"
                         className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
@@ -386,14 +441,23 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                         name="email"
                         value={formData.email}
                         onChange={handleFormChange}
+                        maxLength={CHAR_LIMITS.formEmail}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
                         placeholder="john@example.com"
                       />
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          formData.email.length,
+                          CHAR_LIMITS.formEmail
+                        )}`}
+                      >
+                        {formData.email.length}/{CHAR_LIMITS.formEmail}
+                      </div>
                     </div>
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <label
                       htmlFor="subject"
                       className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
@@ -406,13 +470,22 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                       name="subject"
                       value={formData.subject}
                       onChange={handleFormChange}
+                      maxLength={CHAR_LIMITS.formSubject}
                       required
                       className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
                       placeholder="Project Inquiry"
                     />
+                    <div
+                      className={`text-xs text-right ${getCharCountColor(
+                        formData.subject.length,
+                        CHAR_LIMITS.formSubject
+                      )}`}
+                    >
+                      {formData.subject.length}/{CHAR_LIMITS.formSubject}
+                    </div>
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <label
                       htmlFor="message"
                       className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
@@ -424,11 +497,20 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                       name="message"
                       value={formData.message}
                       onChange={handleFormChange}
+                      maxLength={CHAR_LIMITS.formMessage}
                       required
                       rows={5}
                       className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
                       placeholder="Tell me about your project..."
                     />
+                    <div
+                      className={`text-xs text-right ${getCharCountColor(
+                        formData.message.length,
+                        CHAR_LIMITS.formMessage
+                      )}`}
+                    >
+                      {formData.message.length}/{CHAR_LIMITS.formMessage}
+                    </div>
                   </div>
 
                   {/* Submit Status */}
@@ -507,19 +589,30 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                         {isEditMode ? (
                           <div className="p-4 space-y-3 bg-white border border-orange-300 rounded-lg dark:bg-gray-800">
                             <div className="grid grid-cols-2 gap-2">
-                              <input
-                                type="text"
-                                value={info.label}
-                                onChange={(e) =>
-                                  handleContactInfoChange(
-                                    index,
-                                    "label",
-                                    e.target.value
-                                  )
-                                }
-                                placeholder="Label"
-                                className="px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
-                              />
+                              <div className="space-y-1">
+                                <input
+                                  type="text"
+                                  value={info.label}
+                                  onChange={(e) =>
+                                    handleContactInfoChange(
+                                      index,
+                                      "label",
+                                      e.target.value
+                                    )
+                                  }
+                                  maxLength={CHAR_LIMITS.contactLabel}
+                                  placeholder="Label"
+                                  className="w-full px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
+                                />
+                                <div
+                                  className={`text-xs text-right ${getCharCountColor(
+                                    info.label.length,
+                                    CHAR_LIMITS.contactLabel
+                                  )}`}
+                                >
+                                  {info.label.length}/{CHAR_LIMITS.contactLabel}
+                                </div>
+                              </div>
                               <select
                                 value={info.icon}
                                 onChange={(e) =>
@@ -536,32 +629,54 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                                 <option value="MapPin">MapPin</option>
                               </select>
                             </div>
-                            <input
-                              type="text"
-                              value={info.value}
-                              onChange={(e) =>
-                                handleContactInfoChange(
-                                  index,
-                                  "value",
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Value"
-                              className="w-full px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
-                            />
-                            <input
-                              type="text"
-                              value={info.href}
-                              onChange={(e) =>
-                                handleContactInfoChange(
-                                  index,
-                                  "href",
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Link"
-                              className="w-full px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
-                            />
+                            <div className="space-y-1">
+                              <input
+                                type="text"
+                                value={info.value}
+                                onChange={(e) =>
+                                  handleContactInfoChange(
+                                    index,
+                                    "value",
+                                    e.target.value
+                                  )
+                                }
+                                maxLength={CHAR_LIMITS.contactValue}
+                                placeholder="Value"
+                                className="w-full px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
+                              />
+                              <div
+                                className={`text-xs text-right ${getCharCountColor(
+                                  info.value.length,
+                                  CHAR_LIMITS.contactValue
+                                )}`}
+                              >
+                                {info.value.length}/{CHAR_LIMITS.contactValue}
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <input
+                                type="text"
+                                value={info.href}
+                                onChange={(e) =>
+                                  handleContactInfoChange(
+                                    index,
+                                    "href",
+                                    e.target.value
+                                  )
+                                }
+                                maxLength={CHAR_LIMITS.contactHref}
+                                placeholder="Link"
+                                className="w-full px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
+                              />
+                              <div
+                                className={`text-xs text-right ${getCharCountColor(
+                                  info.href.length,
+                                  CHAR_LIMITS.contactHref
+                                )}`}
+                              >
+                                {info.href.length}/{CHAR_LIMITS.contactHref}
+                              </div>
+                            </div>
                             <div className="flex justify-end">
                               <button
                                 onClick={() => handleRemoveContactInfo(index)}
@@ -635,33 +750,55 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                             <option value="Linkedin">Linkedin</option>
                             <option value="Twitter">Twitter</option>
                           </select>
+                          <div className="space-y-1">
+                            <input
+                              type="text"
+                              value={social.label}
+                              onChange={(e) =>
+                                handleSocialLinkChange(
+                                  index,
+                                  "label",
+                                  e.target.value
+                                )
+                              }
+                              maxLength={CHAR_LIMITS.socialLabel}
+                              placeholder="Label"
+                              className="w-full px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
+                            />
+                            <div
+                              className={`text-xs text-right ${getCharCountColor(
+                                social.label.length,
+                                CHAR_LIMITS.socialLabel
+                              )}`}
+                            >
+                              {social.label.length}/{CHAR_LIMITS.socialLabel}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
                           <input
-                            type="text"
-                            value={social.label}
+                            type="url"
+                            value={social.href}
                             onChange={(e) =>
                               handleSocialLinkChange(
                                 index,
-                                "label",
+                                "href",
                                 e.target.value
                               )
                             }
-                            placeholder="Label"
-                            className="px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
+                            maxLength={CHAR_LIMITS.socialHref}
+                            placeholder="URL"
+                            className="w-full px-3 py-2 mb-3 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
                           />
+                          <div
+                            className={`text-xs text-right ${getCharCountColor(
+                              social.href.length,
+                              CHAR_LIMITS.socialHref
+                            )}`}
+                          >
+                            {social.href.length}/{CHAR_LIMITS.socialHref}
+                          </div>
                         </div>
-                        <input
-                          type="url"
-                          value={social.href}
-                          onChange={(e) =>
-                            handleSocialLinkChange(
-                              index,
-                              "href",
-                              e.target.value
-                            )
-                          }
-                          placeholder="URL"
-                          className="w-full px-3 py-2 mb-3 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
-                        />
                         <div className="flex justify-end">
                           <button
                             onClick={() => handleRemoveSocialLink(index)}
@@ -704,24 +841,51 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
               <div className="p-6 border bg-gradient-to-r from-yellow-500/10 to-orange-500/10 dark:from-yellow-500/10 dark:to-orange-500/10 border-orange-500/30 rounded-2xl">
                 {isEditMode ? (
                   <div className="space-y-4">
-                    <input
-                      type="text"
-                      value={contactContent.availability.message}
-                      onChange={(e) =>
-                        handleAvailabilityChange("message", e.target.value)
-                      }
-                      placeholder="Availability message"
-                      className="w-full px-3 py-2 bg-white border rounded dark:bg-gray-800 focus:outline-none focus:border-orange-500"
-                    />
-                    <input
-                      type="text"
-                      value={contactContent.availability.responseTime}
-                      onChange={(e) =>
-                        handleAvailabilityChange("responseTime", e.target.value)
-                      }
-                      placeholder="Response time"
-                      className="w-full px-3 py-2 bg-white border rounded dark:bg-gray-800 focus:outline-none focus:border-orange-500"
-                    />
+                    <div className="space-y-1">
+                      <input
+                        type="text"
+                        value={contactContent.availability.message}
+                        onChange={(e) =>
+                          handleAvailabilityChange("message", e.target.value)
+                        }
+                        maxLength={CHAR_LIMITS.availabilityMessage}
+                        placeholder="Availability message"
+                        className="w-full px-3 py-2 bg-white border rounded dark:bg-gray-800 focus:outline-none focus:border-orange-500"
+                      />
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          contactContent.availability.message.length,
+                          CHAR_LIMITS.availabilityMessage
+                        )}`}
+                      >
+                        {contactContent.availability.message.length}/
+                        {CHAR_LIMITS.availabilityMessage}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <input
+                        type="text"
+                        value={contactContent.availability.responseTime}
+                        onChange={(e) =>
+                          handleAvailabilityChange(
+                            "responseTime",
+                            e.target.value
+                          )
+                        }
+                        maxLength={CHAR_LIMITS.availabilityResponseTime}
+                        placeholder="Response time"
+                        className="w-full px-3 py-2 bg-white border rounded dark:bg-gray-800 focus:outline-none focus:border-orange-500"
+                      />
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          contactContent.availability.responseTime.length,
+                          CHAR_LIMITS.availabilityResponseTime
+                        )}`}
+                      >
+                        {contactContent.availability.responseTime.length}/
+                        {CHAR_LIMITS.availabilityResponseTime}
+                      </div>
+                    </div>
                     <select
                       value={contactContent.availability.status}
                       onChange={(e) =>

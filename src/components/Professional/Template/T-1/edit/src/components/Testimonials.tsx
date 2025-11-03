@@ -1,5 +1,4 @@
-// Testimonials.tsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Quote,
@@ -9,9 +8,12 @@ import {
   Trash2,
   Save,
   X,
-  SaveAll,
   Edit,
   Upload,
+  Crop,
+  Check,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -47,268 +49,6 @@ const defaultContent: TestimonialContent = {
   testimonials: [],
 };
 
-/* -----------------------
-   Memoized TestimonialForm
-   ----------------------- */
-type FormData = Omit<Testimonial, "id">;
-
-const TestimonialForm: React.FC<{
-  initial: FormData;
-  onCancel: () => void;
-  onSave: (payload: FormData) => void | Promise<void>;
-  autoFocus?: boolean;
-  userId?: string;
-}> = React.memo(({ initial, onCancel, onSave, autoFocus = false, userId }) => {
-  const [local, setLocal] = useState<FormData>(() => ({
-    name: initial.name ?? "",
-    position: initial.position ?? "",
-    company: initial.company ?? "",
-    image: initial.image ?? "",
-    content: initial.content ?? "",
-    rating: initial.rating ?? 5,
-    project: initial.project ?? "",
-    date: initial.date ?? new Date().getFullYear().toString(),
-  }));
-
-  const [isUploading, setIsUploading] = useState(false);
-  const nameRef = useRef<HTMLInputElement | null>(null);
-
-  // Sync when initial changes
-  useEffect(() => {
-    setLocal({
-      name: initial.name ?? "",
-      position: initial.position ?? "",
-      company: initial.company ?? "",
-      image: initial.image ?? "",
-      content: initial.content ?? "",
-      rating: initial.rating ?? 5,
-      project: initial.project ?? "",
-      date: initial.date ?? new Date().getFullYear().toString(),
-    });
-  }, [initial]);
-
-  // Auto-focus effect
-  useEffect(() => {
-    if (autoFocus) {
-      const t = setTimeout(() => {
-        nameRef.current?.focus();
-        const el = nameRef.current;
-        if (el) el.setSelectionRange(el.value.length, el.value.length);
-      }, 40);
-      return () => clearTimeout(t);
-    }
-  }, [autoFocus]);
-
-  const setField = (k: keyof FormData, v: any) =>
-    setLocal((p) => ({ ...p, [k]: v }));
-
-  // Image upload handler - same as Hero.tsx
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // First set local preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (reader.result) {
-          setLocal((prev) => ({
-            ...prev,
-            image: reader.result as string,
-          }));
-        }
-      };
-      reader.readAsDataURL(file);
-
-      setIsUploading(true);
-
-      // Upload to S3
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("userId", userId!);
-      formData.append("fieldName", "testimonialImage");
-
-      try {
-        const uploadResponse = await fetch(
-          `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          setLocal((prev) => ({
-            ...prev,
-            image: uploadData.s3Url,
-          }));
-          toast.success("Image uploaded successfully!");
-        } else {
-          const errorData = await uploadResponse.json();
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
-          return;
-        }
-      } catch (error) {
-        toast.error("Image upload failed due to network error");
-        console.error("Upload error:", error);
-      } finally {
-        setIsUploading(false);
-      }
-    }
-  };
-
-  // Save handler
-  const handleSave = async () => {
-    if (!local.name.trim() || !local.content.trim()) {
-      toast.error("Please provide name and testimonial content.");
-      return;
-    }
-
-    try {
-      await onSave(local);
-    } catch (err) {
-      console.error("Error saving testimonial form:", err);
-      toast.error("Save failed.");
-    }
-  };
-
-  return (
-    <div
-      className="p-6 border-2 border-orange-300 border-dashed bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl dark:border-orange-600"
-      onMouseDown={(e) => e.stopPropagation()}
-      onPointerDown={(e) => e.stopPropagation()}
-    >
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <input
-            ref={nameRef}
-            type="text"
-            placeholder="Name *"
-            value={local.name}
-            onChange={(e) => setField("name", e.target.value)}
-            className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-          />
-          <input
-            type="text"
-            placeholder="Position"
-            value={local.position}
-            onChange={(e) => setField("position", e.target.value)}
-            className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <input
-            type="text"
-            placeholder="Company"
-            value={local.company}
-            onChange={(e) => setField("company", e.target.value)}
-            className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-          />
-          <input
-            type="text"
-            placeholder="Project"
-            value={local.project}
-            onChange={(e) => setField("project", e.target.value)}
-            className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-          />
-        </div>
-
-        <div className="grid items-center grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <input
-              type="url"
-              placeholder="Image URL"
-              value={local.image}
-              onChange={(e) => setField("image", e.target.value)}
-              className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <label
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${
-                isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gray-100 dark:bg-gray-800"
-              }`}
-            >
-              <Upload className="w-4 h-4" />
-              <span className="text-sm">
-                {isUploading ? "Uploading..." : "Upload Image"}
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                disabled={isUploading}
-                onChange={handleImageUpload}
-              />
-            </label>
-          </div>
-        </div>
-
-        <textarea
-          placeholder="Testimonial content *"
-          value={local.content}
-          onChange={(e) => setField("content", e.target.value)}
-          rows={4}
-          className="w-full p-3 bg-white border border-gray-300 rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-        />
-
-        <div className="flex items-center space-x-2">
-          <label className="font-medium text-gray-700 dark:text-gray-300">
-            Rating:
-          </label>
-          <select
-            value={local.rating}
-            onChange={(e) => setField("rating", parseInt(e.target.value))}
-            className="p-2 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
-          >
-            {[1, 2, 3, 4, 5].map((rating) => (
-              <option key={rating} value={rating}>
-                {rating} Star{rating !== 1 ? "s" : ""}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex space-x-2">
-          <button
-            onClick={handleSave}
-            disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
-              isUploading
-                ? "bg-green-400 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600"
-            }`}
-          >
-            <Save className="w-4 h-4" />
-            <span>{isUploading ? "Saving..." : "Save"}</span>
-          </button>
-          <button
-            onClick={onCancel}
-            disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
-              isUploading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gray-500 hover:bg-gray-600"
-            }`}
-          >
-            <X className="w-4 h-4" />
-            <span>Cancel</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-});
-(TestimonialForm as any).displayName = "TestimonialFormMemo";
-
-/* -----------------------
-   Main Testimonials component
-   ----------------------- */
 const Testimonials: React.FC<TestimonialsProps> = ({
   content,
   onSave,
@@ -320,10 +60,52 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
-  
+
   // Store original content for cancel functionality
-  const [originalContent, setOriginalContent] = useState<TestimonialContent>(defaultContent);
-  const [originalTestimonials, setOriginalTestimonials] = useState<Testimonial[]>([]);
+  const [originalContent, setOriginalContent] =
+    useState<TestimonialContent>(defaultContent);
+  const [originalTestimonials, setOriginalTestimonials] = useState<
+    Testimonial[]
+  >([]);
+
+  // Character limits
+  const CHAR_LIMITS = {
+    heading: 100,
+    description: 500,
+    name: 50,
+    position: 100,
+    company: 100,
+    project: 100,
+    content: 1000,
+    imageUrl: 500,
+  };
+
+  // Form state
+  type FormData = Omit<Testimonial, "id">;
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    position: "",
+    company: "",
+    image: "",
+    content: "",
+    rating: 5,
+    project: "",
+    date: new Date().getFullYear().toString(),
+  });
+  const [isUploading, setIsUploading] = useState(false);
+  const nameRef = useRef<HTMLInputElement | null>(null);
+
+  // Cropping states
+  const [isCropping, setIsCropping] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string>("");
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Initialize content
   useEffect(() => {
@@ -344,31 +126,272 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
     setTestimonialContent(newContent);
     setTestimonials(processedTestimonials);
-    
+
     // Store original content for cancel functionality
     setOriginalContent(newContent);
     setOriginalTestimonials(processedTestimonials);
   }, [content]);
 
-  const startEdit = (t: Testimonial) => {
-    setEditingId(t.id);
+  // Form handlers
+  const setFormField = (k: keyof FormData, v: any) =>
+    setFormData((p) => ({ ...p, [k]: v }));
+
+  // Auto-focus effect for form
+  useEffect(() => {
+    if ((isAddingNew || editingId !== null) && isEditMode) {
+      const t = setTimeout(() => {
+        nameRef.current?.focus();
+        const el = nameRef.current;
+        if (el) el.setSelectionRange(el.value.length, el.value.length);
+      }, 40);
+      return () => clearTimeout(t);
+    }
+  }, [isAddingNew, editingId, isEditMode]);
+
+  const getCharCountColor = (current: number, max: number) => {
+    if (current >= max) return "text-red-500";
+    if (current >= max * 0.9) return "text-yellow-500";
+    return "text-gray-500";
+  };
+
+  // Image cropping functions
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    setIsDragging(true);
+    setDragStart({
+      x: touch.clientX - position.x,
+      y: touch.clientY - position.y,
+    });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const touch = e.touches[0];
+    setPosition({
+      x: touch.clientX - dragStart.x,
+      y: touch.clientY - dragStart.y,
+    });
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  const getCroppedImage = async (): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const canvas = canvasRef.current;
+      const image = imageRef.current;
+      const container = containerRef.current;
+
+      if (!canvas || !image || !container) {
+        reject(new Error("Canvas, image, or container not found"));
+        return;
+      }
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Could not get canvas context"));
+        return;
+      }
+
+      // Output size - circular for Testimonial avatars (200x200)
+      const outputSize = 200;
+      canvas.width = outputSize;
+      canvas.height = outputSize;
+
+      // Get container dimensions
+      const containerRect = container.getBoundingClientRect();
+      const cropRadius = 80; // Same as the circle radius in the overlay
+
+      // Calculate the center of the crop area in the container
+      const centerX = containerRect.width / 2;
+      const centerY = containerRect.height / 2;
+
+      // Get image dimensions and position
+      const imgRect = image.getBoundingClientRect();
+      const containerLeft = containerRect.left;
+      const containerTop = containerRect.top;
+
+      // Calculate image position relative to container
+      const imgX = imgRect.left - containerLeft;
+      const imgY = imgRect.top - containerTop;
+
+      // Calculate the crop area in the original image coordinates
+      const scaleX = image.naturalWidth / imgRect.width;
+      const scaleY = image.naturalHeight / imgRect.height;
+
+      // Calculate source coordinates (what part of the original image to crop)
+      const sourceX = (centerX - imgX - cropRadius) * scaleX;
+      const sourceY = (centerY - imgY - cropRadius) * scaleY;
+      const sourceSize = cropRadius * 2 * scaleX;
+
+      // Draw the cropped circular image
+      ctx.beginPath();
+      ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+
+      // Draw the image
+      ctx.drawImage(
+        image,
+        sourceX,
+        sourceY,
+        sourceSize,
+        sourceSize,
+        0,
+        0,
+        outputSize,
+        outputSize
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Failed to create blob"));
+          }
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
+  };
+
+  const handleCropConfirm = async () => {
+    try {
+      const croppedBlob = await getCroppedImage();
+      const croppedFile = new File(
+        [croppedBlob],
+        "cropped-testimonial-image.jpg",
+        {
+          type: "image/jpeg",
+        }
+      );
+
+      // Convert to base64 for immediate preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setFormData((prev) => ({
+            ...prev,
+            image: reader.result as string,
+          }));
+        }
+      };
+      reader.readAsDataURL(croppedFile);
+
+      setIsUploading(true);
+      setIsCropping(false);
+      setImageLoaded(false);
+
+      // Upload cropped image
+      const formData = new FormData();
+      formData.append("file", croppedFile);
+      formData.append("userId", userId!);
+      formData.append("fieldName", "testimonialImage");
+
+      const uploadResponse = await fetch(
+        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        setFormData((prev) => ({
+          ...prev,
+          image: uploadData.s3Url,
+        }));
+        toast.success("Image uploaded successfully!");
+      } else {
+        const errorData = await uploadResponse.json();
+        toast.error(
+          `Image upload failed: ${errorData.message || "Unknown error"}`
+        );
+      }
+
+      setIsUploading(false);
+    } catch (error) {
+      console.error("Error cropping image:", error);
+      toast.error("Failed to crop image");
+      setIsCropping(false);
+      setIsUploading(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setImageToCrop(reader.result as string);
+          setIsCropping(true);
+          setScale(1);
+          setPosition({ x: 0, y: 0 });
+          setImageLoaded(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleZoomIn = () => {
+    setScale((prev) => Math.min(prev + 0.1, 3));
+  };
+
+  const handleZoomOut = () => {
+    setScale((prev) => Math.max(prev - 0.1, 1));
+  };
+
+  // Testimonial CRUD operations
+  const startEdit = (testimonial: Testimonial) => {
+    setFormData({
+      name: testimonial.name,
+      position: testimonial.position,
+      company: testimonial.company,
+      image: testimonial.image,
+      content: testimonial.content,
+      rating: testimonial.rating,
+      project: testimonial.project,
+      date: testimonial.date ?? new Date().getFullYear().toString(),
+    });
+    setEditingId(testimonial.id);
     setIsAddingNew(false);
   };
 
-  const handleAddNew = async (payload?: Omit<Testimonial, "id">) => {
-    const source = payload ?? {
-      name: "",
-      position: "",
-      company: "",
-      image: "",
-      content: "",
-      rating: 5,
-      project: "",
-      date: new Date().getFullYear().toString(),
-    };
-
-    if (!source.name.trim() || !source.content.trim()) {
-      toast.error("Please provide a name and testimonial content.");
+  const handleAddNew = async () => {
+    if (!formData.name.trim() || !formData.content.trim()) {
+      toast.error("Please provide name and testimonial content.");
       return;
     }
 
@@ -376,30 +399,31 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       testimonials.length > 0
         ? Math.max(...testimonials.map((t) => t.id)) + 1
         : 1;
-    const created: Testimonial = { ...source, id };
+    const created: Testimonial = { ...formData, id };
     const updated = [...testimonials, created];
 
     setTestimonials(updated);
     setTestimonialContent((p) => ({ ...p, testimonials: updated }));
     setIsAddingNew(false);
+    resetForm();
 
     toast.success("Testimonial added.");
     onSave?.({ ...testimonialContent, testimonials: updated });
   };
 
-  const handleSaveEdit = (payload: FormData) => {
+  const handleSaveEdit = () => {
     if (editingId == null) return;
 
     const updated = testimonials.map((t) =>
-      t.id === editingId ? { ...t, ...payload } : t
+      t.id === editingId ? { ...t, ...formData } : t
     );
 
     setTestimonials(updated);
     setTestimonialContent((p) => ({ ...p, testimonials: updated }));
     setEditingId(null);
+    resetForm();
 
     toast.success("Testimonial updated.");
-    // onSave?.({ ...testimonialContent, testimonials: updated });
   };
 
   const handleDelete = (id: number) => {
@@ -410,26 +434,39 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     onSave?.({ ...testimonialContent, testimonials: updated });
   };
 
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setIsAddingNew(false);
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      position: "",
+      company: "",
+      image: "",
+      content: "",
+      rating: 5,
+      project: "",
+      date: new Date().getFullYear().toString(),
+    });
   };
 
+  const handleCancelForm = () => {
+    setEditingId(null);
+    setIsAddingNew(false);
+    resetForm();
+  };
+
+  // Section content handlers
   const handleContentChange = (
     field: keyof TestimonialContent,
     value: string
   ) => {
     const updated = { ...testimonialContent, [field]: value };
     setTestimonialContent(updated);
-    // Auto-save section content changes
-    // onSave?.({ ...updated, testimonials });
   };
 
   const handleSaveSection = () => {
     onSave?.({ ...testimonialContent, testimonials });
     setIsEditMode(false);
     toast.success("Testimonials section saved.");
-    
+
     // Update original content after saving
     setOriginalContent(testimonialContent);
     setOriginalTestimonials(testimonials);
@@ -440,8 +477,219 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     setTestimonialContent(originalContent);
     setTestimonials(originalTestimonials);
     setIsEditMode(false);
+    resetForm();
+    setEditingId(null);
+    setIsAddingNew(false);
     toast.success("Changes cancelled.");
   };
+
+  // Render testimonial form
+  const renderTestimonialForm = () => (
+    <div
+      className="p-6 border-2 border-orange-300 border-dashed bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl dark:border-orange-600"
+      onMouseDown={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
+    >
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-1">
+            <input
+              ref={nameRef}
+              type="text"
+              placeholder="Name *"
+              value={formData.name}
+              onChange={(e) => setFormField("name", e.target.value)}
+              maxLength={CHAR_LIMITS.name}
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+            <div
+              className={`text-sm text-right ${getCharCountColor(
+                formData.name.length,
+                CHAR_LIMITS.name
+              )}`}
+            >
+              {formData.name.length}/{CHAR_LIMITS.name}
+            </div>
+          </div>
+          <div className="space-y-1">
+            <input
+              type="text"
+              placeholder="Position"
+              value={formData.position}
+              onChange={(e) => setFormField("position", e.target.value)}
+              maxLength={CHAR_LIMITS.position}
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+            <div
+              className={`text-sm text-right ${getCharCountColor(
+                formData.position.length,
+                CHAR_LIMITS.position
+              )}`}
+            >
+              {formData.position.length}/{CHAR_LIMITS.position}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-1">
+            <input
+              type="text"
+              placeholder="Company"
+              value={formData.company}
+              onChange={(e) => setFormField("company", e.target.value)}
+              maxLength={CHAR_LIMITS.company}
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+            <div
+              className={`text-sm text-right ${getCharCountColor(
+                formData.company.length,
+                CHAR_LIMITS.company
+              )}`}
+            >
+              {formData.company.length}/{CHAR_LIMITS.company}
+            </div>
+          </div>
+          <div className="space-y-1">
+            <input
+              type="text"
+              placeholder="Project"
+              value={formData.project}
+              onChange={(e) => setFormField("project", e.target.value)}
+              maxLength={CHAR_LIMITS.project}
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+            <div
+              className={`text-sm text-right ${getCharCountColor(
+                formData.project.length,
+                CHAR_LIMITS.project
+              )}`}
+            >
+              {formData.project.length}/{CHAR_LIMITS.project}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid items-center grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-1">
+            <input
+              type="url"
+              placeholder="Image URL"
+              value={formData.image}
+              onChange={(e) => setFormField("image", e.target.value)}
+              maxLength={CHAR_LIMITS.imageUrl}
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+            <div
+              className={`text-sm text-right ${getCharCountColor(
+                formData.image.length,
+                CHAR_LIMITS.imageUrl
+              )}`}
+            >
+              {formData.image.length}/{CHAR_LIMITS.imageUrl}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${
+                isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gray-100 dark:bg-gray-800"
+              }`}
+            >
+              <Upload className="w-4 h-4" />
+              <span className="text-sm">
+                {isUploading ? "Uploading..." : "Upload & Crop Image"}
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={isUploading}
+                onChange={handleImageUpload}
+              />
+            </label>
+          </div>
+        </div>
+
+        {formData.image && (
+          <div className="flex justify-center">
+            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-orange-400">
+              <img
+                src={formData.image}
+                alt="Avatar preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-1">
+          <textarea
+            placeholder="Testimonial content *"
+            value={formData.content}
+            onChange={(e) => setFormField("content", e.target.value)}
+            maxLength={CHAR_LIMITS.content}
+            rows={4}
+            className="w-full p-3 bg-white border border-gray-300 rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+          />
+          <div
+            className={`text-sm text-right ${getCharCountColor(
+              formData.content.length,
+              CHAR_LIMITS.content
+            )}`}
+          >
+            {formData.content.length}/{CHAR_LIMITS.content}
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <label className="font-medium text-gray-700 dark:text-gray-300">
+            Rating:
+          </label>
+          <select
+            value={formData.rating}
+            onChange={(e) => setFormField("rating", parseInt(e.target.value))}
+            className="p-2 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+          >
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <option key={rating} value={rating}>
+                {rating} Star{rating !== 1 ? "s" : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex space-x-2">
+          <button
+            onClick={editingId !== null ? handleSaveEdit : handleAddNew}
+            disabled={isUploading}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
+              isUploading
+                ? "bg-green-400 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600"
+            }`}
+          >
+            <Save className="w-4 h-4" />
+            <span>{isUploading ? "Saving..." : "Save"}</span>
+          </button>
+          <button
+            onClick={handleCancelForm}
+            disabled={isUploading}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
+              isUploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gray-500 hover:bg-gray-600"
+            }`}
+          >
+            <X className="w-4 h-4" />
+            <span>Cancel</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <section id="testimonials" className="py-20 bg-white dark:bg-gray-900">
@@ -484,22 +732,47 @@ const Testimonials: React.FC<TestimonialsProps> = ({
         >
           {isEditMode ? (
             <div className="space-y-4">
-              <input
-                type="text"
-                value={testimonialContent.heading}
-                onChange={(e) => handleContentChange("heading", e.target.value)}
-                className="w-full max-w-2xl p-2 mx-auto text-4xl font-bold text-gray-900 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                placeholder="Section heading"
-              />
-              <textarea
-                value={testimonialContent.description}
-                onChange={(e) =>
-                  handleContentChange("description", e.target.value)
-                }
-                className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                rows={2}
-                placeholder="Section description"
-              />
+              <div className="space-y-1">
+                <input
+                  type="text"
+                  value={testimonialContent.heading}
+                  onChange={(e) =>
+                    handleContentChange("heading", e.target.value)
+                  }
+                  maxLength={CHAR_LIMITS.heading}
+                  className="w-full max-w-2xl p-2 mx-auto text-4xl font-bold text-gray-900 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  placeholder="Section heading"
+                />
+                <div
+                  className={`text-sm text-right max-w-2xl mx-auto ${getCharCountColor(
+                    testimonialContent.heading.length,
+                    CHAR_LIMITS.heading
+                  )}`}
+                >
+                  {testimonialContent.heading.length}/{CHAR_LIMITS.heading}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <textarea
+                  value={testimonialContent.description}
+                  onChange={(e) =>
+                    handleContentChange("description", e.target.value)
+                  }
+                  maxLength={CHAR_LIMITS.description}
+                  className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  rows={2}
+                  placeholder="Section description"
+                />
+                <div
+                  className={`text-sm text-right max-w-3xl mx-auto ${getCharCountColor(
+                    testimonialContent.description.length,
+                    CHAR_LIMITS.description
+                  )}`}
+                >
+                  {testimonialContent.description.length}/
+                  {CHAR_LIMITS.description}
+                </div>
+              </div>
             </div>
           ) : (
             <>
@@ -522,6 +795,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
               onClick={() => {
                 setIsAddingNew(true);
                 setEditingId(null);
+                resetForm();
               }}
               className="inline-flex items-center px-6 py-3 space-x-2 text-white transition-colors bg-orange-500 rounded-lg hover:bg-orange-600"
             >
@@ -539,22 +813,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
               exit={{ opacity: 0, y: -20 }}
               className="mb-8"
             >
-              <TestimonialForm
-                initial={{
-                  name: "",
-                  position: "",
-                  company: "",
-                  image: "",
-                  content: "",
-                  rating: 5,
-                  project: "",
-                  date: new Date().getFullYear().toString(),
-                }}
-                autoFocus
-                userId={userId}
-                onCancel={() => setIsAddingNew(false)}
-                onSave={handleAddNew}
-              />
+              {renderTestimonialForm()}
             </motion.div>
           )}
         </AnimatePresence>
@@ -566,7 +825,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
             </p>
             {isEditMode && (
               <button
-                onClick={() => setIsAddingNew(true)}
+                onClick={() => {
+                  setIsAddingNew(true);
+                  setEditingId(null);
+                  resetForm();
+                }}
                 className="px-6 py-2 text-white transition-colors bg-orange-500 rounded-lg hover:bg-orange-600"
               >
                 Add Your First Testimonial
@@ -604,24 +867,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                   )}
 
                   {editingId === testimonial.id ? (
-                    <TestimonialForm
-                      initial={{
-                        name: testimonial.name,
-                        position: testimonial.position,
-                        company: testimonial.company,
-                        image: testimonial.image,
-                        content: testimonial.content,
-                        rating: testimonial.rating,
-                        project: testimonial.project,
-                        date:
-                          testimonial.date ??
-                          new Date().getFullYear().toString(),
-                      }}
-                      autoFocus
-                      userId={userId}
-                      onCancel={handleCancelEdit}
-                      onSave={handleSaveEdit}
-                    />
+                    renderTestimonialForm()
                   ) : (
                     <>
                       <div className="flex justify-end mb-4">
@@ -715,6 +961,145 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           </motion.div>
         )}
       </div>
+
+      {/* Image Cropping Modal */}
+      {isCropping && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
+            <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <Crop className="w-6 h-6" />
+                Crop Avatar Image
+              </h3>
+              <button
+                onClick={() => setIsCropping(false)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-900 dark:text-white" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div
+                ref={containerRef}
+                className="relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 cursor-move select-none"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {/* Circular crop overlay */}
+                <div className="absolute inset-0 pointer-events-none z-10">
+                  <svg className="w-full h-full">
+                    <defs>
+                      <mask id="circleMask">
+                        <rect width="100%" height="100%" fill="white" />
+                        <circle cx="50%" cy="50%" r="80" fill="black" />
+                      </mask>
+                    </defs>
+                    <rect
+                      width="100%"
+                      height="100%"
+                      fill="rgba(0,0,0,0.5)"
+                      mask="url(#circleMask)"
+                    />
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="80"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeDasharray="10,5"
+                    />
+                  </svg>
+                </div>
+
+                <img
+                  ref={imageRef}
+                  src={imageToCrop}
+                  alt="Crop preview"
+                  onLoad={handleImageLoad}
+                  className="absolute top-1/2 left-1/2 max-w-none select-none"
+                  style={{
+                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
+                    transformOrigin: "center",
+                    opacity: imageLoaded ? 1 : 0,
+                    transition: imageLoaded ? "none" : "opacity 0.3s",
+                  }}
+                  draggable={false}
+                />
+
+                {!imageLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center text-white">
+                    <p>Loading image...</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">
+                      Zoom
+                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleZoomOut}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <ZoomOut className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleZoomIn}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <ZoomIn className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.01}
+                    value={scale}
+                    onChange={(e) => setScale(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+
+                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                  Drag to reposition • Use slider or buttons to zoom
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setIsCropping(false)}
+                className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCropConfirm}
+                disabled={!imageLoaded}
+                className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Check className="w-5 h-5" />
+                Crop & Upload
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden canvas for cropping */}
+      <canvas ref={canvasRef} className="hidden" />
     </section>
   );
 };

@@ -9,6 +9,9 @@ interface SubCategory {
 
 interface FormStore {
   basicInfo: Record<string, any>;
+  addressInformation: Record<string, any>;
+  alternateContact: Record<string, any>;  
+  socialMediaLinks: Record<string, any>;
   categories: string[];
   // subcategories: string[];
   subcategories: SubCategory[];
@@ -19,6 +22,8 @@ interface FormStore {
   media: any[];
   // resume: string | null;
   resume: any[]; // array of documents
+   templateSelection: string | number; // <-- add this
+  //  templateSelection: string // <-- add this
 
   
 }
@@ -44,6 +49,9 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<FormStore>({
     basicInfo: {},
     //  basicInfo: { user_name: "" },
+      addressInformation: {},
+  alternateContact: {},   
+  socialMediaLinks: {},   
     categories: [],
     subcategories: [],
     skills: [],
@@ -52,6 +60,8 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
     services: [],
     media: [],
     resume: [],
+    templateSelection:""  //added now for prefill logic and in the formcontext too
+    
   });
 
 

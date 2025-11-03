@@ -21,3 +21,9 @@ export const submitForm = async (payload: any) => {
   const res = await axios.post('https://9zhkqwucj5.execute-api.ap-south-1.amazonaws.com/dev/', payload);
   return res.data;
 };
+
+
+export const updateForm = async (userId: string, professionalId: string, payload: any) => {
+  const res = await axios.put(`https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`, payload);
+  return res.data;
+};

@@ -1,4 +1,3 @@
-// Footer.tsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -56,6 +55,22 @@ interface FooterProps {
   onSave?: (content: FooterContent) => void;
 }
 
+// Character limits
+const CHAR_LIMITS = {
+  personalName: 50,
+  personalDescription: 200,
+  socialLink: 100,
+  linkLabel: 30,
+  linkHref: 100,
+  newsletterTitle: 50,
+  newsletterDescription: 120,
+  newsletterPlaceholder: 30,
+  newsletterButton: 20,
+  copyrightText: 50,
+  afterCopyrightText: 50,
+  policyLabel: 30,
+};
+
 const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState<FooterContent>(content);
@@ -108,6 +123,12 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
     }
   };
 
+  const getCharCountClass = (current: number, limit: number) => {
+    if (current >= limit) return "text-red-500";
+    if (current >= limit * 0.8) return "text-yellow-500";
+    return "text-gray-500";
+  };
+
   return (
     <footer className="bg-dark-300 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
@@ -151,20 +172,32 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
             >
               <Code className="w-8 h-8 text-orange-400" />
               {isEditing ? (
-                <input
-                  type="text"
-                  value={editedContent.personalInfo.name}
-                  onChange={(e) =>
-                    setEditedContent({
-                      ...editedContent,
-                      personalInfo: {
-                        ...editedContent.personalInfo,
-                        name: e.target.value,
-                      },
-                    })
-                  }
-                  className="text-2xl font-bold text-blue-500 dark:text-orange-500 bg-transparent border-b border-orange-400 focus:outline-none"
-                />
+                <div className="flex flex-col">
+                  <input
+                    type="text"
+                    value={editedContent.personalInfo.name}
+                    onChange={(e) =>
+                      setEditedContent({
+                        ...editedContent,
+                        personalInfo: {
+                          ...editedContent.personalInfo,
+                          name: e.target.value,
+                        },
+                      })
+                    }
+                    maxLength={CHAR_LIMITS.personalName}
+                    className="text-2xl font-bold text-blue-500 dark:text-orange-500 bg-transparent border-b border-orange-400 focus:outline-none"
+                  />
+                  <div
+                    className={`text-xs mt-1 ${getCharCountClass(
+                      editedContent.personalInfo.name.length,
+                      CHAR_LIMITS.personalName
+                    )}`}
+                  >
+                    {editedContent.personalInfo.name.length}/
+                    {CHAR_LIMITS.personalName}
+                  </div>
+                </div>
               ) : (
                 <span className="text-2xl font-bold text-blue-500 dark:text-orange-500">
                   {content.personalInfo.name}
@@ -173,20 +206,32 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
             </motion.div>
 
             {isEditing ? (
-              <textarea
-                value={editedContent.personalInfo.description}
-                onChange={(e) =>
-                  setEditedContent({
-                    ...editedContent,
-                    personalInfo: {
-                      ...editedContent.personalInfo,
-                      description: e.target.value,
-                    },
-                  })
-                }
-                className="w-full bg-gray-800 border border-gray-700 text-gray-300 rounded-lg p-3 focus:border-orange-500 focus:outline-none mb-6 resize-none"
-                rows={3}
-              />
+              <div className="mb-6">
+                <textarea
+                  value={editedContent.personalInfo.description}
+                  onChange={(e) =>
+                    setEditedContent({
+                      ...editedContent,
+                      personalInfo: {
+                        ...editedContent.personalInfo,
+                        description: e.target.value,
+                      },
+                    })
+                  }
+                  maxLength={CHAR_LIMITS.personalDescription}
+                  className="w-full bg-gray-800 border border-gray-700 text-gray-300 rounded-lg p-3 focus:border-orange-500 focus:outline-none resize-none"
+                  rows={3}
+                />
+                <div
+                  className={`text-xs mt-1 text-right ${getCharCountClass(
+                    editedContent.personalInfo.description.length,
+                    CHAR_LIMITS.personalDescription
+                  )}`}
+                >
+                  {editedContent.personalInfo.description.length}/
+                  {CHAR_LIMITS.personalDescription}
+                </div>
+              </div>
             ) : (
               <p className="text-gray-400 mb-6 leading-relaxed max-w-md">
                 {content.personalInfo.description}
@@ -194,7 +239,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
             )}
 
             {/* Social Links */}
-            <div className="flex space-x-4">
+            {/* <div className="flex space-x-4">
               {editedContent.socialLinks.map((link, index) => {
                 const IconComponent = getIconComponent(link.icon);
                 const colorClass = getIconColor(link.icon);
@@ -207,25 +252,36 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     {isEditing ? (
                       <div className="relative group w-full h-full flex items-center justify-center">
                         <IconComponent className="w-5 h-5" />
-                        <input
-                          type="text"
-                          value={link.href}
-                          onChange={(e) => {
-                            const newSocialLinks = [
-                              ...editedContent.socialLinks,
-                            ];
-                            newSocialLinks[index] = {
-                              ...link,
-                              href: e.target.value,
-                            };
-                            setEditedContent({
-                              ...editedContent,
-                              socialLinks: newSocialLinks,
-                            });
-                          }}
-                          className="absolute top-12 left-1/2 -translate-x-1/2 w-32 text-xs bg-gray-900 text-white border border-gray-700 rounded p-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
-                          placeholder="URL"
-                        />
+                        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-40 bg-gray-900 border border-gray-700 rounded p-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
+                          <input
+                            type="text"
+                            value={link.href}
+                            onChange={(e) => {
+                              const newSocialLinks = [
+                                ...editedContent.socialLinks,
+                              ];
+                              newSocialLinks[index] = {
+                                ...link,
+                                href: e.target.value,
+                              };
+                              setEditedContent({
+                                ...editedContent,
+                                socialLinks: newSocialLinks,
+                              });
+                            }}
+                            maxLength={CHAR_LIMITS.socialLink}
+                            className="w-full px-2 py-1 text-xs bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                            placeholder="URL"
+                          />
+                          <div
+                            className={`text-xs mt-1 text-right ${getCharCountClass(
+                              link.href.length,
+                              CHAR_LIMITS.socialLink
+                            )}`}
+                          >
+                            {link.href.length}/{CHAR_LIMITS.socialLink}
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       <a
@@ -239,7 +295,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                   </motion.div>
                 );
               })}
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Links */}
@@ -251,35 +307,57 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               {editedContent.quickLinks.map((link, index) => (
                 <li key={index}>
                   {isEditing ? (
-                    <div className="flex flex-col gap-1 mb-2">
-                      <input
-                        type="text"
-                        value={link.label}
-                        onChange={(e) => {
-                          const newQuickLinks = [...editedContent.quickLinks];
-                          newQuickLinks[index].label = e.target.value;
-                          setEditedContent({
-                            ...editedContent,
-                            quickLinks: newQuickLinks,
-                          });
-                        }}
-                        className="px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500"
-                        placeholder="Label"
-                      />
-                      <input
-                        type="text"
-                        value={link.href}
-                        onChange={(e) => {
-                          const newQuickLinks = [...editedContent.quickLinks];
-                          newQuickLinks[index].href = e.target.value;
-                          setEditedContent({
-                            ...editedContent,
-                            quickLinks: newQuickLinks,
-                          });
-                        }}
-                        className="px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500"
-                        placeholder="#section"
-                      />
+                    <div className="flex flex-col gap-1 mb-3">
+                      <div>
+                        <input
+                          type="text"
+                          value={link.label}
+                          onChange={(e) => {
+                            const newQuickLinks = [...editedContent.quickLinks];
+                            newQuickLinks[index].label = e.target.value;
+                            setEditedContent({
+                              ...editedContent,
+                              quickLinks: newQuickLinks,
+                            });
+                          }}
+                          maxLength={CHAR_LIMITS.linkLabel}
+                          className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                          placeholder="Label"
+                        />
+                        <div
+                          className={`text-xs mt-1 text-right ${getCharCountClass(
+                            link.label.length,
+                            CHAR_LIMITS.linkLabel
+                          )}`}
+                        >
+                          {link.label.length}/{CHAR_LIMITS.linkLabel}
+                        </div>
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          value={link.href}
+                          onChange={(e) => {
+                            const newQuickLinks = [...editedContent.quickLinks];
+                            newQuickLinks[index].href = e.target.value;
+                            setEditedContent({
+                              ...editedContent,
+                              quickLinks: newQuickLinks,
+                            });
+                          }}
+                          maxLength={CHAR_LIMITS.linkHref}
+                          className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                          placeholder="#section"
+                        />
+                        <div
+                          className={`text-xs mt-1 text-right ${getCharCountClass(
+                            link.href.length,
+                            CHAR_LIMITS.linkHref
+                          )}`}
+                        >
+                          {link.href.length}/{CHAR_LIMITS.linkHref}
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <motion.button
@@ -304,35 +382,57 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               {editedContent.moreLinks.map((link, index) => (
                 <li key={index}>
                   {isEditing ? (
-                    <div className="flex flex-col gap-1 mb-2">
-                      <input
-                        type="text"
-                        value={link.label}
-                        onChange={(e) => {
-                          const newMoreLinks = [...editedContent.moreLinks];
-                          newMoreLinks[index].label = e.target.value;
-                          setEditedContent({
-                            ...editedContent,
-                            moreLinks: newMoreLinks,
-                          });
-                        }}
-                        className="px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500"
-                        placeholder="Label"
-                      />
-                      <input
-                        type="text"
-                        value={link.href}
-                        onChange={(e) => {
-                          const newMoreLinks = [...editedContent.moreLinks];
-                          newMoreLinks[index].href = e.target.value;
-                          setEditedContent({
-                            ...editedContent,
-                            moreLinks: newMoreLinks,
-                          });
-                        }}
-                        className="px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500"
-                        placeholder="#section"
-                      />
+                    <div className="flex flex-col gap-1 mb-3">
+                      <div>
+                        <input
+                          type="text"
+                          value={link.label}
+                          onChange={(e) => {
+                            const newMoreLinks = [...editedContent.moreLinks];
+                            newMoreLinks[index].label = e.target.value;
+                            setEditedContent({
+                              ...editedContent,
+                              moreLinks: newMoreLinks,
+                            });
+                          }}
+                          maxLength={CHAR_LIMITS.linkLabel}
+                          className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                          placeholder="Label"
+                        />
+                        <div
+                          className={`text-xs mt-1 text-right ${getCharCountClass(
+                            link.label.length,
+                            CHAR_LIMITS.linkLabel
+                          )}`}
+                        >
+                          {link.label.length}/{CHAR_LIMITS.linkLabel}
+                        </div>
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          value={link.href}
+                          onChange={(e) => {
+                            const newMoreLinks = [...editedContent.moreLinks];
+                            newMoreLinks[index].href = e.target.value;
+                            setEditedContent({
+                              ...editedContent,
+                              moreLinks: newMoreLinks,
+                            });
+                          }}
+                          maxLength={CHAR_LIMITS.linkHref}
+                          className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                          placeholder="#section"
+                        />
+                        <div
+                          className={`text-xs mt-1 text-right ${getCharCountClass(
+                            link.href.length,
+                            CHAR_LIMITS.linkHref
+                          )}`}
+                        >
+                          {link.href.length}/{CHAR_LIMITS.linkHref}
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <motion.button
@@ -350,68 +450,116 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
             {/* Newsletter */}
             <div className="border-t border-gray-700 pt-4">
               {isEditing ? (
-                <div className="space-y-2">
-                  <input
-                    type="text"
-                    value={editedContent.newsletter.title}
-                    onChange={(e) =>
-                      setEditedContent({
-                        ...editedContent,
-                        newsletter: {
-                          ...editedContent.newsletter,
-                          title: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
-                    placeholder="Newsletter Title"
-                  />
-                  <textarea
-                    value={editedContent.newsletter.description}
-                    onChange={(e) =>
-                      setEditedContent({
-                        ...editedContent,
-                        newsletter: {
-                          ...editedContent.newsletter,
-                          description: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
-                    placeholder="Description"
-                    rows={2}
-                  />
+                <div className="space-y-3">
+                  <div>
+                    <input
+                      type="text"
+                      value={editedContent.newsletter.title}
+                      onChange={(e) =>
+                        setEditedContent({
+                          ...editedContent,
+                          newsletter: {
+                            ...editedContent.newsletter,
+                            title: e.target.value,
+                          },
+                        })
+                      }
+                      maxLength={CHAR_LIMITS.newsletterTitle}
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
+                      placeholder="Newsletter Title"
+                    />
+                    <div
+                      className={`text-xs mt-1 text-right ${getCharCountClass(
+                        editedContent.newsletter.title.length,
+                        CHAR_LIMITS.newsletterTitle
+                      )}`}
+                    >
+                      {editedContent.newsletter.title.length}/
+                      {CHAR_LIMITS.newsletterTitle}
+                    </div>
+                  </div>
+                  <div>
+                    <textarea
+                      value={editedContent.newsletter.description}
+                      onChange={(e) =>
+                        setEditedContent({
+                          ...editedContent,
+                          newsletter: {
+                            ...editedContent.newsletter,
+                            description: e.target.value,
+                          },
+                        })
+                      }
+                      maxLength={CHAR_LIMITS.newsletterDescription}
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
+                      placeholder="Description"
+                      rows={2}
+                    />
+                    <div
+                      className={`text-xs mt-1 text-right ${getCharCountClass(
+                        editedContent.newsletter.description.length,
+                        CHAR_LIMITS.newsletterDescription
+                      )}`}
+                    >
+                      {editedContent.newsletter.description.length}/
+                      {CHAR_LIMITS.newsletterDescription}
+                    </div>
+                  </div>
                   <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={editedContent.newsletter.placeholder}
-                      onChange={(e) =>
-                        setEditedContent({
-                          ...editedContent,
-                          newsletter: {
-                            ...editedContent.newsletter,
-                            placeholder: e.target.value,
-                          },
-                        })
-                      }
-                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
-                      placeholder="Input Placeholder"
-                    />
-                    <input
-                      type="text"
-                      value={editedContent.newsletter.buttonText}
-                      onChange={(e) =>
-                        setEditedContent({
-                          ...editedContent,
-                          newsletter: {
-                            ...editedContent.newsletter,
-                            buttonText: e.target.value,
-                          },
-                        })
-                      }
-                      className="w-28 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
-                      placeholder="Button Text"
-                    />
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={editedContent.newsletter.placeholder}
+                        onChange={(e) =>
+                          setEditedContent({
+                            ...editedContent,
+                            newsletter: {
+                              ...editedContent.newsletter,
+                              placeholder: e.target.value,
+                            },
+                          })
+                        }
+                        maxLength={CHAR_LIMITS.newsletterPlaceholder}
+                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
+                        placeholder="Input Placeholder"
+                      />
+                      <div
+                        className={`text-xs mt-1 text-right ${getCharCountClass(
+                          editedContent.newsletter.placeholder.length,
+                          CHAR_LIMITS.newsletterPlaceholder
+                        )}`}
+                      >
+                        {editedContent.newsletter.placeholder.length}/
+                        {CHAR_LIMITS.newsletterPlaceholder}
+                      </div>
+                    </div>
+                    <div className="w-28">
+                      <input
+                        type="text"
+                        value={editedContent.newsletter.buttonText}
+                        onChange={(e) =>
+                          setEditedContent({
+                            ...editedContent,
+                            newsletter: {
+                              ...editedContent.newsletter,
+                              buttonText: e.target.value,
+                            },
+                          })
+                        }
+                        maxLength={CHAR_LIMITS.newsletterButton}
+                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
+                        placeholder="Button Text"
+                      />
+                      <div
+                        className={`text-xs mt-1 text-right ${getCharCountClass(
+                          editedContent.newsletter.buttonText.length,
+                          CHAR_LIMITS.newsletterButton
+                        )}`}
+                      >
+                        {editedContent.newsletter.buttonText.length}/
+                        {CHAR_LIMITS.newsletterButton}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -426,7 +574,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     <input
                       type="email"
                       placeholder={content.newsletter.placeholder}
-                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-l-lg text-gray-300 text-sm focus:border-orange-500"
+                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-l-lg text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
                     />
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -449,83 +597,134 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
           <div className="flex items-center text-center md:text-left">
             © {currentYear}{" "}
             {isEditing ? (
-              <input
-                type="text"
-                value={editedContent.personalInfo.name}
-                onChange={(e) =>
-                  setEditedContent({
-                    ...editedContent,
-                    personalInfo: {
-                      ...editedContent.personalInfo,
-                      name: e.target.value,
-                    },
-                  })
-                }
-                className="bg-transparent border-b border-gray-500 focus:border-orange-500 ml-1 px-1 text-gray-200 focus:outline-none"
-              />
+              <div className="flex items-center">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editedContent.personalInfo.name}
+                    onChange={(e) =>
+                      setEditedContent({
+                        ...editedContent,
+                        personalInfo: {
+                          ...editedContent.personalInfo,
+                          name: e.target.value,
+                        },
+                      })
+                    }
+                    maxLength={CHAR_LIMITS.personalName}
+                    className="bg-transparent border-b border-gray-500 focus:border-orange-500 ml-1 px-1 text-gray-200 focus:outline-none"
+                  />
+                  <div
+                    className={`absolute -bottom-5 right-0 text-xs ${getCharCountClass(
+                      editedContent.personalInfo.name.length,
+                      CHAR_LIMITS.personalName
+                    )}`}
+                  >
+                    {editedContent.personalInfo.name.length}/
+                    {CHAR_LIMITS.personalName}
+                  </div>
+                </div>
+                . {content.bottomSection.copyrightText}
+                <Heart className="w-4 h-4 mx-1 text-accent-red fill-current" />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editedContent.bottomSection.afterCopyrightText}
+                    onChange={(e) =>
+                      setEditedContent({
+                        ...editedContent,
+                        bottomSection: {
+                          ...editedContent.bottomSection,
+                          afterCopyrightText: e.target.value,
+                        },
+                      })
+                    }
+                    maxLength={CHAR_LIMITS.afterCopyrightText}
+                    className="bg-transparent border-b border-gray-500 focus:border-orange-500 ml-1 px-1 text-gray-200 focus:outline-none"
+                  />
+                  <div
+                    className={`absolute -bottom-5 right-0 text-xs ${getCharCountClass(
+                      editedContent.bottomSection.afterCopyrightText.length,
+                      CHAR_LIMITS.afterCopyrightText
+                    )}`}
+                  >
+                    {editedContent.bottomSection.afterCopyrightText.length}/
+                    {CHAR_LIMITS.afterCopyrightText}
+                  </div>
+                </div>
+              </div>
             ) : (
-              <span className="mx-1">{content.personalInfo.name}</span>
-            )}
-            . {content.bottomSection.copyrightText}
-            <Heart className="w-4 h-4 mx-1 text-accent-red fill-current" />
-            {isEditing ? (
-              <input
-                type="text"
-                value={editedContent.bottomSection.afterCopyrightText}
-                onChange={(e) =>
-                  setEditedContent({
-                    ...editedContent,
-                    bottomSection: {
-                      ...editedContent.bottomSection,
-                      afterCopyrightText: e.target.value,
-                    },
-                  })
-                }
-                className="bg-transparent border-b border-gray-500 focus:border-orange-500 ml-1 px-1 text-gray-200 focus:outline-none"
-              />
-            ) : (
-              <span>{content.bottomSection.afterCopyrightText}</span>
+              <>
+                <span className="mx-1">{content.personalInfo.name}</span>.{" "}
+                {content.bottomSection.copyrightText}
+                <Heart className="w-4 h-4 mx-1 text-accent-red fill-current" />
+                <span>{content.bottomSection.afterCopyrightText}</span>
+              </>
             )}
           </div>
 
           <div className="flex items-center gap-6">
             {isEditing ? (
-              <>
-                <input
-                  type="text"
-                  value={editedContent.bottomSection.privacyPolicy.label}
-                  onChange={(e) =>
-                    setEditedContent({
-                      ...editedContent,
-                      bottomSection: {
-                        ...editedContent.bottomSection,
-                        privacyPolicy: {
-                          ...editedContent.bottomSection.privacyPolicy,
-                          label: e.target.value,
+              <div className="flex items-center gap-6">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editedContent.bottomSection.privacyPolicy.label}
+                    onChange={(e) =>
+                      setEditedContent({
+                        ...editedContent,
+                        bottomSection: {
+                          ...editedContent.bottomSection,
+                          privacyPolicy: {
+                            ...editedContent.bottomSection.privacyPolicy,
+                            label: e.target.value,
+                          },
                         },
-                      },
-                    })
-                  }
-                  className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
-                />
-                <input
-                  type="text"
-                  value={editedContent.bottomSection.termsOfService.label}
-                  onChange={(e) =>
-                    setEditedContent({
-                      ...editedContent,
-                      bottomSection: {
-                        ...editedContent.bottomSection,
-                        termsOfService: {
-                          ...editedContent.bottomSection.termsOfService,
-                          label: e.target.value,
+                      })
+                    }
+                    maxLength={CHAR_LIMITS.policyLabel}
+                    className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
+                  />
+                  <div
+                    className={`absolute -bottom-5 right-0 text-xs ${getCharCountClass(
+                      editedContent.bottomSection.privacyPolicy.label.length,
+                      CHAR_LIMITS.policyLabel
+                    )}`}
+                  >
+                    {editedContent.bottomSection.privacyPolicy.label.length}/
+                    {CHAR_LIMITS.policyLabel}
+                  </div>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editedContent.bottomSection.termsOfService.label}
+                    onChange={(e) =>
+                      setEditedContent({
+                        ...editedContent,
+                        bottomSection: {
+                          ...editedContent.bottomSection,
+                          termsOfService: {
+                            ...editedContent.bottomSection.termsOfService,
+                            label: e.target.value,
+                          },
                         },
-                      },
-                    })
-                  }
-                  className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
-                />
-              </>
+                      })
+                    }
+                    maxLength={CHAR_LIMITS.policyLabel}
+                    className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
+                  />
+                  <div
+                    className={`absolute -bottom-5 right-0 text-xs ${getCharCountClass(
+                      editedContent.bottomSection.termsOfService.label.length,
+                      CHAR_LIMITS.policyLabel
+                    )}`}
+                  >
+                    {editedContent.bottomSection.termsOfService.label.length}/
+                    {CHAR_LIMITS.policyLabel}
+                  </div>
+                </div>
+              </div>
             ) : (
               <>
                 <motion.a

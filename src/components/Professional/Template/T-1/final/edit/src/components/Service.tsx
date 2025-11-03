@@ -1,4 +1,3 @@
-// Service.tsx (updated with proper state management and parent sync)
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -94,6 +93,16 @@ const ServiceForm: React.FC<{
     deliveryTime: initial.deliveryTime ?? "",
   }));
 
+  // Character limits
+  const CHAR_LIMITS = {
+    title: 100,
+    shortDescription: 200,
+    fullDescription: 1000,
+    feature: 100,
+    pricing: 50,
+    deliveryTime: 50,
+  };
+
   const titleRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -122,6 +131,12 @@ const ServiceForm: React.FC<{
       deliveryTime: initial.deliveryTime ?? "",
     });
   }, [initial]);
+
+  const getCharCountColor = (current: number, max: number) => {
+    if (current >= max) return "text-red-500";
+    if (current >= max * 0.9) return "text-yellow-500";
+    return "text-gray-500";
+  };
 
   const setField = (k: keyof FormData, v: any) => {
     setLocal((prev) => ({ ...prev, [k]: v }));
@@ -160,14 +175,25 @@ const ServiceForm: React.FC<{
     >
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <input
-            ref={titleRef}
-            type="text"
-            placeholder="Service Title"
-            value={local.title}
-            onChange={(e) => setField("title", e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-          />
+          <div className="space-y-1">
+            <input
+              ref={titleRef}
+              type="text"
+              placeholder="Service Title"
+              value={local.title}
+              onChange={(e) => setField("title", e.target.value)}
+              maxLength={CHAR_LIMITS.title}
+              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+            />
+            <div
+              className={`text-sm text-right ${getCharCountColor(
+                local.title.length,
+                CHAR_LIMITS.title
+              )}`}
+            >
+              {local.title.length}/{CHAR_LIMITS.title}
+            </div>
+          </div>
           <select
             value={local.icon}
             onChange={(e) => setField("icon", e.target.value)}
@@ -195,37 +221,81 @@ const ServiceForm: React.FC<{
           </select>
         </div>
 
-        <textarea
-          placeholder="Short Description"
-          value={local.shortDescription}
-          onChange={(e) => setField("shortDescription", e.target.value)}
-          rows={2}
-          className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-        />
+        <div className="space-y-1">
+          <textarea
+            placeholder="Short Description"
+            value={local.shortDescription}
+            onChange={(e) => setField("shortDescription", e.target.value)}
+            maxLength={CHAR_LIMITS.shortDescription}
+            rows={2}
+            className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+          />
+          <div
+            className={`text-sm text-right ${getCharCountColor(
+              local.shortDescription.length,
+              CHAR_LIMITS.shortDescription
+            )}`}
+          >
+            {local.shortDescription.length}/{CHAR_LIMITS.shortDescription}
+          </div>
+        </div>
 
-        <textarea
-          placeholder="Full Description"
-          value={local.fullDescription}
-          onChange={(e) => setField("fullDescription", e.target.value)}
-          rows={3}
-          className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-        />
+        <div className="space-y-1">
+          <textarea
+            placeholder="Full Description"
+            value={local.fullDescription}
+            onChange={(e) => setField("fullDescription", e.target.value)}
+            maxLength={CHAR_LIMITS.fullDescription}
+            rows={3}
+            className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+          />
+          <div
+            className={`text-sm text-right ${getCharCountColor(
+              local.fullDescription.length,
+              CHAR_LIMITS.fullDescription
+            )}`}
+          >
+            {local.fullDescription.length}/{CHAR_LIMITS.fullDescription}
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <input
-            type="text"
-            placeholder="Pricing (e.g., Starting at $2,500)"
-            value={local.pricing}
-            onChange={(e) => setField("pricing", e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-          />
-          <input
-            type="text"
-            placeholder="Delivery Time (e.g., 2-4 weeks)"
-            value={local.deliveryTime}
-            onChange={(e) => setField("deliveryTime", e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-          />
+          <div className="space-y-1">
+            <input
+              type="text"
+              placeholder="Pricing (e.g., Starting at $2,500)"
+              value={local.pricing}
+              onChange={(e) => setField("pricing", e.target.value)}
+              maxLength={CHAR_LIMITS.pricing}
+              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+            />
+            <div
+              className={`text-sm text-right ${getCharCountColor(
+                local.pricing.length,
+                CHAR_LIMITS.pricing
+              )}`}
+            >
+              {local.pricing.length}/{CHAR_LIMITS.pricing}
+            </div>
+          </div>
+          <div className="space-y-1">
+            <input
+              type="text"
+              placeholder="Delivery Time (e.g., 2-4 weeks)"
+              value={local.deliveryTime}
+              onChange={(e) => setField("deliveryTime", e.target.value)}
+              maxLength={CHAR_LIMITS.deliveryTime}
+              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+            />
+            <div
+              className={`text-sm text-right ${getCharCountColor(
+                local.deliveryTime.length,
+                CHAR_LIMITS.deliveryTime
+              )}`}
+            >
+              {local.deliveryTime.length}/{CHAR_LIMITS.deliveryTime}
+            </div>
+          </div>
         </div>
 
         <div>
@@ -265,23 +335,34 @@ const ServiceForm: React.FC<{
 
           <div className="space-y-2">
             {local.features.map((f, idx) => (
-              <div key={idx} className="flex space-x-2">
-                <input
-                  type="text"
-                  placeholder="Feature"
-                  value={f}
-                  onChange={(e) => updateFeature(idx, e.target.value)}
-                  className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-                />
-                {local.features.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(idx)}
-                    className="p-2 text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
+              <div key={idx} className="space-y-1">
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    placeholder="Feature"
+                    value={f}
+                    onChange={(e) => updateFeature(idx, e.target.value)}
+                    maxLength={CHAR_LIMITS.feature}
+                    className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+                  />
+                  {local.features.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeFeature(idx)}
+                      className="p-2 text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                <div
+                  className={`text-xs text-right ${getCharCountColor(
+                    f.length,
+                    CHAR_LIMITS.feature
+                  )}`}
+                >
+                  {f.length}/{CHAR_LIMITS.feature}
+                </div>
               </div>
             ))}
           </div>
@@ -317,6 +398,12 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [hoveredService, setHoveredService] = useState<number | null>(null);
+
+  // Character limits for section headers
+  const CHAR_LIMITS = {
+    heading: 100,
+    description: 500,
+  };
 
   // Sync with parent content
   useEffect(() => {
@@ -357,6 +444,12 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     }),
     []
   );
+
+  const getCharCountColor = (current: number, max: number) => {
+    if (current >= max) return "text-red-500";
+    if (current >= max * 0.9) return "text-yellow-500";
+    return "text-gray-500";
+  };
 
   const handleContentChange = (field: keyof ServiceContent, value: string) => {
     const updated = { ...serviceContent, [field]: value };
@@ -439,18 +532,27 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
         <div className="absolute top-0 right-0">
           {isEditMode ? (
             <div className="flex items-center gap-2">
-              <button onClick={handleSaveSection} className="p-3 rounded-full bg-green-500">
+              <button
+                onClick={handleSaveSection}
+                className="p-3 rounded-full bg-green-500"
+              >
                 <SaveAll className="w-6 h-6" />
               </button>
-              <button onClick={() => {
-                toast.success("Cancel Update")
-                setIsEditMode(false)
-              }} className="p-3 rounded-full bg-red-500">
+              <button
+                onClick={() => {
+                  toast.success("Cancel Update");
+                  setIsEditMode(false);
+                }}
+                className="p-3 rounded-full bg-red-500"
+              >
                 <X className="w-6 h-6" />
               </button>
             </div>
           ) : (
-            <button onClick={() => setIsEditMode(true)} className="p-3 rounded-full bg-gray-500">
+            <button
+              onClick={() => setIsEditMode(true)}
+              className="p-3 rounded-full bg-gray-500"
+            >
               <Edit className="w-6 h-6" />
             </button>
           )}
@@ -470,22 +572,46 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
               onMouseDown={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
             >
-              <input
-                type="text"
-                value={serviceContent.heading}
-                onChange={(e) => handleContentChange("heading", e.target.value)}
-                className="w-full max-w-lg p-2 mx-auto text-4xl font-bold text-gray-900 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                placeholder="Section heading"
-              />
-              <textarea
-                value={serviceContent.description}
-                onChange={(e) =>
-                  handleContentChange("description", e.target.value)
-                }
-                className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                rows={2}
-                placeholder="Section description"
-              />
+              <div className="space-y-1">
+                <input
+                  type="text"
+                  value={serviceContent.heading}
+                  onChange={(e) =>
+                    handleContentChange("heading", e.target.value)
+                  }
+                  maxLength={CHAR_LIMITS.heading}
+                  className="w-full max-w-lg p-2 mx-auto text-4xl font-bold text-gray-900 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  placeholder="Section heading"
+                />
+                <div
+                  className={`text-sm text-right max-w-lg mx-auto ${getCharCountColor(
+                    serviceContent.heading.length,
+                    CHAR_LIMITS.heading
+                  )}`}
+                >
+                  {serviceContent.heading.length}/{CHAR_LIMITS.heading}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <textarea
+                  value={serviceContent.description}
+                  onChange={(e) =>
+                    handleContentChange("description", e.target.value)
+                  }
+                  maxLength={CHAR_LIMITS.description}
+                  className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  rows={2}
+                  placeholder="Section description"
+                />
+                <div
+                  className={`text-sm text-right max-w-3xl mx-auto ${getCharCountColor(
+                    serviceContent.description.length,
+                    CHAR_LIMITS.description
+                  )}`}
+                >
+                  {serviceContent.description.length}/{CHAR_LIMITS.description}
+                </div>
+              </div>
             </div>
           ) : (
             <>
@@ -637,7 +763,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                             isEditMode ? "" : "group-hover:scale-110"
                           } transition-transform duration-300`}
                         >
-                          <IconComponent className="w-8 h-8 text-white" />
+                          <IconComponent className="w-8 h-8 text-black dark:text-white" />
                         </div>
 
                         <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
@@ -724,60 +850,6 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
             </AnimatePresence>
           </div>
         )}
-
-        {/* Why Choose Me Section */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="p-8 text-center bg-white shadow-xl rounded-3xl dark:bg-gray-900 lg:p-12"
-        >
-          <h3 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
-            Why Choose My Services?
-          </h3>
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500">
-                <Star className="w-8 h-8 text-white" />
-              </div>
-              <h4 className="mb-2 font-bold text-gray-900 dark:text-white">
-                Quality Focused
-              </h4>
-              <p className="text-gray-600 dark:text-gray-400">
-                Clean, maintainable code following industry best practices and
-                standards.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-emerald-500">
-                <Zap className="w-8 h-8 text-white" />
-              </div>
-              <h4 className="mb-2 font-bold text-gray-900 dark:text-white">
-                Fast Delivery
-              </h4>
-              <p className="text-gray-600 dark:text-gray-400">
-                Efficient development process with regular updates and on-time
-                delivery.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-orange-500 to-red-500">
-                <Code className="w-8 h-8 text-white" />
-              </div>
-              <h4 className="mb-2 font-bold text-gray-900 dark:text-white">
-                Full Support
-              </h4>
-              <p className="text-gray-600 dark:text-gray-400">
-                Ongoing maintenance and support to ensure your project stays
-                up-to-date.
-              </p>
-            </div>
-          </div>
-        </motion.div> */}
       </div>
     </section>
   );

@@ -97,6 +97,15 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [technologiesInput, setTechnologiesInput] = useState("");
 
+  // Character limits
+  const CHAR_LIMITS = {
+    heading: 100,
+    subtitle: 200,
+    categoryTitle: 50,
+    skillName: 50,
+    technologies: 500,
+  };
+
   useEffect(() => {
     if (content) {
       const processedContent = {
@@ -118,6 +127,12 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
       setTechnologiesInput((content.technologies || []).join(", "));
     }
   }, [content]);
+
+  const getCharCountColor = (current: number, max: number) => {
+    if (current >= max) return "text-red-500";
+    if (current >= max * 0.9) return "text-yellow-500";
+    return "text-gray-500";
+  };
 
   const handleSkillUpdate = useCallback(
     (
@@ -390,20 +405,31 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
             </div>
 
             {isEditing ? (
-              <input
-                type="text"
-                value={skillContent.heading}
-                className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner mb-4"
-                onChange={(e) =>
-                  setSkillContent((prev) => {
-                    if (!prev) return prev;
-                    return {
-                      ...prev,
-                      heading: e.target.value,
-                    };
-                  })
-                }
-              />
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={skillContent.heading}
+                  maxLength={CHAR_LIMITS.heading}
+                  className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner mb-4"
+                  onChange={(e) =>
+                    setSkillContent((prev) => {
+                      if (!prev) return prev;
+                      return {
+                        ...prev,
+                        heading: e.target.value,
+                      };
+                    })
+                  }
+                />
+                <div
+                  className={`text-sm text-right ${getCharCountColor(
+                    skillContent.heading.length,
+                    CHAR_LIMITS.heading
+                  )}`}
+                >
+                  {skillContent.heading.length}/{CHAR_LIMITS.heading}
+                </div>
+              </div>
             ) : (
               <h2 className="text-4xl lg:text-5xl font-bold mb-4">
                 <span className="text-gray-900 dark:text-white">
@@ -416,21 +442,32 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
             )}
 
             {isEditing ? (
-              <textarea
-                value={skillContent.subtitle || ""}
-                onChange={(e) =>
-                  setSkillContent((prev) => {
-                    if (!prev) return prev;
-                    return {
-                      ...prev,
-                      subtitle: e.target.value,
-                    };
-                  })
-                }
-                className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner"
-                rows={2}
-                placeholder="Enter subtitle describing your skills"
-              />
+              <div className="space-y-2">
+                <textarea
+                  value={skillContent.subtitle || ""}
+                  maxLength={CHAR_LIMITS.subtitle}
+                  onChange={(e) =>
+                    setSkillContent((prev) => {
+                      if (!prev) return prev;
+                      return {
+                        ...prev,
+                        subtitle: e.target.value,
+                      };
+                    })
+                  }
+                  className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner"
+                  rows={2}
+                  placeholder="Enter subtitle describing your skills"
+                />
+                <div
+                  className={`text-sm text-right ${getCharCountColor(
+                    skillContent.subtitle?.length || 0,
+                    CHAR_LIMITS.subtitle
+                  )}`}
+                >
+                  {skillContent.subtitle?.length || 0}/{CHAR_LIMITS.subtitle}
+                </div>
+              </div>
             ) : (
               <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
                 {skillContent.subtitle}
@@ -475,28 +512,40 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   <div className="flex items-center flex-1">
                     <Zap className="w-8 h-8 mr-2" />
                     {isEditing ? (
-                      <input
-                        type="text"
-                        value={category.title || ""}
-                        onChange={(e) => {
-                          const newCategories = [...skillContent.categories];
-                          if (newCategories[categoryIndex]) {
-                            newCategories[categoryIndex] = {
-                              ...newCategories[categoryIndex],
-                              title: e.target.value,
-                            };
-                            setSkillContent((prev) => {
-                              if (!prev) return prev;
-                              return {
-                                ...prev,
-                                categories: newCategories,
+                      <div className="space-y-1 flex-1">
+                        <input
+                          type="text"
+                          value={category.title || ""}
+                          maxLength={CHAR_LIMITS.categoryTitle}
+                          onChange={(e) => {
+                            const newCategories = [...skillContent.categories];
+                            if (newCategories[categoryIndex]) {
+                              newCategories[categoryIndex] = {
+                                ...newCategories[categoryIndex],
+                                title: e.target.value,
                               };
-                            });
-                          }
-                        }}
-                        className="bg-gray-100 dark:bg-gray-800 text-2xl font-bold text-gray-900 dark:text-white rounded-lg p-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none flex-1"
-                        placeholder="Category Title"
-                      />
+                              setSkillContent((prev) => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  categories: newCategories,
+                                };
+                              });
+                            }
+                          }}
+                          className="bg-gray-100 dark:bg-gray-800 text-2xl font-bold text-gray-900 dark:text-white rounded-lg p-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none flex-1"
+                          placeholder="Category Title"
+                        />
+                        <div
+                          className={`text-xs text-right ${getCharCountColor(
+                            category.title?.length || 0,
+                            CHAR_LIMITS.categoryTitle
+                          )}`}
+                        >
+                          {category.title?.length || 0}/
+                          {CHAR_LIMITS.categoryTitle}
+                        </div>
+                      </div>
                     ) : (
                       <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                         {category.title}
@@ -527,20 +576,32 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                           <div className="flex items-center flex-1 min-w-0">
                             <skill.icon className="w-6 h-6 text-orange-500 mr-4 flex-shrink-0" />
                             {isEditing ? (
-                              <input
-                                type="text"
-                                value={skill.name || ""}
-                                onChange={(e) =>
-                                  handleSkillUpdate(
-                                    categoryIndex,
-                                    skillIndex,
-                                    "name",
-                                    e.target.value
-                                  )
-                                }
-                                className="flex-1 min-w-0 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-medium rounded-lg p-2 mr-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                                placeholder="Skill name"
-                              />
+                              <div className="space-y-1 flex-1 min-w-0">
+                                <input
+                                  type="text"
+                                  value={skill.name || ""}
+                                  maxLength={CHAR_LIMITS.skillName}
+                                  onChange={(e) =>
+                                    handleSkillUpdate(
+                                      categoryIndex,
+                                      skillIndex,
+                                      "name",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="flex-1 min-w-0 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-medium rounded-lg p-2 mr-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                                  placeholder="Skill name"
+                                />
+                                <div
+                                  className={`text-xs text-right ${getCharCountColor(
+                                    skill.name?.length || 0,
+                                    CHAR_LIMITS.skillName
+                                  )}`}
+                                >
+                                  {skill.name?.length || 0}/
+                                  {CHAR_LIMITS.skillName}
+                                </div>
+                              </div>
                             ) : (
                               <span className="text-gray-700 dark:text-gray-200 font-medium truncate">
                                 {skill.name}
@@ -608,15 +669,33 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
             </h3>
 
             {isEditing ? (
-              <>
+              <div className="space-y-2">
                 <input
                   type="text"
                   value={technologiesInput}
+                  maxLength={CHAR_LIMITS.technologies}
                   onChange={(e) => handleTechnologiesChange(e.target.value)}
                   className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none max-w-4xl mx-auto block"
                   placeholder="Enter technologies separated by commas (e.g., JavaScript, React, Node.js)"
                 />
-                <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto mt-4">
+
+                {isEditing && (
+                  <p className="text-center text-xs rounded-lg text-gray-400">
+                    Data should be separated by commas (e.g., data1, data2,
+                    data3)
+                  </p>
+                )}
+
+                <div
+                  className={`text-sm text-right max-w-4xl mx-auto ${getCharCountColor(
+                    technologiesInput.length,
+                    CHAR_LIMITS.technologies
+                  )}`}
+                >
+                  {technologiesInput.length}/{CHAR_LIMITS.technologies}
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
                   {skillContent.technologies &&
                   skillContent.technologies.length > 0 ? (
                     skillContent.technologies.map((tech, index) => (
@@ -634,7 +713,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                     </p>
                   )}
                 </div>
-              </>
+              </div>
             ) : (
               <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
                 {skillContent.technologies &&

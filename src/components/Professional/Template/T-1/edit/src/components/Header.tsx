@@ -64,7 +64,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
     const sections = navLinks
       .map((link) => {
         // Only query selector if href is valid and not empty
-        if (link.href && link.href.startsWith('#') && link.href.length > 1) {
+        if (link.href && link.href.startsWith("#") && link.href.length > 1) {
           const element = document.querySelector(link.href);
           return element ? element : null;
         }
@@ -93,7 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
 
   const scrollToSection = (href: string) => {
     // Only scroll if href is valid and not empty
-    if (href && href.startsWith('#') && href.length > 1) {
+    if (href && href.startsWith("#") && href.length > 1) {
       const element = document.querySelector(href);
       element?.scrollIntoView({ behavior: "smooth" });
       setActiveLink(href);
@@ -113,13 +113,13 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
     };
 
     onSave(validatedContent);
-    toast.success("Header section updated")
+    toast.success("Header section updated");
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setEditedContent(content);
-    toast.success("Cancel updatetion")
+    toast.success("Cancel updatetion");
     setIsEditing(false);
   };
 
@@ -159,7 +159,11 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`flex justify-between items-center ${isEditing ? "h-80" : "h-20"} py-2`}>
+          <div
+            className={`flex justify-between items-center ${
+              isEditing ? "h-80" : "h-20"
+            } py-2`}
+          >
             {/* Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -168,18 +172,26 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
             >
               <Code className="w-8 h-8 flex-shrink-0" />
               {isEditing ? (
-                <input
-                  type="text"
-                  value={editedContent.logoText}
-                  onChange={(e) =>
-                    setEditedContent({
-                      ...editedContent,
-                      logoText: e.target.value,
-                    })
-                  }
-                  className="text-xl font-bold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 py-1 rounded max-w-[150px]"
-                  placeholder="Logo text"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editedContent.logoText}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 50) {
+                        setEditedContent({
+                          ...editedContent,
+                          logoText: e.target.value,
+                        });
+                      }
+                    }}
+                    className="text-xl font-bold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 py-1 rounded max-w-[150px] border-2 border-dashed border-orange-300 focus:border-orange-500 focus:outline-none"
+                    placeholder="Logo text"
+                    maxLength={50}
+                  />
+                  <div className="absolute -bottom-6 right-0 text-xs text-gray-500">
+                    {editedContent.logoText.length}/50
+                  </div>
+                </div>
               ) : (
                 <span className="text-xl font-bold truncate">
                   {editedContent.logoText || "MyLogo"}
@@ -190,7 +202,9 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
             {/* Desktop Navigation (Fixed overflow/wrap) */}
             <div
               className={`hidden md:flex items-center ${
-                isEditing ? "flex-wrap justify-start gap-3" : "justify-center space-x-2"
+                isEditing
+                  ? "flex-wrap justify-start gap-3"
+                  : "justify-center space-x-2"
               } flex-1 mx-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600`}
             >
               {navLinks.map((link, index) => (
@@ -202,31 +216,47 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                   {isEditing ? (
                     <div className="flex items-center space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg border-2 border-orange-200 dark:border-orange-900 min-w-[180px]">
                       <div className="flex flex-col space-y-1 flex-1">
-                        <input
-                          type="text"
-                          value={link.label}
-                          onChange={(e) =>
-                            updateNavLink(index, "label", e.target.value)
-                          }
-                          className="bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm w-full px-2 py-1 rounded text-gray-800 dark:text-gray-100"
-                          placeholder="Link label"
-                        />
-                        <input
-                          type="text"
-                          value={link.href}
-                          onChange={(e) =>
-                            updateNavLink(index, "href", e.target.value)
-                          }
-                          className="bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 text-xs w-full px-2 py-1 rounded text-gray-600 dark:text-gray-400"
-                          placeholder="#section-id"
-                        />
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={link.label}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 50) {
+                                updateNavLink(index, "label", e.target.value);
+                              }
+                            }}
+                            className="bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm w-full px-2 py-1 rounded text-gray-800 dark:text-gray-100"
+                            placeholder="Link label"
+                            maxLength={50}
+                          />
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={link.href}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 50) {
+                                updateNavLink(index, "href", e.target.value);
+                              }
+                            }}
+                            className="bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 text-xs w-full px-2 py-1 rounded text-gray-600 dark:text-gray-400"
+                            placeholder="#section-id"
+                            maxLength={50}
+                          />
+                        </div>
                       </div>
-                      <button
-                        onClick={() => removeNavLink(index)}
-                        className="w-8 h-14 bg-red-500 flex items-center justify-center rounded-md flex-shrink-0"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+
+                      <div className="flex items-center gap-2 flex-col">
+                        <button
+                          onClick={() => removeNavLink(index)}
+                          className="w-8 h-10 bg-red-500 flex items-center justify-center rounded-md flex-shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <div className=" text-xs text-gray-500">
+                          {link.label.length}/50
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <button
@@ -314,7 +344,11 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 flex-shrink-0"
               >
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
@@ -340,15 +374,23 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                     {isEditing ? (
                       <>
                         <div className="flex items-center space-x-2">
-                          <input
-                            type="text"
-                            value={link.label}
-                            onChange={(e) =>
-                              updateNavLink(index, "label", e.target.value)
-                            }
-                            className="flex-1 bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-gray-800 dark:text-gray-100"
-                            placeholder="Link label"
-                          />
+                          <div className="relative flex-1">
+                            <input
+                              type="text"
+                              value={link.label}
+                              onChange={(e) => {
+                                if (e.target.value.length <= 50) {
+                                  updateNavLink(index, "label", e.target.value);
+                                }
+                              }}
+                              className="w-full bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-gray-800 dark:text-gray-100"
+                              placeholder="Link label"
+                              maxLength={50}
+                            />
+                            <div className="absolute -bottom-5 right-0 text-xs text-gray-500">
+                              {link.label.length}/50
+                            </div>
+                          </div>
                           <button
                             onClick={() => removeNavLink(index)}
                             className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 flex-shrink-0 rounded transition-colors"
@@ -356,15 +398,23 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                             <CloseIcon className="w-5 h-5" />
                           </button>
                         </div>
-                        <input
-                          type="text"
-                          value={link.href}
-                          onChange={(e) =>
-                            updateNavLink(index, "href", e.target.value)
-                          }
-                          className="flex-1 bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-sm text-gray-600 dark:text-gray-400"
-                          placeholder="#section-id"
-                        />
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={link.href}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 50) {
+                                updateNavLink(index, "href", e.target.value);
+                              }
+                            }}
+                            className="w-full bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-sm text-gray-600 dark:text-gray-400"
+                            placeholder="#section-id"
+                            maxLength={50}
+                          />
+                          <div className="absolute -bottom-5 right-0 text-xs text-gray-500">
+                            {link.href.length}/50
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <button

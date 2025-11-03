@@ -74,7 +74,8 @@ const App: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=template1`,
+          // `https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=template1`,
+          `https://l5fb7y1eij.execute-api.ap-south-1.amazonaws.com/dev/get-teme?userId=${userId}&professionalId=${professionalId}`,
           {
             method: "GET",
             headers: {
@@ -148,7 +149,7 @@ const App: React.FC = () => {
     );
   }
 
-  console.log(finalTemplate.content.footerContent)
+  console.log(finalTemplate.content.footerContent);
 
   return (
     <DarkModeProvider>

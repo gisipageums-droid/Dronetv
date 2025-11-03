@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -7,8 +7,13 @@ import {
   Save,
   Plus,
   Trash2,
-  Image as ImageIcon,
+  // Image as ImageIcon,
   X,
+  Crop,
+  Check,
+  ZoomIn,
+  ZoomOut,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -47,6 +52,31 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [tagInput, setTagInput] = useState<string>("");
+
+  // Character limits
+  const CHAR_LIMITS = {
+    heading: 100,
+    description: 500,
+    projectTitle: 100,
+    projectDescription: 1000,
+    tags: 300,
+    github: 500,
+    live: 500,
+    date: 20,
+    category: 50,
+  };
+
+  // Cropping states
+  const [isCropping, setIsCropping] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string>("");
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // ✅ Only update local state when content prop changes from parent
   useEffect(() => {
@@ -87,6 +117,224 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
       setTagInput("");
     }
   }, [isAdding, currentProject]);
+
+  const getCharCountColor = (current: number, max: number) => {
+    if (current >= max) return "text-red-500";
+    if (current >= max * 0.9) return "text-yellow-500";
+    return "text-gray-500";
+  };
+
+  // Image cropping functions
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    setIsDragging(true);
+    setDragStart({
+      x: touch.clientX - position.x,
+      y: touch.clientY - position.y,
+    });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const touch = e.touches[0];
+    setPosition({
+      x: touch.clientX - dragStart.x,
+      y: touch.clientY - dragStart.y,
+    });
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  const getCroppedImage = async (): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const canvas = canvasRef.current;
+      const image = imageRef.current;
+      const container = containerRef.current;
+
+      if (!canvas || !image || !container) {
+        reject(new Error("Canvas, image, or container not found"));
+        return;
+      }
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Could not get canvas context"));
+        return;
+      }
+
+      // Output size - rectangular for Project images (800x600)
+      const outputWidth = 800;
+      const outputHeight = 600;
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
+
+      // Get container dimensions
+      const containerRect = container.getBoundingClientRect();
+
+      // Crop area dimensions - rectangular for Project section
+      const cropWidth = 400;
+      const cropHeight = 300;
+
+      // Calculate the center of the crop area in the container
+      const centerX = containerRect.width / 2;
+      const centerY = containerRect.height / 2;
+
+      // Get image dimensions and position
+      const imgRect = image.getBoundingClientRect();
+      const containerLeft = containerRect.left;
+      const containerTop = containerRect.top;
+
+      // Calculate image position relative to container
+      const imgX = imgRect.left - containerLeft;
+      const imgY = imgRect.top - containerTop;
+
+      // Calculate the crop area in the original image coordinates
+      const scaleX = image.naturalWidth / imgRect.width;
+      const scaleY = image.naturalHeight / imgRect.height;
+
+      // Calculate source coordinates (what part of the original image to crop)
+      const sourceX = (centerX - imgX - cropWidth / 2) * scaleX;
+      const sourceY = (centerY - imgY - cropHeight / 2) * scaleY;
+      const sourceWidth = cropWidth * scaleX;
+      const sourceHeight = cropHeight * scaleY;
+
+      // Draw the cropped rectangular image
+      ctx.drawImage(
+        image,
+        sourceX,
+        sourceY,
+        sourceWidth,
+        sourceHeight,
+        0,
+        0,
+        outputWidth,
+        outputHeight
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Failed to create blob"));
+          }
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
+  };
+
+  const handleCropConfirm = async () => {
+    try {
+      const croppedBlob = await getCroppedImage();
+      const croppedFile = new File([croppedBlob], "cropped-project-image.jpg", {
+        type: "image/jpeg",
+      });
+
+      // Convert to base64 for immediate preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setCurrentProject((prev) =>
+            prev ? { ...prev, image: reader.result as string } : prev
+          );
+        }
+      };
+      reader.readAsDataURL(croppedFile);
+
+      setIsUploading(true);
+      setIsCropping(false);
+      setImageLoaded(false);
+
+      // Upload cropped image
+      const formData = new FormData();
+      formData.append("file", croppedFile);
+      formData.append("userId", userId!);
+      formData.append("fieldName", "projectImage");
+
+      const uploadResponse = await fetch(
+        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        setCurrentProject((prev) =>
+          prev ? { ...prev, image: uploadData.s3Url } : prev
+        );
+        toast.success("Image uploaded successfully!");
+      } else {
+        const errorData = await uploadResponse.json();
+        toast.error(
+          `Image upload failed: ${errorData.message || "Unknown error"}`
+        );
+      }
+
+      setIsUploading(false);
+    } catch (error) {
+      console.error("Error cropping image:", error);
+      toast.error("Failed to crop image");
+      setIsCropping(false);
+      setIsUploading(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setImageToCrop(reader.result as string);
+          setIsCropping(true);
+          setScale(1);
+          setPosition({ x: 0, y: 0 });
+          setImageLoaded(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleZoomIn = () => {
+    setScale((prev) => Math.min(prev + 0.1, 3));
+  };
+
+  const handleZoomOut = () => {
+    setScale((prev) => Math.max(prev - 0.1, 1));
+  };
 
   const handleSaveSection = () => {
     onSave(projectContent);
@@ -181,69 +429,11 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     setCurrentProject({ ...currentProject, [field]: value } as Project);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!userId) {
-      toast.error("User ID is required for image upload");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (reader.result) {
-        setCurrentProject((prev) =>
-          prev ? { ...prev, image: reader.result as string } : prev
-        );
-      }
-    };
-    reader.readAsDataURL(file);
-
-    try {
-      setIsUploading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("userId", userId);
-      formData.append("fieldName", "ProjectImage");
-
-      const res = await fetch(
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Upload failed: ${res.status} - ${errorText}`);
-      }
-
-      const data = await res.json();
-
-      setCurrentProject((prev) =>
-        prev ? { ...prev, image: data.s3Url } : prev
-      );
-
-      toast.success("Image uploaded successfully!");
-    } catch (err) {
-      console.error("Upload error:", err);
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : "Image upload failed. Please try again."
-      );
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
   const handleCancelEdit = () => {
     setIsEditing(false);
     setEditingProjectId(null);
     setCurrentProject(null);
-    toast.success("Cancel update")
+    toast.success("Cancel update");
     setTagInput("");
   };
 
@@ -349,24 +539,47 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
             {isEditing ? (
               <div className="space-y-4">
-                <input
-                  type="text"
-                  value={projectContent.heading}
-                  onChange={(e) =>
-                    handleContentTextChange("heading", e.target.value)
-                  }
-                  className="p-2 mx-auto w-full max-w-2xl text-4xl font-bold text-gray-900 bg-gray-100 rounded-lg border-2 lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                  placeholder="Section heading"
-                />
-                <textarea
-                  value={projectContent.description}
-                  onChange={(e) =>
-                    handleContentTextChange("description", e.target.value)
-                  }
-                  className="p-2 mx-auto w-full max-w-3xl text-xl text-gray-600 bg-gray-100 rounded-lg border-2 resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                  rows={2}
-                  placeholder="Section description"
-                />
+                <div className="space-y-1">
+                  <input
+                    type="text"
+                    value={projectContent.heading}
+                    onChange={(e) =>
+                      handleContentTextChange("heading", e.target.value)
+                    }
+                    maxLength={CHAR_LIMITS.heading}
+                    className="p-2 mx-auto w-full max-w-2xl text-4xl font-bold text-gray-900 bg-gray-100 rounded-lg border-2 lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    placeholder="Section heading"
+                  />
+                  <div
+                    className={`text-sm text-right max-w-2xl mx-auto ${getCharCountColor(
+                      projectContent.heading.length,
+                      CHAR_LIMITS.heading
+                    )}`}
+                  >
+                    {projectContent.heading.length}/{CHAR_LIMITS.heading}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <textarea
+                    value={projectContent.description}
+                    onChange={(e) =>
+                      handleContentTextChange("description", e.target.value)
+                    }
+                    maxLength={CHAR_LIMITS.description}
+                    className="p-2 mx-auto w-full max-w-3xl text-xl text-gray-600 bg-gray-100 rounded-lg border-2 resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    rows={2}
+                    placeholder="Section description"
+                  />
+                  <div
+                    className={`text-sm text-right max-w-3xl mx-auto ${getCharCountColor(
+                      projectContent.description.length,
+                      CHAR_LIMITS.description
+                    )}`}
+                  >
+                    {projectContent.description.length}/
+                    {CHAR_LIMITS.description}
+                  </div>
+                </div>
               </div>
             ) : (
               <>
@@ -397,93 +610,175 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
               <div className="flex flex-col space-y-4">
                 <div className="relative">
-                  <input
-                    type="file"
-                    onChange={handleImageUpload}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    accept="image/*"
-                    disabled={isUploading}
-                  />
-                  <div className="p-6 text-center text-gray-500 rounded-lg border-2 border-gray-300 border-dashed dark:border-gray-600 dark:text-gray-400">
-                    {currentProject?.image ? (
+                  <label className="flex flex-col justify-center items-center p-6 text-center text-gray-500 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer dark:border-gray-600 dark:text-gray-400">
+                    <Upload className="mb-2 w-12 h-12" />
+                    <span>Click to upload project image</span>
+                    <input
+                      type="file"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      accept="image/*"
+                    />
+                  </label>
+                  {currentProject?.image && (
+                    <div className="mt-4">
+                      <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                        Image Preview:
+                      </p>
                       <img
                         src={currentProject.image}
                         alt="Project Preview"
                         className="object-cover w-full h-48 rounded-lg"
                       />
-                    ) : (
-                      <div className="flex flex-col justify-center items-center">
-                        <ImageIcon className="mb-2 w-12 h-12" />
-                        <span>
-                          {isUploading ? "Uploading..." : "Click to upload"}
-                        </span>
-                      </div>
-                    )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <input
+                    type="text"
+                    value={currentProject?.title || ""}
+                    onChange={(e) =>
+                      handleProjectChange("title", e.target.value)
+                    }
+                    maxLength={CHAR_LIMITS.projectTitle}
+                    placeholder="Project Title"
+                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  />
+                  <div
+                    className={`text-sm text-right ${getCharCountColor(
+                      currentProject?.title?.length || 0,
+                      CHAR_LIMITS.projectTitle
+                    )}`}
+                  >
+                    {currentProject?.title?.length || 0}/
+                    {CHAR_LIMITS.projectTitle}
                   </div>
                 </div>
 
-                <input
-                  type="text"
-                  value={currentProject?.title || ""}
-                  onChange={(e) => handleProjectChange("title", e.target.value)}
-                  placeholder="Project Title"
-                  className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                />
-                <textarea
-                  value={currentProject?.description || ""}
-                  onChange={(e) =>
-                    handleProjectChange("description", e.target.value)
-                  }
-                  placeholder="Project Description"
-                  rows={3}
-                  className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 resize-none dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                />
+                <div className="space-y-1">
+                  <textarea
+                    value={currentProject?.description || ""}
+                    onChange={(e) =>
+                      handleProjectChange("description", e.target.value)
+                    }
+                    maxLength={CHAR_LIMITS.projectDescription}
+                    placeholder="Project Description"
+                    rows={3}
+                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 resize-none dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  />
+                  <div
+                    className={`text-sm text-right ${getCharCountColor(
+                      currentProject?.description?.length || 0,
+                      CHAR_LIMITS.projectDescription
+                    )}`}
+                  >
+                    {currentProject?.description?.length || 0}/
+                    {CHAR_LIMITS.projectDescription}
+                  </div>
+                </div>
 
-                <input
-                  type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  placeholder="Tags (comma separated, e.g., React, Node.js)"
-                  className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                />
+                <div className="space-y-1">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    maxLength={CHAR_LIMITS.tags}
+                    placeholder="Tags (comma separated, e.g., React, Node.js)"
+                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  />
+                  <div
+                    className={`text-sm text-right ${getCharCountColor(
+                      tagInput.length,
+                      CHAR_LIMITS.tags
+                    )}`}
+                  >
+                    {tagInput.length}/{CHAR_LIMITS.tags}
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <input
-                    type="url"
-                    value={currentProject?.github || ""}
-                    onChange={(e) =>
-                      handleProjectChange("github", e.target.value)
-                    }
-                    placeholder="GitHub Link"
-                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                  />
-                  <input
-                    type="url"
-                    value={currentProject?.live || ""}
-                    onChange={(e) =>
-                      handleProjectChange("live", e.target.value)
-                    }
-                    placeholder="Live Demo Link"
-                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    value={currentProject?.date || ""}
-                    onChange={(e) =>
-                      handleProjectChange("date", e.target.value)
-                    }
-                    placeholder="Date (e.g., 2024)"
-                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    value={currentProject?.category || ""}
-                    onChange={(e) =>
-                      handleProjectChange("category", e.target.value)
-                    }
-                    placeholder="Category (e.g., Web Development)"
-                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                  />
+                  <div className="space-y-1">
+                    <input
+                      type="url"
+                      value={currentProject?.github || ""}
+                      onChange={(e) =>
+                        handleProjectChange("github", e.target.value)
+                      }
+                      maxLength={CHAR_LIMITS.github}
+                      placeholder="GitHub Link"
+                      className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    />
+                    <div
+                      className={`text-xs text-right ${getCharCountColor(
+                        currentProject?.github?.length || 0,
+                        CHAR_LIMITS.github
+                      )}`}
+                    >
+                      {currentProject?.github?.length || 0}/{CHAR_LIMITS.github}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <input
+                      type="url"
+                      value={currentProject?.live || ""}
+                      onChange={(e) =>
+                        handleProjectChange("live", e.target.value)
+                      }
+                      maxLength={CHAR_LIMITS.live}
+                      placeholder="Live Demo Link"
+                      className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    />
+                    <div
+                      className={`text-xs text-right ${getCharCountColor(
+                        currentProject?.live?.length || 0,
+                        CHAR_LIMITS.live
+                      )}`}
+                    >
+                      {currentProject?.live?.length || 0}/{CHAR_LIMITS.live}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <input
+                      type="text"
+                      value={currentProject?.date || ""}
+                      onChange={(e) =>
+                        handleProjectChange("date", e.target.value)
+                      }
+                      maxLength={CHAR_LIMITS.date}
+                      placeholder="Date (e.g., 2024)"
+                      className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    />
+                    <div
+                      className={`text-xs text-right ${getCharCountColor(
+                        currentProject?.date?.length || 0,
+                        CHAR_LIMITS.date
+                      )}`}
+                    >
+                      {currentProject?.date?.length || 0}/{CHAR_LIMITS.date}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <input
+                      type="text"
+                      value={currentProject?.category || ""}
+                      onChange={(e) =>
+                        handleProjectChange("category", e.target.value)
+                      }
+                      maxLength={CHAR_LIMITS.category}
+                      placeholder="Category (e.g., Web Development)"
+                      className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    />
+                    <div
+                      className={`text-xs text-right ${getCharCountColor(
+                        currentProject?.category?.length || 0,
+                        CHAR_LIMITS.category
+                      )}`}
+                    >
+                      {currentProject?.category?.length || 0}/
+                      {CHAR_LIMITS.category}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end space-x-4">
@@ -569,10 +864,8 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     {editingProjectId === project.id ? (
                       <div className="relative">
                         <label className="flex absolute inset-0 z-10 flex-col justify-center items-center text-white cursor-pointer bg-black/50">
-                          <ImageIcon className="mb-2 w-12 h-12" />
-                          <span>
-                            {isUploading ? "Uploading..." : "Change image"}
-                          </span>
+                          <Upload className="mb-2 w-12 h-12" />
+                          <span>Change image</span>
                           <input
                             type="file"
                             onChange={handleImageUpload}
@@ -602,14 +895,26 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <Calendar className="mr-1 w-4 h-4" />
                         {editingProjectId === project.id ? (
-                          <input
-                            type="text"
-                            value={currentProject?.date || ""}
-                            onChange={(e) =>
-                              handleProjectChange("date", e.target.value)
-                            }
-                            className="w-16 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
-                          />
+                          <div className="space-y-1">
+                            <input
+                              type="text"
+                              value={currentProject?.date || ""}
+                              onChange={(e) =>
+                                handleProjectChange("date", e.target.value)
+                              }
+                              maxLength={CHAR_LIMITS.date}
+                              className="w-16 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+                            />
+                            <div
+                              className={`text-xs text-right ${getCharCountColor(
+                                currentProject?.date?.length || 0,
+                                CHAR_LIMITS.date
+                              )}`}
+                            >
+                              {currentProject?.date?.length || 0}/
+                              {CHAR_LIMITS.date}
+                            </div>
+                          </div>
                         ) : (
                           project.date
                         )}
@@ -617,14 +922,26 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       <div className="flex items-center text-sm text-orange-500">
                         <Tag className="mr-1 w-4 h-4" />
                         {editingProjectId === project.id ? (
-                          <input
-                            type="text"
-                            value={currentProject?.category || ""}
-                            onChange={(e) =>
-                              handleProjectChange("category", e.target.value)
-                            }
-                            className="w-24 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
-                          />
+                          <div className="space-y-1">
+                            <input
+                              type="text"
+                              value={currentProject?.category || ""}
+                              onChange={(e) =>
+                                handleProjectChange("category", e.target.value)
+                              }
+                              maxLength={CHAR_LIMITS.category}
+                              className="w-24 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+                            />
+                            <div
+                              className={`text-xs text-right ${getCharCountColor(
+                                currentProject?.category?.length || 0,
+                                CHAR_LIMITS.category
+                              )}`}
+                            >
+                              {currentProject?.category?.length || 0}/
+                              {CHAR_LIMITS.category}
+                            </div>
+                          </div>
                         ) : (
                           project.category
                         )}
@@ -632,14 +949,26 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     </div>
 
                     {editingProjectId === project.id ? (
-                      <input
-                        type="text"
-                        value={currentProject?.title || ""}
-                        onChange={(e) =>
-                          handleProjectChange("title", e.target.value)
-                        }
-                        className="mb-3 w-full text-xl font-bold text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
-                      />
+                      <div className="space-y-1">
+                        <input
+                          type="text"
+                          value={currentProject?.title || ""}
+                          onChange={(e) =>
+                            handleProjectChange("title", e.target.value)
+                          }
+                          maxLength={CHAR_LIMITS.projectTitle}
+                          className="mb-3 w-full text-xl font-bold text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+                        />
+                        <div
+                          className={`text-xs text-right ${getCharCountColor(
+                            currentProject?.title?.length || 0,
+                            CHAR_LIMITS.projectTitle
+                          )}`}
+                        >
+                          {currentProject?.title?.length || 0}/
+                          {CHAR_LIMITS.projectTitle}
+                        </div>
+                      </div>
                     ) : (
                       <h3 className="mb-3 text-xl font-bold text-gray-900 transition-colors duration-200 dark:text-white group-hover:text-orange-500">
                         {project.title}
@@ -647,14 +976,26 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     )}
 
                     {editingProjectId === project.id ? (
-                      <textarea
-                        value={currentProject?.description || ""}
-                        onChange={(e) =>
-                          handleProjectChange("description", e.target.value)
-                        }
-                        className="p-2 mb-4 w-full text-gray-900 bg-transparent rounded border border-gray-300 resize-none dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                        rows={3}
-                      />
+                      <div className="space-y-1">
+                        <textarea
+                          value={currentProject?.description || ""}
+                          onChange={(e) =>
+                            handleProjectChange("description", e.target.value)
+                          }
+                          maxLength={CHAR_LIMITS.projectDescription}
+                          className="p-2 mb-4 w-full text-gray-900 bg-transparent rounded border border-gray-300 resize-none dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                          rows={3}
+                        />
+                        <div
+                          className={`text-xs text-right ${getCharCountColor(
+                            currentProject?.description?.length || 0,
+                            CHAR_LIMITS.projectDescription
+                          )}`}
+                        >
+                          {currentProject?.description?.length || 0}/
+                          {CHAR_LIMITS.projectDescription}
+                        </div>
+                      </div>
                     ) : (
                       <p className="mb-4 leading-relaxed text-gray-600 dark:text-gray-300">
                         {project.description}
@@ -664,13 +1005,24 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     {/* Tech Tags */}
                     <div className="flex flex-wrap gap-2 mb-4">
                       {editingProjectId === project.id ? (
-                        <input
-                          type="text"
-                          value={tagInput}
-                          onChange={(e) => setTagInput(e.target.value)}
-                          className="p-2 w-full text-gray-900 bg-transparent rounded border border-gray-300 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                          placeholder="Separate tags with commas"
-                        />
+                        <div className="space-y-1 w-full">
+                          <input
+                            type="text"
+                            value={tagInput}
+                            onChange={(e) => setTagInput(e.target.value)}
+                            maxLength={CHAR_LIMITS.tags}
+                            className="p-2 w-full text-gray-900 bg-transparent rounded border border-gray-300 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                            placeholder="Separate tags with commas"
+                          />
+                          <div
+                            className={`text-xs text-right ${getCharCountColor(
+                              tagInput.length,
+                              CHAR_LIMITS.tags
+                            )}`}
+                          >
+                            {tagInput.length}/{CHAR_LIMITS.tags}
+                          </div>
+                        </div>
                       ) : (
                         project.tags.map((tag, index) => (
                           <span
@@ -681,30 +1033,61 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                           </span>
                         ))
                       )}
+
+                      {isEditing && (
+                        <p className="text-center text-xs text-gray-400">
+                          Tags should be separated by commas (e.g., data1,
+                          data2, data3)
+                        </p>
+                      )}
                     </div>
 
                     {/* Links */}
                     <div className="flex space-x-4">
                       {editingProjectId === project.id ? (
                         <>
-                          <input
-                            type="url"
-                            value={currentProject?.github || ""}
-                            onChange={(e) =>
-                              handleProjectChange("github", e.target.value)
-                            }
-                            placeholder="GitHub URL"
-                            className="flex-1 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
-                          />
-                          <input
-                            type="url"
-                            value={currentProject?.live || ""}
-                            onChange={(e) =>
-                              handleProjectChange("live", e.target.value)
-                            }
-                            placeholder="Live Demo URL"
-                            className="flex-1 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
-                          />
+                          <div className="space-y-1 flex-1">
+                            <input
+                              type="url"
+                              value={currentProject?.github || ""}
+                              onChange={(e) =>
+                                handleProjectChange("github", e.target.value)
+                              }
+                              maxLength={CHAR_LIMITS.github}
+                              placeholder="GitHub URL"
+                              className="w-full text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+                            />
+                            <div
+                              className={`text-xs text-right ${getCharCountColor(
+                                currentProject?.github?.length || 0,
+                                CHAR_LIMITS.github
+                              )}`}
+                            >
+                              {currentProject?.github?.length || 0}/
+                              {CHAR_LIMITS.github}
+                            </div>
+                          </div>
+                          <div className="space-y-1 flex-1">
+                            <input
+                              type="url"
+                              value={currentProject?.live || ""}
+                              onChange={(e) =>
+                                handleProjectChange("live", e.target.value)
+                              }
+                              maxLength={CHAR_LIMITS.live}
+                              placeholder="Live Demo URL"
+                              className="w-full text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+                            />
+                            <div
+                              className={`text-xs text-right ${getCharCountColor(
+                                currentProject?.live?.length || 0,
+                                CHAR_LIMITS.live
+                              )}`}
+                            >
+                              {currentProject?.live?.length || 0}/
+                              {CHAR_LIMITS.live}
+                            </div>
+                          </div>
                         </>
                       ) : (
                         <>
@@ -740,6 +1123,154 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
           )}
         </motion.div>
       </div>
+
+      {/* Image Cropping Modal */}
+      {isCropping && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
+            <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <Crop className="w-6 h-6" />
+                Crop Project Image
+              </h3>
+              <button
+                onClick={() => setIsCropping(false)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-900 dark:text-white" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div
+                ref={containerRef}
+                className="relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 cursor-move select-none"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {/* Rectangular crop overlay for Project section */}
+                <div className="absolute inset-0 pointer-events-none z-10">
+                  <svg className="w-full h-full">
+                    <defs>
+                      <mask id="rectMask">
+                        <rect width="100%" height="100%" fill="white" />
+                        <rect
+                          x="50%"
+                          y="50%"
+                          width="400"
+                          height="300"
+                          fill="black"
+                          transform="translate(-200, -150)"
+                        />
+                      </mask>
+                    </defs>
+                    <rect
+                      width="100%"
+                      height="100%"
+                      fill="rgba(0,0,0,0.5)"
+                      mask="url(#rectMask)"
+                    />
+                    <rect
+                      x="50%"
+                      y="50%"
+                      width="400"
+                      height="300"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeDasharray="10,5"
+                      transform="translate(-200, -150)"
+                    />
+                  </svg>
+                </div>
+
+                <img
+                  ref={imageRef}
+                  src={imageToCrop}
+                  alt="Crop preview"
+                  onLoad={handleImageLoad}
+                  className="absolute top-1/2 left-1/2 max-w-none select-none"
+                  style={{
+                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
+                    transformOrigin: "center",
+                    opacity: imageLoaded ? 1 : 0,
+                    transition: imageLoaded ? "none" : "opacity 0.3s",
+                  }}
+                  draggable={false}
+                />
+
+                {!imageLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center text-white">
+                    <p>Loading image...</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">
+                      Zoom
+                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleZoomOut}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <ZoomOut className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleZoomIn}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        <ZoomIn className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.01}
+                    value={scale}
+                    onChange={(e) => setScale(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+
+                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                  Drag to reposition • Use slider or buttons to zoom
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setIsCropping(false)}
+                className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCropConfirm}
+                disabled={!imageLoaded}
+                className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Check className="w-5 h-5" />
+                Crop & Upload
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden canvas for cropping */}
+      <canvas ref={canvasRef} className="hidden" />
     </section>
   );
 };
