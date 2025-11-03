@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import logo from"/logos/logo.svg"
+import logo from "/logos/logo.svg"
 export default function Header({
   headerData,
   onStateChange,
@@ -13,7 +13,7 @@ export default function Header({
 }) {
   // Character limits
   const CHAR_LIMITS = {
-    companyName: 100,
+    companyName: 50,
     navItem: 50,
   };
 
@@ -289,18 +289,17 @@ export default function Header({
         transition={{ duration: 0.6 }}
       >
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 mx-auto max-w-7xl ">
+          <div className="flex items-center justify-center gap-[60px] h-16 mx-auto min-w-7xl ">
             {/* Responsive Edit/Save Button Container */}
             <div className="absolute md:right-0 right-[60px]  z-[999999999]">
               {isEditing ? (
                 <button
                   onClick={handleSave}
                   disabled={isUploading}
-                  className={`flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 ${
-                    isUploading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-500 hover:bg-green-600"
-                  } text-white rounded-lg shadow text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]`}
+                  className={`flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 ${isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600"
+                    } text-white rounded-lg shadow text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]`}
                 >
                   {isUploading ? (
                     <>
@@ -325,12 +324,13 @@ export default function Header({
             </div>
 
             {/* Logo + Company Name */}
+            {/* Logo + Company Name - Fixed Layout */}
             <motion.div
               className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
               whileHover={{ scale: 1.05 }}
             >
               {/* Enhanced Logo with Animations */}
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
                   animate={{
@@ -354,7 +354,7 @@ export default function Header({
                   <motion.img
                     src={headerState.logoSrc || logo}
                     alt="Logo"
-                    className="object-contain w-[40px] h-[40px] "
+                    className="object-contain w-[40px] h-[40px] flex-shrink-0"
                     animate={{
                       y: [0, -5, 0],
                       transition: {
@@ -394,9 +394,9 @@ export default function Header({
                 />
               </div>
 
-              {/* Editable Company Name */}
+              {/* Editable Company Name - Fixed width to prevent layout shift */}
               {isEditing ? (
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-[120px]">
                   <input
                     type="text"
                     value={headerState.companyName}
@@ -406,16 +406,21 @@ export default function Header({
                         companyName: e.target.value,
                       }))
                     }
-                    className="table w-32 px-3 py-2 text-sm bg-white border rounded md:text-base"
+                    className="w-full px-3 py-2 text-sm bg-white border rounded md:text-base min-w-[120px]"
                     placeholder="Company Name"
                     maxLength={CHAR_LIMITS.companyName}
+                    style={{
+                      width: "100%",
+                      minWidth: "120px",
+                      maxWidth: "200px"
+                    }}
                   />
                   <div className="text-xs text-gray-500 text-right mt-1">
                     {headerState.companyName.length}/{CHAR_LIMITS.companyName} characters
                   </div>
                 </div>
               ) : (
-                <span className="text-lg sm:text-xl md:text-2xl">
+                <span className="text-lg sm:text-xl md:text-2xl flex-shrink-0">
                   {headerState.companyName}
                 </span>
               )}
@@ -611,31 +616,28 @@ export default function Header({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
