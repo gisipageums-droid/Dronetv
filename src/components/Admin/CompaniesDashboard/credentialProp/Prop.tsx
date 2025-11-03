@@ -63,7 +63,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
 
   if (!isOpen) return null;
 
-    useEffect(() => {
+  useEffect(() => {
     if (data) {
       console.log("🔍 Modal Data:", data.formData.rawData);
     }
@@ -116,7 +116,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               {/* Basic Information */}
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-lg text-gray-800 mb-3">
-                  Company Information 
+                  Company Information
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
@@ -133,17 +133,12 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                         data.formData.rawData.mainCategories && Array.isArray(data.formData.rawData.mainCategories)
                           ? data.formData.rawData.mainCategories.join(", ")
                           : (data.formData.rawData.companyCategory && Array.isArray(data.formData.rawData.companyCategory)
-                              ? data.formData.rawData.companyCategory.join(", ")
-                              : "Not specified")
+                            ? data.formData.rawData.companyCategory.join(", ")
+                            : "Not specified")
                       )}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Company Size</p>
-                    <p className="font-medium">
-                      {"Not specified"}
-                    </p>
-                  </div>
+
                   <div>
                     <p className="text-sm text-gray-600">Established Year</p>
                     <p className="font-medium">
@@ -158,22 +153,9 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       {data.formData.rawData.websiteUrl || "None"}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Experience Years</p>
-                    <p className="font-medium">
-                      {typeof data.formData.rawData.aboutExperienceYears === "number"
-                        ? data.formData.rawData.aboutExperienceYears
-                        : 0}
-                    </p>
-                  </div>
+
                 </div>
-                <div className="mt-4">
-                  <p className="text-sm text-gray-600">Description</p>
-                  <p className="font-medium">
-                    {data.formData.rawData.servicesDescription ||
-                      "No description provided"}
-                  </p>
-                </div>
+
               </div>
 
               {/* Contact Information */}
@@ -350,9 +332,9 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     <p className="font-medium">
                       {Array.isArray(data.formData?.rawData?.services)
                         ? data.formData.rawData.services
-                            .map((s: any) => s?.title || "")
-                            .filter(Boolean)
-                            .join(", ")
+                          .map((s: any) => s?.title || "")
+                          .filter(Boolean)
+                          .join(", ")
                         : "None specified"}
                     </p>
                   </div>
@@ -361,9 +343,9 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     <p className="font-medium">
                       {Array.isArray(data.formData?.rawData?.products)
                         ? data.formData.rawData.products
-                            .map((p: any) => p?.title || "")
-                            .filter(Boolean)
-                            .join(", ")
+                          .map((p: any) => p?.title || "")
+                          .filter(Boolean)
+                          .join(", ")
                         : "None specified"}
                     </p>
                   </div>
@@ -372,12 +354,12 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     <p className="font-medium">
                       {data.formData?.rawData?.sectorsServed
                         ? Object.entries(data.formData.rawData.sectorsServed as Record<string, string[]>)
-                            .map(([sector, arr]) =>
-                              Array.isArray(arr) && arr.length > 0
-                                ? `${sector}: ${arr.join(", ")}`
-                                : sector
-                            )
-                            .join("; ")
+                          .map(([sector, arr]) =>
+                            Array.isArray(arr) && arr.length > 0
+                              ? `${sector}: ${arr.join(", ")}`
+                              : sector
+                          )
+                          .join("; ")
                         : "None specified"}
                     </p>
                   </div>
@@ -411,69 +393,20 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       View Document
                     </a>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Insurance Details</p>
-                    <p className="font-medium">
-                      {"Not provided"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Certifications</p>
-                    <p className="font-medium">
-                      {"None specified"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Equipment Details</p>
-                    <p className="font-medium">
-                      {"Not provided"}
-                    </p>
-                  </div>
+
+
+
                 </div>
               </div>
 
               {/* Completion Metrics */}
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-lg text-gray-800 mb-3">
-                  Completion Metrics
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600">
-                      Completion Percentage
-                    </p>
-                    <p className="font-medium">
-                      {data.formData?.completionMetrics?.completionPercentage ||
-                        0}
-                      %
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Completed Fields</p>
-                    <p className="font-medium">
-                      {data.formData?.completionMetrics?.completedFields || 0}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Total Key Fields</p>
-                    <p className="font-medium">
-                      {data.formData?.completionMetrics?.totalKeyFields || 0}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Quality Score</p>
-                    <p className="font-medium">
-                      {data.formData?.completionMetrics?.qualityScore || 0}
-                    </p>
-                  </div>
-                </div>
-              </div>
+
 
               {/* Metadata */}
               <div className="bg-gray-100 p-4 rounded-lg">
-                <h4 className="font-semibold text-lg text-gray-800 mb-3">
+                {/* <h4 className="font-semibold text-lg text-gray-800 mb-3">
                   Metadata
-                </h4>
+                </h4> */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">Published ID</p>
@@ -487,30 +420,8 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       {data.draftId}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Template Used</p>
-                    <p className="font-medium">
-                      Template {data.metadata?.templateUsed}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Current Status</p>
-                    <p className="font-medium capitalize">
-                      {data.formData?.publishedMetadata?.currentStatus}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">User ID</p>
-                    <p className="font-medium">
-                      {data.formData?.submissionMetadata?.userId}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Version</p>
-                    <p className="font-medium">
-                      {data.formData?.submissionMetadata?.version}
-                    </p>
-                  </div>
+
+
                 </div>
               </div>
 
