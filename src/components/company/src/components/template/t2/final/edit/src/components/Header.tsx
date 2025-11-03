@@ -37,7 +37,7 @@ export default function Header({
   // choose container width based on companyName length (adjust threshold as needed)
   const containerMaxClass =
     (content?.companyName || "").trim().length > 30 /* threshold */
-      ? "max-w-full"
+      ? "min-w-[1270px]"
       : "max-w-7xl";
 
   // Cropping states
@@ -371,8 +371,8 @@ export default function Header({
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
                       }`}
                   >
                     1:1 (Square)
@@ -380,8 +380,8 @@ export default function Header({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
                       }`}
                   >
                     4:3 (Standard)
@@ -389,8 +389,8 @@ export default function Header({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
                       }`}
                   >
                     16:9 (Widescreen)
@@ -444,8 +444,8 @@ export default function Header({
       {/* Rest of the header code remains exactly the same */}
       <motion.header
         className={`fixed top-16 left-0 right-0 border-b z-10 ${theme === "dark"
-            ? "bg-gray-800 border-gray-700 text-gray-300"
-            : "bg-white border-gray-200"
+          ? "bg-gray-800 border-gray-700 text-gray-300"
+          : "bg-white border-gray-200"
           }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -538,8 +538,8 @@ export default function Header({
                     key={item.id}
                     href={item.href}
                     className={`font-medium relative group whitespace-nowrap ${theme === "dark"
-                        ? "text-gray-300 hover:text-gray-200"
-                        : "text-gray-700 hover:text-primary"
+                      ? "text-gray-300 hover:text-gray-200"
+                      : "text-gray-700 hover:text-primary"
                       }`}
                     whileHover={{ y: -2 }}
                     onClick={(e) => {
@@ -587,8 +587,8 @@ export default function Header({
                   onClick={handleSave}
                   disabled={isUploading}
                   className={`${isUploading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-600 hover:font-semibold"
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:font-semibold"
                     } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl whitespace-nowrap`}
                 >
                   {isUploading ? (
@@ -616,8 +616,8 @@ export default function Header({
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={`hover:text-primary transition-colors p-2 ${theme === "dark"
-                    ? "text-gray-300 hover:text-gray-200"
-                    : "text-gray-700 hover:text-primary"
+                  ? "text-gray-300 hover:text-gray-200"
+                  : "text-gray-700 hover:text-primary"
                   }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
