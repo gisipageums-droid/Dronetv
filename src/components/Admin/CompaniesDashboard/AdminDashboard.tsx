@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import {Search,MapPin,ChevronDown,ArrowRight,Building2,Menu,X,Eye,Key,CheckCircle,XCircle,Trash2,Clock,AlertCircle,Edit} from "lucide-react";
+import { Search, MapPin, ChevronDown, ArrowRight, Building2, Menu, X, Eye, Key, CheckCircle, XCircle, Trash2, Clock, AlertCircle, Edit } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
@@ -325,146 +325,165 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
   const statusStyle = getStatusBadge(company.reviewStatus);
 
   return (
-    <div className="overflow-hidden w-full h-full rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group">
-      <div className="p-4 md:p-6 lg:p-8">
-        <div className="flex justify-between items-center mb-4 md:mb-6">
-          <div className="flex gap-3 items-center md:gap-4">
-            <div className="flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16">
+    <div className="overflow-hidden w-full h-auto rounded-2xl border-l-4 sm:border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group">
+      <div className="p-4 sm:p-5 md:p-6 lg:p-8">
+        {/* Header: stacks on small screens, row on >=sm */}
+        <div className="grid grid-cols-1 sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 gap-3 sm:gap-0">
+          <div className="flex gap-3 items-start sm:items-center min-w-0">
+            {/* Logo */}
+            <div className="flex flex-shrink-0 overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md sm:w-14 sm:h-14 md:w-16 md:h-16">
               <img
                 src={company.previewImage || placeholderImg}
-                alt={`${company.companyName} logo`}
+                alt={`${company.companyName || "Company"} logo`}
                 className="object-contain w-full h-full"
                 onError={(e) => {
-                  const t = e.target as HTMLImageElement;
-                  if (t.src !== placeholderImg) t.src = placeholderImg;
+                  const img = e.currentTarget as HTMLImageElement;
+                  if (img.src !== placeholderImg) img.src = placeholderImg;
                 }}
                 loading="lazy"
+                draggable={false}
               />
             </div>
-            <div className="max-w-[calc(100%-60px)] md:max-w-none">
-              <h3 className="text-lg font-bold text-gray-900 md:text-xl line-clamp-2">{company.companyName || "Unnamed Company"}</h3>
-              <div className="flex items-center mt-1 text-gray-600">
-                <MapPin className="mr-1 w-3 h-3" />
-                <span className="text-xs md:text-sm">{company.location || "Location not specified"}</span>
+
+            {/* Title + location: use min-w-0 so truncate works */}
+            <div className="min-w-0">
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 truncate line-clamp-2">
+                {company.companyName || "Unnamed Company"}
+              </h3>
+
+              <div className="flex items-center mt-1 text-gray-600 text-xs sm:text-sm">
+                <MapPin className="mr-1 w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{company.location || "Location not specified"}</span>
               </div>
             </div>
           </div>
 
-          <div className="hidden text-right sm:block">
-            <div className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 md:px-3 md:py-1 rounded-full text-xs font-medium`}>
+          {/* Status badge: visible on all sizes, compact on small screens */}
+          <div className="mt-2 sm:mt-0 flex-shrink-0">
+            <div
+              className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs sm:text-sm font-medium`}
+              aria-hidden={false}
+            >
               <Building2 className="w-3 h-3" />
-              {statusStyle.label}
+              <span className="truncate">{statusStyle.label}</span>
             </div>
           </div>
         </div>
 
+        {/* Sectors */}
         <div className="mb-4 md:mb-6">
-          <div className="flex flex-wrap gap-1 md:gap-2">
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             {(company.sectors && company.sectors.length > 0 ? company.sectors : ["General"]).map((sector: string, index: number) => (
-              <span key={index} className="px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full md:px-3 md:py-1">
+              <span
+                key={index}
+                className="px-2 py-1 text-xs sm:text-sm font-medium text-blue-800 bg-blue-100 rounded-full"
+              >
                 {sector}
               </span>
             ))}
           </div>
         </div>
 
+        {/* Info + Buttons */}
         <div className="flex flex-col gap-3">
-          <div className="flex gap-3 items-center md:gap-6">
-            <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg md:px-4 md:py-2">
-              <span className="text-xs font-bold text-purple-600 md:text-sm">{formatDate(company.publishedDate)}</span>
-              <span className="hidden text-xs text-gray-600 md:block">Published</span>
+          <div className="flex flex-wrap gap-3 items-center">
+            <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg">
+              <span className="text-xs sm:text-sm font-bold text-purple-600">{formatDate(company.publishedDate)}</span>
+              <span className="hidden sm:inline text-xs text-gray-600">Published</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            {/* <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onPreview(company.publishedId);
-              }}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 md:text-sm"
-              aria-label={`Preview ${company.companyName}`}
-              disabled={disabled}
-            >
-              <Eye className="w-3 h-3 md:w-4 md:h-4" />
-              Preview
-            </button> */}
-
+          {/* Buttons grid: 1 col mobile, 2 col sm, 3 col lg */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onCredentials(company.publishedId);
               }}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg transition-colors hover:bg-purple-200 md:text-sm"
               aria-label={`Credentials ${company.companyName}`}
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-purple-700 bg-purple-100 rounded-lg transition-colors hover:bg-purple-200 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
+              aria-disabled={disabled}
             >
-              <Key className="w-3 h-3 md:w-4 md:h-4" />
-              Access Details
+              <Key className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="truncate">Access Details</span>
             </button>
 
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(company.publishedId, company.templateSelection);
               }}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 md:text-sm"
               aria-label={`Edit ${company.companyName}`}
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
+              aria-disabled={disabled}
             >
-              <Edit className="w-3 h-3 md:w-4 md:h-4" />
-              Edit/preview
+              <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="truncate">Edit / Preview</span>
             </button>
 
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onApprove(company.publishedId);
               }}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 md:text-sm"
               aria-label={`Approve ${company.companyName}`}
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
+              aria-disabled={disabled}
             >
-              <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-              Approve
+              <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="truncate">Approve</span>
             </button>
 
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onReject(company.publishedId);
               }}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 md:text-sm"
               aria-label={`Reject ${company.companyName}`}
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
+              aria-disabled={disabled}
             >
-              <XCircle className="w-3 h-3 md:w-4 md:h-4" />
-              Reject
+              <XCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="truncate">Reject</span>
             </button>
 
+            {/* Delete spans full row on small/medium -> set col-span accordingly */}
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(company.publishedId);
               }}
-              className="flex col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 md:text-sm"
               aria-label={`Delete ${company.companyName}`}
+              className="flex col-span-1 sm:col-span-2 lg:col-span-3 gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
+              aria-disabled={disabled}
             >
-              <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
-              Delete
+              <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="truncate">Delete</span>
             </button>
           </div>
         </div>
 
+        {/* Footer */}
         <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
-          <div className="flex justify-between items-center text-xs text-gray-400">
-            <span className="mr-2 truncate">ID: {company.publishedId || "No ID"}</span>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs text-gray-400 gap-1 sm:gap-0">
+            <span className="truncate">ID: {company.publishedId || "No ID"}</span>
             <span>v{company.version}</span>
           </div>
         </div>
       </div>
     </div>
+
+
   );
 };
 
@@ -866,9 +885,9 @@ const AdminDashboard: React.FC = () => {
         toast.error("Company not found");
         return;
       }
-      
+
       setIsMutating(true);
-      
+
       // Navigate to admin edit page with company's userId
       if (templateSelection === "template-1") {
         navigate(`/admin/companies/edit/1/${publishedId}/${company.userId}`);
