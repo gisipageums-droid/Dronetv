@@ -63,7 +63,7 @@ export default function EditableHero({
     secondaryBtn: heroData?.secondaryBtn || "Learn more",
     primaryButtonLink: heroData?.primaryButtonLink || "#cta",
     secondaryButtonLink: heroData?.secondaryButtonLink || "#how",
-    trustText: heroData?.trustText || "Over 250,000+ meals delivered last year!",
+    trustText: heroData?.trustText,
     hero1Image: Hero1,
     hero3Image: Hero3,
     customerImages: customerImages,
