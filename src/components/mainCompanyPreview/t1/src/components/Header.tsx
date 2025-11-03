@@ -1,43 +1,12 @@
 import { motion } from "motion/react";
-import { useState, useMemo } from "react";
-import logo from"/logos/logo.svg"
+import logo from "/logos/logo.svg";
+import { useState } from "react";
+
 export default function Header({ headerData }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
-
-  // ✅ Desired navigation order
-  const desiredOrder = [
-    "Home",
-    "About",
-    "Profile",
-    "Services",
-    "Product",
-    "Blog",
-    "Gallery",
-    "Testimonials",
-  ];
-
-  // ✅ Reorder nav items safely
-  const orderedNavItems = useMemo(() => {
-    const apiItems = Array.isArray(headerData?.navItems)
-      ? headerData.navItems
-      : [];
-
-    const lowerApiItems = apiItems.map((i) => i.toLowerCase());
-    const lowerDesired = desiredOrder.map((i) => i.toLowerCase());
-
-    const sorted = desiredOrder.filter((item) =>
-      lowerApiItems.includes(item.toLowerCase())
-    );
-
-    const extras = apiItems.filter(
-      (item) => !lowerDesired.includes(item.toLowerCase())
-    );
-
-    return [...sorted, ...extras];
-  }, [headerData]);
 
   const headerStyles: React.CSSProperties = {
     position: "fixed",
@@ -75,14 +44,15 @@ export default function Header({ headerData }) {
         animate={{ y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-0 relative">
-          <div className="flex items-center justify-between h-16">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center gap-[16rem] h-16 mx-auto min-w-7xl">
             {/* Logo + Company Name */}
             <motion.div
-              className="flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-red-500 dark:text-yellow-400 transition-colors duration-300"
+              className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
               whileHover={{ scale: 1.05 }}
             >
-              <div className="relative">
+              {/* Logo with Animations */}
+              <div className="relative flex-shrink-0">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
                   animate={{
@@ -96,16 +66,17 @@ export default function Header({ headerData }) {
                     },
                   }}
                   whileHover={{
-                    scale: 1.0,
+                    scale: 1.2,
                     rotate: 360,
                     transition: { duration: 0.5 },
                   }}
                   whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <motion.img
-                    src={headerData?.logoSrc|| logo}
+                    src={headerData.logoSrc || logo}
                     alt="Logo"
-                    className="h-4 w-4 sm:h-6 sm:w-6 object-contain rounded-full"
+                    className="object-contain w-[40px] h-[40px] rounded-full flex-shrink-0"
                     animate={{
                       y: [0, -5, 0],
                       transition: {
@@ -118,32 +89,33 @@ export default function Header({ headerData }) {
                   />
                 </motion.div>
               </div>
-              <span>{headerData?.companyName || "Company"}</span>
+
+              <span className="text-lg sm:text-xl md:text-2xl flex-shrink-0">
+                {headerData.companyName}
+              </span>
             </motion.div>
 
-            {/* Desktop Navigation + Sign Up */}
-            <div className="hidden md:flex items-center space-x-4 mr-20">
-              <nav className="flex items-center space-x-4">
-                {orderedNavItems.map((item, index) => (
-                  <a
-                    key={index}
-                    href={`#${item.toLowerCase()}`}
-                    className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
-                  >
-                    {item}
-                  </a>
-                ))}
-              </nav>
-            </div>
+            {/* Desktop Navigation */}
+            <nav className="items-center hidden mr-16 space-x-4 md:flex lg:space-x-6 lg:mr-20">
+              {headerData.navItems.map((item, index) => (
+                <a
+                  key={index}
+                  href={`#${item.toLowerCase()}`}
+                  className="text-sm font-medium text-black transition-colors duration-300 hover:text-yellow-600 lg:text-base"
+                >
+                  {item}
+                </a>
+              ))}
+            </nav>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center space-x-2">
+            <div className="flex items-center space-x-2 md:hidden">
               <button
                 onClick={toggleMobileMenu}
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="p-2 transition-colors duration-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
-                  className="h-6 w-6 transition-transform duration-200"
+                  className="w-6 h-6 transition-transform duration-200"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -178,15 +150,15 @@ export default function Header({ headerData }) {
 
       {/* Mobile Navigation Menu */}
       <div
-        style={mobileMenuStyles}
+        style={{ ...mobileMenuStyles }}
         className="md:hidden dark:bg-gray-900 dark:border-gray-700"
       >
-        <div className="px-4 pt-2 pb-3 space-y-1 sm:px-6">
-          {orderedNavItems.map((item, index) => (
+        <div className="flex gap-1 w-[100%] flex-col">
+          {headerData.navItems.map((item, index) => (
             <a
               key={index}
               href={`#${item.toLowerCase()}`}
-              className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
+              className="px-3 py-2 font-medium text-black transition-colors duration-300 rounded-lg hover:text-yellow-600 hover:bg-gray-50"
               onClick={closeMobileMenu}
             >
               {item}

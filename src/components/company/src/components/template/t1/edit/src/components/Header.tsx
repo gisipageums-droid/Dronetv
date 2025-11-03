@@ -301,7 +301,7 @@ export default function Header({
         transition={{ duration: 0.6 }}
       >
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-[60px] h-16 mx-auto min-w-7xl ">
+          <div className="flex items-center justify-center gap-[16rem] h-16 mx-auto min-w-7xl ">
             {/* Responsive Edit/Save Button Container */}
             <div className="absolute md:right-0 right-[60px]  z-[999999999]">
               {isEditing ? (
@@ -366,7 +366,7 @@ export default function Header({
                   <motion.img
                     src={headerState.logoSrc || logo}
                     alt="Logo"
-                    className="object-contain w-[40px] h-[40px] flex-shrink-0"
+                    className="object-contain w-[40px] rounded-full h-[40px] flex-shrink-0"
                     animate={{
                       y: [0, -5, 0],
                       transition: {

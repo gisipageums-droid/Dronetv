@@ -660,12 +660,12 @@ export default function EditableFooter({
               variants={itemVariants}
             >
               <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                <span className="flex flex-row gap-2 text-xl font-bold text-red-500">
+                <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400">
                   <div className="relative">
                     <img
                       src={isEditing ? tempData.brand.logoUrl : footerData.brand.logoUrl}
                       alt="Logo"
-                      className="object-contain w-[40px] h-[40px] "
+                      className="h-4 w-4 rounded-full md:h-8 md:w-8 object-contain"
                       style={{
                         filter: isEditing ? "brightness(0.7)" : "none",
                       }}

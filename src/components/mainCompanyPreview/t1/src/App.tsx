@@ -115,12 +115,12 @@ export default function App() {
      
       />
       
+      <GallerySection 
+          galleryData={finaleDataReview.content.gallery}/>
       <Blog 
       blogData={finaleDataReview.content.blog}
     
       />
-        <GallerySection 
-            galleryData={finaleDataReview.content.gallery}/>
       <Testimonials 
       content={finaleDataReview.content.testimonials}
       
