@@ -58,7 +58,7 @@ export default function Header({
   // choose container width based on companyName length (adjust threshold as needed)
   const containerMaxClass =
     (content?.companyName || "").trim().length > 30 /* threshold */
-      ? "max-w-full"
+      ? "min-w-[1270px]"
       : "max-w-7xl";
 
   // Cropping states
