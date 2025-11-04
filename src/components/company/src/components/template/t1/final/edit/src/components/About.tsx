@@ -28,9 +28,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant] || variants.default} ${
-        sizes[size] || sizes.default
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant] || variants.default} ${sizes[size] || sizes.default
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -124,7 +123,7 @@ export default function EditableAbout({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState(null);
@@ -181,7 +180,7 @@ export default function EditableAbout({
         ...aboutData,
         officeImage: aboutData.officeImage || defaultContent.officeImage,
       };
-      
+
       setAboutState(updatedState);
       setTempAboutState(updatedState);
       setDataLoaded(true);
@@ -279,7 +278,7 @@ export default function EditableAbout({
       }
 
       setLocalPreviewUrl(previewUrl);
-      
+
       setCropModalOpen(false);
       setImageToCrop(null);
       setOriginalFile(null);
@@ -326,7 +325,7 @@ export default function EditableAbout({
       setImageToCrop(reader.result);
       setOriginalFile(file);
       setCropModalOpen(true);
-      setAspectRatio(4/3); // Standard for office images
+      setAspectRatio(4 / 3); // Standard for office images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -420,12 +419,12 @@ export default function EditableAbout({
 
   const handleCancel = () => {
     setTempAboutState(aboutState);
-    
+
     // Clean up preview URL
     if (localPreviewUrl) {
       URL.revokeObjectURL(localPreviewUrl);
     }
-    
+
     setLocalPreviewUrl(null);
     setPendingImageFile(null);
     setIsEditing(false);
@@ -455,7 +454,7 @@ export default function EditableAbout({
   // Helper function to extract URL from different image formats
   const getImageUrl = (image) => {
     if (!image) return "https://via.placeholder.com/500x300?text=Office+Image";
-    
+
     if (typeof image === "string") {
       return image;
     } else if (image.src) {
@@ -463,7 +462,7 @@ export default function EditableAbout({
     } else if (image.url) {
       return image.url;
     }
-    
+
     return "https://via.placeholder.com/500x300?text=Office+Image";
   };
 
@@ -641,31 +640,28 @@ export default function EditableAbout({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -982,7 +978,7 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Certification"
-                          maxLength={100}
+                          maxLength={35}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
                           {cert.length}/100
@@ -1040,7 +1036,7 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
-                          maxLength={100}
+                          maxLength={35}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
                           {achievement.length}/100
@@ -1121,8 +1117,10 @@ export default function EditableAbout({
                   alt="Office"
                   className="w-full h-auto object-cover transition-opacity duration-300"
                   onError={(e) => {
-                    console.error("Image failed to load:", e);
-                    e.target.src = "https://via.placeholder.com/500x300?text=Office+Image";
+                    const img = e.currentTarget as HTMLImageElement;
+                    if (img.src.includes("via.placeholder.com")) return;
+                    img.onerror = null;
+                    img.src = "https://via.placeholder.com/500x300?text=Office+Image";
                   }}
                 />
                 {isEditing && (
@@ -1153,7 +1151,7 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Certification"
-                          maxLength={100}
+                          maxLength={35}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
                           {cert.length}/100
@@ -1211,7 +1209,7 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
-                          maxLength={100}
+                          maxLength={35}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
                           {achievement.length}/100
