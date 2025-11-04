@@ -78,7 +78,6 @@ interface ProfessinalCardProps {
 // =================== Professinal card ==============================
 const Card: React.FC<ProfessinalCardProps> = ({
   onEdit,
-  onPreview,
   professional,
 }) => {
   const placeholderImg =
@@ -209,38 +208,6 @@ const Card: React.FC<ProfessinalCardProps> = ({
 
           {/* Action Buttons */}
           <div className="flex gap-2 justify-between">
-            {/* <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                window.open(
-                  `${window.location.origin}/form/${professional.professionalId}/${professional.userId}/${professional.submissionId}`,
-                  "_blank"
-                );
-              }}
-              className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
-            >
-              <Edit className="w-3 h-3 md:w-4 md:h-4" />
-              Edit Data
-            </button> */}
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (
-                  professional?.professionalId &&
-                  professional.templateSelection
-                )
-                  onPreview(
-                    professional.professionalId,
-                    professional.templateSelection
-                  );
-              }}
-              className="flex-1 px-3 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-300"
-            >
-              <Eye className="w-4 h-4" />
-              Preview
-            </button>
-
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -257,6 +224,9 @@ const Card: React.FC<ProfessinalCardProps> = ({
             >
               <Edit className="w-4 h-4" />
               Edit
+              |
+              <Eye className="w-4 h-4" />
+              Preview
             </button>
           </div>
 

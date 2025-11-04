@@ -712,14 +712,14 @@ export default function EditableHero({
                     field="heading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight"
                     placeholder="Main heading"
-                    maxLength={100}
+                    maxLength={35}
                   />
                   <EditableText
                     value={tempHeroState.subheading}
                     field="subheading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold text-yellow-400"
                     placeholder="Sub heading"
-                    maxLength={200}
+                    maxLength={35}
                   />
                 </div>
               )}
@@ -778,13 +778,13 @@ export default function EditableHero({
                     value={tempHeroState.primaryButtonLink}
                     field="primaryButtonLink"
                     placeholder="Primary button link"
-                    maxLength={200}
+                    maxLength={35}
                   />
                   <EditableText
                     value={tempHeroState.secondaryButtonLink}
                     field="secondaryButtonLink"
                     placeholder="Secondary button link"
-                    maxLength={200}
+                    maxLength={35}
                   />
                 </div>
               )}
@@ -831,7 +831,7 @@ export default function EditableHero({
                     field="trustText"
                     placeholder="Trust text"
                     className="text-sm sm:text-base text-white"
-                    maxLength={100}
+                    maxLength={35}
                   />
                 )}
               </motion.div>

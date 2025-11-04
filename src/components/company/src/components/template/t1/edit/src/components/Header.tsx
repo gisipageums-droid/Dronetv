@@ -356,8 +356,7 @@ export default function Header({
                     },
                   }}
                   whileHover={{
-                    scale: 1.2,
-                    rotate: 360,
+                    scale: 1.0,
                     transition: { duration: 0.5 },
                   }}
                   whileTap={{ scale: 0.9 }}
@@ -366,7 +365,7 @@ export default function Header({
                   <motion.img
                     src={headerState.logoSrc || logo}
                     alt="Logo"
-                    className="object-contain w-[40px] rounded-full h-[40px] flex-shrink-0"
+                    className="w-[40px] h-[40px] rounded-xl "
                     animate={{
                       y: [0, -5, 0],
                       transition: {
@@ -388,7 +387,7 @@ export default function Header({
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Upload size={12} /> Choose File
+                      <Upload size={12} />
                     </motion.button>
                     {pendingLogoFile && (
                       <p className="text-xs text-orange-600 mt-1 max-w-[120px] truncate">

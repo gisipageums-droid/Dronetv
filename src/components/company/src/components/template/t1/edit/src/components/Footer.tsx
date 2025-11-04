@@ -613,7 +613,7 @@ export default function EditableFooter({
               size="sm"
             >
               <Edit2 className="w-3 h-3 mr-1" />
-              Edit
+
             </Button>
           ) : (
             <div className="flex gap-2">
@@ -648,7 +648,7 @@ export default function EditableFooter({
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-12 relative">
           {/* Main Footer Content */}
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 text-center md:text-left"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 text-left"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -659,13 +659,13 @@ export default function EditableFooter({
               className="col-span-1 md:col-span-2 lg:col-span-1"
               variants={itemVariants}
             >
-              <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400">
+              <div className="flex items-center justify-start md:justify-start space-x-3 mb-4">
+                <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400 ">
                   <div className="relative">
                     <img
                       src={isEditing ? tempData.brand.logoUrl : footerData.brand.logoUrl}
                       alt="Logo"
-                      className="h-4 w-4 rounded-full md:h-8 md:w-8 object-contain"
+                      className="w-[40px] h-[40px] rounded-xl"
                       style={{
                         filter: isEditing ? "brightness(0.7)" : "none",
                       }}
@@ -673,7 +673,7 @@ export default function EditableFooter({
                     {isEditing && (
                       <div className="absolute -bottom-14 left-0 bg-white/90 p-2 rounded shadow-lg">
                         <p className="text-xs mb-1 text-gray-600">
-                          Upload Logo:
+                          Upload
                         </p>
                         <motion.button
                           onClick={() => fileInputRef.current?.click()}
@@ -681,7 +681,7 @@ export default function EditableFooter({
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                         >
-                          <Upload size={12} /> Choose File
+                          <Upload size={12} />
                         </motion.button>
                         {pendingLogoFile && (
                           <p className="text-xs text-orange-600 mt-1 max-w-[150px] truncate">
@@ -749,9 +749,9 @@ export default function EditableFooter({
                 className="col-span-1"
                 variants={itemVariants}
               >
-                <div className="flex items-center justify-center md:justify-start mb-4">
+                <div className="flex items-start justify-start md:justify-start mb-4">
                   {isEditing ? (
-                    <div className="flex items-center w-full">
+                    <div className="flex items-center  w-full">
                       <div className="flex-1">
                         <input
                           type="text"
@@ -779,7 +779,7 @@ export default function EditableFooter({
                       )}
                     </div>
                   ) : (
-                    <h4 className="font-semibold text-white">
+                    <h4 className="font-semibold text-white ">
                       {section.title}
                     </h4>
                   )}
