@@ -9,68 +9,11 @@ const Gallery = ({ galleryData }) => {
   const { theme } = useTheme();
   
   // Use the provided data structure with default fallback
-  const contentState = galleryData || {
-    heading: {
-      title: "Our Work Gallery",
-      description: "Showcasing 0+ years of professional excellence and successful project deliveries"
-    },
-    categories: [
-      "All",
-      "Portfolio",
-      "Professional Services",
-      "Client Projects"
-    ],
-    images: [
-      {
-        id: 1.0,
-        url: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&q=80",
-        title: "Professional Work 1",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 1",
-        isPopular: true
-      },
-      {
-        id: 2.0,
-        url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
-        title: "Professional Work 2",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 2",
-        isPopular: true
-      },
-      {
-        id: 3.0,
-        url: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80",
-        title: "Professional Work 3",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 3",
-        isPopular: false
-      },
-      {
-        id: 4.0,
-        url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
-        title: "Professional Work 4",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 4",
-        isPopular: false
-      },
-      {
-        id: 5.0,
-        url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80",
-        title: "Professional Work 5",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 5",
-        isPopular: false
-      },
-      {
-        id: 6.0,
-        url: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&q=80",
-        title: "Professional Work 6",
-        category: "Portfolio",
-        description: "Showcase of our professional services - Professional Work 6",
-        isPopular: false
-      }
-    ]
-  };
+  const contentState = galleryData;
+
+  const hasHeading = (galleryData.heading.title.length > 0) ||
+                     (galleryData.heading.description.length > 0);
+  const hasImages = galleryData.images && galleryData.images.length > 0;
 
   const openLightbox = (index: number) => {
     setSelectedImage(index);
@@ -93,21 +36,25 @@ const Gallery = ({ galleryData }) => {
   };
 
   return (
+    <>
+    {(hasImages||hasHeading)&& (
     <section 
       id="gallery" 
       className={`py-20 theme-transition ${
         theme === "dark" 
-          ? "bg-[#1f1f1f] text-gray-100" 
-          : "bg-gray-50 text-gray-900"
+        ? "bg-[#1f1f1f] text-gray-100" 
+        : "bg-gray-50 text-gray-900"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-4">{contentState.heading.title}</h2>
-          <p className="text-lg max-w-3xl mx-auto">
-            {contentState.heading.description}
-          </p>
-        </div>
+        {hasHeading && (
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">{contentState.heading.title}</h2>
+            <p className="text-lg max-w-3xl mx-auto">
+              {contentState.heading.description}
+            </p>
+          </div>
+        )}
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -182,7 +129,8 @@ const Gallery = ({ galleryData }) => {
           </div>
         </div>
       )}
-    </section>
+    </section>)}
+    </>
   );
 };
 

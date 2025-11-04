@@ -13,6 +13,10 @@ export default function Clients({ clientData }) {
     },
   };
 
+  const hasHeading=clientData.headline.title.length>0||clientData.headline.description.length>0;
+  const hasClients=clientData.clients.length>0;
+
+  console.log(hasClients);
   const logoVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
@@ -23,14 +27,17 @@ export default function Clients({ clientData }) {
   };
 
   return (
-    <motion.section
+    <>
+    {(hasHeading||hasClients) && (
+
+      <motion.section
       id="clients"
       className="py-20 bg-background theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8 }}
-    >
+      >
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -109,5 +116,7 @@ export default function Clients({ clientData }) {
 
       </div>
     </motion.section>
+      )}
+    </>
   );
 }

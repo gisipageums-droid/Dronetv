@@ -23,7 +23,19 @@ export default function Product({ productData }) {
     setSelectedProductIndex(null);
   };
 
+  // Check if all productData values are empty
+  const hasHeading = (productData.heading.title.length > 0) ||
+                     (productData.heading.heading.length > 0) ||
+                     (productData.heading.description.length > 0) ||
+                     (productData.heading.trust.length > 0);
+  const hasBenefits = productData.benefits && productData.benefits.length > 0;
+  const hasProducts = productData.products && productData.products.length > 0;
+// console.log(hasProducts);
+
+
   return (
+    <>
+    {(hasHeading || hasProducts )&&(
     <motion.section
       id="product"
       className="py-20 bg-secondary theme-transition"
@@ -35,107 +47,115 @@ export default function Product({ productData }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          {productData.heading.title.length > 0 ? (
-            <>
-              <div className="inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-red-accent mb-4">
-                <Zap className="w-4 h-4 mr-2" />
-                <span className="font-medium">{productData.heading.title}</span>
-              </div>
-            </>
-          ) : null}
-          <h2 className="text-3xl md:text-4xl text-foreground mb-4">
-            {productData.heading.heading}
-          </h2>
-          <p className="text-lg text-muted-foreground inline">
-            {productData.heading.description}
-          </p>
-          <p className="text-lg text-muted-foreground inline font-bold text-foreground">
-            {" "}
-            {productData.heading.trust}
-          </p>
+          {productData.heading.title && productData.heading.title.length > 0 && (
+            <div className="inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-red-accent mb-4">
+              <Zap className="w-4 h-4 mr-2" />
+              <span className="font-medium">{productData.heading.title}</span>
+            </div>
+          )}
+          {productData.heading.heading && productData.heading.heading.length > 0 && (
+            <h2 className="text-3xl md:text-4xl text-foreground mb-4">
+              {productData.heading.heading}
+            </h2>
+          )}
+          {productData.heading.description && productData.heading.description.length > 0 && (
+            <p className="text-lg text-muted-foreground inline">
+              {productData.heading.description}
+            </p>
+          )}
+          {productData.heading.trust && productData.heading.trust.length > 0 && (
+            <p className="text-lg text-muted-foreground inline font-bold text-foreground">
+              {" "}
+              {productData.heading.trust}
+            </p>
+          )}
         </div>
 
         {/* Products Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {productData.products.slice(0, visibleCount).map((product, index) => (
-            <Card
-              key={index}
-              className="group h-full relative overflow-hidden flex flex-col border-2 shadow-lg hover:shadow-xl  shadow-gray-500"
-            >
-              <div className="relative h-32 overflow-hidden flex-shrink-0">
-                <ImageWithFallback
-                  src={product.image}
-                  alt={product.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <div className="absolute top-2 left-2">
-                  <Badge
-                    className={`${product.categoryColor} border-0 text-xs`}
-                  >
-                    {product.category}
-                  </Badge>
-                </div>
-                {product.isPopular && (
-                  <div className="absolute top-2 right-2 bg-red-accent text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
-                    <Zap className="w-2 h-2 mr-1" /> Bestseller
+        {hasProducts && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {productData.products.slice(0, visibleCount).map((product, index) => (
+              <Card
+                key={index}
+                className="group h-full relative overflow-hidden flex flex-col border-2 shadow-lg hover:shadow-xl  shadow-gray-500"
+              >
+                <div className="relative h-32 overflow-hidden flex-shrink-0">
+                  <ImageWithFallback
+                    src={product.image}
+                    alt={product.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute top-2 left-2">
+                    <Badge
+                      className={`${product.categoryColor} border-0 text-xs`}
+                    >
+                      {product.category}
+                    </Badge>
                   </div>
-                )}
-              </div>
-              <div className="flex flex-col flex-grow p-6">
-                <div className="flex-shrink-0 mb-4">
-                  <CardTitle className="line-clamp-2 min-h-[3rem]">
-                    {product.title}
-                  </CardTitle>
+                  {product.isPopular && (
+                    <div className="absolute top-2 right-2 bg-red-accent text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
+                      <Zap className="w-2 h-2 mr-1" /> Bestseller
+                    </div>
+                  )}
                 </div>
-                <div className="flex-grow mb-4">
-                  <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
-                    {product.description}
-                  </p>
-                  <ul className="space-y-1 mt-3 min-h-[3rem]">
-                    {product.features.map((f, fi) => (
-                      <li
-                        key={fi}
-                        className="text-xs text-muted-foreground flex items-center"
-                      >
-                        <div className="w-1 h-1 bg-primary rounded-full mr-2 flex-shrink-0" />
-                        <span className="line-clamp-1">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="flex flex-col flex-grow p-6">
+                  <div className="flex-shrink-0 mb-4">
+                    <CardTitle className="line-clamp-2 min-h-[3rem]">
+                      {product.title}
+                    </CardTitle>
+                  </div>
+                  <div className="flex-grow mb-4">
+                    <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
+                      {product.description}
+                    </p>
+                    <ul className="space-y-1 mt-3 min-h-[3rem]">
+                      {product.features.map((f, fi) => (
+                        <li
+                          key={fi}
+                          className="text-xs text-muted-foreground flex items-center"
+                        >
+                          <div className="w-1 h-1 bg-primary rounded-full mr-2 flex-shrink-0" />
+                          <span className="line-clamp-1">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="mt-auto">
+                    <Button
+                      size="sm"
+                      className="hover:scale-105 w-full"
+                      onClick={() => openModal(index)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
                 </div>
-                <div className="mt-auto">
-                  <Button
-                    size="sm"
-                    className="hover:scale-105 w-full"
-                    onClick={() => openModal(index)}
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* Load More / Show Less */}
-        <div className="flex justify-center mt-6">
-          {visibleCount < productData.products.length && (
-            <Button onClick={() => setVisibleCount((prev) => prev + 4)}>
-              Load More
-            </Button>
-          )}
-          {visibleCount >= productData.products.length &&
-            productData.products.length > 4 && (
-              <Button
-                onClick={() => setVisibleCount(4)}
-                variant="secondary"
-                className="ml-4"
-              >
-                Show Less
+        {hasProducts && (
+          <div className="flex justify-center mt-6">
+            {visibleCount < productData.products.length && (
+              <Button onClick={() => setVisibleCount((prev) => prev + 4)}>
+                Load More
               </Button>
             )}
-        </div>
+            {visibleCount >= productData.products.length &&
+              productData.products.length > 4 && (
+                <Button
+                  onClick={() => setVisibleCount(4)}
+                  variant="secondary"
+                  className="ml-4"
+                >
+                  Show Less
+                </Button>
+              )}
+          </div>
+        )}
       </div>
 
       {/* Modal */}
@@ -182,6 +202,7 @@ export default function Product({ productData }) {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.section>
+    </motion.section>)}
+      </>
   );
 }

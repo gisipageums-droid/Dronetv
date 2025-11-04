@@ -10,7 +10,8 @@ export default function Blog({ blogData }) {
   const [showAllPosts, setShowAllPosts] = useState(false);
 
   const displayedPosts = showAllPosts ? blogData.posts : blogData.posts.slice(0, 4);
-
+const hasBlog = blogData.posts && blogData.posts.length > 0;
+const hasHeading = blogData.header.title && blogData.header.title.length > 0;
   const openModal = (post) => {
     setSelectedPost(post);
     setIsModalOpen(true);
@@ -23,7 +24,8 @@ export default function Blog({ blogData }) {
     document.body.style.overflow = 'auto';
   };
 
-  return (
+  return (<>
+  {(hasBlog||hasHeading)&&(
     <section id="blog" className="py-20 bg-background theme-transition">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -218,5 +220,7 @@ export default function Blog({ blogData }) {
         )}
       </AnimatePresence>
     </section>
+    )}
+    </>
   );
 }

@@ -4,7 +4,8 @@ import { motion } from "motion/react";
 export default function Testimonials({testimonialsData}) {
   // Duplicate testimonials for marquee loop (showing 3 at a time)
   const duplicatedTestimonials = [...testimonialsData.testimonials, ...testimonialsData.testimonials];
-
+  const hasHeading=testimonialsData.headline.title.length>0||testimonialsData.headline.description.length>0;
+  const hasTestimonials=testimonialsData.testimonials.length>0;
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -17,6 +18,8 @@ export default function Testimonials({testimonialsData}) {
   };
 
   return (
+    <>
+    {(hasHeading||hasTestimonials) && (
     <motion.section 
       id="testimonial"
       className="py-20 bg-background theme-transition"
@@ -78,7 +81,7 @@ export default function Testimonials({testimonialsData}) {
           </motion.div>
         </div>
       </div>
-    </motion.section>
+    </motion.section> )} </>
   );
 }
 
@@ -162,5 +165,6 @@ function TestimonialCard({ testimonial, index }) {
         </div>
       </div>
     </motion.div>
+  
   );
 }
