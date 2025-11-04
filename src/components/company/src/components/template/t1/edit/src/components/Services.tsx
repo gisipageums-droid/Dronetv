@@ -774,7 +774,7 @@ export default function Services({
                   </>
                 ) : (
                   <>
-                    <p className="text-sm text-gray-600 mb-4 flex-1">
+                      <p className="text-sm text-gray-600 mb-4 flex-1 h-[70px] overflow-auto">
                       {service.description}
                     </p>
                   </>
