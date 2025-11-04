@@ -34,7 +34,7 @@ export default function Services({
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Enhanced crop modal state
+  // Enhanced crop modal state (same as Header.tsx)
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropImage, setCropImage] = useState(null);
   const [cropField, setCropField] = useState(null);
@@ -46,7 +46,7 @@ export default function Services({
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
-  // Create a temporary state for editing
+  // Create a temporary state for editing like in Products.tsx
   const [servicesSection, setServicesSection] = useState(serviceData);
   const [tempServicesSection, setTempServicesSection] = useState(serviceData);
 
@@ -72,11 +72,11 @@ export default function Services({
         ? tempServicesSection.services
         : servicesSection.services
       : (isEditing
-        ? tempServicesSection.services
-        : servicesSection.services
-      ).filter((s) => s.category === activeCategory);
+          ? tempServicesSection.services
+          : servicesSection.services
+        ).filter((s) => s.category === activeCategory);
 
-  // Enhanced image upload handler
+  // Enhanced image upload handler (same as Header.tsx)
   const handleServiceImageSelect = (index, e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -109,7 +109,7 @@ export default function Services({
     e.target.value = "";
   };
 
-  // Enhanced cropper functions
+  // Enhanced cropper functions (same as Header.tsx)
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
@@ -273,11 +273,11 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-            ...s,
-            [field]: s[field].map((item, li) =>
-              li === listIndex ? processedValue : item
-            ),
-          }
+              ...s,
+              [field]: s[field].map((item, li) =>
+                li === listIndex ? processedValue : item
+              ),
+            }
           : s
       ),
     }));
@@ -298,9 +298,9 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-            ...s,
-            [field]: s[field].filter((_, li) => li !== listIndex),
-          }
+              ...s,
+              [field]: s[field].filter((_, li) => li !== listIndex),
+            }
           : s
       ),
     }));
@@ -477,7 +477,7 @@ export default function Services({
     }));
   };
 
-  // EditableText component for consistent styling
+  // EditableText component for consistent styling (like in Products.tsx)
   const EditableText = useMemo(
     () =>
       ({
@@ -542,7 +542,14 @@ export default function Services({
   const displayContent = isEditing ? tempServicesSection : servicesSection;
 
   return (
-    <motion.section id="services" className="py-20 theme-transition relative">
+    <motion.section
+      id="services"
+      className={`${
+        servicesSection?.services &&
+        servicesSection?.services.length > 0 &&
+        "py-20 "
+      }  theme-transition relative`}
+    >
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
         {!isEditing ? (
@@ -609,9 +616,12 @@ export default function Services({
             </>
           ) : (
             <>
-              <span className="inline-block mx-auto px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
-                Our Services
-              </span>
+              {servicesSection?.services &&
+                servicesSection?.services.length > 0 && (
+                  <span className="inline-block mx-auto px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
+                    Our Services
+                  </span>
+                )}
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 {displayContent.heading.head}
               </h2>
@@ -648,10 +658,11 @@ export default function Services({
                   onClick={() => {
                     setActiveCategory(cat);
                   }}
-                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${activeCategory === cat
-                    ? "bg-orange-400 text-white shadow-lg scale-105"
-                    : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-                    }`}
+                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+                    activeCategory === cat
+                      ? "bg-orange-400 text-white shadow-lg scale-105"
+                      : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                  }`}
                 >
                   {cat}
                 </Button>
@@ -747,7 +758,7 @@ export default function Services({
                       }
                       multiline={true}
                       placeholder="Service description"
-                      maxLength={500}
+                      maxLength={1000}
                     />
                     <div className="mt-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -773,8 +784,9 @@ export default function Services({
 
                 <div className="mt-4 flex gap-2 ">
                   <Button
-                    className={` ${isEditing ? "" : "w-full"
-                      } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
+                    className={` ${
+                      isEditing ? "" : "w-full"
+                    } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
                     size="sm"
                     onClick={() => openModal(service, index)}
                   >
@@ -934,7 +946,7 @@ export default function Services({
               )}
 
               {/* Process */}
-              <h3 className="font-semibold mb-2">Our Process </h3>
+              <h3 className="font-semibold mb-2">Our Process</h3>
               <ol className="space-y-2 mb-4">
                 {displayContent.services[selectedServiceIndex].process.map(
                   (p, pi) => (
@@ -1043,7 +1055,7 @@ export default function Services({
         )}
       </AnimatePresence>
 
-      {/* Enhanced Crop Modal */}
+      {/* Enhanced Crop Modal (same as Header.tsx) */}
       {cropModalOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -1079,7 +1091,6 @@ export default function Services({
                   aspect={aspectRatio}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
-                  onRotationChange={setRotation}
                   onCropComplete={onCropComplete}
                   showGrid={false}
                   cropShape="rect"
@@ -1102,32 +1113,37 @@ export default function Services({
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -1151,30 +1167,12 @@ export default function Services({
                 />
               </div>
 
-              {/* Rotation Control */}
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Rotation</span>
-                  <span className="text-gray-600">{rotation}°</span>
-                </div>
-                <input
-                  type="range"
-                  value={rotation}
-                  min={0}
-                  max={360}
-                  step={1}
-                  onChange={(e) => setRotation(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
-              </div>
-
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium flex items-center justify-center gap-2"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
-                  <RotateCw className="w-4 h-4" />
                   Reset
                 </button>
                 <button

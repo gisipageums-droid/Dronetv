@@ -5,7 +5,7 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Button } from './ui/button';
 
 export default function Blog({ blogData }) {
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedPost, setSelectedPost] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllPosts, setShowAllPosts] = useState(false);
 
@@ -34,77 +34,93 @@ export default function Blog({ blogData }) {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <motion.div
-            className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
-            whileHover={{ scale: 1.05 }}
-          >
-            <span className="font-semibold text-lg">{blogData.header.badge}</span>
-          </motion.div>
-          
-          <h2 className="text-3xl md:text-4xl text-foreground mb-6">{blogData.header.title}</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{blogData.header.desc}</p>
+          {blogData.header.badge && blogData.header.badge.length > 0 && (
+            <motion.div
+              className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
+              whileHover={{ scale: 1.05 }}
+            >
+              <span className="font-semibold text-lg">{blogData.header.badge}</span>
+            </motion.div>
+          )}
+          {blogData.header.title && blogData.header.title.length > 0 && (
+            <h2 className="text-3xl md:text-4xl text-foreground mb-6">{blogData.header.title}</h2>
+          )}
+          {blogData.header.desc && blogData.header.desc.length > 0 && (
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{blogData.header.desc}</p>
+          )}
         </motion.div>
 
         {/* Blog Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {displayedPosts.map((post, index) => (
-            <motion.article
-              key={post.id}
-              className="bg-card rounded-xl border-2 shadow-lg hover:shadow-xl  shadow-gray-500 transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-            >
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden flex-shrink-0">
-                <ImageWithFallback
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
-                    {post.category}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-6 flex flex-col flex-grow">
-                <div className="flex items-center text-xs text-muted-foreground mb-3 flex-shrink-0">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  <span className="text-xs text-muted-foreground mr-4">{post.date}</span>
-                  <User className="w-3 h-3 mr-1" />
-                  <span className="text-xs text-muted-foreground">{post.author}</span>
+        {displayedPosts.length > 0 && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {displayedPosts.map((post, index) => (
+              <motion.article
+                key={post.id}
+                className="bg-card rounded-xl border-2 shadow-lg hover:shadow-xl  shadow-gray-500 transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+              >
+                {/* Image */}
+                <div className="relative h-48 overflow-hidden flex-shrink-0">
+                  <ImageWithFallback
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute top-4 left-4">
+                    {post.category && post.category.length > 0 && (
+                      <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
+                        {post.category}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="flex-grow mb-4">
-                  <h3 className="font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem]">
-                    {post.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm line-clamp-3 min-h-[4.5rem]">
-                    {post.excerpt}
-                  </p>
-                </div>
+                {/* Content */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex items-center text-xs text-muted-foreground mb-3 flex-shrink-0">
+                    {post.date && post.date.length > 0 && (
+                      <>
+                        <Calendar className="w-3 h-3 mr-1" />
+                        <span className="text-xs text-muted-foreground mr-4">{post.date}</span>
+                      </>
+                    )}
+                    {post.author && post.author.length > 0 && (
+                      <>
+                        <User className="w-3 h-3 mr-1" />
+                        <span className="text-xs text-muted-foreground">{post.author}</span>
+                      </>
+                    )}
+                  </div>
 
-                <div className="mt-auto">
-                  <motion.button
-                    className="w-full py-2 bg-primary/10 text-primary rounded-lg font-medium flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => openModal(post)}
-                  >
-                    Read More
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </motion.button>
+                  <div className="flex-grow mb-4">
+                    <h3 className="font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem]">
+                      {post.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm line-clamp-3 min-h-[4.5rem]">
+                      {post.excerpt}
+                    </p>
+                  </div>
+
+                  <div className="mt-auto">
+                    <motion.button
+                      className="w-full py-2 bg-primary/10 text-primary rounded-lg font-medium flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => openModal(post)}
+                    >
+                      Read More
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </motion.button>
+                  </div>
                 </div>
-              </div>
-            </motion.article>
-          ))}
-        </div>
-          
+              </motion.article>
+            ))}
+          </div>
+        )}
         {/* Show More Button */}
         <div className="flex justify-center mt-6">
           {!showAllPosts && blogData.posts.length > 4 && (
@@ -155,26 +171,40 @@ export default function Blog({ blogData }) {
                   <X className="w-4 h-4" />
                 </button>
                 <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-full">
-                    <span className="text-sm font-medium text-primary-foreground">{selectedPost.category}</span>
-                  </span>
+                  {selectedPost.category && selectedPost.category.length > 0 && (
+                    <span className="px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-full">
+                      <span className="text-sm font-medium text-primary-foreground">{selectedPost.category}</span>
+                    </span>
+                  )}
                 </div>
               </div>
 
               {/* Modal Content */}
               <div className="p-8">
                 <div className="flex items-center text-sm text-muted-foreground mb-4">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  <span className="text-sm text-muted-foreground mr-6">{selectedPost.date}</span>
-                  <User className="w-4 h-4 mr-1" />
-                  <span className="text-sm text-muted-foreground mr-6">{selectedPost.author}</span>
+                  {selectedPost.date && selectedPost.date.length > 0 && (
+                    <>
+                      <Calendar className="w-4 h-4 mr-1" />
+                      <span className="text-sm text-muted-foreground mr-6">{selectedPost.date}</span>
+                    </>
+                  )}
+                  {selectedPost.author && selectedPost.author.length > 0 && (
+                    <>
+                      <User className="w-4 h-4 mr-1" />
+                      <span className="text-sm text-muted-foreground mr-6">{selectedPost.author}</span>
+                    </>
+                  )}
                 </div>
 
-                <h2 className="text-2xl font-bold text-card-foreground mb-6">{selectedPost.title}</h2>
-                <div
-                  className="prose prose-gray max-w-none text-card-foreground"
-                  dangerouslySetInnerHTML={{ __html: selectedPost.content }}
-                />
+                {selectedPost.title && selectedPost.title.length > 0 && (
+                  <h2 className="text-2xl font-bold text-card-foreground mb-6">{selectedPost.title}</h2>
+                )}
+                {selectedPost.content && selectedPost.content.length > 0 && (
+                  <div
+                    className="prose prose-gray max-w-none text-card-foreground"
+                    dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+                  />
+                )}
               </div>
 
               {/* Modal Footer */}

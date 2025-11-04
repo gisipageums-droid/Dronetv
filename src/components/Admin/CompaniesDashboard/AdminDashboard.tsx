@@ -662,7 +662,7 @@ const RecentCompaniesSection: React.FC<{
         </span>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 md:gap-6">
         {recentCompanies.map((company) => (
           <div key={company.publishedId} className="animate-fadeIn">
             <CompanyCard
@@ -1120,7 +1120,7 @@ const AdminDashboard: React.FC = () => {
               <p className="text-gray-500">Try adjusting your search or filters</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 md:gap-6">
               {paginatedCompanies.map((company) => (
                 <div key={company.publishedId} className="animate-fadeIn">
                   <CompanyCard

@@ -72,9 +72,9 @@ export default function Services({
         ? tempServicesSection.services
         : servicesSection.services
       : (isEditing
-        ? tempServicesSection.services
-        : servicesSection.services
-      ).filter((s) => s.category === activeCategory);
+          ? tempServicesSection.services
+          : servicesSection.services
+        ).filter((s) => s.category === activeCategory);
 
   // Enhanced image upload handler (same as Header.tsx)
   const handleServiceImageSelect = (index, e) => {
@@ -273,11 +273,11 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-            ...s,
-            [field]: s[field].map((item, li) =>
-              li === listIndex ? processedValue : item
-            ),
-          }
+              ...s,
+              [field]: s[field].map((item, li) =>
+                li === listIndex ? processedValue : item
+              ),
+            }
           : s
       ),
     }));
@@ -298,9 +298,9 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-            ...s,
-            [field]: s[field].filter((_, li) => li !== listIndex),
-          }
+              ...s,
+              [field]: s[field].filter((_, li) => li !== listIndex),
+            }
           : s
       ),
     }));
@@ -542,7 +542,14 @@ export default function Services({
   const displayContent = isEditing ? tempServicesSection : servicesSection;
 
   return (
-    <motion.section id="services" className="py-20 theme-transition relative">
+    <motion.section
+      id="services"
+      className={`${
+        servicesSection?.services &&
+        servicesSection?.services.length > 0 &&
+        "py-20 "
+      }  theme-transition relative`}
+    >
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
         {!isEditing ? (
@@ -609,9 +616,12 @@ export default function Services({
             </>
           ) : (
             <>
-              <span className="inline-block mx-auto px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
-                Our Services
-              </span>
+              {servicesSection?.services &&
+                servicesSection?.services.length > 0 && (
+                  <span className="inline-block mx-auto px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
+                    Our Services
+                  </span>
+                )}
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 {displayContent.heading.head}
               </h2>
@@ -648,10 +658,11 @@ export default function Services({
                   onClick={() => {
                     setActiveCategory(cat);
                   }}
-                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${activeCategory === cat
+                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+                    activeCategory === cat
                       ? "bg-orange-400 text-white shadow-lg scale-105"
                       : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-                    }`}
+                  }`}
                 >
                   {cat}
                 </Button>
@@ -773,8 +784,9 @@ export default function Services({
 
                 <div className="mt-4 flex gap-2 ">
                   <Button
-                    className={` ${isEditing ? "" : "w-full"
-                      } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
+                    className={` ${
+                      isEditing ? "" : "w-full"
+                    } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
                     size="sm"
                     onClick={() => openModal(service, index)}
                   >
@@ -1101,32 +1113,37 @@ export default function Services({
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     16:9 (Widescreen)
                   </button>

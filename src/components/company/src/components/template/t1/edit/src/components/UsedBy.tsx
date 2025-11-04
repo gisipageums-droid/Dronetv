@@ -612,7 +612,7 @@ export default function EditableUsedBy({
               </div>
 
               {/* Rotation Control */}
-              <div className="space-y-2 mb-4">
+              {/* <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-700">Rotation</span>
                   <span className="text-gray-600">{rotation}°</span>
@@ -626,7 +626,7 @@ export default function EditableUsedBy({
                   onChange={(e) => setRotation(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                 />
-              </div>
+              </div> */}
 
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">

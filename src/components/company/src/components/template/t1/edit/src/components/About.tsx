@@ -690,7 +690,7 @@ export default function EditableAbout({
               </div>
 
               {/* Rotation Control */}
-              <div className="space-y-2 mb-4">
+              {/* <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-700">Rotation</span>
                   <span className="text-gray-600">{rotation}°</span>
@@ -704,7 +704,7 @@ export default function EditableAbout({
                   onChange={(e) => setRotation(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                 />
-              </div>
+              </div> */}
 
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">
@@ -823,7 +823,7 @@ export default function EditableAbout({
                         field="companyName"
                         placeholder="Company name"
                         className="w-full"
-                        maxLength={100}
+                        maxLength={50}
                       />
                     ) : (
                       <p className="font-semibold text-gray-900">
@@ -841,7 +841,7 @@ export default function EditableAbout({
                         field="industry"
                         placeholder="Industry"
                         className="w-full"
-                        maxLength={200}
+                        maxLength={50}
                       />
                     ) : (
                       <p className="font-semibold text-gray-900">
@@ -859,7 +859,7 @@ export default function EditableAbout({
                         field="established"
                         placeholder="Year established"
                         className="w-full"
-                        maxLength={100}
+                        maxLength={50}
                       />
                     ) : (
                       <p className="font-semibold text-gray-900">
@@ -877,7 +877,7 @@ export default function EditableAbout({
                         field="headquarters"
                         placeholder="Headquarters location"
                         className="w-full"
-                        maxLength={100}
+                        maxLength={50}
                       />
                     ) : (
                       <p className="font-semibold text-gray-900">
@@ -982,10 +982,10 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Certification"
-                          maxLength={200}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
-                          {cert.length}/200
+                          {cert.length}/100
                         </div>
                         <Button
                           onClick={() => removeCertification(index)}
@@ -1040,10 +1040,10 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
-                          maxLength={200}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
-                          {achievement.length}/200
+                          {achievement.length}/100
                         </div>
                         <Button
                           onClick={() => removeAchievement(index)}
@@ -1153,10 +1153,10 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Certification"
-                          maxLength={200}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
-                          {cert.length}/200
+                          {cert.length}/100
                         </div>
                         <Button
                           onClick={() => removeCertification(index)}
@@ -1211,10 +1211,10 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
-                          maxLength={200}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
-                          {achievement.length}/200
+                          {achievement.length}/100
                         </div>
                         <Button
                           onClick={() => removeAchievement(index)}

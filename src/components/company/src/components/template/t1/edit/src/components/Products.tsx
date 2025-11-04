@@ -1,4 +1,4 @@
-import { motion, useMotionValue } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Edit2,
   Loader2,
@@ -9,7 +9,6 @@ import {
   Upload,
   X,
   RotateCw,
-  ZoomIn,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { toast } from "react-toastify";
@@ -48,7 +47,7 @@ export default function EditableProducts({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
   const [cropField, setCropField] = useState(null);
   const [cropIndex, setCropIndex] = useState(null);
 
@@ -57,16 +56,13 @@ export default function EditableProducts({
     if (productData) {
       // Get unique categories from products
       const categories = [
-        "All",
         ...new Set(productData.products.map((p) => p.category)),
       ];
 
       return {
-        sectionTitle: productData.heading?.title || "Products",
-        sectionSubtitle: productData.heading?.heading || "Our Products",
-        sectionDescription:
-          productData.heading?.description ||
-          "Discover our suite of innovative products.",
+        sectionTitle: productData.heading?.title,
+        sectionSubtitle: productData.heading?.heading,
+        sectionDescription: productData.heading?.description,
         trustText: productData.heading?.trust || "",
         products: productData.products.map((product, index) => ({
           id: index + 1,
@@ -218,7 +214,7 @@ export default function EditableProducts({
       setCropModalOpen(true);
       setCropField("productImage");
       setCropIndex(productId);
-      setAspectRatio(4/3); // Standard aspect ratio for product images
+      setAspectRatio(4 / 3); // Standard aspect ratio for product images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -401,7 +397,7 @@ export default function EditableProducts({
   const updateProductField = (productId, field, value) => {
     // Apply character limits based on field type
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "description" && value.length > 500) {
@@ -419,7 +415,9 @@ export default function EditableProducts({
     setTempContent((prev) => ({
       ...prev,
       products: prev.products.map((product) =>
-        product.id === productId ? { ...product, [field]: processedValue } : product
+        product.id === productId
+          ? { ...product, [field]: processedValue }
+          : product
       ),
     }));
   };
@@ -512,7 +510,7 @@ export default function EditableProducts({
   };
 
   const removeCategory = (categoryToRemove) => {
-    if (categoryToRemove === "All") return;
+    // if (categoryToRemove === "All") return;
     setTempContent((prev) => ({
       ...prev,
       categories: prev.categories.filter((cat) => cat !== categoryToRemove),
@@ -547,11 +545,11 @@ export default function EditableProducts({
       }) => {
         const baseClasses =
           "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-        
+
         // Show character count if maxLength is provided
         const charCount = maxLength ? (
           <div className="text-xs text-gray-500 text-right mt-1">
-            {value.length}/{maxLength}
+            {value?.length}/{maxLength}
           </div>
         ) : null;
 
@@ -598,7 +596,7 @@ export default function EditableProducts({
   const updateBenefitField = (index, field, value) => {
     // Apply character limits for benefits
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "desc" && value.length > 200) {
@@ -740,7 +738,9 @@ export default function EditableProducts({
     <section
       id="product"
       ref={sectionRef}
-      className="py-20 bg-gray-50 relative overflow-hidden"
+      className={`${
+        tempContent?.products && tempContent?.products.length > 0 && "py-20"
+      } bg-gray-50 relative overflow-hidden`}
     >
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
@@ -788,9 +788,11 @@ export default function EditableProducts({
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <div className="text-center mx-auto">
-            <span className="inline-block px-4 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium mb-4">
-              Our Products
-            </span>
+            {tempContent?.products && tempContent?.products.length > 0 && (
+              <span className="inline-block px-4 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium mb-4">
+                Our Products
+              </span>
+            )}
 
             {isEditing ? (
               <EditableText
@@ -838,12 +840,6 @@ export default function EditableProducts({
             ) : (
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 {displayContent.sectionDescription}
-                {displayContent.trustText && (
-                  <span className="font-bold text-yellow-600">
-                    {" "}
-                    {displayContent.trustText}
-                  </span>
-                )}
               </p>
             )}
           </div>
@@ -862,7 +858,7 @@ export default function EditableProducts({
               }`}
             >
               {cat}
-              {isEditing && cat !== "All" && (
+              {isEditing && (
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
@@ -1242,34 +1238,36 @@ export default function EditableProducts({
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
+                    onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
+                    onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     16:9 (Widescreen)
@@ -1290,23 +1288,6 @@ export default function EditableProducts({
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
-              </div>
-
-              {/* Rotation Control */}
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Rotation</span>
-                  <span className="text-gray-600">{rotation}°</span>
-                </div>
-                <input
-                  type="range"
-                  value={rotation}
-                  min={0}
-                  max={360}
-                  step={1}
-                  onChange={(e) => setRotation(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                 />
               </div>

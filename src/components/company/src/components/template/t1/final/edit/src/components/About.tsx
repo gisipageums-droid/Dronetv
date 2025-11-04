@@ -49,6 +49,57 @@ const Badge = ({ children, className }) => (
   </span>
 );
 
+// Crop helper function
+const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const createImage = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.setAttribute("crossOrigin", "anonymous");
+      image.src = url;
+    });
+
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+
+  ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+  ctx.rotate((rotation * Math.PI) / 180);
+  ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  return new Promise((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        const fileName = `cropped-image-${Date.now()}.jpg`;
+        const file = new File([blob], fileName, {
+          type: "image/jpeg",
+          lastModified: Date.now(),
+        });
+        const previewUrl = URL.createObjectURL(blob);
+        resolve({ file, previewUrl });
+      },
+      "image/jpeg",
+      0.95
+    );
+  });
+};
+
 export default function EditableAbout({
   aboutData,
   onStateChange,
@@ -65,7 +116,7 @@ export default function EditableAbout({
   const sectionRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Enhanced crop modal state (same as Header.tsx)
+  // Enhanced crop modal state
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -200,68 +251,10 @@ export default function EditableAbout({
     setLocalPreviewUrl(null);
   };
 
-  // Enhanced cropper functions (same as Header.tsx)
+  // Enhanced cropper functions
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
-
-  const createImage = (url) =>
-    new Promise((resolve, reject) => {
-      const image = new Image();
-      image.addEventListener("load", () => resolve(image));
-      image.addEventListener("error", (error) => reject(error));
-      image.setAttribute("crossOrigin", "anonymous");
-      image.src = url;
-    });
-
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
-    const image = await createImage(imageSrc);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
-
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
-
-    ctx.drawImage(
-      image,
-      pixelCrop.x,
-      pixelCrop.y,
-      pixelCrop.width,
-      pixelCrop.height,
-      0,
-      0,
-      pixelCrop.width,
-      pixelCrop.height
-    );
-
-    return new Promise((resolve) => {
-      canvas.toBlob(
-        (blob) => {
-          const fileName = originalFile
-            ? `cropped-${originalFile.name}`
-            : `cropped-image-${Date.now()}.jpg`;
-
-          const file = new File([blob], fileName, {
-            type: "image/jpeg",
-            lastModified: Date.now(),
-          });
-
-          const previewUrl = URL.createObjectURL(blob);
-
-          resolve({
-            file,
-            previewUrl,
-          });
-        },
-        "image/jpeg",
-        0.95
-      );
-    });
-  };
 
   const applyCrop = async () => {
     try {
@@ -312,7 +305,7 @@ export default function EditableAbout({
     setCrop({ x: 0, y: 0 });
   };
 
-  // Enhanced image upload handler (same as Header.tsx)
+  // Enhanced image upload handler
   const handleImageUpload = useCallback((event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -461,9 +454,8 @@ export default function EditableAbout({
 
   // Helper function to extract URL from different image formats
   const getImageUrl = (image) => {
-    // Prefer local bundled image as fallback to avoid external DNS failures
-    if (!image) return img;
-
+    if (!image) return "https://via.placeholder.com/500x300?text=Office+Image";
+    
     if (typeof image === "string") {
       return image;
     } else if (image.src) {
@@ -471,8 +463,8 @@ export default function EditableAbout({
     } else if (image.url) {
       return image.url;
     }
-
-    return img;
+    
+    return "https://via.placeholder.com/500x300?text=Office+Image";
   };
 
   // Stable update function with useCallback
@@ -587,7 +579,7 @@ export default function EditableAbout({
 
   return (
     <>
-      {/* Enhanced Crop Modal (same as Header.tsx) */}
+      {/* Enhanced Crop Modal */}
       {cropModalOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -696,6 +688,23 @@ export default function EditableAbout({
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                 />
               </div>
+
+              {/* Rotation Control */}
+              {/* <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">Rotation</span>
+                  <span className="text-gray-600">{rotation}°</span>
+                </div>
+                <input
+                  type="range"
+                  value={rotation}
+                  min={-180}
+                  max={180}
+                  step={1}
+                  onChange={(e) => setRotation(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div> */}
 
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">
@@ -814,7 +823,7 @@ export default function EditableAbout({
                         field="companyName"
                         placeholder="Company name"
                         className="w-full"
-                        maxLength={100}
+                        maxLength={50}
                       />
                     ) : (
                       <p className="font-semibold text-gray-900">
@@ -832,7 +841,7 @@ export default function EditableAbout({
                         field="industry"
                         placeholder="Industry"
                         className="w-full"
-                        maxLength={200}
+                        maxLength={50}
                       />
                     ) : (
                       <p className="font-semibold text-gray-900">
@@ -850,7 +859,7 @@ export default function EditableAbout({
                         field="established"
                         placeholder="Year established"
                         className="w-full"
-                        maxLength={100}
+                        maxLength={50}
                       />
                     ) : (
                       <p className="font-semibold text-gray-900">
@@ -868,7 +877,7 @@ export default function EditableAbout({
                         field="headquarters"
                         placeholder="Headquarters location"
                         className="w-full"
-                        maxLength={100}
+                        maxLength={50}
                       />
                     ) : (
                       <p className="font-semibold text-gray-900">
@@ -973,10 +982,10 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Certification"
-                          maxLength={200}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
-                          {cert.length}/200
+                          {cert.length}/100
                         </div>
                         <Button
                           onClick={() => removeCertification(index)}
@@ -1031,10 +1040,10 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
-                          maxLength={200}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
-                          {achievement.length}/200
+                          {achievement.length}/100
                         </div>
                         <Button
                           onClick={() => removeAchievement(index)}
@@ -1113,11 +1122,7 @@ export default function EditableAbout({
                   className="w-full h-auto object-cover transition-opacity duration-300"
                   onError={(e) => {
                     console.error("Image failed to load:", e);
-                    const target = e.currentTarget as HTMLImageElement;
-                    // Prevent infinite loop if fallback also fails
-                    target.onerror = null;
-                    // Use bundled local image as safe fallback
-                    target.src = getImageUrl(img);
+                    e.target.src = "https://via.placeholder.com/500x300?text=Office+Image";
                   }}
                 />
                 {isEditing && (
@@ -1148,10 +1153,10 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Certification"
-                          maxLength={200}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
-                          {cert.length}/200
+                          {cert.length}/100
                         </div>
                         <Button
                           onClick={() => removeCertification(index)}
@@ -1206,10 +1211,10 @@ export default function EditableAbout({
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
-                          maxLength={200}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
-                          {achievement.length}/200
+                          {achievement.length}/100
                         </div>
                         <Button
                           onClick={() => removeAchievement(index)}

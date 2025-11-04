@@ -1,4 +1,14 @@
-import { Edit2, Loader2, Plus, Save, Trash2, Upload, X, RotateCw, ZoomIn } from "lucide-react";
+import {
+  Edit2,
+  Loader2,
+  Plus,
+  Save,
+  Trash2,
+  Upload,
+  X,
+  RotateCw,
+  ZoomIn,
+} from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -27,8 +37,9 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant] || variants.default} ${sizes[size] || sizes.default
-        } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant] || variants.default} ${
+        sizes[size] || sizes.default
+      } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -528,10 +539,10 @@ export default function EditableCompanyProfile({
   const displayContent = isEditing ? tempProfileState : profileState;
   const displayCounters = isEditing
     ? {
-      growth: displayContent.growthThisYear,
-      team: displayContent.teamSize,
-      projects: displayContent.projectsDelivered,
-    }
+        growth: displayContent.growthThisYear,
+        team: displayContent.teamSize,
+        projects: displayContent.projectsDelivered,
+      }
     : animatedCounters;
 
   return (
@@ -579,7 +590,11 @@ export default function EditableCompanyProfile({
                   ) : (
                     <Save className="w-4 h-4 mr-2" />
                   )}
-                  {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+                  {isUploading
+                    ? "Uploading..."
+                    : isSaving
+                    ? "Saving..."
+                    : "Save"}
                 </Button>
                 <Button
                   onClick={handleCancel}
@@ -595,6 +610,10 @@ export default function EditableCompanyProfile({
             )}
           </div>
         )}
+
+        <div className="w-28 rounded-full mx-auto mb-16 bg-orange-100 text-orange-500 text-sm font-semibold text-center py-2">
+          Profile
+        </div>
 
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
@@ -656,25 +675,6 @@ export default function EditableCompanyProfile({
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2, duration: 0.7 }}
               >
-                <Badge className="bg-[#ffeb3b] text-gray-900 px-4 py-1.5 mb-4">
-                  Since{" "}
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      value={displayContent.establishedYear}
-                      onChange={(e) =>
-                        updateTempContent("establishedYear", e.target.value)
-                      }
-                      className="w-20 ml-1 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
-                      placeholder="Year"
-                      min="1900"
-                      max="2100"
-                    />
-                  ) : (
-                    displayContent.establishedYear
-                  )}
-                </Badge>
-
                 <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
                   {isEditing ? (
                     <div className="relative">
@@ -728,26 +728,14 @@ export default function EditableCompanyProfile({
               <div className="grid grid-cols-2 gap-6 mt-8">
                 {[
                   {
-                    label: "Growth This Year",
-                    value: `${displayCounters.growth}%`,
-                    field: "growthThisYear",
-                    delay: 0.4,
-                  },
-                  {
                     label: "Happy Clients",
                     value: `${displayContent.satisfiedCustomers}+`,
                     field: "satisfiedCustomers",
                     delay: 0.6,
                   },
                   {
-                    label: "Team Members",
-                    value: displayCounters.team,
-                    field: "teamSize",
-                    delay: 0.8,
-                  },
-                  {
                     label: "Projects Delivered",
-                    value: displayCounters.projects,
+                    value: `${displayContent.projectsDelivered}+`,
                     field: "projectsDelivered",
                     delay: 1.0,
                   },
@@ -823,10 +811,10 @@ export default function EditableCompanyProfile({
                               }}
                               className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                               placeholder="Core value"
-                              maxLength={200}
+                              maxLength={100}
                             />
                             <div className="text-right text-xs text-gray-500 mt-1">
-                              {value.length}/200
+                              {value.length}/100
                             </div>
                           </div>
                           <Button
@@ -839,7 +827,9 @@ export default function EditableCompanyProfile({
                           </Button>
                         </div>
                       ) : (
-                        <span className="text-gray-800 font-medium">{value}</span>
+                        <span className="text-gray-800 font-medium">
+                          {value}
+                        </span>
                       )}
                     </motion.div>
                   ))}
@@ -918,32 +908,37 @@ export default function EditableCompanyProfile({
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     16:9 (Widescreen)
                   </button>

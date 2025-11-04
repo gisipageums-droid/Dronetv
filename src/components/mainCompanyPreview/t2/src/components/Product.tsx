@@ -8,7 +8,9 @@ import { useState } from "react";
 
 export default function Product({ productData }) {
   const [visibleCount, setVisibleCount] = useState(4);
-  const [selectedProductIndex, setSelectedProductIndex] = useState<number | null>(null);
+  const [selectedProductIndex, setSelectedProductIndex] = useState<
+    number | null
+  >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = (index) => {
@@ -33,10 +35,14 @@ export default function Product({ productData }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-red-accent mb-4">
-            <Zap className="w-4 h-4 mr-2" />
-            <span className="font-medium">{productData.heading.title}</span>
-          </div>
+          {productData.heading.title.length > 0 ? (
+            <>
+              <div className="inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-red-accent mb-4">
+                <Zap className="w-4 h-4 mr-2" />
+                <span className="font-medium">{productData.heading.title}</span>
+              </div>
+            </>
+          ) : null}
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">
             {productData.heading.heading}
           </h2>
@@ -64,7 +70,9 @@ export default function Product({ productData }) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 <div className="absolute top-2 left-2">
-                  <Badge className={`${product.categoryColor} border-0 text-xs`}>
+                  <Badge
+                    className={`${product.categoryColor} border-0 text-xs`}
+                  >
                     {product.category}
                   </Badge>
                 </div>
@@ -76,7 +84,9 @@ export default function Product({ productData }) {
               </div>
               <div className="flex flex-col flex-grow p-6">
                 <div className="flex-shrink-0 mb-4">
-                  <CardTitle className="line-clamp-2 min-h-[3rem]">{product.title}</CardTitle>
+                  <CardTitle className="line-clamp-2 min-h-[3rem]">
+                    {product.title}
+                  </CardTitle>
                 </div>
                 <div className="flex-grow mb-4">
                   <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
@@ -95,7 +105,11 @@ export default function Product({ productData }) {
                   </ul>
                 </div>
                 <div className="mt-auto">
-                  <Button size="sm" className="hover:scale-105 w-full" onClick={() => openModal(index)}>
+                  <Button
+                    size="sm"
+                    className="hover:scale-105 w-full"
+                    onClick={() => openModal(index)}
+                  >
                     View Details
                   </Button>
                 </div>
@@ -111,15 +125,16 @@ export default function Product({ productData }) {
               Load More
             </Button>
           )}
-          {visibleCount >= productData.products.length && productData.products.length > 4 && (
-            <Button
-              onClick={() => setVisibleCount(4)}
-              variant="secondary"
-              className="ml-4"
-            >
-              Show Less
-            </Button>
-          )}
+          {visibleCount >= productData.products.length &&
+            productData.products.length > 4 && (
+              <Button
+                onClick={() => setVisibleCount(4)}
+                variant="secondary"
+                className="ml-4"
+              >
+                Show Less
+              </Button>
+            )}
         </div>
       </div>
 

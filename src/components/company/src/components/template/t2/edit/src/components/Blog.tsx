@@ -480,11 +480,12 @@ export default function Blog({
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <motion.div
+            
+              {isEditing ? (
+                 <motion.div
               className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
               whileHover={{ scale: 1.05 }}
             >
-              {isEditing ? (
                 <div className="relative">
                   <input
                     type="text"
@@ -511,12 +512,20 @@ export default function Blog({
                     )}
                   </div>
                 </div>
-              ) : (
-                <span className="font-semibold text-lg">
-                  {blogSection.header.badge}
-                </span>
-              )}
             </motion.div>
+
+              ) : (
+                blogSection.header.badge.length > 0 && (
+                  <motion.div
+                    className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <span className="font-semibold text-lg">
+                      {blogSection.header.badge}
+                    </span>
+                  </motion.div>
+                )
+              )}
 
             {isEditing ? (
               <div className="relative">

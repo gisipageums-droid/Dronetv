@@ -8,8 +8,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  RotateCw,
-  ZoomIn,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -132,7 +130,7 @@ export default function EditableGallerySection({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
   const [cropIndex, setCropIndex] = useState(null);
 
   const sectionRef = useRef(null);
@@ -275,7 +273,7 @@ export default function EditableGallerySection({
   const updateHeaderField = useCallback((field, value) => {
     // Apply character limits for header fields
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "description" && value.length > 200) {
@@ -295,7 +293,7 @@ export default function EditableGallerySection({
   const updateImageField = useCallback((index, field, value) => {
     // Apply character limits based on field type
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "category" && value.length > 50) {
@@ -372,7 +370,7 @@ export default function EditableGallerySection({
       setOriginalFile(file);
       setCropIndex(index);
       setCropModalOpen(true);
-      setAspectRatio(4/3); // Default aspect ratio for gallery images
+      setAspectRatio(4 / 3); // Default aspect ratio for gallery images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -531,7 +529,9 @@ export default function EditableGallerySection({
     <section
       id="gallery"
       ref={sectionRef}
-      className="py-24 bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20 relative"
+      className={`${
+        displaygalleryData?.images?.length > 0 ? "py-24" : "py-2"
+      } bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20 relative`}
     >
       {/* Loading Overlay */}
       {isLoading && (
@@ -589,28 +589,30 @@ export default function EditableGallerySection({
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isVisible ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-block mb-4"
-          >
-            <Badge className="bg-[#ffeb3b] text-gray-900 px-5 py-2 shadow-md">
-              Our Gallery
-            </Badge>
-          </motion.div>
+          {displaygalleryData?.images?.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={isVisible ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="inline-block mb-4"
+            >
+              <Badge className="bg-[#ffeb3b] text-gray-900 px-5 py-2 shadow-md">
+                Our Gallery
+              </Badge>
+            </motion.div>
+          )}
 
           {isEditing ? (
             <div className="space-y-4">
               <EditableText
-                value={displaygalleryData.heading.title}
+                value={displaygalleryData?.heading?.title}
                 field="title"
                 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center"
                 placeholder="Gallery Title"
                 maxLength={100}
               />
               <EditableText
-                value={displaygalleryData.heading.description}
+                value={displaygalleryData?.heading?.description}
                 field="description"
                 multiline={true}
                 className="text-gray-600 max-w-2xl mx-auto text-lg text-center"
@@ -626,7 +628,7 @@ export default function EditableGallerySection({
                 transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
                 className="text-3xl md:text-4xl font-extrabold text-gray-900"
               >
-                {displaygalleryData.heading.title}
+                {displaygalleryData?.heading?.title}
               </motion.h2>
 
               <motion.p
@@ -635,7 +637,7 @@ export default function EditableGallerySection({
                 transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
                 className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
               >
-                {displaygalleryData.heading.description}
+                {displaygalleryData?.heading?.description}
               </motion.p>
             </>
           )}
@@ -643,7 +645,7 @@ export default function EditableGallerySection({
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displaygalleryData.images.map((image, index) => (
+          {displaygalleryData?.images?.map((image, index) => (
             <motion.div
               key={image.id}
               initial={{ opacity: 0, y: 50 }}
@@ -728,19 +730,23 @@ export default function EditableGallerySection({
                           <input
                             value={image.category}
                             onChange={(e) =>
-                              updateImageField(index, "category", e.target.value)
+                              updateImageField(
+                                index,
+                                "category",
+                                e.target.value
+                              )
                             }
                             className="text-sm bg-transparent border-b w-full text-white placeholder-gray-300"
                             placeholder="Image category"
                             maxLength={50}
                           />
                           <div className="text-xs text-gray-300 text-right">
-                            {image.category?.length || 0}/50
+                            {image?.category?.length || 0}/50
                           </div>
                         </div>
                         <div>
                           <textarea
-                            value={image.description}
+                            value={image?.description}
                             onChange={(e) =>
                               updateImageField(
                                 index,
@@ -754,16 +760,16 @@ export default function EditableGallerySection({
                             maxLength={500}
                           />
                           <div className="text-xs text-gray-300 text-right">
-                            {image.description?.length || 0}/500
+                            {image?.description?.length || 0}/500
                           </div>
                         </div>
                       </>
                     ) : (
                       <>
-                        <h3 className="font-semibold">{image.title}</h3>
-                        <p className="text-sm">{image.category}</p>
+                        <h3 className="font-semibold">{image?.title}</h3>
+                        <p className="text-sm">{image?.category}</p>
                         <p className="text-xs mt-1 opacity-90">
-                          {image.description}
+                          {image?.description}
                         </p>
                       </>
                     )}
@@ -788,12 +794,12 @@ export default function EditableGallerySection({
           ))}
 
           {/* Add new image button in edit mode */}
-          {displaygalleryData.images.length < 6 && isEditing && (
+          {displaygalleryData?.images?.length < 6 && isEditing && (
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{
-                delay: 0.5 + displaygalleryData.images.length * 0.1,
+                delay: 0.5 + displaygalleryData?.images?.length * 0.1,
                 duration: 0.8,
                 ease: [0.16, 1, 0.3, 1],
               }}
@@ -808,7 +814,7 @@ export default function EditableGallerySection({
           )}
         </div>
 
-        {displaygalleryData.images.length >= 6 && isEditing && (
+        {displaygalleryData?.images?.length >= 6 && isEditing && (
           <p className="mt-6 w-full border border-gray-200 px-2 py-4 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">
             You alredy have 6 image's for adding new image you can edit existing
             images or remove one then add new!
@@ -846,19 +852,19 @@ export default function EditableGallerySection({
 
           <div className="max-w-4xl w-full max-h-full">
             <img
-              src={displaygalleryData.images[selectedImage].url}
-              alt={displaygalleryData.images[selectedImage].title}
+              src={displaygalleryData?.images[selectedImage].url}
+              alt={displaygalleryData?.images[selectedImage].title}
               className="w-full h-auto max-h-full object-contain"
             />
             <div className="text-white text-center mt-4">
               <h3 className="text-xl font-semibold">
-                {displaygalleryData.images[selectedImage].title}
+                {displaygalleryData?.images[selectedImage]?.title}
               </h3>
               <p className="text-gray-300">
-                {displaygalleryData.images[selectedImage].category}
+                {displaygalleryData?.images[selectedImage]?.category}
               </p>
               <p className="text-gray-400 text-sm mt-2">
-                {displaygalleryData.images[selectedImage].description}
+                {displaygalleryData?.images[selectedImage]?.description}
               </p>
             </div>
           </div>
@@ -923,34 +929,36 @@ export default function EditableGallerySection({
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
+                    onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
+                    onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     16:9 (Widescreen)
@@ -962,7 +970,7 @@ export default function EditableGallerySection({
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-gray-600">{zoom?.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"

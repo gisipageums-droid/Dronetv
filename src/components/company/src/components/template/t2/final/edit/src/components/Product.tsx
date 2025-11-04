@@ -648,13 +648,17 @@ export default function Product({
               </>
             ) : (
               <>
-                <div className="inline-flex items-center px-4 py-2 mb-4 rounded-full bg-red-accent/10 text-red-accent">
-                  <Zap className="w-4 h-4 mr-2" />
-                  <span className="font-medium">
-                    {" "}
-                    {contentState.heading.title}
-                  </span>
-                </div>
+                {contentState.heading.title.length > 0 ? (
+                  <>
+                    <div className="inline-flex items-center px-4 py-2 mb-4 rounded-full bg-red-accent/10 text-red-accent">
+                      <Zap className="w-4 h-4 mr-2" />
+                      <span className="font-medium">
+                        {" "}
+                        {contentState.heading.title}
+                      </span>
+                    </div>
+                  </>
+                ) : null}
                 <h2 className="mb-4 text-3xl md:text-4xl text-foreground">
                   {contentState.heading.heading}
                 </h2>

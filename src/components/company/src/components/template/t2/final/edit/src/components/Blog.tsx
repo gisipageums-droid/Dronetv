@@ -1,4 +1,4 @@
-// Blog.tsx - Full Updated Code
+// Blog.tsx - Full Updated Code with Text Limitations
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Calendar, User, ArrowRight } from "lucide-react";
@@ -480,11 +480,12 @@ export default function Blog({
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <motion.div
+            
+              {isEditing ? (
+                 <motion.div
               className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
               whileHover={{ scale: 1.05 }}
             >
-              {isEditing ? (
                 <div className="relative">
                   <input
                     type="text"
@@ -496,7 +497,7 @@ export default function Blog({
                       }))
                     }
                     maxLength={25}
-                    className={`font-medium bg-transparent border-b text-center w-full ${
+                    className={`font-medium bg-transparent border-b text-center ${
                       blogSection.header.badge.length >= 25
                         ? "border-red-500"
                         : ""
@@ -506,17 +507,25 @@ export default function Blog({
                     {blogSection.header.badge.length}/25
                     {blogSection.header.badge.length >= 25 && (
                       <span className="ml-2 text-red-500 font-bold">
-                        Character limit reached!
+                        Limit reached!
                       </span>
                     )}
                   </div>
                 </div>
-              ) : (
-                <span className="font-semibold text-lg">
-                  {blogSection.header.badge}
-                </span>
-              )}
             </motion.div>
+
+              ) : (
+                blogSection.header.badge.length > 0 && (
+                  <motion.div
+                    className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <span className="font-semibold text-lg">
+                      {blogSection.header.badge}
+                    </span>
+                  </motion.div>
+                )
+              )}
 
             {isEditing ? (
               <div className="relative">
@@ -536,11 +545,11 @@ export default function Blog({
                       : ""
                   }`}
                 />
-                <div className="text-right text-xs text-gray-500 -mt-4 mb-2">
+                <div className="text-right text-xs text-gray-500 mt-1">
                   {blogSection.header.title.length}/80
                   {blogSection.header.title.length >= 80 && (
                     <span className="ml-2 text-red-500 font-bold">
-                      Character limit reached!
+                      Limit reached!
                     </span>
                   )}
                 </div>
@@ -573,7 +582,7 @@ export default function Blog({
                   {blogSection.header.desc.length}/200
                   {blogSection.header.desc.length >= 200 && (
                     <span className="ml-2 text-red-500 font-bold">
-                      Character limit reached!
+                      Limit reached!
                     </span>
                   )}
                 </div>
@@ -623,12 +632,17 @@ export default function Blog({
                               }))
                             }
                             maxLength={20}
-                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b w-full ${
-                              post.category.length >= 20 ? "border-red-300" : ""
+                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b ${
+                              post.category.length >= 20 ? "border-red-500" : ""
                             }`}
                           />
-                          <div className="absolute -bottom-5 left-0 text-xs text-red-300 font-bold">
-                            {post.category.length >= 20 && "Limit reached!"}
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {post.category.length}/20
+                            {post.category.length >= 20 && (
+                              <span className="ml-2 text-red-500 font-bold">
+                                Limit reached!
+                              </span>
+                            )}
                           </div>
                         </div>
                       ) : (
@@ -669,18 +683,31 @@ export default function Blog({
                   <div className="flex items-center text-xs text-muted-foreground mb-3 flex-shrink-0">
                     <Calendar className="w-3 h-3 mr-1" />
                     {isEditing ? (
-                      <input
-                        value={post.date}
-                        onChange={(e) =>
-                          setBlogSection((prev) => ({
-                            ...prev,
-                            posts: prev.posts.map((p, i) =>
-                              i === index ? { ...p, date: e.target.value } : p
-                            ),
-                          }))
-                        }
-                        className="text-xs text-muted-foreground mr-4 bg-transparent border-b"
-                      />
+                      <div className="relative mr-4">
+                        <input
+                          value={post.date}
+                          onChange={(e) =>
+                            setBlogSection((prev) => ({
+                              ...prev,
+                              posts: prev.posts.map((p, i) =>
+                                i === index ? { ...p, date: e.target.value } : p
+                              ),
+                            }))
+                          }
+                          maxLength={20}
+                          className={`text-xs text-muted-foreground bg-transparent border-b ${
+                            post.date.length >= 20 ? "border-red-500" : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {post.date.length}/20
+                          {post.date.length >= 20 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <span className="text-xs text-muted-foreground mr-4">
                         {post.date}
@@ -701,40 +728,18 @@ export default function Blog({
                               ),
                             }))
                           }
-                          maxLength={50}
-                          className={`text-xs text-muted-foreground bg-transparent border-b w-full ${
-                            post.author.length >= 50
-                              ? "border-red-500"
-                              : post.author.length >= 45
-                              ? "border-orange-500"
-                              : ""
+                          maxLength={30}
+                          className={`text-xs text-muted-foreground bg-transparent border-b ${
+                            post.author.length >= 30 ? "border-red-500" : ""
                           }`}
                         />
-                        <div className="flex justify-between items-center mt-1">
-                          <div>
-                            {post.author.length >= 50 && (
-                              <span className="text-red-500 text-xs font-bold">
-                                ⚠️ Limit reached!
-                              </span>
-                            )}
-                            {post.author.length >= 45 &&
-                              post.author.length < 50 && (
-                                <span className="text-orange-500 text-xs">
-                                  ⚠️ Approaching limit
-                                </span>
-                              )}
-                          </div>
-                          <div
-                            className={`text-xs ${
-                              post.author.length >= 50
-                                ? "text-red-500"
-                                : post.author.length >= 45
-                                ? "text-orange-500"
-                                : "text-gray-500"
-                            }`}
-                          >
-                            {post.author.length}/50
-                          </div>
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {post.author.length}/30
+                          {post.author.length >= 30 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -747,7 +752,7 @@ export default function Blog({
                   <div className="flex-grow mb-4">
                     {isEditing ? (
                       <>
-                        <div className="relative">
+                        <div className="relative mb-3">
                           <input
                             value={post.title}
                             onChange={(e) =>
@@ -760,21 +765,20 @@ export default function Blog({
                                 ),
                               }))
                             }
-                            maxLength={80}
+                            maxLength={100}
                             className={`font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 w-full border-b bg-transparent min-h-[3rem] ${
-                              post.title.length >= 80 ? "border-red-500" : ""
+                              post.title.length >= 100 ? "border-red-500" : ""
                             }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
-                            {post.title.length}/80
-                            {post.title.length >= 80 && (
+                            {post.title.length}/100
+                            {post.title.length >= 100 && (
                               <span className="ml-2 text-red-500 font-bold">
-                                Character limit reached!
+                                Limit reached!
                               </span>
                             )}
                           </div>
                         </div>
-
                         <div className="relative">
                           <textarea
                             value={post.excerpt}
@@ -788,16 +792,16 @@ export default function Blog({
                                 ),
                               }))
                             }
-                            maxLength={150}
+                            maxLength={200}
                             className={`text-muted-foreground text-sm line-clamp-3 w-full border-b bg-transparent min-h-[4.5rem] ${
-                              post.excerpt.length >= 150 ? "border-red-500" : ""
+                              post.excerpt.length >= 200 ? "border-red-500" : ""
                             }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
-                            {post.excerpt.length}/150
-                            {post.excerpt.length >= 150 && (
+                            {post.excerpt.length}/200
+                            {post.excerpt.length >= 200 && (
                               <span className="ml-2 text-red-500 font-bold">
-                                Character limit reached!
+                                Limit reached!
                               </span>
                             )}
                           </div>
@@ -938,15 +942,19 @@ export default function Blog({
                               }))
                             }
                             maxLength={20}
-                            className={`text-sm font-medium text-primary-foreground bg-transparent border-b w-full ${
+                            className={`text-sm font-medium text-primary-foreground bg-transparent border-b ${
                               selectedPost.category.length >= 20
-                                ? "border-red-300"
+                                ? "border-red-500"
                                 : ""
                             }`}
                           />
-                          <div className="absolute -bottom-6 left-0 text-xs text-red-300 font-bold">
-                            {selectedPost.category.length >= 20 &&
-                              "Limit reached!"}
+                          <div className="text-right text-xs text-gray-500 mt-1">
+                            {selectedPost.category.length}/20
+                            {selectedPost.category.length >= 20 && (
+                              <span className="ml-2 text-red-500 font-bold">
+                                Limit reached!
+                              </span>
+                            )}
                           </div>
                         </div>
                       ) : (
@@ -963,16 +971,31 @@ export default function Blog({
                   <div className="flex items-center text-sm text-muted-foreground mb-4">
                     <Calendar className="w-4 h-4 mr-1" />
                     {isEditing ? (
-                      <input
-                        value={selectedPost.date}
-                        onChange={(e) =>
-                          setSelectedPost((s: any) => ({
-                            ...s,
-                            date: e.target.value,
-                          }))
-                        }
-                        className="text-sm text-muted-foreground mr-6 bg-transparent border-b"
-                      />
+                      <div className="relative mr-6">
+                        <input
+                          value={selectedPost.date}
+                          onChange={(e) =>
+                            setSelectedPost((s: any) => ({
+                              ...s,
+                              date: e.target.value,
+                            }))
+                          }
+                          maxLength={20}
+                          className={`text-sm text-muted-foreground bg-transparent border-b ${
+                            selectedPost.date.length >= 20
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {selectedPost.date.length}/20
+                          {selectedPost.date.length >= 20 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <span className="text-sm text-muted-foreground mr-6">
                         {selectedPost.date}
@@ -981,16 +1004,31 @@ export default function Blog({
 
                     <User className="w-4 h-4 mr-1" />
                     {isEditing ? (
-                      <input
-                        value={selectedPost.author}
-                        onChange={(e) =>
-                          setSelectedPost((s: any) => ({
-                            ...s,
-                            author: e.target.value,
-                          }))
-                        }
-                        className="text-sm text-muted-foreground mr-6 bg-transparent border-b"
-                      />
+                      <div className="relative mr-6">
+                        <input
+                          value={selectedPost.author}
+                          onChange={(e) =>
+                            setSelectedPost((s: any) => ({
+                              ...s,
+                              author: e.target.value,
+                            }))
+                          }
+                          maxLength={30}
+                          className={`text-sm text-muted-foreground bg-transparent border-b ${
+                            selectedPost.author.length >= 30
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {selectedPost.author.length}/30
+                          {selectedPost.author.length >= 30 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <span className="text-sm text-muted-foreground mr-6">
                         {selectedPost.author}
@@ -1000,27 +1038,57 @@ export default function Blog({
 
                   {isEditing ? (
                     <>
-                      <input
-                        value={selectedPost.title}
-                        onChange={(e) =>
-                          setSelectedPost((s: any) => ({
-                            ...s,
-                            title: e.target.value,
-                          }))
-                        }
-                        className="text-2xl font-bold text-card-foreground mb-4 w-full bg-transparent border-b"
-                      />
+                      <div className="relative mb-4">
+                        <input
+                          value={selectedPost.title}
+                          onChange={(e) =>
+                            setSelectedPost((s: any) => ({
+                              ...s,
+                              title: e.target.value,
+                            }))
+                          }
+                          maxLength={100}
+                          className={`text-2xl font-bold text-card-foreground mb-4 w-full bg-transparent border-b ${
+                            selectedPost.title.length >= 100
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {selectedPost.title.length}/100
+                          {selectedPost.title.length >= 100 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
-                      <textarea
-                        value={selectedPost.content}
-                        onChange={(e) =>
-                          setSelectedPost((s: any) => ({
-                            ...s,
-                            content: e.target.value,
-                          }))
-                        }
-                        className="prose prose-gray max-w-none text-card-foreground w-full h-48 mb-4 border bg-transparent p-2"
-                      />
+                      <div className="relative">
+                        <textarea
+                          value={selectedPost.content}
+                          onChange={(e) =>
+                            setSelectedPost((s: any) => ({
+                              ...s,
+                              content: e.target.value,
+                            }))
+                          }
+                          maxLength={5000}
+                          className={`prose prose-gray max-w-none text-card-foreground w-full h-48 mb-4 border bg-transparent p-2 ${
+                            selectedPost.content.length >= 5000
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {selectedPost.content.length}/5000
+                          {selectedPost.content.length >= 5000 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
                       <div className="mb-4">
                         <div className="text-xs text-gray-600 mb-1">

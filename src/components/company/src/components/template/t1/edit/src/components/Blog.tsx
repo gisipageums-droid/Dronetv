@@ -1,7 +1,17 @@
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { Edit2, Save, X, Plus, Trash2, Loader2, Upload, RotateCw, ZoomIn } from "lucide-react";
+import {
+  Edit2,
+  Save,
+  X,
+  Plus,
+  Trash2,
+  Loader2,
+  Upload,
+  RotateCw,
+  ZoomIn,
+} from "lucide-react";
 import blog1 from "../public/images/blog/blog1.jpg";
 import blog2 from "../public/images/blog/blog2.jpg";
 import blog3 from "../public/images/blog/blog3.jpg";
@@ -228,10 +238,8 @@ export default function Blog({
   // Extract data from blogData prop or use defaults
   const defaultContent = {
     header: {
-      title: blogData?.header?.title || "Latest Blog Posts",
-      desc:
-        blogData?.header?.desc ||
-        "Stay updated with our latest insights and stories",
+      title: blogData?.header?.title,
+      desc: blogData?.header?.desc,
     },
     posts:
       blogData?.posts?.map((post, index) => ({
@@ -268,7 +276,7 @@ export default function Blog({
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
   const sectionRef = useRef(null);
 
-  // Enhanced crop modal state
+  // Enhanced crop modal state (same as Header.tsx)
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -276,7 +284,7 @@ export default function Blog({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4/3);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
   const [cropIndex, setCropIndex] = useState(null);
 
   // Update content when blogData changes
@@ -292,7 +300,7 @@ export default function Blog({
     }
   }, [content, onStateChange]);
 
-  // Enhanced cropper functions
+  // Enhanced cropper functions (same as Header.tsx)
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
@@ -404,7 +412,7 @@ export default function Blog({
     setCrop({ x: 0, y: 0 });
   };
 
-  // Enhanced image upload handler
+  // Enhanced image upload handler (same as Header.tsx)
   const handleImageUpload = (id: number, event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -426,7 +434,7 @@ export default function Blog({
       setOriginalFile(file);
       setCropIndex(id);
       setCropModalOpen(true);
-      setAspectRatio(4/3); // Standard aspect ratio for blog images
+      setAspectRatio(4 / 3); // Standard aspect ratio for blog images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -449,7 +457,7 @@ export default function Blog({
       }) => {
         const baseClasses =
           "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
-        
+
         // Show character count if maxLength is provided
         const charCount = maxLength ? (
           <div className="text-xs text-gray-500 text-right mt-1">
@@ -620,7 +628,7 @@ export default function Blog({
   const updateBlogField = useCallback((id, field, value) => {
     // Apply character limits based on field type
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "excerpt" && value.length > 500) {
@@ -648,7 +656,7 @@ export default function Blog({
   const updateHeaderField = (field, value) => {
     // Apply character limits for header fields
     let processedValue = value;
-    
+
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "desc" && value.length > 200) {
@@ -671,7 +679,7 @@ export default function Blog({
       <motion.section
         ref={sectionRef}
         id="blog"
-        className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative"
+        className={`${displayContent.posts.length > 0 ? "py-20" : "py-2"} bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -679,7 +687,7 @@ export default function Blog({
       >
         {/* Edit Controls */}
         <motion.div
-          className="absolute top-4 right-6 flex gap-2 z-10"
+          className="absolute top-4 right-4 flex gap-2 z-10"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
@@ -699,7 +707,7 @@ export default function Blog({
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                className="bg-green-600 text-white"
                 disabled={isSaving || isUploading}
               >
                 {isUploading ? (
@@ -715,7 +723,7 @@ export default function Blog({
                 onClick={handleCancel}
                 variant="outline"
                 size="sm"
-                className="bg-white hover:bg-gray-50 shadow-md"
+                className="bg-white"
                 disabled={isSaving || isUploading}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -724,7 +732,7 @@ export default function Blog({
               <Button
                 onClick={handleAddBlog}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                className="bg-blue-600 text-white"
               >
                 <Plus className="w-4 h-4 mr-2" /> Add Blog
               </Button>
@@ -905,7 +913,7 @@ export default function Blog({
                                 onClick={() => handleDeleteBlog(b.id)}
                                 variant="outline"
                                 size="sm"
-                                className="bg-red-600 hover:bg-red-700 text-white mt-2"
+                                className="bg-red-600 text-white mt-2"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Delete
@@ -965,7 +973,7 @@ export default function Blog({
         <BlogModal blog={selectedBlog} onClose={() => setSelectedBlog(null)} />
       )}
 
-      {/* Enhanced Crop Modal */}
+      {/* Enhanced Crop Modal (same as Header.tsx) */}
       {cropModalOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -1001,7 +1009,6 @@ export default function Blog({
                   aspect={aspectRatio}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
-                  onRotationChange={setRotation}
                   onCropComplete={onCropComplete}
                   showGrid={false}
                   cropShape="rect"
@@ -1024,34 +1031,36 @@ export default function Blog({
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
+                    onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
+                    onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
-                        : 'bg-white text-gray-700 border-gray-300'
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                     }`}
                   >
                     16:9 (Widescreen)
@@ -1076,30 +1085,12 @@ export default function Blog({
                 />
               </div>
 
-              {/* Rotation Control */}
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Rotation</span>
-                  <span className="text-gray-600">{rotation}°</span>
-                </div>
-                <input
-                  type="range"
-                  value={rotation}
-                  min={0}
-                  max={360}
-                  step={1}
-                  onChange={(e) => setRotation(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
-              </div>
-
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium flex items-center justify-center gap-2"
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
                 >
-                  <RotateCw className="w-4 h-4" />
                   Reset
                 </button>
                 <button
