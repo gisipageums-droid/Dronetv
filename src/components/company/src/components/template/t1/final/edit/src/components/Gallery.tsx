@@ -38,9 +38,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant] || variants.default} ${
-        sizes[size] || sizes.default
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant] || variants.default} ${sizes[size] || sizes.default
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -529,9 +528,8 @@ export default function EditableGallerySection({
     <section
       id="gallery"
       ref={sectionRef}
-      className={`${
-        displaygalleryData?.images?.length > 0 ? "py-24" : "py-2"
-      } bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20 relative`}
+      className={`${displaygalleryData?.images?.length > 0 ? "py-24" : "py-2"
+        } bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20 relative`}
     >
       {/* Loading Overlay */}
       {isLoading && (
@@ -609,7 +607,7 @@ export default function EditableGallerySection({
                 field="title"
                 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center"
                 placeholder="Gallery Title"
-                maxLength={100}
+                maxLength={35}
               />
               <EditableText
                 value={displaygalleryData?.heading?.description}
@@ -617,7 +615,7 @@ export default function EditableGallerySection({
                 multiline={true}
                 className="text-gray-600 max-w-2xl mx-auto text-lg text-center"
                 placeholder="Gallery description"
-                maxLength={200}
+                maxLength={100}
               />
             </div>
           ) : (
@@ -720,7 +718,7 @@ export default function EditableGallerySection({
                             }
                             className="font-semibold bg-transparent border-b w-full mb-1 text-white placeholder-gray-300"
                             placeholder="Image title"
-                            maxLength={100}
+                            maxLength={35}
                           />
                           <div className="text-xs text-gray-300 text-right">
                             {image.title?.length || 0}/100
@@ -935,31 +933,28 @@ export default function EditableGallerySection({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
