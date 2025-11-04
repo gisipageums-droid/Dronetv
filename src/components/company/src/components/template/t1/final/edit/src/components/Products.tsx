@@ -434,11 +434,11 @@ export default function EditableProducts({
       products: prev.products.map((product) =>
         product.id === productId
           ? {
-              ...product,
-              features: product.features.map((f, fi) =>
-                fi === fIndex ? processedValue : f
-              ),
-            }
+            ...product,
+            features: product.features.map((f, fi) =>
+              fi === fIndex ? processedValue : f
+            ),
+          }
           : product
       ),
     }));
@@ -461,9 +461,9 @@ export default function EditableProducts({
       products: prev.products.map((product) =>
         product.id === productId
           ? {
-              ...product,
-              features: product.features.filter((_, fi) => fi !== fIndex),
-            }
+            ...product,
+            features: product.features.filter((_, fi) => fi !== fIndex),
+          }
           : product
       ),
     }));
@@ -648,13 +648,12 @@ export default function EditableProducts({
           >
             <div
               className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 text-2xl font-bold
-              ${
-                benefit.color === "red-accent"
+              ${benefit.color === "red-accent"
                   ? "bg-red-100 text-red-600"
                   : benefit.color === "primary"
-                  ? "bg-yellow-100 text-yellow-400"
-                  : "bg-yellow-100 text-yellow-400"
-              }`}
+                    ? "bg-yellow-100 text-yellow-400"
+                    : "bg-yellow-100 text-yellow-400"
+                }`}
             >
               {isEditing ? (
                 <input
@@ -678,7 +677,7 @@ export default function EditableProducts({
                 }
                 className="font-semibold text-lg mb-2 w-full text-center bg-transparent border-b"
                 placeholder="Benefit Title"
-                maxLength={100}
+                maxLength={35}
               />
             ) : (
               <h4 className="font-semibold text-lg mb-2">{benefit.title}</h4>
@@ -692,7 +691,7 @@ export default function EditableProducts({
                 className="text-gray-600 text-sm w-full bg-transparent border-b"
                 placeholder="Benefit Description"
                 rows={2}
-                maxLength={200}
+                maxLength={100}
               />
             ) : (
               <p className="text-gray-600 text-sm">{benefit.desc}</p>
@@ -738,9 +737,8 @@ export default function EditableProducts({
     <section
       id="product"
       ref={sectionRef}
-      className={`${
-        tempContent?.products && tempContent?.products.length > 0 && "py-20"
-      } bg-gray-50 relative overflow-hidden`}
+      className={`${tempContent?.products && tempContent?.products.length > 0 && "py-20"
+        } bg-gray-50 relative overflow-hidden`}
     >
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
@@ -802,7 +800,7 @@ export default function EditableProducts({
                 }
                 className="text-4xl font-bold mb-2"
                 placeholder="Section Title"
-                maxLength={100}
+                maxLength={35}
               />
             ) : (
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
@@ -818,7 +816,7 @@ export default function EditableProducts({
                 }
                 className="text-2xl font-semibold mb-2"
                 placeholder="Section Subtitle"
-                maxLength={200}
+                maxLength={100}
               />
             ) : (
               <h3 className="text-2xl font-semibold text-gray-700 mb-4">
@@ -857,11 +855,10 @@ export default function EditableProducts({
             <button
               key={cat}
               onClick={() => setSelected(cat)}
-              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
-                selected === cat
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${selected === cat
                   ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
                   : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-              }`}
+                }`}
             >
               {cat}
               {isEditing && (
@@ -974,7 +971,7 @@ export default function EditableProducts({
                       }
                       className="text-xl font-bold mb-3"
                       placeholder="Product Title"
-                      maxLength={100}
+                      maxLength={35}
                     />
                   ) : (
                     <h3 className="text-xl font-bold mb-3">{product.title}</h3>
@@ -1023,7 +1020,7 @@ export default function EditableProducts({
                                   }
                                   className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs"
                                   placeholder="Feature"
-                                  maxLength={200}
+                                  maxLength={100}
                                 />
                                 <Button
                                   onClick={() => removeFeature(product.id, idx)}
@@ -1109,7 +1106,7 @@ export default function EditableProducts({
                 }
                 className="text-2xl font-bold mb-4"
                 placeholder="Product Title"
-                maxLength={100}
+                maxLength={35}
               />
             ) : (
               <h2 className="text-2xl font-bold mb-4">
@@ -1155,7 +1152,7 @@ export default function EditableProducts({
                       )
                     }
                     placeholder="Pricing Information"
-                    maxLength={100}
+                    maxLength={35}
                   />
                 ) : (
                   <p>{tempContent.products[selectedProductIndex].pricing}</p>
@@ -1174,7 +1171,7 @@ export default function EditableProducts({
                       )
                     }
                     placeholder="Timeline Information"
-                    maxLength={100}
+                    maxLength={35}
                   />
                 ) : (
                   <p>{tempContent.products[selectedProductIndex].timeline}</p>
@@ -1250,31 +1247,28 @@ export default function EditableProducts({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
