@@ -930,10 +930,10 @@ export default function Blog({
                                 {b.category}
                               </motion.span>
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                            <h3 className="text-xl mb-2 font-semibold text-gray-900 dark:text-white">
                               {b.title}
                             </h3>
-                            <p className="text-gray-600 dark:text-gray-300 h-[50px] overflow-auto">
+                            <p className="text-gray-600 dark:text-gray-300 h-full overflow-auto">
                               {b.excerpt}
                             </p>
                             <div className="flex justify-between items-center mt-4 absolute bottom-4">
