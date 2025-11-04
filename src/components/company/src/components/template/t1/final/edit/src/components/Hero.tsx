@@ -157,7 +157,7 @@ export default function EditableHero({
       setCropField(field);
       setCropIndex(index);
       setShowCropper(true);
-      setAspectRatio(field === "customerImage" ? 1 : 4/3); // Square for customer images, standard for others
+      setAspectRatio(field === "customerImage" ? 1 : 4 / 3); // Square for customer images, standard for others
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -250,9 +250,9 @@ export default function EditableHero({
       } else if (cropField === "customerImage" && cropIndex !== null) {
         const updatedCustomerImages = [...tempHeroState.customerImages];
         updatedCustomerImages[cropIndex] = previewUrl;
-        setTempHeroState((prev) => ({ 
-          ...prev, 
-          customerImages: updatedCustomerImages 
+        setTempHeroState((prev) => ({
+          ...prev,
+          customerImages: updatedCustomerImages
         }));
 
         setPendingImageFiles((prev) => {
@@ -320,8 +320,7 @@ export default function EditableHero({
             } else {
               const errorData = await response.json();
               console.error(
-                `Hero1 image upload failed: ${
-                  errorData.message || "Unknown error"
+                `Hero1 image upload failed: ${errorData.message || "Unknown error"
                 }`
               );
               throw new Error(`Hero1 upload failed`);
@@ -353,8 +352,7 @@ export default function EditableHero({
             } else {
               const errorData = await response.json();
               console.error(
-                `Hero3 image upload failed: ${
-                  errorData.message || "Unknown error"
+                `Hero3 image upload failed: ${errorData.message || "Unknown error"
                 }`
               );
               throw new Error(`Hero3 upload failed`);
@@ -390,8 +388,7 @@ export default function EditableHero({
               } else {
                 const errorData = await response.json();
                 console.error(
-                  `Customer image ${i} upload failed: ${
-                    errorData.message || "Unknown error"
+                  `Customer image ${i} upload failed: ${errorData.message || "Unknown error"
                   }`
                 );
                 throw new Error(`Customer image ${i} upload failed`);
@@ -465,7 +462,7 @@ export default function EditableHero({
         <div className="relative">
           {multiline ? (
             <textarea
-              value={value}
+              value={value ?? ""}
               onChange={handleChange}
               className={`${baseClasses} p-3 resize-none ${className}`}
               placeholder={placeholder}
@@ -475,7 +472,7 @@ export default function EditableHero({
           ) : (
             <input
               type="text"
-              value={value}
+              value={value ?? ""}
               onChange={handleChange}
               className={`${baseClasses} p-2 ${className}`}
               placeholder={placeholder}
@@ -484,7 +481,7 @@ export default function EditableHero({
           )}
           {maxLength && (
             <div className="text-right text-xs text-gray-300 mt-1">
-              {value.length}/{maxLength}
+              {(value?.length ?? 0)}/{maxLength}
             </div>
           )}
         </div>
@@ -556,31 +553,28 @@ export default function EditableHero({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1 
-                        ? 'bg-blue-500 text-white border-blue-500' 
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                        ? 'bg-blue-500 text-white border-blue-500'
                         : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(4/3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4/3 
-                        ? 'bg-blue-500 text-white border-blue-500' 
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                        ? 'bg-blue-500 text-white border-blue-500'
                         : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
-                    onClick={() => setAspectRatio(16/9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16/9 
-                        ? 'bg-blue-500 text-white border-blue-500' 
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                        ? 'bg-blue-500 text-white border-blue-500'
                         : 'bg-white text-gray-700 border-gray-300'
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -629,7 +623,7 @@ export default function EditableHero({
           </motion.div>
         </motion.div>
       )}
-      
+
       {/* Rest of the hero section remains exactly the same */}
       <section
         id="home"
@@ -717,14 +711,14 @@ export default function EditableHero({
                     field="heading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight"
                     placeholder="Main heading"
-                    maxLength={100}
+                    maxLength={35}
                   />
                   <EditableText
                     value={tempHeroState.subheading}
                     field="subheading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold text-yellow-400"
                     placeholder="Sub heading"
-                    maxLength={200}
+                    maxLength={100}
                   />
                 </div>
               )}
@@ -783,13 +777,13 @@ export default function EditableHero({
                     value={tempHeroState.primaryButtonLink}
                     field="primaryButtonLink"
                     placeholder="Primary button link"
-                    maxLength={200}
+                    maxLength={100}
                   />
                   <EditableText
                     value={tempHeroState.secondaryButtonLink}
                     field="secondaryButtonLink"
                     placeholder="Secondary button link"
-                    maxLength={200}
+                    maxLength={100}
                   />
                 </div>
               )}
@@ -836,7 +830,7 @@ export default function EditableHero({
                     field="trustText"
                     placeholder="Trust text"
                     className="text-sm sm:text-base text-white"
-                    maxLength={100}
+                    maxLength={35}
                   />
                 )}
               </motion.div>
