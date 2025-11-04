@@ -132,33 +132,17 @@ export default function EditableAbout({
 
   // Default content structure based on the provided JSON
   const defaultContent = {
-    companyName: aboutData?.companyName || "",
-    industry: aboutData?.industry || "Drone Technology Solutions",
-    established: aboutData?.established || "",
-    headquarters: aboutData?.headquarters || "",
-    description1:
-      aboutData?.description1 ||
-      "Founded in 2020 by [Founder's Name], [Company Name] was born from a vision to provide reliable and innovative drone services. Driven by a passion for cutting-edge technology and a commitment",
-    description2:
-      aboutData?.description2 ||
-      "to safety, we aimed to redefine aerial data acquisition. Our early projects focused on building a strong foundation of expertise",
-    mission:
-      aboutData?.mission ||
-      "To provide safe, reliable, and innovative drone technology solutions that empower businesses and improve lives.",
-    vision:
-      aboutData?.vision ||
-      "To be the leading provider of cutting-edge drone technology, shaping the future of aerial data acquisition and analysis.",
-    officeImage: aboutData?.officeImage || img,
-    certifications: aboutData?.certifications || [
-      "DGCA Remote Pilot License",
-      "Professional Drone Operations Certification",
-      "Advanced Aerial Photography Training",
-    ],
-    achievements: aboutData?.achievements || [
-      "500+ Successful Drone Operations Completed",
-      "DGCA Certified Pilots and Operations",
-      "99.8% Project Success Rate Achieved",
-    ],
+    companyName: aboutData?.companyName,
+    industry: aboutData?.industry,
+    established: aboutData?.established,
+    headquarters: aboutData?.headquarters,
+    description1: aboutData?.description1,
+    description2: aboutData?.description2,
+    mission: aboutData?.mission,
+    vision: aboutData?.vision,
+    officeImage: aboutData?.officeImage,
+    certifications: aboutData?.certifications,
+    achievements: aboutData?.achievements,
   };
 
   // Consolidated state
@@ -1111,11 +1095,11 @@ export default function EditableAbout({
                     </div>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent mix-blend-multiply"></div>
+                <div className="absolute inset-0 z-50 bg-blue-600/20 mix-blend-multiply"></div>
                 <img
                   src={getImageSource()}
                   alt="Office"
-                  className="w-full h-auto object-cover transition-opacity duration-300"
+                  className="w-full h-auto object-cover mt-8 transition-opacity duration-300"
                   onError={(e) => {
                     const img = e.currentTarget as HTMLImageElement;
                     if (img.src.includes("via.placeholder.com")) return;
