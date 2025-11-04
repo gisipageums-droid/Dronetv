@@ -78,7 +78,7 @@ export default function Footer({ content }) {
                 <img
                   src={footerData.brand.logoUrl || logo}
                   alt="Logo"
-                  className="h-4 w-4 rounded-full md:h-8 md:w-8 object-contain"
+                  className="h-4 w-4 md:w-[40px] md:h-[40px] rounded-xl"  
                 />
                 {footerData.brand.name}
               </span>
