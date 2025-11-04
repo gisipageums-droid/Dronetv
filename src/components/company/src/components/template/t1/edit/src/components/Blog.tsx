@@ -82,20 +82,19 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto my-auto m-5"
+        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md max-h-[70vh] overflow-y-auto my-auto"
         onClick={(e) => e.stopPropagation()}
-        style={{ margin: "1rem" }}
       >
-        {/* Close Button - Fixed positioning */}
+        {/* Close Button */}
         <button
-          className="absolute -top-0.5 -right-0.5 z-[1010]  hover:bg-gray-600 rounded-full p-2 text-white transition-colors shadow-lg flex items-center justify-center"
+          className="absolute -top-2 -right-2 z-[1010] bg-gray-600 hover:bg-gray-700 rounded-full p-1 text-white transition-colors shadow-lg flex items-center justify-center"
           onClick={onClose}
           aria-label="Close modal"
-          style={{ width: "32px", height: "32px" }}
+          style={{ width: "28px", height: "28px" }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
+            className="h-3 w-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -113,10 +112,10 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
         <div className="relative">
           <img
             src={blog.image}
-            className="w-full h-48 object-cover rounded-t-xl"
+            className="w-full h-32 object-cover rounded-t-xl"
             alt={blog.title}
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
             <div className="flex justify-between items-center">
               <div className="text-white">
                 <span className="text-xs bg-indigo-600 px-2 py-1 rounded-full">
@@ -131,25 +130,25 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
         </div>
 
         {/* Content */}
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="p-4">
+          <h1 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
             {blog.title}
           </h1>
 
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+          <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
             {blog.excerpt}
           </p>
 
           {/* Blog Outline if available */}
           {blog.outline && blog.outline.length > 0 && (
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+            <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg mb-4 overflow-auto">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
                 In this article:
               </h3>
-              <ul className="space-y-1 text-sm">
+              <ul className="space-y-1 text-xs">
                 {blog.outline.map((item: string, index: number) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-indigo-600 dark:text-indigo-400 mr-2 mt-1">
+                    <span className="text-indigo-600 dark:text-indigo-400 mr-2 mt-0.5">
                       •
                     </span>
                     <span className="text-gray-700 dark:text-gray-300">
@@ -162,7 +161,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
           )}
 
           {/* Main Content */}
-          <div className="text-gray-700 dark:text-gray-300 leading-7 space-y-4 text-sm">
+          <div className="text-gray-700 dark:text-gray-300 leading-6 space-y-3 text-xs max-h-40 overflow-y-auto">
             {blog.content ? (
               <div dangerouslySetInnerHTML={{ __html: blog.content }} />
             ) : (
@@ -182,7 +181,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
                   reduced resource consumption.
                 </p>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6 mb-3">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mt-4 mb-2">
                   The Future of Drone Technology
                 </h3>
 
@@ -200,7 +199,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
 
           {/* Keywords if available */}
           {blog.keywords && blog.keywords.length > 0 && (
-            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
               <h4 className="text-xs font-semibold text-gray-900 dark:text-white mb-2">
                 Keywords:
               </h4>
@@ -800,7 +799,7 @@ export default function Blog({
                     initial="rest"
                     whileHover="hover"
                   >
-                    <Card className="shadow-lg dark:bg-gray-700 transition-all duration-300 overflow-hidden">
+                    <Card className={` relative shadow-lg dark:bg-gray-700 transition-all duration-300 overflow-hidden  ${isEditing ? "" : "h-[480px]"} `}>
                       <div className="relative">
                         <motion.img
                           src={b.image}
@@ -837,7 +836,7 @@ export default function Blog({
                           </motion.div>
                         )}
                       </div>
-                      <CardContent className="p-6 space-y-3">
+                      <CardContent className="p-6 space-y-3 ">
                         {isEditing ? (
                           <>
                             <div className="grid grid-cols-2 gap-2">
@@ -892,7 +891,7 @@ export default function Blog({
                               }
                               multiline
                               placeholder="Blog excerpt"
-                              maxLength={500}
+                              maxLength={200}
                             />
                             <EditableText
                               value={b.content}
@@ -921,7 +920,7 @@ export default function Blog({
                             </motion.div>
                           </>
                         ) : (
-                          <>
+                          <div className="">
                             <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
                               <span>{b.date}</span>
                               <motion.span
@@ -934,10 +933,10 @@ export default function Blog({
                             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                               {b.title}
                             </h3>
-                            <p className="text-gray-600 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-300 h-[50px] overflow-auto">
                               {b.excerpt}
                             </p>
-                            <div className="flex justify-between items-center mt-4">
+                            <div className="flex justify-between items-center mt-4 absolute bottom-4">
                               <div className="text-sm text-gray-500 dark:text-gray-400">
                                 <span>{b.author}</span>
                                 <span className="mx-2">•</span>
@@ -956,7 +955,7 @@ export default function Blog({
                                 </Button>
                               </motion.div>
                             </div>
-                          </>
+                          </div>
                         )}
                       </CardContent>
                     </Card>
