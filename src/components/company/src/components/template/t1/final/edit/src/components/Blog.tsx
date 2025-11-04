@@ -251,15 +251,15 @@ export default function Blog({
         category: post.category,
         date: post.date
           ? new Date(post.date).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })
           : new Date().toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            }),
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }),
         author: post.author || "",
         readTime: post.readTime || "",
         outline: post.outline || [],
@@ -755,7 +755,7 @@ export default function Blog({
                   onChange={(val) => updateHeaderField("title", val)}
                   className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
                   placeholder="Blog section title"
-                  maxLength={100}
+                  maxLength={35}
                 />
                 <EditableText
                   value={tempContent.header.desc}
@@ -763,7 +763,7 @@ export default function Blog({
                   className="text-gray-600 dark:text-gray-600"
                   multiline
                   placeholder="Blog section description"
-                  maxLength={200}
+                  maxLength={100}
                 />
               </>
             ) : (
@@ -883,7 +883,7 @@ export default function Blog({
                               }
                               placeholder="Blog title"
                               className="font-bold"
-                              maxLength={100}
+                              maxLength={35}
                             />
                             <EditableText
                               value={b.excerpt}
@@ -1037,31 +1037,28 @@ export default function Blog({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
