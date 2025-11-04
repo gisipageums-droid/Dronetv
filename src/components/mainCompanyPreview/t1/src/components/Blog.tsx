@@ -295,7 +295,7 @@ export default function Blog({ blogData }: { blogData?: any }) {
                       initial="rest"
                       whileHover="hover"
                     >
-                      <Card className="shadow-lg dark:bg-gray-700 transition-all duration-300 overflow-hidden">
+                      <Card className="relative shadow-lg dark:bg-gray-700 transition-all duration-300 overflow-hidden h-[480px]">
                         <div className="relative">
                           <motion.img
                             src={b.image}
@@ -314,13 +314,13 @@ export default function Blog({ blogData }: { blogData?: any }) {
                               {b.category}
                             </motion.span>
                           </div>
-                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                             {b.title}
                           </h3>
-                          <p className="text-gray-600 dark:text-gray-300">
+                          <p className="text-gray-600 dark:text-gray-300 h-full overflow-auto">
                             {b.excerpt}
                           </p>
-                          <div className="flex justify-between items-center mt-4">
+                          <div className="flex justify-between items-center mt-4 absolute bottom-4">
                             <div className="text-sm text-gray-500 dark:text-gray-400">
                               <span>{b.author}</span>
                               <span className="mx-2">•</span>
