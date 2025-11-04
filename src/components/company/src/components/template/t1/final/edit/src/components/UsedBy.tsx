@@ -700,7 +700,7 @@ export default function EditableUsedBy({
                     field="title"
                     className="text-gray-400 text-lg font-medium"
                     placeholder="Section title"
-                    maxLength={100}
+                    maxLength={35}
                   />
                 </div>
               </div>
@@ -806,7 +806,7 @@ export default function EditableUsedBy({
                           companyId={company.id}
                           className="text-sm"
                           placeholder="Company name"
-                          maxLength={200}
+                          maxLength={100}
                         />
                       </div>
 
