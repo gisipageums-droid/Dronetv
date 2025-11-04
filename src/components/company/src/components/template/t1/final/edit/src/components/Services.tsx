@@ -72,9 +72,9 @@ export default function Services({
         ? tempServicesSection.services
         : servicesSection.services
       : (isEditing
-          ? tempServicesSection.services
-          : servicesSection.services
-        ).filter((s) => s.category === activeCategory);
+        ? tempServicesSection.services
+        : servicesSection.services
+      ).filter((s) => s.category === activeCategory);
 
   // Enhanced image upload handler (same as Header.tsx)
   const handleServiceImageSelect = (index, e) => {
@@ -273,11 +273,11 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-              ...s,
-              [field]: s[field].map((item, li) =>
-                li === listIndex ? processedValue : item
-              ),
-            }
+            ...s,
+            [field]: s[field].map((item, li) =>
+              li === listIndex ? processedValue : item
+            ),
+          }
           : s
       ),
     }));
@@ -298,9 +298,9 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-              ...s,
-              [field]: s[field].filter((_, li) => li !== listIndex),
-            }
+            ...s,
+            [field]: s[field].filter((_, li) => li !== listIndex),
+          }
           : s
       ),
     }));
@@ -544,11 +544,10 @@ export default function Services({
   return (
     <motion.section
       id="services"
-      className={`${
-        servicesSection?.services &&
+      className={`${servicesSection?.services &&
         servicesSection?.services.length > 0 &&
         "py-20 "
-      }  theme-transition relative`}
+        }  theme-transition relative`}
     >
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
@@ -603,7 +602,7 @@ export default function Services({
                 onChange={(val) => updateHeading("head", val)}
                 className="text-3xl font-bold mb-2"
                 placeholder="Section heading"
-                maxLength={100}
+                maxLength={35}
               />
               <EditableText
                 value={tempServicesSection.heading.desc}
@@ -611,7 +610,7 @@ export default function Services({
                 multiline={true}
                 className="text-muted-foreground"
                 placeholder="Section description"
-                maxLength={200}
+                maxLength={100}
               />
             </>
           ) : (
@@ -658,11 +657,10 @@ export default function Services({
                   onClick={() => {
                     setActiveCategory(cat);
                   }}
-                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
-                    activeCategory === cat
+                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${activeCategory === cat
                       ? "bg-orange-400 text-white shadow-lg scale-105"
                       : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-                  }`}
+                    }`}
                 >
                   {cat}
                 </Button>
@@ -742,7 +740,7 @@ export default function Services({
                     onChange={(val) => updateServiceField(index, "title", val)}
                     className="font-bold"
                     placeholder="Service title"
-                    maxLength={100}
+                    maxLength={35}
                   />
                 ) : (
                   <CardTitle>{service.title}</CardTitle>
@@ -784,9 +782,8 @@ export default function Services({
 
                 <div className="mt-4 flex gap-2 ">
                   <Button
-                    className={` ${
-                      isEditing ? "" : "w-full"
-                    } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
+                    className={` ${isEditing ? "" : "w-full"
+                      } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
                     size="sm"
                     onClick={() => openModal(service, index)}
                   >
@@ -852,7 +849,7 @@ export default function Services({
                   }
                   className="text-2xl font-bold mb-4"
                   placeholder="Service title"
-                  maxLength={100}
+                  maxLength={35}
                 />
               ) : (
                 <h2 className="text-2xl font-bold mb-4">
@@ -909,7 +906,7 @@ export default function Services({
                               }
                             }}
                             className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                            maxLength={200}
+                            maxLength={100}
                           />
                           <Button
                             onClick={() =>
@@ -967,7 +964,7 @@ export default function Services({
                               }
                             }}
                             className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                            maxLength={200}
+                            maxLength={100}
                           />
                           <Button
                             onClick={() =>
@@ -1017,7 +1014,7 @@ export default function Services({
                         updateServiceField(selectedServiceIndex, "pricing", val)
                       }
                       placeholder="Pricing information"
-                      maxLength={100}
+                      maxLength={35}
                     />
                   ) : (
                     <p>
@@ -1041,7 +1038,7 @@ export default function Services({
                         )
                       }
                       placeholder="Timeline information"
-                      maxLength={100}
+                      maxLength={35}
                     />
                   ) : (
                     <p>
@@ -1119,31 +1116,28 @@ export default function Services({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
