@@ -1,9 +1,9 @@
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { useState, useEffect } from "react";
-import blog1 from "/images/blog/blog1.jpg";
-import blog2 from "/images/blog/blog2.jpg";
-import blog3 from "/images/blog/blog3.jpg";
+// import blog1 from "/images/blog/blog1.jpg";
+// import blog2 from "/images/blog/blog2.jpg";
+// import blog3 from "/images/blog/blog3.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Animation variants
@@ -209,18 +209,12 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
   );
 }
 
-export default function Blog({
-  blogData,
-}: {
-  blogData?: any;
-}) {
+export default function Blog({ blogData }: { blogData?: any }) {
   // Extract data from blogData prop or use defaults
   const defaultContent = {
     header: {
-      title: blogData?.header?.title || "Latest Blog Posts",
-      desc:
-        blogData?.header?.desc ||
-        "Stay updated with our latest insights and stories",
+      title: blogData?.header?.title,
+      desc: blogData?.header?.desc,
     },
     posts:
       blogData?.posts?.map((post, index) => ({
@@ -252,111 +246,117 @@ export default function Blog({
   const [selectedBlog, setSelectedBlog] = useState(null);
 
   return (
-    <>
-      <motion.section
-        id="blog"
-        className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {content.header.title}
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              {content.header.desc}
-            </p>
-          </motion.div>
+    blogData?.posts &&
+    blogData?.posts.length > 0 && (
+      <>
+        <motion.section
+          id="blog"
+          className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                {content.header.title}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                {content.header.desc}
+              </p>
+            </motion.div>
 
-          <motion.div
-            className="grid md:grid-cols-3 gap-8"
-            variants={containerVariants}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            <AnimatePresence>
-              {content.posts.map((b) => (
-                <motion.div
-                  key={b.id}
-                  variants={itemVariants}
-                  layout
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
+            <motion.div
+              className="grid md:grid-cols-3 gap-8"
+              variants={containerVariants}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+            >
+              <AnimatePresence>
+                {content.posts.map((b) => (
                   <motion.div
-                    variants={cardHoverVariants}
-                    initial="rest"
-                    whileHover="hover"
+                    key={b.id}
+                    variants={itemVariants}
+                    layout
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    <Card className="shadow-lg dark:bg-gray-700 transition-all duration-300 overflow-hidden">
-                      <div className="relative">
-                        <motion.img
-                          src={b.image}
-                          className="w-full h-48 object-cover"
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      </div>
-                      <CardContent className="p-6 space-y-3">
-                        <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-                          <span>{b.date}</span>
-                          <motion.span
-                            className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                    <motion.div
+                      variants={cardHoverVariants}
+                      initial="rest"
+                      whileHover="hover"
+                    >
+                      <Card className="shadow-lg dark:bg-gray-700 transition-all duration-300 overflow-hidden">
+                        <div className="relative">
+                          <motion.img
+                            src={b.image}
+                            className="w-full h-48 object-cover"
                             whileHover={{ scale: 1.05 }}
-                          >
-                            {b.category}
-                          </motion.span>
+                            transition={{ duration: 0.3 }}
+                          />
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                          {b.title}
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-300">
-                          {b.excerpt}
-                        </p>
-                        <div className="flex justify-between items-center mt-4">
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            <span>{b.author}</span>
-                            <span className="mx-2">•</span>
-                            <span>{b.readTime}</span>
-                          </div>
-                          <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <Button
-                              variant="ghost"
-                              className="text-red-500 dark:text-red-400 hover:text-red-600"
-                              onClick={() => setSelectedBlog(b)}
+                        <CardContent className="p-6 space-y-3">
+                          <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                            <span>{b.date}</span>
+                            <motion.span
+                              className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                              whileHover={{ scale: 1.05 }}
                             >
-                              Read More →
-                            </Button>
-                          </motion.div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                              {b.category}
+                            </motion.span>
+                          </div>
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                            {b.title}
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-300">
+                            {b.excerpt}
+                          </p>
+                          <div className="flex justify-between items-center mt-4">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <span>{b.author}</span>
+                              <span className="mx-2">•</span>
+                              <span>{b.readTime}</span>
+                            </div>
+                            <motion.div
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <Button
+                                variant="ghost"
+                                className="text-red-500 dark:text-red-400 hover:text-red-600"
+                                onClick={() => setSelectedBlog(b)}
+                              >
+                                Read More →
+                              </Button>
+                            </motion.div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
                   </motion.div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        </div>
-      </motion.section>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </motion.section>
 
-      {/* Blog Details Modal */}
-      {selectedBlog && (
-        <BlogModal blog={selectedBlog} onClose={() => setSelectedBlog(null)} />
-      )}
-    </>
+        {/* Blog Details Modal */}
+        {selectedBlog && (
+          <BlogModal
+            blog={selectedBlog}
+            onClose={() => setSelectedBlog(null)}
+          />
+        )}
+      </>
+    )
   );
 }

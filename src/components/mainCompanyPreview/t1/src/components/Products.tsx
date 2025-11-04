@@ -88,7 +88,7 @@ export default function Products({ productData }) {
     document.body.style.overflow = "unset";
   };
 
-  return (
+  return content.products && content.products.length > 0 && (
     <section
       id="product"
       ref={sectionRef}

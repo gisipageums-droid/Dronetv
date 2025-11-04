@@ -54,7 +54,7 @@ export default function GallerySection({ galleryData }) {
         }
     };
 
-    return (
+    return galleryData.images && galleryData.images.length > 0 && (
         <section
             id='gallery'
             ref={sectionRef}

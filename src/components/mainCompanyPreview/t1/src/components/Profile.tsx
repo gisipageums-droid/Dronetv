@@ -123,6 +123,10 @@ export default function CompanyProfile({ profileData }) {
       className="py-24 bg-gradient-to-b from-white to-yellow-50/30 scroll-mt-20 relative"
     >
       <div className="max-w-7xl mx-auto px-6">
+        <div className="w-28 rounded-full mx-auto mb-16 bg-orange-100 text-orange-500 text-sm font-semibold text-center py-2">
+          Profile
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* LEFT SIDE — Company Image - Full Width & Height */}
           <motion.div
@@ -156,10 +160,6 @@ export default function CompanyProfile({ profileData }) {
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2, duration: 0.7 }}
             >
-              <Badge className="bg-[#ffeb3b] text-gray-900 px-4 py-1.5 mb-4">
-                Since {profileState.establishedYear}
-              </Badge>
-
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
                 {profileState.companyName}
               </h2>
@@ -171,39 +171,33 @@ export default function CompanyProfile({ profileData }) {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-6 mt-8">
-              {[
-                {
-                  label: "Growth This Year",
-                  value: `${displayCounters.growth}%`,
-                },
-                {
+              {[{
                   label: "Happy Clients",
                   value: `${profileState.satisfiedCustomers}+`,
-                },
-                {
-                  label: "Team Members",
-                  value: displayCounters.team,
+                  field: "satisfiedCustomers",
+                  delay: 0.6,
                 },
                 {
                   label: "Projects Delivered",
-                  value: displayCounters.projects,
-                },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: 0.4 + i * 0.2, duration: 0.6 }}
-                  className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-yellow-100 hover:shadow-md transition-shadow"
-                >
-                  <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
-                    {stat.value}
-                  </div>
-                  <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
+                  value: `${profileState.projectsDelivered}+`,
+                  field: "projectsDelivered",
+                  delay: 1.0,
+                },].map((stat, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: stat.delay, duration: 0.6 }}
+                    className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-yellow-100 hover:shadow-md transition-shadow"
+                  >
+                    <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+                      {stat.label}
+                    </div>
+                  </motion.div>
+                ))}
             </div>
 
             {/* Core Values */}

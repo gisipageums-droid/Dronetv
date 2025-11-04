@@ -79,7 +79,7 @@ export default function Services({ serviceData }) {
     document.body.style.overflow = "unset"; // Restore scroll
   };
 
-  return (
+  return serviceData.services && serviceData.services.length > 0 && (
     <section
       id="services"
       ref={sectionRef}
