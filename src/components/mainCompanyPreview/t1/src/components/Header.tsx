@@ -66,8 +66,8 @@ export default function Header({ headerData }) {
                     },
                   }}
                   whileHover={{
-                    scale: 1.2,
-                    rotate: 360,
+                    scale: 1.1,
+                    
                     transition: { duration: 0.5 },
                   }}
                   whileTap={{ scale: 0.9 }}
@@ -76,7 +76,7 @@ export default function Header({ headerData }) {
                   <motion.img
                     src={headerData.logoSrc || logo}
                     alt="Logo"
-                    className="object-contain w-[40px] h-[40px] rounded-full flex-shrink-0"
+                    className="w-[40px] h-[40px] rounded-xl "
                     animate={{
                       y: [0, -5, 0],
                       transition: {
