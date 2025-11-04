@@ -345,15 +345,15 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               />
             </div>
 
-            {/* Title + location: use min-w-0 so truncate works */}
+            {/* Title + location: use min-w-0 so  works */}
             <div className="min-w-0">
-              <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 truncate line-clamp-2">
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900  line-clamp-2">
                 {company.companyName || "Unnamed Company"}
               </h3>
 
               <div className="flex items-center mt-1 text-gray-600 text-xs sm:text-sm">
                 <MapPin className="mr-1 w-3 h-3 flex-shrink-0" />
-                <span className="truncate">{company.location || "Location not specified"}</span>
+                <span className="">{company.location || "Location not specified"}</span>
               </div>
             </div>
           </div>
@@ -365,7 +365,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               aria-hidden={false}
             >
               <Building2 className="w-3 h-3" />
-              <span className="truncate">{statusStyle.label}</span>
+              <span className="">{statusStyle.label}</span>
             </div>
           </div>
         </div>
@@ -394,7 +394,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
           </div>
 
           {/* Buttons grid: 1 col mobile, 2 col sm, 3 col lg */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-3">
             <button
               type="button"
               onClick={(e) => {
@@ -407,7 +407,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               aria-disabled={disabled}
             >
               <Key className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="truncate">Access Details</span>
+              <span className="">Access Details</span>
             </button>
 
             <button
@@ -422,7 +422,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               aria-disabled={disabled}
             >
               <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="truncate">Edit / Preview</span>
+              <span className="">Edit / Preview</span>
             </button>
 
             <button
@@ -437,7 +437,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               aria-disabled={disabled}
             >
               <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="truncate">Approve</span>
+              <span className="">Approve</span>
             </button>
 
             <button
@@ -452,7 +452,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               aria-disabled={disabled}
             >
               <XCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="truncate">Reject</span>
+              <span className="">Reject</span>
             </button>
 
             {/* Delete spans full row on small/medium -> set col-span accordingly */}
@@ -468,7 +468,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               aria-disabled={disabled}
             >
               <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="truncate">Delete</span>
+              <span className="">Delete</span>
             </button>
           </div>
         </div>
@@ -476,7 +476,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
         {/* Footer */}
         <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs text-gray-400 gap-1 sm:gap-0">
-            <span className="truncate">ID: {company.publishedId || "No ID"}</span>
+            <span className="">ID: {company.publishedId || "No ID"}</span>
             <span>v{company.version}</span>
           </div>
         </div>
