@@ -15,6 +15,7 @@ import { Testimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
 import Publish from './components/Publish';
+
 // Define types for the component states
 interface ComponentStates {
   heroContent?: any;
@@ -26,7 +27,8 @@ interface ComponentStates {
   testimonialContent?: any;
   contactContent?: any;
   footerContent?: any;
-  headerContent?: any; // Added missing header property
+  headerContent?: any;
+  serviceContent?: any; // Added missing service property
 }
 
 interface AIGenData {
@@ -51,12 +53,13 @@ export default function EditTemp_2() {
       ...prev,
       [componentName]: state,
     }));
-  }, []); // Empty dependency array since we're using functional update
+  }, []);
 
   // Memoize callback creators to prevent recreation on every render
   const createStateChangeHandler = useCallback((componentName: keyof ComponentStates) => {
     return (state: any) => collectComponentState(componentName, state);
   }, [collectComponentState]);
+console.log("user name", AIGenData.user_name);
 
   // Update finalTemplate whenever componentStates changes
   useEffect(() => {
@@ -64,9 +67,9 @@ export default function EditTemp_2() {
       ...prev,
       professionalId: AIGenData.professionalId,
       userId: AIGenData.userId,
+      user_name: AIGenData.user_name,
       submissionId: AIGenData.submissionId,
       templateSelection: AIGenData.templateSelection,
-      user_name: AIGenData.user_name,
       content: {
         ...prev.content,
         ...componentStates,
@@ -82,7 +85,7 @@ export default function EditTemp_2() {
     }
   }, [isDarkMode]);
 
-  // Fetch template data
+  // Fetch template data - UPDATED to handle object response properly
   useEffect(() => {
     const fetchTemplateData = async () => {
       try {
@@ -91,11 +94,15 @@ export default function EditTemp_2() {
 
         if (response.ok) {
           const data = await response.json();
+          console.log('Fetched template data:', data); // Debug log
+          console.log('Clients content from API:', data.content?.clientsContent); // Debug log for clients data
 
+          // Your API returns a single object, not an array
           setFinalTemplate(data);
           setAIGenData(data);
 
           if (data.content) {
+            console.log('Setting component states:', data.content); // Debug log
             setComponentStates(data.content);
           } else {
             toast.error("No content found in response");
@@ -122,14 +129,6 @@ export default function EditTemp_2() {
     setIsDarkMode(isDark);
   }, []);
 
-  const handlePublish = useCallback(() => {
-    if (Object.keys(componentStates).length === 0) {
-      toast.error("No content to publish");
-      return;
-    }
-    publishProfessionalTemplate();
-  }, [componentStates, publishProfessionalTemplate]);
-
   // Show loading state
   if (isLoading) {
     return (
@@ -142,7 +141,8 @@ export default function EditTemp_2() {
     );
   }
 
-  // console.log('Current component states:', componentStates);
+  console.log('Current component states:', componentStates); // Debug log
+  console.log('Clients content in App.tsx:', componentStates.clientsContent); // Specific debug for clients
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
@@ -150,19 +150,7 @@ export default function EditTemp_2() {
         onDarkModeToggle={handleDarkModeToggle}
         headerData={componentStates.headerContent}
         onStateChange={createStateChangeHandler('headerContent')}
-        userId={AIGenData.userId}
-        templateSelection={AIGenData.templateSelection}
       />
-
-      {/* Publish Button */}
-      {/* <div className="fixed top-[9.5rem] left-4 z-50">
-        <button
-          onClick={handlePublish}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-300"
-        >
-          Publish Changes
-        </button>
-      </div> */}
 
       <main>
         <Hero
@@ -189,17 +177,19 @@ export default function EditTemp_2() {
           professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
         />
+
+        
+                <Projects
+                  projectsData={componentStates.projectContent}
+                  onStateChange={createStateChangeHandler('projectContent')}
+                  userId={AIGenData.userId}
+                  professionalId={AIGenData.professionalId}
+                  templateSelection={AIGenData.templateSelection}
+                />
+        {/* Services Section */}
         <Services
           servicesData={componentStates.serviceContent}
           onStateChange={createStateChangeHandler('serviceContent')}
-          userId={AIGenData.userId}
-          professionalId={AIGenData.professionalId}
-          templateSelection={AIGenData.templateSelection}
-        />
-
-        <Projects
-          projectsData={componentStates.projectContent}
-          onStateChange={createStateChangeHandler('projectContent')}
           userId={AIGenData.userId}
           professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
@@ -230,7 +220,6 @@ export default function EditTemp_2() {
           <Testimonials
             testimonialsData={componentStates.testimonialContent}
             onStateChange={createStateChangeHandler('testimonialContent')}
-            
           />
         </section>
 
@@ -238,7 +227,6 @@ export default function EditTemp_2() {
         <Contact
           contactData={componentStates.contactContent}
           onStateChange={createStateChangeHandler('contactContent')}
-         
         />
       </main>
       <Publish />
@@ -247,7 +235,6 @@ export default function EditTemp_2() {
       <Footer
         footerData={componentStates.footerContent}
         onStateChange={createStateChangeHandler('footerContent')}
-        
       />
 
       <Toaster

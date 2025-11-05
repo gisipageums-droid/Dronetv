@@ -1,12 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Code,
-  Smartphone,
-  Globe,
-  Database,
-  Palette,
-  Zap,
   ArrowRight,
   Check,
   Plus,
@@ -14,15 +8,8 @@ import {
   Trash2,
   Save,
   X,
-  Monitor,
-  Briefcase,
-  Lightbulb,
-  Cpu,
-  Cloud,
-  Shield,
   SaveAll,
   Edit,
-  Server,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -174,51 +161,24 @@ const ServiceForm: React.FC<{
       onPointerDown={(e) => e.stopPropagation()}
     >
       <div className="space-y-6">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="space-y-1">
-            <input
-              ref={titleRef}
-              type="text"
-              placeholder="Service Title"
-              value={local.title}
-              onChange={(e) => setField("title", e.target.value)}
-              maxLength={CHAR_LIMITS.title}
-              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-            />
-            <div
-              className={`text-sm text-right ${getCharCountColor(
-                local.title.length,
-                CHAR_LIMITS.title
-              )}`}
-            >
-              {local.title.length}/{CHAR_LIMITS.title}
-            </div>
-          </div>
-          <select
-            value={local.icon}
-            onChange={(e) => setField("icon", e.target.value)}
+        <div className="space-y-1">
+          <input
+            ref={titleRef}
+            type="text"
+            placeholder="Service Title"
+            value={local.title}
+            onChange={(e) => setField("title", e.target.value)}
+            maxLength={CHAR_LIMITS.title}
             className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+          />
+          <div
+            className={`text-sm text-right ${getCharCountColor(
+              local.title.length,
+              CHAR_LIMITS.title
+            )}`}
           >
-            {Object.keys({
-              Globe,
-              Smartphone,
-              Database,
-              Code,
-              Palette,
-              Zap,
-              Monitor,
-              Briefcase,
-              Lightbulb,
-              Cpu,
-              Cloud,
-              Shield,
-              Server,
-            }).map((k) => (
-              <option key={k} value={k}>
-                {k}
-              </option>
-            ))}
-          </select>
+            {local.title.length}/{CHAR_LIMITS.title}
+          </div>
         </div>
 
         <div className="space-y-1">
@@ -426,25 +386,6 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     }
   }, [content]);
 
-  const availableIcons = useMemo(
-    () => ({
-      Globe,
-      Smartphone,
-      Database,
-      Code,
-      Palette,
-      Zap,
-      Monitor,
-      Briefcase,
-      Lightbulb,
-      Cpu,
-      Cloud,
-      Shield,
-      Server,
-    }),
-    []
-  );
-
   const getCharCountColor = (current: number, max: number) => {
     if (current >= max) return "text-red-500";
     if (current >= max * 0.9) return "text-yellow-500";
@@ -551,7 +492,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
           ) : (
             <button
               onClick={() => setIsEditMode(true)}
-              className="p-3 rounded-full bg-gray-500"
+              className="p-3 rounded-full bg-gray-200 dark:bg-gray-500"
             >
               <Edit className="w-6 h-6" />
             </button>
@@ -691,9 +632,6 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
           <div className="grid grid-cols-1 gap-8 mb-16 md:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence>
               {serviceContent.services.map((service, index) => {
-                const IconComponent =
-                  availableIcons[service.icon as keyof typeof availableIcons] ||
-                  Code;
                 const isCardEditing = editingId === service.id;
 
                 return (
@@ -757,13 +695,15 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                     ) : (
                       <>
                         <div
-                          className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${
+                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${
                             service.color
                           } mb-6 ${
                             isEditMode ? "" : "group-hover:scale-110"
-                          } transition-transform duration-300`}
+                          } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
                         >
-                          <IconComponent className="w-8 h-8 text-black dark:text-white" />
+                          <span className="uppercase text-white">
+                            {service.title[0]}
+                          </span>
                         </div>
 
                         <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
@@ -809,7 +749,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                               Pricing
                             </p>
                             <p
-                              className={`font-bold bg-gradient-to-r ${service.color} bg-clip-text text-transparent`}
+                              className={`font-bold text-gray-800 dark:text-white`}
                             >
                               {service.pricing}
                             </p>

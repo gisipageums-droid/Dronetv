@@ -19,17 +19,8 @@ interface SocialLink {
   color: string;
 }
 
-interface FormField {
-  name: string;
-  label: string;
-  type: string;
-  required: boolean;
-  rows?: number;
-}
-
 interface FormData {
   submitEndpoint: string;
-  fields: FormField[];
   submitText: string;
   successMessage: string;
   errorMessage: string;
@@ -53,7 +44,7 @@ interface ContactData {
 
 interface ContactProps {
   contactData: ContactData;
-  professionalId:string;
+  professionalId: string;
 }
 
 // Icon mapping
@@ -61,14 +52,50 @@ const iconMap: { [key: string]: React.ComponentType<any> } = {
   Mail, Phone, MapPin, Globe, Send, Github: Mail, Linkedin: Phone, Twitter: MapPin, Instagram: Globe
 };
 
-export function Contact({ contactData ,professionalId}: ContactProps) {
+// Static form fields - not editable (same as in first Contact.tsx)
+const staticFormFields = [
+  {
+    name: "name",
+    label: "Full Name",
+    type: "text",
+    required: true
+  },
+  {
+    name: "email",
+    label: "Email Address",
+    type: "email",
+    required: true
+  },
+  {
+    name: "phone",
+    label: "Phone Number",
+    type: "tel",
+    required: false
+  },
+  {
+    name: "subject",
+    label: "Subject",
+    type: "select",
+    required: true,
+    options: ["General Inquiry", "Sales Inquiry", "Products Inquiry", "Services Inquiry", "Support Inquiry"]
+  },
+  {
+    name: "message",
+    label: "Message",
+    type: "textarea",
+    required: true,
+    rows: 6
+  }
+];
+
+export function Contact({ contactData, professionalId }: ContactProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
 
   // Initialize form data
   useState(() => {
     const initialFormData: Record<string, string> = {};
-    contactData.form.fields.forEach(field => {
+    staticFormFields.forEach(field => {
       initialFormData[field.name] = '';
     });
     setFormData(initialFormData);
@@ -98,7 +125,7 @@ export function Contact({ contactData ,professionalId}: ContactProps) {
       
       // Reset form
       const resetFormData: Record<string, string> = {};
-      contactData.form.fields.forEach(field => {
+      staticFormFields.forEach(field => {
         resetFormData[field.name] = '';
       });
       setFormData(resetFormData);
@@ -141,62 +168,8 @@ export function Contact({ contactData ,professionalId}: ContactProps) {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            {/* Availability Status */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-card rounded-lg p-6 shadow-md"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className={`w-3 h-3 rounded-full ${
-                  contactData.availability.status === 'available' 
-                    ? 'bg-green-500' 
-                    : 'bg-yellow-500'
-                }`} />
-                <span className="text-foreground font-medium">
-                  {contactData.availability.message}
-                </span>
-              </div>
-              <p className="text-muted-foreground text-sm">
-                {contactData.availability.responseTime}
-              </p>
-            </motion.div>
-
-            <div className="space-y-6">
-              {contactData.contactInfo.map((info, index) => {
-                const IconComponent = iconMap[info.icon] || Mail;
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    whileHover={{ x: 10 }}
-                    className="flex items-center space-x-4"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 360 }}
-                      transition={{ duration: 0.3 }}
-                      className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center"
-                    >
-                      <IconComponent className="w-6 h-6 text-gray-900" />
-                    </motion.div>
-                    <div>
-                      <h4 className="text-foreground mb-1">{info.label}</h4>
-                      <a
-                        href={info.href}
-                        className="text-muted-foreground hover:text-yellow-500 transition-colors duration-300"
-                      >
-                        {info.value}
-                      </a>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+            {/* Contact Info Cards */}
+           
 
             {/* Social Links */}
             <motion.div
@@ -229,10 +202,11 @@ export function Contact({ contactData ,professionalId}: ContactProps) {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="bg-card rounded-2xl p-8 shadow-lg"
+            className="bg-card rounded-2xl p-8 shadow-lg border-2 border-white"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
-              {contactData.form.fields.map((field, index) => (
+              {/* Static Form Fields - Not Editable */}
+              {staticFormFields.map((field, index) => (
                 <motion.div
                   key={field.name}
                   initial={{ opacity: 0, y: 20 }}
@@ -245,6 +219,7 @@ export function Contact({ contactData ,professionalId}: ContactProps) {
                     {field.required && <span className="text-red-500 ml-1">*</span>}
                   </label>
 
+                  {/* Field input rendering */}
                   {field.type === 'textarea' ? (
                     <textarea
                       id={field.name}
@@ -255,6 +230,22 @@ export function Contact({ contactData ,professionalId}: ContactProps) {
                       className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 resize-none bg-background text-foreground"
                       required={field.required}
                     />
+                  ) : field.type === 'select' ? (
+                    <select
+                      id={field.name}
+                      name={field.name}
+                      value={formData[field.name] || ''}
+                      onChange={(e) => handleFormChange(field.name, e.target.value)}
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
+                      required={field.required}
+                    >
+                      <option value="">Select a subject</option>
+                      {field.options?.map((option, optionIndex) => (
+                        <option key={optionIndex} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
                   ) : (
                     <input
                       type={field.type}

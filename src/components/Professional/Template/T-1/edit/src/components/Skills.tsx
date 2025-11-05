@@ -435,7 +435,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                 <span className="text-gray-900 dark:text-white">
                   {skillContent.heading.split(" ")[0]}
                 </span>{" "}
-                <span className="text-blue-500 dark:text-orange-500">
+                <span className="text-orange-500">
                   {skillContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
@@ -480,7 +480,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
             <div className="text-center mb-12 w-full flex justify-center">
               <button
                 onClick={addNewCategory}
-                className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                className="px-6 py-3 bg-yellow-500 text-white font-semibold rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2"
                 title="Add a new skill category"
               >
                 <Plus className="w-5 h-5" />
@@ -510,7 +510,12 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
 
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center flex-1">
-                    <Zap className="w-8 h-8 mr-2" />
+                    {!isEditing && (
+                      <div className="w-10 h-10 flex items-center justify-center uppercase text-xl font-extrabold text-white bg-yellow-500 p-2 rounded-full mr-2">
+                        <span className="">{category.title[0]}</span>
+                      </div>
+                    )}
+
                     {isEditing ? (
                       <div className="space-y-1 flex-1">
                         <input
@@ -556,7 +561,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   {isEditing && (
                     <button
                       onClick={() => addNewSkill(categoryIndex)}
-                      className="px-4 py-3.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors flex items-center gap-1 shadow-md ml-4"
+                      className="px-4 py-3.5 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600 transition-colors flex items-center gap-1 shadow-md ml-4"
                       title="Add Skill"
                     >
                       <Plus className="w-6 h-6" />

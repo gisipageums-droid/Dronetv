@@ -1,9 +1,20 @@
-import { Edit2, Loader2, Save, Upload, X } from "lucide-react";
+import { Edit2, Loader2, Save, Upload, X, ZoomIn } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AnimatedButton } from "./AnimatedButton";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import Cropper from 'react-easy-crop';
+
+// Text limits
+const TEXT_LIMITS = {
+  HEADING: 60,
+  SUBTITLE: 100,
+  DESCRIPTION1: 500,
+  DESCRIPTION2: 500,
+  SKILL: 40,
+  BUTTON_TEXT: 30,
+};
 
 // Standardized Button component
 const Button = ({
@@ -77,9 +88,19 @@ export function About({
   const [isVisible, setIsVisible] = useState(false);
   const aboutRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const aboutImageContainerRef = useRef<HTMLDivElement>(null);
 
   // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+
+  // Cropping states
+  const [showCropper, setShowCropper] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio] = useState(4 / 3); // Fixed 4:3 aspect ratio
 
   // Initialize with props data or empty structure
   const [data, setData] = useState<AboutData>(aboutData || {
@@ -109,6 +130,12 @@ export function About({
 
   // FIX: Track previous data to avoid unnecessary updates
   const prevDataRef = useRef<AboutData>();
+  useEffect(() => {
+    if (onStateChangeRef.current && prevDataRef.current !== data) {
+      onStateChangeRef.current(data);
+      prevDataRef.current = data;
+    }
+  }, [data]);
 
   // Sync with props data when it changes
   useEffect(() => {
@@ -117,14 +144,6 @@ export function About({
       setTempData(aboutData);
     }
   }, [aboutData]);
-
-  // FIX: Safe state change notification without infinite loop
-  useEffect(() => {
-    if (onStateChangeRef.current && prevDataRef.current !== data) {
-      onStateChangeRef.current(data);
-      prevDataRef.current = data;
-    }
-  }, [data]);
 
   // Intersection observer
   useEffect(() => {
@@ -145,6 +164,132 @@ export function About({
     setIsEditing(true);
     setTempData({ ...data });
     setPendingImageFile(null);
+  };
+
+  // Cropper functions
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  // Helper function to create image element
+  const createImage = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener('load', () => resolve(image));
+      image.addEventListener('error', (error) => reject(error));
+      image.setAttribute('crossOrigin', 'anonymous');
+      image.src = url;
+    });
+
+  // Function to get cropped image
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        const fileName = originalFile ? 
+          `cropped-about-${originalFile.name}` : 
+          `cropped-about-${Date.now()}.jpg`;
+        
+        const file = new File([blob], fileName, { 
+          type: 'image/jpeg',
+          lastModified: Date.now()
+        });
+        
+        const previewUrl = URL.createObjectURL(blob);
+        
+        resolve({ 
+          file, 
+          previewUrl 
+        });
+      }, 'image/jpeg', 0.95);
+    });
+  };
+
+  // Handle image selection - opens cropper
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageToCrop(reader.result);
+      setOriginalFile(file);
+      setShowCropper(true);
+      setZoom(1);
+      setCrop({ x: 0, y: 0 });
+    };
+    reader.readAsDataURL(file);
+    
+    // Clear the file input
+    event.target.value = '';
+  };
+
+  // Apply crop and set pending file
+  const applyCrop = async () => {
+    try {
+      if (!imageToCrop || !croppedAreaPixels) return;
+
+      const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      
+      // Update preview immediately with blob URL (temporary)
+      setTempData(prev => ({
+        ...prev,
+        imageSrc: previewUrl,
+      }));
+      setPendingImageFile(file);
+
+      console.log('About image cropped, file ready for upload:', file);
+      toast.success('Image cropped successfully! Click Save to upload to S3.');
+      setShowCropper(false);
+      setImageToCrop(null);
+      setOriginalFile(null);
+    } catch (error) {
+      console.error('Error cropping image:', error);
+      toast.error('Error cropping image. Please try again.');
+    }
+  };
+
+  // Cancel cropping
+  const cancelCrop = () => {
+    setShowCropper(false);
+    setImageToCrop(null);
+    setOriginalFile(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+  };
+
+  // Reset zoom
+  const resetCropSettings = () => {
+    setZoom(1);
+    setCrop({ x: 0, y: 0 });
   };
 
   // Save function with S3 upload
@@ -212,36 +357,6 @@ export function About({
     setIsEditing(false);
   };
 
-  // Image upload handler with validation
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type and size
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
-    // Store the file for upload on Save
-    setPendingImageFile(file);
-
-    // Show immediate local preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setTempData(prev => ({
-        ...prev,
-        imageSrc: e.target?.result as string,
-      }));
-    };
-    reader.readAsDataURL(file);
-  };
-
   // Stable update functions with useCallback
   const updateTempContent = useCallback((field: keyof AboutData, value: string) => {
     setTempData(prev => ({ ...prev, [field]: value }));
@@ -305,28 +420,56 @@ export function About({
         }
       };
 
+      const getMaxLength = () => {
+        if (isSkill) return TEXT_LIMITS.SKILL;
+        if (field === 'heading') return TEXT_LIMITS.HEADING;
+        if (field === 'subtitle') return TEXT_LIMITS.SUBTITLE;
+        if (field === 'description1' || field === 'description2') return TEXT_LIMITS.DESCRIPTION1;
+        if (field === 'buttonText') return TEXT_LIMITS.BUTTON_TEXT;
+        return undefined;
+      };
+
+      const maxLength = getMaxLength();
+      const currentLength = value?.length || 0;
+
       const baseClasses = "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
 
       if (multiline) {
         return (
-          <textarea
-            value={value}
-            onChange={handleChange}
-            className={`${baseClasses} p-2 resize-none ${className}`}
-            placeholder={placeholder}
-            rows={rows}
-          />
+          <div className="relative">
+            <textarea
+              value={value}
+              onChange={handleChange}
+              className={`${baseClasses} p-2 resize-none ${className}`}
+              placeholder={placeholder}
+              rows={rows}
+              maxLength={maxLength}
+            />
+            {maxLength && (
+              <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                {currentLength}/{maxLength}
+              </div>
+            )}
+          </div>
         );
       }
 
       return (
-        <input
-          type='text'
-          value={value}
-          onChange={handleChange}
-          className={`${baseClasses} p-1 ${className}`}
-          placeholder={placeholder}
-        />
+        <div className="relative">
+          <input
+            type='text'
+            value={value}
+            onChange={handleChange}
+            className={`${baseClasses} p-1 ${className}`}
+            placeholder={placeholder}
+            maxLength={maxLength}
+          />
+          {maxLength && (
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+              {currentLength}/{maxLength}
+            </div>
+          )}
+        </div>
       );
     };
   }, [updateTempContent, updateSkill]);
@@ -385,6 +528,112 @@ export function About({
 
   return (
     <section ref={aboutRef} id="about" className="relative py-20 bg-background">
+      {/* Image Cropper Modal */}
+      {showCropper && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col" // Increased max-width to max-w-6xl
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop About Image (4:3 Aspect Ratio)
+              </h3>
+              <button
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </div>
+
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Info */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+                </p>
+              </div>
+
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons - Moved to bottom and centered */}
+              <div className="flex justify-center gap-3 pt-4">
+                <button
+                  onClick={resetCropSettings}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                >
+                  Reset Zoom
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right z-50 mb-20'>
@@ -448,31 +697,37 @@ export function About({
           >
             {isEditing && (
               <div className="absolute top-2 right-2 z-10">
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  size="sm"
-                  variant="outline"
-                  className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Change Image
-                </Button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                {pendingImageFile && (
-                  <p className="text-xs text-orange-600 mt-1 bg-white p-1 rounded">
-                    Image selected: {pendingImageFile.name}
-                  </p>
-                )}
+                <div className="bg-white/90 backdrop-blur-sm shadow-md rounded p-2">
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    size="sm"
+                    variant="outline"
+                    className="bg-white text-black hover:bg-gray-100"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Change Image
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                  {pendingImageFile && (
+                    <p className="text-xs text-orange-600 mt-1 bg-white p-1 rounded">
+                      Image selected: {pendingImageFile.name}
+                    </p>
+                  )}
+                  <div className='text-xs text-gray-500 mt-1 text-center'>
+                    Recommended: {Math.round(aboutImageContainerRef.current?.offsetWidth || 400)}×{Math.round((aboutImageContainerRef.current?.offsetWidth || 400) * (4/3))}px (3:4 ratio) - Portrait
+                  </div>
+                </div>
               </div>
             )}
 
             <motion.div
+              ref={aboutImageContainerRef}
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
               className="relative"
@@ -637,9 +892,20 @@ export function About({
               transition={{ duration: 0.6, delay: 1 }}
               viewport={{ once: true }}
             >
-              <AnimatedButton href="#contact" size="lg">
-                {displayData.buttonText || "Let's Connect"}
-              </AnimatedButton>
+              {isEditing ? (
+                <div className="relative">
+                  <EditableText
+                    value={displayData.buttonText || "Let's Connect"}
+                    field="buttonText"
+                    className="inline-block"
+                    placeholder="Button text"
+                  />
+                </div>
+              ) : (
+                <AnimatedButton href="#contact" size="lg">
+                  {displayData.buttonText || "Let's Connect"}
+                </AnimatedButton>
+              )}
             </motion.div>
           </motion.div>
         </div>

@@ -1,8 +1,21 @@
-import { Award, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X } from 'lucide-react';
+import { Award, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X, ZoomIn } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import Cropper from 'react-easy-crop';
+
+// Text limits
+const TEXT_LIMITS = {
+  SUBTITLE: 100,
+  HEADING: 60,
+  DESCRIPTION: 300,
+  CERT_TITLE: 60,
+  CERT_ISSUER: 40,
+  CERT_DATE: 20,
+  CERT_DESCRIPTION: 300,
+  CERT_URL: 200,
+};
 
 // Custom Button component
 const Button = ({
@@ -91,6 +104,16 @@ export function Certifications({ certData, onStateChange, userId, professionalId
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
+  // Cropping states
+  const [showCropper, setShowCropper] = useState(false);
+  const [currentCroppingCert, setCurrentCroppingCert] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
   // Initialize with props data or empty structure
   const [data, setData] = useState<CertificationsData>(certData || defaultData);
   const [tempData, setTempData] = useState<CertificationsData>(certData || defaultData);
@@ -139,6 +162,139 @@ export function Certifications({ certData, onStateChange, userId, professionalId
     setIsEditing(true);
     setTempData({ ...data });
     setPendingImageFiles({});
+  };
+
+  // Cropper functions
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  // Helper function to create image element
+  const createImage = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener('load', () => resolve(image));
+      image.addEventListener('error', (error) => reject(error));
+      image.setAttribute('crossOrigin', 'anonymous');
+      image.src = url;
+    });
+
+  // Function to get cropped image
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        const fileName = originalFile ? 
+          `cropped-certification-${originalFile.name}` : 
+          `cropped-certification-${Date.now()}.jpg`;
+        
+        const file = new File([blob], fileName, { 
+          type: 'image/jpeg',
+          lastModified: Date.now()
+        });
+        
+        const previewUrl = URL.createObjectURL(blob);
+        
+        resolve({ 
+          file, 
+          previewUrl 
+        });
+      }, 'image/jpeg', 0.95);
+    });
+  };
+
+  // Handle image selection - opens cropper
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>, certId: string) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageToCrop(reader.result);
+      setOriginalFile(file);
+      setCurrentCroppingCert(certId);
+      setShowCropper(true);
+      setZoom(1);
+      setCrop({ x: 0, y: 0 });
+    };
+    reader.readAsDataURL(file);
+    
+    // Clear the file input
+    event.target.value = '';
+  };
+
+  // Apply crop and set pending file
+  const applyCrop = async () => {
+    try {
+      if (!imageToCrop || !croppedAreaPixels || !currentCroppingCert) return;
+
+      const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      
+      // Update preview immediately with blob URL (temporary)
+      setTempData(prevData => ({
+        ...prevData,
+        certifications: prevData.certifications.map(cert =>
+          cert.id === currentCroppingCert ? { ...cert, image: previewUrl } : cert
+        )
+      }));
+      
+      // Store the file for upload on Save
+      setPendingImageFiles(prev => ({ ...prev, [currentCroppingCert]: file }));
+
+      console.log('Certification image cropped, file ready for upload:', file);
+      toast.success('Image cropped successfully! Click Save to upload to S3.');
+      setShowCropper(false);
+      setImageToCrop(null);
+      setOriginalFile(null);
+      setCurrentCroppingCert(null);
+    } catch (error) {
+      console.error('Error cropping image:', error);
+      toast.error('Error cropping image. Please try again.');
+    }
+  };
+
+  // Cancel cropping
+  const cancelCrop = () => {
+    setShowCropper(false);
+    setImageToCrop(null);
+    setOriginalFile(null);
+    setCurrentCroppingCert(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+  };
+
+  // Reset zoom
+  const resetCropSettings = () => {
+    setZoom(1);
+    setCrop({ x: 0, y: 0 });
   };
 
   // Save function with S3 upload
@@ -209,38 +365,6 @@ export function Certifications({ certData, onStateChange, userId, professionalId
     setIsEditing(false);
   };
 
-  // Image upload handler with validation
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, certId: string) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type and size
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
-    // Store the file for upload on Save
-    setPendingImageFiles(prev => ({ ...prev, [certId]: file }));
-
-    // Show immediate local preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setTempData(prevData => ({
-        ...prevData,
-        certifications: prevData.certifications.map(cert =>
-          cert.id === certId ? { ...cert, image: e.target?.result as string } : cert
-        )
-      }));
-    };
-    reader.readAsDataURL(file);
-  };
-
   // Stable update functions with useCallback
   const updateCertification = useCallback((index: number, field: keyof Certification, value: string) => {
     setTempData(prevData => {
@@ -278,10 +402,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
 
   const removeCertification = useCallback((index: number) => {
     setTempData(prevData => {
-      if (prevData.certifications.length <= 1) {
-        toast.error("You must have at least one certification");
-        return prevData;
-      }
+      
       
       const updatedCerts = prevData.certifications.filter((_, i) => i !== index);
       
@@ -354,7 +475,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
           </div>
 
           {/* Empty State */}
-          <div className="text-center py-16">
+          {/* <div className="text-center py-16">
             <div className="max-w-md mx-auto">
               <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
                 <Award className="w-12 h-12 text-gray-400" />
@@ -374,7 +495,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
                 Add Your First Certification
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
     );
@@ -382,6 +503,113 @@ export function Certifications({ certData, onStateChange, userId, professionalId
 
   return (
     <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
+      {/* Image Cropper Modal */}
+      
+{showCropper && (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+  >
+    <motion.div
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+    >
+      {/* Header */}
+      <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+        <h3 className="text-lg font-semibold text-gray-800">
+          Crop Certification Image (4:3 Standard)
+        </h3>
+        <button
+          onClick={cancelCrop}
+          className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+        >
+          <X className="w-5 h-5 text-gray-600" />
+        </button>
+      </div>
+
+      {/* Cropper Area */}
+      <div className="flex-1 relative bg-gray-900 min-h-0">
+        <Cropper
+          image={imageToCrop}
+          crop={crop}
+          zoom={zoom}
+          aspect={aspectRatio}
+          onCropChange={setCrop}
+          onZoomChange={setZoom}
+          onCropComplete={onCropComplete}
+          showGrid={false}
+          cropShape="rect"
+          style={{
+            containerStyle: {
+              position: "relative",
+              width: "100%",
+              height: "100%",
+            },
+            cropAreaStyle: {
+              border: "2px solid white",
+              borderRadius: "8px",
+            },
+          }}
+        />
+      </div>
+
+      {/* Controls */}
+      <div className="p-4 bg-gray-50 border-t border-gray-200">
+        {/* Aspect Ratio Info */}
+        <div className="mb-4">
+          <p className="text-sm font-medium text-gray-700 mb-2">
+            Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+          </p>
+        </div>
+
+        {/* Zoom Control */}
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="flex items-center gap-2 text-gray-700">
+              <ZoomIn className="w-4 h-4" />
+              Zoom
+            </span>
+            <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+          </div>
+          <input
+            type="range"
+            value={zoom}
+            min={1}
+            max={3}
+            step={0.1}
+            onChange={(e) => setZoom(Number(e.target.value))}
+            className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            onClick={resetCropSettings}
+            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+          >
+            Reset
+          </button>
+          <button
+            onClick={cancelCrop}
+            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={applyCrop}
+            className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+          >
+            Apply Crop
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  </motion.div>
+)}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
@@ -444,35 +672,53 @@ export function Certifications({ certData, onStateChange, userId, professionalId
           <div className="flex items-center justify-center mb-4">
             <Award className="w-8 h-8 text-yellow-500 mr-3" />
             {isEditing ? (
-              <input
-                type="text"
-                value={displayData.heading || ""}
-                onChange={(e) => updateHeader('heading', e.target.value)}
-                className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
-                placeholder="Certifications & Awards"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={displayData.heading || ""}
+                  onChange={(e) => updateHeader('heading', e.target.value)}
+                  className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                  placeholder="Certifications & Awards"
+                  maxLength={TEXT_LIMITS.HEADING}
+                />
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                  {displayData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
+                </div>
+              </div>
             ) : (
               <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground">
-                {displayData.heading || "Certifications & Awards"}
+                {displayData.heading }
               </h2>
             )}
           </div>
           {isEditing ? (
             <>
-              <input
-                type="text"
-                value={displayData.subtitle || ""}
-                onChange={(e) => updateHeader('subtitle', e.target.value)}
-                className="text-xl text-yellow-600 mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
-                placeholder="Subtitle (e.g., Professional Credentials)"
-              />
-              <textarea
-                value={displayData.description || ""}
-                onChange={(e) => updateHeader('description', e.target.value)}
-                className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
-                rows={2}
-                placeholder="Description of your certifications and achievements"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={displayData.subtitle || ""}
+                  onChange={(e) => updateHeader('subtitle', e.target.value)}
+                  className="text-xl text-yellow-600 mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
+                  placeholder="Subtitle (e.g., Professional Credentials)"
+                  maxLength={TEXT_LIMITS.SUBTITLE}
+                />
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                  {displayData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
+                </div>
+              </div>
+              <div className="relative">
+                <textarea
+                  value={displayData.description || ""}
+                  onChange={(e) => updateHeader('description', e.target.value)}
+                  className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  rows={2}
+                  placeholder="Description of your certifications and achievements"
+                  maxLength={TEXT_LIMITS.DESCRIPTION}
+                />
+                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                  {displayData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -513,31 +759,36 @@ export function Certifications({ certData, onStateChange, userId, professionalId
                     <div className="relative">
                       {isEditing && (
                         <div className='absolute top-2 right-2 z-10'>
-                          <Button
-                            onClick={() => fileInputRefs.current[displayData.certifications[currentIndex]?.id]?.click()}
-                            size="sm"
-                            variant="outline"
-                            className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
-                          >
-                            <Upload className='w-4 h-4 mr-2' />
-                            Change Image
-                          </Button>
-                          <input
-                            ref={el => {
-                              if (displayData.certifications[currentIndex]?.id) {
-                                fileInputRefs.current[displayData.certifications[currentIndex].id] = el as HTMLInputElement;
-                              }
-                            }}
-                            type='file'
-                            accept='image/*'
-                            onChange={(e) => handleImageUpload(e, displayData.certifications[currentIndex]?.id || '')}
-                            className='hidden'
-                          />
-                          {pendingImageFiles[displayData.certifications[currentIndex]?.id || ''] && (
-                            <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
-                              {pendingImageFiles[displayData.certifications[currentIndex]?.id || '']?.name}
-                            </p>
-                          )}
+                          <div className="bg-white/90 backdrop-blur-sm shadow-md rounded p-2">
+                            <Button
+                              onClick={() => fileInputRefs.current[displayData.certifications[currentIndex]?.id]?.click()}
+                              size="sm"
+                              variant="outline"
+                              className="bg-white text-black hover:bg-gray-100"
+                            >
+                              <Upload className='w-4 h-4 mr-2' />
+                              Change Image
+                            </Button>
+                            <input
+                              ref={el => {
+                                if (displayData.certifications[currentIndex]?.id) {
+                                  fileInputRefs.current[displayData.certifications[currentIndex].id] = el as HTMLInputElement;
+                                }
+                              }}
+                              type='file'
+                              accept='image/*'
+                              onChange={(e) => handleImageSelect(e, displayData.certifications[currentIndex]?.id || '')}
+                              className='hidden'
+                            />
+                            {pendingImageFiles[displayData.certifications[currentIndex]?.id || ''] && (
+                              <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
+                                {pendingImageFiles[displayData.certifications[currentIndex]?.id || '']?.name}
+                              </p>
+                            )}
+                            <div className='text-xs text-gray-500 mt-1 text-center'>
+                              Recommended: 600×450px (4:3 ratio)
+                            </div>
+                          </div>
                         </div>
                       )}
                       {displayData.certifications[currentIndex]?.image ? (
@@ -573,13 +824,19 @@ export function Certifications({ certData, onStateChange, userId, professionalId
 
                       <div className="mb-6">
                         {isEditing ? (
-                          <input
-                            type="text"
-                            value={displayData.certifications[currentIndex]?.title || ''}
-                            onChange={(e) => updateCertification(currentIndex, 'title', e.target.value)}
-                            className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                            placeholder="Certification Title"
-                          />
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={displayData.certifications[currentIndex]?.title || ''}
+                              onChange={(e) => updateCertification(currentIndex, 'title', e.target.value)}
+                              className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                              placeholder="Certification Title"
+                              maxLength={TEXT_LIMITS.CERT_TITLE}
+                            />
+                            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                              {displayData.certifications[currentIndex]?.title?.length || 0}/{TEXT_LIMITS.CERT_TITLE}
+                            </div>
+                          </div>
                         ) : (
                           <h3 className="text-2xl lg:text-3xl text-foreground mb-2">
                             {displayData.certifications[currentIndex]?.title || ''}
@@ -589,22 +846,34 @@ export function Certifications({ certData, onStateChange, userId, professionalId
                         <div className="flex items-center text-yellow-600 mb-4">
                           <Calendar className="w-5 h-5 mr-2" />
                           {isEditing ? (
-                            <div className="flex gap-2">
-                              <input
-                                type="text"
-                                value={displayData.certifications[currentIndex]?.issuer || ''}
-                                onChange={(e) => updateCertification(currentIndex, 'issuer', e.target.value)}
-                                className="bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg"
-                                placeholder="Issuer"
-                              />
+                            <div className="flex gap-2 w-full">
+                              <div className="relative flex-1">
+                                <input
+                                  type="text"
+                                  value={displayData.certifications[currentIndex]?.issuer || ''}
+                                  onChange={(e) => updateCertification(currentIndex, 'issuer', e.target.value)}
+                                  className="bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg w-full"
+                                  placeholder="Issuer"
+                                  maxLength={TEXT_LIMITS.CERT_ISSUER}
+                                />
+                                <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                                  {displayData.certifications[currentIndex]?.issuer?.length || 0}/{TEXT_LIMITS.CERT_ISSUER}
+                                </div>
+                              </div>
                               <span>•</span>
-                              <input
-                                type="text"
-                                value={displayData.certifications[currentIndex]?.date || ''}
-                                onChange={(e) => updateCertification(currentIndex, 'date', e.target.value)}
-                                className="bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg w-20"
-                                placeholder="Date"
-                              />
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  value={displayData.certifications[currentIndex]?.date || ''}
+                                  onChange={(e) => updateCertification(currentIndex, 'date', e.target.value)}
+                                  className="bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg w-20"
+                                  placeholder="Date"
+                                  maxLength={TEXT_LIMITS.CERT_DATE}
+                                />
+                                <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                                  {displayData.certifications[currentIndex]?.date?.length || 0}/{TEXT_LIMITS.CERT_DATE}
+                                </div>
+                              </div>
                             </div>
                           ) : (
                             <span className="text-lg">{displayData.certifications[currentIndex]?.issuer || ''} • {displayData.certifications[currentIndex]?.date || ''}</span>
@@ -613,13 +882,19 @@ export function Certifications({ certData, onStateChange, userId, professionalId
                       </div>
 
                       {isEditing ? (
-                        <textarea
-                          value={displayData.certifications[currentIndex]?.description || ''}
-                          onChange={(e) => updateCertification(currentIndex, 'description', e.target.value)}
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground mb-6 leading-relaxed"
-                          rows={4}
-                          placeholder="Certification description"
-                        />
+                        <div className="relative">
+                          <textarea
+                            value={displayData.certifications[currentIndex]?.description || ''}
+                            onChange={(e) => updateCertification(currentIndex, 'description', e.target.value)}
+                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground mb-6 leading-relaxed"
+                            rows={4}
+                            placeholder="Certification description"
+                            maxLength={TEXT_LIMITS.CERT_DESCRIPTION}
+                          />
+                          <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                            {displayData.certifications[currentIndex]?.description?.length || 0}/{TEXT_LIMITS.CERT_DESCRIPTION}
+                          </div>
+                        </div>
                       ) : (
                         <p className="text-muted-foreground mb-6 leading-relaxed">
                           {displayData.certifications[currentIndex]?.description || ''}
@@ -627,13 +902,19 @@ export function Certifications({ certData, onStateChange, userId, professionalId
                       )}
 
                       {isEditing ? (
-                        <input
-                          type="text"
-                          value={displayData.certifications[currentIndex]?.credentialUrl || ''}
-                          onChange={(e) => updateCertification(currentIndex, 'credentialUrl', e.target.value)}
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                          placeholder="Credential URL (optional)"
-                        />
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={displayData.certifications[currentIndex]?.credentialUrl || ''}
+                            onChange={(e) => updateCertification(currentIndex, 'credentialUrl', e.target.value)}
+                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                            placeholder="Credential URL (optional)"
+                            maxLength={TEXT_LIMITS.CERT_URL}
+                          />
+                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                            {displayData.certifications[currentIndex]?.credentialUrl?.length || 0}/{TEXT_LIMITS.CERT_URL}
+                          </div>
+                        </div>
                       ) : displayData.certifications[currentIndex]?.credentialUrl && displayData.certifications[currentIndex]?.credentialUrl !== '#' ? (
                         <a 
                           href={displayData.certifications[currentIndex]?.credentialUrl} 

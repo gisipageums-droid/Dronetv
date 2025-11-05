@@ -66,11 +66,11 @@ interface FormField {
   type: string;
   required: boolean;
   rows?: number;
+  options?: string[];
 }
 
 interface FormData {
   submitEndpoint: string;
-  fields: FormField[];
   submitText: string;
   successMessage: string;
   errorMessage: string;
@@ -150,33 +150,6 @@ const defaultContactData: ContactData = {
   ],
   form: {
     submitEndpoint: "/api/contact",
-    fields: [
-      {
-        name: "name",
-        label: "Full Name",
-        type: "text",
-        required: true
-      },
-      {
-        name: "email",
-        label: "Email Address",
-        type: "email",
-        required: true
-      },
-      {
-        name: "subject",
-        label: "Subject",
-        type: "text",
-        required: true
-      },
-      {
-        name: "message",
-        label: "Message",
-        type: "textarea",
-        required: true,
-        rows: 6
-      }
-    ],
     submitText: "Send Message",
     successMessage: "Thank you! I'll get back to you soon.",
     errorMessage: "Something went wrong. Please try again."
@@ -191,13 +164,48 @@ const defaultContactData: ContactData = {
 interface ContactProps {
   contactData?: ContactData;
   onStateChange?: (data: ContactData) => void;
-  
 }
 
 // Icon mapping
 const iconMap: { [key: string]: React.ComponentType<any> } = {
   Mail, Phone, MapPin, Globe, Send, Github: Mail, Linkedin: Phone, Twitter: MapPin, Instagram: Globe
 };
+
+// Static form fields - not editable
+const staticFormFields: FormField[] = [
+  {
+    name: "name",
+    label: "Full Name",
+    type: "text",
+    required: true
+  },
+  {
+    name: "email",
+    label: "Email Address",
+    type: "email",
+    required: true
+  },
+  {
+    name: "phone",
+    label: "Phone Number",
+    type: "tel",
+    required: false
+  },
+  {
+    name: "subject",
+    label: "Subject",
+    type: "select",
+    required: true,
+    options: ["General Inquiry", "Sales Inquiry", "Products Inquiry", "Servicess Inquiry","Support Inquiry"]
+  },
+  {
+    name: "message",
+    label: "Message",
+    type: "textarea",
+    required: true,
+    rows: 6
+  }
+];
 
 export function Contact({ contactData, onStateChange }: ContactProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -221,11 +229,11 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   // Initialize form data
   useEffect(() => {
     const initialFormData: Record<string, string> = {};
-    data.form.fields.forEach(field => {
+    staticFormFields.forEach(field => {
       initialFormData[field.name] = '';
     });
     setFormData(initialFormData);
-  }, [data.form.fields]);
+  }, []);
 
   // Fake API fetch
   const fetchContactData = async () => {
@@ -295,7 +303,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
       
       // Reset form
       const resetFormData: Record<string, string> = {};
-      data.form.fields.forEach(field => {
+      staticFormFields.forEach(field => {
         resetFormData[field.name] = '';
       });
       setFormData(resetFormData);
@@ -325,19 +333,6 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
       socialLinks: prev.socialLinks.map((item, i) => 
         i === index ? { ...item, [field]: value } : item
       )
-    }));
-  };
-
-  // Update form fields
-  const updateFormField = (index: number, field: keyof FormField, value: string | number | boolean) => {
-    setTempData(prev => ({
-      ...prev,
-      form: {
-        ...prev.form,
-        fields: prev.form.fields.map((item, i) => 
-          i === index ? { ...item, [field]: value } : item
-        )
-      }
     }));
   };
 
@@ -396,7 +391,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
             className='bg-red-500 hover:bg-red-600 shadow-md text-white'
           >
             <Edit2 className='w-4 h-4 mr-2' />
-            Edit Contact
+            Edit 
           </Button>
         ) : (
           <div className='flex gap-2'>
@@ -482,112 +477,6 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            {/* Availability Status */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-card rounded-lg p-6 shadow-md"
-            >
-              {isEditing ? (
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    value={displayData.availability.message}
-                    onChange={(e) => updateAvailability('message', e.target.value)}
-                    className="w-full px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                    placeholder="Availability Message"
-                  />
-                  <input
-                    type="text"
-                    value={displayData.availability.responseTime}
-                    onChange={(e) => updateAvailability('responseTime', e.target.value)}
-                    className="w-full px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                    placeholder="Response Time"
-                  />
-                </div>
-              ) : (
-                <>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      displayData.availability.status === 'available' 
-                        ? 'bg-green-500' 
-                        : 'bg-yellow-500'
-                    }`} />
-                    <span className="text-foreground font-medium">
-                      {displayData.availability.message}
-                    </span>
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    {displayData.availability.responseTime}
-                  </p>
-                </>
-              )}
-            </motion.div>
-
-            <div className="space-y-6">
-              {displayData.contactInfo.map((info, index) => {
-                const IconComponent = iconMap[info.icon] || Mail;
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    whileHover={{ x: 10 }}
-                    className="flex items-center space-x-4"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 360 }}
-                      transition={{ duration: 0.3 }}
-                      className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center"
-                    >
-                      <IconComponent className="w-6 h-6 text-gray-900" />
-                    </motion.div>
-                    <div className="flex-1">
-                      {isEditing ? (
-                        <div className="space-y-2">
-                          <input
-                            type="text"
-                            value={info.label}
-                            onChange={(e) => updateContactInfo(index, 'label', e.target.value)}
-                            className="w-full px-2 py-1 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                            placeholder="Label"
-                          />
-                          <input
-                            type="text"
-                            value={info.value}
-                            onChange={(e) => updateContactInfo(index, 'value', e.target.value)}
-                            className="w-full px-2 py-1 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                            placeholder="Value"
-                          />
-                          <input
-                            type="text"
-                            value={info.href}
-                            onChange={(e) => updateContactInfo(index, 'href', e.target.value)}
-                            className="w-full px-2 py-1 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                            placeholder="Link"
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <h4 className="text-foreground mb-1">{info.label}</h4>
-                          <a
-                            href={info.href}
-                            className="text-muted-foreground hover:text-yellow-500 transition-colors duration-300"
-                          >
-                            {info.value}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-
             {/* Social Links */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -645,7 +534,8 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
             className="bg-card rounded-2xl p-8 shadow-lg"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
-              {displayData.form.fields.map((field, index) => (
+              {/* Static Form Fields - Not Editable */}
+              {staticFormFields.map((field, index) => (
                 <motion.div
                   key={field.name}
                   initial={{ opacity: 0, y: 20 }}
@@ -653,43 +543,12 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                   transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  {isEditing ? (
-                    <div className="space-y-2 mb-3">
-                      <input
-                        type="text"
-                        value={field.label}
-                        onChange={(e) => updateFormField(index, 'label', e.target.value)}
-                        className="w-full px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                        placeholder="Field Label"
-                      />
-                      <div className="flex gap-2">
-                        <select
-                          value={field.type}
-                          onChange={(e) => updateFormField(index, 'type', e.target.value)}
-                          className="flex-1 px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                        >
-                          <option value="text">Text</option>
-                          <option value="email">Email</option>
-                          <option value="textarea">Textarea</option>
-                        </select>
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={field.required}
-                            onChange={(e) => updateFormField(index, 'required', e.target.checked)}
-                            className="rounded border-blue-300 text-blue-600 focus:ring-blue-500"
-                          />
-                          Required
-                        </label>
-                      </div>
-                    </div>
-                  ) : (
-                    <label htmlFor={field.name} className="block text-foreground mb-2">
-                      {field.label}
-                      {field.required && <span className="text-red-500 ml-1">*</span>}
-                    </label>
-                  )}
+                  <label htmlFor={field.name} className="block text-foreground mb-2">
+                    {field.label}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
+                  </label>
 
+                  {/* Field input rendering */}
                   {field.type === 'textarea' ? (
                     <textarea
                       id={field.name}
@@ -701,6 +560,23 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                       required={field.required}
                       disabled={isEditing}
                     />
+                  ) : field.type === 'select' ? (
+                    <select
+                      id={field.name}
+                      name={field.name}
+                      value={formData[field.name] || ''}
+                      onChange={(e) => handleFormChange(field.name, e.target.value)}
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
+                      required={field.required}
+                      disabled={isEditing}
+                    >
+                      <option value="">Select a subject</option>
+                      {field.options?.map((option, optionIndex) => (
+                        <option key={optionIndex} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
                   ) : (
                     <input
                       type={field.type}
@@ -733,17 +609,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                   ) : (
                     <Send className="w-5 h-5 mr-2" />
                   )}
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={displayData.form.submitText}
-                      onChange={(e) => updateFormSetting('submitText', e.target.value)}
-                      className="bg-transparent border-none focus:outline-none text-white w-32"
-                      placeholder="Button Text"
-                    />
-                  ) : (
-                    isSubmitting ? "Sending..." : displayData.form.submitText
-                  )}
+                  {isSubmitting ? "Sending..." : displayData.form.submitText}
                 </AnimatedButton>
               </motion.div>
 

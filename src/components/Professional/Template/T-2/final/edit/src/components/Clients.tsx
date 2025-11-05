@@ -1,6 +1,20 @@
-import { Edit2, Loader2, Plus, Save, Trash2, Upload, X } from 'lucide-react';
+import { Edit2, Loader2, Plus, Save, Trash2, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+
+// Text limits
+const TEXT_LIMITS = {
+  SUBTITLE: 100, // characters
+  HEADING: 60, // characters
+  DESCRIPTION: 300, // characters
+  CLIENT_NAME: 40, // characters
+  CLIENT_INDUSTRY: 30, // characters
+  STAT_VALUE: 10, // characters
+  STAT_LABEL: 20, // characters
+  CTA_TITLE: 60, // characters
+  CTA_DESCRIPTION: 200, // characters
+  CTA_BUTTON_TEXT: 30, // characters
+};
 
 // Custom Button component
 const Button = ({
@@ -11,6 +25,14 @@ const Button = ({
   className,
   disabled,
   ...props
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  variant?: 'outline' | 'default';
+  size?: 'sm' | 'default';
+  className?: string;
+  disabled?: boolean;
+  [key: string]: any;
 }) => {
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
@@ -83,29 +105,49 @@ const defaultData: ClientsData = {
   }
 };
 
-export function Clients({ clientsData, onStateChange, userId, professionalId, templateSelection }) {
+interface ClientsProps {
+  clientsData?: ClientsData;
+  onStateChange?: (data: ClientsData) => void;
+  userId?: string;
+  professionalId?: string;
+  templateSelection?: string;
+}
+
+export function Clients({ clientsData, onStateChange, userId, professionalId, templateSelection }: ClientsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const clientsRef = useRef<HTMLDivElement>(null);
-  
-  // Pending logo files for S3 upload
-  const [pendingLogoFiles, setPendingLogoFiles] = useState<Record<string, File>>({});
 
   const [data, setData] = useState<ClientsData>(defaultData);
   const [tempData, setTempData] = useState<ClientsData>(defaultData);
 
+  // Initialize data from props when component mounts or props change
+  useEffect(() => {
+    if (clientsData && !dataLoaded) {
+      console.log('Initializing Clients data from props:', clientsData);
+      const transformedData = transformBackendData(clientsData);
+      setData(transformedData);
+      setTempData(transformedData);
+      setDataLoaded(true);
+      
+      // Notify parent of initial state
+      if (onStateChange) {
+        onStateChange(transformedData);
+      }
+    }
+  }, [clientsData, dataLoaded]);
+
   // Notify parent of state changes
   useEffect(() => {
-    if (onStateChange) {
+    if (onStateChange && dataLoaded) {
       onStateChange(data);
     }
-  }, [data]);
+  }, [data, dataLoaded]);
 
-  // Intersection observer
+  // Intersection observer for lazy loading if no data from props
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
@@ -120,6 +162,8 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   // Transform backend data to match component structure
   const transformBackendData = (backendData: any): ClientsData => {
     if (!backendData) return defaultData;
+    
+    console.log('Transforming backend data for Clients:', backendData);
     
     return {
       subtitle: backendData.subtitle || "",
@@ -140,138 +184,55 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
     };
   };
 
-  // Fetch clients data
-  const fetchClientsData = async () => {
-    setIsLoading(true);
-    try {
-      // If clientsData is provided as prop, use it directly
-      if (clientsData) {
-        const transformedData = transformBackendData(clientsData);
-        setData(transformedData);
-        setTempData(transformedData);
-        setDataLoaded(true);
-        return;
-      }
-
-      // Otherwise, use empty data
-      const response = await new Promise<ClientsData>((resolve) =>
-        setTimeout(() => resolve(defaultData), 500)
-      );
-      setData(response);
-      setTempData(response);
-      setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  // Load default data if no data from props and component is visible
   useEffect(() => {
-    if (isVisible && !dataLoaded && !isLoading) {
-      fetchClientsData();
-    }
-  }, [isVisible, dataLoaded, isLoading, clientsData]);
+    const loadDataIfNeeded = async () => {
+      if (isVisible && !dataLoaded && !clientsData && !isLoading) {
+        setIsLoading(true);
+        try {
+          console.log('Loading default Clients data');
+          // Use empty default data
+          setData(defaultData);
+          setTempData(defaultData);
+          setDataLoaded(true);
+          
+          if (onStateChange) {
+            onStateChange(defaultData);
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadDataIfNeeded();
+  }, [isVisible, dataLoaded, clientsData, isLoading]);
 
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingLogoFiles({});
   };
 
-  // Save function with S3 upload
+  // Save function
   const handleSave = async () => {
     try {
-      setIsUploading(true);
-      
-      // Create a copy of tempData to update with S3 URLs
-      let updatedData = { ...tempData };
-
-      // Upload logos for clients with pending files
-      for (const [clientId, file] of Object.entries(pendingLogoFiles)) {
-        if (!userId || !professionalId || !templateSelection) {
-          toast.error('Missing user information. Please refresh and try again.');
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('userId', userId);
-        formData.append('fieldName', `client_logo_${clientId}`);
-
-        const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Update the client logo with the S3 URL
-          updatedData.clients = updatedData.clients.map(client =>
-            client.id === clientId ? { ...client, logo: uploadData.s3Url } : client
-          );
-          console.log('Client logo uploaded to S3:', uploadData.s3Url);
-        } else {
-          const errorData = await uploadResponse.json();
-          toast.error(`Logo upload failed: ${errorData.message || 'Unknown error'}`);
-          return;
-        }
-      }
-
-      // Clear pending files
-      setPendingLogoFiles({});
-
-      // Save the updated data with S3 URLs
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
       
-      // Update both states with the new URLs
-      setData(updatedData);
-      setTempData(updatedData);
-      
+      setData(tempData);
       setIsEditing(false);
-      toast.success('Clients section saved with S3 URLs ready for publish');
+      toast.success('Clients section saved successfully');
     } catch (error) {
       console.error('Error saving clients section:', error);
       toast.error('Error saving changes. Please try again.');
     } finally {
-      setIsUploading(false);
       setIsSaving(false);
     }
   };
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingLogoFiles({});
     setIsEditing(false);
-  };
-
-  // Logo upload handler with validation
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputEvent>, clientId: string) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type and size
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
-    // Store the file for upload on Save
-    setPendingLogoFiles(prev => ({ ...prev, [clientId]: file }));
-
-    // Show immediate local preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const updatedClients = tempData.clients.map(client =>
-        client.id === clientId ? { ...client, logo: e.target?.result as string } : client
-      );
-      setTempData({ ...tempData, clients: updatedClients });
-    };
-    reader.readAsDataURL(file);
   };
 
   // Stable update functions with useCallback
@@ -316,11 +277,6 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   }, [tempData]);
 
   const removeClient = useCallback((index: number) => {
-    if (tempData.clients.length <= 1) {
-      toast.error("You must have at least one client");
-      return;
-    }
-    
     const updatedClients = tempData.clients.filter((_, i) => i !== index);
     setTempData({ ...tempData, clients: updatedClients });
   }, [tempData]);
@@ -335,16 +291,18 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                   Object.values(data.stats).some(value => value && value.trim() !== '') ||
                   Object.values(data.cta).some(value => value && value.trim() !== '');
 
-  console.log('Data check:', {
-    clients: data.clients.length,
-    subtitle: data.subtitle,
-    heading: data.heading,
-    description: data.description,
-    stats: data.stats,
-    cta: data.cta,
-    hasData: hasData,
-    statsHasData: Object.values(data.stats).some(value => value && value.trim() !== ''),
-    ctaHasData: Object.values(data.cta).some(value => value && value.trim() !== '')
+  console.log('Clients component debug:', {
+    dataLoaded,
+    hasData,
+    clientsDataFromProps: clientsData,
+    componentData: data,
+    isEditing,
+    clientsCount: data.clients.length,
+    hasSubtitle: !!data.subtitle,
+    hasHeading: !!data.heading,
+    hasDescription: !!data.description,
+    hasStats: Object.values(data.stats).some(value => value && value.trim() !== ''),
+    hasCta: Object.values(data.cta).some(value => value && value.trim() !== '')
   });
 
   // Loading state - only show when actually loading
@@ -360,7 +318,6 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   }
 
   // No data state - show empty state with option to add data
-  // FIXED: Better condition to show empty state
   if (!isEditing && !hasData && !isLoading) {
     return (
       <section ref={clientsRef} className="py-20 bg-background">
@@ -375,29 +332,6 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
               <Edit2 className='w-4 h-4 mr-2' />
               Add Clients
             </Button>
-          </div>
-
-          {/* Empty State */}
-          <div className="text-center py-16">
-            <div className="max-w-md mx-auto">
-              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                <Plus className="w-12 h-12 text-gray-400" />
-              </div>
-              <h3 className="text-2xl font-semibold text-foreground mb-4">
-                No Clients Data Found
-              </h3>
-              <p className="text-muted-foreground mb-8">
-                Start by adding your clients and partners to showcase your work and collaborations.
-              </p>
-              <Button
-                onClick={handleEdit}
-                size='lg'
-                className='bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'
-              >
-                <Plus className='w-5 h-5 mr-2' />
-                Add Your First Client
-              </Button>
-            </div>
           </div>
         </div>
       </section>
@@ -424,22 +358,20 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                 onClick={handleSave}
                 size='sm'
                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
-                disabled={isSaving || isUploading}
+                disabled={isSaving}
               >
-                {isUploading ? (
-                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                ) : isSaving ? (
+                {isSaving ? (
                   <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                 ) : (
                   <Save className='w-4 h-4 mr-2' />
                 )}
-                {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+                {isSaving ? "Saving..." : "Save"}
               </Button>
               <Button
                 onClick={handleCancel}
                 size='sm'
                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
-                disabled={isSaving || isUploading}
+                disabled={isSaving}
               >
                 <X className='w-4 h-4 mr-2' />
                 Cancel
@@ -461,27 +393,45 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
         <div className="text-center mb-16">
           {isEditing ? (
             <>
-              <input
-                type="text"
-                value={displayData.subtitle}
-                onChange={(e) => updateHeading('subtitle', e.target.value)}
-                className="text-lg text-muted-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
-                placeholder="Subtitle (e.g., Trusted by amazing companies)"
-              />
-              <input
-                type="text"
-                value={displayData.heading}
-                onChange={(e) => updateHeading('heading', e.target.value)}
-                className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
-                placeholder="Heading (e.g., Clients & Partners)"
-              />
-              <textarea
-                value={displayData.description}
-                onChange={(e) => updateHeading('description', e.target.value)}
-                className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
-                rows="2"
-                placeholder="Description"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={displayData.subtitle}
+                  onChange={(e) => updateHeading('subtitle', e.target.value)}
+                  className="text-lg text-muted-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  placeholder="Subtitle (e.g., Trusted by amazing companies)"
+                  maxLength={TEXT_LIMITS.SUBTITLE}
+                />
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                  {displayData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
+                </div>
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={displayData.heading}
+                  onChange={(e) => updateHeading('heading', e.target.value)}
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  placeholder="Heading (e.g., Clients & Partners)"
+                  maxLength={TEXT_LIMITS.HEADING}
+                />
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                  {displayData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
+                </div>
+              </div>
+              <div className="relative">
+                <textarea
+                  value={displayData.description}
+                  onChange={(e) => updateHeading('description', e.target.value)}
+                  className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  rows="2"
+                  placeholder="Description"
+                  maxLength={TEXT_LIMITS.DESCRIPTION}
+                />
+                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                  {displayData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -504,7 +454,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
           )}
         </div>
 
-        {/* Stats - FIXED: Show if editing OR if any stat has data */}
+        {/* Stats - Show if editing OR if any stat has data */}
         {(isEditing || Object.values(displayData.stats).some(value => value && value.trim() !== '')) && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
             {[
@@ -515,26 +465,38 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
             ].map((stat) => (
               <div key={stat.key} className="text-center hover:scale-105 transition-transform duration-300">
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={displayData.stats[stat.key]}
-                    onChange={(e) => updateStat(stat.key, e.target.value)}
-                    className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
-                    placeholder="50+"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={displayData.stats[stat.key]}
+                      onChange={(e) => updateStat(stat.key, e.target.value)}
+                      className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                      placeholder="50+"
+                      maxLength={TEXT_LIMITS.STAT_VALUE}
+                    />
+                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                      {displayData.stats[stat.key]?.length || 0}/{TEXT_LIMITS.STAT_VALUE}
+                    </div>
+                  </div>
                 ) : (
                   displayData.stats[stat.key] && (
                     <div className="text-3xl sm:text-4xl text-yellow-500 mb-2">{displayData.stats[stat.key]}</div>
                   )
                 )}
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={stat.label}
-                    onChange={(e) => {}}
-                    className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
-                    disabled
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={stat.label}
+                      onChange={() => {}}
+                      className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
+                      disabled
+                      maxLength={TEXT_LIMITS.STAT_LABEL}
+                    />
+                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                      {stat.label.length}/{TEXT_LIMITS.STAT_LABEL}
+                    </div>
+                  </div>
                 ) : (
                   displayData.stats[stat.key] && (
                     <p className="text-muted-foreground">{stat.label}</p>
@@ -545,7 +507,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
           </div>
         )}
 
-        {/* Client Grid - FIXED: Show if editing OR if there are clients */}
+        {/* Client Grid - Show if editing OR if there are clients */}
         {(isEditing || displayData.clients.length > 0) ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
             {displayData.clients.map((client, index) => (
@@ -554,54 +516,44 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                 className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 relative"
               >
                 {isEditing && (
-                  <>
-                    <Button
-                      onClick={() => removeClient(index)}
-                      size='sm'
-                      variant='outline'
-                      className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
-                    >
-                      <Trash2 className='w-3 h-3' />
-                    </Button>
-                    <Button
-                      onClick={() => document.getElementById(`logo-upload-${client.id}`)?.click()}
-                      size='sm'
-                      variant='outline'
-                      className='absolute -top-2 -left-2 bg-blue-50 hover:bg-blue-100 text-blue-700 p-1'
-                    >
-                      <Upload className='w-3 h-3' />
-                    </Button>
-                    <input
-                      id={`logo-upload-${client.id}`}
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleLogoUpload(e, client.id)}
-                      className="hidden"
-                    />
-                    {pendingLogoFiles[client.id] && (
-                      <p className='absolute -bottom-2 text-xs text-orange-600 bg-white p-1 rounded'>
-                        Logo selected
-                      </p>
-                    )}
-                  </>
+                  <Button
+                    onClick={() => removeClient(index)}
+                    size='sm'
+                    variant='outline'
+                    className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
+                  >
+                    <Trash2 className='w-3 h-3' />
+                  </Button>
                 )}
                 <div className="text-center">
                   {isEditing ? (
                     <>
-                      <input
-                        type="text"
-                        value={client.name}
-                        onChange={(e) => updateClient(index, 'name', e.target.value)}
-                        className="w-full text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
-                        placeholder="Client Name"
-                      />
-                      <input
-                        type="text"
-                        value={client.industry}
-                        onChange={(e) => updateClient(index, 'industry', e.target.value)}
-                        className="w-full text-xs text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
-                        placeholder="Industry"
-                      />
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={client.name}
+                          onChange={(e) => updateClient(index, 'name', e.target.value)}
+                          className="w-full text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                          placeholder="Client Name"
+                          maxLength={TEXT_LIMITS.CLIENT_NAME}
+                        />
+                        <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                          {client.name.length}/{TEXT_LIMITS.CLIENT_NAME}
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={client.industry}
+                          onChange={(e) => updateClient(index, 'industry', e.target.value)}
+                          className="w-full text-xs text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                          placeholder="Industry"
+                          maxLength={TEXT_LIMITS.CLIENT_INDUSTRY}
+                        />
+                        <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                          {client.industry.length}/{TEXT_LIMITS.CLIENT_INDUSTRY}
+                        </div>
+                      </div>
                     </>
                   ) : (
                     <>
@@ -656,54 +608,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
           )
         )}
 
-        {/* CTA Section */}
-        {(isEditing || Object.values(displayData.cta).some(value => value && value.trim() !== '')) && (
-          <div className="text-center bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl p-8">
-            {isEditing ? (
-              <>
-                <input
-                  type="text"
-                  value={displayData.cta.title}
-                  onChange={(e) => updateCta('title', e.target.value)}
-                  className="text-2xl sm:text-3xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
-                  placeholder="CTA Title"
-                />
-                <textarea
-                  value={displayData.cta.description}
-                  onChange={(e) => updateCta('description', e.target.value)}
-                  className="text-lg text-muted-foreground mb-6 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
-                  rows="2"
-                  placeholder="CTA Description"
-                />
-                <input
-                  type="text"
-                  value={displayData.cta.buttonText}
-                  onChange={(e) => updateCta('buttonText', e.target.value)}
-                  className="inline-block px-8 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors bg-white/80 border-2 border-dashed border-blue-300 focus:border-blue-500 focus:outline-none p-2 text-center"
-                  placeholder="Button Text"
-                />
-              </>
-            ) : (
-              <>
-                {displayData.cta.title && (
-                  <h3 className="text-2xl sm:text-3xl text-foreground mb-4">
-                    {displayData.cta.title}
-                  </h3>
-                )}
-                {displayData.cta.description && (
-                  <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-                    {displayData.cta.description}
-                  </p>
-                )}
-                {displayData.cta.buttonText && (
-                  <button className="inline-block px-8 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
-                    {displayData.cta.buttonText}
-                  </button>
-                )}
-              </>
-            )}
-          </div>
-        )}
+       
       </div>
     </section>
   );

@@ -5,7 +5,6 @@ import {
   Moon,
   Menu,
   X,
-  Code,
   Edit,
   Save,
   X as CloseIcon,
@@ -170,7 +169,11 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
               className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-blue-500 dark:text-orange-500"
               onClick={() => scrollToSection("#home")}
             >
-              <Code className="w-8 h-8 flex-shrink-0" />
+              <div className="rounded-full bg-yellow-500 text-white h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+                <span className="uppercase">
+                  {editedContent.logoText[0] || "P"}
+                </span>
+              </div>
               {isEditing ? (
                 <div className="relative">
                   <input
@@ -193,7 +196,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                   </div>
                 </div>
               ) : (
-                <span className="text-xl font-bold truncate">
+                <span className="text-2xl font-bold truncate capitalize text-yellow-500">
                   {editedContent.logoText || "MyLogo"}
                 </span>
               )}

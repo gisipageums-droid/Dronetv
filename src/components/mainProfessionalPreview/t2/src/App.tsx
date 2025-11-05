@@ -13,18 +13,18 @@ import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Services } from './components/services';
 
-export default function MainProTemp2() {
+export default function FinalProTemp2() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
-  const { urlSlug } = useParams();
+  const { professionalId, userId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Function to fetch template data
-  async function fetchTemplateData( urlSlug: string) {
+  async function fetchTemplateData(professionalId: string, userId: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://u1qc84r5d0.execute-api.ap-south-1.amazonaws.com/dev/fetchuserdata/${urlSlug}`, {
+      const response = await fetch(`https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=template2`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -36,7 +36,7 @@ export default function MainProTemp2() {
       }
       
       const data = await response.json();
-      setFinaleDataReview(data.items[0] || {});
+      setFinaleDataReview(data);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching template data:", error);
@@ -46,14 +46,14 @@ export default function MainProTemp2() {
   }
 
   useEffect(() => {
-    // If we have both publishedId and userId from URL, fetch the data
-    if (urlSlug) {
-      fetchTemplateData( urlSlug);
+    // If we have both professionalId and userId from URL, fetch the data
+    if (professionalId && userId) {
+      fetchTemplateData(professionalId, userId);
     } else {
       setError("Required parameters not found in URL");
       setIsLoading(false);
     }
-  }, [urlSlug]);
+  }, [professionalId, userId]);
 
   useEffect(() => {
     // Apply or remove dark class on document element
@@ -92,8 +92,8 @@ export default function MainProTemp2() {
       </div>
     );
   }
-  console.log("Finale Data Review:--------", finaleDataReview.content);
-  if (!finaleDataReview || !finaleDataReview.content) {
+  console.log("Finale Data Review:--------", finaleDataReview[0].content);
+  if (!finaleDataReview || !finaleDataReview[0].content) {
     return (
       <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex items-center justify-center">
         <div className="text-center">
@@ -108,43 +108,44 @@ export default function MainProTemp2() {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       <Header 
         onDarkModeToggle={handleDarkModeToggle}
-        headerData={finaleDataReview.content.headerContent}
+        headerData={finaleDataReview[0].content.headerContent}
       />
       <main>
         <Hero 
-          heroData={finaleDataReview.content.heroContent}
+          heroData={finaleDataReview[0].content.heroContent}
         />
         <About 
-          aboutData={finaleDataReview.content.aboutContent}
+          aboutData={finaleDataReview[0].content.aboutContent}
         />
         <Skills 
-          skillData={finaleDataReview.content.skillContent}
+          skillsData={finaleDataReview[0].content.skillContent}
         />
         <Services 
-          serviceData={finaleDataReview.content.serviceContent}
+          serviceData={finaleDataReview[0].content.serviceContent}
         />
         <Projects 
-          projectData={finaleDataReview.content.projectContent}
+          projectData={finaleDataReview[0].content.projectContent}
         />
         <Certifications 
-          certificationsData={finaleDataReview.content.certificationsContent}
+          certificationsData={finaleDataReview[0].content.certificationsContent}
         />
         <section id="clients">
           <Clients 
-            clientData={finaleDataReview.content.clientsContent}
+            clientData={finaleDataReview[0].content.clientsContent}
           />
         </section>
         <section id="testimonials">
           <SimpleTestimonials 
-            testimonialData={finaleDataReview.content.testimonialContent}
+            testimonialData={finaleDataReview[0].content.testimonialContent}
           />
         </section>
         <Contact 
-          contactData={finaleDataReview.content.contactContent}
+          contactData={finaleDataReview[0].content.contactContent}
+          professionalId={professionalId}
         />
       </main>
       <Footer
-        footerData={finaleDataReview.content.footerContent}
+        footerData={finaleDataReview[0].content.footerContent}
       />
     </div>
   );

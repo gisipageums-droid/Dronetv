@@ -1,7 +1,17 @@
-import { Briefcase, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X } from 'lucide-react';
+import { Briefcase, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X, ZoomIn } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import Cropper from 'react-easy-crop';
+
+// Text limits
+const TEXT_LIMITS = {
+  SUBTITLE: 100,
+  HEADING: 60,
+  DESCRIPTION: 300,
+  SERVICE_TITLE: 50,
+  SERVICE_DESCRIPTION: 200,
+};
 
 // Custom Button component
 const Button = ({
@@ -81,7 +91,17 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
     // Pending image files for S3 upload
     const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
-    // Initialize with props data or empty structure matching your JSON format
+    // Cropping states
+    const [showCropper, setShowCropper] = useState(false);
+    const [currentCroppingService, setCurrentCroppingService] = useState<string | null>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+    const [imageToCrop, setImageToCrop] = useState(null);
+    const [originalFile, setOriginalFile] = useState(null);
+    const [aspectRatio] = useState(4 / 3);
+
+    // Initialize with props data or empty structure
     const [data, setData] = useState<ServicesData>(servicesData || {
         subtitle: "",
         heading: "",
@@ -139,6 +159,139 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
         setIsEditing(true);
         setTempData({ ...data });
         setPendingImageFiles({});
+    };
+
+    // Cropper functions
+    const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+    }, []);
+
+    // Helper function to create image element
+    const createImage = (url) =>
+        new Promise((resolve, reject) => {
+            const image = new Image();
+            image.addEventListener('load', () => resolve(image));
+            image.addEventListener('error', (error) => reject(error));
+            image.setAttribute('crossOrigin', 'anonymous');
+            image.src = url;
+        });
+
+    // Function to get cropped image
+    const getCroppedImg = async (imageSrc, pixelCrop) => {
+        const image = await createImage(imageSrc);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = pixelCrop.width;
+        canvas.height = pixelCrop.height;
+
+        ctx.drawImage(
+            image,
+            pixelCrop.x,
+            pixelCrop.y,
+            pixelCrop.width,
+            pixelCrop.height,
+            0,
+            0,
+            pixelCrop.width,
+            pixelCrop.height
+        );
+
+        return new Promise((resolve) => {
+            canvas.toBlob((blob) => {
+                const fileName = originalFile ? 
+                    `cropped-service-${originalFile.name}` : 
+                    `cropped-service-${Date.now()}.jpg`;
+                
+                const file = new File([blob], fileName, { 
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                });
+                
+                const previewUrl = URL.createObjectURL(blob);
+                
+                resolve({ 
+                    file, 
+                    previewUrl 
+                });
+            }, 'image/jpeg', 0.95);
+        });
+    };
+
+    // Handle image selection - opens cropper
+    const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>, serviceId: string) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            toast.error('Please select an image file');
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error('File size must be less than 5MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImageToCrop(reader.result);
+            setOriginalFile(file);
+            setCurrentCroppingService(serviceId);
+            setShowCropper(true);
+            setZoom(1);
+            setCrop({ x: 0, y: 0 });
+        };
+        reader.readAsDataURL(file);
+        
+        // Clear the file input
+        event.target.value = '';
+    };
+
+    // Apply crop and set pending file
+    const applyCrop = async () => {
+        try {
+            if (!imageToCrop || !croppedAreaPixels || !currentCroppingService) return;
+
+            const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+            
+            // Update preview immediately with blob URL (temporary)
+            setTempData(prevData => ({
+                ...prevData,
+                services: prevData.services.map(service =>
+                    service.id === currentCroppingService ? { ...service, image: previewUrl } : service
+                )
+            }));
+            
+            // Store the file for upload on Save
+            setPendingImageFiles(prev => ({ ...prev, [currentCroppingService]: file }));
+
+            console.log('Service image cropped, file ready for upload:', file);
+            toast.success('Image cropped successfully! Click Save to upload to S3.');
+            setShowCropper(false);
+            setImageToCrop(null);
+            setOriginalFile(null);
+            setCurrentCroppingService(null);
+        } catch (error) {
+            console.error('Error cropping image:', error);
+            toast.error('Error cropping image. Please try again.');
+        }
+    };
+
+    // Cancel cropping
+    const cancelCrop = () => {
+        setShowCropper(false);
+        setImageToCrop(null);
+        setOriginalFile(null);
+        setCurrentCroppingService(null);
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+    };
+
+    // Reset zoom
+    const resetCropSettings = () => {
+        setZoom(1);
+        setCrop({ x: 0, y: 0 });
     };
 
     // Save function with S3 upload
@@ -207,38 +360,6 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
         setIsEditing(false);
     };
 
-    // Image upload handler with validation
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, serviceId: string) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        // Validate file type and size
-        if (!file.type.startsWith('image/')) {
-            toast.error('Please select an image file');
-            return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            toast.error('File size must be less than 5MB');
-            return;
-        }
-
-        // Store the file for upload on Save
-        setPendingImageFiles(prev => ({ ...prev, [serviceId]: file }));
-
-        // Show immediate local preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            setTempData(prevData => ({
-                ...prevData,
-                services: prevData.services.map(service =>
-                    service.id === serviceId ? { ...service, image: e.target?.result as string } : service
-                )
-            }));
-        };
-        reader.readAsDataURL(file);
-    };
-
     // Stable update functions with useCallback
     const updateService = useCallback((index: number, field: keyof Service, value: string) => {
         setTempData(prevData => {
@@ -273,10 +394,10 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
 
     const removeService = useCallback((index: number) => {
         setTempData(prevData => {
-            if (prevData.services.length <= 1) {
-                toast.error("You must have at least one service");
-                return prevData;
-            }
+            // if (prevData.services.length <= 1) {
+            //     toast.error("You must have at least one service");
+            //     return prevData;
+            // }
             
             const updatedServices = prevData.services.filter((_, i) => i !== index);
             
@@ -348,7 +469,7 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                         </Button>
                     </div>
 
-                    {/* Empty State */}
+                    {/* Empty State
                     <div className="text-center py-16">
                         <div className="max-w-md mx-auto">
                             <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
@@ -369,7 +490,7 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                 Add Your First Service
                             </Button>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </section>
         );
@@ -377,6 +498,112 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
 
     return (
         <section ref={servicesRef} id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
+            {/* Image Cropper Modal */}
+            {showCropper && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+                    >
+                        {/* Header */}
+                        <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                            <h3 className="text-lg font-semibold text-gray-800">
+                                Crop Service Image (4:3 Standard)
+                            </h3>
+                            <button
+                                onClick={cancelCrop}
+                                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                            >
+                                <X className="w-5 h-5 text-gray-600" />
+                            </button>
+                        </div>
+
+                        {/* Cropper Area */}
+                        <div className="flex-1 relative bg-gray-900 min-h-0">
+                            <Cropper
+                                image={imageToCrop}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={aspectRatio}
+                                onCropChange={setCrop}
+                                onZoomChange={setZoom}
+                                onCropComplete={onCropComplete}
+                                showGrid={false}
+                                cropShape="rect"
+                                style={{
+                                    containerStyle: {
+                                        position: "relative",
+                                        width: "100%",
+                                        height: "100%",
+                                    },
+                                    cropAreaStyle: {
+                                        border: "2px solid white",
+                                        borderRadius: "8px",
+                                    },
+                                }}
+                            />
+                        </div>
+
+                        {/* Controls */}
+                        <div className="p-4 bg-gray-50 border-t border-gray-200">
+                            {/* Aspect Ratio Info */}
+                            <div className="mb-4">
+                                <p className="text-sm font-medium text-gray-700 mb-2">
+                                    Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+                                </p>
+                            </div>
+
+                            {/* Zoom Control */}
+                            <div className="space-y-2 mb-4">
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="flex items-center gap-2 text-gray-700">
+                                        <ZoomIn className="w-4 h-4" />
+                                        Zoom
+                                    </span>
+                                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    value={zoom}
+                                    min={1}
+                                    max={3}
+                                    step={0.1}
+                                    onChange={(e) => setZoom(Number(e.target.value))}
+                                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                                />
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="grid grid-cols-3 gap-3">
+                                <button
+                                    onClick={resetCropSettings}
+                                    className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                                >
+                                    Reset
+                                </button>
+                                <button
+                                    onClick={cancelCrop}
+                                    className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={applyCrop}
+                                    className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                                >
+                                    Apply Crop
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Edit Controls */}
                 <div className='text-right mb-8'>
@@ -439,35 +666,53 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                     <div className="flex items-center justify-center mb-4">
                         <Briefcase className="w-8 h-8 text-red-500 mr-3" />
                         {isEditing ? (
-                            <input
-                                type="text"
-                                value={displayData.heading || ""}
-                                onChange={(e) => updateHeader('heading', e.target.value)}
-                                className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
-                                placeholder="Services"
-                            />
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={displayData.heading || ""}
+                                    onChange={(e) => updateHeader('heading', e.target.value)}
+                                    className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                                    placeholder="Services"
+                                    maxLength={TEXT_LIMITS.HEADING}
+                                />
+                                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                                    {displayData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
+                                </div>
+                            </div>
                         ) : (
                             <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground">
-                                {displayData.heading || "Services"}
+                                {displayData.heading }
                             </h2>
                         )}
                     </div>
                     {isEditing ? (
                         <>
-                            <input
-                                type="text"
-                                value={displayData.subtitle || ""}
-                                onChange={(e) => updateHeader('subtitle', e.target.value)}
-                                className="text-xl text-red-600 mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
-                                placeholder="Subtitle (e.g., Professional Services)"
-                            />
-                            <textarea
-                                value={displayData.description || ""}
-                                onChange={(e) => updateHeader('description', e.target.value)}
-                                className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
-                                rows={2}
-                                placeholder="Description of your services"
-                            />
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={displayData.subtitle || ""}
+                                    onChange={(e) => updateHeader('subtitle', e.target.value)}
+                                    className="text-xl text-red-600 mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
+                                    placeholder="Subtitle (e.g., Professional Services)"
+                                    maxLength={TEXT_LIMITS.SUBTITLE}
+                                />
+                                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                                    {displayData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
+                                </div>
+                            </div>
+                            <div className="relative">
+                                <textarea
+                                    value={displayData.description || ""}
+                                    onChange={(e) => updateHeader('description', e.target.value)}
+                                    className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                                    rows={2}
+                                    placeholder="Description of your services"
+                                    maxLength={TEXT_LIMITS.DESCRIPTION}
+                                />
+                                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                                    {displayData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
+                                </div>
+                            </div>
                         </>
                     ) : (
                         <>
@@ -504,35 +749,40 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                         }}
                                         className="absolute inset-0 grid md:grid-cols-2 gap-0"
                                     >
-                                        {/* Service Image */}
-                                        <div className="relative">
+                                        {/* Service Image - UPDATED to match Certifications component */}
+                                        <div className="relative aspect-[4/3]">
                                             {isEditing && (
                                                 <div className='absolute top-2 right-2 z-10'>
-                                                    <Button
-                                                        onClick={() => fileInputRefs.current[displayData.services[currentIndex]?.id]?.click()}
-                                                        size="sm"
-                                                        variant="outline"
-                                                        className="bg-white/90 backdrop-blur-sm shadow-md text-black hover:bg-gray-100"
-                                                    >
-                                                        <Upload className='w-4 h-4 mr-2' />
-                                                        Change Image
-                                                    </Button>
-                                                    <input
-                                                        ref={el => {
-                                                            if (displayData.services[currentIndex]?.id) {
-                                                                fileInputRefs.current[displayData.services[currentIndex].id] = el as HTMLInputElement;
-                                                            }
-                                                        }}
-                                                        type='file'
-                                                        accept='image/*'
-                                                        onChange={(e) => handleImageUpload(e, displayData.services[currentIndex]?.id || '')}
-                                                        className='hidden'
-                                                    />
-                                                    {pendingImageFiles[displayData.services[currentIndex]?.id || ''] && (
-                                                        <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
-                                                            {pendingImageFiles[displayData.services[currentIndex]?.id || '']?.name}
-                                                        </p>
-                                                    )}
+                                                    <div className="bg-white/90 backdrop-blur-sm shadow-md rounded p-2">
+                                                        <Button
+                                                            onClick={() => fileInputRefs.current[displayData.services[currentIndex]?.id]?.click()}
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="bg-white text-black hover:bg-gray-100"
+                                                        >
+                                                            <Upload className='w-4 h-4 mr-2' />
+                                                            Change Image
+                                                        </Button>
+                                                        <input
+                                                            ref={el => {
+                                                                if (displayData.services[currentIndex]?.id) {
+                                                                    fileInputRefs.current[displayData.services[currentIndex].id] = el as HTMLInputElement;
+                                                                }
+                                                            }}
+                                                            type='file'
+                                                            accept='image/*'
+                                                            onChange={(e) => handleImageSelect(e, displayData.services[currentIndex]?.id || '')}
+                                                            className='hidden'
+                                                        />
+                                                        {pendingImageFiles[displayData.services[currentIndex]?.id || ''] && (
+                                                            <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
+                                                                {pendingImageFiles[displayData.services[currentIndex]?.id || '']?.name}
+                                                            </p>
+                                                        )}
+                                                        <div className='text-xs text-gray-500 mt-1 text-center'>
+                                                            Recommended: 800×600px (4:3 ratio)
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             )}
                                             {displayData.services[currentIndex]?.image ? (
@@ -540,6 +790,10 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                                     src={displayData.services[currentIndex]?.image}
                                                     alt={displayData.services[currentIndex]?.title || 'Service image'}
                                                     className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        const target = e.target as HTMLImageElement;
+                                                        target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="500" height="300"%3E%3Crect fill="%23f3f4f6" width="500" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EService Image%3C/text%3E%3C/svg%3E';
+                                                    }}
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center bg-gray-200">
@@ -549,7 +803,7 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                             <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
                                         </div>
 
-                                        {/* Service Details */}
+                                        {/* Service Details - Fixed height container */}
                                         <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-red-50 dark:from-card dark:to-red-900/20">
                                             {isEditing && (
                                                 <Button
@@ -562,35 +816,48 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                                 </Button>
                                             )}
 
-                                            <div className="mb-6">
+                                            <div className="flex-1 flex flex-col justify-center">
+                                                <div className="mb-6">
+                                                    {isEditing ? (
+                                                        <div className="relative">
+                                                            <input
+                                                                type="text"
+                                                                value={displayData.services[currentIndex]?.title || ''}
+                                                                onChange={(e) => updateService(currentIndex, 'title', e.target.value)}
+                                                                className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                                                                placeholder="Service Title"
+                                                                maxLength={TEXT_LIMITS.SERVICE_TITLE}
+                                                            />
+                                                            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                                                                {displayData.services[currentIndex]?.title?.length || 0}/{TEXT_LIMITS.SERVICE_TITLE}
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <h3 className="text-2xl lg:text-3xl text-foreground mb-2">
+                                                            {displayData.services[currentIndex]?.title || ''}
+                                                        </h3>
+                                                    )}
+                                                </div>
+
                                                 {isEditing ? (
-                                                    <input
-                                                        type="text"
-                                                        value={displayData.services[currentIndex]?.title || ''}
-                                                        onChange={(e) => updateService(currentIndex, 'title', e.target.value)}
-                                                        className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                                                        placeholder="Service Title"
-                                                    />
+                                                    <div className="relative flex-1">
+                                                        <textarea
+                                                            value={displayData.services[currentIndex]?.description || ''}
+                                                            onChange={(e) => updateService(currentIndex, 'description', e.target.value)}
+                                                            className="w-full h-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground leading-relaxed resize-none"
+                                                            placeholder="Service description"
+                                                            maxLength={TEXT_LIMITS.SERVICE_DESCRIPTION}
+                                                        />
+                                                        <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                                                            {displayData.services[currentIndex]?.description?.length || 0}/{TEXT_LIMITS.SERVICE_DESCRIPTION}
+                                                        </div>
+                                                    </div>
                                                 ) : (
-                                                    <h3 className="text-2xl lg:text-3xl text-foreground mb-2">
-                                                        {displayData.services[currentIndex]?.title || ''}
-                                                    </h3>
+                                                    <p className="text-muted-foreground leading-relaxed flex-1">
+                                                        {displayData.services[currentIndex]?.description || ''}
+                                                    </p>
                                                 )}
                                             </div>
-
-                                            {isEditing ? (
-                                                <textarea
-                                                    value={displayData.services[currentIndex]?.description || ''}
-                                                    onChange={(e) => updateService(currentIndex, 'description', e.target.value)}
-                                                    className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground mb-6 leading-relaxed"
-                                                    rows={4}
-                                                    placeholder="Service description"
-                                                />
-                                            ) : (
-                                                <p className="text-muted-foreground mb-6 leading-relaxed">
-                                                    {displayData.services[currentIndex]?.description || ''}
-                                                </p>
-                                            )}
                                         </div>
                                     </motion.div>
                                 ) : (

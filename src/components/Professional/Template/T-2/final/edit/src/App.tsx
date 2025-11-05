@@ -27,7 +27,8 @@ interface ComponentStates {
   testimonialContent?: any;
   contactContent?: any;
   footerContent?: any;
-  headerContent?: any; // Added missing header property
+  headerContent?: any; 
+   serviceContent?: any;// Added missing header property
 }
 
 interface AIGenData {
@@ -65,8 +66,8 @@ export default function FinalEditTemp_2() {
       ...prev,
       professionalId: AIGenData.professionalId,
       userId: AIGenData.userId,
-      submissionId: AIGenData.submissionId,
       user_name: AIGenData.user_name,
+      submissionId: AIGenData.submissionId,
       templateSelection: AIGenData.templateSelection,
       content: {
         ...prev.content,
@@ -98,10 +99,9 @@ export default function FinalEditTemp_2() {
         if (response.ok) {
           
           const data = await response.json();
-        
+          console.log('Response status:', data.data);
           setFinalTemplate(data.data);
           setAIGenData(data.data);
-          console.log("AIGenData",data.data);
           
           if (data.data.content) {
             setComponentStates(data.data.content);

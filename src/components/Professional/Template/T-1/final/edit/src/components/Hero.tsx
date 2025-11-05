@@ -370,7 +370,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   return (
     <section
       id="home"
-      className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 pt-40"
+      className="bg-white dark:bg-gray-900 transition-colors duration-300 pt-40"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-40 relative">
         {/* Edit Button */}
@@ -422,13 +422,18 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                     maxLength={CHAR_LIMITS.name}
                     className="text-4xl lg:text-6xl font-bold p-4 rounded-xl w-full border"
                   />
-                  <div className={`text-sm text-right ${getCharCountColor(heroContent.name.length, CHAR_LIMITS.name)}`}>
+                  <div
+                    className={`text-sm text-right ${getCharCountColor(
+                      heroContent.name.length,
+                      CHAR_LIMITS.name
+                    )}`}
+                  >
                     {heroContent.name.length}/{CHAR_LIMITS.name}
                   </div>
                 </div>
               ) : (
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white">
-                  <span className="text-blue-500 dark:text-orange-500">
+                  <span className="text-yellow-500 capitalize">
                     {heroContent.name}
                   </span>
                 </h1>
@@ -443,12 +448,17 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                     maxLength={CHAR_LIMITS.title}
                     className="text-xl lg:text-2xl font-semibold p-3 rounded-lg w-full border"
                   />
-                  <div className={`text-sm text-right ${getCharCountColor(heroContent.title.length, CHAR_LIMITS.title)}`}>
+                  <div
+                    className={`text-sm text-right ${getCharCountColor(
+                      heroContent.title.length,
+                      CHAR_LIMITS.title
+                    )}`}
+                  >
                     {heroContent.title.length}/{CHAR_LIMITS.title}
                   </div>
                 </div>
               ) : (
-                <p className="text-xl lg:text-2xl font-semibold text-blue-600 dark:text-orange-400">
+                <p className="text-xl lg:text-2xl font-semibold text-gray-900 dark:text-white">
                   {heroContent.title}
                 </p>
               )}
@@ -457,12 +467,19 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                 <div className="space-y-2">
                   <textarea
                     value={heroContent.description}
-                    onChange={(e) => handleChange("description", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("description", e.target.value)
+                    }
                     maxLength={CHAR_LIMITS.description}
                     className="text-lg p-4 rounded-lg w-full border resize-none"
                     rows={4}
                   />
-                  <div className={`text-sm text-right ${getCharCountColor(heroContent.description.length, CHAR_LIMITS.description)}`}>
+                  <div
+                    className={`text-sm text-right ${getCharCountColor(
+                      heroContent.description.length,
+                      CHAR_LIMITS.description
+                    )}`}
+                  >
                     {heroContent.description.length}/{CHAR_LIMITS.description}
                   </div>
                 </div>
@@ -489,17 +506,27 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                             ] || ""
                           }
                           onChange={(e) =>
-                            handleChange(`socials.${social.key}`, e.target.value)
+                            handleChange(
+                              `socials.${social.key}`,
+                              e.target.value
+                            )
                           }
                           maxLength={CHAR_LIMITS.socials}
                           className="flex-1 text-sm p-2 rounded-lg border"
                         />
                       </div>
-                      <div className={`text-xs text-right ${getCharCountColor(
-                        heroContent.socials[social.key as keyof typeof heroContent.socials]?.length || 0,
-                        CHAR_LIMITS.socials
-                      )}`}>
-                        {(heroContent.socials[social.key as keyof typeof heroContent.socials]?.length || 0)}/{CHAR_LIMITS.socials}
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          heroContent.socials[
+                            social.key as keyof typeof heroContent.socials
+                          ]?.length || 0,
+                          CHAR_LIMITS.socials
+                        )}`}
+                      >
+                        {heroContent.socials[
+                          social.key as keyof typeof heroContent.socials
+                        ]?.length || 0}
+                        /{CHAR_LIMITS.socials}
                       </div>
                     </div>
                   ))}
@@ -531,11 +558,11 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
             {!isEditing && (
               <motion.div className="grid grid-cols-2 gap-4 pt-4">
-                <button className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white dark:border-yellow-400 dark:text-yellow-400 dark:hover:bg-yellow-400 dark:hover:text-gray-900">
+                <button className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-yellow-400 hover:bg-yellow-400 text-gray-900 dark:text-white hover:text-white">
                   View My Work
                 </button>
 
-                <button className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white dark:border-yellow-400 dark:text-yellow-400 dark:hover:bg-yellow-400 dark:hover:text-gray-900">
+                <button className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-yellow-400 hover:bg-yellow-400 text-gray-900 dark:text-white hover:text-white">
                   Get In Touch
                 </button>
               </motion.div>
@@ -544,7 +571,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
           {/* Right Side - Profile Image */}
           <div className="flex justify-center lg:justify-end">
-            <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-600">
+            <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-yellow-500 via-orange-500 to-indigo-yellow-700">
               <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative">
                 {isEditing ? (
                   !isUploading ? (
@@ -576,11 +603,11 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
         </motion.div>
 
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-purple-500 dark:bg-yellow-400 animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-blue-500 dark:bg-orange-500 animate-bounce" />
-          <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-indigo-500 dark:bg-red-500 animate-pulse" />
-          <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-indigo-500 dark:bg-red-500 animate-bounce-slow" />
-          <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-indigo-500 dark:bg-red-500 animate-bounce-slow" />
+          <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-yellow-400 animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-orange-500 animate-bounce" />
+          <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-red-500 animate-pulse" />
+          <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-red-500 animate-bounce-slow" />
+          <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-red-500 animate-bounce-slow" />
         </div>
       </div>
 

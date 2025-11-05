@@ -1,8 +1,15 @@
-import { Cloud, Code, Database, Edit2, Globe, Loader2, Plus, Save, Smartphone, Trash2, Upload, X, Zap } from 'lucide-react';
+import { Code, Database, Cloud, Edit2, Globe, Loader2, Plus, Save, Smartphone, Trash2, X, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+
+// Text limits
+const TEXT_LIMITS = {
+  HEADER_TITLE: 60,
+  HEADER_SUBTITLE: 200,
+  SKILL_TITLE: 40,
+  SKILL_DESCRIPTION: 150,
+};
 
 // Custom Button component
 const Button = ({
@@ -51,7 +58,6 @@ const Button = ({
 interface Skill {
   id: string;
   icon?: any;
-  iconUrl?: string;
   title: string;
   description: string;
   level: number;
@@ -65,8 +71,6 @@ interface SkillsData {
   };
 }
 
-// Remove the defaultData constant since we'll use dynamic data
-
 interface SkillsProps {
   skillsData?: SkillsData;
   onStateChange?: (data: SkillsData) => void;
@@ -79,14 +83,9 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const skillsRef = useRef<HTMLDivElement>(null);
-  const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
-
-  // Pending icon files for S3 upload
-  const [pendingIconFiles, setPendingIconFiles] = useState<Record<string, File>>({});
 
   // Initialize with skillsData or empty structure
   const [data, setData] = useState<SkillsData>(() => 
@@ -109,41 +108,30 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
     }
   );
 
-  // Helper function to get icon component from string name
-  const getIconComponent = (iconName: string) => {
-    const iconMap: { [key: string]: any } = {
-      Code, Database, Cloud, Smartphone, Globe, Zap, Cpu: Zap // Add Cpu with Zap as fallback
-    };
-    return iconMap[iconName] || Zap; // Fallback to Zap if icon not found
+  // Helper function to get first letter of skill name
+  const getSkillInitial = (skillTitle: string) => {
+    return skillTitle.charAt(0).toUpperCase();
   };
 
-  // Modified icon rendering logic
+  // Helper function to generate background color based on skill initial
+  const getSkillIconColor = (skillTitle: string) => {
+    const colors = [
+       'bg-yellow-400'
+    ];
+    const charCode = skillTitle.charCodeAt(0) || 0;
+    return colors[charCode % colors.length];
+  };
+
+  // Modified icon rendering logic - using first letter
   const renderSkillIcon = (skill: Skill) => {
-    // Priority 1: iconUrl (uploaded image)
-    if (skill.iconUrl) {
-      return (
-        <ImageWithFallback
-          src={skill.iconUrl}
-          alt={skill.title}
-          className="w-8 h-8 object-contain"
-        />
-      );
-    }
+    const initial = getSkillInitial(skill.title);
+    const bgColor = getSkillIconColor(skill.title);
     
-    // Priority 2: icon (can be either component or string)
-    if (skill.icon) {
-      // If icon is a string (from backend), get the component
-      if (typeof skill.icon === 'string') {
-        const IconComponent = getIconComponent(skill.icon);
-        return <IconComponent className="w-8 h-8 text-gray-900" />;
-      }
-      // If icon is already a component (default case)
-      const IconComponent = skill.icon;
-      return <IconComponent className="w-8 h-8 text-gray-900" />;
-    }
-    
-    // Priority 3: fallback icon
-    return <Zap className="w-8 h-8 text-gray-900" />;
+    return (
+      <div className={`w-16 h-16 ${bgColor} rounded-full flex items-center justify-center`}>
+        <span className="text-2xl font-bold text-gray-900">{initial}</span>
+      </div>
+    );
   };
 
   // Notify parent of state changes
@@ -204,105 +192,28 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setPendingIconFiles({}); // Clear pending files
   };
 
-  // Save function with S3 upload
   const handleSave = async () => {
     try {
-      setIsUploading(true);
-      
-      // Create a copy of tempData to update with S3 URLs
-      let updatedData = { ...tempData };
-
-      // Upload icon images for skills with pending files
-      for (const [skillId, file] of Object.entries(pendingIconFiles)) {
-        if (!userId || !professionalId || !templateSelection) {
-          toast.error('Missing user information. Please refresh and try again.');
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('userId', userId);
-        formData.append('fieldName', `skill_icon_${skillId}`);
-
-        const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Update the skill icon with the S3 URL
-          updatedData.skills = updatedData.skills.map(skill => 
-            skill.id === skillId ? { ...skill, iconUrl: uploadData.s3Url, icon: undefined } : skill
-          );
-          console.log('Skill icon uploaded to S3:', uploadData.s3Url);
-        } else {
-          const errorData = await uploadResponse.json();
-          toast.error(`Icon upload failed: ${errorData.message || 'Unknown error'}`);
-          return;
-        }
-      }
-
-      // Clear pending files
-      setPendingIconFiles({});
-
-      // Save the updated data with S3 URLs
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
       
-      // Update both states with the new URLs
-      setData(updatedData);
-      setTempData(updatedData);
-      
+      setData(tempData);
       setIsEditing(false);
-      toast.success('Skills section saved with S3 URLs ready for publish');
+      toast.success('Skills section saved successfully');
 
     } catch (error) {
       console.error('Error saving skills section:', error);
       toast.error('Error saving changes. Please try again.');
     } finally {
-      setIsUploading(false);
       setIsSaving(false);
     }
   };
 
   const handleCancel = () => {
     setTempData({ ...data });
-    setPendingIconFiles({}); // Clear pending files
     setIsEditing(false);
-  };
-
-  // Icon upload handler with validation
-  const handleIconUpload = (event: React.ChangeEvent<HTMLInputElement>, skillId: string) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type and size
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit for icons
-      toast.error('File size must be less than 2MB');
-      return;
-    }
-
-    // Store the file for upload on Save
-    setPendingIconFiles(prev => ({ ...prev, [skillId]: file }));
-
-    // Show immediate local preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const updatedSkills = tempData.skills.map(skill =>
-        skill.id === skillId ? { ...skill, iconUrl: e.target?.result as string, icon: undefined } : skill
-      );
-      setTempData({ ...tempData, skills: updatedSkills });
-    };
-    reader.readAsDataURL(file);
   };
 
   // Stable update functions with useCallback
@@ -333,11 +244,6 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   }, [tempData]);
 
   const removeSkill = useCallback((index: number) => {
-    if (tempData.skills.length <= 1) {
-      toast.error("You must have at least one skill");
-      return;
-    }
-    
     const updatedSkills = tempData.skills.filter((_, i) => i !== index);
     setTempData({ ...tempData, skills: updatedSkills });
   }, [tempData]);
@@ -376,23 +282,21 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
                 onClick={handleSave}
                 size='sm'
                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
-                disabled={isSaving || isUploading}
+                disabled={isSaving}
               >
-                {isUploading ? (
-                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                ) : isSaving ? (
+                {isSaving ? (
                   <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                 ) : (
                   <Save className='w-4 h-4 mr-2' />
                 )}
-                {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+                {isSaving ? "Saving..." : "Save"}
               </Button>
               <Button
                 onClick={handleCancel}
                 variant='danger'
                 size='sm'
                 className='bg-red-600 hover:bg-red-700 text-white shadow-md'
-                disabled={isSaving || isUploading}
+                disabled={isSaving}
               >
                 <X className='w-4 h-4 mr-2' />
                 Cancel
@@ -419,18 +323,30 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
         >
           {isEditing ? (
             <>
-              <input
-                type="text"
-                value={displayData.header.title}
-                onChange={(e) => updateHeader('title', e.target.value)}
-                className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
-              />
-              <textarea
-                value={displayData.header.subtitle}
-                onChange={(e) => updateHeader('subtitle', e.target.value)}
-                className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
-                rows={2}
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={displayData.header.title}
+                  onChange={(e) => updateHeader('title', e.target.value)}
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  maxLength={TEXT_LIMITS.HEADER_TITLE}
+                />
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                  {displayData.header.title.length}/{TEXT_LIMITS.HEADER_TITLE}
+                </div>
+              </div>
+              <div className="relative">
+                <textarea
+                  value={displayData.header.subtitle}
+                  onChange={(e) => updateHeader('subtitle', e.target.value)}
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  rows={2}
+                  maxLength={TEXT_LIMITS.HEADER_SUBTITLE}
+                />
+                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                  {displayData.header.subtitle.length}/{TEXT_LIMITS.HEADER_SUBTITLE}
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -466,53 +382,41 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
                 </Button>
               )}
 
-              {/* Icon Upload/Display */}
+              {/* Icon Display */}
               <motion.div
-                whileHover={{ scale: 1.1, rotate: isEditing ? 0 : 360 }}
+                whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.5 }}
-                className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mb-4 relative"
+                className="flex items-center justify-center mb-4"
               >
-                {isEditing && (
-                  <Button
-                    onClick={() => fileInputRefs.current[skill.id]?.click()}
-                    size='sm'
-                    className='absolute -top-1 -right-1 bg-white/90 backdrop-blur-sm shadow-md p-1'
-                  >
-                    <Upload className='w-3 h-3 text-black' />
-                    <input
-                      ref={el => fileInputRefs.current[skill.id] = el as HTMLInputElement}
-                      type='file'
-                      accept='image/*'
-                      onChange={(e) => handleIconUpload(e, skill.id)}
-                      className='hidden'
-                    />
-                  </Button>
-                )}
-                
-                {pendingIconFiles[skill.id] && (
-                  <p className='absolute -bottom-6 text-xs text-orange-600 bg-white p-1 rounded'>
-                    Icon selected
-                  </p>
-                )}
-                
-                {/* Use the new render function */}
                 {renderSkillIcon(skill)}
               </motion.div>
 
               {isEditing ? (
                 <>
-                  <input
-                    type="text"
-                    value={skill.title}
-                    onChange={(e) => updateSkill(index, 'title', e.target.value)}
-                    className="text-xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
-                  />
-                  <textarea
-                    value={skill.description}
-                    onChange={(e) => updateSkill(index, 'description', e.target.value)}
-                    className="text-muted-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
-                    rows={2}
-                  />
+                  <div className="relative mb-2">
+                    <input
+                      type="text"
+                      value={skill.title}
+                      onChange={(e) => updateSkill(index, 'title', e.target.value)}
+                      className="text-xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+                      maxLength={TEXT_LIMITS.SKILL_TITLE}
+                    />
+                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                      {skill.title.length}/{TEXT_LIMITS.SKILL_TITLE}
+                    </div>
+                  </div>
+                  <div className="relative mb-4">
+                    <textarea
+                      value={skill.description}
+                      onChange={(e) => updateSkill(index, 'description', e.target.value)}
+                      className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+                      rows={2}
+                      maxLength={TEXT_LIMITS.SKILL_DESCRIPTION}
+                    />
+                    <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                      {skill.description.length}/{TEXT_LIMITS.SKILL_DESCRIPTION}
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>

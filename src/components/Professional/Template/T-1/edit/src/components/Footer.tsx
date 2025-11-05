@@ -1,16 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Code,
-  Github,
-  Linkedin,
-  Mail,
-  Heart,
-  ArrowUp,
-  Save,
-  X,
-  Edit,
-} from "lucide-react";
+import { Save, X, Edit } from "lucide-react";
 import { toast } from "sonner";
 
 export interface SocialLink {
@@ -74,7 +64,6 @@ const CHAR_LIMITS = {
 const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState<FooterContent>(content);
-  const currentYear = new Date().getFullYear();
 
   const handleSave = () => {
     if (onSave) onSave(editedContent);
@@ -88,39 +77,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
     setIsEditing(false);
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     element?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const getIconComponent = (iconName: string) => {
-    switch (iconName) {
-      case "Github":
-        return Github;
-      case "Linkedin":
-        return Linkedin;
-      case "Mail":
-        return Mail;
-      default:
-        return Github;
-    }
-  };
-
-  const getIconColor = (iconName: string) => {
-    switch (iconName) {
-      case "Github":
-        return "text-accent-yellow hover:bg-accent-yellow/20";
-      case "Linkedin":
-        return "text-accent-orange hover:bg-accent-orange/20";
-      case "Mail":
-        return "text-accent-red hover:bg-accent-red/20";
-      default:
-        return "text-accent-yellow hover:bg-accent-yellow/20";
-    }
   };
 
   const getCharCountClass = (current: number, limit: number) => {
@@ -170,7 +129,12 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               whileHover={{ scale: 1.02 }}
               className="flex items-center space-x-2 mb-4"
             >
-              <Code className="w-8 h-8 text-orange-400" />
+              <div className="rounded-full bg-yellow-500 text-white h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+                <span className="uppercase">
+                  {content.personalInfo.name[0] || "P"}
+                </span>
+              </div>
+
               {isEditing ? (
                 <div className="flex flex-col">
                   <input
@@ -199,7 +163,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                   </div>
                 </div>
               ) : (
-                <span className="text-2xl font-bold text-blue-500 dark:text-orange-500">
+                <span className="text-2xl font-bold truncate capitalize text-yellow-500">
                   {content.personalInfo.name}
                 </span>
               )}
@@ -237,65 +201,6 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                 {content.personalInfo.description}
               </p>
             )}
-
-            {/* Social Links */}
-            {/* <div className="flex space-x-4">
-              {editedContent.socialLinks.map((link, index) => {
-                const IconComponent = getIconComponent(link.icon);
-                const colorClass = getIconColor(link.icon);
-                return (
-                  <motion.div
-                    key={index}
-                    whileHover={{ y: -2, scale: 1.1 }}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center bg-gray-800 ${colorClass}`}
-                  >
-                    {isEditing ? (
-                      <div className="relative group w-full h-full flex items-center justify-center">
-                        <IconComponent className="w-5 h-5" />
-                        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-40 bg-gray-900 border border-gray-700 rounded p-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
-                          <input
-                            type="text"
-                            value={link.href}
-                            onChange={(e) => {
-                              const newSocialLinks = [
-                                ...editedContent.socialLinks,
-                              ];
-                              newSocialLinks[index] = {
-                                ...link,
-                                href: e.target.value,
-                              };
-                              setEditedContent({
-                                ...editedContent,
-                                socialLinks: newSocialLinks,
-                              });
-                            }}
-                            maxLength={CHAR_LIMITS.socialLink}
-                            className="w-full px-2 py-1 text-xs bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                            placeholder="URL"
-                          />
-                          <div
-                            className={`text-xs mt-1 text-right ${getCharCountClass(
-                              link.href.length,
-                              CHAR_LIMITS.socialLink
-                            )}`}
-                          >
-                            {link.href.length}/{CHAR_LIMITS.socialLink}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <IconComponent className="w-5 h-5" />
-                      </a>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div> */}
           </div>
 
           {/* Quick Links */}
@@ -446,318 +351,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                 </li>
               ))}
             </ul>
-
-            {/* Newsletter */}
-            <div className="border-t border-gray-700 pt-4">
-              {isEditing ? (
-                <div className="space-y-3">
-                  <div>
-                    <input
-                      type="text"
-                      value={editedContent.newsletter.title}
-                      onChange={(e) =>
-                        setEditedContent({
-                          ...editedContent,
-                          newsletter: {
-                            ...editedContent.newsletter,
-                            title: e.target.value,
-                          },
-                        })
-                      }
-                      maxLength={CHAR_LIMITS.newsletterTitle}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
-                      placeholder="Newsletter Title"
-                    />
-                    <div
-                      className={`text-xs mt-1 text-right ${getCharCountClass(
-                        editedContent.newsletter.title.length,
-                        CHAR_LIMITS.newsletterTitle
-                      )}`}
-                    >
-                      {editedContent.newsletter.title.length}/
-                      {CHAR_LIMITS.newsletterTitle}
-                    </div>
-                  </div>
-                  <div>
-                    <textarea
-                      value={editedContent.newsletter.description}
-                      onChange={(e) =>
-                        setEditedContent({
-                          ...editedContent,
-                          newsletter: {
-                            ...editedContent.newsletter,
-                            description: e.target.value,
-                          },
-                        })
-                      }
-                      maxLength={CHAR_LIMITS.newsletterDescription}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
-                      placeholder="Description"
-                      rows={2}
-                    />
-                    <div
-                      className={`text-xs mt-1 text-right ${getCharCountClass(
-                        editedContent.newsletter.description.length,
-                        CHAR_LIMITS.newsletterDescription
-                      )}`}
-                    >
-                      {editedContent.newsletter.description.length}/
-                      {CHAR_LIMITS.newsletterDescription}
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        value={editedContent.newsletter.placeholder}
-                        onChange={(e) =>
-                          setEditedContent({
-                            ...editedContent,
-                            newsletter: {
-                              ...editedContent.newsletter,
-                              placeholder: e.target.value,
-                            },
-                          })
-                        }
-                        maxLength={CHAR_LIMITS.newsletterPlaceholder}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
-                        placeholder="Input Placeholder"
-                      />
-                      <div
-                        className={`text-xs mt-1 text-right ${getCharCountClass(
-                          editedContent.newsletter.placeholder.length,
-                          CHAR_LIMITS.newsletterPlaceholder
-                        )}`}
-                      >
-                        {editedContent.newsletter.placeholder.length}/
-                        {CHAR_LIMITS.newsletterPlaceholder}
-                      </div>
-                    </div>
-                    <div className="w-28">
-                      <input
-                        type="text"
-                        value={editedContent.newsletter.buttonText}
-                        onChange={(e) =>
-                          setEditedContent({
-                            ...editedContent,
-                            newsletter: {
-                              ...editedContent.newsletter,
-                              buttonText: e.target.value,
-                            },
-                          })
-                        }
-                        maxLength={CHAR_LIMITS.newsletterButton}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
-                        placeholder="Button Text"
-                      />
-                      <div
-                        className={`text-xs mt-1 text-right ${getCharCountClass(
-                          editedContent.newsletter.buttonText.length,
-                          CHAR_LIMITS.newsletterButton
-                        )}`}
-                      >
-                        {editedContent.newsletter.buttonText.length}/
-                        {CHAR_LIMITS.newsletterButton}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <h4 className="text-gray-700 dark:text-white font-medium mb-2">
-                    {content.newsletter.title}
-                  </h4>
-                  <p className="text-gray-400 text-sm mb-3">
-                    {content.newsletter.description}
-                  </p>
-                  <div className="flex">
-                    <input
-                      type="email"
-                      placeholder={content.newsletter.placeholder}
-                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-l-lg text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
-                    />
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 bg-orange-400 text-white rounded-r-lg text-sm font-medium hover:shadow-lg"
-                    >
-                      {content.newsletter.buttonText}
-                    </motion.button>
-                  </div>
-                </>
-              )}
-            </div>
           </div>
         </div>
       </div>
-
-      {/* Bottom Section */}
-      <div className="border-t border-gray-700 py-6">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-          <div className="flex items-center text-center md:text-left">
-            © {currentYear}{" "}
-            {isEditing ? (
-              <div className="flex items-center">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={editedContent.personalInfo.name}
-                    onChange={(e) =>
-                      setEditedContent({
-                        ...editedContent,
-                        personalInfo: {
-                          ...editedContent.personalInfo,
-                          name: e.target.value,
-                        },
-                      })
-                    }
-                    maxLength={CHAR_LIMITS.personalName}
-                    className="bg-transparent border-b border-gray-500 focus:border-orange-500 ml-1 px-1 text-gray-200 focus:outline-none"
-                  />
-                  <div
-                    className={`absolute -bottom-5 right-0 text-xs ${getCharCountClass(
-                      editedContent.personalInfo.name.length,
-                      CHAR_LIMITS.personalName
-                    )}`}
-                  >
-                    {editedContent.personalInfo.name.length}/
-                    {CHAR_LIMITS.personalName}
-                  </div>
-                </div>
-                . {content.bottomSection.copyrightText}
-                <Heart className="w-4 h-4 mx-1 text-accent-red fill-current" />
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={editedContent.bottomSection.afterCopyrightText}
-                    onChange={(e) =>
-                      setEditedContent({
-                        ...editedContent,
-                        bottomSection: {
-                          ...editedContent.bottomSection,
-                          afterCopyrightText: e.target.value,
-                        },
-                      })
-                    }
-                    maxLength={CHAR_LIMITS.afterCopyrightText}
-                    className="bg-transparent border-b border-gray-500 focus:border-orange-500 ml-1 px-1 text-gray-200 focus:outline-none"
-                  />
-                  <div
-                    className={`absolute -bottom-5 right-0 text-xs ${getCharCountClass(
-                      editedContent.bottomSection.afterCopyrightText.length,
-                      CHAR_LIMITS.afterCopyrightText
-                    )}`}
-                  >
-                    {editedContent.bottomSection.afterCopyrightText.length}/
-                    {CHAR_LIMITS.afterCopyrightText}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                <span className="mx-1">{content.personalInfo.name}</span>.{" "}
-                {content.bottomSection.copyrightText}
-                <Heart className="w-4 h-4 mx-1 text-accent-red fill-current" />
-                <span>{content.bottomSection.afterCopyrightText}</span>
-              </>
-            )}
-          </div>
-
-          <div className="flex items-center gap-6">
-            {isEditing ? (
-              <div className="flex items-center gap-6">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={editedContent.bottomSection.privacyPolicy.label}
-                    onChange={(e) =>
-                      setEditedContent({
-                        ...editedContent,
-                        bottomSection: {
-                          ...editedContent.bottomSection,
-                          privacyPolicy: {
-                            ...editedContent.bottomSection.privacyPolicy,
-                            label: e.target.value,
-                          },
-                        },
-                      })
-                    }
-                    maxLength={CHAR_LIMITS.policyLabel}
-                    className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
-                  />
-                  <div
-                    className={`absolute -bottom-5 right-0 text-xs ${getCharCountClass(
-                      editedContent.bottomSection.privacyPolicy.label.length,
-                      CHAR_LIMITS.policyLabel
-                    )}`}
-                  >
-                    {editedContent.bottomSection.privacyPolicy.label.length}/
-                    {CHAR_LIMITS.policyLabel}
-                  </div>
-                </div>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={editedContent.bottomSection.termsOfService.label}
-                    onChange={(e) =>
-                      setEditedContent({
-                        ...editedContent,
-                        bottomSection: {
-                          ...editedContent.bottomSection,
-                          termsOfService: {
-                            ...editedContent.bottomSection.termsOfService,
-                            label: e.target.value,
-                          },
-                        },
-                      })
-                    }
-                    maxLength={CHAR_LIMITS.policyLabel}
-                    className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500 focus:outline-none"
-                  />
-                  <div
-                    className={`absolute -bottom-5 right-0 text-xs ${getCharCountClass(
-                      editedContent.bottomSection.termsOfService.label.length,
-                      CHAR_LIMITS.policyLabel
-                    )}`}
-                  >
-                    {editedContent.bottomSection.termsOfService.label.length}/
-                    {CHAR_LIMITS.policyLabel}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                <motion.a
-                  whileHover={{ y: -1 }}
-                  href={content.bottomSection.privacyPolicy.href}
-                  className="hover:text-accent-orange transition"
-                >
-                  {content.bottomSection.privacyPolicy.label}
-                </motion.a>
-                <motion.a
-                  whileHover={{ y: -1 }}
-                  href={content.bottomSection.termsOfService.href}
-                  className="hover:text-accent-orange transition"
-                >
-                  {content.bottomSection.termsOfService.label}
-                </motion.a>
-              </>
-            )}
-
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={scrollToTop}
-              className="w-10 h-10 bg-orange-400 rounded-full flex items-center justify-center text-black hover:shadow-lg animate-bounce"
-            >
-              <ArrowUp className="w-5 h-5" />
-            </motion.button>
-          </div>
-        </div>
-      </div>
-
-      {/* Subtle background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-dark-400 to-transparent opacity-40 pointer-events-none" />
     </footer>
   );
 };

@@ -75,8 +75,6 @@ export function Hero({ heroData }) {
             >
               <motion.div 
                 className="absolute inset-0 bg-yellow-400 rounded-3xl transform rotate-6"
-                whileHover={{ rotate: 8, scale: 1.02 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
               ></motion.div>
               <motion.div 
                 className="relative bg-card rounded-3xl overflow-hidden shadow-2xl"

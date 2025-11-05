@@ -3,6 +3,18 @@ import { motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+// Text limits for Footer only
+const FOOTER_TEXT_LIMITS = {
+  LOGO_TEXT: 30,
+  TAGLINE: 80,
+  DESCRIPTION: 300,
+  LINK_LABEL: 40,
+  COPYRIGHT: 100,
+  BUILT_WITH: 80,
+  CONTACT_FIELD: 60,
+  SOCIAL_LABEL: 40,
+};
+
 // Custom Button component (consistent with other components)
 const Button = ({
   children,
@@ -75,67 +87,12 @@ interface FooterData {
   builtWith: string;
 }
 
-const defaultFooterData: FooterData = {
-  logoText: "Professional",
-  tagline: "Professional Technology Professional Solutions",
-  description: "Delivering exceptional results through expertise in modern technologies. Committed to innovation, quality, and client success.",
-  quickLinks: [
-    { href: "#about", label: "About Me" },
-    { href: "#skills", label: "Skills" },
-    { href: "#projects", label: "Portfolio" },
-    { href: "#services", label: "Services" }
-  ],
-  moreLinks: [
-    { href: "#testimonials", label: "Testimonials" },
-    { href: "#contact", label: "Contact" },
-    { href: "/privacy", label: "Privacy Policy" },
-    { href: "/terms", label: "Terms of Service" }
-  ],
-  socialLinks: [
-    {
-      icon: "Linkedin",
-      label: "LinkedIn Profile",
-      href: "https://linkedin.com/in/professional",
-      color: "hover:text-blue-600"
-    },
-    {
-      icon: "Github",
-      label: "GitHub Profile",
-      href: "https://github.com/professional",
-      color: "hover:text-gray-900 dark:hover:text-white"
-    },
-    {
-      icon: "Twitter",
-      label: "Twitter Profile",
-      href: "https://twitter.com/professional",
-      color: "hover:text-blue-400"
-    },
-    {
-      icon: "Mail",
-      label: "Email Contact",
-      href: "mailto:contact@professional.com",
-      color: "hover:text-green-500"
-    },
-    {
-      icon: "Instagram",
-      label: "Instagram",
-      href: "#",
-      color: "hover:text-pink-500"
-    }
-  ],
-  copyright: "© 2024 Professional. All rights reserved.",
-  contactInfo: {
-    email: "contact@professional.com",
-    location: "India",
-    availability: "Available for new projects"
-  },
-  builtWith: "Built with passion and modern technology"
-};
+
 
 interface FooterProps {
   footerData?: FooterData;
   onStateChange?: (data: FooterData) => void;
- 
+
 }
 
 export function Footer({ footerData, onStateChange }: FooterProps) {
@@ -146,8 +103,79 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
   const [isVisible, setIsVisible] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
 
-  const [data, setData] = useState<FooterData>(defaultFooterData);
+  const defaultFooterData: FooterData = footerData || ""
+  const [data, setData] = useState<FooterData>(defaultFooterData); 
   const [tempData, setTempData] = useState<FooterData>(defaultFooterData);
+
+  // Text validation functions
+  const validateTextLength = (text: string, limit: number) => {
+    return text.length <= limit;
+  };
+
+  // Footer EditableText component
+  const FooterEditableText = useCallback(({
+    value,
+    onChange,
+    charLimit,
+    className = "",
+    placeholder = "",
+    multiline = false,
+    rows = 3,
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+    charLimit?: number;
+    className?: string;
+    placeholder?: string;
+    multiline?: boolean;
+    rows?: number;
+  }) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const newValue = e.target.value;
+      if (charLimit && newValue.length > charLimit) {
+        return;
+      }
+      onChange(newValue);
+    };
+
+    const currentLength = value?.length || 0;
+    const isOverLimit = charLimit && currentLength > charLimit;
+
+    const baseClasses = "w-full bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none text-white placeholder-gray-400";
+
+    return (
+      <div className="relative">
+        {multiline ? (
+          <textarea
+            value={value || ''}
+            onChange={handleChange}
+            className={`${baseClasses} p-2 resize-none ${className} ${
+              isOverLimit ? 'border-red-400' : ''
+            }`}
+            placeholder={placeholder}
+            rows={rows}
+          />
+        ) : (
+          <input
+            type="text"
+            value={value || ''}
+            onChange={handleChange}
+            className={`${baseClasses} p-2 ${className} ${
+              isOverLimit ? 'border-red-400' : ''
+            }`}
+            placeholder={placeholder}
+          />
+        )}
+        {charLimit && (
+          <div className={`absolute -bottom-6 right-0 text-xs ${
+            isOverLimit ? 'text-red-400' : 'text-gray-400'
+          }`}>
+            {currentLength}/{charLimit}
+          </div>
+        )}
+      </div>
+    );
+  }, []);
 
   // Notify parent of state changes
   useEffect(() => {
@@ -352,7 +380,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
               className='bg-red-500 hover:bg-red-600 shadow-md text-white'
             >
               <Edit2 className='w-4 h-4 mr-2' />
-              Edit Footer
+              Edit
             </Button>
           ) : (
             <div className='flex gap-2 justify-end'>
@@ -393,22 +421,27 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
           >
             {isEditing ? (
               <>
-                <input
-                  type="text"
+                <FooterEditableText
                   value={displayData.logoText}
-                  onChange={(e) => updateBasicField('logoText', e.target.value)}
-                  className="w-full text-2xl font-bold text-white bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                  onChange={(value) => updateBasicField('logoText', value)}
+                  charLimit={FOOTER_TEXT_LIMITS.LOGO_TEXT}
+                  className="text-2xl font-bold"
+                  placeholder="Logo text"
                 />
-                <input
-                  type="text"
+                <FooterEditableText
                   value={displayData.tagline}
-                  onChange={(e) => updateBasicField('tagline', e.target.value)}
-                  className="w-full text-lg text-yellow-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                  onChange={(value) => updateBasicField('tagline', value)}
+                  charLimit={FOOTER_TEXT_LIMITS.TAGLINE}
+                  className="text-lg text-yellow-400"
+                  placeholder="Tagline"
                 />
-                <textarea
+                <FooterEditableText
                   value={displayData.description}
-                  onChange={(e) => updateBasicField('description', e.target.value)}
-                  className="w-full text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 resize-none"
+                  onChange={(value) => updateBasicField('description', value)}
+                  charLimit={FOOTER_TEXT_LIMITS.DESCRIPTION}
+                  className="text-sm text-gray-400"
+                  placeholder="Description"
+                  multiline
                   rows={4}
                 />
               </>
@@ -436,11 +469,11 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
               <div className="space-y-2">
                 {displayData.quickLinks.map((link, index) => (
                   <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
+                    <FooterEditableText
                       value={link.label}
-                      onChange={(e) => updateQuickLink(index, 'label', e.target.value)}
-                      className="flex-1 text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                      onChange={(value) => updateQuickLink(index, 'label', value)}
+                      charLimit={FOOTER_TEXT_LIMITS.LINK_LABEL}
+                      className="flex-1 text-sm text-gray-400"
                       placeholder="Link Label"
                     />
                     <input
@@ -499,11 +532,11 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
               <div className="space-y-2">
                 {displayData.moreLinks.map((link, index) => (
                   <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
+                    <FooterEditableText
                       value={link.label}
-                      onChange={(e) => updateMoreLink(index, 'label', e.target.value)}
-                      className="flex-1 text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                      onChange={(value) => updateMoreLink(index, 'label', value)}
+                      charLimit={FOOTER_TEXT_LIMITS.LINK_LABEL}
+                      className="flex-1 text-sm text-gray-400"
                       placeholder="Link Label"
                     />
                     <input
@@ -558,117 +591,12 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
           viewport={{ once: true }}
           className="grid gap-8 md:grid-cols-2 mt-8 pt-8 border-t border-gray-800"
         >
-          {/* Contact Info */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-yellow-400">Contact Info</h4>
-            {isEditing ? (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={displayData.contactInfo.email}
-                  onChange={(e) => updateContactInfo('email', e.target.value)}
-                  className="w-full text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                  placeholder="Email"
-                />
-                <input
-                  type="text"
-                  value={displayData.contactInfo.location}
-                  onChange={(e) => updateContactInfo('location', e.target.value)}
-                  className="w-full text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                  placeholder="Location"
-                />
-                <input
-                  type="text"
-                  value={displayData.contactInfo.availability}
-                  onChange={(e) => updateContactInfo('availability', e.target.value)}
-                  className="w-full text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                  placeholder="Availability"
-                />
-              </div>
-            ) : (
-              <div className="space-y-2 text-gray-400">
-                <p>{displayData.contactInfo.email}</p>
-                <p>{displayData.contactInfo.location}</p>
-                <p>{displayData.contactInfo.availability}</p>
-              </div>
-            )}
-          </div>
+        
 
-          {/* Social Links */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-yellow-400">Follow Me</h4>
-            {isEditing ? (
-              <div className="space-y-2">
-                {displayData.socialLinks.map((social, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={social.label}
-                      onChange={(e) => updateSocialLink(index, 'label', e.target.value)}
-                      className="flex-1 text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                      placeholder="Social Label"
-                    />
-                    <input
-                      type="text"
-                      value={social.href}
-                      onChange={(e) => updateSocialLink(index, 'href', e.target.value)}
-                      className="flex-1 text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                      placeholder="Social URL"
-                    />
-                    <Button
-                      onClick={() => removeSocialLink(index)}
-                      size="sm"
-                      variant="outline"
-                      className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
-                    >
-                      <X className="w-3 h-3" />
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  onClick={() => {
-                    setTempData(prev => ({
-                      ...prev,
-                      socialLinks: [...prev.socialLinks, { 
-                        icon: "Link", 
-                        label: "New Social", 
-                        href: "#", 
-                        color: "hover:text-gray-400" 
-                      }]
-                    }))
-                  }}
-                  variant="outline"
-                  size="sm"
-                  className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700"
-                >
-                  Add Social Link
-                </Button>
-              </div>
-            ) : (
-              <div className="flex space-x-4">
-                {displayData.socialLinks.map((social, index) => {
-                  const IconComponent = getIconComponent(social.icon);
-                  return (
-                    <motion.a
-                      key={index}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.1, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`text-gray-400 transition-colors duration-300 ${social.color}`}
-                      title={social.label}
-                    >
-                      <IconComponent className="w-5 h-5" />
-                    </motion.a>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+         
         </motion.div>
 
-        {/* Bottom Bar */}
+{/*         
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -678,18 +606,18 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
         >
           {isEditing ? (
             <div className="space-y-2">
-              <input
-                type="text"
+              <FooterEditableText
                 value={displayData.copyright.replace(`© ${currentYear}`, '').trim()}
-                onChange={(e) => updateBasicField('copyright', `© ${currentYear} ${e.target.value}`)}
-                className="w-full text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                onChange={(value) => updateBasicField('copyright', `© ${currentYear} ${value}`)}
+                charLimit={FOOTER_TEXT_LIMITS.COPYRIGHT}
+                className="w-full text-sm text-gray-400 text-center"
                 placeholder="Copyright text"
               />
-              <input
-                type="text"
+              <FooterEditableText
                 value={displayData.builtWith}
-                onChange={(e) => updateBasicField('builtWith', e.target.value)}
-                className="w-full text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                onChange={(value) => updateBasicField('builtWith', value)}
+                charLimit={FOOTER_TEXT_LIMITS.BUILT_WITH}
+                className="w-full text-sm text-gray-400 text-center"
                 placeholder="Built with text"
               />
             </div>
@@ -707,7 +635,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
               </p>
             </>
           )}
-        </motion.div>
+        </motion.div> */}
       </div>
     </footer>
   );

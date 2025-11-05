@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import {
   Award,
   Calendar,
-  MapPin,
   Users,
   Edit,
   Save,
@@ -48,8 +47,8 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     heading: 100,
     subtitle: 200,
     description1: 1000,
-    description2: 1000,
-    description3: 1000,
+    description2: 500,
+    description3: 200,
     skills: 500,
     stats: 10,
   };
@@ -102,12 +101,6 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
       label: "Happy Clients",
       value: aboutContent.happyClients,
       key: "happyClients" as const,
-    },
-    {
-      icon: MapPin,
-      label: "Countries Served",
-      value: aboutContent.countriesServed,
-      key: "countriesServed" as const,
     },
   ];
 
@@ -426,7 +419,12 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                   maxLength={CHAR_LIMITS.heading}
                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-600 dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none mb-4"
                 />
-                <div className={`text-sm text-right ${getCharCountColor(aboutContent.heading.length, CHAR_LIMITS.heading)}`}>
+                <div
+                  className={`text-sm text-right ${getCharCountColor(
+                    aboutContent.heading.length,
+                    CHAR_LIMITS.heading
+                  )}`}
+                >
                   {aboutContent.heading.length}/{CHAR_LIMITS.heading}
                 </div>
               </div>
@@ -435,7 +433,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                 <span className="text-gray-900 dark:text-white">
                   {aboutContent.heading.split(" ")[0]}
                 </span>{" "}
-                <span className="text-blue-500 dark:text-orange-500">
+                <span className="text-orange-500">
                   {aboutContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
@@ -451,7 +449,12 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                   rows={2}
                 />
-                <div className={`text-sm text-right ${getCharCountColor(aboutContent.subtitle.length, CHAR_LIMITS.subtitle)}`}>
+                <div
+                  className={`text-sm text-right ${getCharCountColor(
+                    aboutContent.subtitle.length,
+                    CHAR_LIMITS.subtitle
+                  )}`}
+                >
                   {aboutContent.subtitle.length}/{CHAR_LIMITS.subtitle}
                 </div>
               </div>
@@ -511,8 +514,14 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                         rows={3}
                       />
-                      <div className={`text-sm text-right ${getCharCountColor(aboutContent.description1.length, CHAR_LIMITS.description1)}`}>
-                        {aboutContent.description1.length}/{CHAR_LIMITS.description1}
+                      <div
+                        className={`text-sm text-right ${getCharCountColor(
+                          aboutContent.description1.length,
+                          CHAR_LIMITS.description1
+                        )}`}
+                      >
+                        {aboutContent.description1.length}/
+                        {CHAR_LIMITS.description1}
                       </div>
                     </div>
                     <div className="space-y-1">
@@ -524,8 +533,14 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                         rows={4}
                       />
-                      <div className={`text-sm text-right ${getCharCountColor(aboutContent.description2.length, CHAR_LIMITS.description2)}`}>
-                        {aboutContent.description2.length}/{CHAR_LIMITS.description2}
+                      <div
+                        className={`text-sm text-right ${getCharCountColor(
+                          aboutContent.description2.length,
+                          CHAR_LIMITS.description2
+                        )}`}
+                      >
+                        {aboutContent.description2.length}/
+                        {CHAR_LIMITS.description2}
                       </div>
                     </div>
                     <div className="space-y-1">
@@ -537,8 +552,14 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                         rows={3}
                       />
-                      <div className={`text-sm text-right ${getCharCountColor(aboutContent.description3.length, CHAR_LIMITS.description3)}`}>
-                        {aboutContent.description3.length}/{CHAR_LIMITS.description3}
+                      <div
+                        className={`text-sm text-right ${getCharCountColor(
+                          aboutContent.description3.length,
+                          CHAR_LIMITS.description3
+                        )}`}
+                      >
+                        {aboutContent.description3.length}/
+                        {CHAR_LIMITS.description3}
                       </div>
                     </div>
                   </>
@@ -565,7 +586,12 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                       maxLength={CHAR_LIMITS.skills}
                       className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                     />
-                    <div className={`text-sm text-right ${getCharCountColor(skillsInput.length, CHAR_LIMITS.skills)}`}>
+                    <div
+                      className={`text-sm text-right ${getCharCountColor(
+                        skillsInput.length,
+                        CHAR_LIMITS.skills
+                      )}`}
+                    >
                       {skillsInput.length}/{CHAR_LIMITS.skills}
                     </div>
                   </div>
@@ -602,7 +628,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
           {/* Stats */}
           <motion.div
             variants={itemVariants}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-16 border-t border-gray-200 dark:border-gray-700"
+            className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-16 pt-16 border-t border-gray-200 dark:border-gray-700"
           >
             {stats.map((stat, index) => (
               <motion.div
@@ -623,7 +649,12 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         maxLength={CHAR_LIMITS.stats}
                         className="w-20 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white text-center rounded-lg border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                       />
-                      <div className={`text-xs text-right ${getCharCountColor(stat.value.length, CHAR_LIMITS.stats)}`}>
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          stat.value.length,
+                          CHAR_LIMITS.stats
+                        )}`}
+                      >
                         {stat.value.length}/{CHAR_LIMITS.stats}
                       </div>
                     </div>

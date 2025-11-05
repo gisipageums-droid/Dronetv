@@ -181,7 +181,7 @@ export function Footer({ footerData }: FooterProps) {
         </div>
 
         {/* Contact & Social Links */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -189,17 +189,10 @@ export function Footer({ footerData }: FooterProps) {
           className="grid gap-8 md:grid-cols-2 mt-8 pt-8 border-t border-gray-800"
         >
           {/* Contact Info */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-yellow-400">Contact Info</h4>
-            <div className="space-y-2 text-gray-400">
-              <p>{data.contactInfo.email}</p>
-              <p>{data.contactInfo.location}</p>
-              <p>{data.contactInfo.availability}</p>
-            </div>
-          </div>
+         
 
           
-        </motion.div>
+        {/* </motion.div> */} 
 
       </div>
     </footer>

@@ -3,6 +3,18 @@ import { motion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+// Text limits
+const TEXT_LIMITS = {
+  SUBTITLE: 100,
+  HEADING: 60,
+  DESCRIPTION: 300,
+  TESTIMONIAL_CONTENT: 500,
+  CLIENT_NAME: 40,
+  CLIENT_POSITION: 40,
+  PROJECT: 30,
+  DATE: 20,
+};
+
 // Custom Button component
 const Button = ({
   children,
@@ -177,10 +189,10 @@ export function Testimonials({
 
   const removeTestimonial = useCallback((index: number) => {
     setTempData(prevData => {
-      if (prevData.testimonials.length <= 1) {
-        toast.error("You must have at least one testimonial");
-        return prevData;
-      }
+      // if (prevData.testimonials.length <= 1) {
+      //   toast.error("You must have at least one testimonial");
+      //   return prevData;
+      // }
       
       const updatedTestimonials = prevData.testimonials.filter((_, i) => i !== index);
       return { ...prevData, testimonials: updatedTestimonials };
@@ -196,7 +208,7 @@ export function Testimonials({
 
   // Safe string splitting for heading
   const renderHeading = () => {
-    const heading = displayData?.heading || "Clients review";
+    const heading = displayData?.heading ;
     const words = heading.split(' ');
     
     if (words.length > 1) {
@@ -273,27 +285,45 @@ export function Testimonials({
         >
           {isEditing ? (
             <>
-              <input
-                type="text"
-                value={tempData.subtitle || ""}
-                onChange={(e) => updateSection('subtitle', e.target.value)}
-                className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
-                placeholder="Subtitle"
-              />
-              <input
-                type="text"
-                value={tempData.heading || ""}
-                onChange={(e) => updateSection('heading', e.target.value)}
-                className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
-                placeholder="Heading"
-              />
-              <textarea
-                value={tempData.description || ""}
-                onChange={(e) => updateSection('description', e.target.value)}
-                className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
-                rows={2}
-                placeholder="Description"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={tempData.subtitle || ""}
+                  onChange={(e) => updateSection('subtitle', e.target.value)}
+                  className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  placeholder="Subtitle"
+                  maxLength={TEXT_LIMITS.SUBTITLE}
+                />
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                  {tempData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
+                </div>
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={tempData.heading || ""}
+                  onChange={(e) => updateSection('heading', e.target.value)}
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  placeholder="Heading"
+                  maxLength={TEXT_LIMITS.HEADING}
+                />
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                  {tempData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
+                </div>
+              </div>
+              <div className="relative">
+                <textarea
+                  value={tempData.description || ""}
+                  onChange={(e) => updateSection('description', e.target.value)}
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  rows={2}
+                  placeholder="Description"
+                  maxLength={TEXT_LIMITS.DESCRIPTION}
+                />
+                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                  {tempData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -343,7 +373,7 @@ export function Testimonials({
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05 }}
-                className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 relative"
+                className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 relative flex flex-col min-h-[400px]"
               >
                 {isEditing && (
                   <Button
@@ -376,37 +406,56 @@ export function Testimonials({
                   ))}
                 </div>
 
-                {/* Review */}
-                {isEditing ? (
-                  <textarea
-                    value={testimonial.content}
-                    onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
-                    className="text-muted-foreground leading-relaxed mb-6 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
-                    rows={4}
-                  />
-                ) : (
-                  <p className="text-muted-foreground leading-relaxed mb-6">
-                    "{testimonial.content}"
-                  </p>
-                )}
+                {/* Review - Fixed height with scroll if needed */}
+                <div className="flex-1 mb-6 min-h-[120px] max-h-[120px] overflow-y-auto">
+                  {isEditing ? (
+                    <div className="relative h-full">
+                      <textarea
+                        value={testimonial.content}
+                        onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
+                        className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 resize-none"
+                        maxLength={TEXT_LIMITS.TESTIMONIAL_CONTENT}
+                      />
+                      <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                        {testimonial.content.length}/{TEXT_LIMITS.TESTIMONIAL_CONTENT}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground leading-relaxed">
+                      "{testimonial.content}"
+                    </p>
+                  )}
+                </div>
 
                 {/* Project and Date */}
                 {isEditing ? (
                   <div className="mb-4 space-y-2">
-                    <input
-                      type="text"
-                      value={testimonial.project}
-                      onChange={(e) => updateTestimonial(index, 'project', e.target.value)}
-                      className="text-sm text-yellow-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                      placeholder="Project type"
-                    />
-                    <input
-                      type="text"
-                      value={testimonial.date}
-                      onChange={(e) => updateTestimonial(index, 'date', e.target.value)}
-                      className="text-sm text-gray-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                      placeholder="Date"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={testimonial.project}
+                        onChange={(e) => updateTestimonial(index, 'project', e.target.value)}
+                        className="text-sm text-yellow-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        placeholder="Project type"
+                        maxLength={TEXT_LIMITS.PROJECT}
+                      />
+                      <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                        {testimonial.project.length}/{TEXT_LIMITS.PROJECT}
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={testimonial.date}
+                        onChange={(e) => updateTestimonial(index, 'date', e.target.value)}
+                        className="text-sm text-gray-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        placeholder="Date"
+                        maxLength={TEXT_LIMITS.DATE}
+                      />
+                      <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                        {testimonial.date.length}/{TEXT_LIMITS.DATE}
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="mb-4">
@@ -415,35 +464,47 @@ export function Testimonials({
                   </div>
                 )}
 
-                {/* Client Info */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                {/* Client Info - Fixed at bottom */}
+                <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
                     <span className="text-gray-900 text-lg">
                       {testimonial.name.charAt(0)}
                     </span>
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     {isEditing ? (
                       <>
-                        <input
-                          type="text"
-                          value={testimonial.name}
-                          onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
-                          className="text-foreground mb-1 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                          placeholder="Client name"
-                        />
-                        <input
-                          type="text"
-                          value={testimonial.position}
-                          onChange={(e) => updateTestimonial(index, 'position', e.target.value)}
-                          className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                          placeholder="Position"
-                        />
+                        <div className="relative mb-1">
+                          <input
+                            type="text"
+                            value={testimonial.name}
+                            onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
+                            className="text-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+                            placeholder="Client name"
+                            maxLength={TEXT_LIMITS.CLIENT_NAME}
+                          />
+                          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                            {testimonial.name.length}/{TEXT_LIMITS.CLIENT_NAME}
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={testimonial.position}
+                            onChange={(e) => updateTestimonial(index, 'position', e.target.value)}
+                            className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+                            placeholder="Position"
+                            maxLength={TEXT_LIMITS.CLIENT_POSITION}
+                          />
+                          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                            {testimonial.position.length}/{TEXT_LIMITS.CLIENT_POSITION}
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <>
-                        <h4 className="text-foreground mb-1">{testimonial.name}</h4>
-                        <p className="text-sm text-muted-foreground">{testimonial.position}</p>
+                        <h4 className="text-foreground mb-1 truncate">{testimonial.name}</h4>
+                        <p className="text-sm text-muted-foreground truncate">{testimonial.position}</p>
                       </>
                     )}
                   </div>
@@ -452,9 +513,9 @@ export function Testimonials({
             ))}
           </div>
         ) : (
-          !isEditing && (
+          isEditing && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">No testimonials to display. Click "Edit" to add testimonials.</p>
+              <p className="text-muted-foreground text-lg">No testimonials to display. Click "addTestimonial" to add testimonials.</p>
             </div>
           )
         )}

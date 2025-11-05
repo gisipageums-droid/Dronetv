@@ -6,13 +6,13 @@ import { useTemplate } from "../../../../../../../../components/context/context"
 export default function Publish() {
   const [model, setModel] = useState(false);
   const { publishProfessionalTemplate } = useTemplate();
-  
+
   return (
     <>
       <motion.div className="fixed bottom-20 right-10 z-50">
         <motion.button
           onClick={() => setModel(true)}
-          className="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
+          className="bg-yellow-500 text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
         >
