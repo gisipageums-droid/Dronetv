@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useForm } from "../../context/FormContext";
 import { MultiSelect } from "../common/MultiSelect";
-import { countries, indianStates } from "../../data/countries"; // Adjust path as needed
+import { PhoneInput } from "../common/PhoneInput";
+import { CountryStateSelect } from "../common/CountryStateSelect";
+import { DatePicker } from "../common/DatePicker";
 
 export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
   const { data, updateField } = useForm();
 
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState("");
 
   // Check username availability when user types
   useEffect(() => {
@@ -49,55 +50,11 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
   const renderInputField = (f: any, section: any) => {
     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
 
-    // Handle dropdown for country
-    if (f.id === "country" && (section.id === "basicInfo" || section.id === "addressInformation")) {
-      return (
-        <select
-          className={baseClasses}
-          value={data[section.id]?.[f.id] || ""}
-          onChange={(e) => {
-            updateField(section.id, { 
-              ...data[section.id], 
-              [f.id]: e.target.value 
-            });
-            if (section.id === "addressInformation") {
-              setSelectedCountry(e.target.value);
-            }
-          }}
-        >
-          <option value="">Select Country</option>
-          {countries.map((country) => (
-            <option key={country.value} value={country.value}>
-              {country.label}
-            </option>
-          ))}
-        </select>
-      );
-    }
-
-    // Handle dropdown for state (address section only)
-    if (f.id === "state" && section.id === "addressInformation") {
-      const stateOptions = selectedCountry === "IN" ? indianStates : [];
-      
-      return (
-        <select
-          className={baseClasses}
-          value={data[section.id]?.[f.id] || ""}
-          onChange={(e) =>
-            updateField(section.id, { 
-              ...data[section.id], 
-              [f.id]: e.target.value 
-            })
-          }
-        >
-          <option value="">Select State</option>
-          {stateOptions.map((state) => (
-            <option key={state.value} value={state.value}>
-              {state.label}
-            </option>
-          ))}
-        </select>
-      );
+    // Handle country and state fields with dynamic API
+    if ((f.id === "country" || f.id === "state") && (section.id === "basicInfo" || section.id === "addressInformation")) {
+      // For country and state fields, we'll handle them together in the section rendering
+      // This is a placeholder that won't be used since we'll render CountryStateSelect directly
+      return null;
     }
 
     // Handle gender dropdown
@@ -119,6 +76,54 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
           <option value="non-binary">Non-binary</option>
           <option value="prefer-not-to-say">Prefer not to say</option>
         </select>
+      );
+    }
+
+    // Handle phone fields with IDD functionality
+    const isPhoneField = f.type === "tel" || 
+                        f.id.toLowerCase().includes("phone") || 
+                        f.id.toLowerCase().includes("mobile") || 
+                        f.id.toLowerCase().includes("contact");
+    
+    if (isPhoneField) {
+      return (
+        <PhoneInput
+          value={data[section.id]?.[f.id] || ""}
+          onChange={(value) =>
+            updateField(section.id, { 
+              ...data[section.id], 
+              [f.id]: value 
+            })
+          }
+          placeholder={f.placeholder || "Enter phone number"}
+          required={f.required}
+          className=""
+        />
+      );
+    }
+
+    // Handle date fields with calendar UI
+    const isDateField = f.type === "date" || 
+                       f.id.toLowerCase().includes("date") || 
+                       f.id.toLowerCase().includes("birth") || 
+                       f.id.toLowerCase().includes("dob") || 
+                       f.id.toLowerCase().includes("established") || 
+                       f.id.toLowerCase().includes("incorporation");
+    
+    if (isDateField) {
+      return (
+        <DatePicker
+          label={f.label}
+          value={data[section.id]?.[f.id] || ""}
+          onChange={(value) =>
+            updateField(section.id, { 
+              ...data[section.id], 
+              [f.id]: value 
+            })
+          }
+          required={f.required}
+          placeholder={f.placeholder || "Select date"}
+        />
       );
     }
 
@@ -157,42 +162,110 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
         {useTwoColumns ? (
           // 2-column grid layout
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {section.fields.map((f: any) => (
-              <div key={f.id} className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
-                  {f.label}
-                  {f.required && <span className="text-red-500 ml-1">*</span>}
-                </label>
-                {renderInputField(f, section)}
+            {section.fields.map((f: any) => {
+              // Skip country and state fields as they will be rendered together
+              if (f.id === "country" || f.id === "state") return null;
+              
+              // Check if this is a date field (DatePicker handles its own label)
+              const isDateField = f.type === "date" || 
+                                 f.id.toLowerCase().includes("date") || 
+                                 f.id.toLowerCase().includes("birth") || 
+                                 f.id.toLowerCase().includes("dob") || 
+                                 f.id.toLowerCase().includes("established") || 
+                                 f.id.toLowerCase().includes("incorporation");
+              
+              return (
+                <div key={f.id} className="flex flex-col">
+                  {!isDateField && (
+                    <label className="mb-1 font-medium text-slate-800 text-sm">
+                      {f.label}
+                      {f.required && <span className="text-red-500 ml-1">*</span>}
+                    </label>
+                  )}
+                  {renderInputField(f, section)}
+                </div>
+              );
+            })}
+            
+            {/* Render CountryStateSelect if this section has country/state fields */}
+            {section.fields.some((f: any) => f.id === "country" || f.id === "state") && (
+              <div className="md:col-span-2">
+                <CountryStateSelect
+                  countryValue={data[section.id]?.country || ""}
+                  stateValue={data[section.id]?.state || ""}
+                  onCountryChange={(value) => updateField(section.id, { 
+                    ...data[section.id], 
+                    country: value 
+                  })}
+                  onStateChange={(value) => updateField(section.id, { 
+                    ...data[section.id], 
+                    state: value 
+                  })}
+                  countryRequired={section.fields.find((f: any) => f.id === "country")?.required}
+                  stateRequired={section.fields.find((f: any) => f.id === "state")?.required}
+                />
               </div>
-            ))}
+            )}
           </div>
         ) : (
           // Single column layout for basicInfo and addressInformation
           <div className="space-y-4">
-            {section.fields.map((f: any) => (
-              <div key={f.id} className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
-                  {f.label}
-                  {f.required && <span className="text-red-500 ml-1">*</span>}
-                </label>
-                {renderInputField(f, section)}
-                {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
-                  <span className={`text-xs mt-1 ${
-                    usernameAvailable === false ? 'text-red-600' : 
-                    usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
-                  }`}>
-                    {checking
-                      ? "Checking availability..."
-                      : usernameAvailable === false
-                      ? "❌ Username is taken"
-                      : usernameAvailable === true
-                      ? "✅ Username is available"
-                      : ""}
-                  </span>
-                )}
-              </div>
-            ))}
+            {section.fields.map((f: any) => {
+              // Skip country and state fields as they will be rendered together
+              if (f.id === "country" || f.id === "state") return null;
+              
+              // Check if this is a date field (DatePicker handles its own label)
+              const isDateField = f.type === "date" || 
+                                 f.id.toLowerCase().includes("date") || 
+                                 f.id.toLowerCase().includes("birth") || 
+                                 f.id.toLowerCase().includes("dob") || 
+                                 f.id.toLowerCase().includes("established") || 
+                                 f.id.toLowerCase().includes("incorporation");
+              
+              return (
+                <div key={f.id} className="flex flex-col">
+                  {!isDateField && (
+                    <label className="mb-1 font-medium text-slate-800 text-sm">
+                      {f.label}
+                      {f.required && <span className="text-red-500 ml-1">*</span>}
+                    </label>
+                  )}
+                  {renderInputField(f, section)}
+                  {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
+                    <span className={`text-xs mt-1 ${
+                      usernameAvailable === false ? 'text-red-600' : 
+                      usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
+                    }`}>
+                      {checking
+                        ? "Checking availability..."
+                        : usernameAvailable === false
+                        ? "❌ Username is taken"
+                        : usernameAvailable === true
+                        ? "✅ Username is available"
+                        : ""}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+            
+            {/* Render CountryStateSelect if this section has country/state fields */}
+            {section.fields.some((f: any) => f.id === "country" || f.id === "state") && (
+              <CountryStateSelect
+                countryValue={data[section.id]?.country || ""}
+                stateValue={data[section.id]?.state || ""}
+                onCountryChange={(value) => updateField(section.id, { 
+                  ...data[section.id], 
+                  country: value 
+                })}
+                onStateChange={(value) => updateField(section.id, { 
+                  ...data[section.id], 
+                  state: value 
+                })}
+                countryRequired={section.fields.find((f: any) => f.id === "country")?.required}
+                stateRequired={section.fields.find((f: any) => f.id === "state")?.required}
+              />
+            )}
           </div>
         )}
       </div>

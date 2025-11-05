@@ -1,18 +1,14 @@
-
-
-
 import { Brain, FileText, Globe, Palette, Sparkles, Zap } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface LoaderProps {
   onComplete?: () => void; // callback after loader completes
-  duration?: number; // total duration in ms, default 30s
+  duration?: number; // total duration in ms, default 70s
 }
 
 export const Loader: React.FC<LoaderProps> = ({
   onComplete,
-  duration = 30000,
-
+  duration = 70000, // <-- increased from 30000 to 70000 (70 seconds)
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -25,6 +21,7 @@ export const Loader: React.FC<LoaderProps> = ({
     { icon: Sparkles, text: "Adding final touches and optimizations..." },
     { icon: Zap, text: "Your website is ready!" },
   ];
+
   useEffect(() => {
     const totalSteps = steps.length;
     const stepDuration = duration / totalSteps; // time per step
@@ -166,7 +163,7 @@ export const Loader: React.FC<LoaderProps> = ({
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-slate-400 text-sm">
-            This usually takes ~30 seconds
+            This usually takes ~70 seconds
           </p>
         </div>
       </div>

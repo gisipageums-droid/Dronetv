@@ -66,6 +66,7 @@ export default function FinalEditTemp_2() {
       professionalId: AIGenData.professionalId,
       userId: AIGenData.userId,
       submissionId: AIGenData.submissionId,
+      user_name: AIGenData.user_name,
       templateSelection: AIGenData.templateSelection,
       content: {
         ...prev.content,

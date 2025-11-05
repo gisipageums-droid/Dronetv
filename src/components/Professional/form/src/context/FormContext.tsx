@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useState, useEffect } from 'react';
 
 
 interface SubCategory {
@@ -45,23 +45,37 @@ interface FormContextType {
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
 
-export const FormProvider = ({ children }: { children: ReactNode }) => {
-  const [data, setData] = useState<FormStore>({
-    basicInfo: {},
-    //  basicInfo: { user_name: "" },
-      addressInformation: {},
+const initialFormData: FormStore = {
+  basicInfo: {},
+  addressInformation: {},
   alternateContact: {},   
   socialMediaLinks: {},   
-    categories: [],
-    subcategories: [],
-    skills: [],
-    freeformSkills: [],
-    projects: [],
-    services: [],
-    media: [],
-    resume: [],
-    templateSelection:""  //added now for prefill logic and in the formcontext too
-    
+  categories: [],
+  subcategories: [],
+  skills: [],
+  freeformSkills: [],
+  projects: [],
+  services: [],
+  media: [],
+  resume: [],
+  templateSelection: ""
+};
+
+export const FormProvider = ({ children }: { children: ReactNode }) => {
+  // Initialize from localStorage synchronously so values are present on first render
+  const [data, setData] = useState<FormStore>(() => {
+    try {
+      const saved = localStorage.getItem("professionalFormDraft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.formData && typeof parsed.formData === "object") {
+          return { ...initialFormData, ...parsed.formData };
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read formData from localStorage on init", e);
+    }
+    return initialFormData;
   });
 
 
@@ -77,11 +91,19 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
     setData(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== index) }));
   };
 
+  // Persist form data to localStorage whenever data changes
+  useEffect(() => {
+    try {
+      const payload = JSON.stringify({ formData: data });
+      localStorage.setItem("professionalFormDraft", payload);
+    } catch (e) {
+      console.error("Failed to save draft to localStorage", e);
+    }
+  }, [data]);
 
+  // const resetForm = () => setData(initialFormData); // 👈 resets all fields
 
-    // const resetForm = () => setData(initialFormData); // 👈 resets all fields
-
- console.log("Form Data:", data);
+  console.log("Form Data:", data);
  
 
   return (

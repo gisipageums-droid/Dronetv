@@ -151,6 +151,14 @@ const handleSubmit = async () => {
     }
 
     setSuccess(true);
+    
+    // Clear localStorage draft after successful submission
+    try {
+      localStorage.removeItem("professionalFormDraft");
+    } catch (e) {
+      console.error("Failed to clear local draft after submit", e);
+    }
+    
     setTimeout(() => setLoading(false), 30000);
 
     setTimeout(() => {

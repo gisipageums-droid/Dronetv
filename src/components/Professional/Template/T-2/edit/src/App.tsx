@@ -66,6 +66,7 @@ export default function EditTemp_2() {
       userId: AIGenData.userId,
       submissionId: AIGenData.submissionId,
       templateSelection: AIGenData.templateSelection,
+      user_name: AIGenData.user_name,
       content: {
         ...prev.content,
         ...componentStates,
