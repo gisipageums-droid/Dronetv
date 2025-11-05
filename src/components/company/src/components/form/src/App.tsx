@@ -35,7 +35,8 @@ const initialFormData: FormData = {
   gstin: "",
   cinOrUdyamOrPan: "",
   supportEmail: "",
-  whatsappLink: "",
+  supportContactNumber: "",
+  whatsappNumber: "",
   socialLinks: {
     linkedin: "",
     facebook: "",

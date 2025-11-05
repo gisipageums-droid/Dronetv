@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { StepProps } from "../../types/form";
 import { Building2, User, Phone, Globe, X, Mail, AlertCircle } from "lucide-react";
-import { FormInput, Select } from "../FormInput";
-import { countries, indianStates } from "../../data/countries";
+import { FormInput } from "../FormInput";
+import { PhoneInput } from "../PhoneInput";
+import { CountryStateSelect } from "../CountryStateSelect";
 import { FormStep } from "../FormStep";
 import { useUserAuth } from "../../../../../../../context/context";
 import axios from "axios";
@@ -279,13 +280,12 @@ React.useEffect(() => {
                     required
                     placeholder="Full name"
                   />
-                  <FormInput
+                  <PhoneInput
                     label="Director Phone"
-                    type="tel"
                     value={formData.directorPhone}
                     onChange={(value) => updateFormData({ directorPhone: value })}
                     required
-                    placeholder="+91XXXXXXXXXX"
+                    placeholder="Enter phone number"
                   />
 
          
@@ -551,15 +551,12 @@ React.useEffect(() => {
                     required
                     placeholder="Full name"
                   />
-                  <FormInput
+                  <PhoneInput
                     label="Contact Phone"
-                    type="tel"
                     value={formData.altContactPhone}
-                    onChange={(value) =>
-                      updateFormData({ altContactPhone: value })
-                    }
+                    onChange={(value) => updateFormData({ altContactPhone: value })}
                     required
-                    placeholder="+91XXXXXXXXXX"
+                    placeholder="Enter phone number"
                   />
                   <div className="md:col-span-2">
                     <FormInput
@@ -593,21 +590,15 @@ React.useEffect(() => {
                     rows={2}
                   />
                   <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4">
-                    <Select
-                      label="Country"
-                      options={countries}
-                      value={formData.country}
-                      onChange={(value) => updateFormData({ country: value })}
-                      required
-                      placeholder="Select Country"
-                    />
-                    <Select
-                      label="State"
-                      options={indianStates}
-                      value={formData.state}
-                      onChange={(value) => updateFormData({ state: value })}
-                      required
-                      placeholder="Select State"
+                    <CountryStateSelect
+                      countryValue={formData.country}
+                      stateValue={formData.state}
+                      onCountryChange={(value) => updateFormData({ country: value })}
+                      onStateChange={(value) => updateFormData({ state: value })}
+                      countryRequired
+                      stateRequired
+                      countryPlaceholder="Select Country"
+                      statePlaceholder="Select State"
                     />
                     <FormInput
                       label="City"
@@ -723,14 +714,11 @@ React.useEffect(() => {
                   </div>
 
                   <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                    <FormInput
+                    <PhoneInput
                       label="Support Contact Number"
-                      type="tel"
                       value={formData.supportContactNumber || ""}
-                      onChange={(value) =>
-                        updateFormData({ supportContactNumber: value })
-                      }
-                      placeholder="+919876543210"
+                      onChange={(value) => updateFormData({ supportContactNumber: value })}
+                      placeholder="Enter phone number"
                     />
                   </div>
                 </div>
