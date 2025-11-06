@@ -669,167 +669,127 @@ const Gallery = ({
 
           {/* Gallery Grid */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-           
-{contentState.images.map((image, index) => (
-  <motion.div
-    key={image.id}
-    className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${
-      theme === "dark" ? "bg-gray-800" : "bg-white"
-    }`}
-    whileHover={{ y: isEditing ? 0 : -5 }}
-    onClick={() => openLightbox(index)}
-  >
-    <div className="relative overflow-hidden">
-      {/* Recommended Size Above Image */}
-      {isEditing && (
-        <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-          Recommended: 600×450px (4:3 ratio)
-        </div>
-      )}
+            {contentState.images.map((image, index) => (
+              <motion.div
+                key={image.id}
+                className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${
+                  theme === "dark" ? "bg-gray-800" : "bg-white"
+                }`}
+                whileHover={{ y: isEditing ? 0 : -5 }}
+                onClick={() => openLightbox(index)}
+              >
+                <div className="relative overflow-hidden">
+                  {/* Recommended Size Above Image */}
+                  {isEditing && (
+                    <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                      Recommended: 600×450px (4:3 ratio)
+                    </div>
+                  )}
 
-      {image.url ? (
-        <img
-          src={image.url}
-          alt={image.title}
-          className="object-cover w-full h-64 transition-transform duration-300 group-hover:scale-110"
-        />
-      ) : (
-        <div className="flex items-center justify-center w-full h-64 bg-gray-200">
-          <span className="text-gray-500">No image</span>
-        </div>
-      )}
+                  {image.url ? (
+                    <img
+                      src={image.url}
+                      alt={image.title}
+                      className="object-cover w-full h-64 transition-transform duration-300 group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-64 bg-gray-200">
+                      <span className="text-gray-500">No image</span>
+                    </div>
+                  )}
 
-      {isEditing && (
-        <motion.div
-          animate={{ opacity: [0, 1], scale: [0.8, 1] }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ duration: 0.3 }}
-          className="absolute bottom-2 left-2 right-2 bg-black/80 p-2 rounded z-50" // CHANGED: bg-white/80 to bg-black/80
-        >
-          <input
-            type="file"
-            accept="image/*"
-            className="w-full text-xs cursor-pointer font-bold text-white" // CHANGED: Added text-white
-            onChange={(e) => handleGalleryImageSelect(index, e)}
-          />
-          {pendingImages[index] && (
-            <p className="text-xs text-green-400 mt-1 text-center"> {/* CHANGED: text-green-600 to text-green-400 */}
-              ✓ Image cropped and ready to upload
-            </p>
-          )}
-        </motion.div>
-      )}
+                  {isEditing && (
+                    <motion.div
+                      animate={{ opacity: [0, 1], scale: [0.8, 1] }}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute bottom-2 left-2 right-2 bg-white/80 p-2 rounded z-50"
+                    >
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="w-full text-xs cursor-pointer font-bold"
+                        onChange={(e) => handleGalleryImageSelect(index, e)}
+                      />
+                      {pendingImages[index] && (
+                        <p className="text-xs text-green-600 mt-1 text-center">
+                          ✓ Image cropped and ready to upload
+                        </p>
+                      )}
+                    </motion.div>
+                  )}
 
-      {/* REMOVED the hover overlay that showed title and category */}
-    </div>
+                  <div className="absolute inset-0 flex items-end transition-all duration-300 bg-black bg-opacity-0 group-hover:bg-opacity-30">
+                    <div className="w-full p-4 text-white transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                      {isEditing ? (
+                        <>
+                          <div className="relative mb-1">
+                            <input
+                              value={image.title}
+                              onChange={(e) =>
+                                updateImageField(index, "title", e.target.value)
+                              }
+                              maxLength={TEXT_LIMITS.imageTitle}
+                              className={`w-full font-semibold bg-transparent border-b ${
+                                image.title.length >= TEXT_LIMITS.imageTitle
+                                  ? "border-red-500"
+                                  : ""
+                              }`}
+                            />
+                            <div className="text-right text-xs text-gray-300 mt-1">
+                              {image.title.length}/{TEXT_LIMITS.imageTitle}
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <input
+                              value={image.category}
+                              onChange={(e) =>
+                                updateImageField(
+                                  index,
+                                  "category",
+                                  e.target.value
+                                )
+                              }
+                              maxLength={TEXT_LIMITS.imageCategory}
+                              className={`w-full text-sm bg-transparent border-b ${
+                                image.category.length >=
+                                TEXT_LIMITS.imageCategory
+                                  ? "border-red-500"
+                                  : ""
+                              }`}
+                            />
+                            <div className="text-right text-xs text-gray-300 mt-1">
+                              {image.category.length}/
+                              {TEXT_LIMITS.imageCategory}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className="font-semibold">{image.title}</h3>
+                          <p className="text-sm">{image.category}</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
-    {/* MOVED DESCRIPTION TO BE UNDER THE IMAGE */}
-    <div className="p-4">
-      {isEditing ? (
-        <>
-          <div className="relative mb-2">
-            <input
-              value={image.title}
-              onChange={(e) =>
-                updateImageField(index, "title", e.target.value)
-              }
-              maxLength={TEXT_LIMITS.imageTitle}
-              className={`w-full font-semibold bg-transparent border-b ${
-                theme === "dark" ? "text-white" : "text-gray-900" // ADDED: theme-based text color
-              } ${
-                image.title.length >= TEXT_LIMITS.imageTitle
-                  ? "border-red-500"
-                  : ""
-              }`}
-            />
-            <div className={`text-right text-xs mt-1 ${
-              theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
-            }`}>
-              {image.title.length}/{TEXT_LIMITS.imageTitle}
-            </div>
-          </div>
-          <div className="relative mb-2">
-            <input
-              value={image.category}
-              onChange={(e) =>
-                updateImageField(index, "category", e.target.value)
-              }
-              maxLength={TEXT_LIMITS.imageCategory}
-              className={`w-full text-sm bg-transparent border-b ${
-                theme === "dark" ? "text-white" : "text-gray-900" // ADDED: theme-based text color
-              } ${
-                image.category.length >= TEXT_LIMITS.imageCategory
-                  ? "border-red-500"
-                  : ""
-              }`}
-            />
-            <div className={`text-right text-xs mt-1 ${
-              theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
-            }`}>
-              {image.category.length}/{TEXT_LIMITS.imageCategory}
-            </div>
-          </div>
-          <div className="relative">
-            <textarea
-              value={image.description}
-              onChange={(e) =>
-                updateImageField(index, "description", e.target.value)
-              }
-              maxLength={TEXT_LIMITS.imageDescription}
-              className={`w-full text-sm bg-transparent border-b resize-none ${
-                theme === "dark" ? "text-gray-300" : "text-gray-600" // ADDED: theme-based text color
-              } ${
-                image.description.length >= TEXT_LIMITS.imageDescription
-                  ? "border-red-500"
-                  : ""
-              }`}
-              placeholder="Image description..."
-              rows={2}
-            />
-            <div className={`text-right text-xs mt-1 ${
-              theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
-            }`}>
-              {image.description.length}/{TEXT_LIMITS.imageDescription}
-            </div>
-          </div>
-        </>
-      ) : (
-        <>
-          <h3 className={`font-semibold ${
-            theme === "dark" ? "text-white" : "text-gray-900"
-          }`}>
-            {image.title}
-          </h3>
-          <p className={`text-sm ${
-            theme === "dark" ? "text-gray-400" : "text-gray-600"
-          }`}>
-            {image.category}
-          </p>
-          <p className={`text-sm mt-1 ${
-            theme === "dark" ? "text-gray-300" : "text-gray-500"
-          }`}>
-            {image.description}
-          </p>
-        </>
-      )}
-    </div>
-
-    {isEditing && (
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={(e) => {
-          e.stopPropagation();
-          removeImage(index);
-        }}
-        className="absolute p-1 text-white bg-red-500 rounded-full top-12 right-2"
-      >
-        <Trash2 size={16} />
-      </motion.button>
-    )}
-  </motion.div>
-))}
+                  {isEditing && (
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeImage(index);
+                      }}
+                      className="absolute p-1 text-white bg-red-500 rounded-full top-12 right-2"
+                    >
+                      <Trash2 size={16} />
+                    </motion.button>
+                  )}
+                </div>
+              </motion.div>
+            ))}
 
             {/* Show Add Image button only when there are less than 6 images */}
             {isEditing && contentState.images.length < 6 && (

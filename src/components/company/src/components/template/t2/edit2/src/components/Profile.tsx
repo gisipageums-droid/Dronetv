@@ -27,7 +27,7 @@ const Profile = ({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+  const [aspectRatio, setAspectRatio] = useState(3 / 4);
 
   // Text field limits
   const TEXT_LIMITS = {
@@ -124,7 +124,7 @@ const Profile = ({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setAspectRatio(4 / 3); // Default to 3:4 for profile
+      setAspectRatio(3 / 4); // Default to 3:4 for profile
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -382,7 +382,7 @@ const Profile = ({
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
-                  {/* <button
+                  <button
                     onClick={() => setAspectRatio(3 / 4)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 3 / 4
@@ -391,8 +391,8 @@ const Profile = ({
                     }`}
                   >
                     3:4 (Portrait)
-                  </button> */}
-                  {/* <button
+                  </button>
+                  <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 1
@@ -401,7 +401,7 @@ const Profile = ({
                     }`}
                   >
                     1:1 (Square)
-                  </button> */}
+                  </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
@@ -752,7 +752,7 @@ const Profile = ({
                       </>
                     ) : (
                       <>
-                       {/* <a
+                       <a
                           href={member.socialLinks.twitter}
                           target="_blank"
                           className={`p-2 rounded-full ${
@@ -787,7 +787,7 @@ const Profile = ({
                           >
                             <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                           </svg>
-                        </a> */}
+                        </a>
                       </>
                     )}
                   </div>

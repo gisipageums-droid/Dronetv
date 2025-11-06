@@ -32,11 +32,11 @@ export default function Hero({
   const [heroState, setHeroState] = useState({
     badgeText: "Trusted by 20+ Companies",
     heading: heroData?.title || "Transform Your Business with",
-    // highlight: "Innovation",
+    highlight: "Innovation",
     description:
       heroData?.subtitle ||
       "We help companies scale and grow with cutting-edge solutions, expert guidance, and proven strategies that deliver",
-    // highlightDesc: "exceptional results",
+    highlightDesc: "exceptional results",
     primaryBtn: heroData?.primaryAction?.text || "Get Started Today",
     trustText: "Join 20+ satisfied clients",
     stats: [
