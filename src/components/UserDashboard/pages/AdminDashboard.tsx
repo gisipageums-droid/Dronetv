@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, Users, Briefcase, Calendar } from "lucide-react";
-import {useUserAuth} from "../../context/context"
+import { useUserAuth } from "../../context/context"
 import {
   PieChart,
   Pie,
@@ -53,12 +53,13 @@ const AdminDashboard: React.FC = () => {
   const [professionalLoading, setProfessionalLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [professionalError, setProfessionalError] = useState<string | null>(null);
+  const [companyCount, setCompanyCount] = useState(0);
 
   // Mock data (keeping other static data as is for now)
   const stats = [
     {
       label: "Total Companies",
-      value: 245,
+      value: companyCount,
       icon: Briefcase,
       color: "bg-blue-500",
     },
@@ -68,11 +69,11 @@ const AdminDashboard: React.FC = () => {
       icon: Users,
       color: "bg-purple-500",
     },
-    { 
-      label: "Events", 
-      value: 52, 
-      icon: Calendar, 
-      color: "bg-green-500" 
+    {
+      label: "Events",
+      value: 52,
+      icon: Calendar,
+      color: "bg-green-500"
     },
   ];
 
@@ -93,9 +94,22 @@ const AdminDashboard: React.FC = () => {
   ];
 
   const COLORS = ["#3b82f6", "#a855f7", "#10b981", "#f59e0b"];
-  
-  const {user} = useUserAuth();
+
+  const { user } = useUserAuth();
   const userDetails = user?.userData;
+  // console.log("userDetails", userDetails.email)
+
+
+
+  let getCategory = async () => {
+    let fetchData = await fetch(`https://kgm0ckp0uf.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `);
+    let resData = await fetchData.json();
+    setCompanyCount(resData.count);
+  }
+  useEffect(() => {
+    getCategory();
+  }, []);
+
 
   // Fetch leads from API
   const fetchRecentCompaniesLeads = async () => {
@@ -104,13 +118,13 @@ const AdminDashboard: React.FC = () => {
       const response = await fetch(
         `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
       );
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data: ApiResponse = await response.json();
-      
+
       if (data.success) {
         setRecentLeads(data.leads);
       } else {
@@ -131,13 +145,13 @@ const AdminDashboard: React.FC = () => {
       const response = await fetch(
         `https://r5mcwn6b10.execute-api.ap-south-1.amazonaws.com/prod/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`
       );
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data: ApiResponse = await response.json();
-      
+
       if (data.success) {
         setRecentProfessional(data.leads);
       } else {
@@ -157,8 +171,8 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   const getStatusColor = (viewed: boolean) => {
-    return viewed 
-      ? "bg-green-100 text-green-800" 
+    return viewed
+      ? "bg-green-100 text-green-800"
       : "bg-yellow-100 text-yellow-800";
   };
 
@@ -340,19 +354,19 @@ const AdminDashboard: React.FC = () => {
         <h2 className="text-xl font-bold text-white mb-4">
           Recent Companies Leads ({recentLeads.length})
         </h2>
-        
+
         {loading && (
           <div className="text-center py-4">
             <p className="text-slate-300">Loading leads...</p>
           </div>
         )}
-        
+
         {error && (
           <div className="text-center py-4">
             <p className="text-red-400">Error: {error}</p>
           </div>
         )}
-        
+
         {!loading && !error && (
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -402,7 +416,7 @@ const AdminDashboard: React.FC = () => {
             </table>
           </div>
         )}
-        
+
         {!loading && !error && recentLeads.length === 0 && (
           <div className="text-center py-4">
             <p className="text-slate-300">No leads found</p>
@@ -415,19 +429,19 @@ const AdminDashboard: React.FC = () => {
         <h2 className="text-xl font-bold text-white mb-4">
           Recent Professional Leads ({recentProfessional.length})
         </h2>
-        
+
         {professionalLoading && (
           <div className="text-center py-4">
             <p className="text-slate-300">Loading professional leads...</p>
           </div>
         )}
-        
+
         {professionalError && (
           <div className="text-center py-4">
             <p className="text-red-400">Error: {professionalError}</p>
           </div>
         )}
-        
+
         {!professionalLoading && !professionalError && (
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -436,7 +450,7 @@ const AdminDashboard: React.FC = () => {
                   <th className="text-left py-3 px-4 text-slate-300 font-semibold">
                     Name
                   </th>
-                   <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
                     Phone
                   </th>
                   <th className="text-left py-3 px-4 text-slate-300 font-semibold">
@@ -477,7 +491,7 @@ const AdminDashboard: React.FC = () => {
             </table>
           </div>
         )}
-        
+
         {!professionalLoading && !professionalError && recentProfessional.length === 0 && (
           <div className="text-center py-4">
             <p className="text-slate-300">No professional leads found</p>
