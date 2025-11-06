@@ -84,12 +84,12 @@ const ContactSection: React.FC = () => {
       </div>
 
       {/* Content Grid */}
-      <div className="max-w-[1170px] mx-auto px-4 grid grid-cols-1 items-start justify-center gap-16">
+      <div className="max-w-[1170px] mx-auto px-4 grid grid-cols-1 items-start justify-center gap-12 sm:gap-16">
        
         {/* Right Card - Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-lg p-8 grid grid-cols-1 md:grid-cols-2 items-start gap-6 w-[75%] mx-auto"
+          className="bg-white rounded-2xl shadow-lg p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 items-start gap-6 w-full max-w-3xl mx-auto"
         >
           <div>
             <label className="block mb-1 font-medium">Company Name  *</label>
@@ -115,8 +115,8 @@ const ContactSection: React.FC = () => {
 
           <div>
             <label className="block mb-1 font-medium">Mobile *</label>
-            <div className="flex gap-2">
-              <select className="border border-gray-300 rounded-lg px-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
+              <select className="w-full sm:w-40 md:w-48 border border-gray-300 rounded-lg px-2 py-2">
                 <option>India (+91)</option>
               </select>
               <input
@@ -124,7 +124,7 @@ const ContactSection: React.FC = () => {
                 value={formData.mobile}
                 onChange={handleChange}
                 required
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+                className="w-full sm:flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
               />
             </div>
           </div>
@@ -167,14 +167,14 @@ const ContactSection: React.FC = () => {
             </select>
           </div>
 
-          <div className="col-span-1 md:col-span-2 flex items-start gap-2">
+          <div className="col-span-1 lg:col-span-2 flex items-start gap-2">
             <input type="checkbox" id="robotCheck" />
             <label htmlFor="robotCheck">I'm not a robot</label>
           </div>
 
           <button
             type="submit"
-            className="w-full col-span-2 bg-[#003D73] text-white font-semibold py-3 rounded-lg hover:bg-blue-900 transition-all"
+            className="w-full lg:col-span-2 bg-[#003D73] text-white font-semibold py-3 rounded-lg hover:bg-blue-900 transition-all"
           >
             Submit
           </button>
