@@ -16,6 +16,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import axios from "axios";
 
 interface Lead {
   leadId: string;
@@ -54,6 +55,7 @@ const AdminDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [professionalError, setProfessionalError] = useState<string | null>(null);
   const [companyCount, setCompanyCount] = useState(0);
+  const [professionalCount, setProfessionalCount] = useState(0);
 
   // Mock data (keeping other static data as is for now)
   const stats = [
@@ -65,7 +67,7 @@ const AdminDashboard: React.FC = () => {
     },
     {
       label: "Professionals",
-      value: 1832,
+      value: professionalCount,
       icon: Users,
       color: "bg-purple-500",
     },
@@ -106,8 +108,20 @@ const AdminDashboard: React.FC = () => {
     let resData = await fetchData.json();
     setCompanyCount(resData.count);
   }
+
+  let getProfessionalCount = () => {
+    axios.get(`https://5otjcn6oi1.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `)
+      .then((res) => {
+        setProfessionalCount(res.data.count);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
   useEffect(() => {
     getCategory();
+    getProfessionalCount();
   }, []);
 
 
