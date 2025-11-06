@@ -490,14 +490,7 @@ React.useEffect(() => {
                       onChange={(value) => updateFormData({ gstin: value })}
                       placeholder="GST number"
                     />
-                    <FormInput
-                      label="Operating Hours"
-                      value={formData.operatingHours || ""}
-                      onChange={(value) =>
-                        updateFormData({ operatingHours: value })
-                      }
-                      placeholder="Mon-Sat 10:00-18:00"
-                    />
+                   
                   </div>
 
                   <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
@@ -589,17 +582,19 @@ React.useEffect(() => {
                     placeholder="Complete office address"
                     rows={2}
                   />
-                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4">
-                    <CountryStateSelect
-                      countryValue={formData.country}
-                      stateValue={formData.state}
-                      onCountryChange={(value) => updateFormData({ country: value })}
-                      onStateChange={(value) => updateFormData({ state: value })}
-                      countryRequired
-                      stateRequired
-                      countryPlaceholder="Select Country"
-                      statePlaceholder="Select State"
-                    />
+                  <div className="grid grid-cols-1 gap-2 w-full md:grid-cols-2 lg:grid-cols-4">
+                    <div className="md:col-span-2">
+                      <CountryStateSelect
+                        countryValue={formData.country}
+                        stateValue={formData.state}
+                        onCountryChange={(value) => updateFormData({ country: value })}
+                        onStateChange={(value) => updateFormData({ state: value })}
+                        countryRequired
+                        stateRequired
+                        countryPlaceholder="Select Country"
+                        statePlaceholder="Select State"
+                      />
+                    </div>
                     <FormInput
                       label="City"
                       value={formData.city}

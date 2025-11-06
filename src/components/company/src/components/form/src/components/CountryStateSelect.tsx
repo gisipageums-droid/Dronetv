@@ -225,7 +225,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
             type="button"
             onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
             disabled={loadingCountries}
-            className={`${getSelectClasses(countryError)} flex items-center justify-between ${
+            className={`${getSelectClasses(countryError)} flex items-center justify-between text-left ${
               loadingCountries ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
             }`}
           >
@@ -306,7 +306,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
             type="button"
             onClick={() => setStateDropdownOpen(!stateDropdownOpen)}
             disabled={loadingStates || !countryValue}
-            className={`${getSelectClasses(stateError)} flex items-center justify-between ${
+            className={`${getSelectClasses(stateError)} flex items-center justify-between text-left ${
               loadingStates || !countryValue ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
             }`}
           >
