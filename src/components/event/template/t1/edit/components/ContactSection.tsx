@@ -84,117 +84,15 @@ const ContactSection: React.FC = () => {
       </div>
 
       {/* Content Grid */}
-      <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16">
-        {/* Left Card - Contact Info */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 relative">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">
-              {isEditing ? (
-                <input
-                  className="border px-2 py-1 rounded w-full"
-                  value={editForm.company}
-                  onChange={(e) => handleContactChange(e, "company")}
-                />
-              ) : (
-                contactInfo.company
-              )}
-            </h2>
-            {isEditing ? (
-              <div className="flex gap-2">
-                <button
-                  onClick={handleSaveContact}
-                  className="p-2 bg-green-500 text-white rounded"
-                >
-                  <Save size={16} />
-                </button>
-                <button
-                  onClick={() => setIsEditing(false)}
-                  className="p-2 bg-gray-400 text-white rounded"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => {
-                  setIsEditing(true);
-                  setEditForm(contactInfo);
-                }}
-                className="p-2 bg-blue-500 text-white rounded"
-              >
-                <Edit2 size={16} />
-              </button>
-            )}
-          </div>
-
-          {/* Contact Info */}
-          <div className="space-y-3 text-sm text-gray-700">
-            <p>
-              <Phone className="inline-block mr-2 text-blue-600" size={16} />
-              {isEditing ? (
-                <input
-                  className="border px-2 py-1 rounded w-full"
-                  value={editForm.phones}
-                  onChange={(e) => handleContactChange(e, "phones")}
-                />
-              ) : (
-                contactInfo.phones
-              )}
-            </p>
-            <p>
-              <Mail className="inline-block mr-2 text-red-500" size={16} />
-              {isEditing ? (
-                <input
-                  className="border px-2 py-1 rounded w-full"
-                  value={editForm.email}
-                  onChange={(e) => handleContactChange(e, "email")}
-                />
-              ) : (
-                contactInfo.email
-              )}
-            </p>
-            <p>
-              <MapPin className="inline-block mr-2 text-green-600" size={16} />
-              {isEditing ? (
-                <input
-                  className="border px-2 py-1 rounded w-full"
-                  value={editForm.address}
-                  onChange={(e) => handleContactChange(e, "address")}
-                />
-              ) : (
-                contactInfo.address
-              )}
-            </p>
-          </div>
-
-          <hr className="my-6" />
-
-          {/* China Contacts */}
-          <h3 className="text-md font-semibold mb-2">For China Enquiries</h3>
-          <div className="space-y-3 text-sm text-gray-700">
-            {contactInfo.chinaContacts.map((c, i) => (
-              <p key={i}>
-                <User
-                  className="inline-block mr-2 text-purple-600"
-                  size={16}
-                />
-                {c.name} | {c.phone} | {c.email}
-              </p>
-            ))}
-            <p>
-              <MapPin className="inline-block mr-2 text-green-600" size={16} />
-              {contactInfo.chinaAddress}
-            </p>
-          </div>
-        </div>
-
+      <div className="max-w-[1170px] mx-auto px-4 grid grid-cols-1 items-start justify-center gap-16">
+       
         {/* Right Card - Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-lg p-8 space-y-6"
+          className="bg-white rounded-2xl shadow-lg p-8 grid grid-cols-1 md:grid-cols-2 items-start gap-6 w-[75%] mx-auto"
         >
           <div>
-            <label className="block mb-1 font-medium">Company Name *</label>
+            <label className="block mb-1 font-medium">Company Name  *</label>
             <input
               name="companyName"
               value={formData.companyName}
@@ -269,14 +167,14 @@ const ContactSection: React.FC = () => {
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="col-span-1 md:col-span-2 flex items-start gap-2">
             <input type="checkbox" id="robotCheck" />
             <label htmlFor="robotCheck">I'm not a robot</label>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-[#003D73] text-white font-semibold py-3 rounded-lg hover:bg-blue-900 transition-all"
+            className="w-full col-span-2 bg-[#003D73] text-white font-semibold py-3 rounded-lg hover:bg-blue-900 transition-all"
           >
             Submit
           </button>

@@ -54,28 +54,7 @@ const Footer: React.FC = () => {
               globally.
             </p>
 
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-3">
-                <Mail size={16} className="text-[#FF0000]" />
-                <span className="text-gray-400">
-                  info@droneexpo.in
-                </span>
-              </div>
-              <div className="flex items-start gap-3">
-                <Phone size={16} className="text-[#FF0000]" />
-                <span className="text-gray-400 leading-snug">
-                  +91 9354688923, +91 8882210038, <br />
-                  +91 738837522
-                </span>
-              </div>
-              <div className="flex items-start gap-3">
-                <MapPin size={16} className="text-[#FF0000]" />
-                <span className="text-gray-400 leading-snug">
-                  D-4 LSC, A Block, Naraina Vihar, <br />
-                  New Delhi - 110028
-                </span>
-              </div>
-            </div>
+       
           </div>
 
           {/* Quick Links */}
@@ -111,9 +90,7 @@ const Footer: React.FC = () => {
                 placeholder="Enter your email"
                 className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-white placeholder-gray-400"
               />
-              <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
-                Subscribe
-              </button>
+             
             </div>
           </div>
         </div>

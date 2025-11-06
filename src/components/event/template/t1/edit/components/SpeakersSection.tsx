@@ -184,6 +184,12 @@ const SpeakersSection: React.FC = () => {
   const [editForm, setEditForm] = useState({});
   const [activeDay, setActiveDay] = useState(0);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [headerContent, setHeaderContent] = useState({
+    eventTitle: 'Drone Expo 2025',
+    sectionTitle: 'Speakers',
+    subtitle: 'Meet our distinguished speakers who will share their expertise and insights'
+  });
+  const [headerBackup, setHeaderBackup] = useState(headerContent);
 
   // Memoized callback functions to prevent unnecessary re-renders
   const handleEdit = useCallback((dayIndex, speakerIndex, speaker) => {
@@ -256,13 +262,23 @@ const SpeakersSection: React.FC = () => {
     setEditForm(newFormData);
   }, []);
 
-  const toggleEditMode = useCallback(() => {
-    if (isEditMode) {
-      setEditingCard(null);
-      setEditForm({});
-    }
-    setIsEditMode(prev => !prev);
-  }, [isEditMode]);
+  const startHeaderEdit = useCallback(() => {
+    setHeaderBackup(headerContent);
+    setIsEditMode(true);
+  }, [headerContent]);
+
+  const saveHeaderEdit = useCallback(() => {
+    setEditingCard(null);
+    setEditForm({});
+    setIsEditMode(false);
+  }, []);
+
+  const cancelHeaderEdit = useCallback(() => {
+    setHeaderContent(headerBackup);
+    setEditingCard(null);
+    setEditForm({});
+    setIsEditMode(false);
+  }, [headerBackup]);
 
   // Computed stats
   const totalSpeakers = speakersData.reduce((acc, d) => acc + (d.speakers?.length || 0), 0);
@@ -274,32 +290,75 @@ const SpeakersSection: React.FC = () => {
       <div className="container mx-auto px-4 max-w-7xl relative">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold mb-4">
-            <span className="text-yellow-500">
-              Drone Expo 2025
-            </span>
-            <span className="block text-gray-800 text-3xl md:text-4xl mt-2">Speakers</span>
-          </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto mt-4">
-            Meet our distinguished speakers who will share their expertise and insights
-          </p>
+          {isEditMode ? (
+            <div className="max-w-3xl mx-auto space-y-4">
+              <input
+                type="text"
+                value={headerContent.eventTitle}
+                onChange={(e) => setHeaderContent({ ...headerContent, eventTitle: e.target.value })}
+                className="w-full text-4xl md:text-5xl font-bold px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="Event Title"
+              />
+              <input
+                type="text"
+                value={headerContent.sectionTitle}
+                onChange={(e) => setHeaderContent({ ...headerContent, sectionTitle: e.target.value })}
+                className="w-full text-2xl md:text-3xl font-bold px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="Section Title"
+              />
+              <input
+                type="text"
+                value={headerContent.subtitle}
+                onChange={(e) => setHeaderContent({ ...headerContent, subtitle: e.target.value })}
+                className="w-full text-base md:text-lg px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="Subtitle"
+              />
+            </div>
+          ) : (
+            <>
+              <h2 className="text-5xl md:text-6xl font-bold mb-4">
+                <span className="text-yellow-500">
+                  {headerContent.eventTitle}
+                </span>
+                <span className="block text-gray-800 text-3xl md:text-4xl mt-2">{headerContent.sectionTitle}</span>
+              </h2>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto mt-4">
+                {headerContent.subtitle}
+              </p>
+            </>
+          )}
           
-          {/* Edit Mode Toggle */}
-          <div className="absolute top-0 right-0">
-            <button
-              onClick={toggleEditMode}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                isEditMode 
-                  ? 'bg-red-500 hover:bg-red-600 text-white shadow-lg' 
-                  : 'bg-green-500 hover:bg-green-600 text-white shadow-lg'
-              }`}
-            >
-              {isEditMode ? <span className='flex items-center gap-2'>
-                <X size={18} /> Cancel
-              </span> : <span className='flex items-center gap-2'>
-                <Edit size={18} /> Edit
-              </span>}
-            </button>
+          {/* Edit Actions */}
+          <div className="absolute top-0 right-0 flex gap-2">
+            {isEditMode ? (
+              <>
+                <button
+                  onClick={saveHeaderEdit}
+                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+                >
+                  <span className='flex items-center gap-2'>
+                    <Save size={18} /> Save
+                  </span>
+                </button>
+                <button
+                  onClick={cancelHeaderEdit}
+                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-red-500 hover:bg-red-600 text-white shadow-lg"
+                >
+                  <span className='flex items-center gap-2'>
+                    <X size={18} /> Cancel
+                  </span>
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={startHeaderEdit}
+                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-green-500 hover:bg-green-600 text-white shadow-lg"
+              >
+                <span className='flex items-center gap-2'>
+                  <Edit size={18} /> Edit
+                </span>
+              </button>
+            )}
           </div>
         </div>
 

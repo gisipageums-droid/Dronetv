@@ -159,7 +159,9 @@ const GallerySection = () => {
                 title={galleryItems[currentSlide].title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                className="w-full h-[500px] rounded-xl"
+                className="w-full h-[530px]
+
+ rounded-xl"
               ></iframe>
               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
                 <h3 className="text-white font-semibold text-lg">{galleryItems[currentSlide].title}</h3>

@@ -224,7 +224,7 @@ const HeroSection: React.FC = () => {
           </div>
 
           {/* Highlights */}
-          <div className="text-white text-lg max-w-3xl mx-auto space-y-2 mb-10">
+          <div className="text-white text-lg max-w-3xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-left">
             {heroContent.highlights.map((highlight, i) =>
               editMode ? (
                 <input
