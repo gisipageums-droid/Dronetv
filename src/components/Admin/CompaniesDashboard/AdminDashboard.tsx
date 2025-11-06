@@ -315,6 +315,18 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
     }
   };
 
+  // Determine which date to show when API provides no publishedDate
+  const displayDateValue = company.publishedDate || company.lastModified || company.lastActivity || company.createdAt || "";
+  const displayDateLabel = company.publishedDate
+    ? "Published"
+    : company.lastModified
+    ? "Last Modified"
+    : company.lastActivity
+    ? "Last Activity"
+    : company.createdAt
+    ? "Created"
+    : "Date";
+
   const getStatusBadge = (reviewStatus?: string) => {
     if (reviewStatus === "active") return { bg: "bg-yellow-100", text: "text-yellow-800", label: "Needs Review" };
     if (reviewStatus === "rejected") return { bg: "bg-red-100", text: "text-red-800", label: "Rejected" };
@@ -388,8 +400,8 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-3 items-center">
             <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg">
-              <span className="text-xs sm:text-sm font-bold text-purple-600">{formatDate(company.publishedDate)}</span>
-              <span className="hidden sm:inline text-xs text-gray-600">Published</span>
+              <span className="text-xs sm:text-sm font-bold text-purple-600">{formatDate(displayDateValue)}</span>
+              <span className="hidden sm:inline text-xs text-gray-600">{displayDateLabel}</span>
             </div>
           </div>
 
@@ -607,6 +619,7 @@ const apiService = {
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
+      console.log("data", data)
       return data;
     } catch (error) {
       console.error("Error fetching published details:", error);
@@ -710,40 +723,46 @@ const AdminDashboard: React.FC = () => {
     isOpen: false,
     publishedId: null,
   });
+
   const [error, setError] = useState<string | null>(null);
 
-  // -------------------- Recent Companies Logic --------------------
+  // Recent Companies Logic
   const recentCompanies = useMemo(() => {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    return companies.filter(company => {
-      if (!company.createdAt) return false;
-      const createdAt = new Date(company.createdAt);
-      return createdAt >= sevenDaysAgo;
-    }).slice(0, 6); // Show max 6 recent companies
+    return companies
+      .filter((company) => {
+        if (!company.createdAt) return false;
+        const createdAt = new Date(company.createdAt);
+        return createdAt >= sevenDaysAgo;
+      })
+      .slice(0, 6);
   }, [companies]);
 
-  // -------------------- Fetch Companies (with AbortController) --------------------
+  // Prefer publishedDate, then lastModified, lastActivity, and finally createdAt
+  const getPrimaryDate = (company: Company) =>
+    company.publishedDate || company.lastModified || company.lastActivity || company.createdAt || "";
+
+  // Fetch Companies (with AbortController)
   const fetchCompanies = async (signal?: AbortSignal) => {
     try {
       setIsFetching(true);
       setError(null);
       const data = await apiService.fetchAllCompanies(signal);
 
-      // --- ENSURE: sort by publishedDate (newest first) immediately after fetch ---
       const cards: Company[] = (data.cards || []).slice();
       cards.sort((a, b) => {
-        const ta = new Date(a.publishedDate || 0).getTime();
-        const tb = new Date(b.publishedDate || 0).getTime();
-        return tb - ta; // newest first (descending)
+        const ta = new Date(getPrimaryDate(a) || 0).getTime();
+        const tb = new Date(getPrimaryDate(b) || 0).getTime();
+        return tb - ta; // newest first
       });
 
       setCompanies(cards);
       setTotalCount(data.totalCount || 0);
       setHasMore(data.hasTemplates || false);
-    } catch (err) {
-      if ((err as any)?.name === "AbortError") return;
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
       console.error("Error in fetchCompanies:", err);
       setError(err instanceof Error ? err.message : "Failed to fetch companies");
     } finally {
@@ -752,9 +771,8 @@ const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    // Force default sort to "Sort by Date" on first mount (so UI shows Date)
+    // default sort on mount
     setSortBy("Sort by Date");
-
     const controller = new AbortController();
     fetchCompanies(controller.signal);
     return () => controller.abort();
@@ -766,9 +784,12 @@ const AdminDashboard: React.FC = () => {
     setCurrentPage(1);
   }, [debouncedSearchTerm, industryFilter, sortBy]);
 
-  // -------------------- Derived lists (useMemo) --------------------
+  // Derived lists
   const industries = useMemo(() => {
-    return ["All Sectors", ...Array.from(new Set(companies.flatMap((c) => c.sectors || []))).sort()];
+    return [
+      "All Sectors",
+      ...Array.from(new Set(companies.flatMap((c) => c.sectors || []))).sort(),
+    ];
   }, [companies]);
 
   const filteredCompanies = useMemo(() => {
@@ -780,7 +801,9 @@ const AdminDashboard: React.FC = () => {
         (company.location && company.location.toLowerCase().includes(q)) ||
         (company.sectors && company.sectors.some((sector) => sector.toLowerCase().includes(q)));
 
-      const matchesSector = industryFilter === "All Sectors" || (company.sectors && company.sectors.includes(industryFilter));
+      const matchesSector =
+        industryFilter === "All Sectors" ||
+        (company.sectors && company.sectors.includes(industryFilter));
       return matchesSearch && matchesSector;
     });
   }, [companies, debouncedSearchTerm, industryFilter]);
@@ -799,13 +822,16 @@ const AdminDashboard: React.FC = () => {
       case "Sort by Location":
         return arr.sort((a, b) => (a.location || "").localeCompare(b.location || ""));
       case "Sort by Date":
-        // publishedDate descending (newest first)
-        return arr.sort((a, b) => new Date(b.publishedDate || 0).getTime() - new Date(a.publishedDate || 0).getTime());
+        // primary date descending (newest first)
+        return arr.sort(
+          (a, b) =>
+            new Date(getPrimaryDate(b) || 0).getTime() -
+            new Date(getPrimaryDate(a) || 0).getTime()
+        );
       case "Sort by Sector":
-        return arr.sort((a, b) => ((a.sectors?.[0] || "").localeCompare(b.sectors?.[0] || "")));
+        return arr.sort((a, b) => (a.sectors?.[0] || "").localeCompare(b.sectors?.[0] || ""));
       case "Sort by Latest":
       default:
-        // most recent activity across fields
         return arr.sort((a, b) => getMostRecentDate(b) - getMostRecentDate(a));
     }
   }, [filteredCompanies, sortBy]);
