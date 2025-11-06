@@ -229,6 +229,17 @@ const Card: React.FC<ProfessinalCardProps> = ({
               Preview
             </button>
           </div>
+           <button
+            onClick={() =>
+              navigate(
+                `/professional/form/${professional.userId}/${professional.professionalId}`
+              )
+            }
+            className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
+          >
+            <Edit className="w-4 h-4" />
+            Edit form
+          </button>
 
           <button
             onClick={() =>

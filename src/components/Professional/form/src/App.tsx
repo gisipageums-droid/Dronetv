@@ -168,22 +168,89 @@ function AppInner() {
 
   const [formLoader, setFormLoader] = useState(true);
 
+  // useEffect(() => {
+  //   const loadForm = async () => {
+  //     try {
+  //       // Always fetch form structure
+  //       const formStructure = await fetchFormStructure();
+  //       setSteps(formStructure.steps);
+  //       setFormLoader(false);
+
+  //       if (userId && professionalId) {
+  //         setFormLoader(true);
+  //         // setLoading(true);
+  //         const res = await fetch(
+  //           `https://ec1amurqr9.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}`
+  //         );
+  //         const userData = await res.json();
+  //         setFormLoader(false);
+  //         // ✅ NEW: Store the old submissionId (or draftId)
+  //         if (userData.submissionId || userData.draftId) {
+  //           localStorage.setItem(
+  //             "oldSubmissionId",
+  //             userData.submissionId || userData.draftId
+  //           );
+  //           // added
+  //           setSubmissionId(userData.submissionId || userData.draftId);
+  //         }
+
+  //         // parse formData strings
+  //         if (userData.formData) {
+  //           const parsedFormData: any = {};
+  //           Object.keys(userData.formData).forEach((key) => {
+  //             try {
+  //               parsedFormData[key] = JSON.parse(userData.formData[key]);
+  //             } catch {
+  //               parsedFormData[key] = userData.formData[key];
+  //             }
+  //           });
+  //           setData(parsedFormData);
+  //         }
+
+  //         // Prefill resume data if any
+  //         setResumeData(userData.resumeData || null);
+
+  //         // ✅ Extract templateSelection from prefill data
+  //         if (userData.templateSelection) {
+  //           updateField("templateSelection", userData.templateSelection);
+  //           // Or setTemplateSelection(userData.templateSelection);
+  //         }
+
+  //         setLoading(false);
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to load form data:", err);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   loadForm();
+  // }, [userId, professionalId, setData]);
+
+  useEffect(() => {
+    if (templateIdFromState && !data.templateSelection && !userId && !professionalId) {
+      // Only for fresh forms (not prefill), save template from location state to form context
+      updateField("templateSelection", templateIdFromState);
+      console.log("✅ Saved template to form context:", templateIdFromState);
+    }
+  }, [templateIdFromState, data.templateSelection, userId, professionalId, updateField]);
+
   useEffect(() => {
     const loadForm = async () => {
       try {
         // Always fetch form structure
         const formStructure = await fetchFormStructure();
         setSteps(formStructure.steps);
-        setFormLoader(false);
+        setFormLoader(false)
 
         if (userId && professionalId) {
-          setFormLoader(true);
+          setFormLoader(true)
           // setLoading(true);
           const res = await fetch(
             `https://ec1amurqr9.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}`
           );
           const userData = await res.json();
-          setFormLoader(false);
+          setFormLoader(false)
           // ✅ NEW: Store the old submissionId (or draftId)
           if (userData.submissionId || userData.draftId) {
             localStorage.setItem(

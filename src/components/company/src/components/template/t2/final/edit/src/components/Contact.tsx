@@ -92,7 +92,7 @@ export default function Contact({ onStateChange, contactData }) {
       >
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
-          <div className="flex justify-end mt-6">
+          {/* <div className="flex justify-end mt-6">
             {isEditing ? (
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -112,7 +112,7 @@ export default function Contact({ onStateChange, contactData }) {
                 Edit
               </motion.button>
             )}
-          </div>
+          </div> */}
 
           {/* Header */}
           <motion.div
@@ -196,6 +196,8 @@ export default function Contact({ onStateChange, contactData }) {
                       )}
                     </div>
                   </div>
+                  
+                  
 
                   <div className="relative w-full mb-2">
                     <input

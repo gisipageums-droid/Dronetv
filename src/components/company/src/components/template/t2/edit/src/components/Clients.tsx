@@ -317,145 +317,146 @@ export default function Clients({
   return (
     <>
       {/* Image Cropper Modal */}
-      {showCropper && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+      {/* Image Cropper Modal */}
+{showCropper && (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+  >
+    <motion.div
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+    >
+      {/* Header */}
+      <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+        <h3 className="text-lg font-semibold text-gray-800">
+          Crop Client Image (Round)
+        </h3>
+        <button
+          onClick={cancelCrop}
+          className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
         >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+          <X className="w-5 h-5 text-gray-600" />
+        </button>
+      </div>
+
+      {/* Cropper Area */}
+      <div className="flex-1 relative bg-gray-900 min-h-0">
+        <Cropper
+          image={imageToCrop}
+          crop={crop}
+          zoom={zoom}
+          rotation={rotation}
+          aspect={aspectRatio}
+          onCropChange={setCrop}
+          onZoomChange={setZoom}
+          onCropComplete={onCropComplete}
+          showGrid={false}
+          cropShape="round" // Changed to round
+          style={{
+            containerStyle: {
+              position: "relative",
+              width: "100%",
+              height: "100%",
+            },
+            cropAreaStyle: {
+              border: "2px solid white",
+              borderRadius: "50%", // Visual round border
+            },
+          }}
+        />
+      </div>
+
+      {/* Controls */}
+      <div className="p-4 bg-gray-50 border-t border-gray-200">
+        {/* Aspect Ratio Buttons */}
+        <div className="mb-4">
+          <p className="text-sm font-medium text-gray-700 mb-2">
+            Aspect Ratio:
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setAspectRatio(1)}
+              className={`px-3 py-2 text-sm rounded border ${
+                aspectRatio === 1
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-white text-gray-700 border-gray-300"
+              }`}
+            >
+              1:1 (Round)
+            </button>
+            {/* <button
+              onClick={() => setAspectRatio(4 / 3)}
+              className={`px-3 py-2 text-sm rounded border ${
+                aspectRatio === 4 / 3
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-white text-gray-700 border-gray-300"
+              }`}
+            >
+              4:3 (Standard)
+            </button>
+            <button
+              onClick={() => setAspectRatio(16 / 9)}
+              className={`px-3 py-2 text-sm rounded border ${
+                aspectRatio === 16 / 9
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-white text-gray-700 border-gray-300"
+              }`}
+            >
+              16:9 (Widescreen)
+            </button> */}
+          </div>
+        </div>
+
+        {/* Zoom Control */}
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="flex items-center gap-2 text-gray-700">
+              <ZoomIn className="w-4 h-4" />
+              Zoom
+            </span>
+            <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+          </div>
+          <input
+            type="range"
+            value={zoom}
+            min={1}
+            max={3}
+            step={0.1}
+            onChange={(e) => setZoom(Number(e.target.value))}
+            className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-3 gap-3">
+          <Button
+            variant="outline"
+            onClick={resetCropSettings}
+            className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
           >
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Crop Client Image (1:1)
-              </h3>
-              <button
-                onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-600" />
-              </button>
-            </div>
-
-            {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
-              <Cropper
-                image={imageToCrop}
-                crop={crop}
-                zoom={zoom}
-                rotation={rotation}
-                aspect={aspectRatio}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-                showGrid={false}
-                cropShape="rect"
-                style={{
-                  containerStyle: {
-                    position: "relative",
-                    width: "100%",
-                    height: "100%",
-                  },
-                  cropAreaStyle: {
-                    border: "2px solid white",
-                    borderRadius: "8px",
-                  },
-                }}
-              />
-            </div>
-
-            {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  Aspect Ratio:
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    1:1 (Square)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    4:3 (Standard)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    16:9 (Widescreen)
-                  </button>
-                </div>
-              </div>
-
-              {/* Zoom Control */}
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
-                    <ZoomIn className="w-4 h-4" />
-                    Zoom
-                  </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                </div>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-3 gap-3">
-                <Button
-                  variant="outline"
-                  onClick={resetCropSettings}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
-                >
-                  Reset
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={cancelCrop}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
-                >
-                  Apply Crop
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
+            Reset
+          </Button>
+          <Button
+            variant="outline"
+            onClick={cancelCrop}
+            className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={applyCrop}
+            className="w-full bg-green-600 hover:bg-green-700 text-white"
+          >
+            Apply Crop
+          </Button>
+        </div>
+      </div>
+    </motion.div>
+  </motion.div>
+)}
       <motion.section
         id="clients"
         className="py-20 bg-background theme-transition"

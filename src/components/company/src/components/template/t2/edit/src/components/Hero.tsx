@@ -733,7 +733,8 @@ export default function Hero({
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xl text-muted-foreground max-w-lg inline">
+                    // <p className="text-xl text-muted-foreground max-w-lg inline">
+                    <p className="text-xl text-red-600 max-w-lg inline">
                       {heroState.description}
                       <span className="text-red-accent font-semibold">
                         {heroState.highlightDesc}

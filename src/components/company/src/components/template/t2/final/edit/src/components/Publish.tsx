@@ -60,13 +60,16 @@ export default function Publish() {
                     className="text-blue-600 mt-0.5 flex-shrink-0"
                   />
                   <p className="text-sm text-blue-800">
-                    Your website will be list immediately after publishing. Make
-                    sure all content is correct.
+                    Thank you for completing your listing!
+Your listing will be reviewed and will go live as soon as possible if your information aligns with our terms and conditions.
+You’ll receive an email notification once it's published.
+Please make sure all the content provided is correct before submitting.
+This action cannot be undone.
+
                   </p>
                 </div>
                 <p className="text-gray-600">
-                  Are you sure you want to publish your website? This action
-                  cannot be undone.
+                  Are you sure you want to submit your listing for review?
                 </p>
               </div>
 

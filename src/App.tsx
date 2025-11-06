@@ -187,7 +187,7 @@ const AppContent = () => {
           <Route path="/companies/:urlSlug" element={<MainCompPreviewT2 />} />
 
           {/* professionals route */}
-
+         <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalForm />} />
           <Route path="/professional/form" element={<ProfessionalForm />} />
           <Route
             path="/professional/select"

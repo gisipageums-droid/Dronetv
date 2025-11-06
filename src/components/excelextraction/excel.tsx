@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Eye, Search, FileText, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, Search, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 // Type definitions
@@ -901,15 +901,6 @@ const ExcelDataProcessor = () => {
                           <tr key={`row-${rowId}`} className="hover:bg-yellow-50 transition-colors">
                             <td className="px-3 py-2 min-w-[100px]">
                               <div className="flex items-center gap-1">
-                                {row._status === 'generated' && (
-                                  <button
-                                    onClick={() => handleViewWebsite(String(row.website || row.url || ''))}
-                                    className="bg-black hover:bg-gray-800 text-white p-1.5 rounded-md transition-colors duration-200"
-                                    title="View Website"
-                                  >
-                                    <Eye className="w-3 h-3" />
-                                  </button>
-                                )}
 
                                 {row._status === 'posted' && (
                                   <button

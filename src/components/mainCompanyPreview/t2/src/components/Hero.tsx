@@ -112,10 +112,11 @@ export default function Hero({ heroData }) {
 
               {/* Description */}
               <motion.div variants={itemVariants}>
-                <p className="text-xl text-muted-foreground max-w-lg inline">
+                {/* <p className="text-xl text-muted-foreground max-w-lg inline"> */}
+                <p className="text-xl text-red-500 max-w-lg inline">
                   {heroState.description}
                   <span className="text-red-accent font-semibold">
-                    {heroState.highlightDesc}
+                   {" "} {heroState.highlightDesc}
                   </span>
                   .
                 </p>
