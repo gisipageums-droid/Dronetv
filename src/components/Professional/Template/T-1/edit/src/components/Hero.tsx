@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import {
   Save,
@@ -72,6 +73,17 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
       setOriginalContent(content);
     }
   }, [content]);
+
+  // lock body scroll when cropping
+  useEffect(() => {
+    if (isCropping) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [isCropping]);
 
   const handleChange = (field: string, value: string) => {
     if (field.startsWith("socials.")) {
@@ -159,7 +171,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
       // Get container dimensions
       const containerRect = container.getBoundingClientRect();
-      const cropRadius = 150; // Same as the circle radius in the overlay
+      const cropRadius = 120; // Same as the circle radius in the overlay
 
       // Calculate the center of the crop area in the container
       const centerX = containerRect.width / 2;
@@ -532,27 +544,30 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                   ))}
                 </div>
               ) : (
-                <div className="flex gap-3">
-                  {socialLinks.map((social) =>
-                    heroContent.socials[
-                      social.key as keyof typeof heroContent.socials
-                    ] ? (
-                      <a
-                        key={social.name}
-                        href={social.url}
-                        target={
-                          social.name === "Email" || social.name === "Phone"
-                            ? "_self"
-                            : "_blank"
-                        }
-                        rel="noreferrer"
-                        className={`p-2 rounded-full bg-gray-100 dark:bg-gray-800 ${social.color}`}
-                      >
-                        <social.icon className="w-5 h-5" />
-                      </a>
-                    ) : null
-                  )}
-                </div>
+                <>
+                
+                </>
+                // <div className="flex gap-3">
+                //   {socialLinks.map((social) =>
+                //     heroContent.socials[
+                //       social.key as keyof typeof heroContent.socials
+                //     ] ? (
+                //       <a
+                //         key={social.name}
+                //         href={social.url}
+                //         target={
+                //           social.name === "Email" || social.name === "Phone"
+                //             ? "_self"
+                //             : "_blank"
+                //         }
+                //         rel="noreferrer"
+                //         className={`p-2 rounded-full bg-gray-100 dark:bg-gray-800 ${social.color}`}
+                //       >
+                //         <social.icon className="w-5 h-5" />
+                //       </a>
+                //     ) : null
+                //   )}
+                // </div>
               )}
             </div>
 
@@ -612,140 +627,143 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
       </div>
 
       {/* Image Cropping Modal */}
-      {isCropping && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
-            <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Crop className="w-6 h-6" />
-                Crop Image
-              </h3>
-              <button
-                onClick={() => setIsCropping(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-              >
-                <X className="w-6 h-6 text-gray-900 dark:text-white" />
-              </button>
-            </div>
+      {isCropping &&
+        createPortal(
+          <div className="fixed inset-0 bg-black/90 z-[2147483647] flex items-center justify-center p-4" style={{ zIndex: 2147483647 }}>
+            <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-3xl relative mx-4">
+      <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <Crop className="w-6 h-6" />
+          Crop Image
+        </h3>
+        <button
+          onClick={() => setIsCropping(false)}
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+        >
+          <X className="w-6 h-6 text-gray-900 dark:text-white" />
+        </button>
+      </div>
 
-            <div className="p-6">
-              <div
-                ref={containerRef}
-                className="relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 cursor-move select-none"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                {/* Circular crop overlay */}
-                <div className="absolute inset-0 pointer-events-none z-10">
-                  <svg className="w-full h-full">
-                    <defs>
-                      <mask id="circleMask">
-                        <rect width="100%" height="100%" fill="white" />
-                        <circle cx="50%" cy="50%" r="150" fill="black" />
-                      </mask>
-                    </defs>
-                    <rect
-                      width="100%"
-                      height="100%"
-                      fill="rgba(0,0,0,0.5)"
-                      mask="url(#circleMask)"
-                    />
-                    <circle
-                      cx="50%"
-                      cy="50%"
-                      r="150"
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="2"
-                      strokeDasharray="10,5"
-                    />
-                  </svg>
-                </div>
-
-                <img
-                  ref={imageRef}
-                  src={imageToCrop}
-                  alt="Crop preview"
-                  onLoad={handleImageLoad}
-                  className="absolute top-1/2 left-1/2 max-w-none select-none"
-                  style={{
-                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
-                    transformOrigin: "center",
-                    opacity: imageLoaded ? 1 : 0,
-                    transition: imageLoaded ? "none" : "opacity 0.3s",
-                  }}
-                  draggable={false}
-                />
-
-                {!imageLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center text-white">
-                    <p>Loading image...</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-900 dark:text-white">
-                      Zoom
-                    </label>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleZoomOut}
-                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                      >
-                        <ZoomOut className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={handleZoomIn}
-                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                      >
-                        <ZoomIn className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                  <input
-                    type="range"
-                    min={1}
-                    max={3}
-                    step={0.01}
-                    value={scale}
-                    onChange={(e) => setScale(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                  />
-                </div>
-
-                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-                  Drag to reposition • Use slider or buttons to zoom
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-3 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
-              <button
-                onClick={() => setIsCropping(false)}
-                className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCropConfirm}
-                disabled={!imageLoaded}
-                className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Check className="w-5 h-5" />
-                Crop & Upload
-              </button>
-            </div>
+      <div className="p-6">
+        <div
+          ref={containerRef}
+          className="relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 cursor-move select-none"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* Circular crop overlay */}
+          <div className="absolute inset-0 pointer-events-none z-10">
+            <svg className="w-full h-full">
+              <defs>
+                <mask id="circleMask">
+                  <rect width="100%" height="100%" fill="white" />
+                  <circle cx="50%" cy="50%" r="120" fill="black" />
+                </mask>
+              </defs>
+              <rect
+                width="100%"
+                height="100%"
+                fill="rgba(0,0,0,0.5)"
+                mask="url(#circleMask)"
+              />
+              <circle
+                cx="50%"
+                cy="50%"
+                r="120"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeDasharray="10,5"
+              />
+            </svg>
           </div>
+
+          <img
+            ref={imageRef}
+            src={imageToCrop}
+            alt="Crop preview"
+            onLoad={handleImageLoad}
+            className="absolute top-1/2 left-1/2 max-w-none select-none z-0"
+            style={{
+              transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
+              transformOrigin: "center",
+              opacity: imageLoaded ? 1 : 0,
+              transition: imageLoaded ? "none" : "opacity 0.3s",
+            }}
+            draggable={false}
+          />
+
+          {!imageLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center text-white z-10">
+              <p className="text-lg">Loading image...</p>
+            </div>
+          )}
         </div>
-      )}
+
+        <div className="space-y-4">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <label className="text-base font-medium text-gray-900 dark:text-white">
+                Zoom Control
+              </label>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleZoomOut}
+                  className="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <ZoomOut className="w-5 h-5" />
+                </button>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[60px] text-center">
+                  {Math.round(scale * 100)}%
+                </span>
+                <button
+                  onClick={handleZoomIn}
+                  className="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <ZoomIn className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.01}
+              value={scale}
+              onChange={(e) => setScale(Number(e.target.value))}
+              className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+            />
+          </div>
+
+      
+        </div>
+      </div>
+
+      <div className="flex gap-4 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+        <button
+          onClick={() => setIsCropping(false)}
+          className="px-6 py-3 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleCropConfirm}
+          disabled={!imageLoaded}
+          className="px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+        >
+          <Check className="w-5 h-5" />
+          Crop & Upload Image
+        </button>
+      </div>
+            </div>
+          </div>,
+          document.body
+        )}
 
       {/* Hidden canvas for cropping */}
       <canvas ref={canvasRef} className="hidden" />

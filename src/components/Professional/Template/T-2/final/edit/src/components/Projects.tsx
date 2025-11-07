@@ -741,7 +741,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
             viewport={{ once: true }}
             className="flex flex-wrap justify-center gap-4 mb-12"
           >
-            <button
+            {/* <button
               onClick={() => setActiveCategory("All")}
               className={`px-6 py-2 rounded-full transition-all duration-300 ${
                 activeCategory === "All"
@@ -750,7 +750,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
               }`}
             >
               All
-            </button>
+            </button> */}
             {data.categories.map((category) => (
               <button
                 key={category}

@@ -61,8 +61,10 @@ const defaultHeaderData: HeaderData = {
     { href: '#home', label: 'Home' },
     { href: '#about', label: 'About' },
     { href: '#skills', label: 'Skills' },
-    { href: '#projects', label: 'Projects' },
     { href: '#services', label: 'Services' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#certification', label: 'Certification' },
+    { href: '#clients', label: 'clients' },
     { href: '#testimonials', label: 'Testimonials' },
     { href: '#contact', label: 'Contact' },
   ]
@@ -170,7 +172,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
       </header>
     );
   }
-
+  
   return (
     <header ref={headerRef} className="fixed top-[4rem] left-0 right-0 z-40 bg-background border-b border-border shadow-lg">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -189,7 +191,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
                       </div>
                     </div>
                     
-                    {/* Logo Text Input */}
+                    {/* Logo Text Input - Now positioned to the right of avatar */}
                     <div className="flex flex-col gap-1">
                       <input
                         type="text"
@@ -204,11 +206,15 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
                 </>
               ) : (
                 <>
-                  {/* Display Mode - Only Avatar (No Text) */}
-                  <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
-                                          {getAvatarLetter(displayData.logoText)}
+                  {/* Display Mode - Avatar with Text on the right */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+                      {getAvatarLetter(displayData.logoText)}
                     </div>
+                    {/* Logo Text displayed to the right of avatar */}
+                    <span className="text-xl font-semibold text-foreground">
+                      {displayData.logoText}
+                    </span>
                   </div>
                 </>
               )}
@@ -284,7 +290,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
         {/* Mobile Navigation - Static (Non-editable) */}
         {isMenuOpen && (
           <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
-            {data.navLinks.map((link, index) => (
+            {defaultHeaderData.navLinks.map((link, index) => (
               <a
                 key={index}
                 href={link.href}
@@ -298,5 +304,4 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
         )}
       </div>
     </header>
-  );
-}
+  )}

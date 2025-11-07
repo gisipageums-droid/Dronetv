@@ -531,7 +531,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                const url = `${window.location.origin}/form/${profile.professionalId}/${profile.userId}/${profile.submissionId}`;
+                const url = `${window.location.origin}/professional/form/${profile.userId}/${profile.professionalId}`;
                 window.open(url, "_blank");
               }}
               className="px-3 py-2 md:px-4 md:py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2"

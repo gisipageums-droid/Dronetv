@@ -219,44 +219,7 @@ const ServiceForm: React.FC<{
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="space-y-1">
-            <input
-              type="text"
-              placeholder="Pricing (e.g., Starting at $2,500)"
-              value={local.pricing}
-              onChange={(e) => setField("pricing", e.target.value)}
-              maxLength={CHAR_LIMITS.pricing}
-              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-            />
-            <div
-              className={`text-sm text-right ${getCharCountColor(
-                local.pricing.length,
-                CHAR_LIMITS.pricing
-              )}`}
-            >
-              {local.pricing.length}/{CHAR_LIMITS.pricing}
-            </div>
-          </div>
-          <div className="space-y-1">
-            <input
-              type="text"
-              placeholder="Delivery Time (e.g., 2-4 weeks)"
-              value={local.deliveryTime}
-              onChange={(e) => setField("deliveryTime", e.target.value)}
-              maxLength={CHAR_LIMITS.deliveryTime}
-              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-            />
-            <div
-              className={`text-sm text-right ${getCharCountColor(
-                local.deliveryTime.length,
-                CHAR_LIMITS.deliveryTime
-              )}`}
-            >
-              {local.deliveryTime.length}/{CHAR_LIMITS.deliveryTime}
-            </div>
-          </div>
-        </div>
+     
 
         <div>
           <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">
@@ -743,26 +706,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                           ))}
                         </ul>
 
-                        <div className="flex items-center justify-between p-4 mb-6 rounded-lg bg-gray-50 dark:bg-gray-800">
-                          <div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Pricing
-                            </p>
-                            <p
-                              className={`font-bold text-gray-800 dark:text-white`}
-                            >
-                              {service.pricing}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Delivery
-                            </p>
-                            <p className="font-medium text-gray-900 dark:text-white">
-                              {service.deliveryTime}
-                            </p>
-                          </div>
-                        </div>
+                    
 
                         <motion.button
                           whileHover={isEditMode ? undefined : { scale: 1.05 }}

@@ -239,16 +239,19 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
               </button>
             </>
           ) : (
-            <button
-              onClick={() => {
-                setIsEditMode(true);
-                setIsSectionEditing(true);
-              }}
-              className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-lg"
-              title="Edit Contact"
-            >
-              <Edit className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-            </button>
+            // <button
+            //   onClick={() => {
+            //     setIsEditMode(true);
+            //     setIsSectionEditing(true);
+            //   }}
+            //   className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-lg"
+            //   title="Edit Contact"
+            // >
+            //   <Edit className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            // </button>
+            <>
+            
+            </>
           )}
         </div>
 
@@ -320,7 +323,7 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
             )}
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          <div className="mx-auto max-w-2xl">
             {/* Contact Form */}
             <motion.div variants={itemVariants}>
               <div className="p-8 transition-colors duration-300 bg-white border border-gray-200 dark:bg-gray-800 backdrop-blur-sm rounded-2xl dark:border-gray-700">
@@ -346,7 +349,7 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                         maxLength={CHAR_LIMITS.formName}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
-                        placeholder="John Doe"
+                        placeholder="Rahul sharma"
                       />
                       <div
                         className={`text-xs text-right ${getCharCountColor(
@@ -374,7 +377,7 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                         maxLength={CHAR_LIMITS.formEmail}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
-                        placeholder="john@example.com"
+                        placeholder="rahulsharma@example.com"
                       />
                       <div
                         className={`text-xs text-right ${getCharCountColor(
@@ -404,7 +407,7 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
                         maxLength={CHAR_LIMITS.formPhone}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
-                        placeholder="Phone no"
+                        placeholder="9876543210"
                       />
                       <div
                         className={`text-xs text-right ${getCharCountColor(
@@ -528,134 +531,7 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
             </motion.div>
 
             {/* Contact Information */}
-            <motion.div variants={itemVariants} className="space-y-8">
-              {/* Social Links */}
-              <div className="p-8 transition-colors duration-300 bg-gray-100 border border-gray-200 dark:bg-white/5 backdrop-blur-sm rounded-2xl dark:border-gray-700">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
-                    Follow Me
-                  </h3>
-                  {isEditMode && (
-                    <button
-                      onClick={handleAddSocialLink}
-                      className="px-3 py-1 text-sm text-white bg-green-500 rounded-lg hover:bg-green-600"
-                    >
-                      Add
-                    </button>
-                  )}
-                </div>
-
-                {isEditMode ? (
-                  <div className="space-y-4">
-                    {contactContent.socialLinks.map((social, index) => (
-                      <div
-                        key={index}
-                        className="p-4 bg-white border border-orange-300 rounded-lg dark:bg-gray-800"
-                      >
-                        <div className="grid grid-cols-2 gap-3 mb-3">
-                          <select
-                            value={social.icon}
-                            onChange={(e) =>
-                              handleSocialLinkChange(
-                                index,
-                                "icon",
-                                e.target.value
-                              )
-                            }
-                            className="px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
-                          >
-                            <option value="Github">Github</option>
-                            <option value="Linkedin">Linkedin</option>
-                            <option value="Twitter">Twitter</option>
-                          </select>
-                          <div className="space-y-1">
-                            <input
-                              type="text"
-                              value={social.label}
-                              onChange={(e) =>
-                                handleSocialLinkChange(
-                                  index,
-                                  "label",
-                                  e.target.value
-                                )
-                              }
-                              maxLength={CHAR_LIMITS.socialLabel}
-                              placeholder="Label"
-                              className="w-full px-3 py-2 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
-                            />
-                            <div
-                              className={`text-xs text-right ${getCharCountColor(
-                                social.label.length,
-                                CHAR_LIMITS.socialLabel
-                              )}`}
-                            >
-                              {social.label.length}/{CHAR_LIMITS.socialLabel}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="space-y-1">
-                          <input
-                            type="url"
-                            value={social.href}
-                            onChange={(e) =>
-                              handleSocialLinkChange(
-                                index,
-                                "href",
-                                e.target.value
-                              )
-                            }
-                            maxLength={CHAR_LIMITS.socialHref}
-                            placeholder="URL"
-                            className="w-full px-3 py-2 mb-3 text-sm bg-gray-100 border rounded dark:bg-gray-700 focus:outline-none focus:border-orange-500"
-                          />
-                          <div
-                            className={`text-xs text-right ${getCharCountColor(
-                              social.href.length,
-                              CHAR_LIMITS.socialHref
-                            )}`}
-                          >
-                            {social.href.length}/{CHAR_LIMITS.socialHref}
-                          </div>
-                        </div>
-                        <div className="flex justify-end">
-                          <button
-                            onClick={() => handleRemoveSocialLink(index)}
-                            className="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex space-x-4">
-                      {contactContent.socialLinks.map((social, index) => {
-                        const IconComponent =
-                          iconMap[social.icon] || GithubIcon;
-                        return (
-                          <motion.a
-                            key={index}
-                            whileHover={{ scale: 1.1, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            href={social.href}
-                            className={`w-12 h-12 bg-gray-200 dark:bg-white/10 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 ${social.color} transition-all duration-200`}
-                          >
-                            <IconComponent className="w-6 h-6" />
-                          </motion.a>
-                        );
-                      })}
-                    </div>
-
-                    <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                      Let's connect on social media and stay updated on my
-                      latest projects and insights.
-                    </p>
-                  </>
-                )}
-              </div>
-            </motion.div>
+         
           </div>
         </motion.div>
       </div>

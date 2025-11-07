@@ -328,79 +328,160 @@ function AppInner() {
     window.open("/pricing", "_blank");
   };
 
+  // const handleSubmit = async () => {
+  //   // First validate tokens
+  //   const canProceed = await validateBeforeSubmit();
+  //   if (!canProceed) {
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   setSuccess(false);
+  //   const email = isLogin ? user?.userData?.email : data.basicInfo?.email;
+
+  //   try {
+  //     // ✅ Use existing submissionId (if editing) or generate a new one (if creating)
+  //     const finalSubmissionId = submissionId || `draft-${Date.now()}`;
+
+  //     const payload = {
+  //       userId: email,
+  //       username: data.basicInfo.user_name || "dummyusername",
+  //       submissionId: finalSubmissionId, // ✅ Same used for draftId
+  //       draftId: finalSubmissionId, // ✅ Keep same value
+  //       aiTriggeredAt: Date.now(),
+  //       formData: data,
+  //       mediaLinks: {},
+  //       uploadedFiles: {},
+  //       resumeData: resumeData || {},
+  //       processingMethod: "separate_upload",
+  //       status: "ai_processing",
+  //       templateSelection: templateIdFromState || "",
+  //       updatedAt: Date.now(),
+  //       version: "2.4",
+  //     };
+
+  //     console.log("payload:", payload);
+
+  //     let response;
+
+  //     // ✅ If form is prefilled → update (PUT)
+  //     if (userId && professionalId) {
+  //       response = await axios.put(
+  //         `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
+  //         payload
+  //       );
+  //       console.log("Update response:", response.data);
+  //     }
+  //     // ✅ Otherwise → create new (POST)
+  //     else {
+  //       response = await submitForm(payload);
+  //       console.log("Create response:", response);
+  //     }
+
+  //     setSuccess(true);
+
+  //     // Clear localStorage draft after successful submission
+  //     try {
+  //       localStorage.removeItem("professionalFormDraft");
+  //     } catch (e) {
+  //       console.error("Failed to clear local draft after submit", e);
+  //     }
+
+  //     setTimeout(() => setLoading(false), 30000);
+
+  //     setTimeout(() => {
+  //       console.log("temps id", templateIdFromState);
+  //       navigate(
+  //         `/professional/edit/${finalSubmissionId}/${email}/template=${templateIdFromState}`
+  //       );
+  //     }, 30000);
+  //   } catch (err) {
+  //     console.error(err);
+  //     setLoading(false);
+  //     alert("Submission failed");
+  //   }
+  // };
+
   const handleSubmit = async () => {
-    // First validate tokens
-    const canProceed = await validateBeforeSubmit();
-    if (!canProceed) {
-      return;
+  // First validate tokens
+  const canProceed = await validateBeforeSubmit();
+  if (!canProceed) {
+    return;
+  }
+
+  setLoading(true);
+  setSuccess(false);
+  const email = isLogin ? user?.userData?.email : data.basicInfo?.email;
+
+  try {
+    // ✅ Use existing submissionId (if editing) or generate a new one (if creating)
+    const finalSubmissionId = submissionId || `draft-${Date.now()}`;
+
+    // ✅ Get template from prefill data first, then fallback to location state
+    const templateId = data.templateSelection || templateIdFromState;
+
+    const payload = {
+      userId: email,
+      username: data.basicInfo.user_name || "dummyusername",
+      submissionId: finalSubmissionId, // ✅ Same used for draftId
+      draftId: finalSubmissionId, // ✅ Keep same value
+      aiTriggeredAt: Date.now(),
+      formData: data,
+      mediaLinks: {},
+      uploadedFiles: {},
+      resumeData: resumeData || {},
+      processingMethod: "separate_upload",
+      status: "ai_processing",
+      templateSelection: templateId || "", // ✅ Use the templateId variable here too
+      updatedAt: Date.now(),
+      version: "2.4",
+    };
+
+    console.log("payload:", payload);
+
+    let response;
+
+    // ✅ If form is prefilled → update (PUT)
+    if (userId && professionalId) {
+      response = await axios.put(
+        `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
+        payload
+      );
+      console.log("Update response:", response.data);
+    }
+    // ✅ Otherwise → create new (POST)
+    else {
+      response = await submitForm(payload);
+      console.log("Create response:", response);
     }
 
-    setLoading(true);
-    setSuccess(false);
-    const email = isLogin ? user?.userData?.email : data.basicInfo?.email;
+    setSuccess(true);
 
+    // Clear localStorage draft after successful submission
     try {
-      // ✅ Use existing submissionId (if editing) or generate a new one (if creating)
-      const finalSubmissionId = submissionId || `draft-${Date.now()}`;
-
-      const payload = {
-        userId: email,
-        username: data.basicInfo.user_name || "dummyusername",
-        submissionId: finalSubmissionId, // ✅ Same used for draftId
-        draftId: finalSubmissionId, // ✅ Keep same value
-        aiTriggeredAt: Date.now(),
-        formData: data,
-        mediaLinks: {},
-        uploadedFiles: {},
-        resumeData: resumeData || {},
-        processingMethod: "separate_upload",
-        status: "ai_processing",
-        templateSelection: templateIdFromState || "",
-        updatedAt: Date.now(),
-        version: "2.4",
-      };
-
-      console.log("payload:", payload);
-
-      let response;
-
-      // ✅ If form is prefilled → update (PUT)
-      if (userId && professionalId) {
-        response = await axios.put(
-          `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
-          payload
-        );
-        console.log("Update response:", response.data);
-      }
-      // ✅ Otherwise → create new (POST)
-      else {
-        response = await submitForm(payload);
-        console.log("Create response:", response);
-      }
-
-      setSuccess(true);
-
-      // Clear localStorage draft after successful submission
-      try {
-        localStorage.removeItem("professionalFormDraft");
-      } catch (e) {
-        console.error("Failed to clear local draft after submit", e);
-      }
-
-      setTimeout(() => setLoading(false), 30000);
-
-      setTimeout(() => {
-        console.log("temps id", templateIdFromState);
-        navigate(
-          `/professional/edit/${finalSubmissionId}/${email}/template=${templateIdFromState}`
-        );
-      }, 30000);
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-      alert("Submission failed");
+      localStorage.removeItem("professionalFormDraft");
+    } catch (e) {
+      console.error("Failed to clear local draft after submit", e);
     }
-  };
+
+    setTimeout(() => setLoading(false), 30000);
+
+    setTimeout(() => {
+      console.log("Template from prefill:", data.templateSelection);
+      console.log("Template from state:", templateIdFromState);
+      console.log("Final template id:", templateId);
+      
+      navigate(
+        `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
+      );
+    }, 30000);
+  } catch (err) {
+    console.error(err);
+    setLoading(false);
+    alert("Submission failed");
+  }
+};
+
 
   if (formLoader)
     return (

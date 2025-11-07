@@ -207,6 +207,14 @@ const staticFormFields: FormField[] = [
   }
 ];
 
+const fieldPlaceholders: Record<string, string> = {
+  name: "Rahul sharma",
+  email: "rahulsharma@example.com",
+  phone: "+91 98765 43210",
+  subject: "Select a subject",
+  message: "Write your message here..."
+};
+
 export function Contact({ contactData, onStateChange }: ContactProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -557,6 +565,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                       onChange={(e) => handleFormChange(field.name, e.target.value)}
                       rows={field.rows || 4}
                       className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 resize-none bg-background text-foreground"
+                      placeholder={fieldPlaceholders[field.name] || field.label}
                       required={field.required}
                       disabled={isEditing}
                     />
@@ -585,6 +594,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                       value={formData[field.name] || ''}
                       onChange={(e) => handleFormChange(field.name, e.target.value)}
                       className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
+                      placeholder={fieldPlaceholders[field.name] || field.label}
                       required={field.required}
                       disabled={isEditing}
                     />

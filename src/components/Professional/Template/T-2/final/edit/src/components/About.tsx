@@ -686,7 +686,7 @@ export function About({
           )}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Left Content - Image */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
