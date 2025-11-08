@@ -80,7 +80,7 @@ const Profile = () => {
                 >
                   {member.role}
                 </p>
-                <p className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
+                <p className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"} text-justify`}>
                   {member.bio}
                 </p>
                 <div className="flex justify-center mt-4 space-x-3">

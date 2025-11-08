@@ -157,7 +157,16 @@ export default function EditableHero({
       setCropField(field);
       setCropIndex(index);
       setShowCropper(true);
-      setAspectRatio(field === "customerImage" ? 1 : 4 / 3); // Square for customer images, standard for others
+      // Lock aspect ratios: hero1Image 1080x720, hero3Image 400x267, customerImage 1:1
+      if (field === "hero1Image") {
+        setAspectRatio(1080 / 720);
+      } else if (field === "hero3Image") {
+        setAspectRatio(400 / 267);
+      } else if (field === "customerImage") {
+        setAspectRatio(1);
+      } else {
+        setAspectRatio(1080 / 720);
+      }
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -186,8 +195,23 @@ export default function EditableHero({
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    // Determine fixed output size for hero images; keep square for customerImage
+    let targetWidth = pixelCrop.width;
+    let targetHeight = pixelCrop.height;
+    if (cropField === "hero1Image") {
+      targetWidth = 1080;
+      targetHeight = 720;
+    } else if (cropField === "hero3Image") {
+      targetWidth = 400;
+      targetHeight = 267;
+    } else if (cropField === "customerImage") {
+      // keep square output equal to crop size
+      targetWidth = pixelCrop.width;
+      targetHeight = pixelCrop.height;
+    }
+
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
 
     ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
     ctx.rotate((rotation * Math.PI) / 180);
@@ -201,8 +225,8 @@ export default function EditableHero({
       pixelCrop.height,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      targetWidth,
+      targetHeight
     );
 
     return new Promise((resolve) => {
@@ -545,41 +569,8 @@ export default function EditableHero({
               </div>
             </div>
 
-            {/* Controls - Same as Header.tsx */}
+            {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
-                      }`}
-                  >
-                    1:1 (Square)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
-                      }`}
-                  >
-                    4:3 (Standard)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
-                      }`}
-                  >
-                    16:9 (Widescreen)
-                  </button>
-                </div>
-              </div>
 
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">

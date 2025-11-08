@@ -1367,11 +1367,11 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-              ...s,
-              [field]: s[field].map((item: string, li: number) =>
-                li === listIndex ? value : item
-              ),
-            }
+            ...s,
+            [field]: s[field].map((item: string, li: number) =>
+              li === listIndex ? value : item
+            ),
+          }
           : s
       ),
     }));
@@ -1399,11 +1399,11 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-              ...s,
-              [field]: s[field].filter(
-                (_: string, li: number) => li !== listIndex
-              ),
-            }
+            ...s,
+            [field]: s[field].filter(
+              (_: string, li: number) => li !== listIndex
+            ),
+          }
           : s
       ),
     }));
@@ -1756,31 +1756,28 @@ export default function Services({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
@@ -1836,7 +1833,7 @@ export default function Services({
       {/* Main Services Section */}
       <motion.section
         id="services"
-        className="py-20 bg-background theme-transition"
+        className=" bg-background theme-transition"
       >
         <div className="px-4 mx-auto max-w-7xl">
           {/* Edit/Save Buttons */}
@@ -1847,11 +1844,10 @@ export default function Services({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
@@ -1874,11 +1870,10 @@ export default function Services({
                 <div className="relative mb-4">
                   <input
                     type="text"
-                    className={`text-3xl font-bold block text-center w-full border-b ${
-                      servicesSection.heading.head.length >= 60
+                    className={`text-3xl font-bold block text-center w-full border-b ${servicesSection.heading.head.length >= 60
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                     value={servicesSection.heading.head}
                     onChange={(e) =>
                       setServicesSection((prev) => ({
@@ -1889,13 +1884,12 @@ export default function Services({
                     maxLength={60}
                   />
                   <div
-                    className={`absolute right-0 -bottom-5 text-xs ${
-                      servicesSection.heading.head.length >= 60
+                    className={`absolute right-0 -bottom-5 text-xs ${servicesSection.heading.head.length >= 60
                         ? "text-red-500 font-bold animate-pulse"
                         : servicesSection.heading.head.length > 50
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
                   >
                     {servicesSection.heading.head.length >= 60
                       ? "MAXIMUM LENGTH REACHED"
@@ -1905,11 +1899,10 @@ export default function Services({
                 <div className="relative">
                   <input
                     type="text"
-                    className={`text-muted-foreground block w-full text-center border-b ${
-                      servicesSection.heading.desc.length >= 120
+                    className={`text-muted-foreground block w-full text-center border-b ${servicesSection.heading.desc.length >= 120
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                     value={servicesSection.heading.desc}
                     onChange={(e) =>
                       setServicesSection((prev) => ({
@@ -1920,13 +1913,12 @@ export default function Services({
                     maxLength={120}
                   />
                   <div
-                    className={`absolute right-0 -bottom-5 text-xs ${
-                      servicesSection.heading.desc.length >= 120
+                    className={`absolute right-0 -bottom-5 text-xs ${servicesSection.heading.desc.length >= 120
                         ? "text-red-500 font-bold animate-pulse"
                         : servicesSection.heading.desc.length > 100
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
                   >
                     {servicesSection.heading.desc.length >= 120
                       ? "MAXIMUM LENGTH REACHED"
@@ -1963,18 +1955,16 @@ export default function Services({
                         }))
                       }
                       maxLength={40}
-                      className={`px-2 border-b pr-10 ${
-                        cat.length >= 40 ? "border-red-500" : ""
-                      }`}
+                      className={`px-2 border-b pr-10 ${cat.length >= 40 ? "border-red-500" : ""
+                        }`}
                     />
                     <div
-                      className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-[10px] ${
-                        cat.length >= 40
+                      className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-[10px] ${cat.length >= 40
                           ? "text-red-500 font-bold"
                           : cat.length > 30
-                          ? "text-red-500"
-                          : "text-gray-400"
-                      }`}
+                            ? "text-red-500"
+                            : "text-gray-400"
+                        }`}
                     >
                       {cat.length >= 40 ? "MAX" : `${cat.length}`}
                     </div>
@@ -2064,18 +2054,16 @@ export default function Services({
                             updateServiceField(index, "title", e.target.value)
                           }
                           maxLength={50}
-                          className={`border-b w-full font-bold text-lg pr-12 ${
-                            service.title.length >= 50 ? "border-red-500" : ""
-                          }`}
+                          className={`border-b w-full font-bold text-lg pr-12 ${service.title.length >= 50 ? "border-red-500" : ""
+                            }`}
                         />
                         <div
-                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                            service.title.length >= 50
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${service.title.length >= 50
                               ? "text-red-500 font-bold"
                               : service.title.length > 40
-                              ? "text-red-500"
-                              : "text-gray-400"
-                          }`}
+                                ? "text-red-500"
+                                : "text-gray-400"
+                            }`}
                         >
                           {service.title.length >= 50
                             ? "MAX"
@@ -2102,20 +2090,18 @@ export default function Services({
                               )
                             }
                             maxLength={120}
-                            className={`border-b w-full min-h-[4rem] resize-none pr-12 ${
-                              service.description.length >= 120
+                            className={`border-b w-full min-h-[4rem] resize-none pr-12 ${service.description.length >= 120
                                 ? "border-red-500"
                                 : ""
-                            }`}
+                              }`}
                           />
                           <div
-                            className={`absolute right-2 bottom-1 text-xs ${
-                              service.description.length >= 120
+                            className={`absolute right-2 bottom-1 text-xs ${service.description.length >= 120
                                 ? "text-red-500 font-bold"
                                 : service.description.length > 100
-                                ? "text-red-500"
-                                : "text-gray-400"
-                            }`}
+                                  ? "text-red-500"
+                                  : "text-gray-400"
+                              }`}
                           >
                             {service.description.length >= 120
                               ? "MAX"
@@ -2134,20 +2120,18 @@ export default function Services({
                               )
                             }
                             maxLength={60}
-                            className={`w-full border-b pr-10 ${
-                              service.category.length >= 60
+                            className={`w-full border-b pr-10 ${service.category.length >= 60
                                 ? "border-red-500"
                                 : ""
-                            }`}
+                              }`}
                           />
                           <div
-                            className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-xs ${
-                              service.category.length >= 60
+                            className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-xs ${service.category.length >= 60
                                 ? "text-red-500 font-bold"
                                 : service.category.length > 50
-                                ? "text-red-500"
-                                : "text-gray-400"
-                            }`}
+                                  ? "text-red-500"
+                                  : "text-gray-400"
+                              }`}
                           >
                             {service.category.length >= 60
                               ? "MAX"
@@ -2256,23 +2240,21 @@ export default function Services({
                         )
                       }
                       maxLength={60}
-                      className={`border-b w-full text-xl font-bold mb-3 pr-16 ${
-                        servicesSection.services[selectedServiceIndex].title
+                      className={`border-b w-full text-xl font-bold mb-3 pr-16 ${servicesSection.services[selectedServiceIndex].title
                           .length >= 60
                           ? "border-red-500"
                           : ""
-                      }`}
+                        }`}
                     />
                     <div
-                      className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                        servicesSection.services[selectedServiceIndex].title
+                      className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex].title
                           .length >= 60
                           ? "text-red-500 font-bold animate-pulse"
                           : servicesSection.services[selectedServiceIndex].title
-                              .length > 50
-                          ? "text-red-500"
-                          : "text-gray-400"
-                      }`}
+                            .length > 50
+                            ? "text-red-500"
+                            : "text-gray-400"
+                        }`}
                     >
                       {servicesSection.services[selectedServiceIndex].title
                         .length >= 60
@@ -2302,23 +2284,21 @@ export default function Services({
                       }
                       maxLength={1000}
                       rows={3}
-                      className={`border-b w-full mb-3 resize-none pr-16 ${
-                        servicesSection.services[selectedServiceIndex]
+                      className={`border-b w-full mb-3 resize-none pr-16 ${servicesSection.services[selectedServiceIndex]
                           .detailedDescription.length >= 1000
                           ? "border-red-500"
                           : ""
-                      }`}
+                        }`}
                     />
                     <div
-                      className={`absolute right-2 bottom-2 text-xs ${
-                        servicesSection.services[selectedServiceIndex]
+                      className={`absolute right-2 bottom-2 text-xs ${servicesSection.services[selectedServiceIndex]
                           .detailedDescription.length >= 1000
                           ? "text-red-500 font-bold animate-pulse"
                           : servicesSection.services[selectedServiceIndex]
-                              .detailedDescription.length > 900
-                          ? "text-red-500"
-                          : "text-gray-400"
-                      }`}
+                            .detailedDescription.length > 900
+                            ? "text-red-500"
+                            : "text-gray-400"
+                        }`}
                     >
                       {servicesSection.services[selectedServiceIndex]
                         .detailedDescription.length >= 1000
@@ -2356,18 +2336,16 @@ export default function Services({
                                   )
                                 }
                                 maxLength={80}
-                                className={`border-b w-full pr-10 text-sm ${
-                                  b.length >= 80 ? "border-red-500" : ""
-                                }`}
+                                className={`border-b w-full pr-10 text-sm ${b.length >= 80 ? "border-red-500" : ""
+                                  }`}
                               />
                               <div
-                                className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${
-                                  b.length >= 80
+                                className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${b.length >= 80
                                     ? "text-red-500 font-bold"
                                     : b.length > 70
-                                    ? "text-red-500"
-                                    : "text-gray-400"
-                                }`}
+                                      ? "text-red-500"
+                                      : "text-gray-400"
+                                  }`}
                               >
                                 {b.length >= 80 ? "MAX" : `${b.length}`}
                               </div>
@@ -2423,18 +2401,16 @@ export default function Services({
                                   )
                                 }
                                 maxLength={80}
-                                className={`border-b w-full pr-10 text-sm ${
-                                  p.length >= 80 ? "border-red-500" : ""
-                                }`}
+                                className={`border-b w-full pr-10 text-sm ${p.length >= 80 ? "border-red-500" : ""
+                                  }`}
                               />
                               <div
-                                className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${
-                                  p.length >= 80
+                                className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${p.length >= 80
                                     ? "text-red-500 font-bold"
                                     : p.length > 70
-                                    ? "text-red-500"
-                                    : "text-gray-400"
-                                }`}
+                                      ? "text-red-500"
+                                      : "text-gray-400"
+                                  }`}
                               >
                                 {p.length >= 80 ? "MAX" : `${p.length}`}
                               </div>
@@ -2491,23 +2467,21 @@ export default function Services({
                             )
                           }
                           maxLength={30}
-                          className={`border-b w-full pr-10 text-sm ${
-                            servicesSection.services[selectedServiceIndex]
+                          className={`border-b w-full pr-10 text-sm ${servicesSection.services[selectedServiceIndex]
                               .pricing.length >= 30
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div
-                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                            servicesSection.services[selectedServiceIndex]
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex]
                               .pricing.length >= 30
                               ? "text-red-500 font-bold"
                               : servicesSection.services[selectedServiceIndex]
-                                  .pricing.length > 25
-                              ? "text-red-500"
-                              : "text-gray-400"
-                          }`}
+                                .pricing.length > 25
+                                ? "text-red-500"
+                                : "text-gray-400"
+                            }`}
                         >
                           {servicesSection.services[selectedServiceIndex]
                             .pricing.length >= 30
@@ -2538,23 +2512,21 @@ export default function Services({
                             )
                           }
                           maxLength={60}
-                          className={`border-b w-full pr-10 text-sm ${
-                            servicesSection.services[selectedServiceIndex]
+                          className={`border-b w-full pr-10 text-sm ${servicesSection.services[selectedServiceIndex]
                               .timeline.length >= 60
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div
-                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                            servicesSection.services[selectedServiceIndex]
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex]
                               .timeline.length >= 60
                               ? "text-red-500 font-bold"
                               : servicesSection.services[selectedServiceIndex]
-                                  .timeline.length > 50
-                              ? "text-red-500"
-                              : "text-gray-400"
-                          }`}
+                                .timeline.length > 50
+                                ? "text-red-500"
+                                : "text-gray-400"
+                            }`}
                         >
                           {servicesSection.services[selectedServiceIndex]
                             .timeline.length >= 60

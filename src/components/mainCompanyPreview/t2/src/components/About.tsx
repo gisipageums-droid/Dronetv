@@ -534,7 +534,7 @@ export default function About({ aboutData }) {
               transition={{ duration: 0.8 }}
             >
               <div className="relative w-full">
-                <motion.div 
+                <motion.div
                   className="relative"
                   whileInView={{ opacity: [0, 1], scale: [0.8, 1] }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
@@ -544,7 +544,7 @@ export default function About({ aboutData }) {
                       src={aboutState.imageUrl}
                       alt="About"
                       className="w-full max-w-full h-auto object-contain rounded-2xl shadow-2xl"
-                      style={{ 
+                      style={{
                         maxHeight: '500px',
                         width: 'auto',
                         margin: '0 auto'
@@ -560,7 +560,7 @@ export default function About({ aboutData }) {
               whileInView={{ opacity: [0, 1], y: [30, 0] }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed text-justify">
                 {aboutState.description2}
               </p>
             </motion.div>
@@ -577,7 +577,7 @@ export default function About({ aboutData }) {
               <h2 className="text-3xl md:text-4xl text-foreground">
                 {aboutState.aboutTitle}
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-lg text-muted-foreground leading-relaxed text-justify">
                 {aboutState.description1}
               </p>
             </motion.div>
@@ -598,7 +598,7 @@ export default function About({ aboutData }) {
             </motion.div>
 
             {/* Company metrics */}
-            <motion.div 
+            <motion.div
               className="grid grid-cols-2 gap-6 pt-6"
               whileInView={{ opacity: [0, 1], y: [30, 0] }}
               transition={{ duration: 0.8, delay: 0.8 }}
@@ -642,16 +642,20 @@ export default function About({ aboutData }) {
 
         {/* Vision Section - Centrally Aligned and Justified */}
         <motion.div className="text-center mb-16 mt-16">
-          <motion.div
-            whileInView={{ opacity: [0, 1], y: [-20, 0] }}
-            transition={{ duration: 0.5, ease: "backInOut" }}
-            className="inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6"
-          >
-            <Eye className="text-lg mr-2 text-red-500" />
-            <span className="font-medium text-red-500 text-lg">
-              {aboutState.visionBadge}
-            </span>
+          <motion.div className="flex flex-col items-center justify-center mb-6">
+            <Eye className="w-12 h-12 text-red-500 mb-3" />
+
+            <motion.div
+              whileInView={{ opacity: [0, 1], y: [-20, 0] }}
+              transition={{ duration: 0.5, ease: "backInOut" }}
+              className="px-4 py-2 bg-red-accent/10 rounded-full"
+            >
+              <span className="font-medium text-red-500 text-lg">
+                {aboutState.visionBadge}
+              </span>
+            </motion.div>
           </motion.div>
+
 
           <motion.h2
             whileInView={{ opacity: [0, 1], x: [-20, 0] }}
@@ -668,7 +672,7 @@ export default function About({ aboutData }) {
           >
             {aboutState.visionDesc}
           </motion.p>
-          
+
           {/* Vision Pillars */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {aboutState.visionPillars.map((pillar, index) => {

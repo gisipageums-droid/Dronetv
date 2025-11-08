@@ -603,7 +603,7 @@ export default function Clients({
             )}
 
             <motion.div
-              className="flex gap-10 items-start text-center animate-marquee"
+              className={`flex gap-10 items-start text-center ${!isEditing ? "animate-marquee" : ""}`}
               variants={containerVariants}
               whileInView={{ opacity: [0, 1], y: [-50, 0] }}
               transition={{ duration: 1 }}

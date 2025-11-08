@@ -179,7 +179,7 @@ const Gallery = ({ galleryData }) => {
     {(hasImages||hasHeading)&& (
     <section 
       id="gallery" 
-      className={`py-20 theme-transition ${
+      className={`pt-8 pb-20 theme-transition ${
         theme === "dark" 
         ? "bg-[#1f1f1f] text-gray-100" 
         : "bg-gray-50 text-gray-900"

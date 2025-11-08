@@ -42,7 +42,7 @@
 //   return (
 //     <>
 //       {(hasServices||hasHeading)&& (
-//         <motion.section id="services" className="py-20 bg-background theme-transition">
+//         <motion.section id="services" className="pt-8 pb-20 bg-background theme-transition">
 //       <div className="max-w-7xl mx-auto px-4">
 //         {/* Header */}
 //         <div className="text-center mb-8">

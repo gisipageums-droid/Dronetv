@@ -78,9 +78,9 @@ export default function Product({
       products: prev.products.map((p, i) =>
         i === index
           ? {
-              ...p,
-              features: p.features.map((f, fi) => (fi === fIndex ? value : f)),
-            }
+            ...p,
+            features: p.features.map((f, fi) => (fi === fIndex ? value : f)),
+          }
           : p
       ),
     }));
@@ -103,9 +103,9 @@ export default function Product({
       products: prev.products.map((p, i) =>
         i === index
           ? {
-              ...p,
-              features: p.features.filter((_, fi) => fi !== fIndex),
-            }
+            ...p,
+            features: p.features.filter((_, fi) => fi !== fIndex),
+          }
           : p
       ),
     }));
@@ -426,31 +426,28 @@ export default function Product({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -505,7 +502,7 @@ export default function Product({
       {/* Main Product Section */}
       <motion.section
         id="product"
-        className="py-20 bg-secondary theme-transition"
+        className=" bg-secondary theme-transition"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -520,11 +517,10 @@ export default function Product({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
@@ -557,13 +553,12 @@ export default function Product({
                       className="pr-8 font-medium bg-transparent border-b"
                     />
                     <div
-                      className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                        contentState.heading.title.length >= 30
+                      className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${contentState.heading.title.length >= 30
                           ? "text-red-500 font-bold"
                           : contentState.heading.title.length > 25
-                          ? "text-red-500"
-                          : "text-gray-400"
-                      }`}
+                            ? "text-red-500"
+                            : "text-gray-400"
+                        }`}
                     >
                       {contentState.heading.title.length >= 30
                         ? "MAX"
@@ -583,13 +578,12 @@ export default function Product({
                     className="block w-full mb-1 text-3xl font-medium text-center bg-transparent border-b md:text-4xl text-foreground"
                   />
                   <div
-                    className={`absolute right-0 -bottom-4 text-xs ${
-                      contentState.heading.heading.length >= 60
+                    className={`absolute right-0 -bottom-4 text-xs ${contentState.heading.heading.length >= 60
                         ? "text-red-500 font-bold"
                         : contentState.heading.heading.length > 50
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
                   >
                     {contentState.heading.heading.length >= 60
                       ? "MAXIMUM LENGTH REACHED"
@@ -608,13 +602,12 @@ export default function Product({
                     maxLength={80}
                   />
                   <div
-                    className={`absolute right-0 -bottom-4 text-xs ${
-                      contentState.heading.description.length >= 80
+                    className={`absolute right-0 -bottom-4 text-xs ${contentState.heading.description.length >= 80
                         ? "text-red-500 font-bold"
                         : contentState.heading.description.length > 70
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
                   >
                     {contentState.heading.description.length >= 80
                       ? "MAXIMUM LENGTH REACHED"
@@ -633,13 +626,12 @@ export default function Product({
                     className="block w-full mb-1 text-3xl font-medium text-center bg-transparent border-b md:text-4xl text-foreground"
                   />
                   <div
-                    className={`absolute right-0 -bottom-4 text-xs ${
-                      contentState.heading.trust.length >= 50
+                    className={`absolute right-0 -bottom-4 text-xs ${contentState.heading.trust.length >= 50
                         ? "text-red-500 font-bold"
                         : contentState.heading.trust.length > 40
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
                   >
                     {contentState.heading.trust.length >= 50
                       ? "MAX"
@@ -763,20 +755,18 @@ export default function Product({
                                 )
                               }
                               maxLength={60}
-                              className={`w-full text-lg font-bold text-center border-b pr-16 ${
-                                product.title.length >= 60
+                              className={`w-full text-lg font-bold text-center border-b pr-16 ${product.title.length >= 60
                                   ? "border-red-500"
                                   : ""
-                              }`}
+                                }`}
                             />
                             <div
-                              className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                                product.title.length >= 60
+                              className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${product.title.length >= 60
                                   ? "text-red-500 font-bold animate-pulse"
                                   : product.title.length > 50
-                                  ? "text-red-500"
-                                  : "text-gray-400"
-                              }`}
+                                    ? "text-red-500"
+                                    : "text-gray-400"
+                                }`}
                             >
                               {product.title.length >= 60
                                 ? "MAX REACHED"
@@ -802,20 +792,18 @@ export default function Product({
                                 )
                               }
                               maxLength={150}
-                              className={`border-b w-full min-h-[4rem] text-center resize-none pr-16 ${
-                                product.description.length >= 150
+                              className={`border-b w-full min-h-[4rem] text-center resize-none pr-16 ${product.description.length >= 150
                                   ? "border-red-500"
                                   : ""
-                              }`}
+                                }`}
                             />
                             <div
-                              className={`absolute right-2 bottom-1 text-xs ${
-                                product.description.length >= 150
+                              className={`absolute right-2 bottom-1 text-xs ${product.description.length >= 150
                                   ? "text-red-500 font-bold animate-pulse"
                                   : product.description.length > 130
-                                  ? "text-red-500"
-                                  : "text-gray-400"
-                              }`}
+                                    ? "text-red-500"
+                                    : "text-gray-400"
+                                }`}
                             >
                               {product.description.length >= 150
                                 ? "MAX"
@@ -843,18 +831,16 @@ export default function Product({
                                         updateFeature(index, fi, e.target.value)
                                       }
                                       maxLength={40}
-                                      className={`w-full border-b pr-12 ${
-                                        f.length >= 40 ? "border-red-500" : ""
-                                      }`}
+                                      className={`w-full border-b pr-12 ${f.length >= 40 ? "border-red-500" : ""
+                                        }`}
                                     />
                                     <div
-                                      className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                                        f.length >= 40
+                                      className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${f.length >= 40
                                           ? "text-red-500 font-bold"
                                           : f.length > 35
-                                          ? "text-red-500"
-                                          : "text-gray-400"
-                                      }`}
+                                            ? "text-red-500"
+                                            : "text-gray-400"
+                                        }`}
                                     >
                                       {f.length >= 40
                                         ? "MAX"
@@ -975,23 +961,21 @@ export default function Product({
                         )
                       }
                       maxLength={60}
-                      className={`w-full mb-4 text-2xl font-bold text-center border-b pr-16 ${
-                        contentState.products[selectedProductIndex].title
+                      className={`w-full mb-4 text-2xl font-bold text-center border-b pr-16 ${contentState.products[selectedProductIndex].title
                           .length >= 60
                           ? "border-red-500"
                           : ""
-                      }`}
+                        }`}
                     />
                     <div
-                      className={`absolute top-[-15px] right-0 text-xs ${
-                        contentState.products[selectedProductIndex].title
+                      className={`absolute top-[-15px] right-0 text-xs ${contentState.products[selectedProductIndex].title
                           .length >= 60
                           ? "text-red-500 font-bold animate-pulse"
                           : contentState.products[selectedProductIndex].title
-                              .length > 50
-                          ? "text-red-500"
-                          : "text-gray-400"
-                      }`}
+                            .length > 50
+                            ? "text-red-500"
+                            : "text-gray-400"
+                        }`}
                     >
                       {contentState.products[selectedProductIndex].title
                         .length >= 60
@@ -1021,23 +1005,21 @@ export default function Product({
                       }
                       maxLength={1000}
                       rows={4}
-                      className={`w-full mb-4 text-center border-b resize-none pr-16 ${
-                        contentState.products[selectedProductIndex]
+                      className={`w-full mb-4 text-center border-b resize-none pr-16 ${contentState.products[selectedProductIndex]
                           .detailedDescription.length >= 1000
                           ? "border-red-500"
                           : ""
-                      }`}
+                        }`}
                     />
                     <div
-                      className={`absolute right-2 bottom-2 text-xs ${
-                        contentState.products[selectedProductIndex]
+                      className={`absolute right-2 bottom-2 text-xs ${contentState.products[selectedProductIndex]
                           .detailedDescription.length >= 1000
                           ? "text-red-500 font-bold animate-pulse"
                           : contentState.products[selectedProductIndex]
-                              .detailedDescription.length > 1000
-                          ? "text-red-500"
-                          : "text-gray-400"
-                      }`}
+                            .detailedDescription.length > 1000
+                            ? "text-red-500"
+                            : "text-gray-400"
+                        }`}
                     >
                       {contentState.products[selectedProductIndex]
                         .detailedDescription.length >= 1000
@@ -1072,23 +1054,21 @@ export default function Product({
                             )
                           }
                           maxLength={30}
-                          className={`w-full border-b pr-10 ${
-                            contentState.products[selectedProductIndex].pricing
+                          className={`w-full border-b pr-10 ${contentState.products[selectedProductIndex].pricing
                               .length >= 30
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div
-                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                            contentState.products[selectedProductIndex].pricing
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${contentState.products[selectedProductIndex].pricing
                               .length >= 30
                               ? "text-red-500 font-bold"
                               : contentState.products[selectedProductIndex]
-                                  .pricing.length > 25
-                              ? "text-red-500"
-                              : "text-gray-400"
-                          }`}
+                                .pricing.length > 25
+                                ? "text-red-500"
+                                : "text-gray-400"
+                            }`}
                         >
                           {contentState.products[selectedProductIndex].pricing
                             .length >= 30
@@ -1118,23 +1098,21 @@ export default function Product({
                             )
                           }
                           maxLength={50}
-                          className={`w-full border-b pr-10 ${
-                            contentState.products[selectedProductIndex].timeline
+                          className={`w-full border-b pr-10 ${contentState.products[selectedProductIndex].timeline
                               .length >= 50
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div
-                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                            contentState.products[selectedProductIndex].timeline
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${contentState.products[selectedProductIndex].timeline
                               .length >= 50
                               ? "text-red-500 font-bold"
                               : contentState.products[selectedProductIndex]
-                                  .timeline.length > 50
-                              ? "text-red-500"
-                              : "text-gray-400"
-                          }`}
+                                .timeline.length > 50
+                                ? "text-red-500"
+                                : "text-gray-400"
+                            }`}
                         >
                           {contentState.products[selectedProductIndex].timeline
                             .length >= 50

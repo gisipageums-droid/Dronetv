@@ -74,11 +74,11 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-              ...s,
-              [field]: s[field].map((item: string, li: number) =>
-                li === listIndex ? value : item
-              ),
-            }
+            ...s,
+            [field]: s[field].map((item: string, li: number) =>
+              li === listIndex ? value : item
+            ),
+          }
           : s
       ),
     }));
@@ -106,11 +106,11 @@ export default function Services({
       services: prev.services.map((s, i) =>
         i === index
           ? {
-              ...s,
-              [field]: s[field].filter(
-                (_: string, li: number) => li !== listIndex
-              ),
-            }
+            ...s,
+            [field]: s[field].filter(
+              (_: string, li: number) => li !== listIndex
+            ),
+          }
           : s
       ),
     }));
@@ -398,146 +398,143 @@ export default function Services({
     <>
       {/* Image Cropper Modal - Services (Same as Clients) */}
       {showCropper && (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
-  >
-    <motion.div
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      className="bg-white rounded-xl max-w-md w-full max-h-[80vh] flex flex-col"
-    >
-      {/* Header */}
-      <div className="p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Crop About Image
-        </h3>
-        <button
-          onClick={cancelCrop}
-          className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
-          <X className="w-5 h-5 text-gray-600" />
-        </button>
-      </div>
-
-      {/* Cropper Area */}
-      <div className="flex-1 relative bg-gray-900 min-h-0 max-h-[50vh]">
-        <Cropper
-          image={imageToCrop}
-          crop={crop}
-          zoom={zoom}
-          rotation={rotation}
-          aspect={aspectRatio}
-          onCropChange={setCrop}
-          onZoomChange={setZoom}
-          onCropComplete={onCropComplete}
-          showGrid={false}
-          cropShape="rect"
-          style={{
-            containerStyle: {
-              position: "relative",
-              width: "100%",
-              height: "100%",
-            },
-            cropAreaStyle: {
-              border: "2px solid white",
-              borderRadius: "8px",
-            },
-          }}
-        />
-      </div>
-
-      {/* Controls */}
-      <div className="p-3 bg-gray-50 border-t border-gray-200">
-        {/* Aspect Ratio Buttons */}
-        <div className="mb-3">
-          <p className="text-sm font-medium text-gray-700 mb-2">
-            Aspect Ratio:
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setAspectRatio(1)}
-              className={`px-2 py-1 text-xs rounded border ${
-                aspectRatio === 1
-                  ? "bg-blue-500 text-white border-blue-500"
-                  : "bg-white text-gray-700 border-gray-300"
-              }`}
-            >
-              1:1 (Square)
-            </button>
-            <button
-              onClick={() => setAspectRatio(4 / 3)}
-              className={`px-2 py-1 text-xs rounded border ${
-                aspectRatio === 4 / 3
-                  ? "bg-blue-500 text-white border-blue-500"
-                  : "bg-white text-gray-700 border-gray-300"
-              }`}
-            >
-              4:3 (Standard)
-            </button>
-            <button
-              onClick={() => setAspectRatio(16 / 9)}
-              className={`px-2 py-1 text-xs rounded border ${
-                aspectRatio === 16 / 9
-                  ? "bg-blue-500 text-white border-blue-500"
-                  : "bg-white text-gray-700 border-gray-300"
-              }`}
-            >
-              16:9 (Widescreen)
-            </button>
-          </div>
-        </div>
-
-        {/* Zoom Control */}
-        <div className="space-y-2 mb-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="flex items-center gap-2 text-gray-700">
-              Zoom
-            </span>
-            <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-          </div>
-          <input
-            type="range"
-            value={zoom}
-            min={1}
-            max={3}
-            step={0.1}
-            onChange={(e) => setZoom(Number(e.target.value))}
-            className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            onClick={resetCropSettings}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-md w-full max-h-[80vh] flex flex-col"
           >
-            Reset
-          </button>
-          <button
-            onClick={cancelCrop}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={applyCrop}
-            className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
-          >
-            Apply Crop
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  </motion.div>
-)}
+            {/* Header */}
+            <div className="p-3 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop About Image
+              </h3>
+              <button
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0 max-h-[50vh]">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </div>
+
+            {/* Controls */}
+            <div className="p-3 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Buttons */}
+              <div className="mb-3">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-2 py-1 text-xs rounded border ${aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                      }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-2 py-1 text-xs rounded border ${aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                      }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-2 py-1 text-xs rounded border ${aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                      }`}
+                  >
+                    16:9 (Widescreen)
+                  </button>
+                </div>
+              </div>
+
+              {/* Zoom Control */}
+              <div className="space-y-2 mb-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={resetCropSettings}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Main Services Section */}
       <motion.section
         id="services"
-        className="py-20 bg-background theme-transition"
+        className=" bg-background theme-transition"
       >
         <div className="px-4 mx-auto max-w-7xl">
           {/* Edit/Save Buttons */}
@@ -548,11 +545,10 @@ export default function Services({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
@@ -575,11 +571,10 @@ export default function Services({
                 <div className="relative mb-4">
                   <input
                     type="text"
-                    className={`text-3xl font-bold block text-center w-full border-b ${
-                      servicesSection.heading.head.length >= 60
+                    className={`text-3xl font-bold block text-center w-full border-b ${servicesSection.heading.head.length >= 60
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                     value={servicesSection.heading.head}
                     onChange={(e) =>
                       setServicesSection((prev) => ({
@@ -590,13 +585,12 @@ export default function Services({
                     maxLength={60}
                   />
                   <div
-                    className={`absolute right-0 -bottom-5 text-xs ${
-                      servicesSection.heading.head.length >= 60
+                    className={`absolute right-0 -bottom-5 text-xs ${servicesSection.heading.head.length >= 60
                         ? "text-red-500 font-bold animate-pulse"
                         : servicesSection.heading.head.length > 50
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
                   >
                     {servicesSection.heading.head.length >= 60
                       ? "MAXIMUM LENGTH REACHED"
@@ -606,11 +600,10 @@ export default function Services({
                 <div className="relative">
                   <input
                     type="text"
-                    className={`text-muted-foreground block w-full text-center border-b ${
-                      servicesSection.heading.desc.length >= 120
+                    className={`text-muted-foreground block w-full text-center border-b ${servicesSection.heading.desc.length >= 120
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                     value={servicesSection.heading.desc}
                     onChange={(e) =>
                       setServicesSection((prev) => ({
@@ -621,13 +614,12 @@ export default function Services({
                     maxLength={120}
                   />
                   <div
-                    className={`absolute right-0 -bottom-5 text-xs ${
-                      servicesSection.heading.desc.length >= 120
+                    className={`absolute right-0 -bottom-5 text-xs ${servicesSection.heading.desc.length >= 120
                         ? "text-red-500 font-bold animate-pulse"
                         : servicesSection.heading.desc.length > 100
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
+                          ? "text-red-500"
+                          : "text-gray-400"
+                      }`}
                   >
                     {servicesSection.heading.desc.length >= 120
                       ? "MAXIMUM LENGTH REACHED"
@@ -664,18 +656,16 @@ export default function Services({
                         }))
                       }
                       maxLength={40}
-                      className={`px-2 border-b pr-10 ${
-                        cat.length >= 20 ? "border-red-500" : ""
-                      }`}
+                      className={`px-2 border-b pr-10 ${cat.length >= 20 ? "border-red-500" : ""
+                        }`}
                     />
                     <div
-                      className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-[10px] ${
-                        cat.length >= 40
+                      className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-[10px] ${cat.length >= 40
                           ? "text-red-500 font-bold"
                           : cat.length > 30
-                          ? "text-red-500"
-                          : "text-gray-400"
-                      }`}
+                            ? "text-red-500"
+                            : "text-gray-400"
+                        }`}
                     >
                       {cat.length >= 40 ? "MAX" : `${cat.length}`}
                     </div>
@@ -711,11 +701,10 @@ export default function Services({
                 whileHover={{ scale: 1.1 }}
                 onClick={addCategory}
                 disabled={servicesSection.categories.length >= 8} // Limit to 8 categories
-                className={`text-sm font-medium ${
-                  servicesSection.categories.length >= 8
+                className={`text-sm font-medium ${servicesSection.categories.length >= 8
                     ? "text-gray-400 cursor-not-allowed"
                     : "text-green-600 hover:text-green-700"
-                }`}
+                  }`}
               >
                 {servicesSection.categories.length >= 8
                   ? "Max Categories Reached"
@@ -772,18 +761,16 @@ export default function Services({
                             updateServiceField(index, "title", e.target.value)
                           }
                           maxLength={50}
-                          className={`w-full text-lg font-bold border-b pr-12 ${
-                            service.title.length >= 50 ? "border-red-500" : ""
-                          }`}
+                          className={`w-full text-lg font-bold border-b pr-12 ${service.title.length >= 50 ? "border-red-500" : ""
+                            }`}
                         />
                         <div
-                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                            service.title.length >= 50
+                          className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${service.title.length >= 50
                               ? "text-red-500 font-bold"
                               : service.title.length > 40
-                              ? "text-red-500"
-                              : "text-gray-400"
-                          }`}
+                                ? "text-red-500"
+                                : "text-gray-400"
+                            }`}
                         >
                           {service.title.length >= 50
                             ? "MAX"
@@ -810,20 +797,18 @@ export default function Services({
                               )
                             }
                             maxLength={120}
-                            className={`border-b w-full min-h-[4rem] resize-none pr-12 ${
-                              service.description.length >= 120
+                            className={`border-b w-full min-h-[4rem] resize-none pr-12 ${service.description.length >= 120
                                 ? "border-red-500"
                                 : ""
-                            }`}
+                              }`}
                           />
                           <div
-                            className={`absolute right-2 bottom-1 text-xs ${
-                              service.description.length >= 120
+                            className={`absolute right-2 bottom-1 text-xs ${service.description.length >= 120
                                 ? "text-red-500 font-bold"
                                 : service.description.length > 100
-                                ? "text-red-500"
-                                : "text-gray-400"
-                            }`}
+                                  ? "text-red-500"
+                                  : "text-gray-400"
+                              }`}
                           >
                             {service.description.length >= 120
                               ? "MAX"
@@ -842,20 +827,18 @@ export default function Services({
                               )
                             }
                             maxLength={60}
-                            className={`w-full border-b pr-10 ${
-                              service.category.length >= 60
+                            className={`w-full border-b pr-10 ${service.category.length >= 60
                                 ? "border-red-500"
                                 : ""
-                            }`}
+                              }`}
                           />
                           <div
-                            className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-xs ${
-                              service.category.length >= 60
+                            className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-xs ${service.category.length >= 60
                                 ? "text-red-500 font-bold"
                                 : service.category.length > 60
-                                ? "text-red-500"
-                                : "text-gray-400"
-                            }`}
+                                  ? "text-red-500"
+                                  : "text-gray-400"
+                              }`}
                           >
                             {service.category.length >= 60
                               ? "MAX"
@@ -931,386 +914,374 @@ export default function Services({
 
         {/* Modal */}
         <AnimatePresence>
-  {isModalOpen && selectedServiceIndex !== null && (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={closeModal}
-    >
-      <div
-        className="bg-card rounded-xl w-full max-w-2xl p-4 relative top-16 z-100 overflow-y-auto max-h-[85vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={closeModal}
-          className="absolute p-2 bg-gray-500 rounded-full top-2 right-2"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
-        {isEditing ? (
-          <div className="space-y-4">
-            {/* Title */}
-            <div className="relative">
-              <input
-                value={
-                  servicesSection.services[selectedServiceIndex].title
-                }
-                onChange={(e) =>
-                  updateServiceField(
-                    selectedServiceIndex,
-                    "title",
-                    e.target.value
-                  )
-                }
-                maxLength={60}
-                className={`w-full mb-2 text-xl font-bold border-b pr-16 ${
-                  servicesSection.services[selectedServiceIndex].title
-                    .length >= 60
-                    ? "border-red-500"
-                    : ""
-                }`}
-              />
+          {isModalOpen && selectedServiceIndex !== null && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeModal}
+            >
               <div
-                className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                  servicesSection.services[selectedServiceIndex].title
-                    .length >= 60
-                    ? "text-red-500 font-bold animate-pulse"
-                    : servicesSection.services[selectedServiceIndex].title
-                        .length > 50
-                    ? "text-red-500"
-                    : "text-gray-400"
-                }`}
+                className="bg-card rounded-xl w-full max-w-2xl p-4 relative top-16 z-100 overflow-y-auto max-h-[85vh]"
+                onClick={(e) => e.stopPropagation()}
               >
-                {servicesSection.services[selectedServiceIndex].title
-                  .length >= 60
-                  ? "MAX REACHED"
-                  : `${servicesSection.services[selectedServiceIndex].title.length}/60`}
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="relative">
-              <textarea
-                value={
-                  servicesSection.services[selectedServiceIndex]
-                    .detailedDescription
-                }
-                onChange={(e) =>
-                  updateServiceField(
-                    selectedServiceIndex,
-                    "detailedDescription",
-                    e.target.value
-                  )
-                }
-                maxLength={1000}
-                rows={3}
-                className={`w-full mb-2 border-b resize-none pr-16 text-sm ${
-                  servicesSection.services[selectedServiceIndex]
-                    .detailedDescription.length >= 1000
-                    ? "border-red-500"
-                    : ""
-                }`}
-              />
-              <div
-                className={`absolute right-2 bottom-2 text-xs ${
-                  servicesSection.services[selectedServiceIndex]
-                    .detailedDescription.length >= 1000
-                    ? "text-red-500 font-bold animate-pulse"
-                    : servicesSection.services[selectedServiceIndex]
-                        .detailedDescription.length > 800
-                    ? "text-red-500"
-                    : "text-gray-400"
-                }`}
-              >
-                {servicesSection.services[selectedServiceIndex]
-                  .detailedDescription.length >= 1000
-                  ? "MAX REACHED"
-                  : `${servicesSection.services[selectedServiceIndex].detailedDescription.length}/1000`}
-              </div>
-            </div>
-
-            {/* Benefits */}
-            <div>
-              <h3 className="mb-1 text-sm font-semibold">Key Benefits</h3>
-              <ul className="mb-3 space-y-1">
-                {servicesSection.services[selectedServiceIndex].benefits.map(
-                  (b: string, bi: number) => (
-                    <li key={bi} className="flex gap-2 items-start">
-                      <CheckCircle className="w-3 h-3 mt-1 text-green-500 flex-shrink-0" />
-                      <div className="flex flex-col w-full gap-1">
-                        <div className="relative">
-                          <input
-                            value={b}
-                            onChange={(e) =>
-                              updateServiceList(
-                                selectedServiceIndex,
-                                "benefits",
-                                bi,
-                                e.target.value
-                              )
-                            }
-                            maxLength={80}
-                            className={`w-full border-b pr-10 text-sm ${
-                              b.length >= 80 ? "border-red-500" : ""
-                            }`}
-                          />
-                          <div
-                            className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${
-                              b.length >= 80
-                                ? "text-red-500 font-bold"
-                                : b.length > 70
-                                ? "text-red-500"
-                                : "text-gray-400"
-                            }`}
-                          >
-                            {b.length >= 80 ? "MAX" : `${b.length}`}
-                          </div>
-                        </div>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() =>
-                            removeFromList(
-                              selectedServiceIndex,
-                              "benefits",
-                              bi
-                            )
-                          }
-                          className="text-xs text-red-500"
-                        >
-                          ✕ Remove
-                        </motion.button>
-                      </div>
-                    </li>
-                  )
-                )}
-              </ul>
-              {isEditing && (
                 <button
-                  onClick={() => addToList(selectedServiceIndex, "benefits")}
-                  className="text-xs text-green-600"
+                  onClick={closeModal}
+                  className="absolute p-2 bg-gray-500 rounded-full top-2 right-2"
                 >
-                  + Add Benefit
+                  <X className="w-4 h-4" />
                 </button>
-              )}
-            </div>
 
-            {/* Process */}
-            <div>
-              <h3 className="mb-1 text-sm font-semibold">Our Process</h3>
-              <ol className="mb-3 space-y-1">
-                {servicesSection.services[selectedServiceIndex].process.map(
-                  (p: string, pi: number) => (
-                    <li key={pi}>
-                      <div className="flex flex-col w-full gap-1">
-                        <div className="relative">
-                          <input
-                            value={p}
-                            onChange={(e) =>
-                              updateServiceList(
-                                selectedServiceIndex,
-                                "process",
-                                pi,
-                                e.target.value
-                              )
-                            }
-                            maxLength={80}
-                            className={`w-full border-b pr-10 text-sm ${
-                              p.length >= 80 ? "border-red-500" : ""
-                            }`}
-                          />
-                          <div
-                            className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${
-                              p.length >= 80
-                                ? "text-red-500 font-bold"
-                                : p.length > 70
-                                ? "text-red-500"
-                                : "text-gray-400"
-                            }`}
-                          >
-                            {p.length >= 80 ? "MAX" : `${p.length}`}
-                          </div>
-                        </div>
+                {isEditing ? (
+                  <div className="space-y-4">
+                    {/* Title */}
+                    <div className="relative">
+                      <input
+                        value={
+                          servicesSection.services[selectedServiceIndex].title
+                        }
+                        onChange={(e) =>
+                          updateServiceField(
+                            selectedServiceIndex,
+                            "title",
+                            e.target.value
+                          )
+                        }
+                        maxLength={60}
+                        className={`w-full mb-2 text-xl font-bold border-b pr-16 ${servicesSection.services[selectedServiceIndex].title
+                            .length >= 60
+                            ? "border-red-500"
+                            : ""
+                          }`}
+                      />
+                      <div
+                        className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex].title
+                            .length >= 60
+                            ? "text-red-500 font-bold animate-pulse"
+                            : servicesSection.services[selectedServiceIndex].title
+                              .length > 50
+                              ? "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                      >
+                        {servicesSection.services[selectedServiceIndex].title
+                          .length >= 60
+                          ? "MAX REACHED"
+                          : `${servicesSection.services[selectedServiceIndex].title.length}/60`}
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <div className="relative">
+                      <textarea
+                        value={
+                          servicesSection.services[selectedServiceIndex]
+                            .detailedDescription
+                        }
+                        onChange={(e) =>
+                          updateServiceField(
+                            selectedServiceIndex,
+                            "detailedDescription",
+                            e.target.value
+                          )
+                        }
+                        maxLength={1000}
+                        rows={3}
+                        className={`w-full mb-2 border-b resize-none pr-16 text-sm ${servicesSection.services[selectedServiceIndex]
+                            .detailedDescription.length >= 1000
+                            ? "border-red-500"
+                            : ""
+                          }`}
+                      />
+                      <div
+                        className={`absolute right-2 bottom-2 text-xs ${servicesSection.services[selectedServiceIndex]
+                            .detailedDescription.length >= 1000
+                            ? "text-red-500 font-bold animate-pulse"
+                            : servicesSection.services[selectedServiceIndex]
+                              .detailedDescription.length > 800
+                              ? "text-red-500"
+                              : "text-gray-400"
+                          }`}
+                      >
+                        {servicesSection.services[selectedServiceIndex]
+                          .detailedDescription.length >= 1000
+                          ? "MAX REACHED"
+                          : `${servicesSection.services[selectedServiceIndex].detailedDescription.length}/1000`}
+                      </div>
+                    </div>
+
+                    {/* Benefits */}
+                    <div>
+                      <h3 className="mb-1 text-sm font-semibold">Key Benefits</h3>
+                      <ul className="mb-3 space-y-1">
+                        {servicesSection.services[selectedServiceIndex].benefits.map(
+                          (b: string, bi: number) => (
+                            <li key={bi} className="flex gap-2 items-start">
+                              <CheckCircle className="w-3 h-3 mt-1 text-green-500 flex-shrink-0" />
+                              <div className="flex flex-col w-full gap-1">
+                                <div className="relative">
+                                  <input
+                                    value={b}
+                                    onChange={(e) =>
+                                      updateServiceList(
+                                        selectedServiceIndex,
+                                        "benefits",
+                                        bi,
+                                        e.target.value
+                                      )
+                                    }
+                                    maxLength={80}
+                                    className={`w-full border-b pr-10 text-sm ${b.length >= 80 ? "border-red-500" : ""
+                                      }`}
+                                  />
+                                  <div
+                                    className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${b.length >= 80
+                                        ? "text-red-500 font-bold"
+                                        : b.length > 70
+                                          ? "text-red-500"
+                                          : "text-gray-400"
+                                      }`}
+                                  >
+                                    {b.length >= 80 ? "MAX" : `${b.length}`}
+                                  </div>
+                                </div>
+                                <motion.button
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() =>
+                                    removeFromList(
+                                      selectedServiceIndex,
+                                      "benefits",
+                                      bi
+                                    )
+                                  }
+                                  className="text-xs text-red-500"
+                                >
+                                  ✕ Remove
+                                </motion.button>
+                              </div>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                      {isEditing && (
+                        <button
+                          onClick={() => addToList(selectedServiceIndex, "benefits")}
+                          className="text-xs text-green-600"
+                        >
+                          + Add Benefit
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Process */}
+                    <div>
+                      <h3 className="mb-1 text-sm font-semibold">Our Process</h3>
+                      <ol className="mb-3 space-y-1">
+                        {servicesSection.services[selectedServiceIndex].process.map(
+                          (p: string, pi: number) => (
+                            <li key={pi}>
+                              <div className="flex flex-col w-full gap-1">
+                                <div className="relative">
+                                  <input
+                                    value={p}
+                                    onChange={(e) =>
+                                      updateServiceList(
+                                        selectedServiceIndex,
+                                        "process",
+                                        pi,
+                                        e.target.value
+                                      )
+                                    }
+                                    maxLength={80}
+                                    className={`w-full border-b pr-10 text-sm ${p.length >= 80 ? "border-red-500" : ""
+                                      }`}
+                                  />
+                                  <div
+                                    className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${p.length >= 80
+                                        ? "text-red-500 font-bold"
+                                        : p.length > 70
+                                          ? "text-red-500"
+                                          : "text-gray-400"
+                                      }`}
+                                  >
+                                    {p.length >= 80 ? "MAX" : `${p.length}`}
+                                  </div>
+                                </div>
+                                <motion.button
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() =>
+                                    removeFromList(
+                                      selectedServiceIndex,
+                                      "process",
+                                      pi
+                                    )
+                                  }
+                                  className="text-xs text-red-500"
+                                >
+                                  ✕ Remove
+                                </motion.button>
+                              </div>
+                            </li>
+                          )
+                        )}
+                      </ol>
+                      {isEditing && (
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          onClick={() =>
-                            removeFromList(
-                              selectedServiceIndex,
-                              "process",
-                              pi
-                            )
-                          }
-                          className="text-xs text-red-500"
+                          onClick={() => addToList(selectedServiceIndex, "process")}
+                          className="text-xs text-green-600"
                         >
-                          ✕ Remove
+                          + Add Step
                         </motion.button>
+                      )}
+                    </div>
+
+                    {/* Pricing & Timeline */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h3 className="mb-1 font-semibold">Pricing</h3>
+                        <div className="relative">
+                          <input
+                            value={
+                              servicesSection.services[selectedServiceIndex]
+                                .pricing
+                            }
+                            onChange={(e) =>
+                              updateServiceField(
+                                selectedServiceIndex,
+                                "pricing",
+                                e.target.value
+                              )
+                            }
+                            maxLength={30}
+                            className={`w-full border-b pr-10 ${servicesSection.services[selectedServiceIndex]
+                                .pricing.length >= 30
+                                ? "border-red-500"
+                                : ""
+                              }`}
+                          />
+                          <div
+                            className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex]
+                                .pricing.length >= 30
+                                ? "text-red-500 font-bold"
+                                : servicesSection.services[selectedServiceIndex]
+                                  .pricing.length > 25
+                                  ? "text-red-500"
+                                  : "text-gray-400"
+                              }`}
+                          >
+                            {servicesSection.services[selectedServiceIndex]
+                              .pricing.length >= 30
+                              ? "MAX"
+                              : `${servicesSection.services[selectedServiceIndex].pricing.length}/30`}
+                          </div>
+                        </div>
                       </div>
-                    </li>
-                  )
-                )}
-              </ol>
-              {isEditing && (
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => addToList(selectedServiceIndex, "process")}
-                  className="text-xs text-green-600"
-                >
-                  + Add Step
-                </motion.button>
-              )}
-            </div>
-
-            {/* Pricing & Timeline */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <h3 className="mb-1 font-semibold">Pricing</h3>
-                <div className="relative">
-                  <input
-                    value={
-                      servicesSection.services[selectedServiceIndex]
-                        .pricing
-                    }
-                    onChange={(e) =>
-                      updateServiceField(
-                        selectedServiceIndex,
-                        "pricing",
-                        e.target.value
-                      )
-                    }
-                    maxLength={30}
-                    className={`w-full border-b pr-10 ${
-                      servicesSection.services[selectedServiceIndex]
-                        .pricing.length >= 30
-                        ? "border-red-500"
-                        : ""
-                    }`}
-                  />
-                  <div
-                    className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                      servicesSection.services[selectedServiceIndex]
-                        .pricing.length >= 30
-                        ? "text-red-500 font-bold"
-                        : servicesSection.services[selectedServiceIndex]
-                            .pricing.length > 25
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
-                  >
-                    {servicesSection.services[selectedServiceIndex]
-                      .pricing.length >= 30
-                      ? "MAX"
-                      : `${servicesSection.services[selectedServiceIndex].pricing.length}/30`}
+                      <div>
+                        <h3 className="mb-1 font-semibold">Timeline</h3>
+                        <div className="relative">
+                          <input
+                            value={
+                              servicesSection.services[selectedServiceIndex]
+                                .timeline
+                            }
+                            onChange={(e) =>
+                              updateServiceField(
+                                selectedServiceIndex,
+                                "timeline",
+                                e.target.value
+                              )
+                            }
+                            maxLength={60}
+                            className={`w-full border-b pr-10 ${servicesSection.services[selectedServiceIndex]
+                                .timeline.length >= 60
+                                ? "border-red-500"
+                                : ""
+                              }`}
+                          />
+                          <div
+                            className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex]
+                                .timeline.length >= 60
+                                ? "text-red-500 font-bold"
+                                : servicesSection.services[selectedServiceIndex]
+                                  .timeline.length > 60
+                                  ? "text-red-500"
+                                  : "text-gray-400"
+                              }`}
+                          >
+                            {servicesSection.services[selectedServiceIndex]
+                              .timeline.length >= 60
+                              ? "MAX"
+                              : `${servicesSection.services[selectedServiceIndex].timeline.length}/60`}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div>
-                <h3 className="mb-1 font-semibold">Timeline</h3>
-                <div className="relative">
-                  <input
-                    value={
-                      servicesSection.services[selectedServiceIndex]
-                        .timeline
-                    }
-                    onChange={(e) =>
-                      updateServiceField(
-                        selectedServiceIndex,
-                        "timeline",
-                        e.target.value
-                      )
-                    }
-                    maxLength={60}
-                    className={`w-full border-b pr-10 ${
-                      servicesSection.services[selectedServiceIndex]
-                        .timeline.length >= 60
-                        ? "border-red-500"
-                        : ""
-                    }`}
-                  />
-                  <div
-                    className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${
-                      servicesSection.services[selectedServiceIndex]
-                        .timeline.length >= 60
-                        ? "text-red-500 font-bold"
-                        : servicesSection.services[selectedServiceIndex]
-                            .timeline.length > 60
-                        ? "text-red-500"
-                        : "text-gray-400"
-                    }`}
-                  >
-                    {servicesSection.services[selectedServiceIndex]
-                      .timeline.length >= 60
-                      ? "MAX"
-                      : `${servicesSection.services[selectedServiceIndex].timeline.length}/60`}
+                ) : (
+                  // Non-editing view with similar compact styling
+                  <div className="space-y-4">
+                    <h2 className="mb-2 text-xl font-bold">
+                      {servicesSection.services[selectedServiceIndex].title}
+                    </h2>
+                    <p className="mb-2 text-sm text-muted-foreground">
+                      {
+                        servicesSection.services[selectedServiceIndex]
+                          .detailedDescription
+                      }
+                    </p>
+
+                    <div>
+                      <h3 className="mb-1 text-sm font-semibold">Key Benefits</h3>
+                      <ul className="mb-3 space-y-1">
+                        {servicesSection.services[selectedServiceIndex].benefits.map(
+                          (b: string, bi: number) => (
+                            <li key={bi} className="flex gap-2 items-start">
+                              <CheckCircle className="w-3 h-3 mt-1 text-green-500 flex-shrink-0" />
+                              <span className="text-sm">{b}</span>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="mb-1 text-sm font-semibold">Our Process</h3>
+                      <ol className="mb-3 space-y-1">
+                        {servicesSection.services[selectedServiceIndex].process.map(
+                          (p: string, pi: number) => (
+                            <li key={pi} className="text-sm">
+                              <span>{p}</span>
+                            </li>
+                          )
+                        )}
+                      </ol>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h3 className="mb-1 font-semibold">Pricing</h3>
+                        <p>
+                          {servicesSection.services[selectedServiceIndex].pricing}
+                        </p>
+                      </div>
+                      <div>
+                        <h3 className="mb-1 font-semibold">Timeline</h3>
+                        <p>
+                          {servicesSection.services[selectedServiceIndex].timeline}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          // Non-editing view with similar compact styling
-          <div className="space-y-4">
-            <h2 className="mb-2 text-xl font-bold">
-              {servicesSection.services[selectedServiceIndex].title}
-            </h2>
-            <p className="mb-2 text-sm text-muted-foreground">
-              {
-                servicesSection.services[selectedServiceIndex]
-                  .detailedDescription
-              }
-            </p>
-
-            <div>
-              <h3 className="mb-1 text-sm font-semibold">Key Benefits</h3>
-              <ul className="mb-3 space-y-1">
-                {servicesSection.services[selectedServiceIndex].benefits.map(
-                  (b: string, bi: number) => (
-                    <li key={bi} className="flex gap-2 items-start">
-                      <CheckCircle className="w-3 h-3 mt-1 text-green-500 flex-shrink-0" />
-                      <span className="text-sm">{b}</span>
-                    </li>
-                  )
                 )}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="mb-1 text-sm font-semibold">Our Process</h3>
-              <ol className="mb-3 space-y-1">
-                {servicesSection.services[selectedServiceIndex].process.map(
-                  (p: string, pi: number) => (
-                    <li key={pi} className="text-sm">
-                      <span>{p}</span>
-                    </li>
-                  )
-                )}
-              </ol>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <h3 className="mb-1 font-semibold">Pricing</h3>
-                <p>
-                  {servicesSection.services[selectedServiceIndex].pricing}
-                </p>
               </div>
-              <div>
-                <h3 className="mb-1 font-semibold">Timeline</h3>
-                <p>
-                  {servicesSection.services[selectedServiceIndex].timeline}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.section>
     </>
   );

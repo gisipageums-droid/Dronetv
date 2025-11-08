@@ -153,7 +153,7 @@ export default function About() {
                   className='w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none'
                 />
               ) : (
-                <p className='text-lg text-muted-foreground'>{aboutDesc1}</p>
+                <p className='text-lg text-muted-foreground text-justify'>{aboutDesc1}</p>
               )}
               {isEditing ? (
                 <textarea
@@ -162,7 +162,7 @@ export default function About() {
                   className='w-full bg-transparent border-b border-muted-foreground text-muted-foreground outline-none'
                 />
               ) : (
-                <p className='text-muted-foreground'>{aboutDesc2}</p>
+                <p className='text-muted-foreground text-justify'>{aboutDesc2}</p>
               )}
             </motion.div>
 
@@ -257,10 +257,12 @@ export default function About() {
               className='bg-transparent border-b border-primary text-primary outline-none'
             />
           ) : (
-            <div className='inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6'>
-              <Eye className='text-lg mr-2 text-red-500' />
-              <span className='font-medium text-red-500 text-lg'>{visionBadge}</span>
-            </div>
+            <>
+              <Eye className='w-12 h-12 text-red-500 mx-auto mb-4' />
+              <div className='inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6'>
+                <span className='font-medium text-red-500 text-lg'>{visionBadge}</span>
+              </div>
+            </>
           )}
 
           {isEditing ? (
@@ -282,7 +284,7 @@ export default function About() {
               className='w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none'
             />
           ) : (
-            <p className='text-lg text-muted-foreground max-w-3xl mx-auto mb-12'>
+            <p className='text-lg text-muted-foreground max-w-3xl mx-auto mb-12 text-justify'>
               {visionDesc}
             </p>
           )}
@@ -321,7 +323,7 @@ export default function About() {
                       className='w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none'
                     />
                   ) : (
-                    <p className='text-muted-foreground text-sm leading-relaxed'>
+                    <p className='text-muted-foreground text-sm leading-relaxed text-justify'>
                       {pillar.description}
                     </p>
                   )}
@@ -352,7 +354,7 @@ export default function About() {
               className='w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none'
             />
           ) : (
-            <p className='text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed'>
+            <p className='text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed text-justify'>
               {missionDesc}
             </p>
           )}

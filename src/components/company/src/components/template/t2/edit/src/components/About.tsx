@@ -502,7 +502,7 @@
 // //       )}
 
 // //       {/* Main About Section */}
-  
+
 // //       {/* Main About Section */}
 // //       <section id="about" className="py-20 bg-secondary theme-transition">
 // //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -548,7 +548,7 @@
 // //                   Recommended: 800×600px (4:3 ratio)
 // //                 </div>
 // //               )}
-              
+
 // //               {/* Image Container */}
 // //               <div className="relative w-full">
 // //                 <motion.div 
@@ -607,7 +607,7 @@
 // //                     {aboutState.aboutTitle}
 // //                   </h2>
 // //                 )}
-                
+
 // //                 {isEditing ? (
 // //                   <div className="relative">
 // //                     <textarea
@@ -646,7 +646,7 @@
 // //                     {aboutState.description1}
 // //                   </p>
 // //                 )}
-                
+
 // //                 {isEditing ? (
 // //                   <div className="relative">
 // //                     <textarea
@@ -1704,7 +1704,7 @@
 //                   Recommended: 800×600px (4:3 ratio)
 //                 </div>
 //               )}
-              
+
 //               {/* Image Container */}
 //               <div className="relative w-full">
 //                 <motion.div 
@@ -1763,7 +1763,7 @@
 //                     {aboutState.aboutTitle}
 //                   </h2>
 //                 )}
-                
+
 //                 {isEditing ? (
 //                   <div className="relative">
 //                     <textarea
@@ -1802,7 +1802,7 @@
 //                     {aboutState.description1}
 //                   </p>
 //                 )}
-                
+
 //                 {isEditing ? (
 //                   <div className="relative">
 //                     <textarea
@@ -2312,7 +2312,7 @@ export default function About({
     Heart: Heart,
   };
 
- // Consolidated state
+  // Consolidated state
   const [aboutState, setAboutState] = useState({
     aboutTitle: "About Our Company",
     description1:
@@ -2338,35 +2338,35 @@ export default function About({
       "We envision a world where technology and human ingenuity combine to create sustainable solutions that empower businesses to thrive while making a positive impact on society and the environment.",
     visionPillars: aboutData?.visionPillars
       ? aboutData.visionPillars.map((pillar) => ({
-          ...pillar,
-          icon: iconMap[pillar.icon] || Globe, // Fallback to Globe if icon not found
-        }))
+        ...pillar,
+        icon: iconMap[pillar.icon] || Globe, // Fallback to Globe if icon not found
+      }))
       : [
-          {
-            icon: Globe,
-            title: "Global Impact",
-            description:
-              "Expanding our reach to serve clients across continents while maintaining our commitment to excellence.",
-          },
-          {
-            icon: Users,
-            title: "Community Building",
-            description:
-              "Creating ecosystems where businesses thrive together through collaboration and shared growth.",
-          },
-          {
-            icon: Rocket,
-            title: "Innovation First",
-            description:
-              "Continuously pushing boundaries with cutting-edge technologies and forward-thinking strategies.",
-          },
-          {
-            icon: Heart,
-            title: "Sustainable Growth",
-            description:
-              "Balancing profitability with social responsibility and environmental consciousness.",
-          },
-        ],
+        {
+          icon: Globe,
+          title: "Global Impact",
+          description:
+            "Expanding our reach to serve clients across continents while maintaining our commitment to excellence.",
+        },
+        {
+          icon: Users,
+          title: "Community Building",
+          description:
+            "Creating ecosystems where businesses thrive together through collaboration and shared growth.",
+        },
+        {
+          icon: Rocket,
+          title: "Innovation First",
+          description:
+            "Continuously pushing boundaries with cutting-edge technologies and forward-thinking strategies.",
+        },
+        {
+          icon: Heart,
+          title: "Sustainable Growth",
+          description:
+            "Balancing profitability with social responsibility and environmental consciousness.",
+        },
+      ],
     missionTitle: "Our Mission",
     missionDesc:
       aboutData?.mission ||
@@ -2697,11 +2697,10 @@ export default function About({
                   </button> */}
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
@@ -2774,11 +2773,10 @@ export default function About({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
@@ -2810,7 +2808,7 @@ export default function About({
                     Recommended: 800×600px (4:3 ratio)
                   </div>
                 )}
-                
+
                 {/* Image Container */}
                 {/* <div className="relative w-full">
                   <motion.div 
@@ -2833,21 +2831,21 @@ export default function About({
                   </motion.div>
                 </div> */}
                 {/* Image Container */}
-<div className="relative w-full">
-  <motion.div 
-    className="relative"
-    whileInView={{ opacity: [0, 1], scale: [0.8, 1] }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
-  >
-    <div className="relative w-full h-full">
-      <img
-        src={aboutState.imageUrl}
-        alt="About"
-        className="w-full h-full object-cover rounded-2xl shadow-2xl"
-      />
-    </div>
-  </motion.div>
-</div>
+                <div className="relative w-full">
+                  <motion.div
+                    className="relative"
+                    whileInView={{ opacity: [0, 1], scale: [0.8, 1] }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                  >
+                    <div className="relative w-full h-full">
+                      <img
+                        src={aboutState.imageUrl}
+                        alt="About"
+                        className="w-full h-full object-cover rounded-2xl shadow-2xl"
+                      />
+                    </div>
+                  </motion.div>
+                </div>
                 {isEditing && (
                   <div className="absolute bottom-4 left-4 right-4 bg-white/80 p-2 rounded shadow z-50">
                     <input
@@ -2878,11 +2876,10 @@ export default function About({
                         updateField("description2", e.target.value)
                       }
                       maxLength={500}
-                      className={`w-full bg-transparent border-b text-muted-foreground outline-none ${
-                        aboutState.description2.length >= 500
-                          ? "border-red-500"
-                          : "border-muted-foreground"
-                      }`}
+                      className={`w-full bg-transparent border-b text-muted-foreground outline-none ${aboutState.description2.length >= 500
+                        ? "border-red-500"
+                        : "border-muted-foreground"
+                        }`}
                       rows={4}
                     />
                     <div className="flex justify-between items-center mt-1">
@@ -2894,11 +2891,10 @@ export default function About({
                         )}
                       </div>
                       <div
-                        className={`text-xs ${
-                          aboutState.description2.length >= 500
-                            ? "text-red-500"
-                            : "text-gray-500"
-                        }`}
+                        className={`text-xs ${aboutState.description2.length >= 500
+                          ? "text-red-500"
+                          : "text-gray-500"
+                          }`}
                       >
                         {aboutState.description2.length}/500
                       </div>
@@ -2931,7 +2927,7 @@ export default function About({
                     {aboutState.aboutTitle}
                   </h2>
                 )}
-                
+
                 {isEditing ? (
                   <div className="relative">
                     <textarea
@@ -2940,11 +2936,10 @@ export default function About({
                         updateField("description1", e.target.value)
                       }
                       maxLength={500}
-                      className={`w-full bg-transparent border-b text-lg text-muted-foreground outline-none ${
-                        aboutState.description1.length >= 500
-                          ? "border-red-500"
-                          : "border-muted-foreground"
-                      }`}
+                      className={`w-full bg-transparent border-b text-lg text-muted-foreground outline-none ${aboutState.description1.length >= 500
+                        ? "border-red-500"
+                        : "border-muted-foreground"
+                        }`}
                       rows={4}
                     />
                     <div className="flex justify-between items-center mt-1">
@@ -2956,11 +2951,10 @@ export default function About({
                         )}
                       </div>
                       <div
-                        className={`text-xs ${
-                          aboutState.description1.length >= 500
-                            ? "text-red-500"
-                            : "text-gray-500"
-                        }`}
+                        className={`text-xs ${aboutState.description1.length >= 500
+                          ? "text-red-500"
+                          : "text-gray-500"
+                          }`}
                       >
                         {aboutState.description1.length}/500
                       </div>
@@ -3007,7 +3001,7 @@ export default function About({
               </motion.div>
 
               {/* Company metrics */}
-              <motion.div 
+              <motion.div
                 className="grid grid-cols-2 gap-6 pt-6"
                 whileInView={{ opacity: [0, 1], y: [30, 0] }}
                 transition={{ duration: 0.8, delay: 0.8 }}
@@ -3021,11 +3015,10 @@ export default function About({
                           updateField("metric1Num", e.target.value)
                         }
                         maxLength={15}
-                        className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${
-                          aboutState.metric1Num.length >= 15
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${aboutState.metric1Num.length >= 15
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {aboutState.metric1Num.length}/15
@@ -3053,11 +3046,10 @@ export default function About({
                           updateField("metric1Label", e.target.value)
                         }
                         maxLength={25}
-                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${
-                          aboutState.metric1Label.length >= 25
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${aboutState.metric1Label.length >= 25
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {aboutState.metric1Label.length}/25
@@ -3088,11 +3080,10 @@ export default function About({
                           updateField("metric2Num", e.target.value)
                         }
                         maxLength={15}
-                        className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${
-                          aboutState.metric2Num.length >= 15
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${aboutState.metric2Num.length >= 15
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {aboutState.metric2Num.length}/15
@@ -3120,11 +3111,10 @@ export default function About({
                           updateField("metric2Label", e.target.value)
                         }
                         maxLength={25}
-                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${
-                          aboutState.metric2Label.length >= 25
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${aboutState.metric2Label.length >= 25
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {aboutState.metric2Label.length}/25
@@ -3157,9 +3147,8 @@ export default function About({
                   value={aboutState.visionBadge}
                   onChange={(e) => updateField("visionBadge", e.target.value)}
                   maxLength={25}
-                  className={`bg-transparent border-b border-primary text-primary outline-none text-center ${
-                    aboutState.visionBadge.length >= 25 ? "border-red-500" : ""
-                  }`}
+                  className={`bg-transparent border-b border-primary text-primary outline-none text-center ${aboutState.visionBadge.length >= 25 ? "border-red-500" : ""
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1 absolute -bottom-6 right-0">
                   {aboutState.visionBadge.length}/25
@@ -3172,15 +3161,14 @@ export default function About({
               </div>
             ) : (
               <motion.div
-                whileInView={{ opacity: [0, 1], y: [-20, 0] }}
-                transition={{ duration: 0.5, ease: "backInOut" }}
-                className="inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6"
+                className="flex flex-col items-center justify-center w-[150px] mx-auto px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6"
               >
-                <Eye className="text-lg mr-2 text-red-500" />
+                <Eye className="text-lg mb-1 text-red-500" />
                 <span className="font-medium text-red-500 text-lg">
                   {aboutState.visionBadge}
                 </span>
               </motion.div>
+
             )}
 
             {isEditing ? (
@@ -3189,9 +3177,8 @@ export default function About({
                   value={aboutState.visionTitle}
                   onChange={(e) => updateField("visionTitle", e.target.value)}
                   maxLength={80}
-                  className={`bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center ${
-                    aboutState.visionTitle.length >= 80 ? "border-red-500" : ""
-                  }`}
+                  className={`bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center ${aboutState.visionTitle.length >= 80 ? "border-red-500" : ""
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {aboutState.visionTitle.length}/80
@@ -3218,9 +3205,8 @@ export default function About({
                   value={aboutState.visionDesc}
                   onChange={(e) => updateField("visionDesc", e.target.value)}
                   maxLength={500}
-                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${
-                    aboutState.visionDesc.length >= 500 ? "border-red-500" : ""
-                  }`}
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.visionDesc.length >= 500 ? "border-red-500" : ""
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {aboutState.visionDesc.length}/500
@@ -3240,7 +3226,7 @@ export default function About({
                 {aboutState.visionDesc}
               </motion.p>
             )}
-            
+
             {/* Vision Pillars */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {aboutState.visionPillars.map((pillar, index) => {
@@ -3264,9 +3250,8 @@ export default function About({
                             updatePillar(index, "title", e.target.value)
                           }
                           maxLength={40}
-                          className={`bg-transparent border-b border-foreground font-semibold outline-none w-full text-center ${
-                            pillar.title.length >= 40 ? "border-red-500" : ""
-                          }`}
+                          className={`bg-transparent border-b border-foreground font-semibold outline-none w-full text-center ${pillar.title.length >= 40 ? "border-red-500" : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {pillar.title.length}/40
@@ -3291,11 +3276,10 @@ export default function About({
                             updatePillar(index, "description", e.target.value)
                           }
                           maxLength={150}
-                          className={`w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none text-center text-justify ${
-                            pillar.description.length >= 150
-                              ? "border-red-500"
-                              : ""
-                          }`}
+                          className={`w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none text-center text-justify ${pillar.description.length >= 150
+                            ? "border-red-500"
+                            : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {pillar.description.length}/150
@@ -3327,9 +3311,8 @@ export default function About({
                   value={aboutState.missionTitle}
                   onChange={(e) => updateField("missionTitle", e.target.value)}
                   maxLength={60}
-                  className={`bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center ${
-                    aboutState.missionTitle.length >= 60 ? "border-red-500" : ""
-                  }`}
+                  className={`bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center ${aboutState.missionTitle.length >= 60 ? "border-red-500" : ""
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {aboutState.missionTitle.length}/60
@@ -3356,9 +3339,8 @@ export default function About({
                   value={aboutState.missionDesc}
                   onChange={(e) => updateField("missionDesc", e.target.value)}
                   maxLength={500}
-                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${
-                    aboutState.missionDesc.length >= 500 ? "border-red-500" : ""
-                  }`}
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.missionDesc.length >= 500 ? "border-red-500" : ""
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {aboutState.missionDesc.length}/500

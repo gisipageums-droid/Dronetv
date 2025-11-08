@@ -5,9 +5,12 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
 
 export default function Blog() {
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllPosts, setShowAllPosts] = useState(false);
+  // Slider state for long content in modal
+  const [slides, setSlides] = useState<string[]>([]);
+  const [slideIndex, setSlideIndex] = useState(0);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [blogPosts, setBlogPosts] = useState<any[]>([
     {
@@ -120,8 +123,22 @@ export default function Blog() {
 
   const displayedPosts = showAllPosts ? blogPosts : blogPosts.slice(0, 4);
 
-  const openModal = (post) => {
+  const openModal = (post: any) => {
     setSelectedPost(post);
+    // Split content into slide-sized chunks (by paragraphs/headings)
+    try {
+      const raw = post?.content || "";
+      const parts = raw
+        .split(/<(?:p|h3|h2)[^>]*>/i)
+        .map((s: string) => s.replace(/<\/(?:p|h3|h2)>/gi, "").trim())
+        .filter((s: string) => s.length > 0)
+        .map((s: string) => `<p>${s}</p>`);
+      setSlides(parts.length > 0 ? parts : [raw]);
+      setSlideIndex(0);
+    } catch (e) {
+      setSlides([post?.content || ""]);
+      setSlideIndex(0);
+    }
     setIsModalOpen(true);
     document.body.style.overflow = "hidden";
   };
@@ -456,10 +473,31 @@ export default function Blog() {
                   {selectedPost.title}
                 </h2>
 
-                <div
-                  className='prose prose-gray max-w-none text-card-foreground'
-                  dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+                {/* Slider content */}
+                <div className='prose prose-gray max-w-none text-card-foreground text-justify'
+                  dangerouslySetInnerHTML={{ __html: slides[slideIndex] || "" }}
                 />
+
+                {slides.length > 1 && (
+                  <div className='mt-6 flex items-center justify-between'>
+                    <Button
+                      variant='secondary'
+                      onClick={() => setSlideIndex((i) => Math.max(0, i - 1))}
+                      disabled={slideIndex === 0}
+                    >
+                      Previous
+                    </Button>
+                    <div className='text-sm text-muted-foreground'>
+                      {slideIndex + 1} / {slides.length}
+                    </div>
+                    <Button
+                      onClick={() => setSlideIndex((i) => Math.min(slides.length - 1, i + 1))}
+                      disabled={slideIndex === slides.length - 1}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>

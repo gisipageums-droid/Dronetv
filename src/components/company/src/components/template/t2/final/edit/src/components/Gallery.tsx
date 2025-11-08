@@ -1298,31 +1298,28 @@ const Gallery = ({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -1377,11 +1374,10 @@ const Gallery = ({
       {/* Main Gallery Section */}
       <section
         id="gallery"
-        className={`py-20 theme-transition ${
-          theme === "dark"
+        className={` theme-transition ${theme === "dark"
             ? "bg-[#1f1f1f] text-gray-100"
             : "bg-gray-50 text-gray-900"
-        }`}
+          }`}
       >
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
@@ -1392,11 +1388,10 @@ const Gallery = ({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
               >
                 <Save size={16} />
                 {isUploading ? "Uploading..." : "Save"}
@@ -1423,11 +1418,10 @@ const Gallery = ({
                     value={contentState.heading.title}
                     onChange={(e) => updateHeaderField("title", e.target.value)}
                     maxLength={80}
-                    className={`mb-4 text-3xl font-bold text-center bg-transparent border-b w-full ${
-                      contentState.heading.title.length >= 80
+                    className={`mb-4 text-3xl font-bold text-center bg-transparent border-b w-full ${contentState.heading.title.length >= 80
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
                     {contentState.heading.title.length}/80
@@ -1446,11 +1440,10 @@ const Gallery = ({
                       updateHeaderField("description", e.target.value)
                     }
                     maxLength={250}
-                    className={`w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b ${
-                      contentState.heading.description.length >= 250
+                    className={`w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b ${contentState.heading.description.length >= 250
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
                     {contentState.heading.description.length}/250
@@ -1479,9 +1472,8 @@ const Gallery = ({
             {contentState.images.map((image, index) => (
               <motion.div
                 key={image.id}
-                className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${
-                  theme === "dark" ? "bg-gray-800" : "bg-white"
-                }`}
+                className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${theme === "dark" ? "bg-gray-800" : "bg-white"
+                  }`}
                 whileHover={{ y: isEditing ? 0 : -5 }}
                 onClick={() => openLightbox(index)}
               >
@@ -1553,9 +1545,8 @@ const Gallery = ({
                         onChange={(e) =>
                           updateImageField(index, "title", e.target.value)
                         }
-                        className={`w-full mb-2 font-semibold bg-transparent border-b ${
-                          theme === "dark" ? "text-white" : "text-gray-900"
-                        }`}
+                        className={`w-full mb-2 font-semibold bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900"
+                          }`}
                         placeholder="Image Title"
                       />
                       <input
@@ -1563,9 +1554,8 @@ const Gallery = ({
                         onChange={(e) =>
                           updateImageField(index, "category", e.target.value)
                         }
-                        className={`w-full text-sm bg-transparent border-b ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-600"
-                        }`}
+                        className={`w-full text-sm bg-transparent border-b ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                          }`}
                         placeholder="Category"
                       />
                       <textarea
@@ -1573,9 +1563,8 @@ const Gallery = ({
                         onChange={(e) =>
                           updateImageField(index, "description", e.target.value)
                         }
-                        className={`w-full mt-2 text-xs bg-transparent border-b ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-500"
-                        }`}
+                        className={`w-full mt-2 text-xs bg-transparent border-b ${theme === "dark" ? "text-gray-400" : "text-gray-500"
+                          }`}
                         placeholder="Image description"
                         rows="2"
                       />
@@ -1600,11 +1589,10 @@ const Gallery = ({
             {/* Show Add Image button only when there are less than 6 images */}
             {isEditing && contentState.images.length < 6 && (
               <motion.div
-                className={`rounded-lg flex items-center justify-center border-dashed ${
-                  theme === "dark"
+                className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
                     ? "bg-gray-800 border-gray-700"
                     : "bg-white border-gray-300"
-                } border-2 cursor-pointer`}
+                  } border-2 cursor-pointer`}
                 whileHover={{ scale: 1.02 }}
                 onClick={addImage}
               >

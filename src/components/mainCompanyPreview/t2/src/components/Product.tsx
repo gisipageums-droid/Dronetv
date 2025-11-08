@@ -38,7 +38,7 @@ export default function Product({ productData }) {
     {(hasHeading || hasProducts )&&(
     <motion.section
       id="product"
-      className="py-20 bg-secondary theme-transition"
+      className="pt-8 pb-20 bg-secondary theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}

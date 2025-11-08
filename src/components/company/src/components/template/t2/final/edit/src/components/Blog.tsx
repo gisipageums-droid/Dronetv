@@ -365,31 +365,28 @@ export default function Blog({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -442,7 +439,7 @@ export default function Blog({
       )}
 
       {/* Main Blog Section */}
-      <section id="blog" className="py-20 bg-background theme-transition">
+      <section id="blog" className=" bg-background theme-transition">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
           <div className="flex justify-end mt-6">
@@ -452,11 +449,10 @@ export default function Blog({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
@@ -480,12 +476,12 @@ export default function Blog({
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            
-              {isEditing ? (
-                 <motion.div
-              className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
-              whileHover={{ scale: 1.05 }}
-            >
+
+            {isEditing ? (
+              <motion.div
+                className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
+                whileHover={{ scale: 1.05 }}
+              >
                 <div className="relative">
                   <input
                     type="text"
@@ -497,11 +493,10 @@ export default function Blog({
                       }))
                     }
                     maxLength={25}
-                    className={`font-medium bg-transparent border-b text-center ${
-                      blogSection.header.badge.length >= 25
+                    className={`font-medium bg-transparent border-b text-center ${blogSection.header.badge.length >= 25
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
                     {blogSection.header.badge.length}/25
@@ -512,20 +507,20 @@ export default function Blog({
                     )}
                   </div>
                 </div>
-            </motion.div>
+              </motion.div>
 
-              ) : (
-                blogSection.header.badge.length > 0 && (
-                  <motion.div
-                    className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <span className="font-semibold text-lg">
-                      {blogSection.header.badge}
-                    </span>
-                  </motion.div>
-                )
-              )}
+            ) : (
+              blogSection.header.badge.length > 0 && (
+                <motion.div
+                  className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <span className="font-semibold text-lg">
+                    {blogSection.header.badge}
+                  </span>
+                </motion.div>
+              )
+            )}
 
             {isEditing ? (
               <div className="relative">
@@ -539,11 +534,10 @@ export default function Blog({
                     }))
                   }
                   maxLength={80}
-                  className={`text-3xl md:text-4xl text-foreground mb-6 w-full text-center bg-transparent border-b font-bold ${
-                    blogSection.header.title.length >= 80
+                  className={`text-3xl md:text-4xl text-foreground mb-6 w-full text-center bg-transparent border-b font-bold ${blogSection.header.title.length >= 80
                       ? "border-red-500"
                       : ""
-                  }`}
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {blogSection.header.title.length}/80
@@ -571,11 +565,10 @@ export default function Blog({
                     }))
                   }
                   maxLength={200}
-                  className={`text-lg text-muted-foreground max-w-2xl mx-auto w-full text-center bg-transparent border-b ${
-                    blogSection.header.desc.length >= 200
+                  className={`text-lg text-muted-foreground max-w-2xl mx-auto w-full text-center bg-transparent border-b ${blogSection.header.desc.length >= 200
                       ? "border-red-500"
                       : ""
-                  }`}
+                    }`}
                   rows={2}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
@@ -632,9 +625,8 @@ export default function Blog({
                               }))
                             }
                             maxLength={20}
-                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b ${
-                              post.category.length >= 20 ? "border-red-500" : ""
-                            }`}
+                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b ${post.category.length >= 20 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {post.category.length}/20
@@ -695,9 +687,8 @@ export default function Blog({
                             }))
                           }
                           maxLength={20}
-                          className={`text-xs text-muted-foreground bg-transparent border-b ${
-                            post.date.length >= 20 ? "border-red-500" : ""
-                          }`}
+                          className={`text-xs text-muted-foreground bg-transparent border-b ${post.date.length >= 20 ? "border-red-500" : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {post.date.length}/20
@@ -729,9 +720,8 @@ export default function Blog({
                             }))
                           }
                           maxLength={30}
-                          className={`text-xs text-muted-foreground bg-transparent border-b ${
-                            post.author.length >= 30 ? "border-red-500" : ""
-                          }`}
+                          className={`text-xs text-muted-foreground bg-transparent border-b ${post.author.length >= 30 ? "border-red-500" : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {post.author.length}/30
@@ -766,9 +756,8 @@ export default function Blog({
                               }))
                             }
                             maxLength={100}
-                            className={`font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 w-full border-b bg-transparent min-h-[3rem] ${
-                              post.title.length >= 100 ? "border-red-500" : ""
-                            }`}
+                            className={`font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 w-full border-b bg-transparent min-h-[3rem] ${post.title.length >= 100 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {post.title.length}/100
@@ -793,9 +782,8 @@ export default function Blog({
                               }))
                             }
                             maxLength={200}
-                            className={`text-muted-foreground text-sm line-clamp-3 w-full border-b bg-transparent min-h-[4.5rem] ${
-                              post.excerpt.length >= 200 ? "border-red-500" : ""
-                            }`}
+                            className={`text-muted-foreground text-sm line-clamp-3 w-full border-b bg-transparent min-h-[4.5rem] ${post.excerpt.length >= 200 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {post.excerpt.length}/200
@@ -942,11 +930,10 @@ export default function Blog({
                               }))
                             }
                             maxLength={20}
-                            className={`text-sm font-medium text-primary-foreground bg-transparent border-b ${
-                              selectedPost.category.length >= 20
+                            className={`text-sm font-medium text-primary-foreground bg-transparent border-b ${selectedPost.category.length >= 20
                                 ? "border-red-500"
                                 : ""
-                            }`}
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {selectedPost.category.length}/20
@@ -981,11 +968,10 @@ export default function Blog({
                             }))
                           }
                           maxLength={20}
-                          className={`text-sm text-muted-foreground bg-transparent border-b ${
-                            selectedPost.date.length >= 20
+                          className={`text-sm text-muted-foreground bg-transparent border-b ${selectedPost.date.length >= 20
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {selectedPost.date.length}/20
@@ -1014,11 +1000,10 @@ export default function Blog({
                             }))
                           }
                           maxLength={30}
-                          className={`text-sm text-muted-foreground bg-transparent border-b ${
-                            selectedPost.author.length >= 30
+                          className={`text-sm text-muted-foreground bg-transparent border-b ${selectedPost.author.length >= 30
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {selectedPost.author.length}/30
@@ -1048,11 +1033,10 @@ export default function Blog({
                             }))
                           }
                           maxLength={100}
-                          className={`text-2xl font-bold text-card-foreground mb-4 w-full bg-transparent border-b ${
-                            selectedPost.title.length >= 100
+                          className={`text-2xl font-bold text-card-foreground mb-4 w-full bg-transparent border-b ${selectedPost.title.length >= 100
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {selectedPost.title.length}/100
@@ -1074,11 +1058,10 @@ export default function Blog({
                             }))
                           }
                           maxLength={5000}
-                          className={`prose prose-gray max-w-none text-card-foreground w-full h-48 mb-4 border bg-transparent p-2 ${
-                            selectedPost.content.length >= 5000
+                          className={`prose prose-gray max-w-none text-card-foreground w-full h-48 mb-4 border bg-transparent p-2 ${selectedPost.content.length >= 5000
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {selectedPost.content.length}/5000
