@@ -32,11 +32,11 @@
 //   const [heroState, setHeroState] = useState({
 //     badgeText: "Trusted by 20+ Companies",
 //     heading: heroData?.title || "Transform Your Business with",
-//     // highlight: "Innovation",
+//     highlight: "Innovation",
 //     description:
 //       heroData?.subtitle ||
 //       "We help companies scale and grow with cutting-edge solutions, expert guidance, and proven strategies that deliver",
-//     // highlightDesc: "exceptional results",
+//     highlightDesc: "exceptional results",
 //     primaryBtn: heroData?.primaryAction?.text || "Get Started Today",
 //     trustText: "Join 20+ satisfied clients",
 //     stats: [
@@ -502,31 +502,28 @@
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(1)}
-//                     className={`px-3 py-2 text-sm rounded border ${
-//                       aspectRatio === 1
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
-//                     }`}
+//                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+//                       ? "bg-blue-500 text-white border-blue-500"
+//                       : "bg-white text-gray-700 border-gray-300"
+//                       }`}
 //                   >
 //                     1:1 (Square)
 //                   </button>
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
-//                     className={`px-3 py-2 text-sm rounded border ${
-//                       aspectRatio === 4 / 3
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
-//                     }`}
+//                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+//                       ? "bg-blue-500 text-white border-blue-500"
+//                       : "bg-white text-gray-700 border-gray-300"
+//                       }`}
 //                   >
 //                     4:3 (Standard)
 //                   </button>
 //                   <button
 //                     onClick={() => setAspectRatio(16 / 9)}
-//                     className={`px-3 py-2 text-sm rounded border ${
-//                       aspectRatio === 16 / 9
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
-//                     }`}
+//                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+//                       ? "bg-blue-500 text-white border-blue-500"
+//                       : "bg-white text-gray-700 border-gray-300"
+//                       }`}
 //                   >
 //                     16:9 (Widescreen)
 //                   </button>
@@ -624,11 +621,10 @@
 //                           updateField("badgeText", e.target.value)
 //                         }
 //                         maxLength={25}
-//                         className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${
-//                           heroState.badgeText.length >= 25
-//                             ? "border-red-500"
-//                             : ""
-//                         }`}
+//                         className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
+//                           ? "border-red-500"
+//                           : ""
+//                           }`}
 //                       />
 //                       <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
 //                         {heroState.badgeText.length >= 25 && "Limit reached!"}
@@ -652,11 +648,10 @@
 //                             updateField("heading", e.target.value)
 //                           }
 //                           maxLength={80}
-//                           className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${
-//                             heroState.heading.length >= 80
-//                               ? "border-red-500"
-//                               : ""
-//                           }`}
+//                           className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80
+//                             ? "border-red-500"
+//                             : ""
+//                             }`}
 //                         />
 //                         <div className="text-right text-xs text-gray-500 mt-1">
 //                           {heroState.heading.length}/80
@@ -675,11 +670,10 @@
 //                             updateField("highlight", e.target.value)
 //                           }
 //                           maxLength={30}
-//                           className={`bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none ${
-//                             heroState.highlight.length >= 30
-//                               ? "border-red-500"
-//                               : ""
-//                           }`}
+//                           className={`bg-transparent border-b border-primary text-4xl md:text-6xl text-primary outline-none ${heroState.highlight.length >= 30
+//                             ? "border-red-500"
+//                             : ""
+//                             }`}
 //                         />
 //                         <div className="text-right text-xs text-gray-500 mt-1">
 //                           {heroState.highlight.length}/30
@@ -711,18 +705,16 @@
 //                           updateField("description", e.target.value)
 //                         }
 //                         maxLength={500}
-//                         className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${
-//                           heroState.description.length >= 500
-//                             ? "border-red-500"
-//                             : "border-muted-foreground"
-//                         }`}
+//                         className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
+//                           ? "border-red-500"
+//                           : "border-muted-foreground"
+//                           }`}
 //                       />
 //                       <div
-//                         className={`absolute right-0 top-full mt-1 text-xs ${
-//                           heroState.description.length >= 500
-//                             ? "text-red-500"
-//                             : "text-gray-500"
-//                         }`}
+//                         className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
+//                           ? "text-red-500"
+//                           : "text-gray-500"
+//                           }`}
 //                       >
 //                         {heroState.description.length}/500
 //                         {heroState.description.length >= 500 && (
@@ -734,9 +726,10 @@
 //                     </div>
 //                   ) : (
 //                     // <p className="text-xl text-muted-foreground max-w-lg inline">
-//                     <p className="text-xl text-red-600 max-w-lg inline">
+//                       <p className="text-xl text-red-500 max-w-lg inline">  
 //                       {heroState.description}
-//                       <span className="text-red-accent font-semibold">
+//                       {/* <span className="text-red-accent font-semibold"> */}
+//                         <span className="text-red-600 font-semibold">
 //                         {heroState.highlightDesc}
 //                       </span>
 //                       .
@@ -759,11 +752,10 @@
 //                           updateField("primaryBtn", e.target.value)
 //                         }
 //                         maxLength={30}
-//                         className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
-//                           heroState.primaryBtn.length >= 30
-//                             ? "border-red-500"
-//                             : ""
-//                         }`}
+//                         className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
+//                           ? "border-red-500"
+//                           : ""
+//                           }`}
 //                       />
 //                       <div className="text-right text-xs text-gray-500 mt-1">
 //                         {heroState.primaryBtn.length}/30
@@ -807,11 +799,10 @@
 //                           updateField("trustText", e.target.value)
 //                         }
 //                         maxLength={60}
-//                         className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-//                           heroState.trustText.length >= 60
-//                             ? "border-red-500"
-//                             : ""
-//                         }`}
+//                         className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
+//                           ? "border-red-500"
+//                           : ""
+//                           }`}
 //                       />
 //                       <div className="text-right text-xs text-gray-500 mt-1">
 //                         {heroState.trustText.length}/60
@@ -846,9 +837,8 @@
 //                               updateStat(s.id, "value", e.target.value)
 //                             }
 //                             maxLength={15}
-//                             className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${
-//                               s.value.length >= 15 ? "border-red-500" : ""
-//                             }`}
+//                             className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
+//                               }`}
 //                           />
 //                           <div className="text-right text-xs text-gray-500 mt-1">
 //                             {s.value.length}/15
@@ -867,9 +857,8 @@
 //                               updateStat(s.id, "label", e.target.value)
 //                             }
 //                             maxLength={25}
-//                             className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-//                               s.label.length >= 25 ? "border-red-500" : ""
-//                             }`}
+//                             className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
+//                               }`}
 //                           />
 //                           <div className="text-right text-xs text-gray-500 mt-1">
 //                             {s.label.length}/25
@@ -966,7 +955,7 @@
 
 //               {/* Main image container - UPDATED FOR AUTO-ADJUST SIZE */}
 //               <div className="relative w-full">
-//                 <motion.div 
+//                 <motion.div
 //                   className="relative"
 //                   variants={imageVariants}
 //                 >
@@ -983,7 +972,7 @@
 //                         src={heroState.heroImage}
 //                         alt="Modern business team collaborating"
 //                         className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
-//                         style={{ 
+//                         style={{
 //                           maxHeight: '500px',
 //                           width: 'auto',
 //                           margin: '0 auto'
@@ -1091,11 +1080,10 @@
 //                 whileTap={{ scale: 0.9 }}
 //                 onClick={handleSave}
 //                 disabled={isUploading}
-//                 className={`${
-//                   isUploading
-//                     ? "bg-gray-400 cursor-not-allowed"
-//                     : "bg-green-600 hover:shadow-2xl"
-//                 } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+//                 className={`${isUploading
+//                   ? "bg-gray-400 cursor-not-allowed"
+//                   : "bg-green-600 hover:shadow-2xl"
+//                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
 //               >
 //                 {isUploading ? "Uploading..." : "Save"}
 //               </motion.button>
@@ -1148,13 +1136,13 @@ export default function Hero({
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
-  // Consolidated state
+  // Consolidated state - REMOVED highlight and highlightDesc
   const [heroState, setHeroState] = useState({
     badgeText: "Trusted by 20+ Companies",
     heading: heroData?.title || "Transform Your Business with Innovation",
     description:
       heroData?.subtitle ||
-      "We help companies scale and grow with cutting-edge solutions, expert guidance, and proven strategies that deliver exceptional results.",
+      "We help companies scale and grow with cutting-edge solutions, expert guidance, and proven strategies that deliver exceptional results",
     primaryBtn: heroData?.primaryAction?.text || "Get Started Today",
     trustText: "Join 20+ satisfied clients",
     stats: [
@@ -1620,31 +1608,28 @@ export default function Hero({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -1695,10 +1680,18 @@ export default function Hero({
           </motion.div>
         </motion.div>
       )}
+
+      {/* Rest of your Hero component remains exactly the same */}
       <section
         id="home"
-        className="pt-10 mt-[1rem] pb-12 bg-background relative overflow-hidden theme-transition"
+        className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition"
       >
+        {/* Background decorations */}
+        <motion.div
+          className="absolute top-20 right-0 w-72 h-72 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2"
+          animate={{ scale: [1, 1.1, 1], rotate: [0, 180, 360] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        />
         <motion.div
           className="absolute bottom-0 left-0 w-96 h-96 bg-primary/3 rounded-full translate-y-1/2 -translate-x-1/2"
           animate={{ scale: [1, 1.2, 1], rotate: [0, -180, -360] }}
@@ -1734,11 +1727,10 @@ export default function Hero({
                           updateField("badgeText", e.target.value)
                         }
                         maxLength={25}
-                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${
-                          heroState.badgeText.length >= 25
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
                         {heroState.badgeText.length >= 25 && "Limit reached!"}
@@ -1754,28 +1746,29 @@ export default function Hero({
                 {/* Heading */}
                 <motion.div variants={itemVariants}>
                   {isEditing ? (
-                    <div className="relative">
-                      <textarea
-                        value={heroState.heading}
-                        onChange={(e) =>
-                          updateField("heading", e.target.value)
-                        }
-                        maxLength={80}
-                        className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${
-                          heroState.heading.length >= 80
+                    <>
+                      <div className="relative">
+                        <textarea
+                          value={heroState.heading}
+                          onChange={(e) =>
+                            updateField("heading", e.target.value)
+                          }
+                          maxLength={80}
+                          className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80
                             ? "border-red-500"
                             : ""
-                        }`}
-                      />
-                      <div className="text-right text-xs text-gray-500 mt-1">
-                        {heroState.heading.length}/80
-                        {heroState.heading.length >= 80 && (
-                          <span className="ml-2 text-red-500 font-bold">
-                            Limit reached!
-                          </span>
-                        )}
+                            }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {heroState.heading.length}/80
+                          {heroState.heading.length >= 80 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    </>
                   ) : (
                     <h1 className="text-4xl md:text-6xl text-foreground leading-tight">
                       {heroState.heading}
@@ -1793,18 +1786,16 @@ export default function Hero({
                           updateField("description", e.target.value)
                         }
                         maxLength={500}
-                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${
-                          heroState.description.length >= 500
-                            ? "border-red-500"
-                            : "border-muted-foreground"
-                        }`}
+                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                          }`}
                       />
                       <div
-                        className={`absolute right-0 top-full mt-1 text-xs ${
-                          heroState.description.length >= 500
-                            ? "text-red-500"
-                            : "text-gray-500"
-                        }`}
+                        className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
+                          ? "text-red-500"
+                          : "text-gray-500"
+                          }`}
                       >
                         {heroState.description.length}/500
                         {heroState.description.length >= 500 && (
@@ -1815,7 +1806,7 @@ export default function Hero({
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xl text-red-600 max-w-lg inline">
+                    <p className="text-xl text-red-500 max-w-lg">  
                       {heroState.description}
                     </p>
                   )}
@@ -1828,36 +1819,39 @@ export default function Hero({
                 variants={itemVariants}
               >
                 {isEditing ? (
-                  <div className="relative">
-                    <input
-                      value={heroState.primaryBtn}
-                      onChange={(e) =>
-                        updateField("primaryBtn", e.target.value)
-                      }
-                      maxLength={30}
-                      className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
-                        heroState.primaryBtn.length >= 30
+                  <>
+                    <div className="relative">
+                      <input
+                        value={heroState.primaryBtn}
+                        onChange={(e) =>
+                          updateField("primaryBtn", e.target.value)
+                        }
+                        maxLength={30}
+                        className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
                           ? "border-red-500"
                           : ""
-                      }`}
-                    />
-                    <div className="text-right text-xs text-gray-500 mt-1">
-                      {heroState.primaryBtn.length}/30
-                      {heroState.primaryBtn.length >= 30 && (
-                        <span className="ml-2 text-red-500 font-bold">
-                          Character limit reached!
-                        </span>
-                      )}
+                          }`}
+                      />
+                      <div className="text-right text-xs text-gray-500 mt-1">
+                        {heroState.primaryBtn.length}/30
+                        {heroState.primaryBtn.length >= 30 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Character limit reached!
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  </>
                 ) : (
-                  <Button
-                    size="lg"
-                    className="bg-primary text-primary-foreground shadow-xl"
-                  >
-                    <a href="#contact">{heroState.primaryBtn}</a>
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <>
+                    <Button
+                      size="lg"
+                      className="bg-primary text-primary-foreground shadow-xl"
+                    >
+                      <a href="#contact">{heroState.primaryBtn}</a>
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </>
                 )}
               </motion.div>
 
@@ -1880,11 +1874,10 @@ export default function Hero({
                           updateField("trustText", e.target.value)
                         }
                         maxLength={60}
-                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-                          heroState.trustText.length >= 60
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.trustText.length}/60
@@ -1919,9 +1912,8 @@ export default function Hero({
                               updateStat(s.id, "value", e.target.value)
                             }
                             maxLength={15}
-                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${
-                              s.value.length >= 15 ? "border-red-500" : ""
-                            }`}
+                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.value.length}/15
@@ -1940,9 +1932,8 @@ export default function Hero({
                               updateStat(s.id, "label", e.target.value)
                             }
                             maxLength={25}
-                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-                              s.label.length >= 25 ? "border-red-500" : ""
-                            }`}
+                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.label.length}/25
@@ -2038,8 +2029,8 @@ export default function Hero({
               )}
 
               {/* Main image container - UPDATED FOR AUTO-ADJUST SIZE */}
-              <div className="relative w-full -mt-6 md:-mt-8 xl:-mt-10">
-                <motion.div 
+              <div className="relative w-full">
+                <motion.div
                   className="relative"
                   variants={imageVariants}
                 >
@@ -2055,7 +2046,12 @@ export default function Hero({
                       <img
                         src={heroState.heroImage}
                         alt="Modern business team collaborating"
-                        className="w-full h-56 md:h-72 xl:h-[400px] object-cover rounded-3xl shadow-2xl block mx-auto"
+                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
+                        style={{
+                          maxHeight: '500px',
+                          width: 'auto',
+                          margin: '0 auto'
+                        }}
                       />
                       {isEditing && (
                         <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
@@ -2104,7 +2100,7 @@ export default function Hero({
                         <img
                           src={heroState.hero3Image}
                           alt="Additional business context"
-                          className="block object-cover rounded-2xl shadow-xl border-4 border-white bg-white w-44 h-32 md:w-52 md:h-36"
+                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
                         />
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
@@ -2160,11 +2156,10 @@ export default function Hero({
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
@@ -2179,6 +2174,7 @@ export default function Hero({
               </motion.button>
             )}
           </div>
+
         </div>
       </section>
     </>
