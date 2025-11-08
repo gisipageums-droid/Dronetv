@@ -23,6 +23,11 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const { pub, userId } = useParams();
 
+  // Always start from top when entering this page
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
   // ✅ Fetch template data when pub/userId changes
   useEffect(() => {
     let isMounted = true;

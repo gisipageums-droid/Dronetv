@@ -1,9 +1,17 @@
-import { Edit2, Globe, Loader2, Mail, MapPin, Phone, Save, Send, X } from 'lucide-react';
-import { motion } from 'motion/react';
-import { useState, useEffect } from 'react';
-import { AnimatedButton } from './AnimatedButton';
-import { toast } from 'sonner';
+import {
+  Globe,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Send,
+} from "lucide-react";
+import { motion } from "motion/react";
+import { useState, useEffect } from "react";
+import { AnimatedButton } from "./AnimatedButton";
+import { toast } from "sonner";
 
+<<<<<<< HEAD
 // Custom Button component (consistent with other components)
 const Button = ({
   children,
@@ -44,6 +52,9 @@ const Button = ({
     </button>
   );
 };
+=======
+ 
+>>>>>>> e0fd4b8670eca85e2f827a0cb8891539c1e202b9
 
 interface ContactInfo {
   icon: string;

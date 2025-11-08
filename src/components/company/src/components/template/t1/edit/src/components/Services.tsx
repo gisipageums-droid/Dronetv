@@ -33,6 +33,8 @@ export default function Services({
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [addingCategoryFor, setAddingCategoryFor] = useState<number | null>(null);
+  const [newCategoryName, setNewCategoryName] = useState("");
 
   // Enhanced crop modal state (same as Header.tsx)
   const [cropModalOpen, setCropModalOpen] = useState(false);
@@ -594,7 +596,7 @@ export default function Services({
 
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           {isEditing ? (
             <>
               <EditableText
@@ -602,7 +604,7 @@ export default function Services({
                 onChange={(val) => updateHeading("head", val)}
                 className="text-3xl font-bold mb-2"
                 placeholder="Section heading"
-                maxLength={35}
+                maxLength={50}
               />
               <EditableText
                 value={tempServicesSection.heading.desc}
@@ -610,7 +612,7 @@ export default function Services({
                 multiline={true}
                 className="text-muted-foreground"
                 placeholder="Section description"
-                maxLength={35}
+                maxLength={50}
               />
             </>
           ) : (
@@ -632,7 +634,7 @@ export default function Services({
         </div>
 
         {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
+        <div className="flex flex-wrap justify-center gap-2 mb-3">
           {displayContent.categories.map((cat, i) => (
             <div key={i} className="flex items-center gap-2">
               {isEditing ? (
@@ -689,17 +691,17 @@ export default function Services({
         </div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-2 md:gap-3">
           {filteredServices.map((service, index) => (
-            <Card key={index} className="relative overflow-hidden shadow-sm">
-              <div className="h-44 overflow-hidden relative">
+            <Card key={index} className="relative overflow-hidden w-[220px] min-h-[360px] rounded-2xl shadow-md border border-gray-100 bg-white flex flex-col">
+              <div className="h-32 overflow-hidden relative rounded-t-2xl">
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute top-3 right-3">
-                  <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full">
+                  <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full shadow">
                     {service.category}
                   </span>
                 </div>
@@ -733,57 +735,103 @@ export default function Services({
                   </div>
                 )}
               </div>
-              <CardHeader>
+              <CardHeader className="px-4 pt-4 pb-2">
                 {isEditing ? (
                   <EditableText
                     value={service.title}
                     onChange={(val) => updateServiceField(index, "title", val)}
-                    className="font-bold"
+                    className="font-bold text-base"
                     placeholder="Service title"
-                    maxLength={35}
+                    maxLength={50}
                   />
                 ) : (
-                  <CardTitle>{service.title}</CardTitle>
+                  <CardTitle className="text-base leading-snug">{service.title}</CardTitle>
                 )}
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 pb-4 flex flex-col flex-1">
                 {isEditing ? (
                   <>
                     <EditableText
                       value={service.description}
-                      onChange={(val) =>
-                        updateServiceField(index, "description", val)
-                      }
+                      onChange={(val) => updateServiceField(index, "description", val)}
                       multiline={true}
+                      className="text-sm"
                       placeholder="Service description"
                       maxLength={1000}
                     />
-                    <div className="mt-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <div className="mt-2 space-y-2">
+                      <label className="block text-xs font-medium text-gray-700">
                         Category
                       </label>
-                      <EditableText
+                      <select
                         value={service.category}
-                        onChange={(val) =>
-                          updateServiceField(index, "category", val)
-                        }
-                        placeholder="Service category"
-                        maxLength={50}
-                      />
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "__add_new__") {
+                            setAddingCategoryFor(index);
+                            setNewCategoryName("");
+                          } else {
+                            updateServiceField(index, "category", val);
+                            setAddingCategoryFor(null);
+                          }
+                        }}
+                        className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-sm"
+                      >
+                        {displayContent.categories.map((c, i) => (
+                          <option key={i} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                        <option value="__add_new__">+ Add new category</option>
+                      </select>
+                      {addingCategoryFor === index && (
+                        <div className="flex items-center gap-2">
+                          <input
+                            value={newCategoryName}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 50) setNewCategoryName(e.target.value);
+                            }}
+                            placeholder="New category name"
+                            className="flex-1 bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-sm"
+                            maxLength={50}
+                          />
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs"
+                            onClick={() => {
+                              const name = newCategoryName.trim();
+                              if (!name) return;
+                              setTempServicesSection((prev) => ({
+                                ...prev,
+                                categories: prev.categories.includes(name)
+                                  ? prev.categories
+                                  : [...prev.categories, name],
+                                services: prev.services.map((s, i) =>
+                                  i === index ? { ...s, category: name } : s
+                                ),
+                              }));
+                              setAddingCategoryFor(null);
+                              setNewCategoryName("");
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : (
                   <>
-                      <p className="text-sm text-gray-600 mb-4 flex-1 h-[70px] overflow-auto">
+                    <p className="text-sm text-gray-600 mb-3 flex-1 h-[64px] overflow-auto">
                       {service.description}
                     </p>
                   </>
                 )}
 
-                <div className="mt-4 flex gap-2 ">
+                <div className="mt-auto flex gap-2 ">
                   <Button
-                    className={` ${isEditing ? "" : "w-full"
-                      } hover:scale-105 bg-orange-400 hover:bg-orange-600 text-white`}
+                    className={` ${isEditing ? "" : "w-full"} bg-orange-400 hover:bg-orange-500 text-white rounded-md`}
                     size="sm"
                     onClick={() => openModal(service, index)}
                   >
@@ -849,7 +897,7 @@ export default function Services({
                   }
                   className="text-2xl font-bold mb-4"
                   placeholder="Service title"
-                  maxLength={35}
+                  maxLength={50}
                 />
               ) : (
                 <h2 className="text-2xl font-bold mb-4">
@@ -906,7 +954,7 @@ export default function Services({
                               }
                             }}
                             className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                            maxLength={35}
+                            maxLength={50}
                           />
                           <Button
                             onClick={() =>
@@ -964,7 +1012,7 @@ export default function Services({
                               }
                             }}
                             className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                            maxLength={35}
+                            maxLength={50}
                           />
                           <Button
                             onClick={() =>
@@ -1014,7 +1062,7 @@ export default function Services({
                         updateServiceField(selectedServiceIndex, "pricing", val)
                       }
                       placeholder="Pricing information"
-                      maxLength={35}
+                      maxLength={50}
                     />
                   ) : (
                     <p>

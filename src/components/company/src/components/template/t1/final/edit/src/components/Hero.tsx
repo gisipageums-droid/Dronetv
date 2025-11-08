@@ -711,7 +711,7 @@ export default function EditableHero({
                     field="heading"
                     className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight"
                     placeholder="Main heading"
-                    maxLength={35}
+                    maxLength={100}
                   />
                   <EditableText
                     value={tempHeroState.subheading}
@@ -747,44 +747,21 @@ export default function EditableHero({
                   variants={itemVariants}
                 >
                   <a
-                    href={heroState.primaryButtonLink}
+                    href="#contact"
                     className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block text-center"
                   >
                     {heroState.primaryBtn}
                   </a>
-                  <a
-                    href={heroState.secondaryButtonLink}
-                    className="text-white border border-white hover:bg-white hover:text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 inline-block text-center"
-                  >
-                    {heroState.secondaryBtn}
-                  </a>
                 </motion.div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-2">
                   <EditableText
                     value={tempHeroState.primaryBtn}
                     field="primaryBtn"
                     placeholder="Primary button text"
                     maxLength={50}
                   />
-                  <EditableText
-                    value={tempHeroState.secondaryBtn}
-                    field="secondaryBtn"
-                    placeholder="Secondary button text"
-                    maxLength={50}
-                  />
-                  <EditableText
-                    value={tempHeroState.primaryButtonLink}
-                    field="primaryButtonLink"
-                    placeholder="Primary button link"
-                    maxLength={100}
-                  />
-                  <EditableText
-                    value={tempHeroState.secondaryButtonLink}
-                    field="secondaryButtonLink"
-                    placeholder="Secondary button link"
-                    maxLength={100}
-                  />
+                  <div className="text-xs text-gray-300">This button redirects to the contact section.</div>
                 </div>
               )}
 
@@ -830,7 +807,7 @@ export default function EditableHero({
                     field="trustText"
                     placeholder="Trust text"
                     className="text-sm sm:text-base text-white"
-                    maxLength={35}
+                    maxLength={50}
                   />
                 )}
               </motion.div>

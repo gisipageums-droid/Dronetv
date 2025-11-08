@@ -702,19 +702,9 @@ export default function EditableContact({
       id="contact"
       className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-500 scroll-mt-20 relative"
     >
-      {/* Edit Controls */}
+      {/* Edit Controls (Edit button removed) */}
       <div className="absolute top-4 right-4 z-10">
-        {!isEditing ? (
-          <Button
-            onClick={handleEdit}
-            variant="outline"
-            size="sm"
-            className="bg-white hover:bg-gray-50 shadow-md"
-          >
-            <Edit2 className="w-4 h-4 mr-2" />
-            Edit
-          </Button>
-        ) : (
+        {isEditing && (
           <div className="flex gap-2">
             <Button
               onClick={handleSave}

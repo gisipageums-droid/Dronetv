@@ -90,8 +90,8 @@ export default function EditableFooter({
 }) {
   // Character limits
   const CHAR_LIMITS = {
-    brandName: 50,
-    brandDescription: 50,
+    brandName: 100,
+    brandDescription: 500,
     sectionTitle: 50,
     linkText: 50,
     linkUrl: 50,
@@ -594,22 +594,19 @@ export default function EditableFooter({
                       }}
                     />
                     {isEditing && (
-                      <div className="absolute -bottom-14 left-0 bg-white/90 p-2 rounded shadow-lg">
-                        <p className="text-xs mb-1 text-gray-600">
-                          Upload Logo:
-                        </p>
-                        <motion.button
+                      <div className="mt-2 flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700"
                           onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-1 p-1 bg-gray-200 rounded shadow text-xs hover:bg-gray-300"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
                         >
-                          <Upload size={12} /> Choose File
-                        </motion.button>
+                          <Upload className="w-3 h-3 mr-1" /> Change Logo
+                        </Button>
                         {pendingLogoFile && (
-                          <p className="text-xs text-orange-600 mt-1 max-w-[150px] truncate">
+                          <span className="text-xs text-gray-400 max-w-[160px] truncate">
                             Selected: {pendingLogoFile.name}
-                          </p>
+                          </span>
                         )}
                       </div>
                     )}

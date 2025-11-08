@@ -68,7 +68,7 @@ export default function Hero({ heroData }) {
   };
 
   return (
-    <section id="home" className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition">
+    <section id="home" className="pt-10 mt-[1rem] pb-12 bg-background relative overflow-hidden theme-transition">
       {/* Background decorations */}
       <motion.div 
         className="absolute top-20 right-0 w-72 h-72 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" 
@@ -162,13 +162,13 @@ export default function Hero({ heroData }) {
             variants={itemVariants}
           >
             {/* Main image container */}
-            <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
+            <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl mx-auto -mt-6 md:-mt-8 xl:-mt-10">
               <motion.div className="relative" variants={imageVariants}>
                 <div className="relative">
                   <img
                     src={safeData.heroImage}
                     alt="Modern business team collaborating"
-                    className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-3xl shadow-2xl"
+                    className="w-full h-56 md:h-72 xl:h-[400px] object-cover rounded-3xl shadow-2xl"
                   />
                 </div>
                 
@@ -182,7 +182,7 @@ export default function Hero({ heroData }) {
                     <img
                       src={safeData.hero3Image}
                       alt="Additional business context"
-                      className="w-48 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 object-cover rounded-2xl shadow-xl border-4 border-white"
+                      className="block object-cover rounded-2xl shadow-xl border-4 border-white bg-white w-44 h-32 md:w-52 md:h-36"
                     />
                   </div>
                 </motion.div>

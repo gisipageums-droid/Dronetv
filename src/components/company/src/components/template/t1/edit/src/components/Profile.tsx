@@ -649,7 +649,7 @@ export default function EditableCompanyProfile({
                   <div className="truncate">{pendingImageFile.name}</div>
                 </div>
               )}
-              <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100 w-full max-w-[900px]">
+              <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100 w-full max-w-[900px] cursor-pointer" onClick={() => { if (isEditing) fileInputRef.current?.click(); }}>
                 <img
                   src={
                     displayContent.imageUrl ||
@@ -657,6 +657,7 @@ export default function EditableCompanyProfile({
                   }
                   alt={`${displayContent.companyName} Office`}
                   className="block w-full h-auto max-h-[75vh] object-contain"
+                  onClick={() => { if (isEditing) fileInputRef.current?.click(); }}
                   onError={(e) => {
                     // Fallback if image fails
                     e.currentTarget.onerror = null;
@@ -687,7 +688,7 @@ export default function EditableCompanyProfile({
                         }}
                         className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-4xl md:text-5xl font-extrabold"
                         placeholder="Company name"
-                        maxLength={35}
+                        maxLength={100}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {displayContent.companyName.length}/100
@@ -804,13 +805,13 @@ export default function EditableCompanyProfile({
                               type="text"
                               value={value}
                               onChange={(e) => {
-                                if (e.target.value.length <= 200) {
+                                if (e.target.value.length <= 100) {
                                   updateCoreValue(i, e.target.value);
                                 }
                               }}
                               className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                               placeholder="Core value"
-                              maxLength={35}
+                              maxLength={100}
                             />
                             <div className="text-right text-xs text-gray-500 mt-1">
                               {value.length}/100
