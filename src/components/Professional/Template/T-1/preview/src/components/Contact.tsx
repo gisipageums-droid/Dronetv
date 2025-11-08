@@ -128,10 +128,10 @@ const Contact: React.FC = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className=" max-w-2xl mx-auto">
             {/* Contact Form */}
-            <motion.div variants={itemVariants}>
-              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            <motion.div variants={itemVariants} className="flex justify-center">
+              <div className="w-full max-w-xl mx-auto bg-white dark:bg-gray-800 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
                 <h3 className="text-2xl font-bold text-orange-500 mb-6">
                   Send Me a Message
                 </h3>
@@ -220,11 +220,10 @@ const Contact: React.FC = () => {
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className={`flex items-center p-4 rounded-lg ${
-                        submitStatus === "success"
-                          ? "bg-green-100 dark:bg-green-500/20 border border-green-400 dark:border-green-500/30 text-green-700 dark:text-green-400"
-                          : "bg-red-100 dark:bg-red-500/20 border border-red-400 dark:border-red-500/30 text-red-700 dark:text-red-400"
-                      }`}
+                      className={`flex items-center p-4 rounded-lg ${submitStatus === "success"
+                        ? "bg-green-100 dark:bg-green-500/20 border border-green-400 dark:border-green-500/30 text-green-700 dark:text-green-400"
+                        : "bg-red-100 dark:bg-red-500/20 border border-red-400 dark:border-red-500/30 text-red-700 dark:text-red-400"
+                        }`}
                     >
                       {submitStatus === "success" ? (
                         <CheckCircle className="w-5 h-5 mr-2" />
@@ -265,78 +264,7 @@ const Contact: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Contact Information */}
-            <motion.div variants={itemVariants} className="space-y-8">
-              {/* Contact Details */}
-              <div className="bg-gray-100 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
-                  Get in Touch
-                </h3>
 
-                <div className="space-y-6">
-                  {contactInfo.map((info, index) => (
-                    <motion.a
-                      key={index}
-                      whileHover={{ x: 5 }}
-                      href={info.href}
-                      className="flex items-center group"
-                    >
-                      <div className="w-12 h-12 bg-gradient-to-br from-yellow-200/20 to-orange-400/40 rounded-lg flex items-center justify-center mr-4 group-hover:from-yellow-400/30 group-hover:to-orange-600/30 transition-all duration-200">
-                        <info.icon className="w-6 h-6 text-accent-orange" />
-                      </div>
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">
-                          {info.label}
-                        </p>
-                        <p className="text-gray-800 dark:text-white font-medium group-hover:text-orange-200 transition-colors duration-200">
-                          {info.value}
-                        </p>
-                      </div>
-                    </motion.a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Social Links */}
-              <div className="bg-gray-100 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
-                  Follow Me
-                </h3>
-
-                <div className="flex space-x-4">
-                  {socialLinks.map((social, index) => (
-                    <motion.a
-                      key={index}
-                      whileHover={{ scale: 1.1, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      href={social.href}
-                      className={`w-12 h-12 bg-gray-200 dark:bg-white/10 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 ${social.color} transition-all duration-200`}
-                    >
-                      <social.icon className="w-6 h-6" />
-                    </motion.a>
-                  ))}
-                </div>
-
-                <p className="text-gray-600 dark:text-gray-400 mt-4 text-sm">
-                  Let's connect on social media and stay updated on my latest
-                  projects and insights.
-                </p>
-              </div>
-
-              {/* Availability */}
-              <div className="bg-gradient-to-r from-accent-yellow/10 to-accent-orange/10 dark:from-accent-yellow/10 dark:to-accent-orange/10 border border-accent-orange/30 rounded-2xl p-6">
-                <div className="flex items-center mb-3">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                  <span className="text-green-600 dark:text-green-400 font-semibold">
-                    Available for Projects
-                  </span>
-                </div>
-                <p className="text-gray-700 dark:text-gray-300 text-sm">
-                  I'm currently accepting new projects and would love to discuss
-                  your ideas. Let's build something amazing together!
-                </p>
-              </div>
-            </motion.div>
           </div>
         </motion.div>
       </div>
