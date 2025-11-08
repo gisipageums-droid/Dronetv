@@ -6,7 +6,7 @@ export function About() {
   return (
     <section id="about" className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Left Content - Image */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -56,9 +56,9 @@ export function About() {
               viewport={{ once: true }}
               className="text-lg text-muted-foreground leading-relaxed"
             >
-              I'm a passionate full-stack developer with over 3 years of experience 
-              creating digital solutions that make a difference. I specialize in 
-              modern web technologies and love turning complex problems into 
+              I'm a passionate full-stack developer with over 3 years of experience
+              creating digital solutions that make a difference. I specialize in
+              modern web technologies and love turning complex problems into
               simple, beautiful designs.
             </motion.p>
 
@@ -69,8 +69,8 @@ export function About() {
               viewport={{ once: true }}
               className="text-lg text-muted-foreground leading-relaxed"
             >
-              When I'm not coding, you'll find me exploring new technologies, 
-              contributing to open-source projects, or sharing my knowledge 
+              When I'm not coding, you'll find me exploring new technologies,
+              contributing to open-source projects, or sharing my knowledge
               through technical writing and mentoring.
             </motion.p>
 
