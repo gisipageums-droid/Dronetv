@@ -174,17 +174,7 @@ export default function EditableContact({
     >
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
-        {!isEditing ? (
-          <Button
-            onClick={handleEdit}
-            variant="outline"
-            size="sm"
-            className="bg-white hover:bg-gray-50 shadow-md"
-          >
-            <Edit2 className="w-4 h-4 mr-2" />
-            Edit
-          </Button>
-        ) : (
+        {isEditing && (
           <div className="flex gap-2">
             <Button
               onClick={handleSave}

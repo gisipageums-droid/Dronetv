@@ -38,6 +38,8 @@ export default function EditableProducts({
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
   const sectionRef = useRef(null);
   const fileInputRefs = useRef({});
+  const [addingCategoryFor, setAddingCategoryFor] = useState<number | null>(null);
+  const [newCategoryName, setNewCategoryName] = useState("");
 
   // Enhanced crop modal state
   const [cropModalOpen, setCropModalOpen] = useState(false);
@@ -398,8 +400,8 @@ export default function EditableProducts({
     // Apply character limits based on field type
     let processedValue = value;
 
-    if (field === "title" && value.length > 100) {
-      processedValue = value.slice(0, 100);
+    if (field === "title" && value.length > 50) {
+      processedValue = value.slice(0, 50);
     } else if (field === "description" && value.length > 500) {
       processedValue = value.slice(0, 500);
     } else if (field === "detailedDescription" && value.length > 1000) {
@@ -425,8 +427,8 @@ export default function EditableProducts({
   const updateFeature = (productId, fIndex, value) => {
     // Apply character limit for features
     let processedValue = value;
-    if (value.length > 200) {
-      processedValue = value.slice(0, 200);
+    if (value.length > 35) {
+      processedValue = value.slice(0, 35);
     }
 
     setTempContent((prev) => ({
@@ -945,18 +947,62 @@ export default function EditableProducts({
                       }
                     >
                       {isEditing ? (
-                        <input
-                          value={product.category}
-                          onChange={(e) =>
-                            updateProductField(
-                              product.id,
-                              "category",
-                              e.target.value
-                            )
-                          }
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs"
-                          maxLength={50}
-                        />
+                        <div className="w-full">
+                          <select
+                            value={product.category}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === "__add_new__") {
+                                setAddingCategoryFor(product.id);
+                                setNewCategoryName("");
+                              } else {
+                                updateProductField(product.id, "category", val);
+                                setAddingCategoryFor(null);
+                              }
+                            }}
+                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-xs"
+                          >
+                            {displayContent.categories.map((c, i) => (
+                              <option key={i} value={c}>{c}</option>
+                            ))}
+                            <option value="__add_new__">+ Add new category</option>
+                          </select>
+                          {addingCategoryFor === product.id && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <input
+                                value={newCategoryName}
+                                onChange={(e) => {
+                                  if (e.target.value.length <= 50) setNewCategoryName(e.target.value);
+                                }}
+                                placeholder="New category name"
+                                className="flex-1 bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-xs"
+                                maxLength={50}
+                              />
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-xs"
+                                onClick={() => {
+                                  const name = newCategoryName.trim();
+                                  if (!name) return;
+                                  setTempContent((prev) => ({
+                                    ...prev,
+                                    categories: prev.categories.includes(name)
+                                      ? prev.categories
+                                      : [...prev.categories, name],
+                                    products: prev.products.map((p) =>
+                                      p.id === product.id ? { ...p, category: name } : p
+                                    ),
+                                  }));
+                                  setAddingCategoryFor(null);
+                                  setNewCategoryName("");
+                                }}
+                              >
+                                Add
+                              </Button>
+                            </div>
+                          )}
+                        </div>
                       ) : (
                         product.category
                       )}
@@ -971,7 +1017,7 @@ export default function EditableProducts({
                       }
                       className="text-xl font-bold mb-3"
                       placeholder="Product Title"
-                      maxLength={35}
+                      maxLength={50}
                     />
                   ) : (
                     <h3 className="text-xl font-bold mb-3">{product.title}</h3>
@@ -1020,7 +1066,7 @@ export default function EditableProducts({
                                   }
                                   className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs"
                                   placeholder="Feature"
-                                  maxLength={100}
+                                  maxLength={35}
                                 />
                                 <Button
                                   onClick={() => removeFeature(product.id, idx)}
@@ -1106,7 +1152,7 @@ export default function EditableProducts({
                 }
                 className="text-2xl font-bold mb-4"
                 placeholder="Product Title"
-                maxLength={35}
+                maxLength={50}
               />
             ) : (
               <h2 className="text-2xl font-bold mb-4">
