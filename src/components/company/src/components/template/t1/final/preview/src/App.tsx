@@ -21,6 +21,11 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Always start from top when entering this page
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
   // Function to fetch template data
   async function fetchTemplateData(pubId: string, userId: string) {
     try {

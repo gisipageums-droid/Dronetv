@@ -972,13 +972,13 @@ export default function EditableAbout({
                           type="text"
                           value={cert}
                           onChange={(e) => {
-                            if (e.target.value.length <= 200) {
+                            if (e.target.value.length <= 100) {
                               updateCertification(index, e.target.value);
                             }
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Certification"
-                          maxLength={35}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
                           {cert.length}/100
@@ -1030,13 +1030,13 @@ export default function EditableAbout({
                           type="text"
                           value={achievement}
                           onChange={(e) => {
-                            if (e.target.value.length <= 200) {
+                            if (e.target.value.length <= 100) {
                               updateAchievement(index, e.target.value);
                             }
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
-                          maxLength={35}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
                           {achievement.length}/100
@@ -1082,7 +1082,7 @@ export default function EditableAbout({
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-4"
             >
-              <div className="relative overflow-hidden rounded-2xl shadow-2xl group">
+              <div className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer" onClick={() => { if (isEditing) fileInputRef.current?.click(); }}>
                 {isEditing && (
                   <div className="absolute top-4 right-4 z-10">
                     <Button
@@ -1116,6 +1116,7 @@ export default function EditableAbout({
                   src={getImageSource()}
                   alt="Office"
                   className="w-full h-auto object-cover transition-opacity duration-300"
+                  onClick={() => { if (isEditing) fileInputRef.current?.click(); }}
                   onError={(e) => {
                     console.error("Image failed to load:", e);
                     e.target.src = "https://via.placeholder.com/500x300?text=Office+Image";
@@ -1143,13 +1144,13 @@ export default function EditableAbout({
                           type="text"
                           value={cert}
                           onChange={(e) => {
-                            if (e.target.value.length <= 200) {
+                            if (e.target.value.length <= 100) {
                               updateCertification(index, e.target.value);
                             }
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Certification"
-                          maxLength={35}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
                           {cert.length}/100
@@ -1201,13 +1202,13 @@ export default function EditableAbout({
                           type="text"
                           value={achievement}
                           onChange={(e) => {
-                            if (e.target.value.length <= 200) {
+                            if (e.target.value.length <= 100) {
                               updateAchievement(index, e.target.value);
                             }
                           }}
                           className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
-                          maxLength={35}
+                          maxLength={100}
                         />
                         <div className="text-xs text-gray-500 whitespace-nowrap">
                           {achievement.length}/100

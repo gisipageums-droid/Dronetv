@@ -754,7 +754,7 @@ export default function Blog({
                   onChange={(val) => updateHeaderField("title", val)}
                   className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
                   placeholder="Blog section title"
-                  maxLength={35}
+                  maxLength={50}
                 />
                 <EditableText
                   value={tempContent.header.desc}
@@ -762,7 +762,7 @@ export default function Blog({
                   className="text-gray-600 dark:text-gray-600"
                   multiline
                   placeholder="Blog section description"
-                  maxLength={35}
+                  maxLength={50}
                 />
               </>
             ) : (
@@ -882,7 +882,7 @@ export default function Blog({
                               }
                               placeholder="Blog title"
                               className="font-bold"
-                              maxLength={35}
+                              maxLength={50}
                             />
                             <EditableText
                               value={b.excerpt}

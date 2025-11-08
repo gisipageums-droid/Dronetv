@@ -733,7 +733,7 @@ export default function EditableUsedBy({
                     field="title"
                     className="text-gray-400 text-lg font-medium"
                     placeholder="Section title"
-                    maxLength={35}
+                    maxLength={50}
                   />
                 </div>
               </div>
