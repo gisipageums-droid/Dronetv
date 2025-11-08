@@ -2685,7 +2685,7 @@ export default function About({
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
-                  <button
+                  {/* <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 1
@@ -2694,7 +2694,7 @@ export default function About({
                     }`}
                   >
                     1:1 (Square)
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
@@ -2705,7 +2705,7 @@ export default function About({
                   >
                     4:3 (Standard)
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 16 / 9
@@ -2714,7 +2714,7 @@ export default function About({
                     }`}
                   >
                     16:9 (Widescreen)
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
@@ -2812,7 +2812,7 @@ export default function About({
                 )}
                 
                 {/* Image Container */}
-                <div className="relative w-full">
+                {/* <div className="relative w-full">
                   <motion.div 
                     className="relative"
                     whileInView={{ opacity: [0, 1], scale: [0.8, 1] }}
@@ -2831,8 +2831,23 @@ export default function About({
                       />
                     </div>
                   </motion.div>
-                </div>
-
+                </div> */}
+                {/* Image Container */}
+<div className="relative w-full">
+  <motion.div 
+    className="relative"
+    whileInView={{ opacity: [0, 1], scale: [0.8, 1] }}
+    transition={{ duration: 0.6, ease: "easeOut" }}
+  >
+    <div className="relative w-full h-full">
+      <img
+        src={aboutState.imageUrl}
+        alt="About"
+        className="w-full h-full object-cover rounded-2xl shadow-2xl"
+      />
+    </div>
+  </motion.div>
+</div>
                 {isEditing && (
                   <div className="absolute bottom-4 left-4 right-4 bg-white/80 p-2 rounded shadow z-50">
                     <input
