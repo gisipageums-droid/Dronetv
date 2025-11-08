@@ -1084,7 +1084,7 @@ export default function Hero({
           </div>
 
           {/* Edit/Save Buttons */}
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-4 right-4 z-50 pointer-events-auto">
             {isEditing ? (
               <motion.button
                 whileHover={{ y: -1, scaleX: 1.1 }}
