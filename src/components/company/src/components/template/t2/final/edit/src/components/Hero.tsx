@@ -1684,7 +1684,7 @@ export default function Hero({
       {/* Rest of your Hero component remains exactly the same */}
       <section
         id="home"
-        className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition"
+        className="pt-10 mt-[1rem] pb-12 bg-background relative overflow-hidden theme-transition"
       >
         {/* Background decorations */}
         <motion.div
@@ -2046,12 +2046,7 @@ export default function Hero({
                       <img
                         src={heroState.heroImage}
                         alt="Modern business team collaborating"
-                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
-                        style={{
-                          maxHeight: '500px',
-                          width: 'auto',
-                          margin: '0 auto'
-                        }}
+                        className="w-full h-56 md:h-72 xl:h-[400px] object-cover rounded-3xl shadow-2xl block mx-auto"
                       />
                       {isEditing && (
                         <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
@@ -2100,7 +2095,7 @@ export default function Hero({
                         <img
                           src={heroState.hero3Image}
                           alt="Additional business context"
-                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
+                          className="block object-cover rounded-2xl shadow-xl border-4 border-white bg-white w-44 h-32 md:w-52 md:h-36"
                         />
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
