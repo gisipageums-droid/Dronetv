@@ -86,6 +86,7 @@ import CompanyLeads from "./components/UserDashboard/components/common/CompanyLe
 import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
 import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
 import AdminCompanyForm from "./components/AdminCompanyForm";
+import FinalT1 from "./components/mainProfessionalPreview/t1/src/App";
 
 const HomePage = () => (
   <>
@@ -157,7 +158,7 @@ const AppContent = () => {
             element={<DashboardEdit2 />}
           />
           {/* // company form admin route */}
-                  <Route path="/admin-dashboard/company-form" element={<AdminCompanyForm />} />
+          <Route path="/admin-dashboard/company-form" element={<AdminCompanyForm />} />
 
           {/* login functionality */}
           <Route path="/login" element={<Login />} />
@@ -187,7 +188,7 @@ const AppContent = () => {
           <Route path="/companies/:urlSlug" element={<MainCompPreviewT2 />} />
 
           {/* professionals route */}
-         <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalForm />} />
+          <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalForm />} />
           <Route path="/professional/form" element={<ProfessionalForm />} />
           <Route
             path="/professional/select"
@@ -195,6 +196,8 @@ const AppContent = () => {
           />
           <Route path="/professional/t2" element={<ProTemp2 />} />
           <Route path="/professional/t1" element={<ProTemp1 />} />
+          <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
+          <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
 
           {/* <Route path='/professional/Greeting' element={<SignupConfirmation/>} /> */}
           <Route

@@ -2,8 +2,7 @@ import { Globe, Loader2, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { AnimatedButton } from './AnimatedButton';
-import { toast } from 'react-toastify';
-import axios from 'axios';
+import { toast } from 'sonner';
 
 interface ContactInfo {
   icon: string;
@@ -19,8 +18,17 @@ interface SocialLink {
   color: string;
 }
 
+interface FormField {
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  rows?: number;
+}
+
 interface FormData {
   submitEndpoint: string;
+  fields: FormField[];
   submitText: string;
   successMessage: string;
   errorMessage: string;
@@ -44,7 +52,6 @@ interface ContactData {
 
 interface ContactProps {
   contactData: ContactData;
-  professionalId: string;
 }
 
 // Icon mapping
@@ -52,50 +59,14 @@ const iconMap: { [key: string]: React.ComponentType<any> } = {
   Mail, Phone, MapPin, Globe, Send, Github: Mail, Linkedin: Phone, Twitter: MapPin, Instagram: Globe
 };
 
-// Static form fields - not editable (same as in first Contact.tsx)
-const staticFormFields = [
-  {
-    name: "name",
-    label: "Full Name",
-    type: "text",
-    required: true
-  },
-  {
-    name: "email",
-    label: "Email Address",
-    type: "email",
-    required: true
-  },
-  {
-    name: "phone",
-    label: "Phone Number",
-    type: "tel",
-    required: false
-  },
-  {
-    name: "subject",
-    label: "Subject",
-    type: "select",
-    required: true,
-    options: ["General Inquiry", "Sales Inquiry", "Products Inquiry", "Services Inquiry", "Support Inquiry"]
-  },
-  {
-    name: "message",
-    label: "Message",
-    type: "textarea",
-    required: true,
-    rows: 6
-  }
-];
-
-export function Contact({ contactData, professionalId }: ContactProps) {
+export function Contact({ contactData }: ContactProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
 
   // Initialize form data
   useState(() => {
     const initialFormData: Record<string, string> = {};
-    staticFormFields.forEach(field => {
+    contactData.form.fields.forEach(field => {
       initialFormData[field.name] = '';
     });
     setFormData(initialFormData);
@@ -111,21 +82,17 @@ export function Contact({ contactData, professionalId }: ContactProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+    
     try {
-      // Send form data as JSON body using POST
-      const res = await axios.post(
-        'https://l7p8i65gl5.execute-api.ap-south-1.amazonaws.com/prod/',
-        { professionalId, ...formData },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      if (res.status === 200) {
-        toast.success("Message sent successfully!");
-      }
+      // Simulate API call to the submit endpoint
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      console.log('Form submitted:', formData);
+      toast.success(contactData.form.successMessage);
       
       // Reset form
       const resetFormData: Record<string, string> = {};
-      staticFormFields.forEach(field => {
+      contactData.form.fields.forEach(field => {
         resetFormData[field.name] = '';
       });
       setFormData(resetFormData);
@@ -168,8 +135,62 @@ export function Contact({ contactData, professionalId }: ContactProps) {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            {/* Contact Info Cards */}
-           
+            {/* Availability Status */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-card rounded-lg p-6 shadow-md"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`w-3 h-3 rounded-full ${
+                  contactData.availability.status === 'available' 
+                    ? 'bg-green-500' 
+                    : 'bg-yellow-500'
+                }`} />
+                <span className="text-foreground font-medium">
+                  {contactData.availability.message}
+                </span>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                {contactData.availability.responseTime}
+              </p>
+            </motion.div>
+
+            <div className="space-y-6">
+              {contactData.contactInfo.map((info, index) => {
+                const IconComponent = iconMap[info.icon] || Mail;
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    whileHover={{ x: 10 }}
+                    className="flex items-center space-x-4"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 360 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center"
+                    >
+                      <IconComponent className="w-6 h-6 text-gray-900" />
+                    </motion.div>
+                    <div>
+                      <h4 className="text-foreground mb-1">{info.label}</h4>
+                      <a
+                        href={info.href}
+                        className="text-muted-foreground hover:text-yellow-500 transition-colors duration-300"
+                      >
+                        {info.value}
+                      </a>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
 
             {/* Social Links */}
             <motion.div
@@ -202,11 +223,10 @@ export function Contact({ contactData, professionalId }: ContactProps) {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="bg-card rounded-2xl p-8 shadow-lg border-2 border-white"
+            className="bg-card rounded-2xl p-8 shadow-lg"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Static Form Fields - Not Editable */}
-              {staticFormFields.map((field, index) => (
+              {contactData.form.fields.map((field, index) => (
                 <motion.div
                   key={field.name}
                   initial={{ opacity: 0, y: 20 }}
@@ -219,7 +239,6 @@ export function Contact({ contactData, professionalId }: ContactProps) {
                     {field.required && <span className="text-red-500 ml-1">*</span>}
                   </label>
 
-                  {/* Field input rendering */}
                   {field.type === 'textarea' ? (
                     <textarea
                       id={field.name}
@@ -230,22 +249,6 @@ export function Contact({ contactData, professionalId }: ContactProps) {
                       className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 resize-none bg-background text-foreground"
                       required={field.required}
                     />
-                  ) : field.type === 'select' ? (
-                    <select
-                      id={field.name}
-                      name={field.name}
-                      value={formData[field.name] || ''}
-                      onChange={(e) => handleFormChange(field.name, e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
-                      required={field.required}
-                    >
-                      <option value="">Select a subject</option>
-                      {field.options?.map((option, optionIndex) => (
-                        <option key={optionIndex} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
                   ) : (
                     <input
                       type={field.type}

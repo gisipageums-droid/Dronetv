@@ -184,12 +184,12 @@ const ProfessionalsPage: React.FC = () => {
           <button
             onClick={() => {
               if (professional.templateSelection === 'template-1') {
-                navigate(`/professional/${professional.userId}`);
+                navigate(`/professional/${professional.userName}`);
               } else if (professional.templateSelection === 'template-2') {
-                navigate(`/professionals/${professional.userId}`);
+                navigate(`/professionals/${professional.userName}`);
               } else {
                 // Default fallback
-                navigate(`/professional/${professional.userId}`);
+                navigate(`/professional/${professional.userName}`);
               }
             }}
             className="flex gap-1 justify-center items-center px-3 py-2 w-full text-xs font-medium text-black bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-md border border-orange-200 shadow-sm transition-all duration-300 hover:from-yellow-500 hover:to-yellow-700"

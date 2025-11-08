@@ -1,143 +1,173 @@
+import React from "react";
 import { motion } from "framer-motion";
-import HeroBackground from "../public/images/Hero/HeroBackground.jpg";
+import {
+  Twitter,
+  Instagram,
+  Linkedin,
+  Github,
+  Mail,
+  Phone,
+} from "lucide-react";
 
-const itemVariants = {
-  hidden: { y: 50, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
-};
+export interface HeroContent {
+  name: string;
+  title: string;
+  description: string;
+  image: string;
+  socials: {
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+    github?: string;
+    email?: string;
+    phone?: string;
+  };
+}
 
-const imageVariants = {
-  hidden: { scale: 0.8, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
-};
+interface HeroProps {
+  content: HeroContent;
+}
 
-export default function Hero({ heroData }) {
+const Hero: React.FC<HeroProps> = ({ content }) => {
+  const socialLinks = [
+    {
+      name: "Twitter",
+      icon: Twitter,
+      url: content.socials.twitter,
+      color: "hover:text-blue-400",
+      key: "twitter",
+    },
+    {
+      name: "Instagram",
+      icon: Instagram,
+      url: content.socials.instagram,
+      color: "hover:text-pink-400",
+      key: "instagram",
+    },
+    {
+      name: "LinkedIn",
+      icon: Linkedin,
+      url: content.socials.linkedin,
+      color: "hover:text-blue-600",
+      key: "linkedin",
+    },
+    {
+      name: "GitHub",
+      icon: Github,
+      url: content.socials.github,
+      color: "hover:text-gray-400",
+      key: "github",
+    },
+    {
+      name: "Email",
+      icon: Mail,
+      url: content.socials.email
+        ? `mailto:${content.socials.email}`
+        : undefined,
+      color: "hover:text-green-400",
+      key: "email",
+    },
+    {
+      name: "Phone",
+      icon: Phone,
+      url: content.socials.phone ? `tel:${content.socials.phone}` : undefined,
+      color: "hover:text-purple-400",
+      key: "phone",
+    },
+  ];
+
   return (
     <section
-      id='home'
-      className='relative h-100vh flex items-center py-52 sm:px-6 lg:px-8 lg:pb-32'
-      style={{
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${HeroBackground}')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "scroll",
-      }}
+      id="home"
+      className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 pt-40"
     >
-      {/* Hero content */}
-      <div className='relative z-10 max-w-7xl mx-auto w-full '>
-        <div className='grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-center'>
-          {/* Text section */}
-          <motion.div
-            className='space-y-8 text-center lg:text-left order-2 lg:order-1'
-            initial='hidden'
-            animate='visible'
-            variants={itemVariants}
-          >
-            <motion.h1
-              className='text-3xl sm:text-4xl md:text-5xl xl:text-3xl font-bold text-white leading-tight px-2 sm:px-0'
-              variants={itemVariants}
-            >
-              {heroData.heading}
-              <span className='block text-yellow-400 mt-2'>
-                {heroData.subheading}
-              </span>
-            </motion.h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-40 relative">
+        {/* Hero Content */}
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+        >
+          {/* Left Side */}
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white">
+                {/* Hi, I'm{" "} */}
+                <span className="text-blue-500 dark:text-orange-500">
+                  {content.name}
+                </span>
+              </h1>
 
-            <motion.p
-              className='text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed'
-              variants={itemVariants}
-            >
-              {heroData.description}
-            </motion.p>
+              <p className="text-xl lg:text-2xl font-semibold text-blue-600 dark:text-orange-400">
+                {content.title}
+              </p>
 
-            {/* Buttons */}
-            <motion.div
-              className='flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start px-2 sm:px-0'
-              variants={itemVariants}
-            >
-              <a
-                href={heroData.primaryButtonLink}
-                className='bg-yellow-400 hover:bg-yellow-300 text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block text-center'
-              >
-                {heroData.primaryBtn}
-              </a>
-              <a
-                href={heroData.secondaryButtonLink}
-                className='text-white border border-white hover:bg-white hover:text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 inline-block text-center'
-              >
-                {heroData.secondaryBtn}
-              </a>
-            </motion.div>
-
-            {/* Customers */}
-            <motion.div
-              className='flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6 pt-8 px-2 sm:px-0'
-              variants={itemVariants}
-            >
-              <div className='flex -space-x-2'>
-                {heroData.customerImages.map((img, i) => (
-                  <motion.div
-                    key={i}
-                    className='w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white shadow-lg bg-cover bg-center relative'
-                    style={{ backgroundImage: `url('${img}')` }}
-                    whileHover={{ scale: 1.2 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  />
-                ))}
-              </div>
-              <span className='text-sm sm:text-base text-white font-normal'>
-                {heroData.trustText}
-              </span>
-            </motion.div>
-          </motion.div>
-
-          {/* Images */}
-          <motion.div
-            className='relative order-1 lg:order-2 flex justify-center lg:justify-end px-4 sm:px-0'
-            initial='hidden'
-            animate='visible'
-            variants={itemVariants}
-          >
-            <div className='relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl'>
-              <motion.div className='relative' variants={imageVariants}>
-                <div className='relative'>
-                  <img
-                    src={heroData.hero1Image||'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800'}
-                    alt='Innovation showcase'
-                    className='w-full h-auto object-contain rounded-3xl shadow-2xl'
-                    style={{ maxHeight: '70vh' }}
-                  />
-
-                </div>
-                <motion.div
-                  className='absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 lg:-bottom-8 lg:-left-8'
-                  variants={imageVariants}
-                  transition={{ delay: 0.3 }}
-                >
-                  <div className='relative'>
-                    <img
-                      src={heroData.hero3Image||'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400'}
-                      alt='Tech innovation'
-                      className='block w-auto h-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] object-contain rounded-2xl shadow-xl border-4 border-white'
-                    />
-
-                  </div>
-                </motion.div>
-                <motion.div
-                  className='absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80'
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-                />
-              </motion.div>
+              <p className="text-lg lg:text-xl text-gray-700 dark:text-gray-300">
+                {content.description}
+              </p>
             </div>
-          </motion.div>
+
+            {/* Social Links */}
+            <div className="flex flex-wrap gap-6 items-center pt-2">
+              <div className="flex gap-3">
+                {socialLinks.map((social) =>
+                  content.socials[
+                    social.key as keyof typeof content.socials
+                  ] ? (
+                    <a
+                      key={social.name}
+                      href={social.url}
+                      target={
+                        social.name === "Email" || social.name === "Phone"
+                          ? "_self"
+                          : "_blank"
+                      }
+                      rel="noreferrer"
+                      className={`p-2 rounded-full bg-gray-100 dark:bg-gray-800 ${social.color}`}
+                    >
+                      <social.icon className="w-5 h-5" />
+                    </a>
+                  ) : null
+                )}
+              </div>
+            </div>
+
+            <motion.div className="grid grid-cols-2 gap-4 pt-4">
+              <button className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white dark:border-yellow-400 dark:text-yellow-400 dark:hover:bg-yellow-400 dark:hover:text-gray-900">
+                View My Work
+              </button>
+
+              <button className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white dark:border-yellow-400 dark:text-yellow-400 dark:hover:bg-yellow-400 dark:hover:text-gray-900">
+                Get In Touch
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Right Side - Profile Image */}
+          <div className="flex justify-center lg:justify-end">
+            <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-600">
+              <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative">
+                <img
+                  src={content.image}
+                  alt="Profile"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-purple-500 dark:bg-yellow-400 animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-blue-500 dark:bg-orange-500 animate-bounce" />
+          <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-indigo-500 dark:bg-red-500 animate-pulse" />
+          <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-indigo-500 dark:bg-red-500 animate-bounce-slow" />
+          <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-indigo-500 dark:bg-red-500 animate-bounce-slow" />
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default Hero;

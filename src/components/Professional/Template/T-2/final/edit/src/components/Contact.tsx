@@ -1,17 +1,49 @@
-import {
-  Globe,
-  Loader2,
-  Mail,
-  MapPin,
-  Phone,
-  Send,
-} from "lucide-react";
-import { motion } from "motion/react";
-import { useState, useEffect } from "react";
-import { AnimatedButton } from "./AnimatedButton";
-import { toast } from "sonner";
+import { Edit2, Globe, Loader2, Mail, MapPin, Phone, Save, Send, X } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
+import { AnimatedButton } from './AnimatedButton';
+import { toast } from 'sonner';
 
+// Custom Button component (consistent with other components)
+const Button = ({
+  children,
+  onClick,
+  variant,
+  size,
+  className,
+  disabled,
+  ...props
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  variant?: string;
+  size?: string;
+  className?: string;
+  disabled?: boolean;
+}) => {
+  const baseClasses =
+    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  const variants: Record<string, string> = {
+    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
+    default: "bg-blue-600 text-white hover:bg-blue-700",
+  };
+  const sizes: Record<string, string> = {
+    sm: "h-8 px-3 text-sm",
+    default: "h-10 px-4",
+  };
 
+  return (
+    <button
+      className={`${baseClasses} ${variants[variant || 'default']} ${sizes[size || 'default']
+        } ${className || ""}`}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
 interface ContactInfo {
   icon: string;

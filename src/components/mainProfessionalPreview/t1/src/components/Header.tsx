@@ -1,199 +1,192 @@
-import { motion } from "motion/react";
-import { useState, useMemo } from "react";
-import logo from"/logos/logo.svg"
-export default function Header({ headerData }) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+import React, { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
+import { Sun, Moon, Menu, X, Code } from "lucide-react";
+import { useDarkMode } from "../context/DarkModeContext";
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+export interface HeaderContent {
+  logoText: string;
+  navLinks: Array<{
+    href: string;
+    label: string;
+  }>;
+}
 
-  // ✅ Desired navigation order
-  const desiredOrder = [
-    "Home",
-    "About",
-    "Profile",
-    "Services",
-    "Product",
-    "Blog",
-    "Gallery",
-    "Testimonials",
-  ];
+interface NavbarProps {
+  content: HeaderContent;
+}
 
-  // ✅ Reorder nav items safely
-  const orderedNavItems = useMemo(() => {
-    const apiItems = Array.isArray(headerData?.navItems)
-      ? headerData.navItems
-      : [];
+const Navbar: React.FC<NavbarProps> = ({ content }) => {
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeLink, setActiveLink] = useState("#home");
 
-    const lowerApiItems = apiItems.map((i) => i.toLowerCase());
-    const lowerDesired = desiredOrder.map((i) => i.toLowerCase());
+  const navLinks = useMemo(() => content.navLinks || [], [content.navLinks]);
 
-    const sorted = desiredOrder.filter((item) =>
-      lowerApiItems.includes(item.toLowerCase())
+  // Scroll detection
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Track section in view
+  useEffect(() => {
+    if (navLinks.length === 0) return;
+
+    const sections = navLinks
+      .map((link) => {
+        if (link.href && link.href.startsWith("#") && link.href.length > 1) {
+          const element = document.querySelector(link.href);
+          return element ? element : null;
+        }
+        return null;
+      })
+      .filter(Boolean) as HTMLElement[];
+
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveLink(`#${entry.target.id}`);
+        });
+      },
+      { threshold: 0.6 }
     );
 
-    const extras = apiItems.filter(
-      (item) => !lowerDesired.includes(item.toLowerCase())
-    );
+    sections.forEach((section) => observer.observe(section));
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+      observer.disconnect();
+    };
+  }, [navLinks]);
 
-    return [...sorted, ...extras];
-  }, [headerData]);
-
-  const headerStyles: React.CSSProperties = {
-    position: "fixed",
-    top: "56px",
-    left: "0",
-    right: "0",
-    width: "100%",
-    zIndex: 1000,
-    backgroundColor: "white",
-    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-    borderBottom: "1px solid #e5e7eb",
-    transition: "all 0.5s ease",
-  };
-
-  const mobileMenuStyles: React.CSSProperties = {
-    position: "fixed",
-    top: "112px",
-    left: "0",
-    right: "0",
-    zIndex: 999,
-    backgroundColor: "white",
-    borderTop: "1px solid #e5e7eb",
-    maxHeight: isMobileMenuOpen ? "384px" : "0",
-    opacity: isMobileMenuOpen ? "1" : "0",
-    overflow: "hidden",
-    transition: "all 0.3s ease-in-out",
+  const scrollToSection = (href: string) => {
+    if (href && href.startsWith("#") && href.length > 1) {
+      const element = document.querySelector(href);
+      element?.scrollIntoView({ behavior: "smooth" });
+      setActiveLink(href);
+    }
+    setIsMenuOpen(false);
   };
 
   return (
     <>
-      <motion.header
-        style={headerStyles}
-        className="dark:bg-gray-900 dark:border-gray-700"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6 }}
+      <motion.nav
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className={`fixed top-16 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-sm ${
+          isScrolled
+            ? "bg-white/80 dark:bg-gray-900/80 shadow-lg backdrop-blur-xl"
+            : "bg-white dark:bg-gray-900"
+        }`}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-0 relative">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo + Company Name */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
+            {/* Logo */}
             <motion.div
-              className="flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-red-500 dark:text-yellow-400 transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
+              className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-blue-500 dark:text-orange-500"
+              onClick={() => scrollToSection("#home")}
             >
-              <div className="relative">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                    rotate: 0,
-                    transition: {
-                      duration: 0.8,
-                      type: "spring",
-                      stiffness: 120,
-                    },
-                  }}
-                  whileHover={{
-                    scale: 1.0,
-                    rotate: 360,
-                    transition: { duration: 0.5 },
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <motion.img
-                    src={headerData?.logoSrc|| logo}
-                    alt="Logo"
-                    className="h-4 w-4 sm:h-6 sm:w-6 object-contain rounded-full"
-                    animate={{
-                      y: [0, -5, 0],
-                      transition: {
-                        duration: 3,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        ease: "easeInOut",
-                      },
-                    }}
-                  />
-                </motion.div>
-              </div>
-              <span>{headerData?.companyName || "Company"}</span>
+              <Code className="w-8 h-8 flex-shrink-0" />
+              <span className="text-xl font-bold truncate">
+                {content.logoText || "Professional"}
+              </span>
             </motion.div>
 
-            {/* Desktop Navigation + Sign Up */}
-            <div className="hidden md:flex items-center space-x-4 mr-20">
-              <nav className="flex items-center space-x-4">
-                {orderedNavItems.map((item, index) => (
-                  <a
-                    key={index}
-                    href={`#${item.toLowerCase()}`}
-                    className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center justify-center space-x-1 flex-1 mx-4">
+              {navLinks.map((link, index) => (
+                <motion.div
+                  key={index}
+                  whileHover={{ y: -2 }}
+                  className="flex-shrink-0"
+                >
+                  <button
+                    onClick={() => scrollToSection(link.href)}
+                    className={`relative px-3 py-2 rounded-md font-medium transition-colors whitespace-nowrap ${
+                      activeLink === link.href
+                        ? "text-orange-500"
+                        : "text-gray-700 dark:text-gray-300 hover:text-orange-500"
+                    }`}
                   >
-                    {item}
-                  </a>
-                ))}
-              </nav>
+                    {link.label}
+                    {activeLink === link.href && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute inset-0 rounded-md bg-orange-500/10"
+                      />
+                    )}
+                  </button>
+                </motion.div>
+              ))}
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center space-x-2">
-              <button
-                onClick={toggleMobileMenu}
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+            {/* Right Section */}
+            <div className="flex items-center space-x-3 flex-shrink-0">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={toggleDarkMode}
+                className="hidden md:inline-block p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex-shrink-0"
               >
-                <svg
-                  className="h-6 w-6 transition-transform duration-200"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  style={{
-                    transform: isMobileMenuOpen
-                      ? "rotate(90deg)"
-                      : "rotate(0deg)",
-                  }}
-                >
-                  {isMobileMenuOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  )}
-                </svg>
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </motion.button>
+
+              {/* Mobile menu toggle */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 flex-shrink-0"
+              >
+                {isMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
-        </div>
-      </motion.header>
 
-      {/* Mobile Navigation Menu */}
-      <div
-        style={mobileMenuStyles}
-        className="md:hidden dark:bg-gray-900 dark:border-gray-700"
-      >
-        <div className="px-4 pt-2 pb-3 space-y-1 sm:px-6">
-          {orderedNavItems.map((item, index) => (
-            <a
-              key={index}
-              href={`#${item.toLowerCase()}`}
-              className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
-              onClick={closeMobileMenu}
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-gray-200 dark:border-gray-800 overflow-hidden"
             >
-              {item}
-            </a>
-          ))}
+              <div className="px-2 pt-2 pb-3 space-y-1">
+                {navLinks.map((link, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-50 dark:bg-gray-800 p-2 rounded-lg"
+                  >
+                    <button
+                      onClick={() => scrollToSection(link.href)}
+                      className={`w-full text-left px-3 py-2 rounded-md text-base ${
+                        activeLink === link.href
+                          ? "text-orange-500 font-semibold bg-orange-50 dark:bg-orange-900/20"
+                          : "text-gray-700 dark:text-gray-300 hover:text-orange-500"
+                      }`}
+                    >
+                      {link.label}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </div>
-      </div>
+      </motion.nav>
     </>
   );
-}
+};
+
+export default Navbar;

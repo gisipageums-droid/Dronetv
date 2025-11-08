@@ -63,6 +63,24 @@ export function Services({ serviceData }: ServicesProps) {
         })
     };
 
+    // Safe string splitting for heading
+    const renderHeading = () => {
+        const heading = serviceData?.heading || "My Services";
+        const words = heading.split(' ');
+
+        if (words.length > 1) {
+            return (
+                <>
+                    {words[0]}{' '}
+                    <span className="text-red-500">
+                        {words.slice(1).join(' ')}
+                    </span>
+                </>
+            );
+        }
+        return heading;
+    };
+
     // Loading state
     if (!serviceData) {
         return (
@@ -108,7 +126,7 @@ export function Services({ serviceData }: ServicesProps) {
                     <div className="flex items-center justify-center mb-4">
                         <Briefcase className="w-8 h-8 text-red-500 mr-3" />
                         <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground">
-                            {serviceData.heading || "My Services"}
+                            {renderHeading()}
                         </h2>
                     </div>
                     {serviceData.subtitle && (
@@ -117,7 +135,7 @@ export function Services({ serviceData }: ServicesProps) {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                             viewport={{ once: true }}
-                            className="text-xl text-red-600 mb-4 max-w-3xl mx-auto"
+                            className="text-lg text-red-500 mb-2"
                         >
                             {serviceData.subtitle}
                         </motion.p>
@@ -128,7 +146,7 @@ export function Services({ serviceData }: ServicesProps) {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.6 }}
                             viewport={{ once: true }}
-                            className="text-lg text-muted-foreground max-w-3xl mx-auto"
+                            className="text-xl text-muted-foreground max-w-3xl mx-auto"
                         >
                             {serviceData.description}
                         </motion.p>
@@ -151,58 +169,58 @@ export function Services({ serviceData }: ServicesProps) {
                                         x: { type: "spring", stiffness: 300, damping: 30 },
                                         opacity: { duration: 0.2 }
                                     }}
-                                    className="absolute inset-0 grid md:grid-cols-2 gap-0"
+                                    className="absolute inset-0 flex items-center justify-center"
                                 >
-                                    {/* Service Image - Updated to match the first component */}
-                                    <div className="relative aspect-[4/3]">
-                                        {services[currentIndex]?.image ? (
-                                            <ImageWithFallback
-                                                src={services[currentIndex].image}
-                                                alt={services[currentIndex].title}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                                <p className="text-gray-400 text-sm">No image uploaded</p>
-                                            </div>
-                                        )}
-                                        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
-                                    </div>
+                                    {/* Service Card Content */}
+                                    <div className="w-full h-full flex bg-gradient-to-br from-card to-red-50 dark:from-card dark:to-red-900/20">
+                                        {/* Service Image */}
+                                        <div className="w-1/2 relative">
+                                            <motion.div transition={{ duration: 0.3 }}>
+                                                <ImageWithFallback
+                                                    src={services[currentIndex].image}
+                                                    alt={services[currentIndex].title}
+                                                    className="w-full h-full object-cover"
+                                                    fallbackSrc="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop"
+                                                />
+                                            </motion.div>
+                                        </div>
 
-                                    {/* Service Details - Updated to match the first component */}
-                                    <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-red-50 dark:from-card dark:to-red-900/20">
-                                        <div className="flex-1 flex flex-col justify-center">
-                                            <div className="mb-6">
-                                                {/* Service Title */}
-                                                <motion.h3
-                                                    className="text-2xl lg:text-3xl text-foreground mb-2"
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: 0.2 }}
-                                                >
-                                                    {services[currentIndex].title}
-                                                </motion.h3>
-
-                                                {/* Service Details (Issuer and Date) */}
-                                                <motion.div
-                                                    className="flex items-center text-red-600 mb-4"
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: 0.3 }}
-                                                >
-                                                    <span className="text-lg">{services[currentIndex].issuer} • {services[currentIndex].date}</span>
-                                                </motion.div>
-                                            </div>
+                                        {/* Service Content */}
+                                        <div className="w-1/2 p-8 flex flex-col items-center justify-center">
+                                            {/* Service Title */}
+                                            <motion.h3
+                                                className="text-3xl lg:text-4xl text-foreground mb-4 text-center"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.2 }}
+                                            >
+                                                {services[currentIndex].title}
+                                            </motion.h3>
 
                                             {/* Service Description */}
                                             <motion.p
-                                                className="text-muted-foreground leading-relaxed flex-1"
+                                                className="text-muted-foreground mb-4 leading-relaxed text-center"
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: 0.4 }}
+                                                transition={{ delay: 0.3 }}
                                             >
                                                 {services[currentIndex].description}
                                             </motion.p>
+
+                                            {/* Service Details */}
+                                            <motion.div
+                                                className="text-center"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.3 }}
+                                            >
+                                                <p className="text-lg text-red-600 dark:text-red-400">
+                                                    {services[currentIndex].issuer}
+                                                </p>
+                                                <p className="text-muted-foreground">
+                                                    {services[currentIndex].date}
+                                                </p>
+                                            </motion.div>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -242,7 +260,16 @@ export function Services({ serviceData }: ServicesProps) {
                         )}
                     </div>
                 ) : (
-                    <div className='h-0 w-0 hidden'></div>
+                    // Empty state when no services are available
+                    <div className="text-center py-12">
+                        <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-xl text-muted-foreground mb-2">
+                            No services available
+                        </h3>
+                        <p className="text-muted-foreground">
+                            Services information is currently being updated.
+                        </p>
+                    </div>
                 )}
             </div>
         </section>

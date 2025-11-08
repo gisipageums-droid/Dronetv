@@ -5,7 +5,7 @@ export function SimpleTestimonials({ testimonialData }) {
   // If no testimonialData provided, return loading state
   if (!testimonialData) {
     return (
-      <section className="py-20 bg-white dark:bg-yellow-900/20">
+      <section className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="h-8 bg-gray-300 rounded w-1/3 mx-auto mb-4"></div>
@@ -13,19 +13,19 @@ export function SimpleTestimonials({ testimonialData }) {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(3)].map((_, index) => (
-              <div key={index} className="animate-pulse bg-card rounded-2xl p-6 shadow-lg min-h-[400px] flex flex-col">
+              <div key={index} className="animate-pulse bg-card rounded-2xl p-6 shadow-lg">
                 <div className="w-12 h-12 bg-gray-300 rounded-full mb-4"></div>
                 <div className="flex space-x-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <div key={i} className="w-5 h-5 bg-gray-300 rounded"></div>
                   ))}
                 </div>
-                <div className="space-y-2 mb-6 flex-1">
+                <div className="space-y-2 mb-6">
                   <div className="h-4 bg-gray-300 rounded"></div>
                   <div className="h-4 bg-gray-300 rounded w-5/6"></div>
                   <div className="h-4 bg-gray-300 rounded w-4/6"></div>
                 </div>
-                <div className="flex items-center space-x-4 mt-auto pt-4">
+                <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
                   <div className="space-y-2">
                     <div className="h-4 bg-gray-300 rounded w-24"></div>
@@ -67,7 +67,7 @@ export function SimpleTestimonials({ testimonialData }) {
   };
 
   return (
-    <section className="py-20 bg-white dark:bg-yellow-900/20">
+    <section className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header - Fully Dynamic */}
         <motion.div
@@ -103,7 +103,7 @@ export function SimpleTestimonials({ testimonialData }) {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10 }}
-                className="bg-card border-2 border-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col min-h-[400px]"
+                className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {/* Quote Icon */}
                 <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
@@ -117,32 +117,30 @@ export function SimpleTestimonials({ testimonialData }) {
                   ))}
                 </div>
 
-                {/* Review - Dynamic Content with fixed height */}
-                <div className="flex-1 mb-6 min-h-[120px] max-h-[120px] overflow-y-auto">
-                  <p className="text-muted-foreground leading-relaxed">
-                    "{testimonial.review}"
-                  </p>
-                </div>
+                {/* Review - Dynamic Content */}
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  "{testimonial.review}"
+                </p>
 
-                {/* Client Info - Fixed at bottom */}
-                <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
+                {/* Client Info - Dynamic */}
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
                     <span className="text-gray-900 text-lg font-semibold">
                       {testimonial.name.charAt(0)}
                     </span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-foreground mb-1 truncate">{testimonial.name}</h4>
-                    <p className="text-sm text-muted-foreground truncate">
+                  <div>
+                    <h4 className="text-foreground mb-1">{testimonial.name}</h4>
+                    <p className="text-sm text-muted-foreground">
                       {testimonial.position}
                     </p>
                     {testimonial.project && (
-                      <p className="text-xs text-muted-foreground mt-1 truncate">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {testimonial.project}
                       </p>
                     )}
                     {testimonial.date && (
-                      <p className="text-xs text-muted-foreground truncate">
+                      <p className="text-xs text-muted-foreground">
                         {testimonial.date}
                       </p>
                     )}
@@ -152,7 +150,7 @@ export function SimpleTestimonials({ testimonialData }) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 hidden">
+          <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
               {testimonialData.emptyMessage || 
                 (testimonialData.testimonials && testimonialData.testimonials.length === 0 
@@ -165,7 +163,7 @@ export function SimpleTestimonials({ testimonialData }) {
         )}
 
         {/* Bottom CTA - Fully Dynamic */}
-        {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
@@ -188,7 +186,7 @@ export function SimpleTestimonials({ testimonialData }) {
               {ctaData.buttonText}
             </motion.a>
           </div>
-        </motion.div> */}
+        </motion.div>
       </div>
     </section>
   );

@@ -45,7 +45,7 @@ export function Projects({ projectData }: ProjectsProps) {
     heading: "",
     description: "",
     projects: [],
-    categories: [""]
+    categories: ["All", "Development", "Application"]
   };
 
   const [data, setData] = useState<ProjectsData>(defaultProjectsData);
@@ -85,38 +85,20 @@ export function Projects({ projectData }: ProjectsProps) {
     activeCategory === "All" || project.category === activeCategory
   );
 
-  // Safe string splitting for heading
-  const renderHeading = () => {
-    const heading = data?.heading || "";
-    const words = heading.split(' ');
-
-    if (words.length > 1) {
-      return (
-        <>
-          {words[0]}{' '}
-          <span className="text-yellow-500">
-            {words.slice(1).join(' ')}
-          </span>
-        </>
-      );
-    }
-    return heading;
-  };
-
   // If no projectData provided, return loading state
   if (!projectData && !dataLoaded) {
     return (
-      <section id="projects" className="py-20 bg-background hidden">
+      <section id="projects" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="h-8 bg-gray-300 rounded w-1/3 mx-auto mb-4"></div>
             <div className="h-4 bg-gray-300 rounded w-2/3 mx-auto"></div>
           </div>
-          <div className="grid md:grid-cols-2 gap-8">
-            {[...Array(4)].map((_, index) => (
-              <div key={index} className="animate-pulse bg-card rounded-2xl overflow-hidden shadow-lg border border-border h-full">
-                <div className="w-full aspect-[16/9] bg-gray-300"></div>
-                <div className="p-6 flex flex-col flex-1">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="animate-pulse bg-card rounded-2xl overflow-hidden shadow-lg border border-border">
+                <div className="w-full h-48 bg-gray-300"></div>
+                <div className="p-6">
                   <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
                   <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
                   <div className="h-4 bg-gray-300 rounded w-5/6 mb-4"></div>
@@ -124,11 +106,9 @@ export function Projects({ projectData }: ProjectsProps) {
                     <div className="w-16 h-6 bg-gray-300 rounded-full"></div>
                     <div className="w-20 h-6 bg-gray-300 rounded-full"></div>
                   </div>
-                  <div className="mt-auto pt-4">
-                    <div className="flex space-x-3">
-                      <div className="h-10 bg-gray-300 rounded flex-1"></div>
-                      <div className="h-10 bg-gray-300 rounded flex-1"></div>
-                    </div>
+                  <div className="flex space-x-3">
+                    <div className="h-10 bg-gray-300 rounded flex-1"></div>
+                    <div className="h-10 bg-gray-300 rounded flex-1"></div>
                   </div>
                 </div>
               </div>
@@ -168,7 +148,10 @@ export function Projects({ projectData }: ProjectsProps) {
             viewport={{ once: true }}
             className="text-3xl sm:text-4xl text-foreground mb-4"
           >
-            {renderHeading()}
+            {data.heading || "Featured Projects"}
+            {data.heading && !data.heading.includes("Projects") && (
+              <span className="text-yellow-500"> Projects</span>
+            )}
           </motion.h2>
           {data.description && (
             <motion.p
@@ -176,7 +159,7 @@ export function Projects({ projectData }: ProjectsProps) {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
               viewport={{ once: true }}
-              className="text-lg text-muted-foreground max-w-2xl mx-auto"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4"
             >
               {data.description}
             </motion.p>
@@ -208,9 +191,9 @@ export function Projects({ projectData }: ProjectsProps) {
           </motion.div>
         )}
 
-        {/* Projects Grid - Updated to 2 columns like the first component */}
+        {/* Projects Grid */}
         {filteredProjects.length > 0 ? (
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProjects.map((project, index) => (
               <motion.div
                 key={project.id}
@@ -219,19 +202,18 @@ export function Projects({ projectData }: ProjectsProps) {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10 }}
-                className="bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-border flex flex-col h-full"
+                className="bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-border"
               >
-                {/* Project Image - Updated to 16:9 aspect ratio */}
-                <div className="relative overflow-hidden bg-gray-100 aspect-[16/9]">
+                {/* Project Image */}
+                <div className="relative overflow-hidden">
                   <motion.div
                     whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.3 }}
-                    className="h-full"
                   >
                     <ImageWithFallback
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-48 object-cover"
                     />
                   </motion.div>
                   <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
@@ -260,15 +242,13 @@ export function Projects({ projectData }: ProjectsProps) {
                   </div>
                 </div>
 
-                {/* Project Content - Updated to match first component */}
-                <div className="p-6 flex flex-col flex-1">
+                {/* Project Content */}
+                <div className="p-6">
                   {/* Project Title */}
-                  <h3 className="text-xl text-foreground mb-3">{project.title}</h3>
+                  <h3 className="text-xl text-foreground mb-2">{project.title}</h3>
 
                   {/* Project Description */}
-                  <p className="text-muted-foreground mb-4 leading-relaxed flex-1">
-                    {project.description}
-                  </p>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
 
                   {/* Project Tags */}
                   {project.technologies && project.technologies.length > 0 && (
@@ -290,27 +270,19 @@ export function Projects({ projectData }: ProjectsProps) {
                     <span>{project.date}</span>
                   </div>
 
-                  {/* Project Links - Fixed at bottom */}
-                  <div className="mt-auto pt-4">
-                    <div className="flex space-x-3">
-                      {project.liveUrl !== '#' && (
-                        <a
-                          href={project.liveUrl}
-                          className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-1 text-center"
-                        >
-                          Live Demo
-                        </a>
-                      )}
-                      {project.githubUrl !== '#' && (
-                        <a
-                          href={project.githubUrl}
-                          className="inline-flex items-center justify-center px-4 py-2 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors flex-1 text-center"
-                        >
-                          <Github className="w-4 h-4 mr-2" />
-                          Code
-                        </a>
-                      )}
-                    </div>
+                  {/* Project Links */}
+                  <div className="flex space-x-3">
+                    {project.liveUrl !== '#' && (
+                      <AnimatedButton href={project.liveUrl} size="sm" className="flex-1">
+                        Live Demo
+                      </AnimatedButton>
+                    )}
+                    {project.githubUrl !== '#' && (
+                      <AnimatedButton href={project.githubUrl} variant="secondary" size="sm" className="flex-1">
+                        <Github className="w-4 h-4 mr-2" />
+                        Code
+                      </AnimatedButton>
+                    )}
                   </div>
                 </div>
               </motion.div>
