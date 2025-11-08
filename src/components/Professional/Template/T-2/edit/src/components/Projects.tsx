@@ -99,7 +99,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   const [isUploading, setIsUploading] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
-  
+
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
@@ -133,7 +133,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   const displayData = isEditing ? tempData : data;
 
   // Use displayData for filtered projects to ensure consistency
-  const filteredProjects = displayData.projects.filter(project => 
+  const filteredProjects = displayData.projects.filter(project =>
     activeCategory === "All" || project.category === activeCategory
   );
 
@@ -141,7 +141,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   const renderHeading = () => {
     const heading = displayData?.heading;
     const words = heading.split(' ');
-    
+
     if (words.length > 1) {
       return (
         <>
@@ -214,20 +214,20 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
-        const fileName = originalFile ? 
-          `cropped-project-${currentCroppingProject}-${originalFile.name}` : 
+        const fileName = originalFile ?
+          `cropped-project-${currentCroppingProject}-${originalFile.name}` :
           `cropped-project-${currentCroppingProject}-${Date.now()}.jpg`;
-        
-        const file = new File([blob], fileName, { 
+
+        const file = new File([blob], fileName, {
           type: 'image/jpeg',
           lastModified: Date.now()
         });
-        
+
         const previewUrl = URL.createObjectURL(blob);
-        
-        resolve({ 
-          file, 
-          previewUrl 
+
+        resolve({
+          file,
+          previewUrl
         });
       }, 'image/jpeg', 0.95);
     });
@@ -258,7 +258,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
-    
+
     // Clear the file input
     event.target.value = '';
   };
@@ -269,17 +269,17 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
       if (!imageToCrop || !croppedAreaPixels || !currentCroppingProject) return;
 
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-      
+
       // Update preview immediately with blob URL (temporary)
       setTempData(prevData => ({
         ...prevData,
         projects: prevData.projects.map(project =>
-          project.id.toString() === currentCroppingProject 
-            ? { ...project, image: previewUrl } 
+          project.id.toString() === currentCroppingProject
+            ? { ...project, image: previewUrl }
             : project
         )
       }));
-      
+
       // Store the file for upload on Save
       setPendingImageFiles(prev => ({ ...prev, [currentCroppingProject]: file }));
 
@@ -315,7 +315,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   const handleSave = async () => {
     try {
       setIsUploading(true);
-      
+
       let updatedData = { ...tempData };
 
       // Upload images for projects with pending files
@@ -349,14 +349,14 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
 
       // Clear pending files and update state immediately
       setPendingImageFiles({});
-      
+
       // Update both data and tempData to ensure UI consistency
       setData(updatedData);
       setTempData(updatedData);
-      
+
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // Set editing to false AFTER state updates
       setIsEditing(false);
       toast.success('Projects section saved successfully');
@@ -755,11 +755,10 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                  activeCategory === category
-                    ? 'bg-yellow-400 text-gray-900 shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className={`px-6 py-2 rounded-full transition-all duration-300 ${activeCategory === category
+                  ? 'bg-yellow-400 text-gray-900 shadow-lg'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
               >
                 {category}
               </button>
@@ -1021,7 +1020,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                   <div className="flex-1"></div>
 
                   {/* Project Links - CONSISTENTLY POSITIONED AT BOTTOM */}
-                  {isEditing ? (
+                  {/* {isEditing ? (
                     <div className="flex flex-col space-y-2 mt-4">
                       <div className="relative">
                         <input
@@ -1066,7 +1065,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                         Code
                       </a>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </motion.div>
             ))}

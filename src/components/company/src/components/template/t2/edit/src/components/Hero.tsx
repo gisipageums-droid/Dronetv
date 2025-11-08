@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "./ui/button";
 import { ArrowRight, Play, CheckCircle, X } from "lucide-react";
@@ -27,7 +26,10 @@ export default function Hero({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Fixed image dimensions - REMOVED aspectRatio state
+  const HERO_IMAGE_SIZE = { width: 1080, height: 720, aspect: 1080 / 720 };
+  const SMALL_IMAGE_SIZE = { width: 400, height: 267, aspect: 400 / 267 };
 
   // Consolidated state
   const [heroState, setHeroState] = useState({
@@ -111,9 +113,6 @@ export default function Hero({
       setOriginalFile(file);
       setCroppingFor("heroImage");
       setShowCropper(true);
-      // Lock aspect ratio for hero image (1080x720)
-      setAspectRatio(1080 / 720);
-
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -144,9 +143,6 @@ export default function Hero({
       setOriginalFile(file);
       setCroppingFor("hero3Image");
       setShowCropper(true);
-      // Lock aspect ratio for small image (400x267)
-      setAspectRatio(400 / 267);
-
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -187,9 +183,9 @@ export default function Hero({
     canvas.height = targetHeight;
 
     // Translate and rotate the context
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
+    ctx.translate(targetWidth / 2, targetHeight / 2);
     ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+    ctx.translate(-targetWidth / 2, -targetHeight / 2);
 
     // Draw the cropped image scaled to the fixed output size
     ctx.drawImage(
@@ -444,7 +440,7 @@ export default function Hero({
 
   return (
     <>
-      {/* Image Cropper Modal - Standardized like Clients */}
+      {/* Image Cropper Modal - FIXED with locked aspect ratios */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -458,9 +454,16 @@ export default function Hero({
           >
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Crop About Image
-              </h3>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Crop {croppingFor === "heroImage" ? "Hero Image" : "Small Image"}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Required Size: {croppingFor === "heroImage"
+                    ? "1080×720px"
+                    : "400×267px"}
+                </p>
+              </div>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
@@ -476,12 +479,13 @@ export default function Hero({
                 crop={crop}
                 zoom={zoom}
                 rotation={rotation}
-                aspect={aspectRatio}
+                aspect={croppingFor === "heroImage" ? HERO_IMAGE_SIZE.aspect : SMALL_IMAGE_SIZE.aspect}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
                 showGrid={false}
                 cropShape="rect"
+                restrictPosition={false}
                 style={{
                   containerStyle: {
                     position: "relative",
@@ -498,42 +502,14 @@ export default function Hero({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
+              {/* Fixed Aspect Ratio Info */}
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">
-                  Aspect Ratio:
+                  Aspect Ratio: <strong>{croppingFor === "heroImage" ? "1080:720 (3:2)" : "400:267 (3:2)"}</strong>
                 </p>
-                <div className="flex gap-2">
-                  {/* <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    1:1 (Square)
-                  </button> */}
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    4:3 (Standard)
-                  </button>
-                  {/* <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    16:9 (Widescreen)
-                  </button> */}
-                </div>
+                <p className="text-xs text-gray-600">
+                  Output will be exactly {croppingFor === "heroImage" ? "1080×720px" : "400×267px"}
+                </p>
               </div>
 
               {/* Zoom Control */}
@@ -581,7 +557,7 @@ export default function Hero({
         </motion.div>
       )}
 
-      {/* Rest of your Hero component remains exactly the same */}
+      {/* Rest of your Hero component */}
       <section
         id="home"
         className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition"
@@ -886,9 +862,9 @@ export default function Hero({
               {isEditing && (
                 <div className="mb-4 space-y-4 p-2 bg-white/80 rounded shadow">
                   <div>
-                    {/* Recommended Size Above Image */}
+                    {/* Required Size Above Image */}
                     <div className="mb-2 bg-black/70 text-white text-xs p-1 rounded text-center">
-                      Recommended: 1080×720px
+                      Required: 1080×720px
                     </div>
                     <input
                       type="file"
@@ -903,9 +879,9 @@ export default function Hero({
                     )}
                   </div>
                   <div>
-                    {/* Recommended Size Above Image */}
+                    {/* Required Size Above Image */}
                     <div className="mb-2 bg-black/70 text-white text-xs p-1 rounded text-center">
-                      Recommended: 400×267px
+                      Required: 400×267px
                     </div>
                     <input
                       type="file"
@@ -922,19 +898,19 @@ export default function Hero({
                 </div>
               )}
 
-              {/* Main image container - UPDATED FOR AUTO-ADJUST SIZE */}
+              {/* Main image container */}
               <div className="relative w-full">
                 <motion.div
                   className="relative"
                   variants={imageVariants}
                 >
                   <div className="relative flex justify-center">
-                    {/* Main Hero Image - Updated for auto-adjust */}
+                    {/* Main Hero Image */}
                     <div className="relative">
-                      {/* Recommended Size Above Image */}
+                      {/* Required Size Above Image */}
                       {isEditing && (
                         <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-                          Recommended: 1080×720px
+                          Required: 1080×720px
                         </div>
                       )}
                       <img
@@ -978,17 +954,17 @@ export default function Hero({
                       )}
                     </div>
 
-                    {/* Small overlapping image - Updated for auto-adjust */}
+                    {/* Small overlapping image */}
                     <motion.div
                       className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 lg:-bottom-8 lg:-left-8"
                       variants={imageVariants}
                       transition={{ delay: 0.3 }}
                     >
                       <div className="relative">
-                        {/* Recommended Size Above Image */}
+                        {/* Required Size Above Image */}
                         {isEditing && (
                           <div className="absolute -top-6 left-0 right-0 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-                            Recommended: 400×267px
+                            Required: 400×267px
                           </div>
                         )}
                         <img
@@ -1042,7 +1018,6 @@ export default function Hero({
           </div>
 
           {/* Edit/Save Buttons */}
-          {/* Added z-50 and pointer-events-auto to keep button above overlays and clickable */}
           <div className="absolute top-4 right-4 z-50 pointer-events-auto">
             {isEditing ? (
               <motion.button
