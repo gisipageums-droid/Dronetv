@@ -180,7 +180,7 @@ export default function Hero({ heroData }) {
             variants={itemVariants}
           >
             {/* Main image container */}
-            <div className="relative w-full">
+            <div className="relative w-full -mt-6 md:-mt-8 xl:-mt-10">
               <motion.div 
                 className="relative"
                 variants={imageVariants}
@@ -193,7 +193,7 @@ export default function Hero({ heroData }) {
                       alt="Modern business team collaborating"
                       className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
                       style={{ 
-                        maxHeight: '500px',
+                        maxHeight: '360px',
                         width: 'auto',
                         margin: '0 auto'
                       }}
