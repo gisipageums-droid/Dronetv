@@ -122,14 +122,14 @@ export function Contact({ contactData, professionalId }: ContactProps) {
       if (res.status === 200) {
         toast.success("Message sent successfully!");
       }
-      
+
       // Reset form
       const resetFormData: Record<string, string> = {};
       staticFormFields.forEach(field => {
         resetFormData[field.name] = '';
       });
       setFormData(resetFormData);
-      
+
     } catch (error) {
       console.error('Error submitting form:', error);
       toast.error(contactData.form.errorMessage);
@@ -169,7 +169,7 @@ export function Contact({ contactData, professionalId }: ContactProps) {
             className="space-y-8"
           >
             {/* Contact Info Cards */}
-           
+
 
             {/* Social Links */}
             <motion.div
@@ -266,9 +266,9 @@ export function Contact({ contactData, professionalId }: ContactProps) {
                 transition={{ duration: 0.6, delay: 0.5 }}
                 viewport={{ once: true }}
               >
-                <AnimatedButton 
-                  size="lg" 
-                  className="w-full" 
+                <AnimatedButton
+                  size="lg"
+                  className="w-full"
                   type="submit"
                   disabled={isSubmitting}
                 >

@@ -1,50 +1,17 @@
-import { Edit2, Globe, Loader2, Mail, MapPin, Phone, Save, Send, X } from 'lucide-react';
-import { motion } from 'motion/react';
-import { useState, useEffect } from 'react';
-import { AnimatedButton } from './AnimatedButton';
-import { toast } from 'sonner';
+import {
+  Globe,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Send,
+} from "lucide-react";
+import { motion } from "motion/react";
+import { useState, useEffect } from "react";
+import { AnimatedButton } from "./AnimatedButton";
+import { toast } from "sonner";
 
-// Custom Button component (consistent with other components)
-const Button = ({
-  children,
-  onClick,
-  variant,
-  size,
-  className,
-  disabled,
-  ...props
-}: {
-  children: React.ReactNode;
-  onClick?: () => void;
-  variant?: string;
-  size?: string;
-  className?: string;
-  disabled?: boolean;
-}) => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
-  const variants: Record<string, string> = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
-  };
-  const sizes: Record<string, string> = {
-    sm: "h-8 px-3 text-sm",
-    default: "h-10 px-4",
-  };
 
-  return (
-    <button
-      className={`${baseClasses} ${variants[variant || 'default']} ${
-        sizes[size || 'default']
-      } ${className || ""}`}
-      onClick={onClick}
-      disabled={disabled}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-};
 
 interface ContactInfo {
   icon: string;
@@ -101,64 +68,64 @@ const defaultContactData: ContactData = {
       icon: "Mail",
       label: "Email",
       value: "example@gmail.com",
-      href: "mailto:example@gmail.com"
+      href: "mailto:example@gmail.com",
     },
     {
       icon: "Phone",
       label: "Phone",
       value: "+91-99999-99999",
-      href: "tel:919999999999"
+      href: "tel:919999999999",
     },
     {
       icon: "MapPin",
       label: "Location",
       value: "India",
-      href: "#"
+      href: "#",
     },
     {
       icon: "Globe",
       label: "Website",
       value: "www.professional.dev",
-      href: "#"
-    }
+      href: "#",
+    },
   ],
   socialLinks: [
     {
       icon: "Github",
       label: "GitHub",
       href: "#",
-      color: "hover:text-gray-900"
+      color: "hover:text-gray-900",
     },
     {
       icon: "Linkedin",
       label: "LinkedIn",
       href: "#",
-      color: "hover:text-blue-600"
+      color: "hover:text-blue-600",
     },
     {
       icon: "Twitter",
       label: "Twitter",
       href: "#",
-      color: "hover:text-blue-400"
+      color: "hover:text-blue-400",
     },
     {
       icon: "Instagram",
       label: "Instagram",
       href: "#",
-      color: "hover:text-pink-500"
-    }
+      color: "hover:text-pink-500",
+    },
   ],
   form: {
     submitEndpoint: "/api/contact",
     submitText: "Send Message",
     successMessage: "Thank you! I'll get back to you soon.",
-    errorMessage: "Something went wrong. Please try again."
+    errorMessage: "Something went wrong. Please try again.",
   },
   availability: {
     message: "Available for new projects",
     responseTime: "Usually responds within 24 hours",
-    status: "available"
-  }
+    status: "available",
+  },
 };
 
 interface ContactProps {
@@ -168,7 +135,15 @@ interface ContactProps {
 
 // Icon mapping
 const iconMap: { [key: string]: React.ComponentType<any> } = {
-  Mail, Phone, MapPin, Globe, Send, Github: Mail, Linkedin: Phone, Twitter: MapPin, Instagram: Globe
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Send,
+  Github: Mail,
+  Linkedin: Phone,
+  Twitter: MapPin,
+  Instagram: Globe,
 };
 
 // Static form fields - not editable
@@ -177,34 +152,40 @@ const staticFormFields: FormField[] = [
     name: "name",
     label: "Full Name",
     type: "text",
-    required: true
+    required: true,
   },
   {
     name: "email",
     label: "Email Address",
     type: "email",
-    required: true
+    required: true,
   },
   {
     name: "phone",
     label: "Phone Number",
     type: "tel",
-    required: false
+    required: false,
   },
   {
     name: "subject",
     label: "Subject",
     type: "select",
     required: true,
-    options: ["General Inquiry", "Sales Inquiry", "Products Inquiry", "Servicess Inquiry","Support Inquiry"]
+    options: [
+      "General Inquiry",
+      "Sales Inquiry",
+      "Products Inquiry",
+      "Servicess Inquiry",
+      "Support Inquiry",
+    ],
   },
   {
     name: "message",
     label: "Message",
     type: "textarea",
     required: true,
-    rows: 6
-  }
+    rows: 6,
+  },
 ];
 
 const fieldPlaceholders: Record<string, string> = {
@@ -212,7 +193,7 @@ const fieldPlaceholders: Record<string, string> = {
   email: "rahulsharma@example.com",
   phone: "+91 98765 43210",
   subject: "Select a subject",
-  message: "Write your message here..."
+  message: "Write your message here...",
 };
 
 export function Contact({ contactData, onStateChange }: ContactProps) {
@@ -221,7 +202,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  
+
   const [data, setData] = useState<ContactData>(defaultContactData);
   const [tempData, setTempData] = useState<ContactData>(defaultContactData);
 
@@ -237,8 +218,8 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   // Initialize form data
   useEffect(() => {
     const initialFormData: Record<string, string> = {};
-    staticFormFields.forEach(field => {
-      initialFormData[field.name] = '';
+    staticFormFields.forEach((field) => {
+      initialFormData[field.name] = "";
     });
     setFormData(initialFormData);
   }, []);
@@ -273,14 +254,13 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
     try {
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       setData(tempData);
       setIsEditing(false);
-      toast.success('Contact section saved successfully');
-
+      toast.success("Contact section saved successfully");
     } catch (error) {
-      console.error('Error saving contact section:', error);
-      toast.error('Error saving changes. Please try again.');
+      console.error("Error saving contact section:", error);
+      toast.error("Error saving changes. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -292,32 +272,31 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   };
 
   const handleFormChange = (fieldName: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [fieldName]: value
+      [fieldName]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       // Simulate API call to the submit endpoint
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      console.log('Form submitted:', formData);
+
+      console.log("Form submitted:", formData);
       toast.success(data.form.successMessage);
-      
+
       // Reset form
       const resetFormData: Record<string, string> = {};
-      staticFormFields.forEach(field => {
-        resetFormData[field.name] = '';
+      staticFormFields.forEach((field) => {
+        resetFormData[field.name] = "";
       });
       setFormData(resetFormData);
-      
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
       toast.error(data.form.errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -325,52 +304,60 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   };
 
   // Update contact info
-  const updateContactInfo = (index: number, field: keyof ContactInfo, value: string) => {
-    setTempData(prev => ({
+  const updateContactInfo = (
+    index: number,
+    field: keyof ContactInfo,
+    value: string
+  ) => {
+    setTempData((prev) => ({
       ...prev,
-      contactInfo: prev.contactInfo.map((item, i) => 
+      contactInfo: prev.contactInfo.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
-      )
+      ),
     }));
   };
 
   // Update social links
-  const updateSocialLink = (index: number, field: keyof SocialLink, value: string) => {
-    setTempData(prev => ({
+  const updateSocialLink = (
+    index: number,
+    field: keyof SocialLink,
+    value: string
+  ) => {
+    setTempData((prev) => ({
       ...prev,
-      socialLinks: prev.socialLinks.map((item, i) => 
+      socialLinks: prev.socialLinks.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
-      )
+      ),
     }));
   };
 
   // Update form settings
   const updateFormSetting = (field: keyof FormData, value: string) => {
-    setTempData(prev => ({
+    setTempData((prev) => ({
       ...prev,
       form: {
         ...prev.form,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
   // Update availability
   const updateAvailability = (field: keyof Availability, value: string) => {
-    setTempData(prev => ({
+    setTempData((prev) => ({
       ...prev,
       availability: {
         ...prev.availability,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
   // Update text content
   const updateTextContent = (field: keyof ContactData, value: string) => {
-    setTempData(prev => ({
+    setTempData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -379,94 +366,66 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   // Loading state
   if (isLoading) {
     return (
-      <section id="contact" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="mt-4 text-muted-foreground">Loading contact section...</p>
+      <section
+        id="contact"
+        className="py-20 bg-yellow-50 dark:bg-yellow-900/20"
+      >
+        <div className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
+          <Loader2 className="w-8 h-8 mx-auto text-yellow-500 animate-spin" />
+          <p className="mt-4 text-muted-foreground">
+            Loading contact section...
+          </p>
         </div>
       </section>
     );
   }
 
   return (
-    <section id="contact" className="py-20 bg-yellow-50 dark:bg-yellow-900/20 relative">
-      {/* Edit/Save Controls */}
-      <div className="absolute top-4 right-4 z-10">
-        {!isEditing ? (
-          <Button
-            onClick={handleEdit}
-            size='sm'
-            className='bg-red-500 hover:bg-red-600 shadow-md text-white'
-          >
-            <Edit2 className='w-4 h-4 mr-2' />
-            Edit 
-          </Button>
-        ) : (
-          <div className='flex gap-2'>
-            <Button
-              onClick={handleSave}
-              size='sm'
-              className='bg-green-600 hover:bg-green-700 text-white shadow-md'
-              disabled={isSaving}
-            >
-              {isSaving ? (
-                <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-              ) : (
-                <Save className='w-4 h-4 mr-2' />
-              )}
-              {isSaving ? "Saving..." : "Save"}
-            </Button>
-            <Button
-              onClick={handleCancel}
-              size='sm'
-              className='bg-red-500 hover:bg-red-600 shadow-md text-white'
-              disabled={isSaving}
-            >
-              <X className='w-4 h-4 mr-2' />
-              Cancel
-            </Button>
-          </div>
-        )}
-      </div>
+    <section
+      id="contact"
+      className="relative py-20 bg-yellow-50 dark:bg-yellow-900/20"
+    >
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="mb-16 text-center"
         >
           {isEditing ? (
-            <div className="space-y-4 max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto space-y-4">
               <input
                 type="text"
                 value={displayData.subtitle}
-                onChange={(e) => updateTextContent('subtitle', e.target.value)}
-                className="text-lg uppercase tracking-wider text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded px-4 py-2 w-full focus:border-blue-500 focus:outline-none"
+                onChange={(e) => updateTextContent("subtitle", e.target.value)}
+                className="w-full px-4 py-2 text-lg tracking-wider uppercase border-2 border-blue-300 border-dashed rounded text-muted-foreground bg-white/80 focus:border-blue-500 focus:outline-none"
                 placeholder="Subtitle"
               />
               <input
                 type="text"
                 value={displayData.heading}
-                onChange={(e) => updateTextContent('heading', e.target.value)}
-                className="text-3xl sm:text-4xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded px-4 py-2 w-full focus:border-blue-500 focus:outline-none text-center"
+                onChange={(e) => updateTextContent("heading", e.target.value)}
+                className="w-full px-4 py-2 text-3xl text-center border-2 border-blue-300 border-dashed rounded sm:text-4xl text-foreground bg-white/80 focus:border-blue-500 focus:outline-none"
                 placeholder="Main Heading"
               />
               <input
                 type="text"
                 value={displayData.description}
-                onChange={(e) => updateTextContent('description', e.target.value)}
-                className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded px-4 py-2 w-full focus:border-blue-500 focus:outline-none"
+                onChange={(e) =>
+                  updateTextContent("description", e.target.value)
+                }
+                className="w-full px-4 py-2 text-lg border-2 border-blue-300 border-dashed rounded text-muted-foreground bg-white/80 focus:border-blue-500 focus:outline-none"
                 placeholder="Description"
               />
             </div>
           ) : (
             <>
-              <p className="text-lg uppercase tracking-wider text-muted-foreground mb-4">
+              <p className="mb-4 text-lg tracking-wider uppercase text-muted-foreground">
                 {displayData.subtitle}
               </p>
-              <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
+              <h2 className="mb-4 text-3xl sm:text-4xl text-foreground">
                 {displayData.heading}
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -476,62 +435,8 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
           )}
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Contact Information */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
-            {/* Social Links */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              viewport={{ once: true }}
-              className="pt-8"
-            >
-              <h4 className="text-foreground mb-4">Follow me on</h4>
-              {isEditing ? (
-                <div className="space-y-3">
-                  {displayData.socialLinks.map((social, index) => (
-                    <div key={index} className="flex gap-2 items-center">
-                      <input
-                        type="text"
-                        value={social.label}
-                        onChange={(e) => updateSocialLink(index, 'label', e.target.value)}
-                        className="flex-1 px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                        placeholder="Social Media Name"
-                      />
-                      <input
-                        type="text"
-                        value={social.href}
-                        onChange={(e) => updateSocialLink(index, 'href', e.target.value)}
-                        className="flex-1 px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
-                        placeholder="Link"
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-3">
-                  {displayData.socialLinks.map((social, index) => (
-                    <motion.a
-                      key={index}
-                      href={social.href}
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`px-4 py-2 bg-card text-foreground rounded-lg shadow hover:shadow-md transition-all duration-300 ${social.color} border border-border`}
-                    >
-                      {social.label}
-                    </motion.a>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          </motion.div>
+        <div className="max-w-2xl mx-auto">
+
 
           {/* Contact Form */}
           <motion.div
@@ -539,7 +444,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="bg-card rounded-2xl p-8 shadow-lg"
+            className="p-4 sm:p-6 lg:p-8 shadow-lg bg-card rounded-2xl mx-auto"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Static Form Fields - Not Editable */}
@@ -551,31 +456,40 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                   transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <label htmlFor={field.name} className="block text-foreground mb-2">
+                  <label
+                    htmlFor={field.name}
+                    className="block mb-2 text-sm sm:text-base text-foreground"
+                  >
                     {field.label}
-                    {field.required && <span className="text-red-500 ml-1">*</span>}
+                    {field.required && (
+                      <span className="ml-1 text-red-500">*</span>
+                    )}
                   </label>
 
                   {/* Field input rendering */}
-                  {field.type === 'textarea' ? (
+                  {field.type === "textarea" ? (
                     <textarea
                       id={field.name}
                       name={field.name}
-                      value={formData[field.name] || ''}
-                      onChange={(e) => handleFormChange(field.name, e.target.value)}
+                      value={formData[field.name] || ""}
+                      onChange={(e) =>
+                        handleFormChange(field.name, e.target.value)
+                      }
                       rows={field.rows || 4}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 resize-none bg-background text-foreground"
+                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg resize-none border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[120px]"
                       placeholder={fieldPlaceholders[field.name] || field.label}
                       required={field.required}
                       disabled={isEditing}
                     />
-                  ) : field.type === 'select' ? (
+                  ) : field.type === "select" ? (
                     <select
                       id={field.name}
                       name={field.name}
-                      value={formData[field.name] || ''}
-                      onChange={(e) => handleFormChange(field.name, e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
+                      value={formData[field.name] || ""}
+                      onChange={(e) =>
+                        handleFormChange(field.name, e.target.value)
+                      }
+                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
                       required={field.required}
                       disabled={isEditing}
                     >
@@ -591,9 +505,11 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                       type={field.type}
                       id={field.name}
                       name={field.name}
-                      value={formData[field.name] || ''}
-                      onChange={(e) => handleFormChange(field.name, e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
+                      value={formData[field.name] || ""}
+                      onChange={(e) =>
+                        handleFormChange(field.name, e.target.value)
+                      }
+                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
                       placeholder={fieldPlaceholders[field.name] || field.label}
                       required={field.required}
                       disabled={isEditing}
@@ -608,9 +524,9 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                 transition={{ duration: 0.6, delay: 0.5 }}
                 viewport={{ once: true }}
               >
-                <AnimatedButton 
-                  size="lg" 
-                  className="w-full" 
+                <AnimatedButton
+                  size="lg"
+                  className="w-full"
                   type="submit"
                   disabled={isSubmitting || isEditing}
                 >
@@ -624,19 +540,23 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
               </motion.div>
 
               {isEditing && (
-                <div className="space-y-3 pt-4 border-t border-border">
+                <div className="pt-4 space-y-3 border-t border-border">
                   <input
                     type="text"
                     value={displayData.form.successMessage}
-                    onChange={(e) => updateFormSetting('successMessage', e.target.value)}
-                    className="w-full px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                    onChange={(e) =>
+                      updateFormSetting("successMessage", e.target.value)
+                    }
+                    className="w-full px-3 py-2 border border-blue-300 border-dashed rounded bg-white/80 focus:border-blue-500 focus:outline-none"
                     placeholder="Success Message"
                   />
                   <input
                     type="text"
                     value={displayData.form.errorMessage}
-                    onChange={(e) => updateFormSetting('errorMessage', e.target.value)}
-                    className="w-full px-3 py-2 bg-white/80 border border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                    onChange={(e) =>
+                      updateFormSetting("errorMessage", e.target.value)
+                    }
+                    className="w-full px-3 py-2 border border-blue-300 border-dashed rounded bg-white/80 focus:border-blue-500 focus:outline-none"
                     placeholder="Error Message"
                   />
                 </div>
