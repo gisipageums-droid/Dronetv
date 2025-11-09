@@ -32,9 +32,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant || 'default']} ${
-        sizes[size || 'default']
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant || 'default']} ${sizes[size || 'default']
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -75,7 +74,7 @@ interface HeaderProps {
 export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
-  
+
   const data = headerData || defaultHeaderData;
 
   // Get first character in uppercase for avatar
@@ -91,10 +90,14 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
           <div className="text-2xl font-bold transition-transform duration-300 text-foreground">
             <div className='flex items-center gap-4'>
               {/* Display Mode - Only Avatar (No Text) */}
-              <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
                   {getAvatarLetter(data.logoText)}
                 </div>
+                {/* Logo Text displayed to the right of avatar */}
+                <span className="text-xl font-semibold text-foreground">
+                  {data.logoText}
+                </span>
               </div>
             </div>
           </div>

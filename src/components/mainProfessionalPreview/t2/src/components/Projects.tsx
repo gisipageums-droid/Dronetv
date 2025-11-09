@@ -81,7 +81,7 @@ export function Projects({ projectData }: ProjectsProps) {
   const projects = processProjectsData();
 
   // Filter projects by category
-  const filteredProjects = projects.filter(project => 
+  const filteredProjects = projects.filter(project =>
     activeCategory === "All" || project.category === activeCategory
   );
 
@@ -179,11 +179,10 @@ export function Projects({ projectData }: ProjectsProps) {
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                  activeCategory === category
-                    ? 'bg-yellow-400 text-gray-900 shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className={`px-6 py-2 rounded-full transition-all duration-300 ${activeCategory === category
+                  ? 'bg-yellow-400 text-gray-900 shadow-lg'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
               >
                 {category}
               </button>
@@ -271,7 +270,7 @@ export function Projects({ projectData }: ProjectsProps) {
                   </div>
 
                   {/* Project Links */}
-                  <div className="flex space-x-3">
+                  {/* <div className="flex space-x-3">
                     {project.liveUrl !== '#' && (
                       <AnimatedButton href={project.liveUrl} size="sm" className="flex-1">
                         Live Demo
@@ -283,7 +282,7 @@ export function Projects({ projectData }: ProjectsProps) {
                         Code
                       </AnimatedButton>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </motion.div>
             ))}
@@ -291,7 +290,7 @@ export function Projects({ projectData }: ProjectsProps) {
         ) : (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
-              {data.projects && data.projects.length === 0 
+              {data.projects && data.projects.length === 0
                 ? "Project portfolio is currently being updated"
                 : "No projects data available"
               }
