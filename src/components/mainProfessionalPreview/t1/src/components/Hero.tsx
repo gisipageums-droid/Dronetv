@@ -109,7 +109,7 @@ const Hero: React.FC<HeroProps> = ({ content }) => {
             </div>
 
             {/* Social Links */}
-            <div className="flex flex-wrap gap-6 items-center pt-2">
+            {/* <div className="flex flex-wrap gap-6 items-center pt-2">
               <div className="flex gap-3">
                 {socialLinks.map((social) =>
                   content.socials[
@@ -131,7 +131,7 @@ const Hero: React.FC<HeroProps> = ({ content }) => {
                   ) : null
                 )}
               </div>
-            </div>
+            </div> */}
 
             <motion.div className="grid grid-cols-2 gap-4 pt-4">
               <button className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white dark:border-yellow-400 dark:text-yellow-400 dark:hover:bg-yellow-400 dark:hover:text-gray-900">
