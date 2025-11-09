@@ -182,7 +182,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          <div className="max-w-2xl mx-auto">
             {/* Contact Form */}
             <motion.div variants={itemVariants}>
               <div className="p-8 transition-colors duration-300 bg-white border border-gray-200 dark:bg-gray-800 backdrop-blur-sm rounded-2xl dark:border-gray-700">
@@ -207,7 +207,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                         onChange={handleFormChange}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
-                        placeholder="John Doe"
+                        placeholder="rahul sharma"
                       />
                     </div>
 
@@ -226,7 +226,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                         onChange={handleFormChange}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
-                        placeholder="john@example.com"
+                        placeholder="rahulsharma@example.com"
                       />
                     </div>
                   </div>
@@ -320,98 +320,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
             </motion.div>
 
             {/* Contact Information */}
-            <motion.div variants={itemVariants} className="space-y-8">
-              {/* Contact Details */}
-              <div className="p-8 transition-colors duration-300 bg-gray-100 border border-gray-200 dark:bg-white/5 backdrop-blur-sm rounded-2xl dark:border-gray-700">
-                <h3 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">
-                  Get in Touch
-                </h3>
-
-                <div className="space-y-6">
-                  {contactContent.contactInfo.map((info, index) => {
-                    const IconComponent = iconMap[info.icon] || Mail;
-                    return (
-                      <motion.a
-                        key={index}
-                        whileHover={{ x: 5 }}
-                        href={info.href}
-                        className="flex items-center group"
-                      >
-                        <div className="flex items-center justify-center w-12 h-12 mr-4 transition-all duration-200 rounded-lg bg-gradient-to-br from-yellow-200/20 to-orange-400/40 group-hover:from-yellow-400/30 group-hover:to-orange-600/30">
-                          <IconComponent className="w-6 h-6 text-orange-500" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {info.label}
-                          </p>
-                          <p className="font-medium text-gray-800 transition-colors duration-200 dark:text-white group-hover:text-orange-500">
-                            {info.value}
-                          </p>
-                        </div>
-                      </motion.a>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Social Links */}
-              <div className="p-8 transition-colors duration-300 bg-gray-100 border border-gray-200 dark:bg-white/5 backdrop-blur-sm rounded-2xl dark:border-gray-700">
-                <h3 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">
-                  Follow Me
-                </h3>
-
-                <div className="flex space-x-4">
-                  {contactContent.socialLinks.map((social, index) => {
-                    const IconComponent = iconMap[social.icon] || Github;
-                    return (
-                      <motion.a
-                        key={index}
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
-                        href={social.href}
-                        className={`w-12 h-12 bg-gray-200 dark:bg-white/10 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 ${social.color} transition-all duration-200`}
-                      >
-                        <IconComponent className="w-6 h-6" />
-                      </motion.a>
-                    );
-                  })}
-                </div>
-
-                <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                  Let's connect on social media and stay updated on my latest
-                  projects and insights.
-                </p>
-              </div>
-
-              {/* Availability */}
-              <div className="p-6 border bg-gradient-to-r from-yellow-500/10 to-orange-500/10 dark:from-yellow-500/10 dark:to-orange-500/10 border-orange-500/30 rounded-2xl">
-                <div className="flex items-center mb-3">
-                  <div
-                    className={`w-3 h-3 rounded-full mr-2 ${
-                      contactContent.availability.status === "available"
-                        ? "bg-green-500"
-                        : contactContent.availability.status === "busy"
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                    }`}
-                  ></div>
-                  <span
-                    className={`font-semibold ${
-                      contactContent.availability.status === "available"
-                        ? "text-green-600 dark:text-green-400"
-                        : contactContent.availability.status === "busy"
-                        ? "text-yellow-600 dark:text-yellow-400"
-                        : "text-red-600 dark:text-red-400"
-                    }`}
-                  >
-                    {contactContent.availability.message}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {contactContent.availability.responseTime}
-                </p>
-              </div>
-            </motion.div>
+          
           </div>
         </motion.div>
       </div>
