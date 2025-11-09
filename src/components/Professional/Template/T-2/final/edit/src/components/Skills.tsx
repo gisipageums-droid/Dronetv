@@ -8,7 +8,7 @@ const TEXT_LIMITS = {
   HEADER_TITLE: 60,
   HEADER_SUBTITLE: 200,
   SKILL_TITLE: 40,
-  SKILL_DESCRIPTION: 150,
+  SKILL_DESCRIPTION: 200,
 };
 
 // Custom Button component
@@ -43,9 +43,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant || 'default']} ${
-        sizes[size || 'default']
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant || 'default']} ${sizes[size || 'default']
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -88,7 +87,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   const skillsRef = useRef<HTMLDivElement>(null);
 
   // Initialize with skillsData or empty structure
-  const [data, setData] = useState<SkillsData>(() => 
+  const [data, setData] = useState<SkillsData>(() =>
     skillsData || {
       skills: [],
       header: {
@@ -97,8 +96,8 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
       }
     }
   );
-  
-  const [tempData, setTempData] = useState<SkillsData>(() => 
+
+  const [tempData, setTempData] = useState<SkillsData>(() =>
     skillsData || {
       skills: [],
       header: {
@@ -116,7 +115,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   // Helper function to generate background color based on skill initial
   const getSkillIconColor = (skillTitle: string) => {
     const colors = [
-       'bg-yellow-400'
+      'bg-yellow-400'
     ];
     const charCode = skillTitle.charCodeAt(0) || 0;
     return colors[charCode % colors.length];
@@ -126,7 +125,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
   const renderSkillIcon = (skill: Skill) => {
     const initial = getSkillInitial(skill.title);
     const bgColor = getSkillIconColor(skill.title);
-    
+
     return (
       <div className={`w-16 h-16 ${bgColor} rounded-full flex items-center justify-center`}>
         <span className="text-2xl font-bold text-gray-900">{initial}</span>
@@ -198,7 +197,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
     try {
       setIsSaving(true);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
-      
+
       setData(tempData);
       setIsEditing(false);
       toast.success('Skills section saved successfully');

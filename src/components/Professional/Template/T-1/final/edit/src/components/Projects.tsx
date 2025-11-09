@@ -1043,7 +1043,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     </div>
 
                     {/* Links */}
-                    <div className="flex space-x-4">
+                    {/* <div className="flex space-x-4">
                       {editingProjectId === project.id ? (
                         <>
                           <div className="space-y-1 flex-1">
@@ -1115,7 +1115,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                           </a>
                         </>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 </motion.div>
               ))}

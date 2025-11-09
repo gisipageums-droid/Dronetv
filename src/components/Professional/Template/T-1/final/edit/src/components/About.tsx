@@ -626,7 +626,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
           </div>
 
           {/* Stats */}
-          <motion.div
+          {/* <motion.div
             variants={itemVariants}
             className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-16 pt-16 border-t border-gray-200 dark:border-gray-700"
           >
@@ -667,7 +667,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                 </div>
               </motion.div>
             ))}
-          </motion.div>
+          </motion.div> */}
         </motion.div>
       </div>
 
