@@ -319,6 +319,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   );
 };
 
+
 // Professional Card Component
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   professional,
@@ -333,6 +334,9 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
     professional.professionalName?.charAt(0) || "P"
   }%3C/text%3E%3C/svg%3E`;
+
+  
+let navigate = useNavigate();
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -450,16 +454,26 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-2">
+         
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                onPreview(professional.professionalId);
+                // onPreview(professional.professionalId);
+                   if (professional.templateSelection === "template-1") {
+        navigate(
+          `/user/professionals/edit/1/${professional.professionalId}/${professional.userId}`
+        );
+      } else if (professional.templateSelection === "template-2") {
+        navigate(
+          `/user/professionals/edit/2/${professional.professionalId}/${professional.userId}`
+        );
+      }
               }}
               disabled={disabled}
               className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Eye className="w-3 h-3 md:w-4 md:h-4" />
-              Preview
+             Edit/ Preview
             </button>
 
             <button
