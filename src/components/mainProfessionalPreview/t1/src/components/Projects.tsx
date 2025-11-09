@@ -145,7 +145,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
                     </div>
 
                     {/* Links */}
-                    <div className="flex space-x-4">
+                    {/* <div className="flex space-x-4">
                       <a
                         href={project.github}
                         target={
@@ -164,7 +164,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
                       >
                         Live Demo
                       </a>
-                    </div>
+                    </div> */}
                   </div>
                 </motion.div>
               ))}
