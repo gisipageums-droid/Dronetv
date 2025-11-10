@@ -51,6 +51,7 @@ import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
 import ProfessionalForm from "./components/Professional/form/src/App";
+import EventsForm from "./components/event/form/src/App";
 import ProfessionalTemplateSelector from "./components/Professional/Select-Template/select";
 import ProTemp2 from "./components/Professional/Template/T-2/src/App";
 import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App";
@@ -189,6 +190,7 @@ const AppContent = () => {
           {/* professionals route */}
          <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalForm />} />
           <Route path="/professional/form" element={<ProfessionalForm />} />
+          <Route path="/events/form" element={<EventsForm />} />
           <Route
             path="/professional/select"
             element={<ProfessionalTemplateSelector />}
