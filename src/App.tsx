@@ -75,8 +75,7 @@ import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/fina
 import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/final/edit/src/App";
 // import MainProTemp1 from "./components/mainProfessinalPreview/T-1/preview/src/App";
 
-import EventTemplateEdit1 from "./components/event/template/t1/edit/EventTemplate1";
-import EventTemplateEdit2 from "./components/event/template/t2/edit/EventTemplate2";
+
 
 import UserDashboard from "./components/UserDashboard/pages/AdminDashboard";
 import UserCompany from "./components/UserDashboard/pages/Company";
@@ -88,6 +87,9 @@ import UserDashboardLayout from "./components/UserDashboard/components/layout/La
 import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
 import AdminCompanyForm from "./components/AdminCompanyForm";
 import FinalT1 from "./components/mainProfessionalPreview/t1/src/App";
+import Event_T2 from "./components/event/template/t2/src/App";
+import Edit_event_t2 from "./components/event/template/t2/final/edit/App";
+import EventSelect from "./components/event/select-template/Event-select";
 
 const HomePage = () => (
   <>
@@ -240,8 +242,12 @@ const AppContent = () => {
           <Route path="/user/event" element={<UserEvent />} />
 
           {/* <Route path='/user/event/preview/1/:eventId/:userId' element={<EventPreview1 />} /> */}
-          <Route path="/user/event/edit/1/" element={<EventTemplateEdit1 />} />
-          <Route path="/user/event/edit/2/" element={<EventTemplateEdit2 />} />
+          {/* <Route path="/user/event/edit/1/" element={<EventTemplateEdit1 />} />  */}
+          {/* <Route path="/user/event/edit/2/" element={<EventTemplateEdit2 />} />  */}
+          <Route path="/user/event/t2" element={<Event_T2 />} />
+          <Route path="/edit/event/t2" element={<Edit_event_t2 />} />
+          <Route path="/event/select" element={<EventSelect />} />
+
 
           {/* excel extraction route */}
           <Route path="/excel" element={<ExcelDataProcessor />} />

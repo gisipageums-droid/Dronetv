@@ -11,7 +11,7 @@ const EventsPage = () => {
   const navigate = useNavigate();
 
   const handleAddEventClick = () => {
-    navigate('/company'); // Navigate to the /add-event route
+    navigate('/event/select'); // Navigate to the /add-event route
   };
 
   const eventTypes = ['All', 'Expo', 'Webinar', 'Conference', 'Workshop', 'Summit', 'Trade Show'];
