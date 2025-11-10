@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* You can add this in globals.css if needed for any custom adjustments */
+.loader {
+  border-top-color: #facc15; /* yellow-400 for theme */
+}
+
+
+
+:root {
+  --bg: #ffffff;
+  --container: #ffffff;
+  --selected: #e6f5ff; /* light blue */
+  --section-pink: rgba(255, 235, 238, 0.6);
+  --section-blue: hsla(206, 84%, 95%, 0.60);
+  --section-green: rgba(237, 249, 230, 0.6);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial;
+  background: var(--bg);
+}
+.container {
+  max-width: 1100px;
+  margin: 28px auto;
+  background: var(--container);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(14, 14, 14, 0.08);
+  padding: 20px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.progress-bar {
+  height: 8px;
+  background: #f1f1f1;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar > .bar {
+  height: 100%;
+  background: #60a5fa;
+  width: 0%;
+  transition: width 220ms ease;
+}
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.box {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #eee;
+}
+.category-box {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+}
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+.btn.primary {
+  background: #fbbf24;
+  color: black;
+}
+.btn.ghost {
+  background: #f3f4f6;
+}
+.section {
+  padding: 12px;
+  border-radius: 10px;
+}
+.section.pink {
+  background: var(--section-pink);
+}
+.section.blue {
+  background: var(--section-blue);
+}
+.section.green {
+  background: var(--section-green);
+}
+.chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--selected);
+  display: inline-block;
+}
+.input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+}
+.small {
+  font-size: 13px;
+  color: #374151;
+}
+.warning {
+  color: #b91c1c;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffeb3b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #fdd835;
+}
