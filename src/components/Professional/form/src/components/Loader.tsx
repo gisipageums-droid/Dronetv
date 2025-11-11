@@ -101,33 +101,30 @@ export const Loader: React.FC<LoaderProps> = ({
             return (
               <div
                 key={index}
-                className={`flex items-center p-4 rounded-lg transition-all duration-500 ${
-                  isActive
-                    ? "bg-white/10 border border-white/20 scale-105"
-                    : isCompleted
+                className={`flex items-center p-4 rounded-lg transition-all duration-500 ${isActive
+                  ? "bg-white/10 border border-white/20 scale-105"
+                  : isCompleted
                     ? "bg-green-500/10 border border-green-500/20"
                     : "bg-slate-800/50 border border-slate-700"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 transition-all duration-300 ${
-                    isActive
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 animate-pulse"
-                      : isCompleted
+                  className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 transition-all duration-300 ${isActive
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 animate-pulse"
+                    : isCompleted
                       ? "bg-green-500"
                       : "bg-slate-600"
-                  }`}
+                    }`}
                 >
                   <Icon className="w-5 h-5 text-white" />
                 </div>
                 <span
-                  className={`font-medium transition-all duration-300 ${
-                    isActive
-                      ? "text-white"
-                      : isCompleted
+                  className={`font-medium transition-all duration-300 ${isActive
+                    ? "text-white"
+                    : isCompleted
                       ? "text-green-300"
                       : "text-slate-400"
-                  }`}
+                    }`}
                 >
                   {step.text}
                 </span>

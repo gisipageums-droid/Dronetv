@@ -168,100 +168,48 @@ function AppInner() {
 
   const [formLoader, setFormLoader] = useState(true);
 
-  // useEffect(() => {
-  //   const loadForm = async () => {
-  //     try {
-  //       // Always fetch form structure
-  //       const formStructure = await fetchFormStructure();
-  //       setSteps(formStructure.steps);
-  //       setFormLoader(false);
-
-  //       if (userId && professionalId) {
-  //         setFormLoader(true);
-  //         // setLoading(true);
-  //         const res = await fetch(
-  //           `https://ec1amurqr9.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}`
-  //         );
-  //         const userData = await res.json();
-  //         setFormLoader(false);
-  //         // ✅ NEW: Store the old submissionId (or draftId)
-  //         if (userData.submissionId || userData.draftId) {
-  //           localStorage.setItem(
-  //             "oldSubmissionId",
-  //             userData.submissionId || userData.draftId
-  //           );
-  //           // added
-  //           setSubmissionId(userData.submissionId || userData.draftId);
-  //         }
-
-  //         // parse formData strings
-  //         if (userData.formData) {
-  //           const parsedFormData: any = {};
-  //           Object.keys(userData.formData).forEach((key) => {
-  //             try {
-  //               parsedFormData[key] = JSON.parse(userData.formData[key]);
-  //             } catch {
-  //               parsedFormData[key] = userData.formData[key];
-  //             }
-  //           });
-  //           setData(parsedFormData);
-  //         }
-
-  //         // Prefill resume data if any
-  //         setResumeData(userData.resumeData || null);
-
-  //         // ✅ Extract templateSelection from prefill data
-  //         if (userData.templateSelection) {
-  //           updateField("templateSelection", userData.templateSelection);
-  //           // Or setTemplateSelection(userData.templateSelection);
-  //         }
-
-  //         setLoading(false);
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to load form data:", err);
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   loadForm();
-  // }, [userId, professionalId, setData]);
-
   useEffect(() => {
-    if (templateIdFromState && !data.templateSelection && !userId && !professionalId) {
-      // Only for fresh forms (not prefill), save template from location state to form context
+    if (
+      templateIdFromState &&
+      !data.templateSelection &&
+      !userId &&
+      !professionalId
+    ) {
       updateField("templateSelection", templateIdFromState);
       console.log("✅ Saved template to form context:", templateIdFromState);
     }
-  }, [templateIdFromState, data.templateSelection, userId, professionalId, updateField]);
+  }, [
+    templateIdFromState,
+    data.templateSelection,
+    userId,
+    professionalId,
+    updateField,
+  ]);
 
   useEffect(() => {
     const loadForm = async () => {
       try {
-        // Always fetch form structure
         const formStructure = await fetchFormStructure();
         setSteps(formStructure.steps);
-        setFormLoader(false)
+        setFormLoader(false);
 
         if (userId && professionalId) {
-          setFormLoader(true)
-          // setLoading(true);
+          setFormLoader(true);
+
           const res = await fetch(
             `https://ec1amurqr9.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}`
           );
           const userData = await res.json();
-          setFormLoader(false)
-          // ✅ NEW: Store the old submissionId (or draftId)
+          setFormLoader(false);
+
           if (userData.submissionId || userData.draftId) {
             localStorage.setItem(
               "oldSubmissionId",
               userData.submissionId || userData.draftId
             );
-            // added
             setSubmissionId(userData.submissionId || userData.draftId);
           }
 
-          // parse formData strings
           if (userData.formData) {
             const parsedFormData: any = {};
             Object.keys(userData.formData).forEach((key) => {
@@ -274,13 +222,10 @@ function AppInner() {
             setData(parsedFormData);
           }
 
-          // Prefill resume data if any
           setResumeData(userData.resumeData || null);
 
-          // ✅ Extract templateSelection from prefill data
           if (userData.templateSelection) {
             updateField("templateSelection", userData.templateSelection);
-            // Or setTemplateSelection(userData.templateSelection);
           }
 
           setLoading(false);
@@ -324,173 +269,80 @@ function AppInner() {
 
   const handlePurchaseTokens = () => {
     setShowTokenModal(false);
-    // Redirect to token purchase page - update the URL as needed
     window.open("/pricing", "_blank");
   };
 
-  // const handleSubmit = async () => {
-  //   // First validate tokens
-  //   const canProceed = await validateBeforeSubmit();
-  //   if (!canProceed) {
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   setSuccess(false);
-  //   const email = isLogin ? user?.userData?.email : data.basicInfo?.email;
-
-  //   try {
-  //     // ✅ Use existing submissionId (if editing) or generate a new one (if creating)
-  //     const finalSubmissionId = submissionId || `draft-${Date.now()}`;
-
-  //     const payload = {
-  //       userId: email,
-  //       username: data.basicInfo.user_name || "dummyusername",
-  //       submissionId: finalSubmissionId, // ✅ Same used for draftId
-  //       draftId: finalSubmissionId, // ✅ Keep same value
-  //       aiTriggeredAt: Date.now(),
-  //       formData: data,
-  //       mediaLinks: {},
-  //       uploadedFiles: {},
-  //       resumeData: resumeData || {},
-  //       processingMethod: "separate_upload",
-  //       status: "ai_processing",
-  //       templateSelection: templateIdFromState || "",
-  //       updatedAt: Date.now(),
-  //       version: "2.4",
-  //     };
-
-  //     console.log("payload:", payload);
-
-  //     let response;
-
-  //     // ✅ If form is prefilled → update (PUT)
-  //     if (userId && professionalId) {
-  //       response = await axios.put(
-  //         `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
-  //         payload
-  //       );
-  //       console.log("Update response:", response.data);
-  //     }
-  //     // ✅ Otherwise → create new (POST)
-  //     else {
-  //       response = await submitForm(payload);
-  //       console.log("Create response:", response);
-  //     }
-
-  //     setSuccess(true);
-
-  //     // Clear localStorage draft after successful submission
-  //     try {
-  //       localStorage.removeItem("professionalFormDraft");
-  //     } catch (e) {
-  //       console.error("Failed to clear local draft after submit", e);
-  //     }
-
-  //     setTimeout(() => setLoading(false), 30000);
-
-  //     setTimeout(() => {
-  //       console.log("temps id", templateIdFromState);
-  //       navigate(
-  //         `/professional/edit/${finalSubmissionId}/${email}/template=${templateIdFromState}`
-  //       );
-  //     }, 30000);
-  //   } catch (err) {
-  //     console.error(err);
-  //     setLoading(false);
-  //     alert("Submission failed");
-  //   }
-  // };
-
   const handleSubmit = async () => {
-  // First validate tokens
-  const canProceed = await validateBeforeSubmit();
-  if (!canProceed) {
-    return;
-  }
-
-  setLoading(true);
-  setSuccess(false);
-  const email = isLogin ? user?.userData?.email : data.basicInfo?.email;
-
-  try {
-    // ✅ Use existing submissionId (if editing) or generate a new one (if creating)
-    const finalSubmissionId = submissionId || `draft-${Date.now()}`;
-
-    // ✅ Get template from prefill data first, then fallback to location state
-    const templateId = data.templateSelection || templateIdFromState;
-
-    const payload = {
-      userId: email,
-      username: data.basicInfo.user_name || "dummyusername",
-      submissionId: finalSubmissionId, // ✅ Same used for draftId
-      draftId: finalSubmissionId, // ✅ Keep same value
-      aiTriggeredAt: Date.now(),
-      formData: data,
-      mediaLinks: {},
-      uploadedFiles: {},
-      resumeData: resumeData || {},
-      processingMethod: "separate_upload",
-      status: "ai_processing",
-      templateSelection: templateId || "", // ✅ Use the templateId variable here too
-      updatedAt: Date.now(),
-      version: "2.4",
-    };
-
-    console.log("payload:", payload);
-
-    let response;
-
-    // ✅ If form is prefilled → update (PUT)
-    if (userId && professionalId) {
-      response = await axios.put(
-        `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
-        payload
-      );
-      console.log("Update response:", response.data);
-    }
-    // ✅ Otherwise → create new (POST)
-    else {
-      response = await submitForm(payload);
-      console.log("Create response:", response);
+    const canProceed = await validateBeforeSubmit();
+    if (!canProceed) {
+      return;
     }
 
-    setSuccess(true);
+    setLoading(true);
+    setSuccess(false);
+    const email = isLogin ? user?.userData?.email : data.basicInfo?.email;
 
-    // Clear localStorage draft after successful submission
     try {
-      localStorage.removeItem("professionalFormDraft");
-    } catch (e) {
-      console.error("Failed to clear local draft after submit", e);
-    }
+      const finalSubmissionId = submissionId || `draft-${Date.now()}`;
+      const templateId = data.templateSelection || templateIdFromState;
 
-    setTimeout(() => setLoading(false), 30000);
+      const payload = {
+        userId: email,
+        username: data.basicInfo.user_name || "dummyusername",
+        submissionId: finalSubmissionId,
+        draftId: finalSubmissionId,
+        aiTriggeredAt: Date.now(),
+        formData: data,
+        mediaLinks: {},
+        uploadedFiles: {},
+        resumeData: resumeData || {},
+        processingMethod: "separate_upload",
+        status: "ai_processing",
+        templateSelection: templateId || "",
+        updatedAt: Date.now(),
+        version: "2.4",
+      };
 
-    setTimeout(() => {
-      console.log("Template from prefill:", data.templateSelection);
-      console.log("Template from state:", templateIdFromState);
-      console.log("Final template id:", templateId);
-      
-      navigate(
-        `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
+      let response;
+
+      if (userId && professionalId) {
+        response = await axios.put(
+          `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
+          payload
+        );
+        console.log("Update response:", response.data);
+      } else {
+        response = await submitForm(payload);
+      }
+
+      setSuccess(true);
+      try {
+        localStorage.removeItem("professionalFormDraft");
+      } catch (e) {
+        console.error("Failed to clear local draft after submit", e);
+      }
+
+      setTimeout(() => setLoading(false), 71000);
+      setTimeout(
+        () =>
+          navigate(
+            `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
+          ),
+        71000
       );
-    }, 30000);
-  } catch (err) {
-    console.error(err);
-    setLoading(false);
-    alert("Submission failed");
-  }
-};
-
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      alert("Submission failed");
+    }
+  };
 
   if (formLoader)
     return (
       <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
         <div className="text-center">
-          {/* Loader */}
           <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
 
-          {/* Message */}
           <p className="text-blue-200 text-lg">
             Please wait while we load your form
           </p>
@@ -536,22 +388,20 @@ function AppInner() {
               <div key={s.id} className="flex items-center">
                 <button
                   onClick={() => goTo(index)}
-                  className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-                    index === current
-                      ? "bg-black text-yellow-200 shadow"
-                      : index < current
+                  className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${index === current
+                    ? "bg-black text-yellow-200 shadow"
+                    : index < current
                       ? "bg-yellow-200 text-black hover:bg-black-300"
                       : "bg-yellow-100 text-gray-600 hover:bg-yellow-300"
-                  }`}
+                    }`}
                 >
                   <div
-                    className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${
-                      index === current
-                        ? "bg-yellow-400 text-black"
-                        : index < current
+                    className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${index === current
+                      ? "bg-yellow-400 text-black"
+                      : index < current
                         ? "bg-yellow-400 text-white"
                         : "bg-gray-300 text-black"
-                    }`}
+                      }`}
                   >
                     {index + 1}
                   </div>
