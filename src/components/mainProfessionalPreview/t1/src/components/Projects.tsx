@@ -8,8 +8,6 @@ interface Project {
   description: string;
   image: string;
   tags: string[];
-  github: string;
-  live: string;
   date: string;
   category: string;
   featured?: boolean;
@@ -143,28 +141,6 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
                         </span>
                       ))}
                     </div>
-
-                    {/* Links */}
-                    {/* <div className="flex space-x-4">
-                      <a
-                        href={project.github}
-                        target={
-                          project.github?.startsWith("/") ? "_self" : "_blank"
-                        }
-                        rel="noopener noreferrer"
-                        className="text-gray-600 transition-colors dark:text-gray-400 hover:text-orange-500"
-                      >
-                        GitHub
-                      </a>
-                      <a
-                        href={project.live}
-                        target={project.live?.startsWith("/") ? "_self" : "_blank"}
-                        rel="noopener noreferrer"
-                        className="text-gray-600 transition-colors dark:text-gray-400 hover:text-orange-500"
-                      >
-                        Live Demo
-                      </a>
-                    </div> */}
                   </div>
                 </motion.div>
               ))}

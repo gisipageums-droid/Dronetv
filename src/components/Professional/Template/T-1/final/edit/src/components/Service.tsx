@@ -19,7 +19,7 @@ interface Service {
   shortDescription: string;
   fullDescription: string;
   icon: string;
-  color: string;
+  color?: string;
   features: string[];
   pricing: string;
   deliveryTime: string;
@@ -44,19 +44,6 @@ const defaultContent: ServiceContent = {
   services: [],
 };
 
-const colorOptions = [
-  "from-blue-500 to-cyan-500",
-  "from-purple-500 to-pink-500",
-  "from-green-500 to-emerald-500",
-  "from-orange-500 to-red-500",
-  "from-pink-500 to-rose-500",
-  "from-yellow-500 to-orange-500",
-  "from-indigo-500 to-purple-500",
-  "from-teal-500 to-cyan-500",
-  "from-red-500 to-pink-500",
-  "from-emerald-500 to-teal-500",
-];
-
 /* ---------- ServiceForm Component (memoized) ---------- */
 type FormData = Omit<Service, "id">;
 
@@ -71,7 +58,6 @@ const ServiceForm: React.FC<{
     shortDescription: initial.shortDescription ?? "",
     fullDescription: initial.fullDescription ?? "",
     icon: initial.icon ?? "Code",
-    color: initial.color ?? colorOptions[0],
     features:
       Array.isArray(initial.features) && initial.features.length > 0
         ? initial.features
@@ -109,7 +95,6 @@ const ServiceForm: React.FC<{
       shortDescription: initial.shortDescription ?? "",
       fullDescription: initial.fullDescription ?? "",
       icon: initial.icon ?? "Code",
-      color: initial.color ?? colorOptions[0],
       features:
         Array.isArray(initial.features) && initial.features.length > 0
           ? initial.features
@@ -217,28 +202,6 @@ const ServiceForm: React.FC<{
           >
             {local.fullDescription.length}/{CHAR_LIMITS.fullDescription}
           </div>
-        </div>
-
-     
-
-        <div>
-          <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">
-            Color Scheme:
-          </label>
-          <select
-            value={local.color}
-            onChange={(e) => setField("color", e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
-          >
-            {colorOptions.map((color) => (
-              <option key={color} value={color}>
-                {color
-                  .replace("from-", "")
-                  .replace(" to-", " → ")
-                  .replace(/-500|-400/g, "")}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div>
@@ -563,7 +526,6 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                   shortDescription: "",
                   fullDescription: "",
                   icon: "Code",
-                  color: colorOptions[0],
                   features: [""],
                   pricing: "",
                   deliveryTime: "",
@@ -706,9 +668,8 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                           ))}
                         </ul>
 
-                    
-
-                        <motion.button
+                        <motion.a
+                          href="#contact"
                           whileHover={isEditMode ? undefined : { scale: 1.05 }}
                           whileTap={isEditMode ? undefined : { scale: 0.95 }}
                           className={`w-full bg-orange-400 ${
@@ -719,13 +680,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                         >
                           <span>Get Started</span>
                           <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                        </motion.button>
-
-                        {!isEditMode && (
-                          <div
-                            className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}
-                          />
-                        )}
+                        </motion.a>
                       </>
                     )}
                   </motion.div>

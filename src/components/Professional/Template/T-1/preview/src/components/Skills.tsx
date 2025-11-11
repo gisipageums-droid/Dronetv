@@ -130,11 +130,16 @@ const Skills: React.FC = () => {
                 whileHover={{ y: -5 }}
                 className="bg-gray-50 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-orange/50 transition-all duration-300"
               >
-                <div className="flex items-center mb-6 gap-2">
-                  <Zap className="w-8 h-8" />
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {category.title}
-                  </h3>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center flex-1">
+                    <div className="w-10 h-10 flex items-center justify-center uppercase text-xl font-extrabold text-white bg-yellow-500 p-2 rounded-full mr-2">
+                      <span className="">{category.title[0]}</span>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {category.title}
+                    </h3>
+                  </div>
                 </div>
 
                 <div className="space-y-6">

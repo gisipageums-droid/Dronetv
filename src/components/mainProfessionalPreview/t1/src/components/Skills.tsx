@@ -143,7 +143,7 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
               <span className="text-gray-900 dark:text-white">
                 {skillContent.heading.split(" ")[0]}
               </span>{" "}
-              <span className="text-blue-500 dark:text-orange-500">
+              <span className="text-orange-500">
                 {skillContent.heading.split(" ").slice(1).join(" ")}
               </span>
             </h2>
@@ -163,7 +163,10 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
               >
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center flex-1">
-                    <Zap className="w-8 h-8 mr-2" />
+                    <div className="w-10 h-10 flex items-center justify-center uppercase text-xl font-extrabold text-white bg-yellow-500 p-2 rounded-full mr-2">
+                      <span className="">{category.title[0]}</span>
+                    </div>
+                    
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                       {category.title}
                     </h3>

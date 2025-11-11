@@ -249,9 +249,7 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
             // >
             //   <Edit className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             // </button>
-            <>
-            
-            </>
+            <></>
           )}
         </div>
 
@@ -531,7 +529,6 @@ const Contact: React.FC<ContactProps> = ({ content, onSave }) => {
             </motion.div>
 
             {/* Contact Information */}
-         
           </div>
         </motion.div>
       </div>

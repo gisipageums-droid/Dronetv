@@ -23,11 +23,6 @@ export interface AboutContent {
   description3: string;
   imageSrc: string;
   skills: string[];
-  // stats
-  projectsCompleted: string;
-  countriesServed: string;
-  yearsExperience: string;
-  happyClients: string;
 }
 
 interface AboutProps {
@@ -83,27 +78,6 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     return "text-gray-500";
   };
 
-  const stats = [
-    {
-      icon: Calendar,
-      label: "Years Experience",
-      value: aboutContent.yearsExperience,
-      key: "yearsExperience" as const,
-    },
-    {
-      icon: Award,
-      label: "Projects Completed",
-      value: aboutContent.projectsCompleted,
-      key: "projectsCompleted" as const,
-    },
-    {
-      icon: Users,
-      label: "Happy Clients",
-      value: aboutContent.happyClients,
-      key: "happyClients" as const,
-    },
-  ];
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -122,17 +96,6 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   ) => {
     const { name, value } = e.target;
     setAboutContent((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleStatChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    statKey: keyof AboutContent
-  ) => {
-    const { value } = e.target;
-    setAboutContent((prev) => ({
-      ...prev,
-      [statKey]: value,
-    }));
   };
 
   // Image cropping functions
@@ -624,50 +587,6 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
               </div>
             </motion.div>
           </div>
-
-          {/* Stats */}
-          {/* <motion.div
-            variants={itemVariants}
-            className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-16 pt-16 border-t border-gray-200 dark:border-gray-700"
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ y: -5 }}
-                className="text-center group"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-500/10 to-red-500/10 rounded-full mb-4 group-hover:from-yellow-500/20 group-hover:to-red-500/20 transition-all duration-200">
-                  <stat.icon className="w-8 h-8 text-orange-500" />
-                </div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {isEditing ? (
-                    <div className="space-y-1">
-                      <input
-                        type="text"
-                        value={stat.value}
-                        onChange={(e) => handleStatChange(e, stat.key)}
-                        maxLength={CHAR_LIMITS.stats}
-                        className="w-20 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white text-center rounded-lg border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                      />
-                      <div
-                        className={`text-xs text-right ${getCharCountColor(
-                          stat.value.length,
-                          CHAR_LIMITS.stats
-                        )}`}
-                      >
-                        {stat.value.length}/{CHAR_LIMITS.stats}
-                      </div>
-                    </div>
-                  ) : (
-                    stat.value
-                  )}
-                </div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
-          </motion.div> */}
         </motion.div>
       </div>
 
@@ -741,8 +660,14 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                   src={imageToCrop}
                   alt="Crop preview"
                   onLoad={handleImageLoad}
-                  className="absolute top-1/2 left-1/2 max-w-none select-none"
+                  className="absolute select-none z-0"
                   style={{
+                    maxHeight: "100%",
+                    maxWidth: "100%",
+                    height: "auto",
+                    width: "auto",
+                    left: "50%",
+                    top: "50%",
                     transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
                     transformOrigin: "center",
                     opacity: imageLoaded ? 1 : 0,

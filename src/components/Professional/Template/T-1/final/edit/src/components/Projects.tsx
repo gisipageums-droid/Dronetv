@@ -7,7 +7,6 @@ import {
   Save,
   Plus,
   Trash2,
-  // Image as ImageIcon,
   X,
   Crop,
   Check,
@@ -697,90 +696,6 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <input
-                      type="url"
-                      value={currentProject?.github || ""}
-                      onChange={(e) =>
-                        handleProjectChange("github", e.target.value)
-                      }
-                      maxLength={CHAR_LIMITS.github}
-                      placeholder="GitHub Link"
-                      className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                    />
-                    <div
-                      className={`text-xs text-right ${getCharCountColor(
-                        currentProject?.github?.length || 0,
-                        CHAR_LIMITS.github
-                      )}`}
-                    >
-                      {currentProject?.github?.length || 0}/{CHAR_LIMITS.github}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <input
-                      type="url"
-                      value={currentProject?.live || ""}
-                      onChange={(e) =>
-                        handleProjectChange("live", e.target.value)
-                      }
-                      maxLength={CHAR_LIMITS.live}
-                      placeholder="Live Demo Link"
-                      className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                    />
-                    <div
-                      className={`text-xs text-right ${getCharCountColor(
-                        currentProject?.live?.length || 0,
-                        CHAR_LIMITS.live
-                      )}`}
-                    >
-                      {currentProject?.live?.length || 0}/{CHAR_LIMITS.live}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <input
-                      type="text"
-                      value={currentProject?.date || ""}
-                      onChange={(e) =>
-                        handleProjectChange("date", e.target.value)
-                      }
-                      maxLength={CHAR_LIMITS.date}
-                      placeholder="Date (e.g., 2024)"
-                      className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                    />
-                    <div
-                      className={`text-xs text-right ${getCharCountColor(
-                        currentProject?.date?.length || 0,
-                        CHAR_LIMITS.date
-                      )}`}
-                    >
-                      {currentProject?.date?.length || 0}/{CHAR_LIMITS.date}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <input
-                      type="text"
-                      value={currentProject?.category || ""}
-                      onChange={(e) =>
-                        handleProjectChange("category", e.target.value)
-                      }
-                      maxLength={CHAR_LIMITS.category}
-                      placeholder="Category (e.g., Web Development)"
-                      className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
-                    />
-                    <div
-                      className={`text-xs text-right ${getCharCountColor(
-                        currentProject?.category?.length || 0,
-                        CHAR_LIMITS.category
-                      )}`}
-                    >
-                      {currentProject?.category?.length || 0}/
-                      {CHAR_LIMITS.category}
-                    </div>
-                  </div>
-                </div>
-
                 <div className="flex justify-end space-x-4">
                   <motion.button
                     onClick={handleCancelAdd}
@@ -1041,81 +956,6 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                         </p>
                       )}
                     </div>
-
-                    {/* Links */}
-                    {/* <div className="flex space-x-4">
-                      {editingProjectId === project.id ? (
-                        <>
-                          <div className="space-y-1 flex-1">
-                            <input
-                              type="url"
-                              value={currentProject?.github || ""}
-                              onChange={(e) =>
-                                handleProjectChange("github", e.target.value)
-                              }
-                              maxLength={CHAR_LIMITS.github}
-                              placeholder="GitHub URL"
-                              className="w-full text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
-                            />
-                            <div
-                              className={`text-xs text-right ${getCharCountColor(
-                                currentProject?.github?.length || 0,
-                                CHAR_LIMITS.github
-                              )}`}
-                            >
-                              {currentProject?.github?.length || 0}/
-                              {CHAR_LIMITS.github}
-                            </div>
-                          </div>
-                          <div className="space-y-1 flex-1">
-                            <input
-                              type="url"
-                              value={currentProject?.live || ""}
-                              onChange={(e) =>
-                                handleProjectChange("live", e.target.value)
-                              }
-                              maxLength={CHAR_LIMITS.live}
-                              placeholder="Live Demo URL"
-                              className="w-full text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
-                            />
-                            <div
-                              className={`text-xs text-right ${getCharCountColor(
-                                currentProject?.live?.length || 0,
-                                CHAR_LIMITS.live
-                              )}`}
-                            >
-                              {currentProject?.live?.length || 0}/
-                              {CHAR_LIMITS.live}
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <a
-                            href={project.github}
-                            target={
-                              project.github?.startsWith("/")
-                                ? "_self"
-                                : "_blank"
-                            }
-                            rel="noopener noreferrer"
-                            className="text-gray-600 transition-colors dark:text-gray-400 hover:text-orange-500"
-                          >
-                            GitHub
-                          </a>
-                          <a
-                            href={project.live}
-                            target={
-                              project.live?.startsWith("/") ? "_self" : "_blank"
-                            }
-                            rel="noopener noreferrer"
-                            className="text-gray-600 transition-colors dark:text-gray-400 hover:text-orange-500"
-                          >
-                            Live Demo
-                          </a>
-                        </>
-                      )}
-                    </div> */}
                   </div>
                 </motion.div>
               ))}
@@ -1194,8 +1034,14 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                   src={imageToCrop}
                   alt="Crop preview"
                   onLoad={handleImageLoad}
-                  className="absolute top-1/2 left-1/2 max-w-none select-none"
+                  className="absolute select-none z-0"
                   style={{
+                    maxHeight: "100%",
+                    maxWidth: "100%",
+                    height: "auto",
+                    width: "auto",
+                    left: "50%",
+                    top: "50%",
                     transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
                     transformOrigin: "center",
                     opacity: imageLoaded ? 1 : 0,

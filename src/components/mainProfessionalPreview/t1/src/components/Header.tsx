@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Sun, Moon, Menu, X, Code } from "lucide-react";
+import { Sun, Moon, Menu, X } from "lucide-react";
 import { useDarkMode } from "../context/DarkModeContext";
 
 export interface HeaderContent {
@@ -91,9 +91,11 @@ const Navbar: React.FC<NavbarProps> = ({ content }) => {
               className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-blue-500 dark:text-orange-500"
               onClick={() => scrollToSection("#home")}
             >
-              <Code className="w-8 h-8 flex-shrink-0" />
-              <span className="text-xl font-bold truncate">
-                {content.logoText || "Professional"}
+              <div className="rounded-full bg-yellow-500 text-white h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+                <span className="uppercase">{content.logoText[0] || "P"}</span>
+              </div>
+              <span className="text-2xl font-bold truncate capitalize text-yellow-500">
+                {content.logoText || "MyLogo"}
               </span>
             </motion.div>
 

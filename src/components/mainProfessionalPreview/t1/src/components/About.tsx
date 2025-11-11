@@ -1,6 +1,5 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Award, Calendar, MapPin, Users } from "lucide-react";
 
 export interface AboutContent {
   heading: string;
@@ -10,17 +9,6 @@ export interface AboutContent {
   description3: string;
   imageSrc: string;
   skills: string[];
-  // stats
-  projectsCompleted: string;
-  countriesServed: string;
-  yearsExperience: string;
-  happyClients: string;
-  // stats: {
-  //   yearsExperience: string;
-  //   projectsCompleted: string;
-  //   happyClients: string;
-  //   skillsCount: string;
-  // };
 }
 
 interface AboutProps {
@@ -28,29 +16,6 @@ interface AboutProps {
 }
 
 const About: React.FC<AboutProps> = ({ content }) => {
-  const stats = [
-    {
-      icon: Calendar,
-      label: "Years Experience",
-      value: content.yearsExperience,
-    },
-    {
-      icon: Award,
-      label: "Projects Completed",
-      value: content.projectsCompleted,
-    },
-    {
-      icon: Users,
-      label: "Happy Clients",
-      value: content.happyClients,
-    },
-    {
-      icon: MapPin,
-      label: "Countries Served",
-      value: content.countriesServed,
-    },
-  ];
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -74,16 +39,13 @@ const About: React.FC<AboutProps> = ({ content }) => {
           viewport={{ once: true, amount: 0.2 }}
         >
           {/* Section Header */}
-          <motion.div
-            variants={itemVariants}
-            className="text-center mb-16"
-          >
+          <motion.div variants={itemVariants} className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4">
               <span className="text-gray-900 dark:text-white">
-                About Me & 
+                {content.heading.split(" ")[0]}
               </span>{" "}
-              <span className="text-blue-500 dark:text-orange-500">
-                My Journey
+              <span className="text-orange-500">
+                {content.heading.split(" ").slice(1).join(" ")}
               </span>
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
@@ -141,30 +103,6 @@ const About: React.FC<AboutProps> = ({ content }) => {
               </div>
             </motion.div>
           </div>
-
-          {/* Stats */}
-          <motion.div
-            variants={itemVariants}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-16 border-t border-gray-200 dark:border-gray-700"
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ y: -5 }}
-                className="text-center group"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-500/10 to-red-500/10 rounded-full mb-4 group-hover:from-yellow-500/20 group-hover:to-red-500/20 transition-all duration-200">
-                  <stat.icon className="w-8 h-8 text-orange-500" />
-                </div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
         </motion.div>
       </div>
     </section>

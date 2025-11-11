@@ -1,22 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  Code,
-  Smartphone,
-  Globe,
-  Database,
-  Palette,
-  Zap,
-  ArrowRight,
-  Check,
-  Monitor,
-  Briefcase,
-  Lightbulb,
-  Cpu,
-  Cloud,
-  Shield,
-  Server,
-} from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 interface Service {
   id: number;
@@ -50,25 +34,8 @@ const defaultContent: ServiceContent = {
 
 const Service: React.FC<ServiceProps> = ({ content }) => {
   const serviceContent = content || defaultContent;
-  const [hoveredService, setHoveredService] = React.useState<number | null>(null);
-
-  const availableIcons = React.useMemo(
-    () => ({
-      Globe,
-      Smartphone,
-      Database,
-      Code,
-      Palette,
-      Zap,
-      Monitor,
-      Briefcase,
-      Lightbulb,
-      Cpu,
-      Cloud,
-      Shield,
-      Server,
-    }),
-    []
+  const [hoveredService, setHoveredService] = React.useState<number | null>(
+    null
   );
 
   return (
@@ -103,10 +70,6 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
         ) : (
           <div className="grid grid-cols-1 gap-8 mb-16 md:grid-cols-2 lg:grid-cols-3">
             {serviceContent.services.map((service, index) => {
-              const IconComponent =
-                availableIcons[service.icon as keyof typeof availableIcons] ||
-                Code;
-
               return (
                 <motion.div
                   key={service.id}
@@ -119,9 +82,11 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                   className="relative p-8 transition-all duration-300 bg-white border border-gray-100 shadow-xl rounded-2xl group dark:bg-gray-900 hover:shadow-2xl dark:border-gray-800"
                 >
                   <div
-                    className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color} mb-6 group-hover:scale-110 transition-transform duration-300`}
+                    className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r  mb-6 transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
                   >
-                    <IconComponent className="w-8 h-8 text-white" />
+                    <span className="uppercase text-white">
+                      {service.title[0]}
+                    </span>
                   </div>
 
                   <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
@@ -148,10 +113,7 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                             : { opacity: 0.9, x: 0 }
                         }
                         transition={{
-                          delay:
-                            hoveredService === service.id
-                              ? idx * 0.06
-                              : 0,
+                          delay: hoveredService === service.id ? idx * 0.06 : 0,
                         }}
                         className="flex items-center text-sm text-gray-600 dark:text-gray-400"
                       >
@@ -161,39 +123,15 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                     ))}
                   </ul>
 
-                  <div className="flex items-center justify-between p-4 mb-6 rounded-lg bg-gray-50 dark:bg-gray-800">
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Pricing
-                      </p>
-                      <p
-                        className={`font-bold bg-gradient-to-r ${service.color} bg-clip-text text-transparent`}
-                      >
-                        {service.pricing}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Delivery
-                      </p>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {service.deliveryTime}
-                      </p>
-                    </div>
-                  </div>
-
-                  <motion.button
+                  <motion.a
+                    href="#contact"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className={`w-full bg-orange-400 ${service.color} text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg`}
                   >
                     <span>Get Started</span>
                     <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </motion.button>
-
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}
-                  />
+                  </motion.a>
                 </motion.div>
               );
             })}

@@ -143,8 +143,8 @@ const Service: React.FC = () => {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {services.map((service, index) => {
-            const Icon = service.icon;
             const isHovered = hoveredService === service.id;
+
             return (
               <motion.div
                 key={service.id}
@@ -155,13 +155,15 @@ const Service: React.FC = () => {
                 whileHover={{ y: -10, scale: 1.02 }}
                 onHoverStart={() => setHoveredService(service.id)}
                 onHoverEnd={() => setHoveredService(null)}
-                className="group relative bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
+                className="group relative bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
               >
                 {/* Service Icon */}
                 <div
-                  className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color} mb-6 group-hover:scale-110 transition-transform duration-300`}
+                  className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r  mb-6 transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
                 >
-                  <Icon className="w-8 h-8 text-black dark:text-white" />
+                  <span className="uppercase text-white">
+                    {service.title[0]}
+                  </span>
                 </div>
 
                 {/* Service Title */}
@@ -199,100 +201,20 @@ const Service: React.FC = () => {
                   ))}
                 </ul>
 
-                {/* Pricing and Timeline */}
-                <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Starting at
-                    </p>
-                    <p
-                      className={`font-bold bg-gradient-to-r ${service.color} bg-clip-text text-transparent`}
-                    >
-                      {service.pricing}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Delivery
-                    </p>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {service.deliveryTime}
-                    </p>
-                  </div>
-                </div>
-
                 {/* CTA Button */}
-                <motion.button
+                <motion.a
+                  href="#contact"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`w-full bg-orange-500 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-lg`}
                 >
                   <span>Get Started</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                </motion.button>
-
-                {/* Hover Effect Overlay */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}
-                />
+                </motion.a>
               </motion.div>
             );
           })}
         </div>
-
-        {/* Why Choose Me Section */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="text-center bg-white dark:bg-gray-900 rounded-3xl p-8 lg:p-12 shadow-xl"
-        >
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-            Why Choose My Services?
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8 text-white" />
-              </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">
-                Quality Focused
-              </h4>
-              <p className="text-gray-600 dark:text-gray-400">
-                Clean, maintainable code following industry best practices and
-                standards.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-8 h-8 text-white" />
-              </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">
-                Fast Delivery
-              </h4>
-              <p className="text-gray-600 dark:text-gray-400">
-                Efficient development process with regular updates and on-time
-                delivery.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Code className="w-8 h-8 text-white" />
-              </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">
-                Full Support
-              </h4>
-              <p className="text-gray-600 dark:text-gray-400">
-                Ongoing maintenance and support to ensure your project stays
-                up-to-date.
-              </p>
-            </div>
-          </div>
-        </motion.div> */}
       </div>
     </section>
   );

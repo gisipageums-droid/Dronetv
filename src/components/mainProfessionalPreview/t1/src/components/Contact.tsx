@@ -1,118 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Send,
-  Mail,
-  Phone,
-  MapPin,
-  Github,
-  Linkedin,
-  Twitter,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
-
-interface ContactInfo {
-  icon: string;
-  label: string;
-  value: string;
-  href: string;
-}
-
-interface SocialLink {
-  icon: string;
-  label: string;
-  href: string;
-  color: string;
-}
-
-interface Availability {
-  message: string;
-  responseTime: string;
-  status: string;
-}
+import { Send, CheckCircle, AlertCircle } from "lucide-react";
 
 export interface ContactContent {
   subtitle: string;
   heading: string;
   description: string;
-  contactInfo: ContactInfo[];
-  socialLinks: SocialLink[];
-  availability: Availability;
 }
 
 interface ContactProps {
   content: ContactContent;
 }
 
-const defaultContent: ContactContent = {
-  subtitle: "get in touch with me",
-  heading: "Let's Work Together",
-  description:
-    "I'm always open to discussing new opportunities and creative projects. Let's bring your ideas to life!",
-  contactInfo: [
-    {
-      icon: "Mail",
-      label: "Email",
-      value: "john@example.com",
-      href: "mailto:john@example.com",
-    },
-    {
-      icon: "Phone",
-      label: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
-    },
-    {
-      icon: "MapPin",
-      label: "Location",
-      value: "New York, USA",
-      href: "#",
-    },
-  ],
-  socialLinks: [
-    {
-      icon: "Github",
-      label: "GitHub",
-      href: "https://github.com/johndoe",
-      color: "hover:bg-gray-900 hover:text-white",
-    },
-    {
-      icon: "Linkedin",
-      label: "LinkedIn",
-      href: "https://linkedin.com/in/johndoe",
-      color: "hover:bg-blue-600 hover:text-white",
-    },
-    {
-      icon: "Twitter",
-      label: "Twitter",
-      href: "https://twitter.com/johndoe",
-      color: "hover:bg-blue-400 hover:text-white",
-    },
-  ],
-  availability: {
-    message: "Available for new projects",
-    responseTime: "Typically responds within 24 hours",
-    status: "available",
-  },
-};
-
 const Contact: React.FC<ContactProps> = ({ content }) => {
-  const contactContent = content || defaultContent;
-
-  const iconMap: { [key: string]: React.ComponentType<any> } = {
-    Mail,
-    Phone,
-    MapPin,
-    Github,
-    Linkedin,
-    Twitter,
-  };
+  const [contactContent, setContactContent] = useState<ContactContent | null>(
+    null
+  );
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
+    subject: "General Inquiry",
+    phone: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -127,13 +36,31 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Character limits
+  const CHAR_LIMITS = {
+    heading: 100,
+    description: 500,
+    contactLabel: 50,
+    contactValue: 100,
+    contactHref: 500,
+    socialLabel: 50,
+    socialHref: 500,
+    availabilityMessage: 100,
+    availabilityResponseTime: 100,
+    formName: 100,
+    formEmail: 100,
+    formPhone: 100,
+    formSubject: 100,
+    formMessage: 2000,
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setSubmitStatus("success");
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData({ name: "", email: "", subject: "", message: "", phone: "" });
     } catch (error) {
       console.log(error);
       setSubmitStatus("error");
@@ -142,6 +69,16 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
       setTimeout(() => setSubmitStatus("idle"), 5000);
     }
   };
+
+  const getCharCountColor = (current: number, max: number) => {
+    if (current >= max) return "text-red-500";
+    if (current >= max * 0.9) return "text-yellow-500";
+    return "text-gray-500";
+  };
+
+  useEffect(() => {
+    setContactContent(content);
+  }, [content]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -172,13 +109,13 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
           {/* Header */}
           <motion.div variants={itemVariants} className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold text-gray-800 lg:text-5xl dark:text-gray-100">
-              {contactContent.heading.split(" ").slice(0, -1).join(" ")}{" "}
+              {contactContent?.heading.split(" ").slice(0, -1).join(" ")}{" "}
               <span className="text-orange-500">
-                {contactContent.heading.split(" ").slice(-1)}
+                {contactContent?.heading.split(" ").slice(-1)}
               </span>
             </h2>
             <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-300">
-              {contactContent.description}
+              {contactContent?.description}
             </p>
           </motion.div>
 
@@ -192,7 +129,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div>
+                    <div className="space-y-1">
                       <label
                         htmlFor="name"
                         className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
@@ -205,13 +142,22 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                         name="name"
                         value={formData.name}
                         onChange={handleFormChange}
+                        maxLength={CHAR_LIMITS.formName}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
-                        placeholder="rahul sharma"
+                        placeholder="Rahul sharma"
                       />
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          formData.name.length,
+                          CHAR_LIMITS.formName
+                        )}`}
+                      >
+                        {formData.name.length}/{CHAR_LIMITS.formName}
+                      </div>
                     </div>
 
-                    <div>
+                    <div className="space-y-1">
                       <label
                         htmlFor="email"
                         className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
@@ -224,33 +170,85 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                         name="email"
                         value={formData.email}
                         onChange={handleFormChange}
+                        maxLength={CHAR_LIMITS.formEmail}
                         required
                         className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
                         placeholder="rahulsharma@example.com"
                       />
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          formData.email.length,
+                          CHAR_LIMITS.formEmail
+                        )}`}
+                      >
+                        {formData.email.length}/{CHAR_LIMITS.formEmail}
+                      </div>
                     </div>
                   </div>
 
-                  <div>
-                    <label
-                      htmlFor="subject"
-                      className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
-                    >
-                      Subject *
-                    </label>
-                    <input
-                      type="text"
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleFormChange}
-                      required
-                      className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
-                      placeholder="Project Inquiry"
-                    />
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="space-y-1">
+                      <label
+                        htmlFor="email"
+                        className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        Phone No *
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleFormChange}
+                        maxLength={CHAR_LIMITS.formPhone}
+                        required
+                        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                        placeholder="9876543210"
+                      />
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          formData.phone.length,
+                          CHAR_LIMITS.formPhone
+                        )}`}
+                      >
+                        {formData.phone.length}/{CHAR_LIMITS.formPhone}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label
+                        htmlFor="subject"
+                        className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        Subject *
+                      </label>
+
+                      <select
+                        name="subject"
+                        id="subject"
+                        value={formData.subject}
+                        onChange={handleFormChange}
+                        required
+                        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                      >
+                        <option>General Inquiry</option>
+                        <option>Sales Inquiry</option>
+                        <option>Products Inquiry</option>
+                        <option>Services Inquiry</option>
+                        <option>Support Inquiry</option>
+                      </select>
+                      <div
+                        className={`text-xs text-right ${getCharCountColor(
+                          formData.subject.length,
+                          CHAR_LIMITS.formSubject
+                        )}`}
+                      >
+                        {formData.subject.length}/{CHAR_LIMITS.formSubject}
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <label
                       htmlFor="message"
                       className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
@@ -262,11 +260,20 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                       name="message"
                       value={formData.message}
                       onChange={handleFormChange}
+                      maxLength={CHAR_LIMITS.formMessage}
                       required
                       rows={5}
                       className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
                       placeholder="Tell me about your project..."
                     />
+                    <div
+                      className={`text-xs text-right ${getCharCountColor(
+                        formData.message.length,
+                        CHAR_LIMITS.formMessage
+                      )}`}
+                    >
+                      {formData.message.length}/{CHAR_LIMITS.formMessage}
+                    </div>
                   </div>
 
                   {/* Submit Status */}
@@ -318,9 +325,6 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                 </form>
               </div>
             </motion.div>
-
-            {/* Contact Information */}
-          
           </div>
         </motion.div>
       </div>

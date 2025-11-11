@@ -1023,8 +1023,14 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                   src={imageToCrop}
                   alt="Crop preview"
                   onLoad={handleImageLoad}
-                  className="absolute top-1/2 left-1/2 max-w-none select-none"
+                  className="absolute select-none z-0"
                   style={{
+                    maxHeight: "100%",
+                    maxWidth: "100%",
+                    height: "auto",
+                    width: "auto",
+                    left: "50%",
+                    top: "50%",
                     transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
                     transformOrigin: "center",
                     opacity: imageLoaded ? 1 : 0,
