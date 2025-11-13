@@ -4,12 +4,42 @@ import { Calendar, MapPin, Clock, ArrowRight, Edit, Save, X } from "lucide-react
 const HeroSection: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
 
+  // Helper function to convert YouTube URLs to embed format
+  const convertToEmbedUrl = (url: string): string => {
+    // If it's already an embed URL, return as is
+    if (url.includes('youtube.com/embed/')) {
+      return url;
+    }
+    
+    // Extract video ID from different YouTube URL formats
+    let videoId = '';
+    
+    // Handle youtu.be format
+    if (url.includes('youtu.be/')) {
+      videoId = url.split('youtu.be/')[1].split('?')[0];
+    }
+    // Handle youtube.com/watch format
+    else if (url.includes('youtube.com/watch')) {
+      const urlParams = new URLSearchParams(url.split('?')[1]);
+      videoId = urlParams.get('v') || '';
+    }
+    
+    // If we found a video ID, create embed URL with autoplay parameters
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&modestbranding=1&showinfo=0&rel=0`;
+    }
+    
+    // Return original URL if we can't parse it
+    return url;
+  };
+
   const [heroContent, setHeroContent] = useState({
     title: "Drone Expo 2025",
     date: "25th – 27th September 2025",
     time: "9:00 AM - 6:00 PM",
     location: "Bombay Exhibition Centre, NESCO, Mumbai",
     eventDate: "2025-09-25T09:00:00", // default event date
+    videoUrl: "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0",
     highlights: [
       "Interaction with Key Buyers",
       "Launch New Products",
@@ -75,6 +105,7 @@ const HeroSection: React.FC = () => {
       {/* YouTube Video BG */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
         <iframe
+          key={heroContent.videoUrl} // Force reload when URL changes
           className="w-full h-full object-cover"
           style={{
             position: "absolute",
@@ -84,10 +115,10 @@ const HeroSection: React.FC = () => {
             height: "100%",
             minHeight: "100vh",
           }}
-          src="https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"
-          title="Drone Expo Background"
+          src={convertToEmbedUrl(heroContent.videoUrl)}
+          title="Event Background Video"
           frameBorder="0"
-          allow="autoplay; encrypted-media"
+          allow="autoplay; encrypted-media; fullscreen"
           allowFullScreen
         />
         <div className="absolute inset-0 bg-black/60 z-10"></div>
@@ -190,16 +221,37 @@ const HeroSection: React.FC = () => {
 
           {/* Editable Event Date (affects countdown) */}
           {editMode && (
-            <div className="mb-6">
-              <label className="text-white block mb-2">Event Start Date:</label>
-              <input
-                type="datetime-local"
-                value={heroContent.eventDate}
-                onChange={(e) =>
-                  setHeroContent({ ...heroContent, eventDate: e.target.value })
-                }
-                className="bg-white text-black px-3 py-2 rounded-md"
-              />
+            <div className="mb-6 space-y-4">
+              <div>
+                <label className="text-white block mb-2">Event Start Date:</label>
+                <input
+                  type="datetime-local"
+                  value={heroContent.eventDate}
+                  onChange={(e) =>
+                    setHeroContent({ ...heroContent, eventDate: e.target.value })
+                  }
+                  className="bg-white text-black px-3 py-2 rounded-md"
+                />
+              </div>
+              <div>
+                <label className="text-white block mb-2">Background Video URL:</label>
+                <input
+                  type="url"
+                  value={heroContent.videoUrl}
+                  onChange={(e) =>
+                    setHeroContent({ ...heroContent, videoUrl: e.target.value })
+                  }
+                  placeholder="Paste any YouTube URL (will be auto-converted)"
+                  className="bg-white text-black px-3 py-2 rounded-md w-full max-w-lg"
+                />
+                <div className="text-gray-300 text-sm mt-2 space-y-1">
+                  <p><strong>Supported formats:</strong></p>
+                  <p>• https://youtu.be/VIDEO_ID</p>
+                  <p>• https://www.youtube.com/watch?v=VIDEO_ID</p>
+                  <p>• https://www.youtube.com/embed/VIDEO_ID</p>
+                  <p className="text-yellow-300 mt-2"><strong>✨ Auto-converts to embed format with autoplay!</strong></p>
+                </div>
+              </div>
             </div>
           )}
 

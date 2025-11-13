@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Save, X, Plus, Trash2, Edit } from "lucide-react";
+import { Edit, Save, X, Plus, Trash2, Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
 
 const initialAgendaThemes = {
   1: {
@@ -33,18 +33,70 @@ const initialAgendaThemes = {
 
 const AgendaSection: React.FC = () => {
   const [activeDay, setActiveDay] = useState(1);
-  const [agendaThemes, setAgendaThemes] = useState(initialAgendaThemes);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  
+  const [agendaContent, setAgendaContent] = useState({
+    title: "Event",
+    titleHighlight: "Themes",
+    subtitle: "Each day focuses on a powerful industry-relevant theme.",
+    themes: initialAgendaThemes
+  });
+  
+  const [backupContent, setBackupContent] = useState(agendaContent);
   const [editForm, setEditForm] = useState(null);
 
-  // Toggle edit mode and load data into the form
-  const toggleEditMode = () => {
-    if (isEditMode) {
-      setIsEditMode(false);
-      setEditForm(null); // Clear the form data
-    } else {
-      setIsEditMode(true);
-      setEditForm({ ...agendaThemes[activeDay] });
+  const handleEditToggle = () => {
+    if (!editMode) {
+      setBackupContent(agendaContent);
+      setEditForm({ ...agendaContent.themes[activeDay] });
+    }
+    setEditMode(!editMode);
+  };
+
+  const handleCancel = () => {
+    setAgendaContent(backupContent);
+    setEditMode(false);
+    setEditForm(null);
+  };
+
+  // Add new day
+  const handleAddDay = () => {
+    const dayKeys = Object.keys(agendaContent.themes).map(Number);
+    const newDayNumber = Math.max(...dayKeys) + 1;
+    const newDay = {
+      title: `Day ${newDayNumber} Theme`,
+      note: "New theme description",
+      bullets: ["New bullet point"]
+    };
+    
+    setAgendaContent({
+      ...agendaContent,
+      themes: {
+        ...agendaContent.themes,
+        [newDayNumber]: newDay
+      }
+    });
+    setActiveDay(newDayNumber);
+    setEditForm(newDay);
+  };
+
+  // Remove day
+  const handleRemoveDay = (dayToRemove: number) => {
+    const { [dayToRemove]: _, ...remainingThemes } = agendaContent.themes;
+    const dayKeys = Object.keys(remainingThemes).map(Number);
+    
+    if (dayKeys.length === 0) return; // Don't remove if it's the last day
+    
+    setAgendaContent({
+      ...agendaContent,
+      themes: remainingThemes
+    });
+    
+    // Set active day to first available day if current day was removed
+    if (activeDay === dayToRemove) {
+      const firstDay = Math.min(...dayKeys);
+      setActiveDay(firstDay);
+      setEditForm({ ...remainingThemes[firstDay] });
     }
   };
 
@@ -74,23 +126,24 @@ const AgendaSection: React.FC = () => {
 
   // Save changes to the main state and exit edit mode
   const handleSave = () => {
-    setAgendaThemes((prev) => ({
-      ...prev,
+    const updatedThemes = {
+      ...agendaContent.themes,
       [activeDay]: editForm,
-    }));
-    setIsEditMode(false);
+    };
+    setAgendaContent({ ...agendaContent, themes: updatedThemes });
+    setEditMode(false);
     setEditForm(null);
   };
 
   // Render the themes based on the current mode
   const renderThemeContent = () => {
-    const theme = isEditMode ? editForm : agendaThemes[activeDay];
+    const theme = editMode ? editForm : agendaContent.themes[activeDay];
 
     if (!theme) {
       return null;
     }
 
-    if (isEditMode) {
+    if (editMode) {
       return (
         <div className="space-y-6">
           <input
@@ -143,7 +196,7 @@ const AgendaSection: React.FC = () => {
               <Save size={18} /> Save
             </button>
             <button
-              onClick={toggleEditMode}
+              onClick={handleCancel}
               className="flex items-center gap-2 px-6 py-3 bg-gray-500 text-white rounded-full font-semibold hover:bg-gray-600 transition-colors shadow-lg"
             >
               <X size={18} /> Cancel
@@ -173,57 +226,118 @@ const AgendaSection: React.FC = () => {
   return (
     <section id="agenda" className="py-20 bg-white">
       <div className="container mx-auto px-4 max-w-7xl relative">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
-            Event <span className="text-[#FF0000]">Themes</span>
-          </h2>
-          <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Each day focuses on a powerful industry-relevant theme.
-          </p>
-
-          <div className="absolute top-0 right-0">
-            <button
-              onClick={toggleEditMode}
-              className={`px-6 py-2 rounded-lg font-semibold text-lg transition-all duration-300 ${
-                isEditMode
-                  ? "bg-red-500 text-white hover:bg-red-600"
-                  : "bg-green-500 text-white hover:bg-green-600"
-              }`}
-            >
-              {isEditMode ? (
-                <span className="flex items-center gap-2">
+        <div className="text-center mb-12 relative">
+          {/* Edit/Save/Cancel Buttons */}
+          <div className="absolute top-0 right-0 flex gap-3">
+            {editMode ? (
+              <>
+                <button
+                  onClick={() => setEditMode(false)}
+                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg border border-green-700 hover:bg-green-700 transition"
+                >
+                  <Save size={18} /> Save
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg border border-red-700 hover:bg-red-700 transition"
+                >
                   <X size={18} /> Cancel
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  <Edit size={18} /> Edit
-                </span>
-              )}
-            </button>
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={handleEditToggle}
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg border border-blue-700 hover:bg-blue-700 transition"
+              >
+                <Edit size={18} /> Edit
+              </button>
+            )}
           </div>
+
+          {editMode ? (
+            <>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <input
+                  type="text"
+                  value={agendaContent.title}
+                  onChange={(e) => setAgendaContent({ ...agendaContent, title: e.target.value })}
+                  className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                />
+                <input
+                  type="text"
+                  value={agendaContent.titleHighlight}
+                  onChange={(e) => setAgendaContent({ ...agendaContent, titleHighlight: e.target.value })}
+                  className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                />
+              </div>
+              <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
+              <textarea
+                value={agendaContent.subtitle}
+                onChange={(e) => setAgendaContent({ ...agendaContent, subtitle: e.target.value })}
+                className="text-gray-600 text-lg max-w-2xl mx-auto bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+                rows={2}
+              />
+            </>
+          ) : (
+            <>
+              <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+                {agendaContent.title} <span className="text-[#FF0000]">{agendaContent.titleHighlight}</span>
+              </h2>
+              <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                {agendaContent.subtitle}
+              </p>
+            </>
+          )}
         </div>
 
         {/* Day Tabs */}
         <div className="flex justify-center mb-10">
-          <div className="flex bg-gray-100 rounded-full p-2 shadow-md">
-            {[1, 2, 3].map((day) => (
+          <div className="flex items-center gap-4">
+            <div className="flex bg-gray-100 rounded-full p-2 shadow-md">
+              {Object.keys(agendaContent.themes).map((day) => {
+                const dayNum = parseInt(day);
+                return (
+                  <div key={day} className="relative flex items-center">
+                    <button
+                      onClick={() => {
+                        setActiveDay(dayNum);
+                        if (editMode) {
+                          setEditForm({ ...agendaContent.themes[dayNum] });
+                        }
+                      }}
+                      className={`px-6 py-2 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
+                        activeDay === dayNum
+                          ? "bg-[#FF0000] text-white shadow-lg"
+                          : "text-gray-700 hover:text-[#FF0000]"
+                      }`}
+                      disabled={editMode}
+                    >
+                      Day {day}
+                    </button>
+                    {editMode && Object.keys(agendaContent.themes).length > 1 && (
+                      <button
+                        onClick={() => handleRemoveDay(dayNum)}
+                        className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center"
+                        title="Remove Day"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {editMode && (
               <button
-                key={day}
-                onClick={() => {
-                  setActiveDay(day);
-                  setEditForm({ ...agendaThemes[day] });
-                }}
-                className={`px-6 py-2 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
-                  activeDay === day
-                    ? "bg-[#FF0000] text-white shadow-lg"
-                    : "text-gray-700 hover:text-[#FF0000]"
-                }`}
-                disabled={isEditMode}
+                onClick={handleAddDay}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-md"
+                title="Add New Day"
               >
-                Day {day}
+                <Plus size={16} />
+                Add Day
               </button>
-            ))}
+            )}
           </div>
         </div>
 

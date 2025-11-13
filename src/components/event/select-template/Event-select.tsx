@@ -20,12 +20,23 @@ type Template = {
 const templates: Template[] = [
     {
         id: 1,
+        name: "formal Event Template",
+        imgpath: TPL2,
+        description:
+            "Clean design with bright hero section — perfect for conferences and meetups.",
+        features: ["Hero Section", "Schedule", "Speakers", "Responsive Design"],
+        path: "/preview/event/t1",
+        rating: 5,
+        tags: ["formal"],
+    },
+    {
+        id: 2,
         name: "Modern Event Template",
         imgpath: TPL2,
         description:
             "Clean design with bright hero section — perfect for conferences and meetups.",
         features: ["Hero Section", "Schedule", "Speakers", "Responsive Design"],
-        path: "/event/t1",
+        path: "/preview/event/t2",
         rating: 4.8,
         tags: ["Modern", "Popular"],
     },
@@ -48,7 +59,7 @@ const EventSelect: React.FC = () => {
         e: React.MouseEvent<HTMLButtonElement>
     ) => {
         e.stopPropagation();
-        navigate("/user/event/t2");
+        navigate(path);
     };
 
     return (

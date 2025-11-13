@@ -190,6 +190,16 @@ const SpeakersSection: React.FC = () => {
     subtitle: 'Meet our distinguished speakers who will share their expertise and insights'
   });
   const [headerBackup, setHeaderBackup] = useState(headerContent);
+  
+  const [statsContent, setStatsContent] = useState({
+    totalSpeakersLabel: 'Total Speakers',
+    totalSpeakersValue: null as number | null, // null means use computed value
+    eventDaysLabel: 'Event Days',
+    eventDaysValue: null as number | null, // null means use computed value
+    speakersTodayLabel: 'Speakers Today',
+    speakersTodayValue: null as number | null // null means use computed value
+  });
+  const [statsBackup, setStatsBackup] = useState(statsContent);
 
   // Memoized callback functions to prevent unnecessary re-renders
   const handleEdit = useCallback((dayIndex, speakerIndex, speaker) => {
@@ -284,9 +294,44 @@ const SpeakersSection: React.FC = () => {
   const totalSpeakers = speakersData.reduce((acc, d) => acc + (d.speakers?.length || 0), 0);
   const eventDays = speakersData.length;
   const speakersToday = speakersData[activeDay]?.speakers?.length || 0;
+  
+  // Handle day name editing
+  const handleDayEdit = (dayIndex: number, newDayName: string) => {
+    setSpeakersData(prev => 
+      prev.map((day, index) => 
+        index === dayIndex ? { ...day, day: newDayName } : day
+      )
+    );
+  };
+
+  // Add new day
+  const handleAddDay = () => {
+    const newDayNumber = speakersData.length + 1;
+    const newDay = {
+      day: `Day ${newDayNumber} (New Date)`,
+      speakers: []
+    };
+    
+    setSpeakersData(prev => [...prev, newDay]);
+    setActiveDay(speakersData.length); // Set to the new day index
+  };
+
+  // Remove day
+  const handleRemoveDay = (dayIndex: number) => {
+    if (speakersData.length <= 1) return; // Don't remove if it's the last day
+    
+    setSpeakersData(prev => prev.filter((_, index) => index !== dayIndex));
+    
+    // Adjust active day if necessary
+    if (activeDay >= speakersData.length - 1) {
+      setActiveDay(Math.max(0, speakersData.length - 2));
+    } else if (activeDay > dayIndex) {
+      setActiveDay(activeDay - 1);
+    }
+  };
 
   return (
-    <section className="py-20 bg-gray-50 min-h-screen">
+    <section id="speakers" className="py-20 bg-gray-50 min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl relative">
         {/* Header */}
         <div className="text-center mb-16">
@@ -364,20 +409,56 @@ const SpeakersSection: React.FC = () => {
 
         {/* Day Navigation */}
         <div className="flex justify-center mb-12">
-          <div className="bg-white rounded-2xl shadow-lg p-2 flex gap-2">
-            {speakersData.map((dayGroup, index) => (
+          <div className="flex items-center gap-4">
+            <div className="bg-white rounded-2xl shadow-lg p-2 flex gap-2">
+              {speakersData.map((dayGroup, index) => (
+                <div key={index} className="relative">
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      value={dayGroup.day}
+                      onChange={(e) => handleDayEdit(index, e.target.value)}
+                      className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 border-2 outline-none ${
+                        activeDay === index
+                          ? 'bg-yellow-500 text-white border-yellow-600'
+                          : 'text-gray-600 border-gray-300 focus:border-yellow-400'
+                      }`}
+                      onClick={() => setActiveDay(index)}
+                    />
+                  ) : (
+                    <button
+                      onClick={() => setActiveDay(index)}
+                      className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                        activeDay === index
+                          ? 'bg-yellow-500 text-white shadow-lg'
+                          : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                      }`}
+                    >
+                      {dayGroup.day}
+                    </button>
+                  )}
+                  {isEditMode && speakersData.length > 1 && (
+                    <button
+                      onClick={() => handleRemoveDay(index)}
+                      className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center"
+                      title="Remove Day"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            {isEditMode && (
               <button
-                key={index}
-                onClick={() => setActiveDay(index)}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  activeDay === index
-                    ? 'bg-yellow-500 text-white shadow-lg'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                }`}
+                onClick={handleAddDay}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-md"
+                title="Add New Day"
               >
-                {dayGroup.day}
+                <Plus size={16} />
+                Add Day
               </button>
-            ))}
+            )}
           </div>
         </div>
 
@@ -422,16 +503,70 @@ const SpeakersSection: React.FC = () => {
         <div className="mt-16 bg-yellow-500 rounded-2xl p-8 text-white">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold mb-2">{totalSpeakers}</div>
-              <div className="text-yellow-100">Total Speakers</div>
+              {isEditMode ? (
+                <input
+                  type="number"
+                  value={statsContent.totalSpeakersValue || totalSpeakers}
+                  onChange={(e) => setStatsContent({ ...statsContent, totalSpeakersValue: parseInt(e.target.value) || 0 })}
+                  className="text-3xl font-bold mb-2 bg-transparent border-b-2 border-yellow-300 focus:border-white outline-none text-center text-white w-20 mx-auto"
+                />
+              ) : (
+                <div className="text-3xl font-bold mb-2">{statsContent.totalSpeakersValue || totalSpeakers}</div>
+              )}
+              {isEditMode ? (
+                <input
+                  type="text"
+                  value={statsContent.totalSpeakersLabel}
+                  onChange={(e) => setStatsContent({ ...statsContent, totalSpeakersLabel: e.target.value })}
+                  className="text-yellow-100 bg-transparent border-b border-yellow-300 focus:border-white outline-none text-center"
+                />
+              ) : (
+                <div className="text-yellow-100">{statsContent.totalSpeakersLabel}</div>
+              )}
             </div>
             <div>
-              <div className="text-3xl font-bold mb-2">{eventDays}</div>
-              <div className="text-yellow-100">Event Days</div>
+              {isEditMode ? (
+                <input
+                  type="number"
+                  value={statsContent.eventDaysValue || eventDays}
+                  onChange={(e) => setStatsContent({ ...statsContent, eventDaysValue: parseInt(e.target.value) || 0 })}
+                  className="text-3xl font-bold mb-2 bg-transparent border-b-2 border-yellow-300 focus:border-white outline-none text-center text-white w-20 mx-auto"
+                />
+              ) : (
+                <div className="text-3xl font-bold mb-2">{statsContent.eventDaysValue || eventDays}</div>
+              )}
+              {isEditMode ? (
+                <input
+                  type="text"
+                  value={statsContent.eventDaysLabel}
+                  onChange={(e) => setStatsContent({ ...statsContent, eventDaysLabel: e.target.value })}
+                  className="text-yellow-100 bg-transparent border-b border-yellow-300 focus:border-white outline-none text-center"
+                />
+              ) : (
+                <div className="text-yellow-100">{statsContent.eventDaysLabel}</div>
+              )}
             </div>
             <div>
-              <div className="text-3xl font-bold mb-2">{speakersToday}</div>
-              <div className="text-yellow-100">Speakers Today</div>
+              {isEditMode ? (
+                <input
+                  type="number"
+                  value={statsContent.speakersTodayValue || speakersToday}
+                  onChange={(e) => setStatsContent({ ...statsContent, speakersTodayValue: parseInt(e.target.value) || 0 })}
+                  className="text-3xl font-bold mb-2 bg-transparent border-b-2 border-yellow-300 focus:border-white outline-none text-center text-white w-20 mx-auto"
+                />
+              ) : (
+                <div className="text-3xl font-bold mb-2">{statsContent.speakersTodayValue || speakersToday}</div>
+              )}
+              {isEditMode ? (
+                <input
+                  type="text"
+                  value={statsContent.speakersTodayLabel}
+                  onChange={(e) => setStatsContent({ ...statsContent, speakersTodayLabel: e.target.value })}
+                  className="text-yellow-100 bg-transparent border-b border-yellow-300 focus:border-white outline-none text-center"
+                />
+              ) : (
+                <div className="text-yellow-100">{statsContent.speakersTodayLabel}</div>
+              )}
             </div>
           </div>
         </div>

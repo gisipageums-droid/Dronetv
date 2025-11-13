@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Target, Users, Lightbulb, Award, Edit, Save, X } from "lucide-react";
+import { Edit, Save, X } from "lucide-react";
 
 const AboutSection: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
@@ -10,30 +10,29 @@ const AboutSection: React.FC = () => {
       "Join us in Mumbai for the premier Drone Expo & Conference where technology, innovation, and opportunity converge. Explore industry advancements across UAVs, Robotics, AR/VR, Geospatial, and more.",
     features: [
       {
-        icon: <Target size={32} />,
         title: "Business Meeting Lounge",
         description:
           "Engage in key discussions and networking with decision-makers.",
       },
       {
-        icon: <Lightbulb size={32} />,
         title: "Drone Expo App",
         description:
           "Navigate the expo with interactive maps, schedules, and exhibitor details.",
       },
       {
-        icon: <Award size={32} />,
         title: "Technical Conference",
         description:
           "Explore trends and advancements in technical sessions from industry leaders.",
       },
       {
-        icon: <Users size={32} />,
         title: "Networking Opportunities",
         description:
           "Foster partnerships with innovators, regulators, and business leaders.",
       },
     ],
+    zonesTitle: "Special",
+    zonesTitleHighlight: "Zones",
+    zonesSubtitle: "Discover specialized areas designed for different aspects of the drone industry.",
     zones: [
       {
         title: "Start-up Zone",
@@ -142,8 +141,8 @@ const AboutSection: React.FC = () => {
               key={index}
               className="bg-gray-50 p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#FFD400] hover:text-black transition-all duration-300"
             >
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#FF0000] text-white mb-4">
-                {item.icon}
+              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#FF0000] text-white mb-4 text-xl font-bold">
+                {item.title.charAt(0).toUpperCase()}
               </div>
               {editMode ? (
                 <input
@@ -177,13 +176,40 @@ const AboutSection: React.FC = () => {
         </div>
 
         {/* Zones */}
-        <div className="text-center mb-12">
-          <h3 className="text-3xl font-bold text-black mb-4">
-            <span className="text-[#FFD400]">Specialized Zones</span> to Explore
-          </h3>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-            Discover dynamic pavilions focused on start-ups, education, students, and innovation.
-          </p>
+        <div className="text-center mb-16">
+          {editMode ? (
+            <>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <input
+                  type="text"
+                  value={aboutContent.zonesTitle}
+                  onChange={(e) => setAboutContent({ ...aboutContent, zonesTitle: e.target.value })}
+                  className="text-3xl font-bold text-[#FFD400] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                />
+                <input
+                  type="text"
+                  value={aboutContent.zonesTitleHighlight}
+                  onChange={(e) => setAboutContent({ ...aboutContent, zonesTitleHighlight: e.target.value })}
+                  className="text-3xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                />
+              </div>
+              <textarea
+                value={aboutContent.zonesSubtitle}
+                onChange={(e) => setAboutContent({ ...aboutContent, zonesSubtitle: e.target.value })}
+                className="text-gray-600 text-lg max-w-3xl mx-auto bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+                rows={2}
+              />
+            </>
+          ) : (
+            <>
+              <h3 className="text-3xl font-bold text-black mb-4">
+                <span className="text-[#FFD400]">{aboutContent.zonesTitle}</span> {aboutContent.zonesTitleHighlight}
+              </h3>
+              <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+                {aboutContent.zonesSubtitle}
+              </p>
+            </>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-10">
