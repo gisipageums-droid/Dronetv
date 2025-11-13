@@ -39,7 +39,8 @@ const EventSelect: React.FC = () => {
     const handleSelect = (id: number) => {
         setSelectedTemplate(id);
         // Static flow: send to your event form with selected id in state
-        navigate("/user/event/t2", { state: { templateId: id } });
+        navigate("/events/form", { state: { templateId: id } });
+        // navigate("/user/event/t2", { state: { templateId: id } });
     };
 
     const handlePreview = (
