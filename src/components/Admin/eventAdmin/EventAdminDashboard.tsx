@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Search,
   MapPin,
@@ -13,18 +13,115 @@ import {
   XCircle,
   Trash2,
   Clock,
+  Pen,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { motion, AnimatePresence } from "motion/react";
 
 // -------------------- Types --------------------
 interface Event {
-  publishedId: string;
+  eventId: string;
+  userId: string;
+  submissionId: string;
   eventName: string;
+  shortDescription: string;
+  eventDate: string;
+  eventTime: string;
   location: string;
-  categories: string[];
-  previewImage?: string;
+  category: string;
   reviewStatus: string;
-  publishedDate: string;
+  status: boolean;
   version: number;
+  hasEdits: boolean;
+  lastModified: string;
+  createdAt: string;
+  publishedAt: string;
+  urlSlug: string;
+  thumbnailUrl: string;
+  previewImage: string;
+  templateSelection: string;
+  adminNotes: string;
+  isVisible: boolean;
+  isApproved: boolean;
+  canEdit: boolean;
+  canResubmit: boolean;
+  hasCustomImages: boolean;
+  completionPercentage: number;
+  dashboardType: string;
+  needsAdminAction: boolean;
+}
+
+interface EventCredentialsData {
+  success: boolean;
+  eventId: string;
+  draftId: string;
+  debug: {
+    message: string;
+    draftRecordKeys: string[];
+    publishedRecordKeys: string[];
+    draftRecordRaw: {
+      publishedEventId: string;
+      updatedAt: string;
+      userId: string;
+      status: string;
+      submissionId: string;
+    };
+    publishedRecordRaw: {
+      content: {
+        heroContent: {
+          eventTime: string;
+          eventName: string;
+          tagline: string;
+          location: string;
+          heroImage: string;
+          category: string;
+          eventDate: string;
+        };
+      };
+      metadata: {
+        adminNotes: string;
+        urlSlug: string;
+        reviewedAt: string;
+        isVisible: boolean;
+        shortDescription: string;
+        approvedAt: string;
+        lastUpdated: string;
+        createdAt: string;
+        needsAdminAction: boolean;
+        rejectedAt: string;
+        eventTime: string;
+        eventName: string;
+        location: string;
+        category: string;
+        rejectionReason: string;
+        status: string;
+        eventDate: string;
+        thumbnailUrl: string;
+      };
+      eventId: string;
+      urlSlug: string;
+      publishedAt: string;
+      templateSelection: string;
+      userId: string;
+      editHistory: {
+        createdAt: string;
+        lastModified: string;
+        lastEditBy: string;
+        version: number;
+        editCount: number;
+      };
+      lastModified: string;
+      createdAt: string;
+      adminReview: {
+        reviewedAt: string;
+        notes: string;
+        reviewedBy: string;
+        status: string;
+      };
+      submissionId: string;
+    };
+  };
 }
 
 interface DropdownProps {
@@ -48,12 +145,326 @@ interface SidebarProps {
 
 interface EventCardProps {
   event: Event;
-  onCredentials: (publishedId: string) => void;
-  onPreview: (publishedId: string) => void;
-  onApprove: (publishedId: string) => void;
-  onReject: (publishedId: string) => void;
-  onDelete: (publishedId: string) => void;
+  onCredentials: (eventId: string) => void;
+  onPreview: (eventId: string, userId: string) => void;
+  onApprove: (eventId: string, userId: string) => void;
+  onReject: (eventId: string, userId: string) => void;
+  onDelete: (eventId: string) => void;
 }
+
+// -------------------- Credentials Modal --------------------
+interface EventCredentialsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  data: EventCredentialsData | null;
+}
+
+const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
+  isOpen,
+  onClose,
+  data,
+}) => {
+  if (!isOpen || !data) return null;
+
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return "Invalid Date";
+    }
+  };
+
+  const publishedData = data.debug.publishedRecordRaw;
+  // const draftData = data.debug.draftRecordRaw;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <Key className="w-6 h-6 text-purple-600" />
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Event Credentials & Details
+                </h2>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                    Basic Information
+                  </h3>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Event Name
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                      {publishedData.metadata.eventName}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Event Date & Time
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                      {formatDate(publishedData.metadata.eventDate)} at{" "}
+                      {publishedData.metadata.eventTime}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Location
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                      {publishedData.metadata.location}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Category
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                      {publishedData.metadata.category}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                    Technical Details
+                  </h3>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Event ID
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border font-mono">
+                      {data.eventId}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      User ID
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border font-mono">
+                      {publishedData.userId}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Submission ID
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border font-mono">
+                      {publishedData.submissionId}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Template
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                      {publishedData.templateSelection}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Timeline Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                    Timeline
+                  </h3>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Created At
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                      {formatDate(publishedData.createdAt)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Last Modified
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                      {formatDate(publishedData.lastModified)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Published At
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                      {formatDate(publishedData.publishedAt)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                    Review Status
+                  </h3>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Current Status
+                    </label>
+                    <p
+                      className={`text-sm font-medium p-2 rounded border ${
+                        publishedData.metadata.status === "approved"
+                          ? "text-green-800 bg-green-100 border-green-200"
+                          : publishedData.metadata.status === "rejected"
+                          ? "text-red-800 bg-red-100 border-red-200"
+                          : "text-yellow-800 bg-yellow-100 border-yellow-200"
+                      }`}
+                    >
+                      {publishedData.metadata.status?.toUpperCase() ||
+                        "UNDER REVIEW"}
+                    </p>
+                  </div>
+
+                  {publishedData.metadata.adminNotes && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Admin Notes
+                      </label>
+                      <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
+                        {publishedData.metadata.adminNotes}
+                      </p>
+                    </div>
+                  )}
+
+                  {publishedData.metadata.rejectionReason && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Rejection Reason
+                      </label>
+                      <p className="text-sm text-red-700 bg-red-50 p-2 rounded border">
+                        {publishedData.metadata.rejectionReason}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Edit History */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Edit History
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Version
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border text-center">
+                      v{publishedData.editHistory.version}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Edit Count
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border text-center">
+                      {publishedData.editHistory.editCount}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Last Edited By
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border text-center">
+                      {publishedData.editHistory.lastEditBy}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* URLs */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  URLs & Media
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      URL Slug
+                    </label>
+                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border font-mono">
+                      {publishedData.urlSlug}
+                    </p>
+                  </div>
+                  {publishedData.metadata.thumbnailUrl && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Thumbnail URL
+                      </label>
+                      <p className="text-sm text-blue-600 bg-gray-50 p-2 rounded border font-mono truncate">
+                        {publishedData.metadata.thumbnailUrl}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex justify-end items-center p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+              <button
+                onClick={onClose}
+                className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 // -------------------- Constants --------------------
 const SORT_OPTIONS = [
@@ -66,38 +477,19 @@ const SORT_OPTIONS = [
 // -------------------- Header --------------------
 const Header: React.FC = () => {
   return (
-    <div className="h-[40vh] md:h-[60vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6">
+    <div className="h-[40vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6">
       <div className="relative w-full max-w-3xl text-center">
-        <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full border border-blue-200 opacity-40 md:-top-20 md:-left-20 md:w-40 md:h-40"></div>
-        <div className="absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-blue-200 opacity-30 rounded-2xl"></div>
-
         <div className="relative z-10">
-          <div className="flex gap-2 justify-center items-center mb-4 md:gap-4 md:mb-8">
-            <div className="w-2 h-2 bg-blue-400 rounded-full md:w-3 md:h-3"></div>
-            <div className="w-4 h-4 border-2 border-blue-400 md:w-6 md:h-6"></div>
-            <div className="w-3 h-3 bg-blue-600 rotate-45 md:w-4 md:h-4"></div>
-          </div>
-
-          <h1 className="mb-4 text-3xl font-light text-blue-900 md:text-5xl md:mb-6">
+          <h1 className="mb-4 text-3xl font-extrabold text-blue-900 md:text-5xl md:mb-6">
             Admin Dashboard
-            <span className="block mt-1 text-xl font-extralight text-blue-600 md:text-3xl md:mt-2">
+            <span className="block mt-1 text-xl font-bold text-blue-600 md:text-3xl md:mt-2">
               Event Management
             </span>
           </h1>
 
-          <p className="mx-auto mb-6 max-w-xl text-base font-light text-blue-700 md:text-lg md:mb-10">
+          <p className="mx-auto mb-6 max-w-xl text-base font-semibold text-blue-700 md:text-lg md:mb-10">
             Review and manage all event listings, credentials, and approvals.
           </p>
-
-          <div className="flex flex-col gap-4 justify-center items-center sm:flex-row">
-            <button className="px-6 py-3 w-full text-sm font-semibold text-white bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg shadow-lg transition-all duration-300 transform md:px-8 md:py-4 hover:from-blue-500 hover:to-blue-600 hover:shadow-xl hover:-translate-y-1 sm:w-auto md:text-base">
-              Analytics
-            </button>
-            <div className="hidden w-px h-8 bg-blue-300 md:h-12 sm:block"></div>
-            <button className="mt-2 text-sm text-blue-700 transition-colors duration-300 hover:text-blue-900 md:text-base sm:mt-0">
-              Export Data
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -105,7 +497,12 @@ const Header: React.FC = () => {
 };
 
 // -------------------- Dropdown --------------------
-const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, options, placeholder }) => {
+const MinimalisticDropdown: React.FC<DropdownProps> = ({
+  value,
+  onChange,
+  options,
+  placeholder,
+}) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
@@ -116,14 +513,21 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className={value === options[0] ? "text-gray-500" : "text-gray-900"}>
+        <span
+          className={value === options[0] ? "text-gray-500" : "text-gray-900"}
+        >
           {value || options[0] || placeholder}
         </span>
-        <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
+        />
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-sm" role="listbox">
+        <div
+          className="absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-sm"
+          role="listbox"
+        >
           {options.map((option: string, idx: number) => (
             <button
               key={idx}
@@ -131,8 +535,11 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option ? "bg-gray-50 text-gray-900 font-medium" : "text-gray-700 hover:bg-gray-50"
-                }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                value === option
+                  ? "bg-gray-50 text-gray-900 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
               role="option"
               aria-selected={value === option}
             >
@@ -157,17 +564,28 @@ const Sidebar: React.FC<SidebarProps> = ({
   isMobileSidebarOpen,
   onCloseMobileSidebar,
 }) => {
-  const sortOptions: string[] = ["Sort by Date", ...SORT_OPTIONS.filter((s) => s !== "Sort by Date")];
+  const sortOptions: string[] = [
+    "Sort by Date",
+    ...SORT_OPTIONS.filter((s) => s !== "Sort by Date"),
+  ];
+  const navigate = useNavigate();
 
   return (
     <div
-      className={`bg-blue-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 ${isMobileSidebarOpen ? "overflow-y-auto fixed inset-0 z-50 w-full" : "hidden md:block md:w-80"
-        }`}
+      className={`bg-blue-50 p-4 md:p-8 h-full min-h-screen md:sticky md:top-0 border-r-2 border-gray-200 ${
+        isMobileSidebarOpen
+          ? "overflow-y-auto fixed inset-0 z-50 w-full"
+          : "hidden md:block md:w-80"
+      }`}
     >
       {isMobileSidebarOpen && (
-        <div className="flex justify-between items-center mb-6 md:hidden">
+        <div className="flex justify-between items-center mt-16 mb-6 md:hidden">
           <h2 className="text-xl font-bold">Filters</h2>
-          <button onClick={onCloseMobileSidebar} className="p-2" aria-label="Close filters">
+          <button
+            onClick={onCloseMobileSidebar}
+            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+            aria-label="Close filters"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -175,14 +593,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <div className="space-y-6 md:space-y-8">
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">Search</label>
+          <label className="block text-sm font-medium text-gray-900">
+            Search
+          </label>
+
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 w-4 h-4 text-gray-400 transform -translate-y-1/2" />
+            <Search className="absolute left-3 top-8 w-4 h-4 text-gray-400 transform -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search events..."
               value={searchTerm}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onSearchChange(e.target.value)
+              }
               className="py-3 pr-4 pl-10 w-full text-sm bg-gray-50 rounded-lg border border-gray-200 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300"
               aria-label="Search events"
             />
@@ -190,13 +613,28 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">Category</label>
-          <MinimalisticDropdown value={categoryFilter} onChange={onCategoryChange} options={categories} placeholder="Select category" />
+          <label className="block text-sm font-medium text-gray-900">
+            Category
+          </label>
+          <MinimalisticDropdown
+            value={categoryFilter}
+            onChange={onCategoryChange}
+            options={categories}
+            placeholder="Select category"
+          />
         </div>
 
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">Sort by</label>
-          <MinimalisticDropdown key={`sort-${sortBy}`} value={sortBy} onChange={onSortChange} options={sortOptions} placeholder="Sort options" />
+          <label className="block text-sm font-medium text-gray-900">
+            Sort by
+          </label>
+          <MinimalisticDropdown
+            key={`sort-${sortBy}`}
+            value={sortBy}
+            onChange={onSortChange}
+            options={sortOptions}
+            placeholder="Sort options"
+          />
         </div>
 
         <button
@@ -211,6 +649,21 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         <div className="border-t border-gray-100"></div>
+
+        <div className="flex items-center w-full gap-2 flex-col">
+          <button
+            className="bg-yellow-500 text-white text-sm font-semibold px-4 py-2 rounded-lg w-full hover:bg-yellow-600 transition-all duration-200"
+            onClick={() => navigate("/admin/company/dashboard")}
+          >
+            Companies
+          </button>
+          <button
+            className="bg-yellow-500 text-white text-sm font-semibold px-4 py-2 rounded-lg w-full hover:bg-yellow-600 transition-all duration-200"
+            onClick={() => navigate("/admin/professional")}
+          >
+            Professionals
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -225,32 +678,39 @@ const EventCard: React.FC<EventCardProps> = ({
   onReject,
   onDelete,
 }) => {
-  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${encodeURIComponent(
-    (event.eventName && event.eventName.charAt(0)) || "E"
-  )}%3C/text%3E%3C/svg%3E`;
+  const placeholderImg = event.previewImage || event.eventName[0];
 
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "Date not available";
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
     } catch {
       return "Date not available";
     }
   };
 
   const getStatusBadge = (reviewStatus?: string) => {
-    if (reviewStatus === "active") return { bg: "bg-yellow-100", text: "text-yellow-800", label: "Needs Review" };
-    if (reviewStatus === "rejected") return { bg: "bg-red-100", text: "text-red-800", label: "Rejected" };
-    if (reviewStatus === "approved") return { bg: "bg-green-100", text: "text-green-800", label: "Approved" };
+    if (reviewStatus === "under_review")
+      return {
+        bg: "bg-yellow-100",
+        text: "text-yellow-800",
+        label: "Needs Review",
+      };
+
+    if (reviewStatus === "rejected")
+      return { bg: "bg-red-100", text: "text-red-800", label: "Rejected" };
+    if (reviewStatus === "approved")
+      return { bg: "bg-green-100", text: "text-green-800", label: "Approved" };
+
     return { bg: "bg-gray-50", text: "text-gray-700", label: "Unknown" };
   };
 
   const statusStyle = getStatusBadge(event.reviewStatus);
-
-  const handleAction = (action: string) => {
-    alert(`${action} action clicked for ${event.eventName}`);
-  };
 
   return (
     <div className="overflow-hidden w-full h-full rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group">
@@ -258,28 +718,37 @@ const EventCard: React.FC<EventCardProps> = ({
         <div className="flex justify-between items-center mb-4 md:mb-6">
           <div className="flex gap-3 items-center md:gap-4">
             <div className="flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16">
-              <img
-                src={event.previewImage || placeholderImg}
-                alt={`${event.eventName} logo`}
-                className="object-contain w-full h-full"
-                onError={(e) => {
-                  const t = e.target as HTMLImageElement;
-                  if (t.src !== placeholderImg) t.src = placeholderImg;
-                }}
-                loading="lazy"
-              />
+              {event.previewImage ? (
+                <img
+                  src={event.previewImage}
+                  alt={`${event.eventName} logo`}
+                  className="w-full h-full object-cover rounded-lg"
+                  loading="lazy"
+                />
+              ) : (
+                <span className="text-4xl font-extrabold text-yellow-600">
+                  {placeholderImg}
+                </span>
+              )}
             </div>
+
             <div className="max-w-[calc(100%-60px)] md:max-w-none">
-              <h3 className="text-lg font-bold text-gray-900 md:text-xl line-clamp-2">{event.eventName || "Unnamed Event"}</h3>
+              <h3 className="text-lg font-bold text-gray-900 md:text-xl line-clamp-2">
+                {event.eventName || "Unnamed Event"}
+              </h3>
               <div className="flex items-center mt-1 text-gray-600">
                 <MapPin className="mr-1 w-3 h-3" />
-                <span className="text-xs md:text-sm">{event.location || "Location not specified"}</span>
+                <span className="text-xs md:text-sm">
+                  {event.location || "Location not specified"}
+                </span>
               </div>
             </div>
           </div>
 
           <div className="hidden text-right sm:block">
-            <div className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 md:px-3 md:py-1 rounded-full text-xs font-medium`}>
+            <div
+              className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 md:px-3 md:py-1 rounded-full text-xs font-medium`}
+            >
               <Calendar className="w-3 h-3" />
               {statusStyle.label}
             </div>
@@ -288,34 +757,34 @@ const EventCard: React.FC<EventCardProps> = ({
 
         <div className="mb-4 md:mb-6">
           <div className="flex flex-wrap gap-1 md:gap-2">
-            {(event.categories && event.categories.length > 0 ? event.categories : ["General"]).map((category: string, index: number) => (
-              <span key={index} className="px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full md:px-3 md:py-1">
-                {category}
-              </span>
-            ))}
+            {event.category || "Category not specified"}
           </div>
         </div>
 
         <div className="flex flex-col gap-3">
           <div className="flex gap-3 items-center md:gap-6">
             <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg md:px-4 md:py-2">
-              <span className="text-xs font-bold text-purple-600 md:text-sm">{formatDate(event.publishedDate)}</span>
-              <span className="hidden text-xs text-gray-600 md:block">Published</span>
+              <span className="text-xs font-bold text-purple-600 md:text-sm">
+                {formatDate(event.createdAt)}
+              </span>
+              <span className="hidden text-xs text-gray-600 md:block">
+                Published
+              </span>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <button
-              onClick={() => handleAction("Preview")}
+              onClick={() => onPreview(event.eventId, event.userId)}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 md:text-sm"
               aria-label={`Preview ${event.eventName}`}
             >
-              <Eye className="w-3 h-3 md:w-4 md:h-4" />
-              Preview
+              <Pen className="w-3 h-3 md:w-4 md:h-4" /> Edit /{" "}
+              <Eye className="w-3 h-3 md:w-4 md:h-4" /> Preview
             </button>
 
             <button
-              onClick={() => handleAction("Credentials")}
+              onClick={() => onCredentials(event.eventId)}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg transition-colors hover:bg-purple-200 md:text-sm"
               aria-label={`Credentials ${event.eventName}`}
             >
@@ -324,7 +793,7 @@ const EventCard: React.FC<EventCardProps> = ({
             </button>
 
             <button
-              onClick={() => handleAction("Approve")}
+              onClick={() => onApprove(event.eventId, event.userId)}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 md:text-sm"
               aria-label={`Approve ${event.eventName}`}
             >
@@ -333,7 +802,7 @@ const EventCard: React.FC<EventCardProps> = ({
             </button>
 
             <button
-              onClick={() => handleAction("Reject")}
+              onClick={() => onReject(event.eventId, event.userId)}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 md:text-sm"
               aria-label={`Reject ${event.eventName}`}
             >
@@ -342,7 +811,7 @@ const EventCard: React.FC<EventCardProps> = ({
             </button>
 
             <button
-              onClick={() => handleAction("Delete")}
+              onClick={() => onDelete(event.eventId)}
               className="flex col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 md:text-sm"
               aria-label={`Delete ${event.eventName}`}
             >
@@ -354,7 +823,9 @@ const EventCard: React.FC<EventCardProps> = ({
 
         <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
           <div className="flex justify-between items-center text-xs text-gray-400">
-            <span className="mr-2 truncate">ID: {event.publishedId || "No ID"}</span>
+            <span className="mr-2 truncate">
+              ID: {event.eventId || "No ID"}
+            </span>
             <span>v{event.version}</span>
           </div>
         </div>
@@ -375,11 +846,18 @@ const LoadingSpinner: React.FC = () => (
 const RecentEventsSection: React.FC<{
   recentEvents: Event[];
   onCredentials: (publishedId: string) => void;
-  onPreview: (publishedId: string) => void;
-  onApprove: (publishedId: string) => void;
-  onReject: (publishedId: string) => void;
+  onPreview: (publishedId: string, userId: string) => void;
+  onApprove: (publishedId: string, userId: string) => void;
+  onReject: (publishedId: string, userId: string) => void;
   onDelete: (publishedId: string) => void;
-}> = ({ recentEvents, onCredentials, onPreview, onApprove, onReject, onDelete }) => {
+}> = ({
+  recentEvents,
+  onCredentials,
+  onPreview,
+  onApprove,
+  onReject,
+  onDelete,
+}) => {
   if (recentEvents.length === 0) return null;
 
   return (
@@ -398,7 +876,7 @@ const RecentEventsSection: React.FC<{
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
         {recentEvents.map((event) => (
-          <div key={event.publishedId} className="animate-fadeIn">
+          <div key={event.eventId} className="animate-fadeIn">
             <EventCard
               event={event}
               onCredentials={onCredentials}
@@ -416,115 +894,209 @@ const RecentEventsSection: React.FC<{
   );
 };
 
-// -------------------- Static Data --------------------
-const STATIC_EVENTS: Event[] = [
-  {
-    publishedId: "event-001",
-    eventName: "Tech Conference 2024",
-    location: "San Francisco, CA",
-    categories: ["Technology", "Conference"],
-    reviewStatus: "approved",
-    publishedDate: "2024-01-15",
-    version: 2
+// -------------------- API Service --------------------
+const eventApiService = {
+  async fetchEventCredentials(eventId: string): Promise<EventCredentialsData> {
+    try {
+      const response = await fetch(
+        `https://dmxs169e33.execute-api.ap-south-1.amazonaws.com/dev/event-formdetails-verification/${eventId}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching event credentials:", error);
+      throw error;
+    }
   },
-  {
-    publishedId: "event-002",
-    eventName: "Music Festival",
-    location: "Austin, TX",
-    categories: ["Music", "Entertainment"],
-    reviewStatus: "active",
-    publishedDate: "2024-01-10",
-    version: 1
-  },
-  {
-    publishedId: "event-003",
-    eventName: "Business Summit",
-    location: "Boston, MA",
-    categories: ["Business", "Networking"],
-    reviewStatus: "rejected",
-    publishedDate: "2024-01-05",
-    version: 3
-  },
-  {
-    publishedId: "event-004",
-    eventName: "Art Exhibition",
-    location: "New York, NY",
-    categories: ["Art", "Culture"],
-    reviewStatus: "approved",
-    publishedDate: "2024-01-12",
-    version: 1
-  },
-  {
-    publishedId: "event-005",
-    eventName: "Sports Tournament",
-    location: "Chicago, IL",
-    categories: ["Sports", "Competition"],
-    reviewStatus: "active",
-    publishedDate: "2024-01-08",
-    version: 2
-  },
-  {
-    publishedId: "event-006",
-    eventName: "Food Festival",
-    location: "Detroit, MI",
-    categories: ["Food", "Culinary"],
-    reviewStatus: "approved",
-    publishedDate: "2024-01-03",
-    version: 1
-  }
-];
+};
 
 // -------------------- Main Component --------------------
 const EventAdminDashboard: React.FC = () => {
-  // Static state - no API calls
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("All Categories");
+  const [categoryFilter, setCategoryFilter] =
+    useState<string>("All Categories");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
+    useState<boolean>(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [recentEvents, setRecentEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [credentialsModal, setCredentialsModal] = useState<{
+    isOpen: boolean;
+    data: EventCredentialsData | null;
+  }>({
+    isOpen: false,
+    data: null,
+  });
+  const navigate = useNavigate();
 
-  // Static data
-  const events = STATIC_EVENTS;
-  const recentEvents = STATIC_EVENTS.slice(0, 3); // First 3 as recent
-  const categories = ["All Categories", "Technology", "Conference", "Music", "Entertainment", "Business", "Networking", "Art", "Culture", "Sports", "Competition", "Food", "Culinary"];
+  const categories = [
+    "All Categories",
+    "Technology",
+    "Conference",
+    "Music",
+    "Entertainment",
+    "Business",
+    "Networking",
+    "Art",
+    "Culture",
+    "Sports",
+    "Competition",
+    "Food",
+    "Culinary",
+  ];
 
-  // Static handlers - just show alerts
-  const handleCredentials = (publishedId: string) => {
-    alert(`Credentials for event ID: ${publishedId}`);
+  const handleCredentials = async (eventId: string) => {
+    try {
+      setLoading(true);
+      const credentials = await eventApiService.fetchEventCredentials(eventId);
+      setCredentialsModal({ isOpen: true, data: credentials });
+    } catch (error) {
+      console.error("Error fetching credentials:", error);
+      toast.error("Failed to fetch credentials");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handlePreview = (publishedId: string) => {
-    alert(`Preview for event ID: ${publishedId}`);
+  const handlePreview = (eventId: string, userId: string) => {
+    navigate(`/edit/event/${userId}/${eventId}`);
   };
 
-  const handleApprove = (publishedId: string) => {
-    alert(`Approve event ID: ${publishedId}`);
+  const handleApprove = async (eventId: string, userId: string) => {
+    try {
+      await fetch(
+        `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            eventId: eventId,
+            action: "approve",
+            adminNotes: "Looks good!",
+            userId: userId,
+          }),
+        }
+      );
+
+      toast.success("Event approved successfully");
+      const updatedEvents = events.map((event) => {
+        if (event.eventId === eventId) {
+          return { ...event, reviewStatus: "approved" };
+        }
+        return event;
+      });
+      setEvents(updatedEvents);
+    } catch (error) {
+      console.error("Error approving event:", error);
+      toast.error("Failed to approve event");
+    }
   };
 
-  const handleReject = (publishedId: string) => {
-    alert(`Reject event ID: ${publishedId}`);
+  const handleReject = async (eventId: string, userId: string) => {
+    try {
+      await fetch(
+        `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            eventId: eventId,
+            action: "reject",
+            adminNotes: "Looks bad!",
+            userId: userId,
+          }),
+        }
+      );
+
+      toast.success("Event rejected successfully");
+      const updatedEvents = events.map((event) => {
+        if (event.eventId === eventId) {
+          return { ...event, reviewStatus: "rejected" };
+        }
+        return event;
+      });
+      setEvents(updatedEvents);
+    } catch (error) {
+      console.error("Error rejecting event:", error);
+      toast.error("Failed to rejecte event");
+    }
   };
 
-  const handleDelete = (publishedId: string) => {
-    alert(`Delete event ID: ${publishedId}`);
+  const handleDelete = async (eventId: string) => {
+    try {
+      await fetch(
+        "https://pjqm3sgpzf.execute-api.ap-south-1.amazonaws.com/dev/delete-event",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            eventId: eventId,
+            action: "delete",
+          }),
+        }
+      );
+
+      toast.success("Event deleted successfully");
+      const updatedEvents = events.filter((event) => event.eventId !== eventId);
+      setEvents(updatedEvents);
+      setRecentEvents(recentEvents.filter((e) => e.eventId != eventId));
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("Failed to delete event");
+    }
   };
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
+        );
+        const data = await response.json();
+        setEvents(data?.cards || []);
+        setRecentEvents(data?.cards?.slice(0, 3) || []);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="w-full min-h-screen h-full bg-blue-50">
       <Header />
 
+      {/* Credentials Modal */}
+      <EventCredentialsModal
+        isOpen={credentialsModal.isOpen}
+        onClose={() => setCredentialsModal({ isOpen: false, data: null })}
+        data={credentialsModal.data}
+      />
+
       {/* Mobile sidebar toggle */}
-      <div className="flex sticky top-0 z-40 justify-between items-center p-4 bg-white border-b border-gray-200 md:hidden">
-        <button
-          onClick={() => setIsMobileSidebarOpen(true)}
-          className="p-2 rounded-lg border border-gray-200"
-          aria-label="Open filters"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-        <span className="text-sm font-medium text-gray-700">
-          {events.length} {events.length === 1 ? "event" : "events"}
-        </span>
-      </div>
+      <button
+        onClick={() => setIsMobileSidebarOpen(true)}
+        className="p-3 rounded-full border border-gray-200 bg-yellow-500 text-white relative left-5 hover:bg-yellow-600 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
+        aria-label="Open filters"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
 
       {/* Main layout */}
       <div className="flex">
@@ -540,65 +1112,80 @@ const EventAdminDashboard: React.FC = () => {
           onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
         />
 
-        <div className="flex-1 p-4 md:p-8">
-          {/* Recent Events Section */}
-          <RecentEventsSection
-            recentEvents={recentEvents}
-            onCredentials={handleCredentials}
-            onPreview={handlePreview}
-            onApprove={handleApprove}
-            onReject={handleReject}
-            onDelete={handleDelete}
-          />
+        <div className="flex-1 p-4 md:p-8 bg-blue-50">
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              {/* Recent Events Section */}
+              <RecentEventsSection
+                recentEvents={recentEvents}
+                onCredentials={handleCredentials}
+                onPreview={handlePreview}
+                onApprove={handleApprove}
+                onReject={handleReject}
+                onDelete={handleDelete}
+              />
 
-          {/* All Events Section */}
-          <div className="flex gap-3 items-center mb-6">
-            <div className="flex gap-2 items-center">
-              <Calendar className="w-6 h-6 text-blue-600" />
-              <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
-                All Events
-              </h2>
-            </div>
-            <span className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full">
-              {events.length} {events.length === 1 ? "event" : "events"}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
-            {events.map((event) => (
-              <div key={event.publishedId} className="animate-fadeIn">
-                <EventCard
-                  event={event}
-                  onCredentials={handleCredentials}
-                  onPreview={handlePreview}
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                  onDelete={handleDelete}
-                />
+              {/* All Events Section */}
+              <div className="flex gap-3 items-center mb-6">
+                <div className="flex gap-2 items-center">
+                  <Calendar className="w-6 h-6 text-blue-600" />
+                  <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+                    All Events
+                  </h2>
+                </div>
+                <span className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full">
+                  {events.length} {events.length === 1 ? "event" : "events"}
+                </span>
               </div>
-            ))}
-          </div>
 
-          {/* Static Pagination */}
-          <div className="flex justify-center items-center mt-8">
-            <button
-              className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={true}
-            >
-              <ArrowRight className="w-4 h-4 rotate-180" />
-              Previous
-            </button>
-            <span className="mx-4 text-sm text-gray-600">
-              Page 1 of 1
-            </span>
-            <button
-              className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={true}
-            >
-              Next
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+                {events.map((event) => (
+                  <div key={event.eventId} className="animate-fadeIn">
+                    <EventCard
+                      event={event}
+                      onCredentials={handleCredentials}
+                      onPreview={handlePreview}
+                      onApprove={handleApprove}
+                      onReject={handleReject}
+                      onDelete={handleDelete}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                {events.length === 0 && (
+                  <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
+                    <Calendar className="w-24 h-24 text-gray-400" />
+                    <p className="text-sm font-semibold text-gray-400">
+                      Oops looks like there is not events!
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Static Pagination */}
+              <div className="flex justify-center items-center mt-8">
+                <button
+                  className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={true}
+                >
+                  <ArrowRight className="w-4 h-4 rotate-180" />
+                  Previous
+                </button>
+                <span className="mx-4 text-sm text-gray-600">Page 1 of 1</span>
+                <button
+                  className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={true}
+                >
+                  Next
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
