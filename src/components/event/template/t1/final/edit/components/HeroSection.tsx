@@ -3,6 +3,25 @@ import { Calendar, MapPin, Clock, ArrowRight, Edit, Save, X } from "lucide-react
 
 const HeroSection: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
+  const [countdown, setCountdown] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    isEventStarted: false,
+    isEventExpired: false
+  });
+
+  // Helper function for ordinal suffixes
+  const getOrdinalSuffix = (day: number): string => {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  };
 
   // Helper function to convert YouTube URLs to embed format
   const convertToEmbedUrl = (url: string): string => {
@@ -38,7 +57,11 @@ const HeroSection: React.FC = () => {
     date: "25th – 27th September 2025",
     time: "9:00 AM - 6:00 PM",
     location: "Bombay Exhibition Centre, NESCO, Mumbai",
-    eventDate: "2025-09-25T09:00:00", // default event date
+    eventDate: "2025-09-25T09:00:00", // September 25, 2025 at 9:00 AM
+    startDate: "2025-09-25",
+    endDate: "2025-09-27",
+    startTime: "09:00",
+    endTime: "18:00",
     videoUrl: "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0",
     highlights: [
       "Interaction with Key Buyers",
@@ -52,38 +75,66 @@ const HeroSection: React.FC = () => {
     btn2: "Exhibitor Enquiry",
   });
 
-  const [backupContent, setBackupContent] = useState(heroContent); // for cancel
+  const [backupContent, setBackupContent] = useState(heroContent);
 
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-
+  // Countdown timer effect
   useEffect(() => {
     const updateCountdown = () => {
-      const eventDate = new Date(heroContent.eventDate).getTime();
       const now = new Date().getTime();
-      const distance = eventDate - now;
+      const eventStartTime = new Date(heroContent.eventDate).getTime();
+      const eventEndTime = new Date(`${heroContent.endDate}T${heroContent.endTime}:00`).getTime();
+      const distanceToStart = eventStartTime - now;
+      const distanceToEnd = eventEndTime - now;
 
-      if (distance > 0) {
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000),
+      // Event hasn't started yet - show countdown
+      if (distanceToStart > 0) {
+        const days = Math.floor(distanceToStart / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distanceToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distanceToStart % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distanceToStart % (1000 * 60)) / 1000);
+
+        setCountdown({
+          days,
+          hours,
+          minutes,
+          seconds,
+          isEventStarted: false,
+          isEventExpired: false
         });
-      } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+      // Event is currently running (started but not ended)
+      else if (distanceToEnd > 0) {
+        setCountdown({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          isEventStarted: true,
+          isEventExpired: false
+        });
+      }
+      // Event has ended - show expired
+      else {
+        setCountdown({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          isEventStarted: false,
+          isEventExpired: true
+        });
       }
     };
 
+    // Update immediately
     updateCountdown();
+    
+    // Update every second
     const timer = setInterval(updateCountdown, 1000);
 
+    // Cleanup interval on component unmount
     return () => clearInterval(timer);
-  }, [heroContent.eventDate]);
+  }, [heroContent.eventDate, heroContent.endDate, heroContent.endTime]);
 
   const handleEditToggle = () => {
     if (!editMode) {
@@ -219,20 +270,156 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Editable Event Date (affects countdown) */}
+          {/* Countdown Timer */}
+          <div className="mb-8">
+            {countdown.isEventExpired ? (
+              <div className="text-center">
+                <div className="inline-block bg-red-500/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-red-400/30">
+                  <h3 className="text-2xl md:text-3xl font-bold text-red-400 mb-2">❌ Event is Expired</h3>
+                  <p className="text-white text-lg">This event has ended</p>
+                </div>
+              </div>
+            ) : countdown.isEventStarted ? (
+              <div className="text-center">
+                <div className="inline-block bg-green-500/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-green-400/30">
+                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">🎉 Event is Live!</h3>
+                  <p className="text-white text-lg">Join us now at the event</p>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center">
+                <h3 className="text-xl md:text-2xl font-semibold text-white mb-4">Event Starts In</h3>
+                <div className="flex justify-center gap-4 md:gap-6">
+                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">{countdown.days}</div>
+                    <div className="text-sm md:text-base text-white/80">Days</div>
+                  </div>
+                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">{countdown.hours}</div>
+                    <div className="text-sm md:text-base text-white/80">Hours</div>
+                  </div>
+                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">{countdown.minutes}</div>
+                    <div className="text-sm md:text-base text-white/80">Minutes</div>
+                  </div>
+                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">{countdown.seconds}</div>
+                    <div className="text-sm md:text-base text-white/80">Seconds</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Editable Event Date Range (affects countdown) */}
           {editMode && (
             <div className="mb-6 space-y-4">
-              <div>
-                <label className="text-white block mb-2">Event Start Date:</label>
-                <input
-                  type="datetime-local"
-                  value={heroContent.eventDate}
-                  onChange={(e) =>
-                    setHeroContent({ ...heroContent, eventDate: e.target.value })
-                  }
-                  className="bg-white text-black px-3 py-2 rounded-md"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-white block mb-2">Start Date:</label>
+                  <input
+                    type="date"
+                    value={heroContent.startDate}
+                    onChange={(e) => {
+                      const newStartDate = e.target.value;
+                      const eventDateTime = `${newStartDate}T${heroContent.startTime}:00`;
+                      setHeroContent({ 
+                        ...heroContent, 
+                        startDate: newStartDate,
+                        eventDate: eventDateTime
+                      });
+                    }}
+                    className="bg-white text-black px-3 py-2 rounded-md w-full"
+                  />
+                </div>
+                <div>
+                  <label className="text-white block mb-2">End Date:</label>
+                  <input
+                    type="date"
+                    value={heroContent.endDate}
+                    onChange={(e) =>
+                      setHeroContent({ ...heroContent, endDate: e.target.value })
+                    }
+                    className="bg-white text-black px-3 py-2 rounded-md w-full"
+                  />
+                </div>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-white block mb-2">Start Time:</label>
+                  <input
+                    type="time"
+                    value={heroContent.startTime}
+                    onChange={(e) => {
+                      const newStartTime = e.target.value;
+                      const eventDateTime = `${heroContent.startDate}T${newStartTime}:00`;
+                      setHeroContent({ 
+                        ...heroContent, 
+                        startTime: newStartTime,
+                        eventDate: eventDateTime
+                      });
+                    }}
+                    className="bg-white text-black px-3 py-2 rounded-md w-full"
+                  />
+                </div>
+                <div>
+                  <label className="text-white block mb-2">End Time:</label>
+                  <input
+                    type="time"
+                    value={heroContent.endTime}
+                    onChange={(e) =>
+                      setHeroContent({ ...heroContent, endTime: e.target.value })
+                    }
+                    className="bg-white text-black px-3 py-2 rounded-md w-full"
+                  />
+                </div>
+              </div>
+              <div className="text-center">
+                <button
+                  onClick={() => {
+                    // Auto-generate display date from selected dates
+                    const startDate = new Date(heroContent.startDate);
+                    const endDate = new Date(heroContent.endDate);
+                    const startDay = startDate.getDate();
+                    const endDay = endDate.getDate();
+                    const month = startDate.toLocaleDateString('en-US', { month: 'long' });
+                    const year = startDate.getFullYear();
+                    
+                    // Format start and end times
+                    const startTimeFormatted = new Date(`2000-01-01T${heroContent.startTime}:00`).toLocaleTimeString('en-US', { 
+                      hour: 'numeric', 
+                      minute: '2-digit', 
+                      hour12: true 
+                    });
+                    const endTimeFormatted = new Date(`2000-01-01T${heroContent.endTime}:00`).toLocaleTimeString('en-US', { 
+                      hour: 'numeric', 
+                      minute: '2-digit', 
+                      hour12: true 
+                    });
+                    
+                    const displayDate = startDay === endDay 
+                      ? `${startDay}${getOrdinalSuffix(startDay)} ${month} ${year}`
+                      : `${startDay}${getOrdinalSuffix(startDay)} – ${endDay}${getOrdinalSuffix(endDay)} ${month} ${year}`;
+                    
+                    const displayTime = `${startTimeFormatted} - ${endTimeFormatted}`;
+                    
+                    setHeroContent({ 
+                      ...heroContent, 
+                      date: displayDate,
+                      time: displayTime
+                    });
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                >
+                  Update Display Date & Time
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Video URL Section */}
+          {editMode && (
+            <div className="mb-6">
               <div>
                 <label className="text-white block mb-2">Background Video URL:</label>
                 <input
@@ -254,26 +441,6 @@ const HeroSection: React.FC = () => {
               </div>
             </div>
           )}
-
-          {/* Countdown Timer */}
-          <div className="grid grid-cols-4 gap-4 max-w-md mx-auto mb-12">
-            {[
-              { label: "Days", value: timeLeft.days },
-              { label: "Hours", value: timeLeft.hours },
-              { label: "Minutes", value: timeLeft.minutes },
-              { label: "Seconds", value: timeLeft.seconds },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="bg-black/50 backdrop-blur-sm rounded-lg p-4 border border-[#FFD400]/30"
-              >
-                <div className="text-2xl font-bold text-[#FFD400]">
-                  {item.value.toString().padStart(2, "0")}
-                </div>
-                <div className="text-sm text-gray-300">{item.label}</div>
-              </div>
-            ))}
-          </div>
 
           {/* Highlights */}
           <div className="text-white text-lg max-w-3xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-left">
