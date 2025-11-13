@@ -22,14 +22,21 @@ export default function Hero({
   const [croppingFor, setCroppingFor] = useState(null); // 'heroImage' or 'hero3Image'
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
-  // Fixed image dimensions - REMOVED aspectRatio state
-  const HERO_IMAGE_SIZE = { width: 1080, height: 720, aspect: 1080 / 720 };
-  const SMALL_IMAGE_SIZE = { width: 400, height: 267, aspect: 400 / 267 };
+  // Dynamic zoom calculation states
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Consolidated state
   const [heroState, setHeroState] = useState({
@@ -59,6 +66,25 @@ export default function Hero({
       onStateChange(heroState);
     }
   }, [heroState, onStateChange]);
+
+  // Compute dynamic min zoom
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.5);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Recenter when zooming out
+  useEffect(() => {
+    if (zoom < prevZoom) {
+      setCrop({ x: 0, y: 0 });
+    }
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   // Update function for simple fields
   const updateField = (field, value) => {
@@ -113,9 +139,9 @@ export default function Hero({
       setOriginalFile(file);
       setCroppingFor("heroImage");
       setShowCropper(true);
+      setAspectRatio(4 / 3);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
-      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -143,9 +169,9 @@ export default function Hero({
       setOriginalFile(file);
       setCroppingFor("hero3Image");
       setShowCropper(true);
+      setAspectRatio(4 / 3);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
-      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -168,24 +194,15 @@ export default function Hero({
       image.src = url;
     });
 
-  // Function to get cropped image with fixed output dimensions
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  // Function to get cropped image
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Determine target output size based on which image is being cropped
-    const targetWidth = croppingFor === "heroImage" ? 1080 : 400;
-    const targetHeight = croppingFor === "heroImage" ? 720 : 267;
-
-    // Set canvas size to the fixed output size
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-
-    // Translate and rotate the context
-    ctx.translate(targetWidth / 2, targetHeight / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-targetWidth / 2, -targetHeight / 2);
+    // Set canvas size to the desired crop size
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
 
     // Draw the cropped image scaled to the fixed output size
     ctx.drawImage(
@@ -196,8 +213,8 @@ export default function Hero({
       pixelCrop.height,
       0,
       0,
-      targetWidth,
-      targetHeight
+      pixelCrop.width,
+      pixelCrop.height
     );
 
     return new Promise((resolve) => {
@@ -237,8 +254,7 @@ export default function Hero({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -272,13 +288,11 @@ export default function Hero({
     setCroppingFor(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -456,7 +470,7 @@ export default function Hero({
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Crop {croppingFor === "heroImage" ? "Hero Image" : "Small Image"}
+                  Crop {croppingFor === "heroImage" ? "Hero" : "Small"} Image (4:3 Ratio)
                 </h3>
                 <p className="text-sm text-gray-600">
                   Required Size: {croppingFor === "heroImage"
@@ -478,14 +492,17 @@ export default function Hero({
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
-                aspect={croppingFor === "heroImage" ? HERO_IMAGE_SIZE.aspect : SMALL_IMAGE_SIZE.aspect}
+                aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={3}
+                restrictPosition={true}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                showGrid={true}
                 cropShape="rect"
-                restrictPosition={false}
                 style={{
                   containerStyle: {
                     position: "relative",
@@ -523,7 +540,7 @@ export default function Hero({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
+                  min={minZoomDynamic}
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
@@ -916,7 +933,7 @@ export default function Hero({
                       <img
                         src={heroState.heroImage}
                         alt="Modern business team collaborating"
-                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
+                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl scale-110"
                         style={{
                           maxHeight: '500px',
                           width: 'auto',
@@ -970,7 +987,7 @@ export default function Hero({
                         <img
                           src={heroState.hero3Image}
                           alt="Additional business context"
-                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
+                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white scale-110"
                         />
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">

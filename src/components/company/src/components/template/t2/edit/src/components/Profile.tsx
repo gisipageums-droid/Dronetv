@@ -23,11 +23,21 @@ const Profile = ({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Dynamic zoom calculation states
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Text field limits
   const TEXT_LIMITS = {
@@ -48,6 +58,22 @@ const Profile = ({
       onStateChange(contentState);
     }
   }, [contentState, onStateChange]);
+
+  // Compute dynamic min zoom (free pan/zoom)
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.1);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Track previous zoom only (no auto recentre to allow free panning)
+  useEffect(() => {
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   // Update function for team members
   const updateTeamMemberField = (index, field, value) => {
@@ -95,9 +121,9 @@ const Profile = ({
       teamMembers: prev.teamMembers.map((m, i) =>
         i === index
           ? {
-              ...m,
-              socialLinks: { ...m.socialLinks, [platform]: value },
-            }
+            ...m,
+            socialLinks: { ...m.socialLinks, [platform]: value },
+          }
           : m
       ),
     }));
@@ -124,10 +150,9 @@ const Profile = ({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setAspectRatio(4 / 3); // Default to 3:4 for profile
+      setAspectRatio(4 / 3); // Default to 4:3 for profile
       setCrop({ x: 0, y: 0 });
       setZoom(1);
-      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -151,17 +176,13 @@ const Profile = ({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
-
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
 
     ctx.drawImage(
       image,
@@ -207,8 +228,7 @@ const Profile = ({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -237,13 +257,11 @@ const Profile = ({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
-  // Reset zoom and rotation
+  // Reset zoom
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -333,7 +351,7 @@ const Profile = ({
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Crop Profile Image
+                  Crop Profile Image (4:3 Ratio)
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
                   Recommended: 100×100px (1:1 ratio) - square
@@ -353,12 +371,18 @@ const Profile = ({
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
                 aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -404,11 +428,10 @@ const Profile = ({
                   </button> */}
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
@@ -427,8 +450,8 @@ const Profile = ({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
-                  max={3}
+                  min={minZoomDynamic}
+                  max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -464,11 +487,10 @@ const Profile = ({
       {/* Main Profile Section */}
       <section
         id="our-team"
-        className={`py-20 theme-transition ${
-          theme === "dark"
+        className={`py-20 theme-transition ${theme === "dark"
             ? "bg-black text-gray-100"
             : "bg-gray-50 text-gray-900"
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
@@ -479,11 +501,10 @@ const Profile = ({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
               >
                 <Save size={16} />
                 {isUploading ? "Uploading..." : "Save"}
@@ -514,11 +535,10 @@ const Profile = ({
                     }))
                   }
                   maxLength={TEXT_LIMITS.heading}
-                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full max-w-2xl mx-auto ${
-                    contentState.heading.length >= TEXT_LIMITS.heading
+                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full max-w-2xl mx-auto ${contentState.heading.length >= TEXT_LIMITS.heading
                       ? "border-red-500"
                       : ""
-                  }`}
+                    }`}
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
                   <div>
@@ -550,20 +570,19 @@ const Profile = ({
                     }))
                   }
                   maxLength={TEXT_LIMITS.subheading}
-                  className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${
-                    contentState.subheading.length >= TEXT_LIMITS.subheading
+                  className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${contentState.subheading.length >= TEXT_LIMITS.subheading
                       ? "border-red-500"
                       : ""
-                  }`}
+                    }`}
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
                   <div>
                     {contentState.subheading.length >=
                       TEXT_LIMITS.subheading && (
-                      <span className="text-red-500 font-bold">
-                        ⚠️ Character limit reached!
-                      </span>
-                    )}
+                        <span className="text-red-500 font-bold">
+                          ⚠️ Character limit reached!
+                        </span>
+                      )}
                   </div>
                   <div>
                     {contentState.subheading.length}/{TEXT_LIMITS.subheading}
@@ -581,9 +600,8 @@ const Profile = ({
             {contentState.teamMembers.map((member, index) => (
               <motion.div
                 key={member.id}
-                className={`rounded-lg overflow-hidden shadow-lg ${
-                  theme === "dark" ? "bg-gray-900" : "bg-white"
-                }`}
+                className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
+                  }`}
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
               >
@@ -591,7 +609,7 @@ const Profile = ({
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover scale-110"
                   />
 
                   {isEditing && (
@@ -628,11 +646,10 @@ const Profile = ({
                           updateTeamMemberField(index, "name", e.target.value)
                         }
                         maxLength={TEXT_LIMITS.memberName}
-                        className={`text-xl font-semibold border-b bg-transparent text-center w-full ${
-                          member.name.length >= TEXT_LIMITS.memberName
+                        className={`text-xl font-semibold border-b bg-transparent text-center w-full ${member.name.length >= TEXT_LIMITS.memberName
                             ? "border-red-500"
                             : ""
-                        }`}
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {member.name.length}/{TEXT_LIMITS.memberName}
@@ -652,11 +669,10 @@ const Profile = ({
                           updateTeamMemberField(index, "role", e.target.value)
                         }
                         maxLength={TEXT_LIMITS.memberRole}
-                        className={`font-medium border-b bg-transparent text-center w-full ${
-                          member.role.length >= TEXT_LIMITS.memberRole
+                        className={`font-medium border-b bg-transparent text-center w-full ${member.role.length >= TEXT_LIMITS.memberRole
                             ? "border-red-500"
                             : ""
-                        }`}
+                          }`}
                         style={{ color: "#facc15" }}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
@@ -680,13 +696,11 @@ const Profile = ({
                           updateTeamMemberField(index, "bio", e.target.value)
                         }
                         maxLength={TEXT_LIMITS.memberBio}
-                        className={`text-sm border-b bg-transparent text-center w-full ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-600"
-                        } ${
-                          member.bio.length >= TEXT_LIMITS.memberBio
+                        className={`text-sm border-b bg-transparent text-center w-full ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                          } ${member.bio.length >= TEXT_LIMITS.memberBio
                             ? "border-red-500"
                             : ""
-                        }`}
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {member.bio.length}/{TEXT_LIMITS.memberBio}
@@ -694,14 +708,13 @@ const Profile = ({
                     </div>
                   ) : (
                     <p
-                      className={`text-sm ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-600"
-                      }`}
+                      className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                        }`}
                     >
                       {member.bio}
                     </p>
                   )}
-{/* 
+                  {/* 
                   <div className="flex justify-center mt-4 space-x-3">
                     {isEditing ? (
                       <>
@@ -752,7 +765,7 @@ const Profile = ({
                       </>
                     ) : (
                       <> */}
-                       {/* <a
+                  {/* <a
                           href={member.socialLinks.twitter}
                           target="_blank"
                           className={`p-2 rounded-full ${
@@ -788,8 +801,8 @@ const Profile = ({
                             <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                           </svg>
                         </a> */}
-                      {/* </> */}
-                    {/* )} */}
+                  {/* </> */}
+                  {/* )} */}
                   {/* </div> */}
 
                   {isEditing && (
@@ -809,11 +822,10 @@ const Profile = ({
 
             {isEditing && (
               <motion.div
-                className={`rounded-lg flex items-center justify-center border-dashed ${
-                  theme === "dark"
+                className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
                     ? "bg-gray-900 border-gray-700"
                     : "bg-white border-gray-300"
-                } border-2`}
+                  } border-2`}
                 whileHover={{ scale: 1.02 }}
               >
                 <motion.button

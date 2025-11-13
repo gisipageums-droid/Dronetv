@@ -870,6 +870,11 @@ export default function Footer({
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(1); // Square for logos
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
 
   // Merged all state into a single object
   const [footerContent, setFooterContent] = useState(() => {
@@ -912,6 +917,30 @@ export default function Footer({
       onStateChange(footerContent);
     }
   }, [footerContent, onStateChange]);
+
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      setMinZoomDynamic(0.1);
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
+  useEffect(() => {
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
 
   // Handlers for company info
   const updateCompanyInfo = (field, value) => {
@@ -1213,17 +1242,26 @@ export default function Footer({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
                 rotation={rotation}
                 aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -1249,31 +1287,28 @@ export default function Footer({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -1292,8 +1327,8 @@ export default function Footer({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
-                  max={3}
+                  min={minZoomDynamic}
+                  max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -1341,11 +1376,10 @@ export default function Footer({
               whileHover={{ y: -1, scaleX: 1.1 }}
               onClick={handleSave}
               disabled={isUploading}
-              className={`${
-                isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:font-semibold"
-              } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
+              className={`${isUploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:font-semibold"
+                } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
             >
               {isUploading ? (
                 "Uploading..."
@@ -1387,12 +1421,12 @@ export default function Footer({
                     {isEditing ? (
                       <div className="relative w-full h-full">
                         {footerContent.companyInfo.logoUrl &&
-                        (footerContent.companyInfo.logoUrl.startsWith(
-                          "data:"
-                        ) ||
-                          footerContent.companyInfo.logoUrl.startsWith(
-                            "http"
-                          )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith(
+                            "data:"
+                          ) ||
+                            footerContent.companyInfo.logoUrl.startsWith(
+                              "http"
+                            )) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl || logo}
                             alt="Logo"
@@ -1415,12 +1449,12 @@ export default function Footer({
                     ) : (
                       <>
                         {footerContent.companyInfo.logoUrl &&
-                        (footerContent.companyInfo.logoUrl.startsWith(
-                          "data:"
-                        ) ||
-                          footerContent.companyInfo.logoUrl.startsWith(
-                            "http"
-                          )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith(
+                            "data:"
+                          ) ||
+                            footerContent.companyInfo.logoUrl.startsWith(
+                              "http"
+                            )) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
@@ -1449,11 +1483,10 @@ export default function Footer({
                           updateCompanyInfo("companyName", e.target.value)
                         }
                         maxLength={50}
-                        className={`w-full text-xl font-bold text-white bg-transparent border-b ${
-                          footerContent.companyInfo.companyName.length >= 50
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`w-full text-xl font-bold text-white bg-transparent border-b ${footerContent.companyInfo.companyName.length >= 50
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-300 mt-1">
                         {footerContent.companyInfo.companyName.length}/50
@@ -1479,11 +1512,10 @@ export default function Footer({
                         updateCompanyInfo("description", e.target.value)
                       }
                       maxLength={200}
-                      className={`w-full max-w-md text-gray-400 bg-transparent border-b ${
-                        footerContent.companyInfo.description.length >= 200
-                          ? "border-red-500"
-                          : ""
-                      }`}
+                      className={`w-full max-w-md text-gray-400 bg-transparent border-b ${footerContent.companyInfo.description.length >= 200
+                        ? "border-red-500"
+                        : ""
+                        }`}
                       rows={3}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
@@ -1520,9 +1552,8 @@ export default function Footer({
                             });
                           }}
                           maxLength={25}
-                          className={`w-full mb-4 font-medium text-white bg-transparent border-b ${
-                            category.length >= 25 ? "border-red-500" : ""
-                          }`}
+                          className={`w-full mb-4 font-medium text-white bg-transparent border-b ${category.length >= 25 ? "border-red-500" : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-300 mt-1 -mb-2">
                           {category.length}/25

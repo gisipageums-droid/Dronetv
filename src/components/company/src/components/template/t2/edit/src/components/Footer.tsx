@@ -47,11 +47,21 @@ export default function Footer({
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(1); // Square for logos
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Dynamic zoom calculation states (from Gallery)
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Merged all state into a single object - PRESERVING ORIGINAL DATA STRUCTURE
   const [footerContent, setFooterContent] = useState({
@@ -72,15 +82,15 @@ export default function Footer({
       ],
       Services: footerData?.services
         ? footerData.services.map((service) => ({
-            name: service.title,
-            href: "#services",
-          }))
+          name: service.title,
+          href: "#services",
+        }))
         : [
-            { name: "Strategy Consulting", href: "#services" },
-            { name: "Team Development", href: "#services" },
-            { name: "Digital Transformation", href: "#services" },
-            { name: "Performance Optimization", href: "#services" },
-          ],
+          { name: "Strategy Consulting", href: "#services" },
+          { name: "Team Development", href: "#services" },
+          { name: "Digital Transformation", href: "#services" },
+          { name: "Performance Optimization", href: "#services" },
+        ],
       Resources: [
         { name: "Blog", href: "#blog" },
         { name: "Gallery", href: "#gallery" },
@@ -98,7 +108,7 @@ export default function Footer({
       buttonText: "Subscribe",
     },
     bottomFooter: {
-      copyright: "© 2024 Company. All rights reserved.",
+      copyright: " 2024 Company. All rights reserved.",
       links: [
         { name: "Privacy Policy", href: "#" },
         { name: "Terms of Service", href: "#" },
@@ -129,6 +139,22 @@ export default function Footer({
       onStateChange(footerContent);
     }
   }, [footerContent, onStateChange]);
+
+  // Compute dynamic min zoom (free pan/zoom)
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.1);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Track previous zoom only (no auto recentre to allow free panning)
+  useEffect(() => {
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   // Handlers for company info
   const updateCompanyInfo = (field, value) => {
@@ -197,10 +223,9 @@ export default function Footer({
       setImageToCrop(reader.result);
       setOriginalFile(file);
       setShowCropper(true);
-      setAspectRatio(1); // Square for logos
+      setAspectRatio(4 / 3);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
-      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -224,17 +249,13 @@ export default function Footer({
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
-
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
 
     ctx.drawImage(
       image,
@@ -282,8 +303,7 @@ export default function Footer({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately - using logoUrl field to preserve data structure
@@ -308,12 +328,10 @@ export default function Footer({
     setOriginalFile(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -416,7 +434,8 @@ export default function Footer({
           >
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">Crop Logo</h3>
+              <h3 className="text-lg font-semibold text-gray-800">Crop Logo (4:3 Ratio)</h3>
+
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
@@ -431,12 +450,18 @@ export default function Footer({
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
                 aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -454,41 +479,20 @@ export default function Footer({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
+              {/* Aspect Ratio Button - Only 4:3 */}
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    1:1 (Square)
-                  </button>
-                  <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    16:9 (Widescreen)
                   </button>
                 </div>
               </div>
@@ -505,8 +509,8 @@ export default function Footer({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
-                  max={3}
+                  min={minZoomDynamic}
+                  max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -554,11 +558,10 @@ export default function Footer({
               whileHover={{ y: -1, scaleX: 1.1 }}
               onClick={handleSave}
               disabled={isUploading}
-              className={`${
-                isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:font-semibold"
-              } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
+              className={`${isUploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:font-semibold"
+                } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
             >
               {isUploading ? (
                 "Uploading..."
@@ -611,16 +614,16 @@ export default function Footer({
                     {isEditing ? (
                       <div className="relative w-full h-full">
                         {footerContent.companyInfo.logoUrl &&
-                        (footerContent.companyInfo.logoUrl.startsWith(
-                          "data:"
-                        ) ||
-                          footerContent.companyInfo.logoUrl.startsWith(
-                            "http"
-                          )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith(
+                            "data:"
+                          ) ||
+                            footerContent.companyInfo.logoUrl.startsWith(
+                              "http"
+                            )) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl || logo}
                             alt="Logo"
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain scale-110"
                           />
                         ) : (
                           <span className="text-lg font-bold text-black">
@@ -639,12 +642,12 @@ export default function Footer({
                     ) : (
                       <>
                         {footerContent.companyInfo.logoUrl &&
-                        (footerContent.companyInfo.logoUrl.startsWith(
-                          "data:"
-                        ) ||
-                          footerContent.companyInfo.logoUrl.startsWith(
-                            "http"
-                          )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith(
+                            "data:"
+                          ) ||
+                            footerContent.companyInfo.logoUrl.startsWith(
+                              "http"
+                            )) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
@@ -673,11 +676,10 @@ export default function Footer({
                           updateCompanyInfo("companyName", e.target.value)
                         }
                         maxLength={30}
-                        className={`text-xl font-bold text-white bg-transparent border-b w-full ${
-                          footerContent.companyInfo.companyName.length >= 30
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`text-xl font-bold text-white bg-transparent border-b w-full ${footerContent.companyInfo.companyName.length >= 30
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {footerContent.companyInfo.companyName.length}/30
@@ -703,11 +705,10 @@ export default function Footer({
                         updateCompanyInfo("description", e.target.value)
                       }
                       maxLength={200}
-                      className={`text-gray-400 max-w-md w-full bg-transparent border-b ${
-                        footerContent.companyInfo.description.length >= 200
-                          ? "border-red-500"
-                          : ""
-                      }`}
+                      className={`text-gray-400 max-w-md w-full bg-transparent border-b ${footerContent.companyInfo.description.length >= 200
+                        ? "border-red-500"
+                        : ""
+                        }`}
                       rows={3}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
@@ -734,11 +735,10 @@ export default function Footer({
                           updateCompanyInfo("email", e.target.value)
                         }
                         maxLength={50}
-                        className={`text-gray-400 bg-transparent border-b w-full ${
-                          footerContent.companyInfo.email.length >= 50
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`text-gray-400 bg-transparent border-b w-full ${footerContent.companyInfo.email.length >= 50
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {footerContent.companyInfo.email.length}/50
@@ -756,11 +756,10 @@ export default function Footer({
                           updateCompanyInfo("phone", e.target.value)
                         }
                         maxLength={20}
-                        className={`text-gray-400 bg-transparent border-b w-full ${
-                          footerContent.companyInfo.phone.length >= 20
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`text-gray-400 bg-transparent border-b w-full ${footerContent.companyInfo.phone.length >= 20
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {footerContent.companyInfo.phone.length}/20
@@ -806,9 +805,8 @@ export default function Footer({
                             });
                           }}
                           maxLength={20}
-                          className={`font-medium text-white mb-4 bg-transparent border-b w-full ${
-                            category.length >= 20 ? "border-red-500" : ""
-                          }`}
+                          className={`font-medium text-white mb-4 bg-transparent border-b w-full ${category.length >= 20 ? "border-red-500" : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {category.length}/20
@@ -851,11 +849,10 @@ export default function Footer({
                                     )
                                   }
                                   maxLength={30}
-                                  className={`text-gray-400 bg-transparent border-b w-full ${
-                                    link.name.length >= 30
-                                      ? "border-red-500"
-                                      : ""
-                                  }`}
+                                  className={`text-gray-400 bg-transparent border-b w-full ${link.name.length >= 30
+                                    ? "border-red-500"
+                                    : ""
+                                    }`}
                                 />
                                 <div className="text-right text-xs text-gray-500 mt-1">
                                   {link.name.length}/30
@@ -878,11 +875,10 @@ export default function Footer({
                                     )
                                   }
                                   maxLength={100}
-                                  className={`text-gray-400 bg-transparent border-b w-full ${
-                                    link.href.length >= 100
-                                      ? "border-red-500"
-                                      : ""
-                                  }`}
+                                  className={`text-gray-400 bg-transparent border-b w-full ${link.href.length >= 100
+                                    ? "border-red-500"
+                                    : ""
+                                    }`}
                                 />
                                 <div className="text-right text-xs text-gray-500 mt-1">
                                   {link.href.length}/100

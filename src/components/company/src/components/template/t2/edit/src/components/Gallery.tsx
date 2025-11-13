@@ -32,11 +32,21 @@ const Gallery = ({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Dynamic zoom calculation states
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Text field limits
   const TEXT_LIMITS = {
@@ -127,6 +137,22 @@ const Gallery = ({
     }
   }, [contentState, onStateChange]);
 
+  // Compute dynamic min zoom (free pan/zoom)
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.1);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Track previous zoom only (no auto recentre to allow free panning)
+  useEffect(() => {
+    setPrevZoom(zoom);
+  }, [zoom]);
+
   // Update function for gallery images
   const updateImageField = (index, field, value) => {
     setContentState((prev) => ({
@@ -202,7 +228,6 @@ const Gallery = ({
       setShowCropper(true);
       setAspectRatio(4 / 3);
       setZoom(1);
-      setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
@@ -227,17 +252,13 @@ const Gallery = ({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
-
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
 
     ctx.drawImage(
       image,
@@ -283,8 +304,7 @@ const Gallery = ({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -313,13 +333,11 @@ const Gallery = ({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -431,7 +449,7 @@ const Gallery = ({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop Gallery Image
+                Crop Gallery Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
@@ -447,12 +465,18 @@ const Gallery = ({
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
                 aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -470,38 +494,20 @@ const Gallery = ({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
+              {/* Aspect Ratio Button - Only 4:3 */}
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    1:1 (Square)
-                  </button>
-                  <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     4:3 (Standard)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    16:9 (Widescreen)
                   </button>
                 </div>
               </div>
@@ -517,8 +523,8 @@ const Gallery = ({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
-                  max={3}
+                  min={minZoomDynamic}
+                  max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -555,8 +561,8 @@ const Gallery = ({
       <section
         id="gallery"
         className={` theme-transition ${theme === "dark"
-            ? "bg-[#1f1f1f] text-gray-100"
-            : "bg-gray-50 text-gray-900"
+          ? "bg-[#1f1f1f] text-gray-100"
+          : "bg-gray-50 text-gray-900"
           }`}
       >
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -569,8 +575,8 @@ const Gallery = ({
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
               >
                 <Save size={16} />
@@ -599,9 +605,9 @@ const Gallery = ({
                     onChange={(e) => updateHeaderField("title", e.target.value)}
                     maxLength={TEXT_LIMITS.headingTitle}
                     className={`mb-4 text-3xl font-bold text-center bg-transparent border-b w-full max-w-2xl mx-auto ${contentState.heading.title.length >=
-                        TEXT_LIMITS.headingTitle
-                        ? "border-red-500"
-                        : ""
+                      TEXT_LIMITS.headingTitle
+                      ? "border-red-500"
+                      : ""
                       }`}
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -627,9 +633,9 @@ const Gallery = ({
                     }
                     maxLength={TEXT_LIMITS.headingDescription}
                     className={`w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b ${contentState.heading.description.length >=
-                        TEXT_LIMITS.headingDescription
-                        ? "border-red-500"
-                        : ""
+                      TEXT_LIMITS.headingDescription
+                      ? "border-red-500"
+                      : ""
                       }`}
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -815,8 +821,8 @@ const Gallery = ({
             {isEditing && contentState.images.length < 6 && (
               <motion.div
                 className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
-                    ? "bg-gray-800 border-gray-700"
-                    : "bg-white border-gray-300"
+                  ? "bg-gray-800 border-gray-700"
+                  : "bg-white border-gray-300"
                   } border-2 cursor-pointer`}
                 whileHover={{ scale: 1.02 }}
                 onClick={addImage}
@@ -867,7 +873,7 @@ const Gallery = ({
               <img
                 src={contentState.images[selectedImage].url}
                 alt={contentState.images[selectedImage].title}
-                className="object-contain w-full h-auto max-h-full"
+                className="object-contain w-full h-auto max-h-full scale-110"
               />
               <div className="mt-4 text-center text-white">
                 <h3 className="text-xl font-semibold">
