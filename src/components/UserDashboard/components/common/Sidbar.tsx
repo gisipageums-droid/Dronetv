@@ -6,6 +6,7 @@ import {
   Menu,
   X,
   User,
+  MessageSquare,
 
   LogOut,
 } from "lucide-react";
@@ -24,6 +25,7 @@ const navLinks = [
       href: "/user-professionals",
     },
     { icon: Calendar, label: "Events", href: "/user-events" },
+    { icon: MessageSquare, label: "Contacted People", href: "/user-contacted" },
   ];
   return (
     <aside className="flex h-screen rounded-lg shadow-lg overflow-hidden">

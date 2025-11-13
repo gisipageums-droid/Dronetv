@@ -1951,25 +1951,53 @@ function EventsForm() {
       return;
     }
 
-    try {
-      // Use existing submissionId (if editing) or generate a new one
-      const finalSubmissionId = submissionId || `event-draft-${Date.now()}`;
+    // try {
+    //   // Use existing submissionId (if editing) or generate a new one
+    //   const finalSubmissionId = submissionId || `event-draft-${Date.now()}`;
 
-      const payload = {
-        userId: email,
-        eventId: finalSubmissionId,
-        submissionId: finalSubmissionId,
-        draftId: finalSubmissionId,
-        aiTriggeredAt: Date.now(),
-        formData: data,
-        mediaLinks: {},
-        uploadedFiles: {},
-        processingMethod: "separate_upload",
-        status: "ai_processing",
-        updatedAt: Date.now(),
-        version: "1.0",
-        eventType: "conference",
-      };
+    //   const payload = {
+    //     userId: email,
+    //     eventId: finalSubmissionId,
+    //     submissionId: finalSubmissionId,
+    //     draftId: finalSubmissionId,
+    //     aiTriggeredAt: Date.now(),
+    //     formData: data,
+    //     mediaLinks: {},
+    //     uploadedFiles: {},
+    //     processingMethod: "separate_upload",
+    //     status: "ai_processing",
+    //     updatedAt: Date.now(),
+    //     templateSelection:'2',
+    //     version: "1.0",
+    //     eventType: "conference",
+    //   };
+
+    try {
+  // Use existing submissionId (if editing) or generate a new one
+  const finalSubmissionId = submissionId || Date.now();
+  
+  // Generate unique eventId starting with "event-"
+  const eventId = `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Generate unique draftId starting with "draft-"
+  const draftId = `draft-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+  const payload = {
+    userId: email,
+    eventId: eventId,
+    submissionId: finalSubmissionId,
+    draftId: draftId,
+    aiTriggeredAt: Date.now(),
+    formData: data,
+    mediaLinks: {},
+    uploadedFiles: {},
+    processingMethod: "separate_upload",
+    status: "ai_processing",
+    updatedAt: Date.now(),
+    templateSelection: '2',
+    version: "1.0",
+    eventType: "conference",
+  };
 
       console.log("Event submission payload:", payload);
 
@@ -2002,7 +2030,8 @@ function EventsForm() {
 
       // Navigate to event preview/edit page
       setTimeout(() => {
-        navigate(`/event/edit/${finalSubmissionId}/${email}`);
+        // navigate(`/event/edit/${finalSubmissionId}/${emil}`);
+        navigate(`/edit/event/t2/${draftId}/${email}`);
       }, 30000);
     } catch (err) {
       console.error(err);

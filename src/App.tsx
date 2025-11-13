@@ -82,12 +82,14 @@ import UserCompany from "./components/UserDashboard/pages/Company";
 import Professinal from "./components/UserDashboard/pages/Professinal";
 import Event from "./components/UserDashboard/pages/Event";
 import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
+import ContactedPeople from "./components/UserDashboard/pages/ContactedPeople";
 import CompanyLeads from "./components/UserDashboard/components/common/CompanyLeads";
 import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
 import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
 import AdminCompanyForm from "./components/AdminCompanyForm";
 import FinalT1 from "./components/mainProfessionalPreview/t1/src/App";
 import Event_T2 from "./components/event/template/t2/src/App";
+import Edit_event_t1 from "./components/event/template/t1/final/edit/EventTemplate1";
 import Edit_event_t2 from "./components/event/template/t2/final/edit/App";
 import EventSelect from "./components/event/select-template/Event-select";
 import EventLeads from "./components/UserDashboard/components/common/EventLeads";
@@ -246,6 +248,7 @@ const AppContent = () => {
           {/* <Route path="/user/event/edit/1/" element={<EventTemplateEdit1 />} />  */}
           {/* <Route path="/user/event/edit/2/" element={<EventTemplateEdit2 />} />  */}
           <Route path="/user/event/t2" element={<Event_T2 />} />
+          <Route path="/edit/event/t1" element={<Edit_event_t1 />} />
           <Route path="/edit/event/t2" element={<Edit_event_t2 />} />
           <Route path="/event/select" element={<EventSelect />} />
           <Route path="/event/leads/:eventName/:eventId" element={
@@ -318,6 +321,14 @@ const AppContent = () => {
             element={
               <UserDashboardLayout>
                 <ProfessionalLeads />
+              </UserDashboardLayout>
+            }
+          />
+          <Route
+            path="/user-contacted"
+            element={
+              <UserDashboardLayout>
+                <ContactedPeople />
               </UserDashboardLayout>
             }
           />
