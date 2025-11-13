@@ -82,6 +82,7 @@ import UserCompany from "./components/UserDashboard/pages/Company";
 import Professinal from "./components/UserDashboard/pages/Professinal";
 import Event from "./components/UserDashboard/pages/Event";
 import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
+import ContactedPeople from "./components/UserDashboard/pages/ContactedPeople";
 import CompanyLeads from "./components/UserDashboard/components/common/CompanyLeads";
 import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
 import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
@@ -311,6 +312,14 @@ const AppContent = () => {
             element={
               <UserDashboardLayout>
                 <ProfessionalLeads />
+              </UserDashboardLayout>
+            }
+          />
+          <Route
+            path="/user-contacted"
+            element={
+              <UserDashboardLayout>
+                <ContactedPeople />
               </UserDashboardLayout>
             }
           />
