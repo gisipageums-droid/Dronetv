@@ -90,6 +90,7 @@ import FinalT1 from "./components/mainProfessionalPreview/t1/src/App";
 import Event_T2 from "./components/event/template/t2/src/App";
 import Edit_event_t2 from "./components/event/template/t2/final/edit/App";
 import EventSelect from "./components/event/select-template/Event-select";
+import EventLeads from "./components/UserDashboard/components/common/EventLeads";
 
 const HomePage = () => (
   <>
@@ -247,6 +248,12 @@ const AppContent = () => {
           <Route path="/user/event/t2" element={<Event_T2 />} />
           <Route path="/edit/event/t2" element={<Edit_event_t2 />} />
           <Route path="/event/select" element={<EventSelect />} />
+          <Route path="/event/leads/:eventName/:eventId" element={
+
+            <UserDashboardLayout>
+              <EventLeads />
+            </UserDashboardLayout>
+          } />
 
 
           {/* excel extraction route */}

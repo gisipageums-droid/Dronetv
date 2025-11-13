@@ -28,6 +28,7 @@ export default function Testimonials({
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(1);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Pending images for upload
   const [pendingTestimonialImages, setPendingTestimonialImages] = useState({});
@@ -42,6 +43,14 @@ export default function Testimonials({
       onStateChange(testimonialsSection);
     }
   }, [testimonialsSection, onStateChange]);
+
+  // Re-center image when zooming out
+  useEffect(() => {
+    if (zoom < prevZoom) {
+      setCrop({ x: 0, y: 0 });
+    }
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   // Handlers for testimonials
   const updateTestimonial = (idx, field, value) => {

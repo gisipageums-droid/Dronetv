@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "./ui/button";
 import { ArrowRight, Play, CheckCircle, X } from "lucide-react";
@@ -18,16 +17,53 @@ export default function Hero({
   const [pendingSmallImageFile, setPendingSmallImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Cropping states
+  // Cropping states - ENHANCED WITH GALLERY LOGIC
   const [showCropper, setShowCropper] = useState(false);
   const [croppingFor, setCroppingFor] = useState(null); // 'heroImage' or 'hero3Image'
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
+
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      setMinZoomDynamic(0.1);
+    }
+  }, [mediaSize, cropAreaSize]);
+
+
+  // Arrow keys to pan image inside crop area when cropper is open
+  useEffect(() => {
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        nudge(-PAN_STEP, 0);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nudge(PAN_STEP, 0);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        nudge(0, -PAN_STEP);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        nudge(0, PAN_STEP);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
 
   // Consolidated state - REMOVED highlight and highlightDesc
   const [heroState, setHeroState] = useState({
@@ -90,7 +126,7 @@ export default function Hero({
     }));
   };
 
-  // Image selection handlers - now open cropper
+  // Image selection handlers - UPDATED WITH GALLERY LOGIC
   const handleHeroImageSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -111,11 +147,8 @@ export default function Hero({
       setOriginalFile(file);
       setCroppingFor("heroImage");
       setShowCropper(true);
-      // Lock aspect ratio for hero image (1080x720)
-      setAspectRatio(1080 / 720);
-      setCrop({ x: 0, y: 0 });
       setZoom(1);
-      setRotation(0);
+      setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
 
@@ -143,11 +176,8 @@ export default function Hero({
       setOriginalFile(file);
       setCroppingFor("hero3Image");
       setShowCropper(true);
-      // Lock aspect ratio for small image (400x267)
-      setAspectRatio(400 / 267);
-      setCrop({ x: 0, y: 0 });
       setZoom(1);
-      setRotation(0);
+      setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
 
@@ -155,12 +185,12 @@ export default function Hero({
     e.target.value = "";
   };
 
-  // Cropper functions
+  // Cropper functions - FROM GALLERY
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  // Helper function to create image element
+  // Helper function to create image element - FROM GALLERY
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
@@ -170,26 +200,19 @@ export default function Hero({
       image.src = url;
     });
 
-  // Function to get cropped image with fixed output dimensions
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  // Function to get cropped image - UPDATED WITH FIXED 4:3 RATIO
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Determine target output size based on which image is being cropped
-    const targetWidth = croppingFor === "heroImage" ? 1080 : 400;
-    const targetHeight = croppingFor === "heroImage" ? 720 : 267;
+    // Fixed output size for 4:3 ratio
+    const outputWidth = 600;
+    const outputHeight = 450;
 
-    // Set canvas size to the fixed output size
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
-    // Translate and rotate the context
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
-
-    // Draw the cropped image scaled to the fixed output size
     ctx.drawImage(
       image,
       pixelCrop.x,
@@ -198,24 +221,22 @@ export default function Hero({
       pixelCrop.height,
       0,
       0,
-      targetWidth,
-      targetHeight
+      outputWidth,
+      outputHeight
     );
 
     return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          // Create a proper file with original file name or generate one
-          const fileName = originalFile
-            ? `cropped-${originalFile.name}`
-            : `cropped-${croppingFor}-${Date.now()}.jpg`;
+          const pngName = originalFile
+            ? `cropped-hero-${croppingFor}-${originalFile.name.replace(/\.[^.]+$/, "")}.png`
+            : `cropped-hero-${croppingFor}-${Date.now()}.png`;
 
-          const file = new File([blob], fileName, {
-            type: "image/jpeg",
+          const file = new File([blob], pngName, {
+            type: "image/png",
             lastModified: Date.now(),
           });
 
-          // Create object URL for preview
           const previewUrl = URL.createObjectURL(blob);
 
           resolve({
@@ -223,13 +244,12 @@ export default function Hero({
             previewUrl,
           });
         },
-        "image/jpeg",
-        0.95
-      ); // 95% quality
+        "image/png"
+      );
     });
   };
 
-  // Apply crop and set pending file - FIXED
+  // Apply crop and set pending file - UPDATED WITH GALLERY LOGIC
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels) {
@@ -239,8 +259,7 @@ export default function Hero({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -266,7 +285,7 @@ export default function Hero({
     }
   };
 
-  // Cancel cropping
+  // Cancel cropping - UPDATED
   const cancelCrop = () => {
     setShowCropper(false);
     setImageToCrop(null);
@@ -274,17 +293,15 @@ export default function Hero({
     setCroppingFor(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
-  // Reset zoom and rotation
+  // Reset zoom and rotation - UPDATED
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Updated Save button handler - uploads cropped images to S3 - FIXED
+  // Updated Save button handler - uploads cropped images to S3
   const handleSave = async () => {
     try {
       setIsUploading(true);
@@ -306,7 +323,6 @@ export default function Hero({
         const formData = new FormData();
         formData.append("file", pendingImageFile);
         formData.append("sectionName", "hero");
-        // Use unique filename with timestamp to avoid conflicts
         formData.append("imageField", `heroImage_${Date.now()}`);
         formData.append("templateSelection", templateSelection);
 
@@ -354,7 +370,6 @@ export default function Hero({
         const formData = new FormData();
         formData.append("file", pendingSmallImageFile);
         formData.append("sectionName", "hero");
-        // Use unique filename with timestamp to avoid conflicts
         formData.append("imageField", `hero3Image_${Date.now()}`);
         formData.append("templateSelection", templateSelection);
 
@@ -442,7 +457,7 @@ export default function Hero({
 
   return (
     <>
-      {/* Image Cropper Modal - Standardized like Clients */}
+      {/* Image Cropper Modal - UPDATED WITH GALLERY LOGIC */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -457,7 +472,7 @@ export default function Hero({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop About Image
+                Crop Hero Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
@@ -468,17 +483,25 @@ export default function Hero({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
-                aspect={aspectRatio}
+                aspect={4 / 3} // ✅ FIXED 4:3 ASPECT RATIO
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area, areaPixels) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
+                showGrid={true} // ✅ Better alignment like Gallery
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -496,44 +519,6 @@ export default function Hero({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  Aspect Ratio:
-                </p>
-                <div className="flex gap-2">
-                  {/* <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    1:1 (Square)
-                  </button> */}
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    4:3 (Standard)
-                  </button>
-                  {/* <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    16:9 (Widescreen)
-                  </button> */}
-                </div>
-              </div>
-
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
@@ -545,7 +530,7 @@ export default function Hero({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
+                  min={minZoomDynamic}
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
@@ -579,7 +564,7 @@ export default function Hero({
         </motion.div>
       )}
 
-      {/* Rest of your Hero component remains exactly the same */}
+      {/* Main Hero Section */}
       <section
         id="home"
         className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition"
@@ -880,77 +865,33 @@ export default function Hero({
               </motion.div>
             </motion.div>
 
-            {/* Hero Image */}
+            {/* Hero Image - FIXED DISPLAY */}
             <motion.div
               className="relative"
               initial="hidden"
               animate="visible"
               variants={itemVariants}
             >
-              {isEditing && (
-                <div className="mb-4 space-y-4 p-2 bg-white/80 rounded shadow">
-                  <div>
-                    {/* Recommended Size Above Image */}
-                    <div className="mb-2 bg-black/70 text-white text-xs p-1 rounded text-center">
-                      Recommended: 1080×720px
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleHeroImageSelect}
-                      className="text-sm font-bold border-2 border-dashed border-muted-foreground p-2 rounded w-full"
-                    />
-                    {pendingImageFile && (
-                      <p className="text-xs text-green-600 mt-1 text-center">
-                        ✓ Image cropped and ready to upload
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    {/* Recommended Size Above Image */}
-                    <div className="mb-2 bg-black/70 text-white text-xs p-1 rounded text-center">
-                      Recommended: 400×267px
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleSmallImageSelect}
-                      className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
-                    />
-                    {pendingSmallImageFile && (
-                      <p className="text-xs text-green-600 mt-1 text-center">
-                        ✓ Small image cropped and ready to upload
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Main image container - UPDATED FOR AUTO-ADJUST SIZE */}
               <div className="relative w-full">
                 <motion.div
                   className="relative"
                   variants={imageVariants}
                 >
                   <div className="relative flex justify-center">
-                    {/* Main Hero Image - Updated for auto-adjust */}
-                    <div className="relative">
-                      {/* Recommended Size Above Image */}
+                    {/* Main Hero Image - FIXED */}
+                    <div className="relative w-full max-w-2xl mx-auto">
                       {isEditing && (
                         <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-                          Recommended: 1080×720px
+                          Recommended: 600×450px (4:3 ratio)
                         </div>
                       )}
-                      <img
-                        src={heroState.heroImage}
-                        alt="Modern business team collaborating"
-                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
-                        style={{
-                          maxHeight: '500px',
-                          width: 'auto',
-                          margin: '0 auto'
-                        }}
-                      />
+                      <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden">
+                        <img
+                          src={heroState.heroImage}
+                          alt="Modern business team collaborating"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                       {isEditing && (
                         <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
                           <svg
@@ -982,24 +923,25 @@ export default function Hero({
                       )}
                     </div>
 
-                    {/* Small overlapping image - Updated for auto-adjust */}
+                    {/* Small overlapping image - FIXED */}
                     <motion.div
                       className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 lg:-bottom-8 lg:-left-8"
                       variants={imageVariants}
                       transition={{ delay: 0.3 }}
                     >
                       <div className="relative">
-                        {/* Recommended Size Above Image */}
                         {isEditing && (
                           <div className="absolute -top-6 left-0 right-0 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-                            Recommended: 400×267px
+                            Recommended: 600×450px (4:3 ratio)
                           </div>
                         )}
-                        <img
-                          src={heroState.hero3Image}
-                          alt="Additional business context"
-                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
-                        />
+                        <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden">
+                          <img
+                            src={heroState.hero3Image}
+                            alt="Additional business context"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
                             <svg
@@ -1046,7 +988,6 @@ export default function Hero({
           </div>
 
           {/* Edit/Save Buttons */}
-          {/* Added z-50 and pointer-events-auto to keep button above overlays and clickable */}
           <div className="absolute top-4 right-4 z-50 pointer-events-auto">
             {isEditing ? (
               <motion.button
@@ -1072,7 +1013,6 @@ export default function Hero({
               </motion.button>
             )}
           </div>
-
         </div>
       </section>
     </>

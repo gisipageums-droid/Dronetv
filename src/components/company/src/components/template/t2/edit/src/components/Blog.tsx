@@ -26,11 +26,21 @@ export default function Blog({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Dynamic zoom calculation states
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Merged all state into a single object
   const [blogSection, setBlogSection] = useState(blogData);
@@ -41,6 +51,25 @@ export default function Blog({
       onStateChange(blogSection);
     }
   }, [blogSection, onStateChange]);
+
+  // Compute dynamic min zoom
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.5);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Recenter when zooming out
+  useEffect(() => {
+    if (zoom < prevZoom) {
+      setCrop({ x: 0, y: 0 });
+    }
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   const displayedPosts = showAllPosts
     ? blogSection.posts
@@ -97,7 +126,6 @@ export default function Blog({
       setShowCropper(true);
       setAspectRatio(4 / 3);
       setZoom(1);
-      setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
@@ -122,17 +150,13 @@ export default function Blog({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
-
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
 
     ctx.drawImage(
       image,
@@ -178,8 +202,7 @@ export default function Blog({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -216,13 +239,11 @@ export default function Blog({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -318,7 +339,7 @@ export default function Blog({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop Blog Image
+                Crop Blog Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
@@ -334,12 +355,16 @@ export default function Blog({
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
                 aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={3}
+                restrictPosition={true}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -357,21 +382,12 @@ export default function Blog({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
+              {/* Aspect Ratio Button - Only 4:3 */}
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    1:1 (Square)
-                  </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
@@ -380,15 +396,6 @@ export default function Blog({
                       }`}
                   >
                     4:3 (Standard)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    16:9 (Widescreen)
                   </button>
                 </div>
               </div>
@@ -404,7 +411,7 @@ export default function Blog({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
+                  min={minZoomDynamic}
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}

@@ -2294,11 +2294,21 @@ export default function About({
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Dynamic zoom calculation states (like final edit)
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Map the string icons to Lucide React components
   const iconMap = {
@@ -2382,6 +2392,25 @@ export default function About({
     }
   }, [aboutState, onStateChange]);
 
+  // Compute dynamic min zoom based on media and crop area (like final edit)
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.5);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Re-center on zoom-out (like final edit)
+  useEffect(() => {
+    if (zoom < prevZoom) {
+      setCrop({ x: 0, y: 0 });
+    }
+    setPrevZoom(zoom);
+  }, [zoom]);
+
   // Update function for simple fields
   const updateField = (field, value) => {
     setAboutState((prev) => ({ ...prev, [field]: value }));
@@ -2435,7 +2464,6 @@ export default function About({
       setShowCropper(true);
       setAspectRatio(4 / 3);
       setZoom(1);
-      setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
@@ -2460,7 +2488,7 @@ export default function About({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -2468,11 +2496,6 @@ export default function About({
     // Set canvas size to the desired crop size
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
-
-    // Translate and rotate the context
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
 
     // Draw the cropped image
     ctx.drawImage(
@@ -2522,8 +2545,7 @@ export default function About({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -2550,13 +2572,11 @@ export default function About({
     setOriginalFile(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -2640,7 +2660,7 @@ export default function About({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop About Image
+                Crop About Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
@@ -2656,12 +2676,16 @@ export default function About({
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
                 aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={3}
+                restrictPosition={true}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -2728,7 +2752,7 @@ export default function About({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
+                  min={minZoomDynamic}
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}

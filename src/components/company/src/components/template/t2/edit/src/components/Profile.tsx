@@ -23,11 +23,21 @@ const Profile = ({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Dynamic zoom calculation states
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Text field limits
   const TEXT_LIMITS = {
@@ -48,6 +58,25 @@ const Profile = ({
       onStateChange(contentState);
     }
   }, [contentState, onStateChange]);
+
+  // Compute dynamic min zoom
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.5);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Recenter when zooming out
+  useEffect(() => {
+    if (zoom < prevZoom) {
+      setCrop({ x: 0, y: 0 });
+    }
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   // Update function for team members
   const updateTeamMemberField = (index, field, value) => {
@@ -124,10 +153,9 @@ const Profile = ({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setAspectRatio(4 / 3); // Default to 3:4 for profile
+      setAspectRatio(4 / 3); // Default to 4:3 for profile
       setCrop({ x: 0, y: 0 });
       setZoom(1);
-      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -151,17 +179,13 @@ const Profile = ({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
-
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
 
     ctx.drawImage(
       image,
@@ -207,8 +231,7 @@ const Profile = ({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -237,13 +260,11 @@ const Profile = ({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
-  // Reset zoom and rotation
+  // Reset zoom
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -333,7 +354,7 @@ const Profile = ({
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Crop Profile Image
+                  Crop Profile Image (4:3 Ratio)
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
                   Recommended: 100×100px (1:1 ratio) - square
@@ -353,12 +374,16 @@ const Profile = ({
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
                 aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={3}
+                restrictPosition={true}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -427,7 +452,7 @@ const Profile = ({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
+                  min={minZoomDynamic}
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}

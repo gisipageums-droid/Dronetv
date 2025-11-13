@@ -1,4 +1,3 @@
-
 import { Button } from "./ui/button";
 import {
   Menu,
@@ -17,7 +16,6 @@ import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
 import logo from "/images/Drone tv .in.jpg";
 import Cropper from "react-easy-crop";
-
 
 export default function Header({
   headerData,
@@ -40,15 +38,36 @@ export default function Header({
       ? "min-w-[1270px]"
       : "max-w-7xl";
 
-  // Cropping states
+  // Cropping states - ENHANCED WITH GALLERY LOGIC
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(1); // Add aspect ratio state
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
+
+  // Dynamic zoom calculation - FROM GALLERY
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.5);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Re-center image when zooming out - FROM GALLERY
+  useEffect(() => {
+    if (zoom < prevZoom) {
+      setCrop({ x: 0, y: 0 });
+    }
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   // Static navigation items
   const staticNavItems = [
@@ -95,7 +114,7 @@ export default function Header({
     setContent((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Logo cropping functionality
+  // Logo cropping functionality - UPDATED WITH GALLERY LOGIC
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -115,21 +134,20 @@ export default function Header({
       setImageToCrop(reader.result);
       setOriginalFile(file);
       setShowCropper(true);
-      setAspectRatio(1); // Set default aspect ratio
-      setCrop({ x: 0, y: 0 });
       setZoom(1);
-      setRotation(0);
+      setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
 
     e.target.value = "";
   };
 
-  // Cropper functions
+  // Cropper functions - FROM GALLERY
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
+  // Helper function to create image element - FROM GALLERY
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
@@ -139,17 +157,18 @@ export default function Header({
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  // Function to get cropped image - UPDATED WITH FIXED 1:1 RATIO FOR LOGO
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    // Fixed output size for 1:1 ratio (Logo)
+    const outputWidth = 200;
+    const outputHeight = 200;
 
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
     ctx.drawImage(
       image,
@@ -159,19 +178,19 @@ export default function Header({
       pixelCrop.height,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      outputWidth,
+      outputHeight
     );
 
     return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          const fileName = originalFile
-            ? `cropped-${originalFile.name}`
-            : `cropped-logo-${Date.now()}.jpg`;
+          const pngName = originalFile
+            ? `cropped-logo-${originalFile.name.replace(/\.[^.]+$/, "")}.png`
+            : `cropped-logo-${Date.now()}.png`;
 
-          const file = new File([blob], fileName, {
-            type: "image/jpeg",
+          const file = new File([blob], pngName, {
+            type: "image/png",
             lastModified: Date.now(),
           });
 
@@ -182,12 +201,12 @@ export default function Header({
             previewUrl,
           });
         },
-        "image/jpeg",
-        0.95
+        "image/png"
       );
     });
   };
 
+  // Apply crop and set pending file - UPDATED WITH GALLERY LOGIC
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels) {
@@ -197,15 +216,15 @@ export default function Header({
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
-      // Update preview immediately
+      // Update preview immediately with blob URL (temporary)
       setContent((prev) => ({ ...prev, logoUrl: previewUrl }));
 
       // Set the file for upload on save
       setPendingLogoFile(file);
+      console.log("Logo cropped, file ready for upload:", file);
 
       toast.success("Logo cropped successfully! Click Save to upload to S3.");
       setShowCropper(false);
@@ -217,18 +236,18 @@ export default function Header({
     }
   };
 
+  // Cancel cropping - UPDATED
   const cancelCrop = () => {
     setShowCropper(false);
     setImageToCrop(null);
     setOriginalFile(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
+  // Reset zoom and rotation - UPDATED
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -308,7 +327,7 @@ export default function Header({
 
   return (
     <>
-      {/* Updated Cropping Modal - Matches Product.tsx styling */}
+      {/* Updated Cropping Modal - ENHANCED WITH GALLERY LOGIC */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -323,7 +342,7 @@ export default function Header({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop Logo
+                Crop Logo (1:1 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
@@ -335,79 +354,49 @@ export default function Header({
 
             {/* Cropper Area */}
             <div className="flex-1 relative bg-gray-900 min-h-0">
-              <div className="relative w-full h-full">
-                <Cropper
-                  image={imageToCrop}
-                  crop={crop}
-                  zoom={zoom}
-                  rotation={rotation}
-                  aspect={aspectRatio}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                aspect={1} // ✅ FIXED 1:1 ASPECT RATIO FOR LOGO
+                minZoom={minZoomDynamic}
+                maxZoom={3}
+                restrictPosition={true}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area, areaPixels) => setCropAreaSize(area)}
+                showGrid={true} // ✅ Better alignment like Gallery
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             </div>
 
-            {/* Controls - Simplified like Product.tsx */}
+            {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
-                  >
-                    1:1 (Square)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
-                  >
-                    4:3 (Standard)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
-                  >
-                    16:9 (Widescreen)
-                  </button>
-                </div>
-              </div>
-
-              {/* Zoom Control - Simplified */}
+              {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
+                  min={minZoomDynamic}
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
@@ -415,7 +404,7 @@ export default function Header({
                 />
               </div>
 
-              {/* Action Buttons - Consistent with Product.tsx */}
+              {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
@@ -455,13 +444,10 @@ export default function Header({
           className={`px-4 mx-auto lg:min-w-[1180px] ${containerMaxClass} sm:px-6 lg:px-16`}
         >
           <div className="flex items-center justify-between h-16">
-            {/* Logo + Company - keep space and  long company names */}
-            {/* <div className="flex items-center flex-shrink-0 min-w-0 mr-6 lg:mr-10">
-              <motion.div
-                className="relative flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 overflow-hidden rounded-lg shadow-md"
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
-              >
+            {/* Logo + Company */}
+            <div className="flex items-center flex-shrink-0 min-w-0 mr-6 lg:mr-10">
+              <div className="relative flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 overflow-hidden rounded-lg shadow-md">
+                {/* Your logo code remains the same */}
                 {isEditing ? (
                   <div className="relative w-[56px] h-[56px]">
                     {content.logoUrl &&
@@ -510,7 +496,9 @@ export default function Header({
                   onChange={handleLogoUpload}
                   className="hidden font-bold"
                 />
-              </motion.div>
+              </div>
+
+              {/* Add this company name section back */}
               {isEditing ? (
                 <input
                   type="text"
@@ -519,140 +507,16 @@ export default function Header({
                   className="bg-transparent border-b border-primary text-xl font-medium outline-none max-w-[140px] pr-2"
                 />
               ) : (
-                <motion.div className="flex items-center min-w-0">
-                  <motion.span
+                <div className="flex items-center min-w-0">
+                  <span
                     className="lg:text-xl text-sm font-medium whitespace-nowrap max-w-[140px] lg:max-w-[260px]"
                     title={content.companyName}
                   >
                     {content.companyName}
-                  </motion.span>
-                </motion.div>
+                  </span>
+                </div>
               )}
-            </div> */}
-            {/* <div className="flex items-center flex-shrink-0 min-w-0 mr-6 lg:mr-10">
-  <div className="relative flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 overflow-hidden rounded-lg shadow-md">
-    {isEditing ? (
-      <div className="relative w-[56px] h-[56px]">
-        {content.logoUrl &&
-          (content.logoUrl.startsWith("data:") ||
-            content.logoUrl.startsWith("http")) ? (
-          <img
-            src={content.logoUrl || logo}
-            alt="Logo"
-            className="object-contain w-full h-full "
-          />
-        ) : (
-          <span className="text-lg font-bold text-black">
-            {content.logoUrl}
-          </span>
-        )}
-        <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100">
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="p-1 text-xs text-white bg-blue-500 rounded"
-          >
-            <Upload size={12} />
-          </button>
-        </div>
-      </div>
-    ) : (
-      <>
-        {content.logoUrl &&
-          (content.logoUrl.startsWith("data:") ||
-            content.logoUrl.startsWith("http")) ? (
-          <img
-            src={content.logoUrl || logo}
-            alt="Logo"
-            className="object-contain w-[70px] h-[70px]"
-          />
-        ) : (
-          <span className="text-lg font-bold text-black">
-            {content.logoUrl}
-          </span>
-        )}
-      </>
-    )}
-    <input
-      type="file"
-      ref={fileInputRef}
-      accept="image/*"
-      onChange={handleLogoUpload}
-      className="hidden font-bold"
-    />
-  </div>
-  </div> */}
-  <div className="flex items-center flex-shrink-0 min-w-0 mr-6 lg:mr-10">
-  <div className="relative flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 overflow-hidden rounded-lg shadow-md">
-    {/* Your logo code remains the same */}
-    {isEditing ? (
-      <div className="relative w-[56px] h-[56px]">
-        {content.logoUrl &&
-          (content.logoUrl.startsWith("data:") ||
-            content.logoUrl.startsWith("http")) ? (
-          <img
-            src={content.logoUrl || logo}
-            alt="Logo"
-            className="object-contain w-full h-full "
-          />
-        ) : (
-          <span className="text-lg font-bold text-black">
-            {content.logoUrl}
-          </span>
-        )}
-        <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100">
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="p-1 text-xs text-white bg-blue-500 rounded"
-          >
-            <Upload size={12} />
-          </button>
-        </div>
-      </div>
-    ) : (
-      <>
-        {content.logoUrl &&
-          (content.logoUrl.startsWith("data:") ||
-            content.logoUrl.startsWith("http")) ? (
-          <img
-            src={content.logoUrl || logo}
-            alt="Logo"
-            className="object-contain w-[70px] h-[70px]"
-          />
-        ) : (
-          <span className="text-lg font-bold text-black">
-            {content.logoUrl}
-          </span>
-        )}
-      </>
-    )}
-    <input
-      type="file"
-      ref={fileInputRef}
-      accept="image/*"
-      onChange={handleLogoUpload}
-      className="hidden font-bold"
-    />
-  </div>
-  
-  {/* Add this company name section back */}
-  {isEditing ? (
-    <input
-      type="text"
-      value={content.companyName}
-      onChange={(e) => updateContent("companyName", e.target.value)}
-      className="bg-transparent border-b border-primary text-xl font-medium outline-none max-w-[140px] pr-2"
-    />
-  ) : (
-    <div className="flex items-center min-w-0">
-      <span
-        className="lg:text-xl text-sm font-medium whitespace-nowrap max-w-[140px] lg:max-w-[260px]"
-        title={content.companyName}
-      >
-        {content.companyName}
-      </span>
-    </div>
-  )}
-</div>
+            </div>
 
             {/* Desktop Nav - Centered with proper spacing */}
             <nav className="items-center justify-center flex-1 hidden mx-4 lg:flex min-w-0">

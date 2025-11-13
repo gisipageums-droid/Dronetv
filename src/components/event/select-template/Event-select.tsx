@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FiArrowRight, FiCheck, FiExternalLink, FiEye, FiStar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
+
 const TPL2 =
     "https://images.unsplash.com/photo-1531058020387-3be344556be6?q=80&w=1200&auto=format&fit=crop";
 
@@ -68,7 +69,7 @@ const EventSelect: React.FC = () => {
             </motion.div>
 
             {/* Grid (single card) */}
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 ">
                 {templates.map((tpl) => {
                     const isActive = selectedTemplate === tpl.id;
                     const isHovered = hoveredTemplate === tpl.id;
@@ -102,9 +103,9 @@ const EventSelect: React.FC = () => {
                             <div className="relative h-56 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg mb-6 overflow-hidden">
                                 {tpl.imgpath ? (
                                     <img
-                                        src={tpl.imgpath}
+                                        src="../images/select.jpg"
                                         alt={`${tpl.name} Preview`}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        className="w-full h-full transition-transform duration-500 group-hover:scale-105"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center p-4">

@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   Building2,
   Edit,
@@ -7,45 +8,77 @@ import {
   Search,
   Users,
 } from "lucide-react";
-import React, { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useTemplate, useUserAuth } from "../../context/context";
 
-interface IEvent {
+interface EventCard {
   eventId: string;
   userId: string;
   submissionId: string;
   eventName: string;
-  fullName: string;
-  eventDescription: string;
-  location: string;
-  categories: string[];
-  attendeesCount: number;
-  sessionsCount: number;
-  reviewStatus: string;
-  templateSelection: string;
-  status: boolean;
-  lastModified: string;
-  createdAt: string;
+  shortDescription: string;
   eventDate: string;
-  urlSlug: string;
-  previewImage: string;
-  heroImage: string;
-  adminNotes: string;
+  eventTime: string;
+  location: string;
+  category: string;
+  reviewStatus: "under_review" | "approved" | "rejected";
+  status: boolean;
   version: number;
   hasEdits: boolean;
-  completionPercentage: number;
-  hasCustomImages: boolean;
-  lastActivity: string;
-  canEdit: boolean;
-  canResubmit: boolean;
+  lastModified: string;
+  createdAt: string;
+  publishedAt: string;
+  urlSlug: string;
+  thumbnailUrl: string;
+  previewImage: string;
+  templateSelection: string;
+  adminNotes: string;
   isVisible: boolean;
   isApproved: boolean;
+  canEdit: boolean;
+  canResubmit: boolean;
+  hasCustomImages: boolean;
+  completionPercentage: number;
   dashboardType: string;
   cleanUrl: string;
 }
 
+interface CardsByStatus {
+  under_review: EventCard[];
+  approved: EventCard[];
+  rejected: EventCard[];
+}
+
+interface StatusCounts {
+  underReview: number;
+  approved: number;
+  rejected: number;
+}
+
+interface Metadata {
+  dashboardType: string;
+  requestedUserId: string;
+  totalRecordsScanned: number;
+  validEventsFound: number;
+  requiresUserId: boolean;
+}
+
+interface EventResponse {
+  success: boolean;
+  viewType: string;
+  userId: string;
+  cards: EventCard[];
+  cardsByStatus: CardsByStatus;
+  totalCount: number;
+  statusCounts: StatusCounts;
+  hasEvents: boolean;
+  message: string;
+  metadata: Metadata;
+}
+
 interface EventCardProps {
-  event: IEvent;
+  event: EventCard;
   onEdit: (eventId: string, templateSelection: string) => Promise<void>;
   onPreview: (eventId: string, templateSelection: string) => Promise<void>;
 }
@@ -56,7 +89,7 @@ const EventCard: React.FC<EventCardProps> = ({
   event,
 }) => {
   const placeholderImg =
-    event.previewImage || event?.fullName?.charAt(0) || "E";
+    event.previewImage || event?.eventName?.charAt(0) || "E";
   const navigate = useNavigate();
 
   const formatDate = (dateString: string): string => {
@@ -119,7 +152,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 {event.previewImage ? (
                   <img
                     src={placeholderImg}
-                    alt={event.fullName}
+                    alt={event.eventName}
                     className="w-full h-full object-cover rounded-md"
                   />
                 ) : (
@@ -131,7 +164,7 @@ const EventCard: React.FC<EventCardProps> = ({
             {/* Event Info */}
             <div className="flex-1">
               <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
-                {event?.fullName || "Unnamed Event"}
+                {event?.eventName || "Unnamed Event"}
               </h3>
               <div className="flex items-center text-gray-600 mt-1">
                 <MapPin className="w-4 h-4 mr-1 text-yellow-500" />
@@ -156,17 +189,9 @@ const EventCard: React.FC<EventCardProps> = ({
         {/* Categories */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
-            {(event?.categories && event?.categories.length > 0
-              ? event.categories
-              : ["General"]
-            ).map((category, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full border border-yellow-200"
-              >
-                {category}
-              </span>
-            ))}
+            {
+              event.category || "General"
+            }
           </div>
         </div>
 
@@ -226,7 +251,7 @@ const EventCard: React.FC<EventCardProps> = ({
           <button
             onClick={() =>
               navigate(
-                `/event/registrations/${event.eventName}/${event.eventId}`
+                `/event/leads/${event.eventName}/${event.eventId}`
               )
             }
             className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
@@ -252,207 +277,34 @@ const Events: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  // Static events data
-  const staticEvents: IEvent[] = [
-    {
-      eventId: "EVT001",
-      userId: "user123",
-      submissionId: "SUB001",
-      eventName: "tech-summit-2024",
-      fullName: "Tech Innovation Summit 2024",
-      eventDescription: "Annual technology conference featuring the latest innovations in AI, ML and Cloud Computing",
-      location: "San Francisco, CA",
-      categories: ["Technology", "Conference", "Networking"],
-      attendeesCount: 350,
-      sessionsCount: 25,
-      reviewStatus: "approved",
-      templateSelection: "template-1",
-      status: true,
-      lastModified: "2024-01-15T10:30:00Z",
-      createdAt: "2024-01-10T14:20:00Z",
-      eventDate: "2024-03-20T09:00:00Z",
-      urlSlug: "tech-summit-2024",
-      previewImage: "",
-      heroImage: "",
-      adminNotes: "",
-      version: 1,
-      hasEdits: false,
-      completionPercentage: 95,
-      hasCustomImages: false,
-      lastActivity: "2024-01-15T10:30:00Z",
-      canEdit: true,
-      canResubmit: false,
-      isVisible: true,
-      isApproved: true,
-      dashboardType: "user",
-      cleanUrl: "tech-summit-2024"
-    },
-    {
-      eventId: "EVT002",
-      userId: "user123",
-      submissionId: "SUB002",
-      eventName: "design-workshop",
-      fullName: "UI/UX Design Masterclass Workshop",
-      eventDescription: "Hands-on workshop for designers to master modern UI/UX principles and tools",
-      location: "New York, NY",
-      categories: ["Design", "Workshop", "Creative"],
-      attendeesCount: 120,
-      sessionsCount: 8,
-      reviewStatus: "active",
-      templateSelection: "template-2",
-      status: true,
-      lastModified: "2024-01-12T16:45:00Z",
-      createdAt: "2024-01-08T11:15:00Z",
-      eventDate: "2024-02-28T10:00:00Z",
-      urlSlug: "design-workshop",
-      previewImage: "",
-      heroImage: "",
-      adminNotes: "",
-      version: 1,
-      hasEdits: false,
-      completionPercentage: 85,
-      hasCustomImages: false,
-      lastActivity: "2024-01-12T16:45:00Z",
-      canEdit: true,
-      canResubmit: false,
-      isVisible: true,
-      isApproved: false,
-      dashboardType: "user",
-      cleanUrl: "design-workshop"
-    },
-    {
-      eventId: "EVT003",
-      userId: "user123",
-      submissionId: "SUB003",
-      eventName: "startup-networking",
-      fullName: "Startup Founders Networking Night",
-      eventDescription: "Exclusive networking event for startup founders and investors",
-      location: "Austin, TX",
-      categories: ["Networking", "Startup", "Business"],
-      attendeesCount: 200,
-      sessionsCount: 5,
-      reviewStatus: "rejected",
-      templateSelection: "template-1",
-      status: false,
-      lastModified: "2024-01-05T09:20:00Z",
-      createdAt: "2024-01-02T13:40:00Z",
-      eventDate: "2024-04-15T18:00:00Z",
-      urlSlug: "startup-networking",
-      previewImage: "",
-      heroImage: "",
-      adminNotes: "Venue availability issue",
-      version: 1,
-      hasEdits: true,
-      completionPercentage: 70,
-      hasCustomImages: false,
-      lastActivity: "2024-01-05T09:20:00Z",
-      canEdit: true,
-      canResubmit: true,
-      isVisible: false,
-      isApproved: false,
-      dashboardType: "user",
-      cleanUrl: "startup-networking"
-    },
-    {
-      eventId: "EVT004",
-      userId: "user123",
-      submissionId: "SUB004",
-      eventName: "digital-marketing-conf",
-      fullName: "Digital Marketing Conference 2024",
-      eventDescription: "Learn the latest trends and strategies in digital marketing",
-      location: "Chicago, IL",
-      categories: ["Marketing", "Conference", "Digital"],
-      attendeesCount: 280,
-      sessionsCount: 15,
-      reviewStatus: "approved",
-      templateSelection: "template-2",
-      status: true,
-      lastModified: "2024-01-18T14:10:00Z",
-      createdAt: "2024-01-15T08:30:00Z",
-      eventDate: "2024-05-10T08:30:00Z",
-      urlSlug: "digital-marketing-conf",
-      previewImage: "",
-      heroImage: "",
-      adminNotes: "",
-      version: 2,
-      hasEdits: true,
-      completionPercentage: 100,
-      hasCustomImages: true,
-      lastActivity: "2024-01-18T14:10:00Z",
-      canEdit: true,
-      canResubmit: false,
-      isVisible: true,
-      isApproved: true,
-      dashboardType: "user",
-      cleanUrl: "digital-marketing-conf"
-    },
-    {
-      eventId: "EVT005",
-      userId: "user123",
-      submissionId: "SUB005",
-      eventName: "health-wellness-expo",
-      fullName: "Health & Wellness Expo 2024",
-      eventDescription: "Comprehensive expo covering health, fitness, nutrition and mental wellness",
-      location: "Los Angeles, CA",
-      categories: ["Health", "Wellness", "Fitness", "Expo"],
-      attendeesCount: 500,
-      sessionsCount: 30,
-      reviewStatus: "active",
-      templateSelection: "template-1",
-      status: true,
-      lastModified: "2024-01-20T11:25:00Z",
-      createdAt: "2024-01-18T10:15:00Z",
-      eventDate: "2024-06-22T09:00:00Z",
-      urlSlug: "health-wellness-expo",
-      previewImage: "",
-      heroImage: "",
-      adminNotes: "",
-      version: 1,
-      hasEdits: false,
-      completionPercentage: 90,
-      hasCustomImages: false,
-      lastActivity: "2024-01-20T11:25:00Z",
-      canEdit: true,
-      canResubmit: false,
-      isVisible: true,
-      isApproved: false,
-      dashboardType: "user",
-      cleanUrl: "health-wellness-expo"
-    },
-    {
-      eventId: "EVT006",
-      userId: "user123",
-      submissionId: "SUB006",
-      eventName: "finance-webinar-series",
-      fullName: "Personal Finance Webinar Series",
-      eventDescription: "Weekly webinars covering personal finance, investment strategies and wealth management",
-      location: "Virtual",
-      categories: ["Finance", "Webinar", "Education"],
-      attendeesCount: 150,
-      sessionsCount: 12,
-      reviewStatus: "approved",
-      templateSelection: "template-1",
-      status: true,
-      lastModified: "2024-01-22T13:40:00Z",
-      createdAt: "2024-01-20T09:50:00Z",
-      eventDate: "2024-02-01T19:00:00Z",
-      urlSlug: "finance-webinar-series",
-      previewImage: "",
-      heroImage: "",
-      adminNotes: "",
-      version: 1,
-      hasEdits: false,
-      completionPercentage: 88,
-      hasCustomImages: false,
-      lastActivity: "2024-01-22T13:40:00Z",
-      canEdit: true,
-      canResubmit: false,
-      isVisible: true,
-      isApproved: true,
-      dashboardType: "user",
-      cleanUrl: "finance-webinar-series"
-    }
-  ];
+
+
+
+
+  const { user } = useUserAuth();
+  console.log("user", user);
+  const [events, setEvents] = useState<EventCard[]>([]);
+  const [loading, setloading] = useState(true);
+
+  useEffect(() => {
+    setloading(true);
+
+
+    // axios.get.then((response) => {
+    //   console.log(response.data);
+    // });
+
+    axios.get<EventResponse>(`https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user?.userData?.email}`).then((response) => {
+      console.log(response.data);
+      setEvents(response.data.cards);
+
+
+    }).catch((error) => {
+      console.log(error);
+    }).finally(() => {
+      setloading(false);
+    })
+  }, []);
 
   const handleEdit = async (eventId: string, templateSelection: string) => {
     try {
@@ -479,17 +331,16 @@ const Events: React.FC = () => {
       alert("Failed to load template for preview. Please try again.");
     }
   };
+  console.log("events", events);
 
   const filteredEvents = useMemo(() => {
-    return staticEvents.filter(
+    return events?.filter(
       (event) =>
-        event.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.categories.some((c) =>
-          c.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+        event.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm]);
+  }, [searchTerm, events]);
 
   // Skeleton Loading
   const SkeletonCard: React.FC = () => (
@@ -578,7 +429,7 @@ const Events: React.FC = () => {
         />
       </div>
 
-      {false ? ( // Set to true to see skeleton loading
+      {loading ? ( // Set to true to see skeleton loading
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array(6)
             .fill(0)

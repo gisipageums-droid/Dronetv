@@ -24,19 +24,21 @@ const CustomButton = ({
   className?: string;
   disabled?: boolean;
 }) => {
-  const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  const baseClasses =
+    'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: 'border border-gray-300 bg-transparent hover:bg-gray-50',
+    default: 'bg-blue-600 text-white hover:bg-blue-700',
   };
   const sizes = {
-    sm: "h-8 px-3 text-sm",
-    default: "h-10 px-4",
+    sm: 'h-8 px-3 text-sm',
+    default: 'h-10 px-4',
   };
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant] || variants.default} ${sizes[size] || sizes.default} ${className || ""}`}
+      className={`${baseClasses} ${variants[variant] || variants.default} ${sizes[size] || sizes.default} ${className || ''
+        }`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -78,17 +80,17 @@ const staticNavItems: NavigationItem[] = [
 
 // Default data
 const defaultData: NavigationData = {
-  logoText: "EventPro",
-  navItems: staticNavItems
+  logoText: 'EventPro',
+  navItems: staticNavItems,
 };
 
-// Editable Text Component (moved outside to fix re-render issues)
-const EditableText = ({ 
-  value, 
-  onChange, 
-  className = "", 
-  placeholder = "", 
-  charLimit 
+// Editable Text Component
+const EditableText = ({
+  value,
+  onChange,
+  className = '',
+  placeholder = '',
+  charLimit,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -162,8 +164,8 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-      
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API call
+
       setData(tempData);
       setIsEditing(false);
       toast.success('Navigation saved successfully');
@@ -181,12 +183,12 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
   };
 
   const updateField = useCallback((field: keyof NavigationData, value: string) => {
-    setTempData(prev => ({ ...prev, [field]: value }));
+    setTempData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
   const scrollToSection = (id: string) => {
     if (isEditing) return; // Disable scrolling in edit mode
-    
+
     const element = document.getElementById(id);
     if (element) {
       const offset = 80;
@@ -211,18 +213,16 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
   return (
     <>
       <nav
-        className={`fixed top-[4rem] left-0 right-0 z-[50] transition-all duration-300 ${
-          isScrolled ? 'bg-white shadow-md py-3' : 'bg-white/95 backdrop-blur-md py-4'
-        }`}
+        className={`fixed top-[4rem] left-0 right-0 z-[50] transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-3' : 'bg-white/95 backdrop-blur-md py-4'
+          }`}
       >
-        <div className="container mx-auto px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          {/* Container: left = logo, right = nav items + controls */}
           <div className="flex items-center justify-between">
-            {/* Logo Section */}
+            {/* LEFT: Logo only */}
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center">
-                <span className="text-white text-sm font-bold">
-                  {getLogoLetter()}
-                </span>
+                <span className="text-white text-sm font-bold">{getLogoLetter()}</span>
               </div>
               {isEditing ? (
                 <EditableText
@@ -237,129 +237,137 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
               )}
             </div>
 
-            {/* Edit Controls - Only for logo text */}
-            <div className="flex items-center gap-2">
-              {!isEditing ? (
-                <CustomButton
-                  onClick={handleEdit}
-                  size="sm"
-                  className="bg-red-500 hover:bg-red-600 shadow-md text-white"
-                >
-                  <Edit2 className="w-4 h-4 mr-2" />
-                  Edit
-                </CustomButton>
-              ) : (
-                <div className="flex gap-2">
-                  <CustomButton
-                    onClick={handleSave}
-                    size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white shadow-md"
-                    disabled={isSaving}
-                  >
-                    {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                    {isSaving ? "Saving..." : "Save"}
-                  </CustomButton>
-                  <CustomButton
-                    onClick={handleCancel}
-                    size="sm"
-                    className="bg-red-500 hover:bg-red-600 text-white shadow-md"
-                    disabled={isSaving}
-                  >
-                    <X className="w-4 h-4 mr-2" />
-                    Cancel
-                  </CustomButton>
-                </div>
-              )}
-            </div>
+            {/* RIGHT: Nav items + Edit Controls */}
+            <div className="flex items-center gap-4">
+              {/* Nav items (desktop) */}
+              <div className="hidden lg:flex items-center gap-6 mr-2">
+                {staticNavItems.map((item) => (
+                  <div key={item.id} className="relative group">
+                    <button
+                      onClick={() => scrollToSection(item.href.substring(1))}
+                      className={`transition-colors duration-200 relative group text-sm ${activeSection === item.href.substring(1)
+                        ? 'text-amber-600'
+                        : 'text-gray-600 hover:text-amber-600'
+                        }`}
+                    >
+                      {item.label}
+                      <span
+                        className={`absolute -bottom-1 left-0 w-full h-0.5 bg-amber-500 transition-transform duration-200 ${activeSection === item.href.substring(1) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                          }`}
+                      />
+                    </button>
+                  </div>
+                ))}
+              </div>
 
-            {/* Desktop Navigation - Always static */}
-            <div className="hidden lg:flex items-center gap-6">
-              {staticNavItems.map((item) => (
-                <div key={item.id} className="relative group">
+              {/* Edit Controls - only shown on sm+ (desktop/tablet) */}
+              <div className="hidden sm:flex">
+                {!isEditing ? (
+                  <CustomButton onClick={handleEdit} size="sm" className="bg-red-500 hover:bg-red-600 shadow-md text-white">
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit
+                  </CustomButton>
+                ) : (
+                  <div className="flex gap-2">
+                    <CustomButton
+                      onClick={handleSave}
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                      {isSaving ? 'Saving...' : 'Save'}
+                    </CustomButton>
+                    <CustomButton onClick={handleCancel} size="sm" className="bg-red-500 hover:bg-red-600 text-white shadow-md" disabled={isSaving}>
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel
+                    </CustomButton>
+                  </div>
+                )}
+              </div>
+
+              {/* MOBILE: small icon controls (visible only on mobile) */}
+              <div className="flex items-center lg:hidden">
+                {!isEditing ? (
                   <button
-                    onClick={() => scrollToSection(item.href.substring(1))}
-                    className={`transition-colors duration-200 relative group text-sm ${
-                      activeSection === item.href.substring(1) ? 'text-amber-600' : 'text-gray-600 hover:text-amber-600'
-                    }`}
+                    onClick={() => {
+                      handleEdit();
+                    }}
+                    className="p-2 text-gray-900 mr-1"
+                    aria-label="Edit"
                   >
-                    {item.label}
-                    <span
-                      className={`absolute -bottom-1 left-0 w-full h-0.5 bg-amber-500 transition-transform duration-200 ${
-                        activeSection === item.href.substring(1) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                      }`}
-                    />
+                    <Edit2 size={20} />
                   </button>
-                </div>
-              ))}
-            </div>
+                ) : (
+                  <div className="flex items-center gap-1 mr-1">
+                    <button
+                      onClick={handleSave}
+                      className="p-2 text-gray-900"
+                      aria-label="Save"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? <Loader2 size={18} /> : <Save size={18} />}
+                    </button>
+                    <button onClick={handleCancel} className="p-2 text-gray-900" aria-label="Cancel">
+                      <X size={18} />
+                    </button>
+                  </div>
+                )}
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-900"
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+                {/* Mobile menu button */}
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-900" aria-label="Open menu">
+                  {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${
-          isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
         onClick={() => setIsMobileMenuOpen(false)}
       >
         <div
-          className={`fixed right-0 top-0 bottom-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ${
-            isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+          className={`fixed right-0 top-0 bottom-0 w-full h-screen bg-white shadow-xl transform transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="p-6">
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute top-6 right-6 text-gray-900"
-            >
+            <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-6 right-6 text-gray-900">
               <X size={24} />
             </button>
-            
-            {/* Edit Controls in Mobile Menu - Only for logo text */}
-            {isEditing && (
-              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Editing Logo</p>
+
+            {/* Mobile: Place Edit Controls at top for quick access (icons visible) */}
+            <div className="mb-4 p-3 bg-gray-50 rounded-lg flex items-center justify-between gap-2">
+              {isEditing ? (
                 <div className="flex gap-2">
-                  <CustomButton
-                    onClick={handleSave}
-                    size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white text-xs"
-                    disabled={isSaving}
-                  >
-                    {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
-                    Save
+                  <CustomButton onClick={handleSave} size="sm" className="bg-green-600 hover:bg-green-700 text-white text-xs flex items-center" disabled={isSaving}>
+                    {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    <span className="text-[11px]">{isSaving ? 'Saving' : 'Save'}</span>
                   </CustomButton>
-                  <CustomButton
-                    onClick={handleCancel}
-                    size="sm"
-                    className="bg-red-500 hover:bg-red-600 text-white text-xs"
-                    disabled={isSaving}
-                  >
-                    <X className="w-3 h-3" />
-                    Cancel
+                  <CustomButton onClick={handleCancel} size="sm" className="bg-red-500 hover:bg-red-600 text-white text-xs flex items-center" disabled={isSaving}>
+                    <X className="w-4 h-4 mr-2" />
+                    <span className="text-[11px]">Cancel</span>
                   </CustomButton>
                 </div>
-              </div>
-            )}
+              ) : (
+                <CustomButton onClick={handleEdit} size="sm" className="bg-red-500 hover:bg-red-600 text-white text-xs flex items-center">
+                  <Edit2 className="w-4 h-4 mr-2" />
+                  <span className="text-[11px]">Edit</span>
+                </CustomButton>
+              )}
+            </div>
 
             <div className="mt-12 flex flex-col gap-3">
               {staticNavItems.map((item) => (
                 <div key={item.id} className="flex items-center justify-between">
                   <button
                     onClick={() => scrollToSection(item.href.substring(1))}
-                    className={`text-left py-2 transition-colors duration-200 text-sm w-full ${
-                      activeSection === item.href.substring(1) ? 'text-amber-600' : 'text-gray-600 hover:text-amber-600'
-                    }`}
+                    className={`text-left py-2 transition-colors duration-200 text-sm w-full ${activeSection === item.href.substring(1) ? 'text-amber-600' : 'text-gray-600 hover:text-amber-600'
+                      }`}
                   >
                     {item.label}
                   </button>

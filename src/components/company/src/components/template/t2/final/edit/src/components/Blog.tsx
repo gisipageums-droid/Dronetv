@@ -1,4 +1,4 @@
-// Blog.tsx - Full Updated Code with Text Limitations
+// Blog.tsx - Full Updated Code with Enhanced Cropping Logic
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Calendar, User, ArrowRight } from "lucide-react";
@@ -21,16 +21,37 @@ export default function Blog({
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
   const [isUploading, setIsUploading] = useState(false);
 
-  // Cropping states
+  // Cropping states - ENHANCED WITH GALLERY LOGIC
   const [showCropper, setShowCropper] = useState(false);
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
+
+  // Dynamic zoom calculation - FROM GALLERY
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.5);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Re-center image when zooming out - FROM GALLERY
+  useEffect(() => {
+    if (zoom < prevZoom) {
+      setCrop({ x: 0, y: 0 });
+    }
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   // Merged all state into a single object
   const [blogSection, setBlogSection] = useState(blogData);
@@ -71,7 +92,7 @@ export default function Blog({
     document.body.style.overflow = "auto";
   };
 
-  // Handle blog image selection - now opens cropper
+  // Handle blog image selection - UPDATED WITH GALLERY LOGIC
   const handleBlogImageSelect = async (
     index: number | null,
     e: React.ChangeEvent<HTMLInputElement>
@@ -95,9 +116,7 @@ export default function Blog({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setAspectRatio(4 / 3);
       setZoom(1);
-      setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
@@ -106,12 +125,12 @@ export default function Blog({
     e.target.value = "";
   };
 
-  // Cropper functions
+  // Cropper functions - FROM GALLERY
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  // Helper function to create image element
+  // Helper function to create image element - FROM GALLERY
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
@@ -121,18 +140,18 @@ export default function Blog({
       image.src = url;
     });
 
-  // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
+  // Function to get cropped image - UPDATED WITH FIXED 4:3 RATIO
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    // Fixed output size for 4:3 ratio - SAME AS GALLERY
+    const outputWidth = 600;
+    const outputHeight = 450;
 
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
     ctx.drawImage(
       image,
@@ -142,19 +161,19 @@ export default function Blog({
       pixelCrop.height,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      outputWidth,
+      outputHeight
     );
 
     return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          const fileName = originalFile
-            ? `cropped-blog-${croppingIndex}-${originalFile.name}`
-            : `cropped-blog-modal-${Date.now()}.jpg`;
+          const pngName = originalFile
+            ? `cropped-blog-${croppingIndex}-${originalFile.name.replace(/\.[^.]+$/, "")}.png`
+            : `cropped-blog-modal-${Date.now()}.png`;
 
-          const file = new File([blob], fileName, {
-            type: "image/jpeg",
+          const file = new File([blob], pngName, {
+            type: "image/png",
             lastModified: Date.now(),
           });
 
@@ -165,21 +184,19 @@ export default function Blog({
             previewUrl,
           });
         },
-        "image/jpeg",
-        0.95
+        "image/png"
       );
     });
   };
 
-  // Apply crop and set pending file
+  // Apply crop and set pending file - UPDATED WITH GALLERY LOGIC
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels) return;
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels,
-        rotation
+        croppedAreaPixels
       );
 
       // Update preview immediately with blob URL (temporary)
@@ -208,7 +225,7 @@ export default function Blog({
     }
   };
 
-  // Cancel cropping
+  // Cancel cropping - UPDATED
   const cancelCrop = () => {
     setShowCropper(false);
     setImageToCrop(null);
@@ -216,13 +233,11 @@ export default function Blog({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setRotation(0);
   };
 
-  // Reset zoom and rotation
+  // Reset zoom and rotation - UPDATED
   const resetCropSettings = () => {
     setZoom(1);
-    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
@@ -303,7 +318,7 @@ export default function Blog({
 
   return (
     <>
-      {/* Image Cropper Modal - Standardized like Clients */}
+      {/* Image Cropper Modal - UPDATED WITH GALLERY STYLING AND LOGIC */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -318,7 +333,7 @@ export default function Blog({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop Blog Image
+                Crop Blog Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
@@ -334,12 +349,16 @@ export default function Blog({
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                rotation={rotation}
-                aspect={aspectRatio}
+                aspect={4 / 3} // ✅ FIXED 4:3 ASPECT RATIO LIKE GALLERY
+                minZoom={minZoomDynamic}
+                maxZoom={3}
+                restrictPosition={true}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area, areaPixels) => setCropAreaSize(area)}
+                showGrid={true} // ✅ Better alignment like Gallery
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -357,42 +376,6 @@ export default function Blog({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Buttons */}
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  Aspect Ratio:
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    1:1 (Square)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    4:3 (Standard)
-                  </button>
-                  <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    16:9 (Widescreen)
-                  </button>
-                </div>
-              </div>
-
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
@@ -404,7 +387,7 @@ export default function Blog({
                 <input
                   type="range"
                   value={zoom}
-                  min={1}
+                  min={minZoomDynamic}
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
@@ -450,8 +433,8 @@ export default function Blog({
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
@@ -494,8 +477,8 @@ export default function Blog({
                     }
                     maxLength={25}
                     className={`font-medium bg-transparent border-b text-center ${blogSection.header.badge.length >= 25
-                        ? "border-red-500"
-                        : ""
+                      ? "border-red-500"
+                      : ""
                       }`}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
@@ -535,8 +518,8 @@ export default function Blog({
                   }
                   maxLength={80}
                   className={`text-3xl md:text-4xl text-foreground mb-6 w-full text-center bg-transparent border-b font-bold ${blogSection.header.title.length >= 80
-                      ? "border-red-500"
-                      : ""
+                    ? "border-red-500"
+                    : ""
                     }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
@@ -566,8 +549,8 @@ export default function Blog({
                   }
                   maxLength={200}
                   className={`text-lg text-muted-foreground max-w-2xl mx-auto w-full text-center bg-transparent border-b ${blogSection.header.desc.length >= 200
-                      ? "border-red-500"
-                      : ""
+                    ? "border-red-500"
+                    : ""
                     }`}
                   rows={2}
                 />
@@ -653,7 +636,7 @@ export default function Blog({
                     >
                       {/* Recommendation text connected with select image */}
                       <div className="text-xs text-gray-600 mb-1 text-center">
-                        Recommended: 400×300px (4:3 ratio)
+                        Recommended: 600×450px (4:3 ratio)
                       </div>
                       <input
                         type="file"
@@ -836,6 +819,7 @@ export default function Blog({
                 </div>
               </motion.article>
             ))}
+
             {isEditing && (
               <motion.div
                 whileTap={{ scale: 0.9 }}
@@ -931,8 +915,8 @@ export default function Blog({
                             }
                             maxLength={20}
                             className={`text-sm font-medium text-primary-foreground bg-transparent border-b ${selectedPost.category.length >= 20
-                                ? "border-red-500"
-                                : ""
+                              ? "border-red-500"
+                              : ""
                               }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
@@ -969,8 +953,8 @@ export default function Blog({
                           }
                           maxLength={20}
                           className={`text-sm text-muted-foreground bg-transparent border-b ${selectedPost.date.length >= 20
-                              ? "border-red-500"
-                              : ""
+                            ? "border-red-500"
+                            : ""
                             }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
@@ -1001,8 +985,8 @@ export default function Blog({
                           }
                           maxLength={30}
                           className={`text-sm text-muted-foreground bg-transparent border-b ${selectedPost.author.length >= 30
-                              ? "border-red-500"
-                              : ""
+                            ? "border-red-500"
+                            : ""
                             }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
@@ -1034,8 +1018,8 @@ export default function Blog({
                           }
                           maxLength={100}
                           className={`text-2xl font-bold text-card-foreground mb-4 w-full bg-transparent border-b ${selectedPost.title.length >= 100
-                              ? "border-red-500"
-                              : ""
+                            ? "border-red-500"
+                            : ""
                             }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
@@ -1059,8 +1043,8 @@ export default function Blog({
                           }
                           maxLength={5000}
                           className={`prose prose-gray max-w-none text-card-foreground w-full h-48 mb-4 border bg-transparent p-2 ${selectedPost.content.length >= 5000
-                              ? "border-red-500"
-                              : ""
+                            ? "border-red-500"
+                            : ""
                             }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
@@ -1075,7 +1059,7 @@ export default function Blog({
 
                       <div className="mb-4">
                         <div className="text-xs text-gray-600 mb-1">
-                          Recommended: 800×600px (4:3 ratio)
+                          Recommended: 600×450px (4:3 ratio)
                         </div>
                         <input
                           type="file"

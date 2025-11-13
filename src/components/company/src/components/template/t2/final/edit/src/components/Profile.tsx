@@ -28,6 +28,7 @@ const Profile = ({
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(3 / 4);
+  const [prevZoom, setPrevZoom] = useState(1);
 
   // Consolidated state
   const [contentState, setContentState] = useState(profileData);
@@ -38,6 +39,14 @@ const Profile = ({
       onStateChange(contentState);
     }
   }, [contentState, onStateChange]);
+
+  // Re-center image when zooming out
+  useEffect(() => {
+    if (zoom < prevZoom) {
+      setCrop({ x: 0, y: 0 });
+    }
+    setPrevZoom(zoom);
+  }, [zoom]);
 
   // Update function for team members
   const updateTeamMemberField = (index, field, value) => {
@@ -114,7 +123,7 @@ const Profile = ({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setAspectRatio(4 / 3); // Default to 3:4 for profile
+      setAspectRatio(1); // Enforce square 1:1
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setRotation(0);
@@ -146,12 +155,12 @@ const Profile = ({
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    // Fixed output size for 1:1 ratio (like Hero's fixed export behavior)
+    const outputWidth = 600;
+    const outputHeight = 600;
 
-    ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
     ctx.drawImage(
       image,
@@ -161,8 +170,8 @@ const Profile = ({
       pixelCrop.height,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      outputWidth,
+      outputHeight
     );
 
     return new Promise((resolve) => {
@@ -414,15 +423,33 @@ const Profile = ({
                   </span>
                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                 </div>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    aria-label="Zoom out"
+                    onClick={() => setZoom((z) => Math.max(0.5, parseFloat((z - 0.1).toFixed(2))))}
+                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={0.5}
+                    max={3}
+                    step={0.1}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Zoom in"
+                    onClick={() => setZoom((z) => Math.min(3, parseFloat((z + 0.1).toFixed(2))))}
+                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons */}

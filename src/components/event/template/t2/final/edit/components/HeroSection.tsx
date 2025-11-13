@@ -95,14 +95,14 @@ const defaultData: HeroData = {
 };
 
 // Editable Text Component
-const EditableText = ({ 
-  value, 
-  onChange, 
-  multiline = false, 
-  className = "", 
-  placeholder = "", 
-  charLimit, 
-  rows = 3 
+const EditableText = ({
+  value,
+  onChange,
+  multiline = false,
+  className = "",
+  placeholder = "",
+  charLimit,
+  rows = 3
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -182,7 +182,7 @@ export function HeroSection({ heroData, onStateChange, userId, professionalId, t
     try {
       setIsSaving(true);
       await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-      
+
       setData(tempData);
       setIsEditing(false);
       toast.success('Hero section saved successfully');
@@ -215,7 +215,7 @@ export function HeroSection({ heroData, onStateChange, userId, professionalId, t
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-yellow-50 pt-32">
       {/* Edit Controls */}
-      <div className="absolute top-[9rem] right-8 z-50">
+      <div className="absolute top-[9rem] lg:right-[120px] right-8 z-50">
         {!isEditing ? (
           <CustomButton
             onClick={handleEdit}
@@ -333,7 +333,7 @@ export function HeroSection({ heroData, onStateChange, userId, professionalId, t
               <span className="text-amber-700">{displayData.subtitle}</span>
             )}
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

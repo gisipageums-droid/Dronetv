@@ -1249,31 +1249,28 @@ export default function Footer({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -1341,11 +1338,10 @@ export default function Footer({
               whileHover={{ y: -1, scaleX: 1.1 }}
               onClick={handleSave}
               disabled={isUploading}
-              className={`${
-                isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:font-semibold"
-              } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
+              className={`${isUploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:font-semibold"
+                } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
             >
               {isUploading ? (
                 "Uploading..."
@@ -1387,12 +1383,12 @@ export default function Footer({
                     {isEditing ? (
                       <div className="relative w-full h-full">
                         {footerContent.companyInfo.logoUrl &&
-                        (footerContent.companyInfo.logoUrl.startsWith(
-                          "data:"
-                        ) ||
-                          footerContent.companyInfo.logoUrl.startsWith(
-                            "http"
-                          )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith(
+                            "data:"
+                          ) ||
+                            footerContent.companyInfo.logoUrl.startsWith(
+                              "http"
+                            )) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl || logo}
                             alt="Logo"
@@ -1415,12 +1411,12 @@ export default function Footer({
                     ) : (
                       <>
                         {footerContent.companyInfo.logoUrl &&
-                        (footerContent.companyInfo.logoUrl.startsWith(
-                          "data:"
-                        ) ||
-                          footerContent.companyInfo.logoUrl.startsWith(
-                            "http"
-                          )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith(
+                            "data:"
+                          ) ||
+                            footerContent.companyInfo.logoUrl.startsWith(
+                              "http"
+                            )) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
@@ -1449,11 +1445,10 @@ export default function Footer({
                           updateCompanyInfo("companyName", e.target.value)
                         }
                         maxLength={50}
-                        className={`w-full text-xl font-bold text-white bg-transparent border-b ${
-                          footerContent.companyInfo.companyName.length >= 50
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`w-full text-xl font-bold text-white bg-transparent border-b ${footerContent.companyInfo.companyName.length >= 50
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-300 mt-1">
                         {footerContent.companyInfo.companyName.length}/50
@@ -1479,11 +1474,10 @@ export default function Footer({
                         updateCompanyInfo("description", e.target.value)
                       }
                       maxLength={200}
-                      className={`w-full max-w-md text-gray-400 bg-transparent border-b ${
-                        footerContent.companyInfo.description.length >= 200
-                          ? "border-red-500"
-                          : ""
-                      }`}
+                      className={`w-full max-w-md text-gray-400 bg-transparent border-b ${footerContent.companyInfo.description.length >= 200
+                        ? "border-red-500"
+                        : ""
+                        }`}
                       rows={3}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
@@ -1520,9 +1514,8 @@ export default function Footer({
                             });
                           }}
                           maxLength={25}
-                          className={`w-full mb-4 font-medium text-white bg-transparent border-b ${
-                            category.length >= 25 ? "border-red-500" : ""
-                          }`}
+                          className={`w-full mb-4 font-medium text-white bg-transparent border-b ${category.length >= 25 ? "border-red-500" : ""
+                            }`}
                         />
                         <div className="text-right text-xs text-gray-300 mt-1 -mb-2">
                           {category.length}/25
