@@ -933,7 +933,7 @@ export default function Hero({
                       <img
                         src={heroState.heroImage}
                         alt="Modern business team collaborating"
-                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
+                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl scale-110"
                         style={{
                           maxHeight: '500px',
                           width: 'auto',
@@ -987,7 +987,7 @@ export default function Hero({
                         <img
                           src={heroState.hero3Image}
                           alt="Additional business context"
-                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
+                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white scale-110"
                         />
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">

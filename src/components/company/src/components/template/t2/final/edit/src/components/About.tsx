@@ -36,27 +36,42 @@ export default function About({
   const [originalFile, setOriginalFile] = useState(null);
   const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
-  const [prevZoom, setPrevZoom] = useState(1);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
 
-  // Dynamic zoom calculation - FROM GALLERY
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
-      const coverW = cropAreaSize.width / mediaSize.width;
-      const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.5);
-      setMinZoomDynamic(computedMin);
-      setZoom((z) => (z < computedMin ? computedMin : z));
+      setMinZoomDynamic(0.1);
     }
   }, [mediaSize, cropAreaSize]);
 
-  // Re-center image when zooming out - FROM GALLERY
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
   useEffect(() => {
-    if (zoom < prevZoom) {
-      setCrop({ x: 0, y: 0 });
-    }
-    setPrevZoom(zoom);
-  }, [zoom]);
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        nudge(-PAN_STEP, 0);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nudge(PAN_STEP, 0);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        nudge(0, -PAN_STEP);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        nudge(0, PAN_STEP);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
 
   // Map the string icons to Lucide React components
   const iconMap = {
@@ -399,20 +414,24 @@ export default function About({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
                 aspect={4 / 3} // ✅ FIXED 4:3 ASPECT RATIO LIKE GALLERY
                 minZoom={minZoomDynamic}
-                maxZoom={3}
-                restrictPosition={true}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
                 onMediaLoaded={(ms) => setMediaSize(ms)}
                 onCropAreaChange={(area, areaPixels) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
                 showGrid={true} // ✅ Better alignment like Gallery
                 cropShape="rect"
                 style={{
@@ -531,36 +550,33 @@ export default function About({
                     transition={{ duration: 0.6, ease: "easeOut" }}
                   >
                     <div className="relative flex justify-center">
-                      <img
-                        src={aboutState.imageUrl}
-                        alt="About"
-                        className="w-full max-w-full h-auto object-contain rounded-2xl shadow-2xl"
-                        style={{
-                          maxHeight: '500px',
-                          width: 'auto',
-                          margin: '0 auto'
-                        }}
-                      />
+                      <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-2xl shadow-2xl overflow-hidden">
+                        <img
+                          src={aboutState.imageUrl}
+                          alt="About"
+                          className="w-full h-full object-cover scale-110"
+                        />
+                      </div>
+                      {isEditing && (
+                        <div className="absolute bottom-4 left-4 right-4 bg-white/80 p-2 rounded shadow z-50">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageSelect}
+                            className="text-sm cursor-pointer font-bold w-full text-center border-2 border-dashed border-muted-foreground p-2 rounded"
+                          />
+                          {pendingImageFile && (
+                            <p className="text-xs text-green-600 mt-1 text-center">
+                              ✓ Image cropped and ready to upload
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 </div>
-
-                {isEditing && (
-                  <div className="absolute bottom-4 left-4 right-4 bg-white/80 p-2 rounded shadow z-50">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageSelect}
-                      className="text-sm cursor-pointer font-bold w-full text-center border-2 border-dashed border-muted-foreground p-2 rounded"
-                    />
-                    {pendingImageFile && (
-                      <p className="text-xs text-green-600 mt-1 text-center">
-                        ✓ Image cropped and ready to upload
-                      </p>
-                    )}
-                  </div>
-                )}
               </motion.div>
+              {/* Close Image Section wrapper */}
 
               {/* Description 2 - Under the image */}
               <motion.div
@@ -605,6 +621,7 @@ export default function About({
                   </p>
                 )}
               </motion.div>
+
             </div>
 
             {/* Right Column - Title, Description1, Features & Metrics */}

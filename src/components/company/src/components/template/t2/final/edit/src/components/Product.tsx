@@ -42,7 +42,11 @@ export default function Product({
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
-  const [prevZoom, setPrevZoom] = useState(1);
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
 
   // Consolidated state
   const [contentState, setContentState] = useState(productData);
@@ -54,13 +58,29 @@ export default function Product({
     }
   }, [contentState, onStateChange]);
 
-  // Re-center image when zooming out
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
   useEffect(() => {
-    if (zoom < prevZoom) {
-      setCrop({ x: 0, y: 0 });
+    if (mediaSize && cropAreaSize) {
+      setMinZoomDynamic(0.1);
     }
-    setPrevZoom(zoom);
-  }, [zoom]);
+  }, [mediaSize, cropAreaSize]);
+
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
+  useEffect(() => {
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
 
   // Update function for simple fields
   const updateField = (section, field, value) => {
@@ -398,17 +418,26 @@ export default function Product({
             </div>
 
             {/* Cropper Area */}
-            <div className="relative flex-1 min-h-0 bg-gray-900">
+            <div className={`relative flex-1 min-h-0 bg-gray-900 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
                 rotation={rotation}
                 aspect={aspectRatio}
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -474,7 +503,7 @@ export default function Product({
                   <button
                     type="button"
                     aria-label="Zoom out"
-                    onClick={() => setZoom((z) => Math.max(0.5, parseFloat((z - 0.1).toFixed(2))))}
+                    onClick={() => setZoom((z) => Math.max(minZoomDynamic, parseFloat((z - 0.1).toFixed(2))))}
                     className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
                   >
                     −
@@ -482,8 +511,8 @@ export default function Product({
                   <input
                     type="range"
                     value={zoom}
-                    min={0.5}
-                    max={3}
+                    min={minZoomDynamic}
+                    max={5}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -491,7 +520,7 @@ export default function Product({
                   <button
                     type="button"
                     aria-label="Zoom in"
-                    onClick={() => setZoom((z) => Math.min(3, parseFloat((z + 0.1).toFixed(2))))}
+                    onClick={() => setZoom((z) => Math.min(5, parseFloat((z + 0.1).toFixed(2))))}
                     className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
                   >
                     +

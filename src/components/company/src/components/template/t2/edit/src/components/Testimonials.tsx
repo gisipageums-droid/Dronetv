@@ -62,22 +62,19 @@ export default function Testimonials({
     }
   }, [testimonialsSection, onStateChange]);
 
-  // Compute dynamic min zoom
+  // Compute dynamic min zoom (free pan/zoom)
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
       const coverW = cropAreaSize.width / mediaSize.width;
       const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.5);
+      const computedMin = Math.max(coverW, coverH, 0.1);
       setMinZoomDynamic(computedMin);
       setZoom((z) => (z < computedMin ? computedMin : z));
     }
   }, [mediaSize, cropAreaSize]);
 
-  // Recenter when zooming out
+  // Track previous zoom only (no auto recentre to allow free panning)
   useEffect(() => {
-    if (zoom < prevZoom) {
-      setCrop({ x: 0, y: 0 });
-    }
     setPrevZoom(zoom);
   }, [zoom]);
 
@@ -402,8 +399,10 @@ export default function Testimonials({
                 zoom={zoom}
                 aspect={aspectRatio}
                 minZoom={minZoomDynamic}
-                maxZoom={3}
-                restrictPosition={true}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 onMediaLoaded={(ms) => setMediaSize(ms)}
                 onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
@@ -459,7 +458,7 @@ export default function Testimonials({
                   type="range"
                   value={zoom}
                   min={minZoomDynamic}
-                  max={3}
+                  max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"

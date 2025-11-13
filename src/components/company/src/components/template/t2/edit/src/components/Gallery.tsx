@@ -137,22 +137,19 @@ const Gallery = ({
     }
   }, [contentState, onStateChange]);
 
-  // Compute dynamic min zoom
+  // Compute dynamic min zoom (free pan/zoom)
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
       const coverW = cropAreaSize.width / mediaSize.width;
       const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.5);
+      const computedMin = Math.max(coverW, coverH, 0.1);
       setMinZoomDynamic(computedMin);
       setZoom((z) => (z < computedMin ? computedMin : z));
     }
   }, [mediaSize, cropAreaSize]);
 
-  // Recenter when zooming out
+  // Track previous zoom only (no auto recentre to allow free panning)
   useEffect(() => {
-    if (zoom < prevZoom) {
-      setCrop({ x: 0, y: 0 });
-    }
     setPrevZoom(zoom);
   }, [zoom]);
 
@@ -470,8 +467,10 @@ const Gallery = ({
                 zoom={zoom}
                 aspect={aspectRatio}
                 minZoom={minZoomDynamic}
-                maxZoom={3}
-                restrictPosition={true}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 onMediaLoaded={(ms) => setMediaSize(ms)}
                 onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
@@ -504,8 +503,8 @@ const Gallery = ({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     4:3 (Standard)
@@ -525,7 +524,7 @@ const Gallery = ({
                   type="range"
                   value={zoom}
                   min={minZoomDynamic}
-                  max={3}
+                  max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -562,8 +561,8 @@ const Gallery = ({
       <section
         id="gallery"
         className={` theme-transition ${theme === "dark"
-            ? "bg-[#1f1f1f] text-gray-100"
-            : "bg-gray-50 text-gray-900"
+          ? "bg-[#1f1f1f] text-gray-100"
+          : "bg-gray-50 text-gray-900"
           }`}
       >
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -576,8 +575,8 @@ const Gallery = ({
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
               >
                 <Save size={16} />
@@ -606,9 +605,9 @@ const Gallery = ({
                     onChange={(e) => updateHeaderField("title", e.target.value)}
                     maxLength={TEXT_LIMITS.headingTitle}
                     className={`mb-4 text-3xl font-bold text-center bg-transparent border-b w-full max-w-2xl mx-auto ${contentState.heading.title.length >=
-                        TEXT_LIMITS.headingTitle
-                        ? "border-red-500"
-                        : ""
+                      TEXT_LIMITS.headingTitle
+                      ? "border-red-500"
+                      : ""
                       }`}
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -634,9 +633,9 @@ const Gallery = ({
                     }
                     maxLength={TEXT_LIMITS.headingDescription}
                     className={`w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b ${contentState.heading.description.length >=
-                        TEXT_LIMITS.headingDescription
-                        ? "border-red-500"
-                        : ""
+                      TEXT_LIMITS.headingDescription
+                      ? "border-red-500"
+                      : ""
                       }`}
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -822,8 +821,8 @@ const Gallery = ({
             {isEditing && contentState.images.length < 6 && (
               <motion.div
                 className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
-                    ? "bg-gray-800 border-gray-700"
-                    : "bg-white border-gray-300"
+                  ? "bg-gray-800 border-gray-700"
+                  : "bg-white border-gray-300"
                   } border-2 cursor-pointer`}
                 whileHover={{ scale: 1.02 }}
                 onClick={addImage}
@@ -874,7 +873,7 @@ const Gallery = ({
               <img
                 src={contentState.images[selectedImage].url}
                 alt={contentState.images[selectedImage].title}
-                className="object-contain w-full h-auto max-h-full"
+                className="object-contain w-full h-auto max-h-full scale-110"
               />
               <div className="mt-4 text-center text-white">
                 <h3 className="text-xl font-semibold">

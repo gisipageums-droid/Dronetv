@@ -510,8 +510,8 @@ export default function Hero({
                     height: "100%",
                   },
                   cropAreaStyle: {
-                    border: "2px solid white",
-                    borderRadius: "8px",
+                    // border: "2px solid white",
+                    // borderRadius: "8px",
                   },
                 }}
               />
@@ -889,7 +889,7 @@ export default function Hero({
                         <img
                           src={heroState.heroImage}
                           alt="Modern business team collaborating"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover scale-110"
                         />
                       </div>
                       {isEditing && (
@@ -939,8 +939,9 @@ export default function Hero({
                           <img
                             src={heroState.hero3Image}
                             alt="Additional business context"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover scale-110"
                           />
+
                         </div>
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">

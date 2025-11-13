@@ -34,13 +34,29 @@ export default function Services({
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [prevZoom, setPrevZoom] = useState(1);
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
 
   useEffect(() => {
-    if (zoom < prevZoom) {
-      setCrop({ x: 0, y: 0 });
-    }
     setPrevZoom(zoom);
   }, [zoom]);
+
+  // Compute dynamic min zoom (free pan/zoom)
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.1);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
 
   // Merged all state into a single object
   const [servicesSection, setServicesSection] = useState(serviceData);
@@ -439,6 +455,13 @@ export default function Services({
                 zoom={zoom}
                 rotation={rotation}
                 aspect={16 / 9}
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
@@ -473,7 +496,7 @@ export default function Services({
                   <button
                     type="button"
                     aria-label="Zoom out"
-                    onClick={() => setZoom((z) => Math.max(0.5, parseFloat((z - 0.1).toFixed(2))))}
+                    onClick={() => setZoom((z) => Math.max(minZoomDynamic, parseFloat((z - 0.1).toFixed(2))))}
                     className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
                   >
                     −
@@ -481,8 +504,8 @@ export default function Services({
                   <input
                     type="range"
                     value={zoom}
-                    min={0.5}
-                    max={3}
+                    min={minZoomDynamic}
+                    max={5}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -490,7 +513,7 @@ export default function Services({
                   <button
                     type="button"
                     aria-label="Zoom in"
-                    onClick={() => setZoom((z) => Math.min(3, parseFloat((z + 0.1).toFixed(2))))}
+                    onClick={() => setZoom((z) => Math.min(5, parseFloat((z + 0.1).toFixed(2))))}
                     className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
                   >
                     +
@@ -711,7 +734,7 @@ export default function Services({
                   <img
                     src={service.image}
                     alt={service.title}
-                    className="object-cover w-full h-full"
+                    className="object-cover w-full h-full scale-110"
                   />
                   {isEditing && (
                     <motion.div

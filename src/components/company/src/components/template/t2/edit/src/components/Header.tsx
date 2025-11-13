@@ -89,22 +89,19 @@ export default function Header({
     }
   }, [content, onStateChange]);
 
-  // Compute dynamic min zoom
+  // Compute dynamic min zoom (free pan/zoom)
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
       const coverW = cropAreaSize.width / mediaSize.width;
       const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.5);
+      const computedMin = Math.max(coverW, coverH, 0.1);
       setMinZoomDynamic(computedMin);
       setZoom((z) => (z < computedMin ? computedMin : z));
     }
   }, [mediaSize, cropAreaSize]);
 
-  // Recenter when zooming out
+  // Track previous zoom only (no auto recentre to allow free panning)
   useEffect(() => {
-    if (zoom < prevZoom) {
-      setCrop({ x: 0, y: 0 });
-    }
     setPrevZoom(zoom);
   }, [zoom]);
 
@@ -354,8 +351,10 @@ export default function Header({
                   zoom={zoom}
                   aspect={aspectRatio}
                   minZoom={minZoomDynamic}
-                  maxZoom={3}
-                  restrictPosition={true}
+                  maxZoom={5}
+                  restrictPosition={false}
+                  zoomWithScroll={true}
+                  zoomSpeed={0.2}
                   onMediaLoaded={(ms) => setMediaSize(ms)}
                   onCropAreaChange={(area) => setCropAreaSize(area)}
                   onCropChange={setCrop}
@@ -387,8 +386,8 @@ export default function Header({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     4:3 (Standard)
@@ -406,7 +405,7 @@ export default function Header({
                   type="range"
                   value={zoom}
                   min={minZoomDynamic}
-                  max={3}
+                  max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -465,7 +464,7 @@ export default function Header({
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className=" w-full h-full bg-transparent p-0"
+                        className=" w-full h-full bg-transparent scale-110"
                       />
                     ) : (
                       <span className="text-lg font-bold">
@@ -490,7 +489,7 @@ export default function Header({
                         src={content.logoUrl || logo}
                         alt="Logo"
                         className="cover
-                         w-full h-full bg-transparent p-0"
+                         w-full h-full bg-transparent scale-110"
                       />
                     ) : (
                       <span className="text-lg font-bold">

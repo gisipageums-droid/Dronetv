@@ -57,30 +57,36 @@ export default function Clients({
   // NEW: Dynamic zoom calculation states
   const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
-  const [prevZoom, setPrevZoom] = useState(1);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
 
   // Merged all state into a single object
   const [clientsSection, setClientsSection] = useState<ClientsData>(clientData);
 
-  // NEW: Dynamic zoom calculation - FROM GALLERY
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
-      const coverW = cropAreaSize.width / mediaSize.width;
-      const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.5);
-      setMinZoomDynamic(computedMin);
-      setZoom((z) => (z < computedMin ? computedMin : z));
+      setMinZoomDynamic(0.1);
     }
   }, [mediaSize, cropAreaSize]);
 
-  // NEW: Re-center image when zooming out - FROM GALLERY
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
   useEffect(() => {
-    if (zoom < prevZoom) {
-      setCrop({ x: 0, y: 0 });
-    }
-    setPrevZoom(zoom);
-  }, [zoom]);
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
 
   // Add this useEffect to notify parent of state changes
   useEffect(() => {
@@ -391,20 +397,24 @@ export default function Clients({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
                 aspect={aspectRatio}
-                minZoom={minZoomDynamic} // NEW: Dynamic min zoom
-                maxZoom={3}
-                restrictPosition={true} // NEW: Restrict position
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
                 onMediaLoaded={(ms) => setMediaSize(ms)} // NEW: Media loaded callback
                 onCropAreaChange={(area) => setCropAreaSize(area)} // NEW: Crop area change
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
                 showGrid={true} // NEW: Better alignment
                 cropShape="round"
                 style={{
@@ -454,8 +464,8 @@ export default function Clients({
                 <input
                   type="range"
                   value={zoom}
-                  min={minZoomDynamic} // UPDATED: Dynamic min
-                  max={3}
+                  min={minZoomDynamic}
+                  max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
