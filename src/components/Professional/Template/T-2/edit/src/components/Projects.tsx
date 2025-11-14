@@ -1,4 +1,4 @@
-import { Edit2, ExternalLink, Github, Loader2, Plus, Save, Trash2, Upload, X, ZoomIn } from 'lucide-react';
+import { Edit2, ExternalLink, Github, Loader2, Plus, Save, Trash2, Upload, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -103,7 +103,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
-  // Cropping states - SAME AS ABOUT SECTION
+  // Cropping states - UPDATED WITH ZOOM OUT LOGIC
   const [showCropper, setShowCropper] = useState(false);
   const [currentCroppingProject, setCurrentCroppingProject] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -176,7 +176,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
     setPendingImageFiles({});
   };
 
-  // Cropper functions - SAME AS ABOUT SECTION
+  // Cropper functions - UPDATED WITH ZOOM OUT LOGIC
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
@@ -263,7 +263,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
     event.target.value = '';
   };
 
-  // Apply crop and set pending file - SAME AS ABOUT SECTION
+  // Apply crop and set pending file - UPDATED WITH ZOOM OUT LOGIC
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || !currentCroppingProject) return;
@@ -295,7 +295,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
     }
   };
 
-  // Cancel cropping - SAME AS ABOUT SECTION
+  // Cancel cropping - UPDATED WITH ZOOM OUT LOGIC
   const cancelCrop = () => {
     setShowCropper(false);
     setImageToCrop(null);
@@ -305,7 +305,20 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
     setZoom(1);
   };
 
-  // Reset zoom - SAME AS ABOUT SECTION
+  // Zoom functions - ADDED ZOOM OUT LOGIC
+  const handleZoomIn = () => {
+    setZoom(prev => Math.min(5, +(prev + 0.1).toFixed(2)));
+  };
+
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(0.1, +(prev - 0.1).toFixed(2)));
+  };
+
+  const handleZoomChange = (value: number) => {
+    setZoom(Math.max(0.1, Math.min(5, value)));
+  };
+
+  // Reset zoom - UPDATED WITH ZOOM OUT LOGIC
   const resetCropSettings = () => {
     setZoom(1);
     setCrop({ x: 0, y: 0 });
@@ -488,7 +501,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
 
   return (
     <section id="projects" className="relative py-20 bg-background">
-      {/* Image Cropper Modal - SAME AS ABOUT SECTION */}
+      {/* Image Cropper Modal - UPDATED WITH ZOOM OUT LOGIC */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -498,7 +511,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col" // Increased max-width to max-w-6xl
+            className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
@@ -525,6 +538,11 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                 onCropComplete={onCropComplete}
                 showGrid={false}
                 cropShape="rect"
+                minZoom={0.1}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 style={{
                   containerStyle: {
                     position: "relative",
@@ -539,7 +557,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
               />
             </div>
 
-            {/* Controls */}
+            {/* Controls - UPDATED WITH ZOOM OUT BUTTONS */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Info */}
               <div className="mb-4">
@@ -548,7 +566,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                 </p>
               </div>
 
-              {/* Zoom Control */}
+              {/* Zoom Control - UPDATED WITH ZOOM OUT BUTTON */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2 text-gray-700">
@@ -557,15 +575,31 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                   </span>
                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                 </div>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleZoomOut}
+                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    onChange={(e) => handleZoomChange(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleZoomIn}
+                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons - Centered like About section */}
@@ -756,8 +790,8 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                 key={category}
                 onClick={() => setActiveCategory(category)}
                 className={`px-6 py-2 rounded-full transition-all duration-300 ${activeCategory === category
-                  ? 'bg-yellow-400 text-gray-900 shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-yellow-400 text-gray-900 shadow-lg'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
                 {category}
@@ -866,7 +900,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
                       <img
                         src={project.image}
                         alt={project.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover scale-110"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200"%3E%3Crect fill="%23f3f4f6" width="400" height="200"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';

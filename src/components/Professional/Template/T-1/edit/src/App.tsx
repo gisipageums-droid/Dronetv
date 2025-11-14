@@ -147,8 +147,8 @@ const App: React.FC = () => {
           content: {
             ...data.content,
             skillContent: {
+              ...(data.content.skillContent || {}),
               heading: data.content.skillContent?.heading || "My Skills",
-              ...data.content.skillContent,
             },
             footerContent: data.content.footerContent || defaultFooterContent,
           },
@@ -187,6 +187,14 @@ const App: React.FC = () => {
     return (
       <div className="flex items-center justify-center w-full h-screen">
         <div className="text-gray-500">No data available</div>
+      </div>
+    );
+  }
+
+  if (!AIGenData.content) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <div className="text-gray-500">No content found for this draft</div>
       </div>
     );
   }

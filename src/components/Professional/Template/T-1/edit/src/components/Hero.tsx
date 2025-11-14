@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
+import Cropper from "react-easy-crop";
 import {
   Save,
   Upload,
@@ -51,14 +52,12 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   // Cropping states
   const [isCropping, setIsCropping] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string>("");
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageLoaded, setImageLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // update local state if props change
   useEffect(() => {
@@ -97,128 +96,50 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
     return "text-gray-500";
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    setIsDragging(true);
-    setDragStart({
-      x: touch.clientX - position.x,
-      y: touch.clientY - position.y,
-    });
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    const touch = e.touches[0];
-    setPosition({
-      x: touch.clientX - dragStart.x,
-      y: touch.clientY - dragStart.y,
-    });
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
-
   const getCroppedImage = async (): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const canvas = canvasRef.current;
-      const image = imageRef.current;
-      const container = containerRef.current;
-
-      if (!canvas || !image || !container) {
-        reject(new Error("Canvas, image, or container not found"));
+      if (!canvas || !croppedAreaPixels || !imageToCrop) {
+        reject(new Error("Missing canvas or crop data"));
         return;
       }
-
       const ctx = canvas.getContext("2d");
       if (!ctx) {
         reject(new Error("Could not get canvas context"));
         return;
       }
-
-      // Output size
       const outputSize = 500;
       canvas.width = outputSize;
       canvas.height = outputSize;
-
-      // Get container dimensions
-      const containerRect = container.getBoundingClientRect();
-      const cropRadius = 120; // Same as the circle radius in the overlay
-
-      // Calculate the center of the crop area in the container
-      const centerX = containerRect.width / 2;
-      const centerY = containerRect.height / 2;
-
-      // Get image dimensions and position
-      const imgRect = image.getBoundingClientRect();
-      const containerLeft = containerRect.left;
-      const containerTop = containerRect.top;
-
-      // Calculate image position relative to container
-      const imgX = imgRect.left - containerLeft;
-      const imgY = imgRect.top - containerTop;
-
-      // Calculate the crop area in the original image coordinates
-      const scaleX = image.naturalWidth / imgRect.width;
-      const scaleY = image.naturalHeight / imgRect.height;
-
-      // Calculate source coordinates (what part of the original image to crop)
-      const sourceX = (centerX - imgX - cropRadius) * scaleX;
-      const sourceY = (centerY - imgY - cropRadius) * scaleY;
-      const sourceSize = cropRadius * 2 * scaleX;
-
-      // Draw the cropped circular image
-      ctx.beginPath();
-      ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-
-      // Draw the image
-      ctx.drawImage(
-        image,
-        sourceX,
-        sourceY,
-        sourceSize,
-        sourceSize,
-        0,
-        0,
-        outputSize,
-        outputSize
-      );
-
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error("Failed to create blob"));
-          }
-        },
-        "image/jpeg",
-        0.95
-      );
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageToCrop;
+      img.onload = () => {
+        const { x, y, width, height } = croppedAreaPixels as any;
+        ctx.beginPath();
+        ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(
+          img,
+          x,
+          y,
+          width,
+          height,
+          0,
+          0,
+          outputSize,
+          outputSize
+        );
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("Failed to create blob"));
+          },
+          "image/jpeg",
+          0.95
+        );
+      };
     });
   };
 
@@ -290,17 +211,13 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
         if (reader.result) {
           setImageToCrop(reader.result as string);
           setIsCropping(true);
-          setScale(1);
-          setPosition({ x: 0, y: 0 });
+          setZoom(1);
+          setCrop({ x: 0, y: 0 });
           setImageLoaded(false);
         }
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const handleImageLoad = () => {
-    setImageLoaded(true);
   };
 
   const handleSave = () => {
@@ -317,11 +234,11 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   };
 
   const handleZoomIn = () => {
-    setScale((prev) => Math.min(prev + 0.1, 3));
+    setZoom((prev) => Math.min(prev + 0.1, 5));
   };
 
   const handleZoomOut = () => {
-    setScale((prev) => Math.max(prev - 0.1, 1));
+    setZoom((prev) => Math.max(prev - 0.1, 0.1));
   };
 
   return (
@@ -531,69 +448,27 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
               <div className="p-6">
                 <div
-                  ref={containerRef}
-                  className="relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 cursor-move select-none"
-                  onMouseDown={handleMouseDown}
-                  onMouseMove={handleMouseMove}
-                  onMouseUp={handleMouseUp}
-                  onMouseLeave={handleMouseUp}
-                  onTouchStart={handleTouchStart}
-                  onTouchMove={handleTouchMove}
-                  onTouchEnd={handleTouchEnd}
+                  className={`relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
                 >
-                  {/* Circular crop overlay */}
-                  <div className="absolute inset-0 pointer-events-none z-10">
-                    <svg className="w-full h-full">
-                      <defs>
-                        <mask id="circleMask">
-                          <rect width="100%" height="100%" fill="white" />
-                          <circle cx="50%" cy="50%" r="120" fill="black" />
-                        </mask>
-                      </defs>
-                      <rect
-                        width="100%"
-                        height="100%"
-                        fill="rgba(0,0,0,0.5)"
-                        mask="url(#circleMask)"
-                      />
-                      <circle
-                        cx="50%"
-                        cy="50%"
-                        r="120"
-                        fill="none"
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeDasharray="10,5"
-                      />
-                    </svg>
-                  </div>
-
-                  <img
-                    ref={imageRef}
-                    src={imageToCrop}
-                    alt="Crop preview"
-                    onLoad={handleImageLoad}
-                    className="absolute select-none z-0"
-                    style={{
-                      maxHeight: "100%",
-                      maxWidth: "100%",
-                      height: "auto",
-                      width: "auto",
-                      left: "50%",
-                      top: "50%",
-                      transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
-                      transformOrigin: "center",
-                      opacity: imageLoaded ? 1 : 0,
-                      transition: imageLoaded ? "none" : "opacity 0.3s",
-                    }}
-                    draggable={false}
+                  <Cropper
+                    image={imageToCrop}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={1}
+                    cropShape="round"
+                    showGrid={true}
+                    minZoom={0.1}
+                    maxZoom={5}
+                    restrictPosition={false}
+                    zoomWithScroll={true}
+                    zoomSpeed={0.2}
+                    onCropChange={setCrop}
+                    onZoomChange={setZoom}
+                    onCropComplete={(_c, p) => setCroppedAreaPixels(p)}
+                    onMediaLoaded={() => setImageLoaded(true)}
+                    onInteractionStart={() => setIsDragging(true)}
+                    onInteractionEnd={() => setIsDragging(false)}
                   />
-
-                  {!imageLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center text-white z-10">
-                      <p className="text-lg">Loading image...</p>
-                    </div>
-                  )}
                 </div>
 
                 <div className="space-y-4">
@@ -610,7 +485,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                           <ZoomOut className="w-5 h-5" />
                         </button>
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[60px] text-center">
-                          {Math.round(scale * 100)}%
+                          {Math.round(zoom * 100)}%
                         </span>
                         <button
                           onClick={handleZoomIn}
@@ -622,11 +497,11 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                     </div>
                     <input
                       type="range"
-                      min={1}
-                      max={3}
+                      min={0.1}
+                      max={5}
                       step={0.01}
-                      value={scale}
-                      onChange={(e) => setScale(Number(e.target.value))}
+                      value={zoom}
+                      onChange={(e) => setZoom(Number(e.target.value))}
                       className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                     />
                   </div>

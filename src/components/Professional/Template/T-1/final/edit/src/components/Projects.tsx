@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Cropper from "react-easy-crop";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -68,14 +69,12 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   // Cropping states
   const [isCropping, setIsCropping] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string>("");
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageLoaded, setImageLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // ✅ Only update local state when content prop changes from parent
   useEffect(() => {
@@ -124,127 +123,47 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   };
 
   // Image cropping functions
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    setIsDragging(true);
-    setDragStart({
-      x: touch.clientX - position.x,
-      y: touch.clientY - position.y,
-    });
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    const touch = e.touches[0];
-    setPosition({
-      x: touch.clientX - dragStart.x,
-      y: touch.clientY - dragStart.y,
-    });
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
-
   const getCroppedImage = async (): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const canvas = canvasRef.current;
-      const image = imageRef.current;
-      const container = containerRef.current;
-
-      if (!canvas || !image || !container) {
-        reject(new Error("Canvas, image, or container not found"));
+      if (!canvas || !croppedAreaPixels || !imageToCrop) {
+        reject(new Error("Missing canvas or crop data"));
         return;
       }
-
       const ctx = canvas.getContext("2d");
       if (!ctx) {
         reject(new Error("Could not get canvas context"));
         return;
       }
-
-      // Output size - rectangular for Project images (800x600)
       const outputWidth = 800;
       const outputHeight = 600;
       canvas.width = outputWidth;
       canvas.height = outputHeight;
-
-      // Get container dimensions
-      const containerRect = container.getBoundingClientRect();
-
-      // Crop area dimensions - rectangular for Project section
-      const cropWidth = 400;
-      const cropHeight = 300;
-
-      // Calculate the center of the crop area in the container
-      const centerX = containerRect.width / 2;
-      const centerY = containerRect.height / 2;
-
-      // Get image dimensions and position
-      const imgRect = image.getBoundingClientRect();
-      const containerLeft = containerRect.left;
-      const containerTop = containerRect.top;
-
-      // Calculate image position relative to container
-      const imgX = imgRect.left - containerLeft;
-      const imgY = imgRect.top - containerTop;
-
-      // Calculate the crop area in the original image coordinates
-      const scaleX = image.naturalWidth / imgRect.width;
-      const scaleY = image.naturalHeight / imgRect.height;
-
-      // Calculate source coordinates (what part of the original image to crop)
-      const sourceX = (centerX - imgX - cropWidth / 2) * scaleX;
-      const sourceY = (centerY - imgY - cropHeight / 2) * scaleY;
-      const sourceWidth = cropWidth * scaleX;
-      const sourceHeight = cropHeight * scaleY;
-
-      // Draw the cropped rectangular image
-      ctx.drawImage(
-        image,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight,
-        0,
-        0,
-        outputWidth,
-        outputHeight
-      );
-
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error("Failed to create blob"));
-          }
-        },
-        "image/jpeg",
-        0.95
-      );
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageToCrop;
+      img.onload = () => {
+        const { x, y, width, height } = croppedAreaPixels as any;
+        ctx.drawImage(
+          img,
+          x,
+          y,
+          width,
+          height,
+          0,
+          0,
+          outputWidth,
+          outputHeight
+        );
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("Failed to create blob"));
+          },
+          "image/jpeg",
+          0.95
+        );
+      };
     });
   };
 
@@ -314,8 +233,8 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
         if (reader.result) {
           setImageToCrop(reader.result as string);
           setIsCropping(true);
-          setScale(1);
-          setPosition({ x: 0, y: 0 });
+          setZoom(1);
+          setCrop({ x: 0, y: 0 });
           setImageLoaded(false);
         }
       };
@@ -323,16 +242,12 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     }
   };
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
-
   const handleZoomIn = () => {
-    setScale((prev) => Math.min(prev + 0.1, 3));
+    setZoom((prev) => Math.min(prev + 0.1, 5));
   };
 
   const handleZoomOut = () => {
-    setScale((prev) => Math.max(prev - 0.1, 1));
+    setZoom((prev) => Math.max(prev - 0.1, 0.1));
   };
 
   const handleSaveSection = () => {
@@ -369,10 +284,59 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     toast.success("Project updated!");
   };
 
-  const handleAddProject = () => {
+  const handleAddProject = async () => {
+    if (isUploading) {
+      toast.error("Please wait for the image upload to finish before saving.");
+      return;
+    }
     if (!currentProject || !currentProject.title.trim()) {
       toast.error("Project title is required");
       return;
+    }
+
+    let finalImage = currentProject.image;
+
+    // If an image was selected but crop wasn't confirmed, finalize it now
+    if (!finalImage && imageToCrop && croppedAreaPixels) {
+      try {
+        setIsUploading(true);
+        const croppedBlob = await getCroppedImage();
+        const croppedFile = new File([croppedBlob], "cropped-project-image.jpg", {
+          type: "image/jpeg",
+        });
+
+        // Base64 preview immediately
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const r = new FileReader();
+          r.onloadend = () => (r.result ? resolve(r.result as string) : reject(new Error("preview failed")));
+          r.readAsDataURL(croppedFile);
+        });
+        finalImage = base64;
+
+        // Try S3 upload if userId available
+        if (userId) {
+          const formData = new FormData();
+          formData.append("file", croppedFile);
+          formData.append("userId", userId);
+          formData.append("fieldName", "projectImage");
+          const uploadResponse = await fetch(
+            `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+            { method: "POST", body: formData }
+          );
+          if (uploadResponse.ok) {
+            const uploadData = await uploadResponse.json();
+            finalImage = uploadData.s3Url || finalImage;
+          } else {
+            const err = await uploadResponse.json().catch(() => ({}));
+            toast.error(`Image upload failed: ${err.message || "Unknown error"}`);
+          }
+        }
+      } catch (e) {
+        console.error("Auto-crop on save failed:", e);
+        toast.error("Could not process image. You can try cropping again.");
+      } finally {
+        setIsUploading(false);
+      }
     }
 
     const newId =
@@ -388,6 +352,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     const newProject: Project = {
       ...currentProject,
       id: newId,
+      image: finalImage || currentProject.image,
       tags: tagsFromInput,
       featured: currentProject.featured || false,
     };
@@ -709,7 +674,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     onClick={handleAddProject}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2 font-semibold text-white bg-orange-500 rounded-lg"
+                    className="px-6 py-2 font-semibold text-white bg-orange-500 rounded-lg cursor-pointer"
                     disabled={!currentProject?.title?.trim() || isUploading}
                   >
                     {isUploading ? "Uploading..." : "Save Project"}
@@ -983,78 +948,27 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
             <div className="p-6">
               <div
-                ref={containerRef}
-                className="relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 cursor-move select-none"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
+                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
               >
-                {/* Rectangular crop overlay for Project section */}
-                <div className="absolute inset-0 pointer-events-none z-10">
-                  <svg className="w-full h-full">
-                    <defs>
-                      <mask id="rectMask">
-                        <rect width="100%" height="100%" fill="white" />
-                        <rect
-                          x="50%"
-                          y="50%"
-                          width="400"
-                          height="300"
-                          fill="black"
-                          transform="translate(-200, -150)"
-                        />
-                      </mask>
-                    </defs>
-                    <rect
-                      width="100%"
-                      height="100%"
-                      fill="rgba(0,0,0,0.5)"
-                      mask="url(#rectMask)"
-                    />
-                    <rect
-                      x="50%"
-                      y="50%"
-                      width="400"
-                      height="300"
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="2"
-                      strokeDasharray="10,5"
-                      transform="translate(-200, -150)"
-                    />
-                  </svg>
-                </div>
-
-                <img
-                  ref={imageRef}
-                  src={imageToCrop}
-                  alt="Crop preview"
-                  onLoad={handleImageLoad}
-                  className="absolute select-none z-0"
-                  style={{
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    height: "auto",
-                    width: "auto",
-                    left: "50%",
-                    top: "50%",
-                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
-                    transformOrigin: "center",
-                    opacity: imageLoaded ? 1 : 0,
-                    transition: imageLoaded ? "none" : "opacity 0.3s",
-                  }}
-                  draggable={false}
+                <Cropper
+                  image={imageToCrop}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={4 / 3}
+                  cropShape="rect"
+                  showGrid={true}
+                  minZoom={0.1}
+                  maxZoom={5}
+                  restrictPosition={false}
+                  zoomWithScroll={true}
+                  zoomSpeed={0.2}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={(_c, p) => setCroppedAreaPixels(p)}
+                  onMediaLoaded={() => setImageLoaded(true)}
+                  onInteractionStart={() => setIsDragging(true)}
+                  onInteractionEnd={() => setIsDragging(false)}
                 />
-
-                {!imageLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center text-white">
-                    <p>Loading image...</p>
-                  </div>
-                )}
               </div>
 
               <div className="space-y-4">
@@ -1080,11 +994,11 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                   </div>
                   <input
                     type="range"
-                    min={1}
-                    max={3}
+                    min={0.1}
+                    max={5}
                     step={0.01}
-                    value={scale}
-                    onChange={(e) => setScale(Number(e.target.value))}
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
                     className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
