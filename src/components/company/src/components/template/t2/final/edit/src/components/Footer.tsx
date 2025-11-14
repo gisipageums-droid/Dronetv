@@ -51,6 +51,11 @@
 //   const [imageToCrop, setImageToCrop] = useState(null);
 //   const [originalFile, setOriginalFile] = useState(null);
 //   const [aspectRatio, setAspectRatio] = useState(1); // Square for logos
+//   const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+//   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+//   const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+//   const [isDragging, setIsDragging] = useState(false);
+//   const PAN_STEP = 10;
 
 //   // Merged all state into a single object
 //   const [footerContent, setFooterContent] = useState(() => {
@@ -93,6 +98,30 @@
 //       onStateChange(footerContent);
 //     }
 //   }, [footerContent, onStateChange]);
+
+//   // Allow more zoom-out; do not enforce cover when media/crop sizes change
+//   useEffect(() => {
+//     if (mediaSize && cropAreaSize) {
+//       setMinZoomDynamic(0.1);
+//     }
+//   }, [mediaSize, cropAreaSize]);
+
+//   // Arrow keys to pan image inside crop area when cropper is open
+//   const nudge = useCallback((dx: number, dy: number) => {
+//     setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+//   }, []);
+
+//   useEffect(() => {
+//     if (!showCropper) return;
+//     const onKeyDown = (e: KeyboardEvent) => {
+//       if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+//       else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+//       else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+//       else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+//     };
+//     window.addEventListener("keydown", onKeyDown);
+//     return () => window.removeEventListener("keydown", onKeyDown);
+//   }, [showCropper, nudge]);
 
 //   // Handlers for company info
 //   const updateCompanyInfo = (field, value) => {
@@ -394,17 +423,26 @@
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
 //               <Cropper
 //                 image={imageToCrop}
 //                 crop={crop}
 //                 zoom={zoom}
 //                 rotation={rotation}
 //                 aspect={aspectRatio}
+//                 minZoom={minZoomDynamic}
+//                 maxZoom={5}
+//                 restrictPosition={false}
+//                 zoomWithScroll={true}
+//                 zoomSpeed={0.2}
 //                 onCropChange={setCrop}
 //                 onZoomChange={setZoom}
 //                 onCropComplete={onCropComplete}
-//                 showGrid={false}
+//                 onMediaLoaded={(ms) => setMediaSize(ms)}
+//                 onCropAreaChange={(area) => setCropAreaSize(area)}
+//                 onInteractionStart={() => setIsDragging(true)}
+//                 onInteractionEnd={() => setIsDragging(false)}
+//                 showGrid={true}
 //                 cropShape="rect"
 //                 style={{
 //                   containerStyle: {
@@ -430,31 +468,28 @@
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(1)}
-//                     className={`px-3 py-2 text-sm rounded border ${
-//                       aspectRatio === 1
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
-//                     }`}
+//                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+//                       ? "bg-blue-500 text-white border-blue-500"
+//                       : "bg-white text-gray-700 border-gray-300"
+//                       }`}
 //                   >
 //                     1:1 (Square)
 //                   </button>
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
-//                     className={`px-3 py-2 text-sm rounded border ${
-//                       aspectRatio === 4 / 3
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
-//                     }`}
+//                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+//                       ? "bg-blue-500 text-white border-blue-500"
+//                       : "bg-white text-gray-700 border-gray-300"
+//                       }`}
 //                   >
 //                     4:3 (Standard)
 //                   </button>
 //                   <button
 //                     onClick={() => setAspectRatio(16 / 9)}
-//                     className={`px-3 py-2 text-sm rounded border ${
-//                       aspectRatio === 16 / 9
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
-//                     }`}
+//                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+//                       ? "bg-blue-500 text-white border-blue-500"
+//                       : "bg-white text-gray-700 border-gray-300"
+//                       }`}
 //                   >
 //                     16:9 (Widescreen)
 //                   </button>
@@ -473,8 +508,8 @@
 //                 <input
 //                   type="range"
 //                   value={zoom}
-//                   min={1}
-//                   max={3}
+//                   min={minZoomDynamic}
+//                   max={5}
 //                   step={0.1}
 //                   onChange={(e) => setZoom(Number(e.target.value))}
 //                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
@@ -522,11 +557,10 @@
 //               whileHover={{ y: -1, scaleX: 1.1 }}
 //               onClick={handleSave}
 //               disabled={isUploading}
-//               className={`${
-//                 isUploading
-//                   ? "bg-gray-400 cursor-not-allowed"
-//                   : "bg-green-600 hover:font-semibold"
-//               } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
+//               className={`${isUploading
+//                 ? "bg-gray-400 cursor-not-allowed"
+//                 : "bg-green-600 hover:font-semibold"
+//                 } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
 //             >
 //               {isUploading ? (
 //                 "Uploading..."
@@ -563,28 +597,17 @@
 //                 className="space-y-6 lg:col-span-2"
 //                 variants={itemVariants}
 //               >
-//                 <motion.div
-//                   className="flex items-center"
-//                   whileHover={{ scale: 1.05 }}
-//                   transition={{ duration: 0.3 }}
-//                 >
-//                   <motion.div
-//                     className="relative flex items-center justify-center w-8 h-8 mr-2 overflow-hidden rounded-lg"
-//                     whileHover={{
-//                       rotate: 360,
-//                       boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)",
-//                     }}
-//                     transition={{ duration: 0.6 }}
-//                   >
+//                 <div className="flex items-center">
+//                   <div className="relative flex items-center justify-center w-8 h-8 mr-2 overflow-hidden rounded-lg">
 //                     {isEditing ? (
 //                       <div className="relative w-full h-full">
 //                         {footerContent.companyInfo.logoUrl &&
-//                         (footerContent.companyInfo.logoUrl.startsWith(
-//                           "data:"
-//                         ) ||
-//                           footerContent.companyInfo.logoUrl.startsWith(
-//                             "http"
-//                           )) ? (
+//                           (footerContent.companyInfo.logoUrl.startsWith(
+//                             "data:"
+//                           ) ||
+//                             footerContent.companyInfo.logoUrl.startsWith(
+//                               "http"
+//                             )) ? (
 //                           <img
 //                             src={footerContent.companyInfo.logoUrl || logo}
 //                             alt="Logo"
@@ -607,12 +630,12 @@
 //                     ) : (
 //                       <>
 //                         {footerContent.companyInfo.logoUrl &&
-//                         (footerContent.companyInfo.logoUrl.startsWith(
-//                           "data:"
-//                         ) ||
-//                           footerContent.companyInfo.logoUrl.startsWith(
-//                             "http"
-//                           )) ? (
+//                           (footerContent.companyInfo.logoUrl.startsWith(
+//                             "data:"
+//                           ) ||
+//                             footerContent.companyInfo.logoUrl.startsWith(
+//                               "http"
+//                             )) ? (
 //                           <img
 //                             src={footerContent.companyInfo.logoUrl}
 //                             alt="Logo"
@@ -632,7 +655,7 @@
 //                       onChange={handleLogoUpload}
 //                       className="hidden font-bold"
 //                     />
-//                   </motion.div>
+//                   </div>
 //                   {isEditing ? (
 //                     <div className="relative">
 //                       <input
@@ -641,11 +664,10 @@
 //                           updateCompanyInfo("companyName", e.target.value)
 //                         }
 //                         maxLength={50}
-//                         className={`w-full text-xl font-bold text-white bg-transparent border-b ${
-//                           footerContent.companyInfo.companyName.length >= 50
-//                             ? "border-red-500"
-//                             : ""
-//                         }`}
+//                         className={`w-full text-xl font-bold text-white bg-transparent border-b ${footerContent.companyInfo.companyName.length >= 50
+//                           ? "border-red-500"
+//                           : ""
+//                           }`}
 //                       />
 //                       <div className="text-right text-xs text-gray-300 mt-1">
 //                         {footerContent.companyInfo.companyName.length}/50
@@ -661,7 +683,7 @@
 //                       {footerContent.companyInfo.companyName}
 //                     </span>
 //                   )}
-//                 </motion.div>
+//                 </div>
 
 //                 {isEditing ? (
 //                   <div className="relative">
@@ -671,11 +693,10 @@
 //                         updateCompanyInfo("description", e.target.value)
 //                       }
 //                       maxLength={200}
-//                       className={`w-full max-w-md text-gray-400 bg-transparent border-b ${
-//                         footerContent.companyInfo.description.length >= 200
-//                           ? "border-red-500"
-//                           : ""
-//                       }`}
+//                       className={`w-full max-w-md text-gray-400 bg-transparent border-b ${footerContent.companyInfo.description.length >= 200
+//                         ? "border-red-500"
+//                         : ""
+//                         }`}
 //                       rows={3}
 //                     />
 //                     <div className="text-right text-xs text-gray-500 mt-1">
@@ -712,9 +733,8 @@
 //                             });
 //                           }}
 //                           maxLength={25}
-//                           className={`w-full mb-4 font-medium text-white bg-transparent border-b ${
-//                             category.length >= 25 ? "border-red-500" : ""
-//                           }`}
+//                           className={`w-full mb-4 font-medium text-white bg-transparent border-b ${category.length >= 25 ? "border-red-500" : ""
+//                             }`}
 //                         />
 //                         <div className="text-right text-xs text-gray-300 mt-1 -mb-2">
 //                           {category.length}/25
@@ -814,9 +834,6 @@
 //   );
 // }
 
-
-
-
 import {
   Facebook,
   Twitter,
@@ -858,6 +875,7 @@ export default function Footer({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -876,22 +894,57 @@ export default function Footer({
   const [isDragging, setIsDragging] = useState(false);
   const PAN_STEP = 10;
 
+  // Track initial state to detect changes
+  const initialFooterState = useRef(null);
+
   // Merged all state into a single object
   const [footerContent, setFooterContent] = useState(() => {
     // Process the footer data to ensure icons are proper components
-    const processedData = { ...footerData };
+    const processedData = footerData || {
+      companyInfo: {
+        companyName: "Your Company",
+        description: "Transforming businesses with innovative solutions and cutting-edge technology.",
+        logoUrl: ""
+      },
+      footerLinks: {
+        Services: [
+          { name: "Web Development", href: "#services" },
+          { name: "Mobile Apps", href: "#services" },
+          { name: "Cloud Solutions", href: "#services" },
+          { name: "Digital Marketing", href: "#services" }
+        ],
+        Company: [
+          { name: "About Us", href: "#about" },
+          { name: "Our Team", href: "#team" },
+          { name: "Careers", href: "#careers" },
+          { name: "Contact", href: "#contact" }
+        ],
+        Support: [
+          { name: "Help Center", href: "#help" },
+          { name: "Documentation", href: "#docs" },
+          { name: "API Status", href: "#status" },
+          { name: "Community", href: "#community" }
+        ]
+      },
+      socialLinks: [
+        { name: "Facebook", url: "#", icon: "Facebook" },
+        { name: "Twitter", url: "#", icon: "Twitter" },
+        { name: "LinkedIn", url: "#", icon: "LinkedIn" },
+        { name: "Instagram", url: "#", icon: "Instagram" }
+      ]
+    };
 
+    // Process social links to ensure icons are proper components
     if (processedData.socialLinks) {
       processedData.socialLinks = processedData.socialLinks.map((link) => ({
         ...link,
-        // Use the name to determine the icon if icon is not a valid string
-        icon:
-          typeof link.icon === "string" && iconMap[link.icon]
-            ? iconMap[link.icon]
-            : iconMap[link.name] || Facebook, // Fallback to name or Facebook
+        icon: typeof link.icon === "string" && iconMap[link.icon]
+          ? iconMap[link.icon]
+          : iconMap[link.name] || Facebook,
       }));
     }
 
+    initialFooterState.current = processedData;
     return processedData;
   });
 
@@ -911,11 +964,15 @@ export default function Footer({
     }
   }, [footerData]);
 
-  // Add this useEffect to notify parent of state changes
+  // Add this useEffect to notify parent of state changes immediately
   useEffect(() => {
     if (onStateChange) {
       onStateChange(footerContent);
     }
+
+    // Check if there are any changes from initial state
+    const hasChanges = JSON.stringify(footerContent) !== JSON.stringify(initialFooterState.current);
+    setHasUnsavedChanges(hasChanges);
   }, [footerContent, onStateChange]);
 
   // Allow more zoom-out; do not enforce cover when media/crop sizes change
@@ -942,7 +999,16 @@ export default function Footer({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [showCropper, nudge]);
 
-  // Handlers for company info
+  // Handle cancel editing
+  const handleCancel = () => {
+    // Reset to initial state
+    setFooterContent(initialFooterState.current);
+    setPendingLogoFile(null);
+    setHasUnsavedChanges(false);
+    setIsEditing(false);
+  };
+
+  // Handlers for company info - now update immediately
   const updateCompanyInfo = (field, value) => {
     setFooterContent((prev) => ({
       ...prev,
@@ -950,7 +1016,7 @@ export default function Footer({
     }));
   };
 
-  // Handlers for footer links
+  // Handlers for footer links - now update immediately
   const updateFooterLink = (category, index, field, value) => {
     setFooterContent((prev) => ({
       ...prev,
@@ -986,7 +1052,7 @@ export default function Footer({
     }));
   };
 
-  // Handlers for social links
+  // Handlers for social links - now update immediately
   const updateSocialLink = (index, field, value) => {
     setFooterContent((prev) => ({
       ...prev,
@@ -1182,6 +1248,10 @@ export default function Footer({
         }
       }
 
+      // Update initial state reference to current state
+      initialFooterState.current = footerContent;
+      setHasUnsavedChanges(false);
+      
       // Exit edit mode
       setIsEditing(false);
       toast.success("Footer section saved with S3 URLs!");
@@ -1369,26 +1439,38 @@ export default function Footer({
         transition={{ duration: 0.8 }}
       >
         {/* Edit/Save Buttons */}
-        <div className="flex justify-end mr-50">
+        <div className="flex justify-end mr-50 gap-2">
           {isEditing ? (
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              whileHover={{ y: -1, scaleX: 1.1 }}
-              onClick={handleSave}
-              disabled={isUploading}
-              className={`${isUploading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-600 hover:font-semibold"
-                } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
-            >
-              {isUploading ? (
-                "Uploading..."
-              ) : (
-                <>
-                  <Save size={16} className="inline mr-1" /> Save
-                </>
-              )}
-            </motion.button>
+            <>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ y: -1, scaleX: 1.05 }}
+                onClick={handleCancel}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ y: -1, scaleX: 1.1 }}
+                onClick={handleSave}
+                disabled={isUploading}
+                className={`${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : hasUnsavedChanges || pendingLogoFile
+                    ? "bg-green-600 hover:font-semibold"
+                    : "bg-gray-400 cursor-not-allowed"
+                  } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
+              >
+                {isUploading ? (
+                  "Uploading..."
+                ) : (
+                  <>
+                    <Save size={16} className="inline mr-1" /> Save
+                  </>
+                )}
+              </motion.button>
+            </>
           ) : (
             <motion.button
               whileTap={{ scale: 0.9 }}
