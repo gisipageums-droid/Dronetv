@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Edit, Save, X, Plus, Trash2, Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
+import {
+  Edit,
+  Save,
+  X,
+  Plus,
+  Trash2,
+  Calendar,
+  MapPin,
+  Clock,
+  ArrowRight,
+} from "lucide-react";
 
 const initialAgendaThemes = {
   1: {
@@ -34,14 +44,14 @@ const initialAgendaThemes = {
 const AgendaSection: React.FC = () => {
   const [activeDay, setActiveDay] = useState(1);
   const [editMode, setEditMode] = useState(false);
-  
+
   const [agendaContent, setAgendaContent] = useState({
     title: "Event",
     titleHighlight: "Themes",
     subtitle: "Each day focuses on a powerful industry-relevant theme.",
-    themes: initialAgendaThemes
+    themes: initialAgendaThemes,
   });
-  
+
   const [backupContent, setBackupContent] = useState(agendaContent);
   const [editForm, setEditForm] = useState(null);
 
@@ -66,15 +76,15 @@ const AgendaSection: React.FC = () => {
     const newDay = {
       title: `Day ${newDayNumber} Theme`,
       note: "New theme description",
-      bullets: ["New bullet point"]
+      bullets: ["New bullet point"],
     };
-    
+
     setAgendaContent({
       ...agendaContent,
       themes: {
         ...agendaContent.themes,
-        [newDayNumber]: newDay
-      }
+        [newDayNumber]: newDay,
+      },
     });
     setActiveDay(newDayNumber);
     setEditForm(newDay);
@@ -84,14 +94,14 @@ const AgendaSection: React.FC = () => {
   const handleRemoveDay = (dayToRemove: number) => {
     const { [dayToRemove]: _, ...remainingThemes } = agendaContent.themes;
     const dayKeys = Object.keys(remainingThemes).map(Number);
-    
+
     if (dayKeys.length === 0) return; // Don't remove if it's the last day
-    
+
     setAgendaContent({
       ...agendaContent,
-      themes: remainingThemes
+      themes: remainingThemes,
     });
-    
+
     // Set active day to first available day if current day was removed
     if (activeDay === dayToRemove) {
       const firstDay = Math.min(...dayKeys);
@@ -260,20 +270,35 @@ const AgendaSection: React.FC = () => {
                 <input
                   type="text"
                   value={agendaContent.title}
-                  onChange={(e) => setAgendaContent({ ...agendaContent, title: e.target.value })}
+                  onChange={(e) =>
+                    setAgendaContent({
+                      ...agendaContent,
+                      title: e.target.value,
+                    })
+                  }
                   className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
                 />
                 <input
                   type="text"
                   value={agendaContent.titleHighlight}
-                  onChange={(e) => setAgendaContent({ ...agendaContent, titleHighlight: e.target.value })}
+                  onChange={(e) =>
+                    setAgendaContent({
+                      ...agendaContent,
+                      titleHighlight: e.target.value,
+                    })
+                  }
                   className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
                 />
               </div>
               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
               <textarea
                 value={agendaContent.subtitle}
-                onChange={(e) => setAgendaContent({ ...agendaContent, subtitle: e.target.value })}
+                onChange={(e) =>
+                  setAgendaContent({
+                    ...agendaContent,
+                    subtitle: e.target.value,
+                  })
+                }
                 className="text-gray-600 text-lg max-w-2xl mx-auto bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
                 rows={2}
               />
@@ -281,7 +306,10 @@ const AgendaSection: React.FC = () => {
           ) : (
             <>
               <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
-                {agendaContent.title} <span className="text-[#FF0000]">{agendaContent.titleHighlight}</span>
+                {agendaContent.title}{" "}
+                <span className="text-[#FF0000]">
+                  {agendaContent.titleHighlight}
+                </span>
               </h2>
               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -315,15 +343,16 @@ const AgendaSection: React.FC = () => {
                     >
                       Day {day}
                     </button>
-                    {editMode && Object.keys(agendaContent.themes).length > 1 && (
-                      <button
-                        onClick={() => handleRemoveDay(dayNum)}
-                        className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center"
-                        title="Remove Day"
-                      >
-                        ×
-                      </button>
-                    )}
+                    {editMode &&
+                      Object.keys(agendaContent.themes).length > 1 && (
+                        <button
+                          onClick={() => handleRemoveDay(dayNum)}
+                          className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center"
+                          title="Remove Day"
+                        >
+                          ×
+                        </button>
+                      )}
                   </div>
                 );
               })}

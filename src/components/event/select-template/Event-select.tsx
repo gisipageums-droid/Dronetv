@@ -81,7 +81,7 @@ const EventSelect: React.FC = () => {
             </motion.div>
 
             {/* Grid (single card) */}
-            <div className="grid grid-cols-1 ">
+            <div className="grid grid-cols-2 gap-6 ">
                 {templates.map((tpl) => {
                     const isActive = selectedTemplate === tpl.id;
                     const isHovered = hoveredTemplate === tpl.id;
