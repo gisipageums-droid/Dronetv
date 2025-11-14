@@ -274,8 +274,8 @@ const HeroSection: React.FC = () => {
           <div className="mb-8">
             {countdown.isEventExpired ? (
               <div className="text-center">
-                <div className="inline-block bg-red-500/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-red-400/30">
-                  <h3 className="text-2xl md:text-3xl font-bold text-red-400 mb-2">❌ Event is Expired</h3>
+                <div className="inline-block bg-orange-300/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-red-400/30">
+                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">✅ Event has been completed</h3>
                   <p className="text-white text-lg">This event has ended</p>
                 </div>
               </div>

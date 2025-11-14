@@ -1,6 +1,1626 @@
-import { X, ZoomIn } from "lucide-react";
+// import { X, ZoomIn } from "lucide-react";
+// import { motion } from "framer-motion";
+// import { useCallback, useEffect, useState, ChangeEvent } from "react";
+// import Cropper, { Area } from "react-easy-crop";
+// import { toast } from "react-toastify";
+// import { ImageWithFallback } from "./figma/ImageWithFallback";
+// import { Button } from "./ui/button";
+
+// interface Client {
+//   name: string;
+//   image: string;
+// }
+
+// interface Stat {
+//   value: string;
+//   label: string;
+// }
+
+// interface ClientsData {
+//   headline: {
+//     title: string;
+//     description: string;
+//   };
+//   clients: Client[];
+//   stats: Stat[];
+// }
+
+// interface ClientsProps {
+//   clientData: ClientsData;
+//   onStateChange: (data: ClientsData) => void;
+//   userId: string;
+//   publishedId: string;
+//   templateSelection: string;
+// }
+
+// export default function Clients({
+//   clientData,
+//   onStateChange,
+//   userId,
+//   publishedId,
+//   templateSelection,
+// }: ClientsProps) {
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [isUploading, setIsUploading] = useState(false);
+
+//   // Cropping states - ENHANCED WITH GALLERY LOGIC
+//   const [showCropper, setShowCropper] = useState(false);
+//   const [croppingFor, setCroppingFor] = useState<{ index: number } | null>(null);
+//   const [crop, setCrop] = useState({ x: 0, y: 0 });
+//   const [zoom, setZoom] = useState(1);
+//   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+//   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+//   const [originalFile, setOriginalFile] = useState<File | null>(null);
+//   const [pendingImages, setPendingImages] = useState<{ [key: number]: File }>({});
+//   const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+//   // NEW: Dynamic zoom calculation states
+//   const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+//   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+//   const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+//   const [isDragging, setIsDragging] = useState(false);
+//   const PAN_STEP = 10;
+
+//   // Merged all state into a single object
+//   const [clientsSection, setClientsSection] = useState<ClientsData>(clientData);
+
+//   // Allow more zoom-out; do not enforce cover when media/crop sizes change
+//   useEffect(() => {
+//     if (mediaSize && cropAreaSize) {
+//       setMinZoomDynamic(0.1);
+//     }
+//   }, [mediaSize, cropAreaSize]);
+
+//   // Arrow keys to pan image inside crop area when cropper is open
+//   const nudge = useCallback((dx: number, dy: number) => {
+//     setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+//   }, []);
+
+//   useEffect(() => {
+//     if (!showCropper) return;
+//     const onKeyDown = (e: KeyboardEvent) => {
+//       if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+//       else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+//       else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+//       else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+//     };
+//     window.addEventListener("keydown", onKeyDown);
+//     return () => window.removeEventListener("keydown", onKeyDown);
+//   }, [showCropper, nudge]);
+
+//   // Add this useEffect to notify parent of state changes
+//   useEffect(() => {
+//     if (onStateChange) {
+//       onStateChange(clientsSection);
+//     }
+//   }, [clientsSection, onStateChange]);
+
+//   // Handlers for clients
+//   const updateClient = (idx: number, field: keyof Client, value: string) => {
+//     setClientsSection((prev) => ({
+//       ...prev,
+//       clients: prev.clients.map((c, i) =>
+//         i === idx ? { ...c, [field]: value } : c
+//       ),
+//     }));
+//   };
+
+//   const removeClient = (idx: number) => {
+//     setClientsSection((prev) => ({
+//       ...prev,
+//       clients: prev.clients.filter((_, i) => i !== idx),
+//     }));
+//   };
+
+//   const addClient = () => {
+//     setClientsSection((prev) => ({
+//       ...prev,
+//       clients: [...prev.clients, { name: "New Client", image: "" }],
+//     }));
+//   };
+
+//   // Image cropping functionality - UPDATED WITH GALLERY LOGIC
+//   const handleClientImageSelect = (index: number, e: ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0];
+//     if (!file) return;
+
+//     if (!file.type.startsWith("image/")) {
+//       toast.error("Please select an image file");
+//       return;
+//     }
+
+//     if (file.size > 5 * 1024 * 1024) {
+//       toast.error("File size must be less than 5MB");
+//       return;
+//     }
+
+//     const reader = new FileReader();
+//     reader.onloadend = () => {
+//       setImageToCrop(reader.result as string);
+//       setOriginalFile(file);
+//       setCroppingFor({ index });
+//       setShowCropper(true);
+//       setAspectRatio(4 / 3);
+//       setCrop({ x: 0, y: 0 });
+//       setZoom(1);
+//     };
+//     reader.readAsDataURL(file);
+
+//     e.target.value = "";
+//   };
+
+//   // Cropper functions
+//   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
+//     setCroppedAreaPixels(croppedAreaPixels);
+//   }, []);
+
+//   const createImage = (url: string): Promise<HTMLImageElement> =>
+//     new Promise((resolve, reject) => {
+//       const image = new Image();
+//       image.addEventListener("load", () => resolve(image));
+//       image.addEventListener("error", (error) => reject(error));
+//       image.setAttribute("crossOrigin", "anonymous");
+//       image.src = url;
+//     });
+
+//   // UPDATED: Get cropped image with fixed 1:1 ratio for circular images
+//   const getCroppedImg = async (
+//     imageSrc: string,
+//     pixelCrop: Area
+//   ): Promise<{ file: File; previewUrl: string } | null> => {
+//     if (!originalFile) return null;
+//     const image = await createImage(imageSrc);
+//     const canvas = document.createElement("canvas");
+//     const ctx = canvas.getContext("2d");
+
+//     if (!ctx) return null;
+
+//     // FIXED: Set canvas size to 200x200 for consistent circular images
+//     const outputSize = 200;
+//     canvas.width = outputSize;
+//     canvas.height = outputSize;
+
+//     // Create circular clipping path
+//     ctx.beginPath();
+//     ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, 2 * Math.PI);
+//     ctx.closePath();
+//     ctx.clip();
+
+//     // Draw the image within the circular clip
+//     ctx.drawImage(
+//       image,
+//       pixelCrop.x,
+//       pixelCrop.y,
+//       pixelCrop.width,
+//       pixelCrop.height,
+//       0,
+//       0,
+//       outputSize,
+//       outputSize
+//     );
+
+//     return new Promise((resolve) => {
+//       canvas.toBlob(
+//         (blob) => {
+//           if (!blob) {
+//             resolve(null);
+//             return;
+//           }
+
+//           // UPDATED: Consistent file naming
+//           const fileName = `cropped-client-${originalFile.name.replace(/\.[^.]+$/, "")}.png`;
+
+//           const file = new File([blob], fileName, {
+//             type: "image/png",
+//             lastModified: Date.now(),
+//           });
+
+//           const previewUrl = URL.createObjectURL(blob);
+
+//           resolve({
+//             file,
+//             previewUrl,
+//           });
+//         },
+//         "image/png",
+//         1
+//       );
+//     });
+//   };
+
+//   // UPDATED: Apply crop with enhanced logic
+//   const applyCrop = async () => {
+//     try {
+//       if (!imageToCrop || !croppedAreaPixels || !croppingFor) {
+//         toast.error("Please select an area to crop");
+//         return;
+//       }
+
+//       const croppedImage = await getCroppedImg(
+//         imageToCrop,
+//         croppedAreaPixels
+//       );
+
+//       if (!croppedImage) {
+//         toast.error("Error cropping image. Please try again.");
+//         return;
+//       }
+
+//       const { file, previewUrl } = croppedImage;
+
+//       // Update preview immediately with blob URL (temporary)
+//       updateClient(croppingFor.index, "image", previewUrl);
+
+//       // Set the file for upload on save
+//       setPendingImages((prev) => ({
+//         ...prev,
+//         [croppingFor.index]: file,
+//       }));
+
+//       toast.success("Image cropped successfully! Click Save to upload to S3.");
+//       setShowCropper(false);
+//       setImageToCrop(null);
+//       setOriginalFile(null);
+//       setCroppingFor(null);
+//     } catch (error) {
+//       console.error("Error cropping image:", error);
+//       toast.error("Error cropping image. Please try again.");
+//     }
+//   };
+
+//   // UPDATED: Cancel cropping
+//   const cancelCrop = () => {
+//     setShowCropper(false);
+//     setImageToCrop(null);
+//     setOriginalFile(null);
+//     setCroppingFor(null);
+//     setCrop({ x: 0, y: 0 });
+//     setZoom(1);
+//   };
+
+//   // UPDATED: Reset crop settings
+//   const resetCropSettings = () => {
+//     setZoom(1);
+//     setCrop({ x: 0, y: 0 });
+//   };
+
+//   // Save handler - uploads all pending images
+//   const handleSave = async () => {
+//     try {
+//       setIsUploading(true);
+
+//       // Upload all pending images
+//       for (const [indexStr, file] of Object.entries(pendingImages)) {
+//         const index = parseInt(indexStr);
+
+//         if (!userId || !publishedId || !templateSelection) {
+//           console.error("Missing required props:", {
+//             userId,
+//             publishedId,
+//             templateSelection,
+//           });
+//           toast.error(
+//             "Missing user information. Please refresh and try again."
+//           );
+//           return;
+//         }
+
+//         const formData = new FormData();
+//         formData.append("file", file);
+//         formData.append("sectionName", "clients");
+//         formData.append("imageField", `clients[${index}].image_${Date.now()}`);
+//         formData.append("templateSelection", templateSelection);
+
+//         const uploadResponse = await fetch(
+//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           {
+//             method: "POST",
+//             body: formData,
+//           }
+//         );
+
+//         if (uploadResponse.ok) {
+//           const uploadData = await uploadResponse.json();
+//           // Update with actual S3 URL, not blob URL
+//           updateClient(index, "image", uploadData.imageUrl);
+//           console.log("Client image uploaded to S3:", uploadData.imageUrl);
+//         } else {
+//           const errorData = await uploadResponse.json();
+//           console.error("Client image upload failed:", errorData);
+//           toast.error(
+//             `Image upload failed: ${errorData.message || "Unknown error"}`
+//           );
+//           return;
+//         }
+//       }
+
+//       // Clear pending images
+//       setPendingImages({});
+//       setIsEditing(false);
+//       toast.success("Clients section saved with S3 URLs!");
+//     } catch (error) {
+//       console.error("Error saving clients section:", error);
+//       toast.error("Error saving changes. Please try again.");
+//     } finally {
+//       setIsUploading(false);
+//     }
+//   };
+
+//   // Duplicate clients for marquee loop
+//   const duplicatedClients = [
+//     ...clientsSection.clients,
+//     ...clientsSection.clients,
+//   ];
+
+//   const containerVariants = {
+//     hidden: { opacity: 0 },
+//     visible: {
+//       opacity: 1,
+//       transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+//     },
+//   };
+
+//   const logoVariants = {
+//     hidden: { y: 20, opacity: 0 },
+//     visible: {
+//       y: 0,
+//       opacity: 1,
+//       transition: { duration: 0.5, ease: "easeOut" },
+//     },
+//   };
+
+//   return (
+//     <>
+//       {/* Image Cropper Modal - UPDATED WITH GALLERY LOGIC */}
+//       {showCropper && (
+//         <motion.div
+//           initial={{ opacity: 0 }}
+//           animate={{ opacity: 1 }}
+//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//         >
+//           <motion.div
+//             initial={{ scale: 0.9, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//           >
+//             {/* Header */}
+//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+//               <h3 className="text-lg font-semibold text-gray-800">
+//                 Crop Client Image (4:3 Ratio)
+//               </h3>
+//               <button
+//                 onClick={cancelCrop}
+//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//               >
+//                 <X className="w-5 h-5 text-gray-600" />
+//               </button>
+//             </div>
+
+//             {/* Cropper Area */}
+//             <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+//               <Cropper
+//                 image={imageToCrop}
+//                 crop={crop}
+//                 zoom={zoom}
+//                 aspect={aspectRatio}
+//                 minZoom={minZoomDynamic}
+//                 maxZoom={5}
+//                 restrictPosition={false}
+//                 zoomWithScroll={true}
+//                 zoomSpeed={0.2}
+//                 onCropChange={setCrop}
+//                 onZoomChange={setZoom}
+//                 onCropComplete={onCropComplete}
+//                 onMediaLoaded={(ms) => setMediaSize(ms)} // NEW: Media loaded callback
+//                 onCropAreaChange={(area) => setCropAreaSize(area)} // NEW: Crop area change
+//                 onInteractionStart={() => setIsDragging(true)}
+//                 onInteractionEnd={() => setIsDragging(false)}
+//                 showGrid={true} // NEW: Better alignment
+//                 cropShape="round"
+//                 style={{
+//                   containerStyle: {
+//                     position: "relative",
+//                     width: "100%",
+//                     height: "100%",
+//                   },
+//                   cropAreaStyle: {
+//                     border: "2px solid white",
+//                     borderRadius: "50%",
+//                     boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
+//                   },
+//                 }}
+//               />
+//             </div>
+
+//             {/* Controls */}
+//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//               {/* Aspect Ratio Button - Only 4:3 */}
+//               <div className="mb-4">
+//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                   Aspect Ratio:
+//                 </p>
+//                 <div className="flex gap-2">
+//                   <button
+//                     onClick={() => setAspectRatio(4 / 3)}
+//                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+//                       ? "bg-blue-500 text-white border-blue-500"
+//                       : "bg-white text-gray-700 border-gray-300"
+//                       }`}
+//                   >
+//                     4:3 (Oval)
+//                   </button>
+//                 </div>
+//               </div>
+
+//               {/* Zoom Control - UPDATED WITH DYNAMIC RANGE */}
+//               <div className="space-y-2 mb-4">
+//                 <div className="flex items-center justify-between text-sm">
+//                   <span className="flex items-center gap-2 text-gray-700">
+//                     <ZoomIn className="w-4 h-4" />
+//                     Zoom
+//                   </span>
+//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                 </div>
+//                 <input
+//                   type="range"
+//                   value={zoom}
+//                   min={minZoomDynamic}
+//                   max={5}
+//                   step={0.1}
+//                   onChange={(e) => setZoom(Number(e.target.value))}
+//                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                 />
+//               </div>
+
+
+//               {/* Action Buttons */}
+//               <div className="grid grid-cols-3 gap-3">
+//                 <Button
+//                   variant="outline"
+//                   onClick={resetCropSettings}
+//                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+//                 >
+//                   Reset
+//                 </Button>
+//                 <Button
+//                   variant="outline"
+//                   onClick={cancelCrop}
+//                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+//                 >
+//                   Cancel
+//                 </Button>
+//                 <Button
+//                   onClick={applyCrop}
+//                   className="w-full bg-green-600 hover:bg-green-700 text-white"
+//                 >
+//                   Apply Crop
+//                 </Button>
+//               </div>
+//             </div>
+//           </motion.div>
+//         </motion.div>
+//       )}
+
+//       {/* Rest of the component remains the same */}
+//       <motion.section
+//         id="clients"
+//         className="py-20 bg-background theme-transition"
+//         initial={{ opacity: 0 }}
+//         whileInView={{ opacity: 1 }}
+//         viewport={{ once: true, margin: "-100px" }}
+//         transition={{ duration: 0.8 }}
+//       >
+//         <div className="max-w-6xl mx-auto px-6">
+//           {/* Edit/Save Buttons */}
+//           <div className="flex justify-end mt-6">
+//             {isEditing ? (
+//               <motion.button
+//                 whileTap={{ scale: 0.9 }}
+//                 whileHover={{ y: -1, scaleX: 1.1 }}
+//                 onClick={handleSave}
+//                 disabled={isUploading}
+//                 className={`${isUploading
+//                   ? "bg-gray-400 cursor-not-allowed"
+//                   : "bg-green-600 hover:shadow-2xl"
+//                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+//               >
+//                 {isUploading ? "Uploading..." : "Save"}
+//               </motion.button>
+//             ) : (
+//               <motion.button
+//                 whileTap={{ scale: 0.9 }}
+//                 whileHover={{ y: -1, scaleX: 1.1 }}
+//                 onClick={() => setIsEditing(true)}
+//                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+//               >
+//                 Edit
+//               </motion.button>
+//             )}
+//           </div>
+
+//           {/* Section Header */}
+//           <motion.div
+//             className="text-center mb-16"
+//             initial={{ y: 30, opacity: 0 }}
+//             whileInView={{ y: 0, opacity: 1 }}
+//             transition={{ duration: 0.8 }}
+//           >
+//             {isEditing ? (
+//               <>
+//                 <div className="relative">
+//                   <input
+//                     value={clientsSection.headline.title}
+//                     onChange={(e) =>
+//                       setClientsSection((prev) => ({
+//                         ...prev,
+//                         headline: { ...prev.headline, title: e.target.value },
+//                       }))
+//                     }
+//                     maxLength={80}
+//                     className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${clientsSection.headline.title.length >= 80
+//                       ? "border-red-500"
+//                       : ""
+//                       }`}
+//                   />
+//                   <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
+//                     {clientsSection.headline.title.length}/80
+//                     {clientsSection.headline.title.length >= 80 && (
+//                       <span className="ml-2 text-red-500 font-bold">
+//                         Character limit reached!
+//                       </span>
+//                     )}
+//                   </div>
+//                 </div>
+
+//                 <div className="relative">
+//                   <textarea
+//                     value={clientsSection.headline.description}
+//                     onChange={(e) =>
+//                       setClientsSection((prev) => ({
+//                         ...prev,
+//                         headline: {
+//                           ...prev.headline,
+//                           description: e.target.value,
+//                         },
+//                       }))
+//                     }
+//                     maxLength={200}
+//                     className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${clientsSection.headline.description.length >= 200
+//                       ? "border-red-500"
+//                       : ""
+//                       }`}
+//                     rows={2}
+//                   />
+//                   <div className="text-right text-xs text-gray-500 mt-1">
+//                     {clientsSection.headline.description.length}/200
+//                     {clientsSection.headline.description.length >= 200 && (
+//                       <span className="ml-2 text-red-500 font-bold">
+//                         Character limit reached!
+//                       </span>
+//                     )}
+//                   </div>
+//                 </div>
+//               </>
+//             ) : (
+//               <>
+//                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+//                   {clientsSection.headline.title}
+//                 </h2>
+//                 <p className="text-muted-foreground text-lg">
+//                   {clientsSection.headline.description}
+//                 </p>
+//               </>
+//             )}
+//           </motion.div>
+
+//           {/* Marquee Container */}
+//           <div className="group w-full overflow-hidden">
+//             <style>
+//               {`
+//                 @keyframes marquee {
+//                   0% { transform: translateX(0%); }
+//                   100% { transform: translateX(-50%); }
+//                 }
+//                 .animate-marquee {
+//                   animation: marquee 40s linear infinite;
+//                 }
+//                 .group:hover .animate-marquee {
+//                   animation-play-state: paused;
+//                 }
+//               `}
+//             </style>
+
+//             {isEditing && (
+//               <motion.div
+//                 whileTap={{ scale: 0.9 }}
+//                 whileHover={{ scale: 1.1 }}
+//                 className="flex items-center justify-center mb-8"
+//               >
+//                 <Button
+//                   onClick={addClient}
+//                   className="cursor-pointer text-green-600"
+//                 >
+//                   + Add Client
+//                 </Button>
+//               </motion.div>
+//             )}
+
+//             <motion.div
+//               className={`flex gap-10 items-start text-center ${!isEditing ? "animate-marquee" : ""
+//                 }`}
+//               variants={containerVariants}
+//               whileInView={{ opacity: [0, 1], y: [-50, 0] }}
+//               transition={{ duration: 1 }}
+//               viewport={{ once: true }}
+//             >
+//               {duplicatedClients.map((client, index) => (
+//                 <motion.div
+//                   key={index}
+//                   className="flex flex-col items-center flex-shrink-0 w-32 cursor-pointer"
+//                   variants={logoVariants}
+//                   whileHover={{ scale: 1.08 }}
+//                   transition={{ duration: 0.3 }}
+//                 >
+//                   <motion.div
+//                     className="w-20 h-20 rounded-full overflow-hidden shadow-md border border-border relative"
+//                     whileHover={{
+//                       borderColor: "var(--color-primary)",
+//                       boxShadow: "0 10px 25px rgba(250, 204, 21, 0.3)",
+//                     }}
+//                     transition={{ duration: 0.3 }}
+//                   >
+//                     {isEditing && (
+//                       <div className="absolute top-0 left-0 bg-black/70 text-white text-xs p-1 rounded z-10">
+//                         Recommended: 4:3
+//                       </div>
+//                     )}
+//                     <ImageWithFallback
+//                       src={client.image}
+//                       alt={`${client.name} logo`}
+//                       className="w-full h-full object-cover"
+//                     />
+//                     {isEditing && (
+//                       <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
+//                         <svg
+//                           className="w-4 h-4 text-white"
+//                           fill="none"
+//                           stroke="currentColor"
+//                           viewBox="0 0 24 24"
+//                         >
+//                           <path
+//                             strokeLinecap="round"
+//                             strokeLinejoin="round"
+//                             strokeWidth={2}
+//                             d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+//                           />
+//                           <path
+//                             strokeLinecap="round"
+//                             strokeLinejoin="round"
+//                             strokeWidth={2}
+//                             d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+//                           />
+//                         </svg>
+//                         <input
+//                           type="file"
+//                           accept="image/*"
+//                           className="hidden"
+//                           onChange={(e) =>
+//                             handleClientImageSelect(
+//                               index % clientsSection.clients.length,
+//                               e
+//                             )
+//                           }
+//                         />
+//                       </label>
+//                     )}
+//                   </motion.div>
+//                   <motion.div
+//                     className="mt-3"
+//                     whileHover={{ y: -2 }}
+//                     transition={{ duration: 0.2 }}
+//                   >
+//                     {isEditing ? (
+//                       <>
+//                         <div className="relative">
+//                           <input
+//                             value={client.name}
+//                             onChange={(e) =>
+//                               updateClient(
+//                                 index % clientsSection.clients.length,
+//                                 "name",
+//                                 e.target.value
+//                               )
+//                             }
+//                             maxLength={50}
+//                             className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-red-500" : ""
+//                               }`}
+//                           />
+//                           <div className="text-right text-xs text-gray-500 mt-1">
+//                             {client.name.length}/50
+//                             {client.name.length >= 50 && (
+//                               <span className="ml-2 text-red-500 font-bold">
+//                                 Limit reached!
+//                               </span>
+//                             )}
+//                           </div>
+//                         </div>
+
+//                         {pendingImages[
+//                           index % clientsSection.clients.length
+//                         ] && (
+//                             <p className="text-xs text-green-600 mt-1">
+//                               ✓ Image ready to upload
+//                             </p>
+//                           )}
+
+//                         <Button
+//                           size="sm"
+//                           variant="destructive"
+//                           className="mt-2 hover:scale-105 cursor-pointer"
+//                           onClick={() =>
+//                             removeClient(index % clientsSection.clients.length)
+//                           }
+//                         >
+//                           Remove
+//                         </Button>
+//                       </>
+//                     ) : (
+//                       <p className="text-sm font-medium text-card-foreground group-hover:text-primary transition-colors">
+//                         {client.name}
+//                       </p>
+//                     )}
+//                   </motion.div>
+//                 </motion.div>
+//               ))}
+//             </motion.div>
+//           </div>
+//         </div>
+//       </motion.section>
+//     </>
+//   );
+// }
+
+// import { X, ZoomIn } from "lucide-react";
+// import { motion } from "framer-motion";
+// import { useCallback, useEffect, useState, ChangeEvent, useRef } from "react";
+// import Cropper, { Area } from "react-easy-crop";
+// import { toast } from "react-toastify";
+// import { ImageWithFallback } from "./figma/ImageWithFallback";
+// import { Button } from "./ui/button";
+
+// interface Client {
+//   name: string;
+//   image: string;
+// }
+
+// interface Stat {
+//   value: string;
+//   label: string;
+// }
+
+// interface ClientsData {
+//   headline: {
+//     title: string;
+//     description: string;
+//   };
+//   clients: Client[];
+//   stats: Stat[];
+// }
+
+// interface ClientsProps {
+//   clientData: ClientsData;
+//   onStateChange: (data: ClientsData) => void;
+//   userId: string;
+//   publishedId: string;
+//   templateSelection: string;
+// }
+
+// export default function Clients({
+//   clientData,
+//   onStateChange,
+//   userId,
+//   publishedId,
+//   templateSelection,
+// }: ClientsProps) {
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [isUploading, setIsUploading] = useState(false);
+//   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+//   // Cropping states - ENHANCED WITH GALLERY LOGIC
+//   const [showCropper, setShowCropper] = useState(false);
+//   const [croppingFor, setCroppingFor] = useState<{ index: number } | null>(null);
+//   const [crop, setCrop] = useState({ x: 0, y: 0 });
+//   const [zoom, setZoom] = useState(1);
+//   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+//   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+//   const [originalFile, setOriginalFile] = useState<File | null>(null);
+//   const [pendingImages, setPendingImages] = useState<{ [key: number]: File }>({});
+//   const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+//   // NEW: Dynamic zoom calculation states
+//   const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+//   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+//   const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+//   const [isDragging, setIsDragging] = useState(false);
+//   const PAN_STEP = 10;
+
+//   // Track initial state to detect changes
+//   const initialClientsState = useRef<ClientsData>(null);
+
+//   // Merged all state into a single object
+//   const [clientsSection, setClientsSection] = useState<ClientsData>(() => {
+//     const initialState = clientData || {
+//       headline: {
+//         title: "Trusted by Industry Leaders",
+//         description: "We partner with forward-thinking companies to deliver exceptional results and drive innovation across industries."
+//       },
+//       clients: [
+//         { name: "Client 1", image: "" },
+//         { name: "Client 2", image: "" },
+//         { name: "Client 3", image: "" },
+//         { name: "Client 4", image: "" },
+//         { name: "Client 5", image: "" },
+//         { name: "Client 6", image: "" },
+//       ],
+//       stats: [
+//         { value: "50+", label: "Happy Clients" },
+//         { value: "95%", label: "Success Rate" },
+//         { value: "24/7", label: "Support" }
+//       ]
+//     };
+//     initialClientsState.current = initialState;
+//     return initialState;
+//   });
+
+//   // Allow more zoom-out; do not enforce cover when media/crop sizes change
+//   useEffect(() => {
+//     if (mediaSize && cropAreaSize) {
+//       setMinZoomDynamic(0.1);
+//     }
+//   }, [mediaSize, cropAreaSize]);
+
+//   // Arrow keys to pan image inside crop area when cropper is open
+//   const nudge = useCallback((dx: number, dy: number) => {
+//     setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+//   }, []);
+
+//   useEffect(() => {
+//     if (!showCropper) return;
+//     const onKeyDown = (e: KeyboardEvent) => {
+//       if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+//       else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+//       else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+//       else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+//     };
+//     window.addEventListener("keydown", onKeyDown);
+//     return () => window.removeEventListener("keydown", onKeyDown);
+//   }, [showCropper, nudge]);
+
+//   // Add this useEffect to notify parent of state changes immediately
+//   useEffect(() => {
+//     if (onStateChange) {
+//       onStateChange(clientsSection);
+//     }
+
+//     // Check if there are any changes from initial state
+//     const hasChanges = JSON.stringify(clientsSection) !== JSON.stringify(initialClientsState.current);
+//     setHasUnsavedChanges(hasChanges);
+//   }, [clientsSection, onStateChange]);
+
+//   // Handlers for clients - now update immediately
+//   const updateClient = (idx: number, field: keyof Client, value: string) => {
+//     setClientsSection((prev) => ({
+//       ...prev,
+//       clients: prev.clients.map((c, i) =>
+//         i === idx ? { ...c, [field]: value } : c
+//       ),
+//     }));
+//   };
+
+//   const removeClient = (idx: number) => {
+//     setClientsSection((prev) => ({
+//       ...prev,
+//       clients: prev.clients.filter((_, i) => i !== idx),
+//     }));
+//   };
+
+//   const addClient = () => {
+//     setClientsSection((prev) => ({
+//       ...prev,
+//       clients: [...prev.clients, { name: "New Client", image: "" }],
+//     }));
+//   };
+
+//   // Handle cancel editing
+//   const handleCancel = () => {
+//     // Reset to initial state
+//     setClientsSection(initialClientsState.current);
+//     setPendingImages({});
+//     setHasUnsavedChanges(false);
+//     setIsEditing(false);
+//   };
+
+//   // Image cropping functionality - UPDATED WITH GALLERY LOGIC
+//   const handleClientImageSelect = (index: number, e: ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0];
+//     if (!file) return;
+
+//     if (!file.type.startsWith("image/")) {
+//       toast.error("Please select an image file");
+//       return;
+//     }
+
+//     if (file.size > 5 * 1024 * 1024) {
+//       toast.error("File size must be less than 5MB");
+//       return;
+//     }
+
+//     const reader = new FileReader();
+//     reader.onloadend = () => {
+//       setImageToCrop(reader.result as string);
+//       setOriginalFile(file);
+//       setCroppingFor({ index });
+//       setShowCropper(true);
+//       setAspectRatio(4 / 3);
+//       setCrop({ x: 0, y: 0 });
+//       setZoom(1);
+//     };
+//     reader.readAsDataURL(file);
+
+//     e.target.value = "";
+//   };
+
+//   // Cropper functions
+//   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
+//     setCroppedAreaPixels(croppedAreaPixels);
+//   }, []);
+
+//   const createImage = (url: string): Promise<HTMLImageElement> =>
+//     new Promise((resolve, reject) => {
+//       const image = new Image();
+//       image.addEventListener("load", () => resolve(image));
+//       image.addEventListener("error", (error) => reject(error));
+//       image.setAttribute("crossOrigin", "anonymous");
+//       image.src = url;
+//     });
+
+//   // UPDATED: Get cropped image with fixed 1:1 ratio for circular images
+//   const getCroppedImg = async (
+//     imageSrc: string,
+//     pixelCrop: Area
+//   ): Promise<{ file: File; previewUrl: string } | null> => {
+//     if (!originalFile) return null;
+//     const image = await createImage(imageSrc);
+//     const canvas = document.createElement("canvas");
+//     const ctx = canvas.getContext("2d");
+
+//     if (!ctx) return null;
+
+//     // FIXED: Set canvas size to 200x200 for consistent circular images
+//     const outputSize = 200;
+//     canvas.width = outputSize;
+//     canvas.height = outputSize;
+
+//     // Create circular clipping path
+//     ctx.beginPath();
+//     ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, 2 * Math.PI);
+//     ctx.closePath();
+//     ctx.clip();
+
+//     // Draw the image within the circular clip
+//     ctx.drawImage(
+//       image,
+//       pixelCrop.x,
+//       pixelCrop.y,
+//       pixelCrop.width,
+//       pixelCrop.height,
+//       0,
+//       0,
+//       outputSize,
+//       outputSize
+//     );
+
+//     return new Promise((resolve) => {
+//       canvas.toBlob(
+//         (blob) => {
+//           if (!blob) {
+//             resolve(null);
+//             return;
+//           }
+
+//           // UPDATED: Consistent file naming
+//           const fileName = `cropped-client-${originalFile.name.replace(/\.[^.]+$/, "")}.png`;
+
+//           const file = new File([blob], fileName, {
+//             type: "image/png",
+//             lastModified: Date.now(),
+//           });
+
+//           const previewUrl = URL.createObjectURL(blob);
+
+//           resolve({
+//             file,
+//             previewUrl,
+//           });
+//         },
+//         "image/png",
+//         1
+//       );
+//     });
+//   };
+
+//   // UPDATED: Apply crop with enhanced logic
+//   const applyCrop = async () => {
+//     try {
+//       if (!imageToCrop || !croppedAreaPixels || !croppingFor) {
+//         toast.error("Please select an area to crop");
+//         return;
+//       }
+
+//       const croppedImage = await getCroppedImg(
+//         imageToCrop,
+//         croppedAreaPixels
+//       );
+
+//       if (!croppedImage) {
+//         toast.error("Error cropping image. Please try again.");
+//         return;
+//       }
+
+//       const { file, previewUrl } = croppedImage;
+
+//       // Update preview immediately with blob URL (temporary)
+//       updateClient(croppingFor.index, "image", previewUrl);
+
+//       // Set the file for upload on save
+//       setPendingImages((prev) => ({
+//         ...prev,
+//         [croppingFor.index]: file,
+//       }));
+
+//       toast.success("Image cropped successfully! Click Save to upload to S3.");
+//       setShowCropper(false);
+//       setImageToCrop(null);
+//       setOriginalFile(null);
+//       setCroppingFor(null);
+//     } catch (error) {
+//       console.error("Error cropping image:", error);
+//       toast.error("Error cropping image. Please try again.");
+//     }
+//   };
+
+//   // UPDATED: Cancel cropping
+//   const cancelCrop = () => {
+//     setShowCropper(false);
+//     setImageToCrop(null);
+//     setOriginalFile(null);
+//     setCroppingFor(null);
+//     setCrop({ x: 0, y: 0 });
+//     setZoom(1);
+//   };
+
+//   // UPDATED: Reset crop settings
+//   const resetCropSettings = () => {
+//     setZoom(1);
+//     setCrop({ x: 0, y: 0 });
+//   };
+
+//   // Save handler - uploads all pending images
+//   const handleSave = async () => {
+//     try {
+//       setIsUploading(true);
+
+//       // Upload all pending images
+//       for (const [indexStr, file] of Object.entries(pendingImages)) {
+//         const index = parseInt(indexStr);
+
+//         if (!userId || !publishedId || !templateSelection) {
+//           console.error("Missing required props:", {
+//             userId,
+//             publishedId,
+//             templateSelection,
+//           });
+//           toast.error(
+//             "Missing user information. Please refresh and try again."
+//           );
+//           return;
+//         }
+
+//         const formData = new FormData();
+//         formData.append("file", file);
+//         formData.append("sectionName", "clients");
+//         formData.append("imageField", `clients[${index}].image_${Date.now()}`);
+//         formData.append("templateSelection", templateSelection);
+
+//         const uploadResponse = await fetch(
+//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           {
+//             method: "POST",
+//             body: formData,
+//           }
+//         );
+
+//         if (uploadResponse.ok) {
+//           const uploadData = await uploadResponse.json();
+//           // Update with actual S3 URL, not blob URL
+//           updateClient(index, "image", uploadData.imageUrl);
+//           console.log("Client image uploaded to S3:", uploadData.imageUrl);
+//         } else {
+//           const errorData = await uploadResponse.json();
+//           console.error("Client image upload failed:", errorData);
+//           toast.error(
+//             `Image upload failed: ${errorData.message || "Unknown error"}`
+//           );
+//           return;
+//         }
+//       }
+
+//       // Update initial state reference to current state
+//       initialClientsState.current = clientsSection;
+//       setHasUnsavedChanges(false);
+      
+//       // Clear pending images
+//       setPendingImages({});
+//       setIsEditing(false);
+//       toast.success("Clients section saved with S3 URLs!");
+//     } catch (error) {
+//       console.error("Error saving clients section:", error);
+//       toast.error("Error saving changes. Please try again.");
+//     } finally {
+//       setIsUploading(false);
+//     }
+//   };
+
+//   // Duplicate clients for marquee loop
+//   const duplicatedClients = [
+//     ...clientsSection.clients,
+//     ...clientsSection.clients,
+//   ];
+
+//   const containerVariants = {
+//     hidden: { opacity: 0 },
+//     visible: {
+//       opacity: 1,
+//       transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+//     },
+//   };
+
+//   const logoVariants = {
+//     hidden: { y: 20, opacity: 0 },
+//     visible: {
+//       y: 0,
+//       opacity: 1,
+//       transition: { duration: 0.5, ease: "easeOut" },
+//     },
+//   };
+
+//   return (
+//     <>
+//       {/* Image Cropper Modal - UPDATED WITH GALLERY LOGIC */}
+//       {showCropper && (
+//         <motion.div
+//           initial={{ opacity: 0 }}
+//           animate={{ opacity: 1 }}
+//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//         >
+//           <motion.div
+//             initial={{ scale: 0.9, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//           >
+//             {/* Header */}
+//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+//               <h3 className="text-lg font-semibold text-gray-800">
+//                 Crop Client Image (4:3 Ratio)
+//               </h3>
+//               <button
+//                 onClick={cancelCrop}
+//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//               >
+//                 <X className="w-5 h-5 text-gray-600" />
+//               </button>
+//             </div>
+
+//             {/* Cropper Area */}
+//             <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+//               <Cropper
+//                 image={imageToCrop}
+//                 crop={crop}
+//                 zoom={zoom}
+//                 aspect={aspectRatio}
+//                 minZoom={minZoomDynamic}
+//                 maxZoom={5}
+//                 restrictPosition={false}
+//                 zoomWithScroll={true}
+//                 zoomSpeed={0.2}
+//                 onCropChange={setCrop}
+//                 onZoomChange={setZoom}
+//                 onCropComplete={onCropComplete}
+//                 onMediaLoaded={(ms) => setMediaSize(ms)} // NEW: Media loaded callback
+//                 onCropAreaChange={(area) => setCropAreaSize(area)} // NEW: Crop area change
+//                 onInteractionStart={() => setIsDragging(true)}
+//                 onInteractionEnd={() => setIsDragging(false)}
+//                 showGrid={true} // NEW: Better alignment
+//                 cropShape="round"
+//                 style={{
+//                   containerStyle: {
+//                     position: "relative",
+//                     width: "100%",
+//                     height: "100%",
+//                   },
+//                   cropAreaStyle: {
+//                     border: "2px solid white",
+//                     borderRadius: "50%",
+//                     boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
+//                   },
+//                 }}
+//               />
+//             </div>
+
+//             {/* Controls */}
+//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//               {/* Aspect Ratio Button - Only 4:3 */}
+//               <div className="mb-4">
+//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                   Aspect Ratio:
+//                 </p>
+//                 <div className="flex gap-2">
+//                   <button
+//                     onClick={() => setAspectRatio(4 / 3)}
+//                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+//                       ? "bg-blue-500 text-white border-blue-500"
+//                       : "bg-white text-gray-700 border-gray-300"
+//                       }`}
+//                   >
+//                     4:3 (Oval)
+//                   </button>
+//                 </div>
+//               </div>
+
+//               {/* Zoom Control - UPDATED WITH DYNAMIC RANGE */}
+//               <div className="space-y-2 mb-4">
+//                 <div className="flex items-center justify-between text-sm">
+//                   <span className="flex items-center gap-2 text-gray-700">
+//                     <ZoomIn className="w-4 h-4" />
+//                     Zoom
+//                   </span>
+//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                 </div>
+//                 <input
+//                   type="range"
+//                   value={zoom}
+//                   min={minZoomDynamic}
+//                   max={5}
+//                   step={0.1}
+//                   onChange={(e) => setZoom(Number(e.target.value))}
+//                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                 />
+//               </div>
+
+
+//               {/* Action Buttons */}
+//               <div className="grid grid-cols-3 gap-3">
+//                 <Button
+//                   variant="outline"
+//                   onClick={resetCropSettings}
+//                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+//                 >
+//                   Reset
+//                 </Button>
+//                 <Button
+//                   variant="outline"
+//                   onClick={cancelCrop}
+//                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+//                 >
+//                   Cancel
+//                 </Button>
+//                 <Button
+//                   onClick={applyCrop}
+//                   className="w-full bg-green-600 hover:bg-green-700 text-white"
+//                 >
+//                   Apply Crop
+//                 </Button>
+//               </div>
+//             </div>
+//           </motion.div>
+//         </motion.div>
+//       )}
+
+//       {/* Rest of the component remains the same */}
+//       <motion.section
+//         id="clients"
+//         className="py-20 bg-background theme-transition"
+//         initial={{ opacity: 0 }}
+//         whileInView={{ opacity: 1 }}
+//         viewport={{ once: true, margin: "-100px" }}
+//         transition={{ duration: 0.8 }}
+//       >
+//         <div className="max-w-6xl mx-auto px-6">
+//           {/* Edit/Save Buttons */}
+//           <div className="flex justify-end mt-6 gap-2">
+//             {isEditing ? (
+//               <>
+//                 <motion.button
+//                   whileTap={{ scale: 0.9 }}
+//                   whileHover={{ y: -1, scaleX: 1.05 }}
+//                   onClick={handleCancel}
+//                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+//                 >
+//                   Cancel
+//                 </motion.button>
+//                 <motion.button
+//                   whileTap={{ scale: 0.9 }}
+//                   whileHover={{ y: -1, scaleX: 1.1 }}
+//                   onClick={handleSave}
+//                   disabled={isUploading}
+//                   className={`${isUploading
+//                     ? "bg-gray-400 cursor-not-allowed"
+//                     : hasUnsavedChanges || Object.keys(pendingImages).length > 0
+//                       ? "bg-green-600 hover:shadow-2xl"
+//                       : "bg-gray-400 cursor-not-allowed"
+//                     } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+//                 >
+//                   {isUploading ? "Uploading..." : "Save"}
+//                 </motion.button>
+//               </>
+//             ) : (
+//               <motion.button
+//                 whileTap={{ scale: 0.9 }}
+//                 whileHover={{ y: -1, scaleX: 1.1 }}
+//                 onClick={() => setIsEditing(true)}
+//                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+//               >
+//                 Edit
+//               </motion.button>
+//             )}
+//           </div>
+
+//           {/* Section Header */}
+//           <motion.div
+//             className="text-center mb-16"
+//             initial={{ y: 30, opacity: 0 }}
+//             whileInView={{ y: 0, opacity: 1 }}
+//             transition={{ duration: 0.8 }}
+//           >
+//             {isEditing ? (
+//               <>
+//                 <div className="relative">
+//                   <input
+//                     value={clientsSection.headline.title}
+//                     onChange={(e) =>
+//                       setClientsSection((prev) => ({
+//                         ...prev,
+//                         headline: { ...prev.headline, title: e.target.value },
+//                       }))
+//                     }
+//                     maxLength={80}
+//                     className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${clientsSection.headline.title.length >= 80
+//                       ? "border-red-500"
+//                       : ""
+//                       }`}
+//                   />
+//                   <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
+//                     {clientsSection.headline.title.length}/80
+//                     {clientsSection.headline.title.length >= 80 && (
+//                       <span className="ml-2 text-red-500 font-bold">
+//                         Character limit reached!
+//                       </span>
+//                     )}
+//                   </div>
+//                 </div>
+
+//                 <div className="relative">
+//                   <textarea
+//                     value={clientsSection.headline.description}
+//                     onChange={(e) =>
+//                       setClientsSection((prev) => ({
+//                         ...prev,
+//                         headline: {
+//                           ...prev.headline,
+//                           description: e.target.value,
+//                         },
+//                       }))
+//                     }
+//                     maxLength={200}
+//                     className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${clientsSection.headline.description.length >= 200
+//                       ? "border-red-500"
+//                       : ""
+//                       }`}
+//                     rows={2}
+//                   />
+//                   <div className="text-right text-xs text-gray-500 mt-1">
+//                     {clientsSection.headline.description.length}/200
+//                     {clientsSection.headline.description.length >= 200 && (
+//                       <span className="ml-2 text-red-500 font-bold">
+//                         Character limit reached!
+//                       </span>
+//                     )}
+//                   </div>
+//                 </div>
+//               </>
+//             ) : (
+//               <>
+//                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+//                   {clientsSection.headline.title}
+//                 </h2>
+//                 <p className="text-muted-foreground text-lg">
+//                   {clientsSection.headline.description}
+//                 </p>
+//               </>
+//             )}
+//           </motion.div>
+
+//           {/* Marquee Container */}
+//           <div className="group w-full overflow-hidden">
+//             <style>
+//               {`
+//                 @keyframes marquee {
+//                   0% { transform: translateX(0%); }
+//                   100% { transform: translateX(-50%); }
+//                 }
+//                 .animate-marquee {
+//                   animation: marquee 40s linear infinite;
+//                 }
+//                 .group:hover .animate-marquee {
+//                   animation-play-state: paused;
+//                 }
+//               `}
+//             </style>
+
+//             {isEditing && (
+//               <motion.div
+//                 whileTap={{ scale: 0.9 }}
+//                 whileHover={{ scale: 1.1 }}
+//                 className="flex items-center justify-center mb-8"
+//               >
+//                 <Button
+//                   onClick={addClient}
+//                   className="cursor-pointer text-green-600"
+//                 >
+//                   + Add Client
+//                 </Button>
+//               </motion.div>
+//             )}
+
+//             <motion.div
+//               className={`flex gap-10 items-start text-center ${!isEditing ? "animate-marquee" : ""
+//                 }`}
+//               variants={containerVariants}
+//               whileInView={{ opacity: [0, 1], y: [-50, 0] }}
+//               transition={{ duration: 1 }}
+//               viewport={{ once: true }}
+//             >
+//               {duplicatedClients.map((client, index) => (
+//                 <motion.div
+//                   key={index}
+//                   className="flex flex-col items-center flex-shrink-0 w-32 cursor-pointer"
+//                   variants={logoVariants}
+//                   whileHover={{ scale: 1.08 }}
+//                   transition={{ duration: 0.3 }}
+//                 >
+//                   <motion.div
+//                     className="w-20 h-20 rounded-full overflow-hidden shadow-md border border-border relative"
+//                     whileHover={{
+//                       borderColor: "var(--color-primary)",
+//                       boxShadow: "0 10px 25px rgba(250, 204, 21, 0.3)",
+//                     }}
+//                     transition={{ duration: 0.3 }}
+//                   >
+//                     {isEditing && (
+//                       <div className="absolute top-0 left-0 bg-black/70 text-white text-xs p-1 rounded z-10">
+//                         Recommended: 4:3
+//                       </div>
+//                     )}
+//                     <ImageWithFallback
+//                       src={client.image}
+//                       alt={`${client.name} logo`}
+//                       className="w-full h-full object-cover"
+//                     />
+//                     {isEditing && (
+//                       <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
+//                         <svg
+//                           className="w-4 h-4 text-white"
+//                           fill="none"
+//                           stroke="currentColor"
+//                           viewBox="0 0 24 24"
+//                         >
+//                           <path
+//                             strokeLinecap="round"
+//                             strokeLinejoin="round"
+//                             strokeWidth={2}
+//                             d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+//                           />
+//                           <path
+//                             strokeLinecap="round"
+//                             strokeLinejoin="round"
+//                             strokeWidth={2}
+//                             d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+//                           />
+//                         </svg>
+//                         <input
+//                           type="file"
+//                           accept="image/*"
+//                           className="hidden"
+//                           onChange={(e) =>
+//                             handleClientImageSelect(
+//                               index % clientsSection.clients.length,
+//                               e
+//                             )
+//                           }
+//                         />
+//                       </label>
+//                     )}
+//                   </motion.div>
+//                   <motion.div
+//                     className="mt-3"
+//                     whileHover={{ y: -2 }}
+//                     transition={{ duration: 0.2 }}
+//                   >
+//                     {isEditing ? (
+//                       <>
+//                         <div className="relative">
+//                           <input
+//                             value={client.name}
+//                             onChange={(e) =>
+//                               updateClient(
+//                                 index % clientsSection.clients.length,
+//                                 "name",
+//                                 e.target.value
+//                               )
+//                             }
+//                             maxLength={50}
+//                             className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-red-500" : ""
+//                               }`}
+//                           />
+//                           <div className="text-right text-xs text-gray-500 mt-1">
+//                             {client.name.length}/50
+//                             {client.name.length >= 50 && (
+//                               <span className="ml-2 text-red-500 font-bold">
+//                                 Limit reached!
+//                               </span>
+//                             )}
+//                           </div>
+//                         </div>
+
+//                         {pendingImages[
+//                           index % clientsSection.clients.length
+//                         ] && (
+//                             <p className="text-xs text-green-600 mt-1">
+//                               ✓ Image ready to upload
+//                             </p>
+//                           )}
+
+//                         <Button
+//                           size="sm"
+//                           variant="destructive"
+//                           className="mt-2 hover:scale-105 cursor-pointer"
+//                           onClick={() =>
+//                             removeClient(index % clientsSection.clients.length)
+//                           }
+//                         >
+//                           Remove
+//                         </Button>
+//                       </>
+//                     ) : (
+//                       <p className="text-sm font-medium text-card-foreground group-hover:text-primary transition-colors">
+//                         {client.name}
+//                       </p>
+//                     )}
+//                   </motion.div>
+//                 </motion.div>
+//               ))}
+//             </motion.div>
+//           </div>
+//         </div>
+//       </motion.section>
+//     </>
+//   );
+// }
+
+
+import { X, ZoomIn, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { useCallback, useEffect, useState, ChangeEvent } from "react";
+import { useCallback, useEffect, useState, ChangeEvent, useRef } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import { toast } from "react-toastify";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -42,6 +1662,7 @@ export default function Clients({
 }: ClientsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Cropping states - ENHANCED WITH GALLERY LOGIC
   const [showCropper, setShowCropper] = useState(false);
@@ -52,7 +1673,7 @@ export default function Clients({
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [pendingImages, setPendingImages] = useState<{ [key: number]: File }>({});
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+  const [aspectRatio, setAspectRatio] = useState(1); // Changed to 1:1 for circular images
 
   // NEW: Dynamic zoom calculation states
   const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
@@ -61,8 +1682,56 @@ export default function Clients({
   const [isDragging, setIsDragging] = useState(false);
   const PAN_STEP = 10;
 
+  // Track initial state to detect changes
+  const initialClientsState = useRef<ClientsData>(null);
+
   // Merged all state into a single object
-  const [clientsSection, setClientsSection] = useState<ClientsData>(clientData);
+  const [clientsSection, setClientsSection] = useState<ClientsData>(() => {
+    const initialState = clientData || {
+      headline: {
+        title: "Trusted by Industry Leaders",
+        description: "We partner with forward-thinking companies to deliver exceptional results and drive innovation across industries."
+      },
+      clients: [
+        { name: "Client 1", image: "" },
+        { name: "Client 2", image: "" },
+        { name: "Client 3", image: "" },
+        { name: "Client 4", image: "" },
+        { name: "Client 5", image: "" },
+        { name: "Client 6", image: "" },
+      ],
+      stats: [
+        { value: "50+", label: "Happy Clients" },
+        { value: "95%", label: "Success Rate" },
+        { value: "24/7", label: "Support" }
+      ]
+    };
+    initialClientsState.current = JSON.parse(JSON.stringify(initialState));
+    return initialState;
+  });
+
+  // AUTO-UPDATE: Notify parent of state changes immediately
+  useEffect(() => {
+    if (onStateChange) {
+      onStateChange(clientsSection);
+    }
+
+    // Check if there are any changes from initial state
+    const hasChanges = JSON.stringify(clientsSection) !== JSON.stringify(initialClientsState.current);
+    setHasUnsavedChanges(hasChanges);
+  }, [clientsSection, onStateChange]);
+
+  // AUTO-UPLOAD: Auto-save when images are uploaded
+  useEffect(() => {
+    const autoSaveImages = async () => {
+      const pendingEntries = Object.entries(pendingImages);
+      if (pendingEntries.length > 0 && !isUploading) {
+        await handleImageUpload();
+      }
+    };
+
+    autoSaveImages();
+  }, [pendingImages]);
 
   // Allow more zoom-out; do not enforce cover when media/crop sizes change
   useEffect(() => {
@@ -88,20 +1757,20 @@ export default function Clients({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [showCropper, nudge]);
 
-  // Add this useEffect to notify parent of state changes
-  useEffect(() => {
-    if (onStateChange) {
-      onStateChange(clientsSection);
-    }
-  }, [clientsSection, onStateChange]);
-
-  // Handlers for clients
+  // Handlers for clients - now update immediately
   const updateClient = (idx: number, field: keyof Client, value: string) => {
     setClientsSection((prev) => ({
       ...prev,
       clients: prev.clients.map((c, i) =>
         i === idx ? { ...c, [field]: value } : c
       ),
+    }));
+  };
+
+  const updateHeadline = (field: keyof ClientsData['headline'], value: string) => {
+    setClientsSection((prev) => ({
+      ...prev,
+      headline: { ...prev.headline, [field]: value },
     }));
   };
 
@@ -119,7 +1788,16 @@ export default function Clients({
     }));
   };
 
-  // Image cropping functionality - UPDATED WITH GALLERY LOGIC
+  // Handle cancel editing
+  const handleCancel = () => {
+    // Reset to initial state
+    setClientsSection(initialClientsState.current);
+    setPendingImages({});
+    setHasUnsavedChanges(false);
+    setIsEditing(false);
+  };
+
+  // Image cropping functionality - UPDATED WITH AUTO UPLOAD
   const handleClientImageSelect = (index: number, e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -140,7 +1818,7 @@ export default function Clients({
       setOriginalFile(file);
       setCroppingFor({ index });
       setShowCropper(true);
-      setAspectRatio(4 / 3);
+      setAspectRatio(1); // 1:1 for circular images
       setCrop({ x: 0, y: 0 });
       setZoom(1);
     };
@@ -163,7 +1841,7 @@ export default function Clients({
       image.src = url;
     });
 
-  // UPDATED: Get cropped image with fixed 1:1 ratio for circular images
+  // Get cropped image with fixed 1:1 ratio for circular images
   const getCroppedImg = async (
     imageSrc: string,
     pixelCrop: Area
@@ -175,7 +1853,7 @@ export default function Clients({
 
     if (!ctx) return null;
 
-    // FIXED: Set canvas size to 200x200 for consistent circular images
+    // Set canvas size to 200x200 for consistent circular images
     const outputSize = 200;
     canvas.width = outputSize;
     canvas.height = outputSize;
@@ -207,8 +1885,7 @@ export default function Clients({
             return;
           }
 
-          // UPDATED: Consistent file naming
-          const fileName = `cropped-client-${originalFile.name.replace(/\.[^.]+$/, "")}.png`;
+          const fileName = `cropped-client-${croppingFor?.index}-${Date.now()}.png`;
 
           const file = new File([blob], fileName, {
             type: "image/png",
@@ -228,7 +1905,7 @@ export default function Clients({
     });
   };
 
-  // UPDATED: Apply crop with enhanced logic
+  // UPDATED: Apply crop with AUTO UPLOAD
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || !croppingFor) {
@@ -251,13 +1928,18 @@ export default function Clients({
       // Update preview immediately with blob URL (temporary)
       updateClient(croppingFor.index, "image", previewUrl);
 
-      // Set the file for upload on save
+      // Set the file for auto-upload
       setPendingImages((prev) => ({
         ...prev,
         [croppingFor.index]: file,
       }));
 
-      toast.success("Image cropped successfully! Click Save to upload to S3.");
+      console.log("Client image cropped, file ready for auto-upload:", file);
+
+      // Auto-upload immediately after cropping
+      await handleImageUpload();
+
+      toast.success("Image cropped and uploaded successfully!");
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
@@ -268,7 +1950,7 @@ export default function Clients({
     }
   };
 
-  // UPDATED: Cancel cropping
+  // Cancel cropping
   const cancelCrop = () => {
     setShowCropper(false);
     setImageToCrop(null);
@@ -278,18 +1960,19 @@ export default function Clients({
     setZoom(1);
   };
 
-  // UPDATED: Reset crop settings
+  // Reset crop settings
   const resetCropSettings = () => {
     setZoom(1);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Save handler - uploads all pending images
-  const handleSave = async () => {
+  // SEPARATE FUNCTION: Handle image upload only
+  const handleImageUpload = async () => {
     try {
       setIsUploading(true);
+      const uploadPromises = [];
 
-      // Upload all pending images
+      // Create upload promises for all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
 
@@ -302,47 +1985,92 @@ export default function Clients({
           toast.error(
             "Missing user information. Please refresh and try again."
           );
-          return;
+          continue;
         }
 
         const formData = new FormData();
         formData.append("file", file);
         formData.append("sectionName", "clients");
-        formData.append("imageField", `clients[${index}].image_${Date.now()}`);
+        formData.append("imageField", `clients[${index}].image`);
         formData.append("templateSelection", templateSelection);
 
-        const uploadResponse = await fetch(
+        console.log("Auto-uploading client image to S3:", file);
+
+        const uploadPromise = fetch(
           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
             body: formData,
           }
-        );
+        ).then(async (uploadResponse) => {
+          if (uploadResponse.ok) {
+            const uploadData = await uploadResponse.json();
+            // Replace local preview with S3 URL
+            updateClient(index, "image", uploadData.imageUrl);
+            console.log("Image auto-uploaded to S3:", uploadData.imageUrl);
+            return { success: true, index };
+          } else {
+            const errorData = await uploadResponse.json();
+            console.error("Image auto-upload failed:", errorData);
+            throw new Error(errorData.message || "Upload failed");
+          }
+        });
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Update with actual S3 URL, not blob URL
-          updateClient(index, "image", uploadData.imageUrl);
-          console.log("Client image uploaded to S3:", uploadData.imageUrl);
-        } else {
-          const errorData = await uploadResponse.json();
-          console.error("Client image upload failed:", errorData);
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
-          return;
-        }
+        uploadPromises.push(uploadPromise);
       }
 
-      // Clear pending images
-      setPendingImages({});
+      // Wait for all uploads to complete
+      const results = await Promise.allSettled(uploadPromises);
+      
+      const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
+      const failedUploads = results.filter(result => result.status === 'rejected').length;
+
+      if (successfulUploads > 0) {
+        toast.success(`${successfulUploads} client image(s) uploaded successfully!`);
+      }
+      if (failedUploads > 0) {
+        toast.error(`${failedUploads} client image(s) failed to upload. Please try again.`);
+      }
+
+      // Clear only successfully uploaded images from pending
+      const successfulIndices = results
+        .filter(result => result.status === 'fulfilled')
+        .map(result => result.value.index);
+      
+      setPendingImages(prev => {
+        const updated = { ...prev };
+        successfulIndices.forEach(index => {
+          delete updated[index];
+        });
+        return updated;
+      });
+
+    } catch (error) {
+      console.error("Error in auto-upload:", error);
+      toast.error("Error uploading client images. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Updated Save button handler - now only exits edit mode
+  const handleSave = async () => {
+    try {
+      // If there are pending images, upload them first
+      if (Object.keys(pendingImages).length > 0) {
+        await handleImageUpload();
+      }
+      
+      // Update initial state reference to current state
+      initialClientsState.current = JSON.parse(JSON.stringify(clientsSection));
+      setHasUnsavedChanges(false);
+      
+      // Exit edit mode
       setIsEditing(false);
-      toast.success("Clients section saved with S3 URLs!");
+      toast.success("Clients section saved!");
     } catch (error) {
       console.error("Error saving clients section:", error);
       toast.error("Error saving changes. Please try again.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -371,7 +2099,7 @@ export default function Clients({
 
   return (
     <>
-      {/* Image Cropper Modal - UPDATED WITH GALLERY LOGIC */}
+      {/* Image Cropper Modal - UPDATED WITH AUTO UPLOAD */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -386,7 +2114,7 @@ export default function Clients({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop Client Image (4:3 Ratio)
+                Crop Client Image (1:1 Ratio for Circular)
               </h3>
               <button
                 onClick={cancelCrop}
@@ -411,11 +2139,11 @@ export default function Clients({
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                onMediaLoaded={(ms) => setMediaSize(ms)} // NEW: Media loaded callback
-                onCropAreaChange={(area) => setCropAreaSize(area)} // NEW: Crop area change
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onInteractionStart={() => setIsDragging(true)}
                 onInteractionEnd={() => setIsDragging(false)}
-                showGrid={true} // NEW: Better alignment
+                showGrid={true}
                 cropShape="round"
                 style={{
                   containerStyle: {
@@ -434,25 +2162,26 @@ export default function Clients({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Button - Only 4:3 */}
+              {/* Aspect Ratio Button - Only 1:1 for circular */}
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
-                    4:3 (Oval)
+                    1:1 (Circular)
                   </button>
                 </div>
               </div>
 
-              {/* Zoom Control - UPDATED WITH DYNAMIC RANGE */}
+              {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2 text-gray-700">
@@ -472,7 +2201,6 @@ export default function Clients({
                 />
               </div>
 
-
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">
                 <Button
@@ -491,9 +2219,14 @@ export default function Clients({
                 </Button>
                 <Button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  disabled={isUploading}
+                  className={`w-full ${
+                    isUploading 
+                      ? "bg-gray-400 cursor-not-allowed" 
+                      : "bg-green-600 hover:bg-green-700"
+                  } text-white`}
                 >
-                  Apply Crop
+                  {isUploading ? "Uploading..." : "Apply Crop"}
                 </Button>
               </div>
             </div>
@@ -501,7 +2234,6 @@ export default function Clients({
         </motion.div>
       )}
 
-      {/* Rest of the component remains the same */}
       <motion.section
         id="clients"
         className="py-20 bg-background theme-transition"
@@ -512,20 +2244,33 @@ export default function Clients({
       >
         <div className="max-w-6xl mx-auto px-6">
           {/* Edit/Save Buttons */}
-          <div className="flex justify-end mt-6">
+          <div className="flex justify-end mt-6 gap-2">
             {isEditing ? (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={handleSave}
-                disabled={isUploading}
-                className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:shadow-2xl"
+              <>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ y: -1, scaleX: 1.05 }}
+                  onClick={handleCancel}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ y: -1, scaleX: 1.1 }}
+                  onClick={handleSave}
+                  disabled={isUploading}
+                  className={`${
+                    isUploading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : hasUnsavedChanges || Object.keys(pendingImages).length > 0
+                      ? "bg-green-600 hover:shadow-2xl"
+                      : "bg-gray-400 cursor-not-allowed"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
-              >
-                {isUploading ? "Uploading..." : "Save"}
-              </motion.button>
+                >
+                  {isUploading ? "Uploading..." : "Save & Exit"}
+                </motion.button>
+              </>
             ) : (
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -537,6 +2282,14 @@ export default function Clients({
               </motion.button>
             )}
           </div>
+
+          {/* Auto-update status indicator */}
+          {isEditing && (
+            <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+              <CheckCircle className="w-4 h-4 mr-1" />
+              Auto-saving changes...
+            </div>
+          )}
 
           {/* Section Header */}
           <motion.div
@@ -550,17 +2303,13 @@ export default function Clients({
                 <div className="relative">
                   <input
                     value={clientsSection.headline.title}
-                    onChange={(e) =>
-                      setClientsSection((prev) => ({
-                        ...prev,
-                        headline: { ...prev.headline, title: e.target.value },
-                      }))
-                    }
+                    onChange={(e) => updateHeadline("title", e.target.value)}
                     maxLength={80}
-                    className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${clientsSection.headline.title.length >= 80
-                      ? "border-red-500"
-                      : ""
-                      }`}
+                    className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${
+                      clientsSection.headline.title.length >= 80
+                        ? "border-red-500"
+                        : ""
+                    }`}
                   />
                   <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
                     {clientsSection.headline.title.length}/80
@@ -575,20 +2324,13 @@ export default function Clients({
                 <div className="relative">
                   <textarea
                     value={clientsSection.headline.description}
-                    onChange={(e) =>
-                      setClientsSection((prev) => ({
-                        ...prev,
-                        headline: {
-                          ...prev.headline,
-                          description: e.target.value,
-                        },
-                      }))
-                    }
+                    onChange={(e) => updateHeadline("description", e.target.value)}
                     maxLength={200}
-                    className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${clientsSection.headline.description.length >= 200
-                      ? "border-red-500"
-                      : ""
-                      }`}
+                    className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${
+                      clientsSection.headline.description.length >= 200
+                        ? "border-red-500"
+                        : ""
+                    }`}
                     rows={2}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
@@ -646,8 +2388,9 @@ export default function Clients({
             )}
 
             <motion.div
-              className={`flex gap-10 items-start text-center ${!isEditing ? "animate-marquee" : ""
-                }`}
+              className={`flex gap-10 items-start text-center ${
+                !isEditing ? "animate-marquee" : ""
+              }`}
               variants={containerVariants}
               whileInView={{ opacity: [0, 1], y: [-50, 0] }}
               transition={{ duration: 1 }}
@@ -671,7 +2414,7 @@ export default function Clients({
                   >
                     {isEditing && (
                       <div className="absolute top-0 left-0 bg-black/70 text-white text-xs p-1 rounded z-10">
-                        Recommended: 4:3
+                        Recommended: 1:1
                       </div>
                     )}
                     <ImageWithFallback
@@ -713,6 +2456,9 @@ export default function Clients({
                         />
                       </label>
                     )}
+                    {pendingImages[index % clientsSection.clients.length] && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+                    )}
                   </motion.div>
                   <motion.div
                     className="mt-3"
@@ -732,8 +2478,9 @@ export default function Clients({
                               )
                             }
                             maxLength={50}
-                            className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-red-500" : ""
-                              }`}
+                            className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${
+                              client.name.length >= 50 ? "border-red-500" : ""
+                            }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {client.name.length}/50
@@ -748,10 +2495,10 @@ export default function Clients({
                         {pendingImages[
                           index % clientsSection.clients.length
                         ] && (
-                            <p className="text-xs text-green-600 mt-1">
-                              ✓ Image ready to upload
-                            </p>
-                          )}
+                          <p className="text-xs text-green-600 mt-1">
+                            ✓ Image uploaded to AWS
+                          </p>
+                        )}
 
                         <Button
                           size="sm"

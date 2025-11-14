@@ -1,7 +1,7 @@
 import React, { useState, useCallback, memo } from 'react';
 import { Edit2, Save, X, Plus, Trash2, Edit } from 'lucide-react';
 
-/** initial data (you can move this to a JSON file or fetch from API) */
+/** initial data */
 const initialSpeakers = [
   {
     day: "Day 1 (24th April'25)",
@@ -40,536 +40,411 @@ const initialSpeakers = [
   }
 ];
 
-// Utility functions
+/* Utility functions */
 const getColorForAvatar = (name = '') => {
   const colors = [
-    'bg-purple-500',
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-red-500',
-    'bg-indigo-500',
-    'bg-pink-500',
-    'bg-cyan-500'
+    'bg-purple-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500',
+    'bg-red-500', 'bg-indigo-500', 'bg-pink-500', 'bg-cyan-500'
   ];
-  const code = name && name.length ? name.charCodeAt(0) : 65;
-  const idx = code % colors.length;
-  return colors[idx];
+  const code = name.length ? name.charCodeAt(0) : 65;
+  return colors[code % colors.length];
 };
 
 const getInitials = (name = '') => {
   if (!name) return 'NA';
   const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-  return (parts[0][0] + parts[1][0]).toUpperCase();
+  return parts.length > 1
+    ? (parts[0][0] + parts[1][0]).toUpperCase()
+    : parts[0].substring(0, 2).toUpperCase();
 };
 
-// Memoized SpeakerCard component to prevent unnecessary re-renders
-const SpeakerCard = memo(({ 
-  speaker, 
-  dayIndex, 
-  speakerIndex, 
-  isEditing, 
-  editForm,
-  isEditMode,
-  onEdit,
-  onSave,
-  onCancel,
-  onDelete,
-  onFormChange
-}) => {
-  if (isEditing) {
-    return (
-      <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-blue-400 transition-all duration-300">
-        <div className="space-y-4">
-          <input
-            type="text"
-            value={editForm.name || ''}
-            onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none"
-            placeholder="Speaker Name"
-            autoFocus
-          />
-          <input
-            type="text"
-            value={editForm.title || ''}
-            onChange={(e) => onFormChange({ ...editForm, title: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none"
-            placeholder="Title"
-          />
-          <input
-            type="text"
-            value={editForm.company || ''}
-            onChange={(e) => onFormChange({ ...editForm, company: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none"
-            placeholder="Company"
-          />
-          <div className="flex gap-2">
-            <button
-              onClick={onSave}
-              className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
-            >
-              <Save size={14} />
-              Save
-            </button>
-            <button
-              onClick={onCancel}
-              className="flex items-center gap-1 px-3 py-1 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
-            >
-              <X size={14} />
-              Cancel
-            </button>
+/* Speaker Card Component */
+const SpeakerCard = memo(
+  ({
+    speaker, dayIndex, speakerIndex,
+    isEditing, editForm, isEditMode,
+    onEdit, onSave, onCancel, onDelete, onFormChange
+  }) => {
+    if (isEditing) {
+      return (
+        <div className="bg-white rounded-xl shadow-xl p-6">
+          <div className="space-y-4">
+            <input
+              value={editForm.name || ''}
+              onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="Speaker Name"
+            />
+            <input
+              value={editForm.title || ''}
+              onChange={(e) => onFormChange({ ...editForm, title: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="Title"
+            />
+            <input
+              value={editForm.company || ''}
+              onChange={(e) => onFormChange({ ...editForm, company: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg"
+              placeholder="Company"
+            />
+            <div className="flex gap-2">
+              <button onClick={onSave} className="px-3 py-1 bg-green-600 text-white rounded-lg">
+                <Save size={14} /> Save
+              </button>
+              <button onClick={onCancel} className="px-3 py-1 bg-gray-500 text-white rounded-lg">
+                <X size={14} /> Cancel
+              </button>
+            </div>
           </div>
         </div>
+      );
+    }
+
+    return (
+      <div className="group bg-white rounded-xl shadow-lg p-6 relative">
+        {isEditMode && (
+          <div className="absolute top-3 right-3 flex gap-1">
+            <button onClick={onEdit} className="p-1 bg-blue-500 text-white rounded">
+              <Edit2 size={14} />
+            </button>
+            <button onClick={onDelete} className="p-1 bg-red-500 text-white rounded">
+              <Trash2 size={14} />
+            </button>
+          </div>
+        )}
+
+        <div className={`w-16 h-16 mx-auto rounded-xl ${getColorForAvatar(speaker.name)} text-white flex items-center justify-center text-xl font-bold`}>
+          {speaker.avatar || getInitials(speaker.name)}
+        </div>
+
+        <h4 className="text-center font-bold mt-4">{speaker.name}</h4>
+        {speaker.title && <p className="text-center text-sm">{speaker.title}</p>}
+        {speaker.company && <p className="text-center text-sm text-gray-600">{speaker.company}</p>}
       </div>
     );
   }
+);
 
-  return (
-    <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-6 h-full border border-gray-100 hover:border-gray-200 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-100 rounded-full -translate-y-10 translate-x-10 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-      
-      {/* Edit controls */}
-      {isEditMode && (
-        <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-          <button
-            onClick={onEdit}
-            className="p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md"
-            title="Edit speaker"
-          >
-            <Edit2 size={12} />
-          </button>
-          <button
-            onClick={onDelete}
-            className="p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-md"
-            title="Delete speaker"
-          >
-            <Trash2 size={12} />
-          </button>
-        </div>
-      )}
+const SpeakersSection = () => {
+  /* --------------------------
+      MERGED MAIN STATE HERE
+     -------------------------- */
+  const [speakersData, setSpeakersData] = useState({
+    speakers: initialSpeakers,
+    headerContent: {
+      eventTitle: 'Drone Expo 2025',
+      sectionTitle: 'Speakers',
+      subtitle: 'Meet our distinguished speakers who will share their expertise and insights'
+    }
+  });
 
-      <div className="relative z-10">
-        {/* Avatar */}
-        <div className={`w-16 h-16 rounded-2xl ${getColorForAvatar(speaker.name)} text-white flex items-center justify-center mx-auto font-bold text-lg mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-          {speaker.avatar && speaker.avatar.length > 0
-            ? speaker.avatar
-            : getInitials(speaker.name)}
-        </div>
-
-        {/* Content */}
-        <div className="text-center space-y-2">
-          <h4 className="text-lg font-bold text-gray-800 leading-tight">{speaker.name}</h4>
-          {speaker.title && (
-            <p className="text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full inline-block">
-              {speaker.title}
-            </p>
-          )}
-          {speaker.company && (
-            <p className="text-sm text-gray-600 leading-relaxed">{speaker.company}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Hover effect border */}
-      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-yellow-400 transition-all pointer-events-none"></div>
-    </div>
-  );
-});
-
-const SpeakersSection: React.FC = () => {
-  const [speakersData, setSpeakersData] = useState(initialSpeakers);
+  /* --------------------------
+      OTHER STATES REMAIN SAME
+     -------------------------- */
   const [editingCard, setEditingCard] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [activeDay, setActiveDay] = useState(0);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [headerContent, setHeaderContent] = useState({
-    eventTitle: 'Drone Expo 2025',
-    sectionTitle: 'Speakers',
-    subtitle: 'Meet our distinguished speakers who will share their expertise and insights'
-  });
-  const [headerBackup, setHeaderBackup] = useState(headerContent);
-  
-  const [statsContent, setStatsContent] = useState({
-    totalSpeakersLabel: 'Total Speakers',
-    totalSpeakersValue: null as number | null, // null means use computed value
-    eventDaysLabel: 'Event Days',
-    eventDaysValue: null as number | null, // null means use computed value
-    speakersTodayLabel: 'Speakers Today',
-    speakersTodayValue: null as number | null // null means use computed value
-  });
-  const [statsBackup, setStatsBackup] = useState(statsContent);
+  const [headerBackup, setHeaderBackup] = useState(speakersData.headerContent);
 
-  // Memoized callback functions to prevent unnecessary re-renders
-  const handleEdit = useCallback((dayIndex, speakerIndex, speaker) => {
+  const { speakers, headerContent } = speakersData;
+
+  /* --------------------------
+        Header Editing
+     -------------------------- */
+  const startHeaderEdit = () => {
+    setHeaderBackup(headerContent);
+    setIsEditMode(true);
+  };
+
+  const saveHeaderEdit = () => {
+    setEditingCard(null);
+    setEditForm({});
+    setIsEditMode(false);
+  };
+
+  const cancelHeaderEdit = () => {
+    setSpeakersData(prev => ({
+      ...prev,
+      headerContent: headerBackup
+    }));
+    setIsEditMode(false);
+  };
+
+  /* --------------------------
+        Update Header Text
+     -------------------------- */
+  const updateHeaderField = (field, value) => {
+    setSpeakersData(prev => ({
+      ...prev,
+      headerContent: { ...prev.headerContent, [field]: value }
+    }));
+  };
+
+  /* --------------------------
+        Update Speakers
+     -------------------------- */
+  const handleEdit = (dayIndex, speakerIndex, speaker) => {
     setEditingCard(`${dayIndex}-${speakerIndex}`);
-    setEditForm({ ...speaker });
-  }, []);
+    setEditForm(speaker);
+  };
 
-  const handleSave = useCallback((dayIndex, speakerIndex) => {
-    const updatedSpeaker = {
-      ...editForm,
-      avatar: getInitials(editForm.name)
-    };
-
-    setSpeakersData(prev =>
-      prev.map((d, di) =>
-        di === dayIndex
-          ? {
-              ...d,
-              speakers: d.speakers.map((s, si) =>
-                si === speakerIndex ? updatedSpeaker : s
-              )
-            }
-          : d
-      )
+  const handleSave = (dayIndex, speakerIndex) => {
+    const updated = speakersData.speakers.map((day, dIndex) =>
+      dIndex === dayIndex
+        ? {
+            ...day,
+            speakers: day.speakers.map((sp, sIndex) =>
+              sIndex === speakerIndex
+                ? { ...editForm, avatar: getInitials(editForm.name) }
+                : sp
+            )
+          }
+        : day
     );
+
+    setSpeakersData(prev => ({
+      ...prev,
+      speakers: updated
+    }));
 
     setEditingCard(null);
     setEditForm({});
-  }, [editForm]);
+  };
 
-  const handleCancel = useCallback(() => {
+  const handleCancel = () => {
     setEditingCard(null);
-    setEditForm({});
-  }, []);
+  };
 
-  const handleDelete = useCallback((dayIndex, speakerIndex) => {
-    setSpeakersData(prev =>
-      prev.map((d, di) =>
-        di === dayIndex
-          ? { ...d, speakers: d.speakers.filter((_, si) => si !== speakerIndex) }
-          : d
-      )
+  const handleDelete = (dayIndex, speakerIndex) => {
+    const updated = speakersData.speakers.map((day, dIndex) =>
+      dIndex === dayIndex
+        ? {
+            ...day,
+            speakers: day.speakers.filter((_, sIndex) => sIndex !== speakerIndex)
+          }
+        : day
     );
-  }, []);
 
-  const handleAddSpeaker = useCallback((dayIndex) => {
-    const ids = speakersData.flatMap(d => d.speakers.map(s => s.id || 0));
-    const maxId = ids.length ? Math.max(...ids) : 0;
-    const newId = maxId + 1;
+    setSpeakersData(prev => ({
+      ...prev,
+      speakers: updated
+    }));
+  };
+
+  const handleAddSpeaker = (dayIndex) => {
     const newSpeaker = {
-      id: newId,
+      id: Date.now(),
       name: "New Speaker",
       title: "",
       company: "",
       avatar: "NS"
     };
 
-    setSpeakersData(prev =>
-      prev.map((d, di) =>
-        di === dayIndex ? { ...d, speakers: [...d.speakers, newSpeaker] } : d
-      )
+    const updated = speakersData.speakers.map((day, dIndex) =>
+      dIndex === dayIndex
+        ? { ...day, speakers: [...day.speakers, newSpeaker] }
+        : day
     );
 
-    const newIndex = (speakersData[dayIndex]?.speakers.length ?? 0);
+    setSpeakersData(prev => ({
+      ...prev,
+      speakers: updated
+    }));
+
+    const newIndex = speakers[dayIndex].speakers.length;
     setEditingCard(`${dayIndex}-${newIndex}`);
-    setEditForm({ ...newSpeaker });
-  }, [speakersData]);
-
-  const handleFormChange = useCallback((newFormData) => {
-    setEditForm(newFormData);
-  }, []);
-
-  const startHeaderEdit = useCallback(() => {
-    setHeaderBackup(headerContent);
-    setIsEditMode(true);
-  }, [headerContent]);
-
-  const saveHeaderEdit = useCallback(() => {
-    setEditingCard(null);
-    setEditForm({});
-    setIsEditMode(false);
-  }, []);
-
-  const cancelHeaderEdit = useCallback(() => {
-    setHeaderContent(headerBackup);
-    setEditingCard(null);
-    setEditForm({});
-    setIsEditMode(false);
-  }, [headerBackup]);
-
-  // Computed stats
-  const totalSpeakers = speakersData.reduce((acc, d) => acc + (d.speakers?.length || 0), 0);
-  const eventDays = speakersData.length;
-  const speakersToday = speakersData[activeDay]?.speakers?.length || 0;
-  
-  // Handle day name editing
-  const handleDayEdit = (dayIndex: number, newDayName: string) => {
-    setSpeakersData(prev => 
-      prev.map((day, index) => 
-        index === dayIndex ? { ...day, day: newDayName } : day
-      )
-    );
+    setEditForm(newSpeaker);
   };
 
-  // Add new day
+  /* --------------------------
+          Day Editing
+     -------------------------- */
+  const handleDayEdit = (dayIndex, newValue) => {
+    const updated = speakersData.speakers.map((day, dIndex) =>
+      dIndex === dayIndex
+        ? { ...day, day: newValue }
+        : day
+    );
+
+    setSpeakersData(prev => ({
+      ...prev,
+      speakers: updated
+    }));
+  };
+
   const handleAddDay = () => {
-    const newDayNumber = speakersData.length + 1;
     const newDay = {
-      day: `Day ${newDayNumber} (New Date)`,
+      day: `Day ${speakers.length + 1} (New Date)`,
       speakers: []
     };
-    
-    setSpeakersData(prev => [...prev, newDay]);
-    setActiveDay(speakersData.length); // Set to the new day index
+
+    setSpeakersData(prev => ({
+      ...prev,
+      speakers: [...prev.speakers, newDay]
+    }));
+
+    setActiveDay(speakers.length);
   };
 
-  // Remove day
-  const handleRemoveDay = (dayIndex: number) => {
-    if (speakersData.length <= 1) return; // Don't remove if it's the last day
-    
-    setSpeakersData(prev => prev.filter((_, index) => index !== dayIndex));
-    
-    // Adjust active day if necessary
-    if (activeDay >= speakersData.length - 1) {
-      setActiveDay(Math.max(0, speakersData.length - 2));
-    } else if (activeDay > dayIndex) {
-      setActiveDay(activeDay - 1);
-    }
+  const handleRemoveDay = (dayIndex) => {
+    if (speakers.length <= 1) return;
+
+    const updated = speakers.filter((_, index) => index !== dayIndex);
+
+    setSpeakersData(prev => ({
+      ...prev,
+      speakers: updated
+    }));
+
+    setActiveDay(Math.max(0, dayIndex - 1));
   };
 
+  /* --------------------------
+            Render UI
+     -------------------------- */
   return (
-    <section id="speakers" className="py-20 bg-gray-50 min-h-screen">
+    <section className="py-20 bg-gray-50 min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl relative">
+        
         {/* Header */}
         <div className="text-center mb-16">
           {isEditMode ? (
             <div className="max-w-3xl mx-auto space-y-4">
+              
               <input
                 type="text"
                 value={headerContent.eventTitle}
-                onChange={(e) => setHeaderContent({ ...headerContent, eventTitle: e.target.value })}
-                className="w-full text-4xl md:text-5xl font-bold px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                placeholder="Event Title"
+                onChange={(e) => updateHeaderField("eventTitle", e.target.value)}
+                className="w-full text-4xl font-bold px-4 py-3 border rounded-xl"
               />
+
               <input
                 type="text"
                 value={headerContent.sectionTitle}
-                onChange={(e) => setHeaderContent({ ...headerContent, sectionTitle: e.target.value })}
-                className="w-full text-2xl md:text-3xl font-bold px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                placeholder="Section Title"
+                onChange={(e) => updateHeaderField("sectionTitle", e.target.value)}
+                className="w-full text-2xl font-bold px-4 py-3 border rounded-xl"
               />
+
               <input
                 type="text"
                 value={headerContent.subtitle}
-                onChange={(e) => setHeaderContent({ ...headerContent, subtitle: e.target.value })}
-                className="w-full text-base md:text-lg px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                placeholder="Subtitle"
+                onChange={(e) => updateHeaderField("subtitle", e.target.value)}
+                className="w-full text-lg px-4 py-3 border rounded-xl"
               />
+
             </div>
           ) : (
             <>
-              <h2 className="text-5xl md:text-6xl font-bold mb-4">
-                <span className="text-yellow-500">
-                  {headerContent.eventTitle}
-                </span>
-                <span className="block text-gray-800 text-3xl md:text-4xl mt-2">{headerContent.sectionTitle}</span>
+              <h2 className="text-5xl font-bold">
+                <span className="text-yellow-500">{headerContent.eventTitle}</span>
+                <span className="block text-3xl text-gray-800">{headerContent.sectionTitle}</span>
               </h2>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto mt-4">
-                {headerContent.subtitle}
-              </p>
+              <p className="text-gray-600 mt-4">{headerContent.subtitle}</p>
             </>
           )}
-          
-          {/* Edit Actions */}
+
+          {/* Edit Buttons */}
           <div className="absolute top-0 right-0 flex gap-2">
             {isEditMode ? (
               <>
-                <button
-                  onClick={saveHeaderEdit}
-                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
-                >
-                  <span className='flex items-center gap-2'>
-                    <Save size={18} /> Save
-                  </span>
+                <button onClick={saveHeaderEdit} className="px-6 py-3 bg-blue-600 text-white rounded-xl">
+                  <Save size={18} />
                 </button>
-                <button
-                  onClick={cancelHeaderEdit}
-                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-red-500 hover:bg-red-600 text-white shadow-lg"
-                >
-                  <span className='flex items-center gap-2'>
-                    <X size={18} /> Cancel
-                  </span>
+                <button onClick={cancelHeaderEdit} className="px-6 py-3 bg-red-500 text-white rounded-xl">
+                  <X size={18} />
                 </button>
               </>
             ) : (
-              <button
-                onClick={startHeaderEdit}
-                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-green-500 hover:bg-green-600 text-white shadow-lg"
-              >
-                <span className='flex items-center gap-2'>
-                  <Edit size={18} /> Edit
-                </span>
+              <button onClick={startHeaderEdit} className="px-6 py-3 bg-green-500 text-white rounded-xl">
+                <Edit size={18} />
               </button>
             )}
           </div>
         </div>
 
-        {/* Day Navigation */}
+        {/* Day Tabs */}
         <div className="flex justify-center mb-12">
-          <div className="flex items-center gap-4">
-            <div className="bg-white rounded-2xl shadow-lg p-2 flex gap-2">
-              {speakersData.map((dayGroup, index) => (
-                <div key={index} className="relative">
-                  {isEditMode ? (
-                    <input
-                      type="text"
-                      value={dayGroup.day}
-                      onChange={(e) => handleDayEdit(index, e.target.value)}
-                      className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 border-2 outline-none ${
-                        activeDay === index
-                          ? 'bg-yellow-500 text-white border-yellow-600'
-                          : 'text-gray-600 border-gray-300 focus:border-yellow-400'
-                      }`}
-                      onClick={() => setActiveDay(index)}
-                    />
-                  ) : (
-                    <button
-                      onClick={() => setActiveDay(index)}
-                      className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                        activeDay === index
-                          ? 'bg-yellow-500 text-white shadow-lg'
-                          : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                      }`}
-                    >
-                      {dayGroup.day}
-                    </button>
-                  )}
-                  {isEditMode && speakersData.length > 1 && (
-                    <button
-                      onClick={() => handleRemoveDay(index)}
-                      className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center"
-                      title="Remove Day"
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-            {isEditMode && (
-              <button
-                onClick={handleAddDay}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-md"
-                title="Add New Day"
-              >
-                <Plus size={16} />
-                Add Day
-              </button>
-            )}
+          <div className="bg-white shadow-lg p-2 rounded-2xl flex gap-2">
+            {speakers.map((day, index) => (
+              <div key={index} className="relative">
+                {isEditMode ? (
+                  <input
+                    value={day.day}
+                    onChange={(e) => handleDayEdit(index, e.target.value)}
+                    onClick={() => setActiveDay(index)}
+                    className={`px-6 py-3 rounded-xl border ${
+                      activeDay === index ? 'bg-yellow-500 text-white' : ''
+                    }`}
+                  />
+                ) : (
+                  <button
+                    onClick={() => setActiveDay(index)}
+                    className={`px-6 py-3 rounded-xl ${
+                      activeDay === index ? 'bg-yellow-500 text-white' : ''
+                    }`}
+                  >
+                    {day.day}
+                  </button>
+                )}
+
+                {isEditMode && speakers.length > 1 && (
+                  <button
+                    onClick={() => handleRemoveDay(index)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
+
+          {isEditMode && (
+            <button
+              onClick={handleAddDay}
+              className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-full"
+            >
+              <Plus size={16} /> Add Day
+            </button>
+          )}
         </div>
 
         {/* Speakers Grid */}
-        <div className="mb-16">
+        <div>
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-3xl font-bold text-gray-800">
-              {speakersData[activeDay]?.day}
-            </h3>
+            <h3 className="text-3xl font-bold">{speakers[activeDay]?.day}</h3>
+
             {isEditMode && (
               <button
                 onClick={() => handleAddSpeaker(activeDay)}
-                className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg"
               >
-                <Plus size={16} />
-                Add Speaker
+                <Plus size={16} /> Add Speaker
               </button>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {speakersData[activeDay]?.speakers.map((speaker, speakerIndex) => (
+            {speakers[activeDay]?.speakers.map((speaker, index) => (
               <SpeakerCard
-                key={`${speaker.id}-${activeDay}-${speakerIndex}`}
+                key={speaker.id}
                 speaker={speaker}
                 dayIndex={activeDay}
-                speakerIndex={speakerIndex}
-                isEditing={editingCard === `${activeDay}-${speakerIndex}`}
+                speakerIndex={index}
+                isEditing={editingCard === `${activeDay}-${index}`}
                 editForm={editForm}
                 isEditMode={isEditMode}
-                onEdit={() => handleEdit(activeDay, speakerIndex, speaker)}
-                onSave={() => handleSave(activeDay, speakerIndex)}
+                onEdit={() => handleEdit(activeDay, index, speaker)}
+                onSave={() => handleSave(activeDay, index)}
                 onCancel={handleCancel}
-                onDelete={() => handleDelete(activeDay, speakerIndex)}
-                onFormChange={handleFormChange}
+                onDelete={() => handleDelete(activeDay, index)}
+                onFormChange={(data) => setEditForm(data)}
               />
             ))}
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="mt-16 bg-yellow-500 rounded-2xl p-8 text-white">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div>
-              {isEditMode ? (
-                <input
-                  type="number"
-                  value={statsContent.totalSpeakersValue || totalSpeakers}
-                  onChange={(e) => setStatsContent({ ...statsContent, totalSpeakersValue: parseInt(e.target.value) || 0 })}
-                  className="text-3xl font-bold mb-2 bg-transparent border-b-2 border-yellow-300 focus:border-white outline-none text-center text-white w-20 mx-auto"
-                />
-              ) : (
-                <div className="text-3xl font-bold mb-2">{statsContent.totalSpeakersValue || totalSpeakers}</div>
-              )}
-              {isEditMode ? (
-                <input
-                  type="text"
-                  value={statsContent.totalSpeakersLabel}
-                  onChange={(e) => setStatsContent({ ...statsContent, totalSpeakersLabel: e.target.value })}
-                  className="text-yellow-100 bg-transparent border-b border-yellow-300 focus:border-white outline-none text-center"
-                />
-              ) : (
-                <div className="text-yellow-100">{statsContent.totalSpeakersLabel}</div>
-              )}
-            </div>
-            <div>
-              {isEditMode ? (
-                <input
-                  type="number"
-                  value={statsContent.eventDaysValue || eventDays}
-                  onChange={(e) => setStatsContent({ ...statsContent, eventDaysValue: parseInt(e.target.value) || 0 })}
-                  className="text-3xl font-bold mb-2 bg-transparent border-b-2 border-yellow-300 focus:border-white outline-none text-center text-white w-20 mx-auto"
-                />
-              ) : (
-                <div className="text-3xl font-bold mb-2">{statsContent.eventDaysValue || eventDays}</div>
-              )}
-              {isEditMode ? (
-                <input
-                  type="text"
-                  value={statsContent.eventDaysLabel}
-                  onChange={(e) => setStatsContent({ ...statsContent, eventDaysLabel: e.target.value })}
-                  className="text-yellow-100 bg-transparent border-b border-yellow-300 focus:border-white outline-none text-center"
-                />
-              ) : (
-                <div className="text-yellow-100">{statsContent.eventDaysLabel}</div>
-              )}
-            </div>
-            <div>
-              {isEditMode ? (
-                <input
-                  type="number"
-                  value={statsContent.speakersTodayValue || speakersToday}
-                  onChange={(e) => setStatsContent({ ...statsContent, speakersTodayValue: parseInt(e.target.value) || 0 })}
-                  className="text-3xl font-bold mb-2 bg-transparent border-b-2 border-yellow-300 focus:border-white outline-none text-center text-white w-20 mx-auto"
-                />
-              ) : (
-                <div className="text-3xl font-bold mb-2">{statsContent.speakersTodayValue || speakersToday}</div>
-              )}
-              {isEditMode ? (
-                <input
-                  type="text"
-                  value={statsContent.speakersTodayLabel}
-                  onChange={(e) => setStatsContent({ ...statsContent, speakersTodayLabel: e.target.value })}
-                  className="text-yellow-100 bg-transparent border-b border-yellow-300 focus:border-white outline-none text-center"
-                />
-              ) : (
-                <div className="text-yellow-100">{statsContent.speakersTodayLabel}</div>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
