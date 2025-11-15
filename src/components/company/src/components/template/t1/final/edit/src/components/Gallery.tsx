@@ -665,7 +665,7 @@ export default function EditableGallerySection({
                   <img
                     src={image.url}
                     alt={image.title}
-                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110 scale-110"
                     onError={(e) => {
                       e.currentTarget.src =
                         "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&h=600&fit=crop";
@@ -852,7 +852,7 @@ export default function EditableGallerySection({
             <img
               src={displaygalleryData?.images[selectedImage].url}
               alt={displaygalleryData?.images[selectedImage].title}
-              className="w-full h-auto max-h-full object-contain"
+              className="w-full h-auto max-h-full object-contain scale-110"
             />
             <div className="text-white text-center mt-4">
               <h3 className="text-xl font-semibold">
@@ -903,6 +903,9 @@ export default function EditableGallerySection({
                   zoom={zoom}
                   rotation={rotation}
                   aspect={aspectRatio}
+                  minZoom={0.5}
+                  maxZoom={4}
+                  restrictPosition={false}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={onCropComplete}
@@ -967,15 +970,38 @@ export default function EditableGallerySection({
                   <span className="text-gray-700">Zoom</span>
                   <span className="text-gray-600">{zoom?.toFixed(1)}x</span>
                 </div>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
+                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={0.5}
+                    max={4}
+                    step={0.1}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
+                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setZoom(1)}
+                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  >
+                    1x
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons */}

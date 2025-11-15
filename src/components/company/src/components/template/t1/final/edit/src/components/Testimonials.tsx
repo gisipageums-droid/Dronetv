@@ -702,7 +702,7 @@ export default function EditableTestimonials({
                         <img
                           src={testimonial.image || user}
                           alt={testimonial.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover scale-110"
                         />
                         {isEditing && (
                           <>
@@ -833,6 +833,9 @@ export default function EditableTestimonials({
                   zoom={zoom}
                   rotation={rotation}
                   aspect={aspectRatio}
+                  minZoom={0.5}
+                  maxZoom={4}
+                  restrictPosition={false}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={onCropComplete}
@@ -900,15 +903,38 @@ export default function EditableTestimonials({
                   <span className="text-gray-700">Zoom</span>
                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                 </div>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
+                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={0.5}
+                    max={4}
+                    step={0.1}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
+                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setZoom(1)}
+                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  >
+                    1x
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons */}
