@@ -1830,6 +1830,7 @@ function EventsForm() {
   const admin = true;
 
   const location = useLocation();
+  
   const navigate = useNavigate();
   const [formLoader, setFormLoader] = useState(true);
 
@@ -1994,7 +1995,7 @@ function EventsForm() {
     processingMethod: "separate_upload",
     status: "ai_processing",
     updatedAt: Date.now(),
-    templateSelection: '2',
+    templateSelection: location.state?.templateId,
     version: "1.0",
     eventType: "conference",
   };
