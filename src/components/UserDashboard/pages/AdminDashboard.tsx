@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, Users, Briefcase, Calendar } from "lucide-react";
-import { useUserAuth } from "../../context/context"
+import { useUserAuth } from "../../context/context";
 import {
   PieChart,
   Pie,
@@ -53,9 +53,12 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [professionalLoading, setProfessionalLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [professionalError, setProfessionalError] = useState<string | null>(null);
+  const [professionalError, setProfessionalError] = useState<string | null>(
+    null
+  );
   const [companyCount, setCompanyCount] = useState(0);
   const [professionalCount, setProfessionalCount] = useState(0);
+  const [EventCount, setEventCount] = useState(0);
 
   // Mock data (keeping other static data as is for now)
   const stats = [
@@ -73,9 +76,9 @@ const AdminDashboard: React.FC = () => {
     },
     {
       label: "Events",
-      value: 52,
+      value: EventCount,
       icon: Calendar,
-      color: "bg-green-500"
+      color: "bg-green-500",
     },
   ];
 
@@ -101,29 +104,56 @@ const AdminDashboard: React.FC = () => {
   const userDetails = user?.userData;
   // console.log("userDetails", userDetails.email)
 
-
-
   let getCategory = async () => {
-    let fetchData = await fetch(`https://kgm0ckp0uf.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `);
+    setLoading(true);
+
+    let fetchData = await fetch(
+      `https://kgm0ckp0uf.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+    );
     let resData = await fetchData.json();
     setCompanyCount(resData.count);
-  }
+  };
 
   let getProfessionalCount = () => {
-    axios.get(`https://5otjcn6oi1.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `)
+    setLoading(true);
+
+    axios
+      .get(
+        `https://5otjcn6oi1.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+      )
       .then((res) => {
         setProfessionalCount(res.data.count);
       })
       .catch((err) => {
         console.log(err);
       })
-  }
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+  let getEventCount = () => {
+    setLoading(true);
+
+    axios
+      .get(
+        `https://zd3q4ewnxe.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+      )
+      .then((res) => {
+        setEventCount(res.data.count);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
     getCategory();
     getProfessionalCount();
+    getEventCount();
   }, []);
-
 
   // Fetch leads from API
   const fetchRecentCompaniesLeads = async () => {
@@ -152,7 +182,7 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  //api for professional recent leads unviewed :        
+  //api for professional recent leads unviewed :
   const fetchRecentProfessionalLeads = async () => {
     try {
       setProfessionalLoading(true);
@@ -172,7 +202,9 @@ const AdminDashboard: React.FC = () => {
         throw new Error("Failed to fetch leads");
       }
     } catch (err) {
-      setProfessionalError(err instanceof Error ? err.message : "An error occurred");
+      setProfessionalError(
+        err instanceof Error ? err.message : "An error occurred"
+      );
       console.error("Error fetching leads:", err);
     } finally {
       setProfessionalLoading(false);
@@ -192,17 +224,16 @@ const AdminDashboard: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const getStatusText = (viewed: boolean) => {
     return viewed ? "Viewed" : "Unviewed";
   };
-
 
   return (
     <div className="min-h-screen bg-amber-50 p-8">
@@ -232,29 +263,33 @@ const AdminDashboard: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {stats.map((stat, idx) => {
-          const Icon = stat.icon;
-          return (
-            <div
-              key={idx}
-              className="bg-amber-50 border-4 border-yellow-200 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-800 text-sm mb-2">{stat.label}</p>
-                  <p className="text-4xl font-bold text-gray-800">
-                    {stat.value}
-                  </p>
-                </div>
-                <div
-                  className={`bg-yellow-400 border border-orange-200 p-4 rounded-lg animate-bounce`}
-                >
-                  <Icon size={28} className="text-white" />
+        {stats.length > 0 ? (
+          stats.map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <div
+                key={idx}
+                className="bg-amber-50 border-4 border-yellow-200 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-800 text-sm mb-2">{stat.label}</p>
+                    <p className="text-4xl font-bold text-gray-800">
+                      {stat.value}
+                    </p>
+                  </div>
+                  <div
+                    className={`bg-yellow-400 border border-orange-200 p-4 rounded-lg animate-bounce`}
+                  >
+                    <Icon size={28} className="text-white" />
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div>Loading...</div>
+        )}
       </div>
 
       {/* Charts Row */}
@@ -409,8 +444,12 @@ const AdminDashboard: React.FC = () => {
                     key={lead.leadId}
                     className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
                   >
-                    <td className="py-3 px-4 text-white">{lead.firstName} {lead.lastName}</td>
-                    <td className="py-3 px-4 text-slate-300">{lead.category}</td>
+                    <td className="py-3 px-4 text-white">
+                      {lead.firstName} {lead.lastName}
+                    </td>
+                    <td className="py-3 px-4 text-slate-300">
+                      {lead.category}
+                    </td>
                     <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
                     <td className="py-3 px-4">
                       <span
@@ -506,11 +545,13 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {!professionalLoading && !professionalError && recentProfessional.length === 0 && (
-          <div className="text-center py-4">
-            <p className="text-slate-300">No professional leads found</p>
-          </div>
-        )}
+        {!professionalLoading &&
+          !professionalError &&
+          recentProfessional.length === 0 && (
+            <div className="text-center py-4">
+              <p className="text-slate-300">No professional leads found</p>
+            </div>
+          )}
       </div>
     </div>
   );

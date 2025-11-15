@@ -1,4 +1,4 @@
-import { Briefcase, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X, ZoomIn } from 'lucide-react';
+import { Briefcase, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -535,6 +535,11 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                 onCropComplete={onCropComplete}
                                 showGrid={false}
                                 cropShape="rect"
+                                minZoom={0.1}
+                                maxZoom={5}
+                                restrictPosition={false}
+                                zoomWithScroll={true}
+                                zoomSpeed={0.2}
                                 style={{
                                     containerStyle: {
                                         position: "relative",
@@ -558,7 +563,8 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                 </p>
                             </div>
 
-                            {/* Zoom Control */}
+                            {/* Zoom Control */
+                            }
                             <div className="space-y-2 mb-4">
                                 <div className="flex items-center justify-between text-sm">
                                     <span className="flex items-center gap-2 text-gray-700">
@@ -567,15 +573,31 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                     </span>
                                     <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                                 </div>
-                                <input
-                                    type="range"
-                                    value={zoom}
-                                    min={1}
-                                    max={3}
-                                    step={0.1}
-                                    onChange={(e) => setZoom(Number(e.target.value))}
-                                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                                />
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
+                                        className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                                    >
+                                        <ZoomOut className="w-4 h-4" />
+                                    </button>
+                                    <input
+                                        type="range"
+                                        value={zoom}
+                                        min={0.1}
+                                        max={5}
+                                        step={0.1}
+                                        onChange={(e) => setZoom(Number(e.target.value))}
+                                        className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
+                                        className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                                    >
+                                        <ZoomIn className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Action Buttons */}
@@ -789,7 +811,7 @@ export function Services({ servicesData, onStateChange, userId, professionalId, 
                                                 <img
                                                     src={displayData.services[currentIndex]?.image}
                                                     alt={displayData.services[currentIndex]?.title || 'Service image'}
-                                                    className="w-full h-full object-cover"
+                                                    className="w-full h-full object-cover scale-110"
                                                     onError={(e) => {
                                                         const target = e.target as HTMLImageElement;
                                                         target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="500" height="300"%3E%3Crect fill="%23f3f4f6" width="500" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EService Image%3C/text%3E%3C/svg%3E';

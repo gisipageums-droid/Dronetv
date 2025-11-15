@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import Cropper from "react-easy-crop";
 import {
   Award,
   Calendar,
@@ -51,14 +52,13 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   // Cropping states
   const [isCropping, setIsCropping] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string>("");
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageLoaded, setImageLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     if (content) {
@@ -99,127 +99,47 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   };
 
   // Image cropping functions
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    setIsDragging(true);
-    setDragStart({
-      x: touch.clientX - position.x,
-      y: touch.clientY - position.y,
-    });
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    const touch = e.touches[0];
-    setPosition({
-      x: touch.clientX - dragStart.x,
-      y: touch.clientY - dragStart.y,
-    });
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
-
   const getCroppedImage = async (): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const canvas = canvasRef.current;
-      const image = imageRef.current;
-      const container = containerRef.current;
-
-      if (!canvas || !image || !container) {
-        reject(new Error("Canvas, image, or container not found"));
+      if (!canvas || !croppedAreaPixels || !imageToCrop) {
+        reject(new Error("Missing canvas or crop data"));
         return;
       }
-
       const ctx = canvas.getContext("2d");
       if (!ctx) {
         reject(new Error("Could not get canvas context"));
         return;
       }
-
-      // Output size - rectangular for About section (600x600)
       const outputWidth = 600;
       const outputHeight = 600;
       canvas.width = outputWidth;
       canvas.height = outputHeight;
-
-      // Get container dimensions
-      const containerRect = container.getBoundingClientRect();
-
-      // Crop area dimensions - rectangular for About section
-      const cropWidth = 300;
-      const cropHeight = 300;
-
-      // Calculate the center of the crop area in the container
-      const centerX = containerRect.width / 2;
-      const centerY = containerRect.height / 2;
-
-      // Get image dimensions and position
-      const imgRect = image.getBoundingClientRect();
-      const containerLeft = containerRect.left;
-      const containerTop = containerRect.top;
-
-      // Calculate image position relative to container
-      const imgX = imgRect.left - containerLeft;
-      const imgY = imgRect.top - containerTop;
-
-      // Calculate the crop area in the original image coordinates
-      const scaleX = image.naturalWidth / imgRect.width;
-      const scaleY = image.naturalHeight / imgRect.height;
-
-      // Calculate source coordinates (what part of the original image to crop)
-      const sourceX = (centerX - imgX - cropWidth / 2) * scaleX;
-      const sourceY = (centerY - imgY - cropHeight / 2) * scaleY;
-      const sourceWidth = cropWidth * scaleX;
-      const sourceHeight = cropHeight * scaleY;
-
-      // Draw the cropped rectangular image
-      ctx.drawImage(
-        image,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight,
-        0,
-        0,
-        outputWidth,
-        outputHeight
-      );
-
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error("Failed to create blob"));
-          }
-        },
-        "image/jpeg",
-        0.95
-      );
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageToCrop;
+      img.onload = () => {
+        const { x, y, width, height } = croppedAreaPixels as any;
+        ctx.drawImage(
+          img,
+          x,
+          y,
+          width,
+          height,
+          0,
+          0,
+          outputWidth,
+          outputHeight
+        );
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("Failed to create blob"));
+          },
+          "image/jpeg",
+          0.95
+        );
+      };
     });
   };
 
@@ -291,8 +211,8 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
         if (reader.result) {
           setImageToCrop(reader.result as string);
           setIsCropping(true);
-          setScale(1);
-          setPosition({ x: 0, y: 0 });
+          setZoom(1);
+          setCrop({ x: 0, y: 0 });
           setImageLoaded(false);
         }
       };
@@ -300,16 +220,12 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     }
   };
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
-
   const handleZoomIn = () => {
-    setScale((prev) => Math.min(prev + 0.1, 3));
+    setZoom((prev) => Math.min(prev + 0.1, 5));
   };
 
   const handleZoomOut = () => {
-    setScale((prev) => Math.max(prev - 0.1, 1));
+    setZoom((prev) => Math.max(prev - 0.1, 0.1));
   };
 
   const handleSave = () => {
@@ -592,9 +508,9 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
       {/* Image Cropping Modal */}
       {isCropping && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/90 z-[9999999] flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
-            <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center px-6 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <Crop className="w-6 h-6" />
                 Crop Image
@@ -609,81 +525,30 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
             <div className="p-6">
               <div
-                ref={containerRef}
-                className="relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 cursor-move select-none"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
+                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
               >
-                {/* Rectangular crop overlay for About section */}
-                <div className="absolute inset-0 pointer-events-none z-10">
-                  <svg className="w-full h-full">
-                    <defs>
-                      <mask id="rectMask">
-                        <rect width="100%" height="100%" fill="white" />
-                        <rect
-                          x="50%"
-                          y="50%"
-                          width="300"
-                          height="300"
-                          fill="black"
-                          transform="translate(-150, -150)"
-                        />
-                      </mask>
-                    </defs>
-                    <rect
-                      width="100%"
-                      height="100%"
-                      fill="rgba(0,0,0,0.5)"
-                      mask="url(#rectMask)"
-                    />
-                    <rect
-                      x="50%"
-                      y="50%"
-                      width="300"
-                      height="300"
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="2"
-                      strokeDasharray="10,5"
-                      transform="translate(-150, -150)"
-                    />
-                  </svg>
-                </div>
-
-                <img
-                  ref={imageRef}
-                  src={imageToCrop}
-                  alt="Crop preview"
-                  onLoad={handleImageLoad}
-                  className="absolute select-none z-0"
-                  style={{
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    height: "auto",
-                    width: "auto",
-                    left: "50%",
-                    top: "50%",
-                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
-                    transformOrigin: "center",
-                    opacity: imageLoaded ? 1 : 0,
-                    transition: imageLoaded ? "none" : "opacity 0.3s",
-                  }}
-                  draggable={false}
+                <Cropper
+                  image={imageToCrop}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  cropShape="rect"
+                  showGrid={true}
+                  minZoom={0.1}
+                  maxZoom={5}
+                  restrictPosition={false}
+                  zoomWithScroll={true}
+                  zoomSpeed={0.2}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={(_c, p) => setCroppedAreaPixels(p)}
+                  onMediaLoaded={() => setImageLoaded(true)}
+                  onInteractionStart={() => setIsDragging(true)}
+                  onInteractionEnd={() => setIsDragging(false)}
                 />
-
-                {!imageLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center text-white">
-                    <p>Loading image...</p>
-                  </div>
-                )}
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm font-medium text-gray-900 dark:text-white">
@@ -706,22 +571,20 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                   </div>
                   <input
                     type="range"
-                    min={1}
-                    max={3}
+                    min={0.1}
+                    max={5}
                     step={0.01}
-                    value={scale}
-                    onChange={(e) => setScale(Number(e.target.value))}
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
                     className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
-                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-                  Drag to reposition • Use slider or buttons to zoom
-                </p>
+
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex gap-3 justify-end px-1 border-t border-gray-200 dark:border-gray-700">
               <button
                 onClick={() => setIsCropping(false)}
                 className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"

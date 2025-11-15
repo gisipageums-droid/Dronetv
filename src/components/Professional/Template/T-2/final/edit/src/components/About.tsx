@@ -1,4 +1,5 @@
-import { Edit2, Loader2, Save, Upload, X, ZoomIn } from "lucide-react";
+import { Edit2, Loader2, Save, Upload, X, ZoomIn, ZoomOut } from "lucide-react";
+
 import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -565,6 +566,11 @@ export function About({
                 onCropComplete={onCropComplete}
                 showGrid={false}
                 cropShape="rect"
+                minZoom={0.1}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
                 style={{
                   containerStyle: {
                     position: "relative",
@@ -597,15 +603,31 @@ export function About({
                   </span>
                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                 </div>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
+                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
+                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons - Moved to bottom and centered */}

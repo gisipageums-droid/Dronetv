@@ -1,4 +1,4 @@
-import { Award, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X, ZoomIn } from 'lucide-react';
+import { Award, Calendar, ChevronLeft, ChevronRight, Edit2, ExternalLink, Loader2, Plus, Save, Trash2, Upload, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -104,7 +104,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
-  // Cropping states
+  // Cropping states - UPDATED WITH ZOOM OUT LOGIC
   const [showCropper, setShowCropper] = useState(false);
   const [currentCroppingCert, setCurrentCroppingCert] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -164,7 +164,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
     setPendingImageFiles({});
   };
 
-  // Cropper functions
+  // Cropper functions - UPDATED WITH ZOOM OUT LOGIC
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
@@ -291,7 +291,20 @@ export function Certifications({ certData, onStateChange, userId, professionalId
     setZoom(1);
   };
 
-  // Reset zoom
+  // Zoom functions - ADDED ZOOM OUT LOGIC
+  const handleZoomIn = () => {
+    setZoom(prev => Math.min(5, +(prev + 0.1).toFixed(2)));
+  };
+
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(0.1, +(prev - 0.1).toFixed(2)));
+  };
+
+  const handleZoomChange = (value: number) => {
+    setZoom(Math.max(0.1, Math.min(5, value)));
+  };
+
+  // Reset zoom - UPDATED WITH ZOOM OUT LOGIC
   const resetCropSettings = () => {
     setZoom(1);
     setCrop({ x: 0, y: 0 });
@@ -503,112 +516,132 @@ export function Certifications({ certData, onStateChange, userId, professionalId
 
   return (
     <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
-      {/* Image Cropper Modal */}
-      
-{showCropper && (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
-  >
-    <motion.div
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
-    >
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Crop Certification Image (4:3 Standard)
-        </h3>
-        <button
-          onClick={cancelCrop}
-          className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+      {/* Image Cropper Modal - UPDATED WITH ZOOM OUT LOGIC */}
+      {showCropper && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
         >
-          <X className="w-5 h-5 text-gray-600" />
-        </button>
-      </div>
-
-      {/* Cropper Area */}
-      <div className="flex-1 relative bg-gray-900 min-h-0">
-        <Cropper
-          image={imageToCrop}
-          crop={crop}
-          zoom={zoom}
-          aspect={aspectRatio}
-          onCropChange={setCrop}
-          onZoomChange={setZoom}
-          onCropComplete={onCropComplete}
-          showGrid={false}
-          cropShape="rect"
-          style={{
-            containerStyle: {
-              position: "relative",
-              width: "100%",
-              height: "100%",
-            },
-            cropAreaStyle: {
-              border: "2px solid white",
-              borderRadius: "8px",
-            },
-          }}
-        />
-      </div>
-
-      {/* Controls */}
-      <div className="p-4 bg-gray-50 border-t border-gray-200">
-        {/* Aspect Ratio Info */}
-        <div className="mb-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">
-            Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
-          </p>
-        </div>
-
-        {/* Zoom Control */}
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="flex items-center gap-2 text-gray-700">
-              <ZoomIn className="w-4 h-4" />
-              Zoom
-            </span>
-            <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-          </div>
-          <input
-            type="range"
-            value={zoom}
-            min={1}
-            max={3}
-            step={0.1}
-            onChange={(e) => setZoom(Number(e.target.value))}
-            className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-3 gap-3">
-          <button
-            onClick={resetCropSettings}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
           >
-            Reset
-          </button>
-          <button
-            onClick={cancelCrop}
-            className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={applyCrop}
-            className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
-          >
-            Apply Crop
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  </motion.div>
-)}
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Certification Image (4:3 Standard)
+              </h3>
+              <button
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Cropper Area - UPDATED WITH ZOOM OUT PROPS */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                minZoom={0.1}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    // border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </div>
+
+            {/* Controls - UPDATED WITH ZOOM OUT BUTTONS */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Info */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+                </p>
+              </div>
+
+              {/* Zoom Control - UPDATED WITH ZOOM OUT BUTTON */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleZoomOut}
+                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    onChange={(e) => handleZoomChange(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleZoomIn}
+                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons - UPDATED LAYOUT */}
+              <div className="flex justify-center gap-3 pt-4">
+                <button
+                  onClick={resetCropSettings}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                >
+                  Reset Zoom
+                </button>
+                <button
+                  onClick={cancelCrop}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
+                >
+                  Apply Crop
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
@@ -795,7 +828,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
                         <img
                           src={displayData.certifications[currentIndex]?.image}
                           alt={displayData.certifications[currentIndex]?.title || 'Certification image'}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover scale-110"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="500" height="300"%3E%3Crect fill="%23f3f4f6" width="500" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ECertificate Image%3C/text%3E%3C/svg%3E';
