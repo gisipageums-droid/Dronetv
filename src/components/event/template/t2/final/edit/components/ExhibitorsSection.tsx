@@ -130,14 +130,14 @@ const createDefaultData = (): ExhibitorsData => {
 };
 
 // Editable Text Component
-const EditableText = ({ 
-  value, 
-  onChange, 
-  multiline = false, 
-  className = "", 
-  placeholder = "", 
-  charLimit, 
-  rows = 3 
+const EditableText = ({
+  value,
+  onChange,
+  multiline = false,
+  className = "",
+  placeholder = "",
+  charLimit,
+  rows = 3
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -193,16 +193,21 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
   const [data, setData] = useState<ExhibitorsData>(createDefaultData());
   const [tempData, setTempData] = useState<ExhibitorsData>(createDefaultData());
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
-  
+
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
+  // Zoom constants
+  const MIN_ZOOM = 0.1;
+  const MAX_ZOOM = 3;
+  const ZOOM_STEP = 0.1;
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [croppingForExhibitor, setCroppingForExhibitor] = useState<string | null>(null);
   const [aspectRatio] = useState(1 / 1); // Square aspect for logos
+  const cropperContainerRef = useRef<HTMLDivElement>(null);
 
   // Remove the old scrollRef and animationRef since we'll use CSS marquee
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -238,7 +243,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
   // Calculate grid layout for edit mode
   const getGridLayout = useCallback(() => {
     const exhibitorCount = tempData.exhibitors.length;
-    
+
     if (exhibitorCount <= 4) {
       // Single row for 1-4 exhibitors
       return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
@@ -292,7 +297,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<{file: File; previewUrl: string}> => {
+  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<{ file: File; previewUrl: string }> => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -317,7 +322,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         if (!blob) throw new Error('Canvas is empty');
-        const file = new File([blob], `exhibitor-logo-${Date.now()}.jpg`, { 
+        const file = new File([blob], `exhibitor-logo-${Date.now()}.jpg`, {
           type: 'image/jpeg',
           lastModified: Date.now()
         });
@@ -330,15 +335,15 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || !croppingForExhibitor) return;
-      
+
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-      
+
       // Update the exhibitor with the cropped image preview
       updateExhibitor(croppingForExhibitor, 'logo', previewUrl);
-      
+
       // Add to pending images for S3 upload on save
       setPendingImages(prev => [...prev, { file, exhibitorId: croppingForExhibitor }]);
-      
+
       toast.success('Logo cropped successfully! Click Save to upload to S3.');
       setShowCropper(false);
       setImageToCrop(null);
@@ -368,7 +373,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
     const formData = new FormData();
     formData.append('file', file);
     formData.append('userId', userId);
-    formData.append(`fieldName`, fieldName+Date.now());
+    formData.append(`fieldName`, fieldName + Date.now());
 
     const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`, {
       method: 'POST',
@@ -393,16 +398,16 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      
+
       // Handle image uploads to S3 first if any
       if (pendingImages.length > 0) {
         setIsUploading(true);
         const updatedExhibitors = [...tempData.exhibitors];
-        
+
         for (const pending of pendingImages) {
           try {
             const s3Url = await uploadImageToS3(pending.file, `exhibitor-logo-${pending.exhibitorId}`);
-            
+
             const exhibitorIndex = updatedExhibitors.findIndex(exhibitor => exhibitor.id === pending.exhibitorId);
             if (exhibitorIndex !== -1) {
               updatedExhibitors[exhibitorIndex].logo = s3Url;
@@ -415,23 +420,23 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
             return;
           }
         }
-        
+
         setTempData(prev => ({ ...prev, exhibitors: updatedExhibitors }));
       }
 
       // Simulate API call for saving exhibitors data
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       setData(tempData);
       setPendingImages([]);
       setIsEditing(false);
-      
+
       if (onStateChange) {
         onStateChange(tempData);
       }
-      
-      toast.success(pendingImages.length > 0 
-        ? 'Exhibitors saved with new logos!' 
+
+      toast.success(pendingImages.length > 0
+        ? 'Exhibitors saved with new logos!'
         : 'Exhibitors updated successfully!');
     } catch (error) {
       console.error('Error saving exhibitors:', error);
@@ -459,7 +464,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
       description: '',
       website: ''
     };
-    
+
     setTempData(prev => ({
       ...prev,
       exhibitors: [...prev.exhibitors, newExhibitor]
@@ -500,6 +505,79 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
 
   // Duplicate exhibitors for marquee loop (same as testimonials)
   const duplicatedExhibitors = [...displayData.exhibitors, ...displayData.exhibitors];
+
+  // Handle wheel events for zooming and panning
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (!showCropper) return;
+    e.preventDefault();
+
+    if (e.ctrlKey || e.metaKey) {
+      // Zoom with Ctrl/Cmd + Wheel
+      const delta = e.deltaY > 0 ? -1 : 1;
+      setZoom(prev => {
+        const newZoom = prev + (delta * ZOOM_STEP);
+        return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+      });
+    } else if (e.shiftKey) {
+      // Horizontal pan with Shift + Wheel
+      setCrop(prev => ({
+        ...prev,
+        x: Math.max(-100, Math.min(100, prev.x - e.deltaY * 0.1))
+      }));
+    } else {
+      // Vertical pan with Wheel
+      setCrop(prev => ({
+        ...prev,
+        y: Math.max(-100, Math.min(100, prev.y + e.deltaY * 0.1))
+      }));
+    }
+  }, [showCropper, ZOOM_STEP, MIN_ZOOM, MAX_ZOOM]);
+
+  // Handle keyboard events for zoom and pan
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!showCropper) return;
+
+      // Prevent default for all handled keys
+      const handledKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', '+', '-', '='];
+      if (handledKeys.includes(e.key)) {
+        e.preventDefault();
+      }
+
+      // Handle arrow keys for panning
+      const panStep = 10;
+      switch (e.key) {
+        case 'ArrowUp':
+          setCrop(prev => ({ ...prev, y: Math.min(prev.y + panStep, 100) }));
+          break;
+        case 'ArrowDown':
+          setCrop(prev => ({ ...prev, y: Math.max(prev.y - panStep, -100) }));
+          break;
+        case 'ArrowLeft':
+          setCrop(prev => ({ ...prev, x: Math.min(prev.x + panStep, 100) }));
+          break;
+        case 'ArrowRight':
+          setCrop(prev => ({ ...prev, x: Math.max(prev.x - panStep, -100) }));
+          break;
+        case '-':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP));
+          }
+          break;
+        case '+':
+        case '=':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP));
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showCropper, ZOOM_STEP, MIN_ZOOM, MAX_ZOOM]);
 
   return (
     <section id="exhibitors" className="py-16 sm:py-20 md:py-24 bg-yellow-50 overflow-hidden">
@@ -569,12 +647,12 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                   />
                 </div>
                 <EditableText
-                    value={displayData.heading}
-                    onChange={(value) => updateField('heading', value)}
-                    className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
-                    placeholder="Section heading"
-                    charLimit={TEXT_LIMITS.HEADING}
-                  />
+                  value={displayData.heading}
+                  onChange={(value) => updateField('heading', value)}
+                  className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
+                  placeholder="Section heading"
+                  charLimit={TEXT_LIMITS.HEADING}
+                />
                 <EditableText
                   value={displayData.description}
                   onChange={(value) => updateField('description', value)}
@@ -633,19 +711,19 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                       ) : (
                         <Building2 className="w-6 h-6 text-white" />
                       )}
-                      
+
                       {/* Logo Upload */}
                       <label className="absolute inset-0 cursor-pointer bg-black/0 hover:bg-black/30 flex items-center justify-center transition-colors">
                         <Upload className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          className="hidden" 
-                          onChange={(e) => handleImageSelect(e, exhibitor.id)} 
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageSelect(e, exhibitor.id)}
                         />
                       </label>
                     </div>
-                    
+
                     <EditableText
                       value={exhibitor.booth}
                       onChange={(value) => updateExhibitor(exhibitor.id, 'booth', value)}
@@ -654,7 +732,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                       charLimit={TEXT_LIMITS.EXHIBITOR_BOOTH}
                     />
                   </div>
-                  
+
                   <div className="space-y-3">
                     <EditableText
                       value={exhibitor.name}
@@ -700,7 +778,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                 }
               `}
             </style>
-            
+
             <motion.div
               className="flex gap-8 animate-marquee"
               variants={{
@@ -748,12 +826,12 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                           <Building2 className="w-6 h-6 text-white" />
                         )}
                       </div>
-                      
+
                       <span className="px-3 py-1 bg-yellow-100 text-amber-700 rounded-full text-xs sm:text-sm">
                         {exhibitor.booth}
                       </span>
                     </div>
-                    
+
                     <h3 className="text-gray-900 mb-2 text-lg sm:text-xl group-hover:text-amber-600 transition-colors">
                       {exhibitor.name}
                     </h3>
@@ -799,7 +877,11 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="flex-1 relative">
+            <div
+              className="flex-1 relative"
+              ref={cropperContainerRef}
+              onWheel={handleWheel}
+            >
               <Cropper
                 image={imageToCrop || undefined}
                 crop={crop}
@@ -808,25 +890,69 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
+                minZoom={MIN_ZOOM}
+                maxZoom={MAX_ZOOM}
+                zoomWithScroll={false}
+                restrictPosition={false}
+                onWheelRequest={e => {
+                  // Allow zooming with Ctrl/Cmd + Wheel
+                  if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    return false;
+                  }
+                  return true;
+                }}
+                style={{
+                  containerStyle: {
+                    backgroundColor: '#000',
+                  },
+                  cropAreaStyle: {
+                    border: '2px solid white',
+                  },
+                }}
               />
             </div>
-            <div className="p-4 border-t flex gap-4 items-center">
-              <span className="text-sm text-gray-600">Zoom:</span>
-              <input
-                type="range"
-                value={zoom}
-                min={1}
-                max={3}
-                step={0.1}
-                onChange={(e) => setZoom(Number(e.target.value))}
-                className="flex-1"
-              />
-              <button 
-                onClick={applyCrop} 
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                Apply Crop
-              </button>
+            <div className="p-4 border-t flex flex-wrap gap-4 items-center">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={() => setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP))}
+                  className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={zoom <= MIN_ZOOM}
+                >
+                  -
+                </button>
+                <input
+                  type="range"
+                  value={zoom}
+                  min={MIN_ZOOM}
+                  max={MAX_ZOOM}
+                  step={ZOOM_STEP}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-24 sm:w-32"
+                />
+                <button
+                  onClick={() => setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP))}
+                  className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={zoom >= MAX_ZOOM}
+                >
+                  +
+                </button>
+                <button
+                  onClick={() => setZoom(1)}
+                  className="px-2 h-8 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                >
+                  1x
+                </button>
+                <span className="text-sm text-gray-600">({zoom.toFixed(1)}x)</span>
+              </div>
+              <div className="flex-1 text-right">
+                <button
+                  onClick={applyCrop}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Apply Crop
+                </button>
+              </div>
             </div>
           </div>
         </div>

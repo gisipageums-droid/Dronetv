@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { X, ChevronLeft, ChevronRight, Edit2, Loader2, Save, Plus, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import Cropper from 'react-easy-crop';
@@ -130,14 +130,14 @@ const createDefaultData = (): GalleryData => {
 };
 
 // Editable Text Component
-const EditableText = ({ 
-  value, 
-  onChange, 
-  multiline = false, 
-  className = "", 
-  placeholder = "", 
-  charLimit, 
-  rows = 3 
+const EditableText = ({
+  value,
+  onChange,
+  multiline = false,
+  className = "",
+  placeholder = "",
+  charLimit,
+  rows = 3
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -184,7 +184,7 @@ const EditableText = ({
   </div>
 );
 
-export function GallerySection({ galleryData, onStateChange, userId, eventId}: GalleryProps) {
+export function GallerySection({ galleryData, onStateChange, userId, eventId }: GalleryProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -194,16 +194,21 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
   const [tempData, setTempData] = useState<GalleryData>(createDefaultData());
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
-  
+
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
+  // Zoom constants
+  const MIN_ZOOM = 0.1;
+  const MAX_ZOOM = 3;
+  const ZOOM_STEP = 0.1;
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [croppingForImage, setCroppingForImage] = useState<string | null>(null);
   const [aspectRatio] = useState(4 / 3);
+  const cropperContainerRef = useRef<HTMLDivElement>(null);
 
   // Initialize data from backend props
   useEffect(() => {
@@ -286,7 +291,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<{file: File; previewUrl: string}> => {
+  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<{ file: File; previewUrl: string }> => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -311,7 +316,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         if (!blob) throw new Error('Canvas is empty');
-        const file = new File([blob], `gallery-${Date.now()}.jpg`, { 
+        const file = new File([blob], `gallery-${Date.now()}.jpg`, {
           type: 'image/jpeg',
           lastModified: Date.now()
         });
@@ -324,9 +329,9 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || !croppingForImage) return;
-      
+
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-      
+
       if (croppingForImage === 'new') {
         // Add new image to tempData immediately
         const newImage: GalleryImage = {
@@ -335,13 +340,13 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
           caption: 'New image',
           category: 'keynote'
         };
-        
+
         const updatedImages = [...tempData.images, newImage];
         setTempData(prev => ({ ...prev, images: updatedImages }));
-        
+
         // Add to pendingImages for S3 upload
         setPendingImages(prev => [...prev, { file, imageId: newImage.id, isNew: true }]);
-        
+
         toast.success('Image added! Click Save to upload to S3.');
       } else {
         // Replace existing image
@@ -349,13 +354,13 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
           img.id === croppingForImage ? { ...img, url: previewUrl } : img
         );
         setTempData(prev => ({ ...prev, images: updatedImages }));
-        
+
         // Add to pendingImages for S3 upload
         setPendingImages(prev => [...prev, { file, imageId: croppingForImage }]);
-        
+
         toast.success('Image replaced! Click Save to upload to S3.');
       }
-      
+
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
@@ -381,7 +386,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
     const formData = new FormData();
     formData.append('file', file);
     formData.append('userId', userId);
-    formData.append(`fieldName`, fieldName+Date.now());
+    formData.append(`fieldName`, fieldName + Date.now());
 
     const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`, {
       method: 'POST',
@@ -400,16 +405,16 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      
+
       // Handle image uploads to S3
       if (pendingImages.length > 0) {
         setIsUploading(true);
         const updatedImages = [...tempData.images];
-        
+
         for (const pending of pendingImages) {
           try {
             const s3Url = await uploadImageToS3(pending.file, `gallery-image-${pending.imageId}`);
-            
+
             const imageIndex = updatedImages.findIndex(img => img.id === pending.imageId);
             if (imageIndex !== -1) {
               updatedImages[imageIndex].url = s3Url;
@@ -426,23 +431,23 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
             return;
           }
         }
-        
+
         setTempData(prev => ({ ...prev, images: updatedImages }));
       }
 
       // Simulate API call for saving gallery data
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       setData(tempData);
       setPendingImages([]);
       setIsEditing(false);
-      
+
       if (onStateChange) {
         onStateChange(tempData);
       }
-      
-      toast.success(pendingImages.length > 0 
-        ? 'Gallery saved with new images!' 
+
+      toast.success(pendingImages.length > 0
+        ? 'Gallery saved with new images!'
         : 'Gallery updated successfully!');
     } catch (error) {
       console.error('Error saving gallery:', error);
@@ -478,7 +483,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
   const removeImage = useCallback((imageId: string) => {
     const updatedImages = tempData.images.filter(img => img.id !== imageId);
     setTempData(prev => ({ ...prev, images: updatedImages }));
-    
+
     // Remove any pending upload for this image
     setPendingImages(prev => prev.filter(p => p.imageId !== imageId));
   }, [tempData.images]);
@@ -518,6 +523,79 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
 
   // Check if maximum images reached
   const maxImagesReached = displayData.images.length >= 6;
+
+  // Handle wheel events for zooming and panning
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (!showCropper) return;
+    e.preventDefault();
+
+    if (e.ctrlKey || e.metaKey) {
+      // Zoom with Ctrl/Cmd + Wheel
+      const delta = e.deltaY > 0 ? -1 : 1;
+      setZoom(prev => {
+        const newZoom = prev + (delta * ZOOM_STEP);
+        return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+      });
+    } else if (e.shiftKey) {
+      // Horizontal pan with Shift + Wheel
+      setCrop(prev => ({
+        ...prev,
+        x: Math.max(-100, Math.min(100, prev.x - e.deltaY * 0.1))
+      }));
+    } else {
+      // Vertical pan with Wheel
+      setCrop(prev => ({
+        ...prev,
+        y: Math.max(-100, Math.min(100, prev.y + e.deltaY * 0.1))
+      }));
+    }
+  }, [showCropper, ZOOM_STEP, MIN_ZOOM, MAX_ZOOM]);
+
+  // Handle keyboard events for zoom and pan
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!showCropper) return;
+
+      // Prevent default for all handled keys
+      const handledKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', '+', '-', '='];
+      if (handledKeys.includes(e.key)) {
+        e.preventDefault();
+      }
+
+      // Handle arrow keys for panning
+      const panStep = 10;
+      switch (e.key) {
+        case 'ArrowUp':
+          setCrop(prev => ({ ...prev, y: Math.min(prev.y + panStep, 100) }));
+          break;
+        case 'ArrowDown':
+          setCrop(prev => ({ ...prev, y: Math.max(prev.y - panStep, -100) }));
+          break;
+        case 'ArrowLeft':
+          setCrop(prev => ({ ...prev, x: Math.min(prev.x + panStep, 100) }));
+          break;
+        case 'ArrowRight':
+          setCrop(prev => ({ ...prev, x: Math.max(prev.x - panStep, -100) }));
+          break;
+        case '-':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP));
+          }
+          break;
+        case '+':
+        case '=':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP));
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showCropper, ZOOM_STEP, MIN_ZOOM, MAX_ZOOM]);
 
   return (
     <section id="gallery" className="py-16 sm:py-20 md:py-24 bg-white">
@@ -642,7 +720,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
                   alt={image.caption}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                
+
                 {/* Edit Overlay */}
                 {isEditing && (
                   <div className="absolute inset-0 bg-black/60 flex flex-col justify-between p-4">
@@ -662,11 +740,11 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
                       <label className="cursor-pointer inline-flex items-center justify-center w-full py-1 bg-blue-600 text-white rounded text-sm">
                         <Upload className="w-3 h-3 mr-1" />
                         Replace
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          className="hidden" 
-                          onChange={(e) => handleImageSelect(e, image.id)} 
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageSelect(e, image.id)}
                         />
                       </label>
                       <div className="space-y-2">
@@ -692,7 +770,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
                     </div>
                   </div>
                 )}
-                
+
                 {/* Hover Overlay (non-edit mode) */}
                 {!isEditing && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -706,7 +784,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
                 )}
               </div>
             ))}
-            
+
             {/* Add New Image Card (edit mode) */}
             {isEditing && !maxImagesReached && (
               <div
@@ -752,7 +830,11 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-                <div className="flex-1 relative">
+                <div
+                  className="flex-1 relative"
+                  ref={cropperContainerRef}
+                  onWheel={handleWheel}
+                >
                   <Cropper
                     image={imageToCrop || undefined}
                     crop={crop}
@@ -761,25 +843,69 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId}: G
                     onCropChange={setCrop}
                     onZoomChange={setZoom}
                     onCropComplete={onCropComplete}
+                    minZoom={MIN_ZOOM}
+                    maxZoom={MAX_ZOOM}
+                    zoomWithScroll={false}
+                    restrictPosition={false}
+                    onWheelRequest={e => {
+                      // Allow zooming with Ctrl/Cmd + Wheel
+                      if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        return false;
+                      }
+                      return true;
+                    }}
+                    style={{
+                      containerStyle: {
+                        backgroundColor: '#000',
+                      },
+                      cropAreaStyle: {
+                        border: '2px solid white',
+                      },
+                    }}
                   />
                 </div>
-                <div className="p-4 border-t flex gap-4 items-center">
-                  <span className="text-sm text-gray-600">Zoom:</span>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="flex-1"
-                  />
-                  <button 
-                    onClick={applyCrop} 
-                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                  >
-                    Apply Crop
-                  </button>
+                <div className="p-4 border-t flex flex-wrap gap-4 items-center">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button
+                      onClick={() => setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP))}
+                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={zoom <= MIN_ZOOM}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="range"
+                      value={zoom}
+                      min={MIN_ZOOM}
+                      max={MAX_ZOOM}
+                      step={ZOOM_STEP}
+                      onChange={(e) => setZoom(Number(e.target.value))}
+                      className="w-24 sm:w-32"
+                    />
+                    <button
+                      onClick={() => setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP))}
+                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={zoom >= MAX_ZOOM}
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() => setZoom(1)}
+                      className="px-2 h-8 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                    >
+                      1x
+                    </button>
+                    <span className="text-sm text-gray-600">({zoom.toFixed(1)}x)</span>
+                  </div>
+                  <div className="flex-1 text-right">
+                    <button
+                      onClick={applyCrop}
+                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                      Apply Crop
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

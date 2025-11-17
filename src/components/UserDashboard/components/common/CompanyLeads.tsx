@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useUserAuth } from "../../../context/context";
 import { useLocation, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,23 +22,30 @@ interface Lead {
 
 interface ChatMessage {
   id: string;
-  isRead: boolean;
-  messageId: string;
-  senderType: "user" | "lead";
-  senderName: string;
   message: string;
-  timestamp: Date;
-  delivered?: boolean;
-  seen?: boolean;
-  sender?: "user" | "lead";
+  sender: "user" | "lead";
+  timestamp: string;
+  seen: boolean;
+  delivered: boolean;
 }
 
 const LeadsPage: React.FC = () => {
+  console.log("=== LeadsPage Component Mounted ===");
+  
   const { user } = useUserAuth();
-  const userId = user?.email || user?.userData?.email;
+  const userId = user?.email;
   const companyName = useParams().companyName || "";
+  
+  // Debug: Log navigation state
   const location = useLocation();
   const publishedId = location.state?.publishedId;
+  
+  console.log("LeadsPage Debug Info:");
+  console.log("- userId:", userId);
+  console.log("- companyName:", companyName);
+  console.log("- location.state:", location.state);
+  console.log("- publishedId:", publishedId);
+  console.log("- full location:", location);
 
   const [leads, setLeads] = useState<Lead[]>([]);
   const [totalTokens, setTotalTokens] = useState(0);
@@ -48,15 +55,15 @@ const LeadsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
-
+  
+  // Chat states
   const [showChatModal, setShowChatModal] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const intervalId = useRef<number | null>(null);
-  const lastMessageIdRef = useRef<string>("");
 
-  const fetchUserTokens = useCallback(async () => {
+  // ✅ Fetch user tokens
+  const fetchUserTokens = async () => {
     if (!userId) return;
     try {
       console.log("Fetching tokens for userId:", userId);
@@ -70,25 +77,26 @@ const LeadsPage: React.FC = () => {
     } catch (error) {
       console.error("Error fetching user tokens:", error);
     }
-  }, [userId]);
+  };
 
-  const fetchLeads = useCallback(async () => {
+  // ✅ Fetch leads
+  const fetchLeads = async () => {
     if (!userId) return;
     try {
       console.log("Calling leads API with:", { userId, publishedId });
-
+      
       // Try with publishedId first, if not available, try without it
       let apiUrl = `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all`;
       if (publishedId) {
         apiUrl += `&publishedId=${publishedId}`;
       }
-
+      
       console.log("Final API URL:", apiUrl);
       const res = await fetch(apiUrl);
       console.log("Leads API response status:", res.status);
       const data = await res.json();
       console.log("Leads API response data:", data);
-
+      
       if (data.success && Array.isArray(data.leads)) {
         const formattedLeads = data.leads.map((lead: any) => ({
           leadId: lead.leadId,
@@ -115,24 +123,41 @@ const LeadsPage: React.FC = () => {
       console.error("Error fetching leads:", error);
       setLeads([]);
     }
-  }, [publishedId, userId]);
+  };
 
+  // Force API call on component mount
+  React.useEffect(() => {
+    console.log("=== Force API Call on Mount ===");
+    if (userId) {
+      console.log("User found, forcing API calls...");
+      fetchUserTokens();
+      fetchLeads();
+    } else {
+      console.log("No user found, cannot call APIs");
+    }
+  }, []); // Empty dependency array to run only once on mount
+
+  // ✅ Fetch both in parallel
   useEffect(() => {
+    console.log("=== LeadsPage useEffect triggered ===");
+    console.log("Current state:", { userId, publishedId, loading });
+    
     const fetchAll = async () => {
+      console.log("=== Starting fetchAll ===");
       if (!userId) {
         console.log("No userId found, skipping API calls");
         setLoading(false);
         return;
       }
-
+      
       if (!publishedId) {
-        console.warn(
-          "Warning: No publishedId found. Will try to fetch all leads for user."
-        );
+        console.warn("Warning: No publishedId found. Will try to fetch all leads for user.");
       }
-
+      
+      setLoading(true);
+      console.log("Fetching leads for userId:", userId, "publishedId:", publishedId);
+      
       try {
-        setLoading(true);
         await Promise.all([fetchUserTokens(), fetchLeads()]);
       } catch (error) {
         console.error("Error in fetchAll:", error);
@@ -140,10 +165,11 @@ const LeadsPage: React.FC = () => {
         setLoading(false);
       }
     };
-
+    
     fetchAll();
-  }, [userId, publishedId, fetchLeads, fetchUserTokens]);
+  }, [userId, publishedId]);
 
+  // ✅ Handle view button
   const handleViewClick = async (leadId: string) => {
     if (totalTokens < 10) {
       setShowTokenModal(true);
@@ -178,133 +204,69 @@ const LeadsPage: React.FC = () => {
     }
   };
 
+  // ✅ Handle view message button click
   const handleViewMessage = (lead: Lead) => {
     setSelectedLead(lead);
     setShowMessageModal(true);
   };
 
   const closeTokenModal = () => setShowTokenModal(false);
+  const closeMessageModal = () => setShowMessageModal(false);
 
-  const closeMessageModal = () => {
-    setShowMessageModal(false);
-    if (intervalId.current) clearInterval(intervalId.current);
-  };
-
-  // gel all conversetions
+  // ✅ Handle chat with lead
   const handleChatWithLead = (lead: Lead) => {
     setSelectedLead(lead);
     setShowChatModal(true);
-    setChatMessages([]);
-    lastMessageIdRef.current = "";
-
-    // message pooling in 1s
-    const id = setInterval(async () => {
-      try {
-        const response = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`
-        );
-        const data = await response.json();
-
-        if (data?.messages && Array.isArray(data.messages)) {
-          // Transform messages to ensure consistent structure
-          const transformedMessages: ChatMessage[] = data.messages.map(
-            (msg: any) => ({
-              id:
-                msg.messageId || msg.id || `${msg.timestamp}-${Math.random()}`,
-              isRead: msg.isRead || false,
-              messageId:
-                msg.messageId || msg.id || `${msg.timestamp}-${Math.random()}`,
-              senderType: msg.senderType === "user" ? "user" : "lead",
-              senderName: msg.senderName || msg.sender,
-              message: msg.message,
-              timestamp: new Date(msg.timestamp),
-              delivered: msg.delivered !== false,
-              seen: msg.seen || false,
-              sender: msg.senderType === "user" ? "user" : "lead",
-            })
-          );
-
-          setChatMessages(transformedMessages);
-        }
-      } catch (error) {
-        console.error("Error fetching chat messages:", error);
+    // Initialize chat with welcome message
+    setChatMessages([
+      {
+        id: "1",
+        message: `Hello ${lead.firstName}! Thank you for your interest in ${companyName}. How can I help you today?`,
+        sender: "user",
+        timestamp: new Date().toISOString(),
+        seen: false,
+        delivered: true,
       }
-    }, 1000);
-
-    intervalId.current = id;
+    ]);
   };
 
-  // Send message to User
-  const sendChatMessage = async () => {
-    if (!newMessage.trim() || !selectedLead) return;
-
-    const messageToSend = newMessage;
-    setNewMessage("");
-
-    // Add message immediately to UI
-    const tempMessage: ChatMessage = {
-      id: `temp-${Date.now()}`,
-      isRead: false,
-      messageId: `temp-${Date.now()}`,
-      senderType: "lead",
-      senderName: user?.userData?.fullName || user?.fullName || "You",
-      message: messageToSend,
-      timestamp: new Date(),
-      delivered: false,
-      seen: false,
-      sender: "lead",
-    };
-
-    setChatMessages((prev) => [...prev, tempMessage]);
-
-    try {
-      const response = await fetch(
-        "https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/send",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            leadId: selectedLead.leadId,
-            userId: userId,
-            senderType: "lead",
-            senderName: user?.userData?.fullName || user?.fullName || "You",
-            message: messageToSend,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Update message with delivered status
-        setChatMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === tempMessage.id
-              ? {
-                  ...msg,
-                  id: data.messageId,
-                  messageId: data.messageId,
-                  delivered: true,
-                }
+  // ✅ Send message to lead
+  const sendChatMessage = () => {
+    if (newMessage.trim() && selectedLead) {
+      const message: ChatMessage = {
+        id: Date.now().toString(),
+        message: newMessage,
+        sender: "user",
+        timestamp: new Date().toISOString(),
+        seen: false,
+        delivered: false,
+      };
+      setChatMessages([...chatMessages, message]);
+      setNewMessage("");
+      
+      // Simulate message delivery
+      setTimeout(() => {
+        setChatMessages(prev => 
+          prev.map(msg => 
+            msg.id === message.id 
+              ? { ...msg, delivered: true }
               : msg
           )
         );
-      } else {
-        // Remove message if failed
-        setChatMessages((prev) =>
-          prev.filter((msg) => msg.id !== tempMessage.id)
-        );
-        toast.error("Failed to send message");
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-      // Remove message if failed
-      setChatMessages((prev) =>
-        prev.filter((msg) => msg.id !== tempMessage.id)
-      );
-      toast.error("Error sending message");
+      }, 500);
+      
+      // Simulate lead response
+      setTimeout(() => {
+        const response: ChatMessage = {
+          id: (Date.now() + 1000).toString(),
+          message: "Thank you for your response. I'll get back to you soon with more information!",
+          sender: "lead",
+          timestamp: new Date().toISOString(),
+          seen: false,
+          delivered: true,
+        };
+        setChatMessages(prev => [...prev, response]);
+      }, 1500);
     }
   };
 
@@ -317,26 +279,19 @@ const LeadsPage: React.FC = () => {
     scrollToBottom();
   }, [chatMessages]);
 
-  // Cleanup interval on modal close
-  useEffect(() => {
-    return () => {
-      if (intervalId.current) {
-        clearInterval(intervalId.current);
-      }
-    };
-  }, []);
-
+  // ✅ Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
+  // ✅ Filter leads
   const filteredLeads = leads.filter((lead) => {
     const matchesSearch =
       lead.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -349,6 +304,7 @@ const LeadsPage: React.FC = () => {
 
   const categories = ["All", ...new Set(leads.map((lead) => lead.subject))];
 
+  // ✅ Show full-page loader
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-amber-50">
@@ -381,6 +337,28 @@ const LeadsPage: React.FC = () => {
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Debug Info */}
+        <div className="mb-4 p-4 bg-yellow-100 rounded-lg border border-yellow-200">
+          <h3 className="font-semibold text-yellow-800 mb-2">Debug Information:</h3>
+          <div className="text-sm text-yellow-700 space-y-1">
+            <p>User ID: {userId || "Not found"}</p>
+            <p>Published ID: {publishedId || "Not found"}</p>
+            <p>Company Name: {companyName || "Not found"}</p>
+            <p>Loading: {loading ? "Yes" : "No"}</p>
+            <p>Leads Count: {leads.length}</p>
+          </div>
+          <button
+            onClick={() => {
+              console.log("Manual API trigger clicked");
+              fetchUserTokens();
+              fetchLeads();
+            }}
+            className="mt-3 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 text-sm"
+          >
+            Manual Trigger APIs
+          </button>
         </div>
 
         {/* Search + Filter */}
@@ -453,13 +431,11 @@ const LeadsPage: React.FC = () => {
                       </td>
 
                       <td className="px-6 py-4 text-sm text-amber-800">
-                        <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            lead.viewed
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          lead.viewed 
+                            ? "bg-green-100 text-green-800" 
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}>
                           {lead.viewed ? "Viewed" : "New"}
                         </span>
                       </td>
@@ -467,13 +443,13 @@ const LeadsPage: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {lead.viewed ? (
                           <div className="flex gap-2">
-                            <button
+                            <button 
                               onClick={() => handleViewMessage(lead)}
                               className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm"
                             >
                               Details
                             </button>
-                            <button
+                            <button 
                               onClick={() => handleChatWithLead(lead)}
                               className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm flex items-center gap-1"
                             >
@@ -494,7 +470,10 @@ const LeadsPage: React.FC = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="px-6 py-16 text-center">
+                    <td
+                      colSpan={5}
+                      className="px-6 py-16 text-center"
+                    >
                       <div className="flex flex-col items-center justify-center">
                         <div className="bg-amber-100 rounded-full p-4 mb-4">
                           <MessageCircle className="w-8 h-8 text-amber-500" />
@@ -503,15 +482,14 @@ const LeadsPage: React.FC = () => {
                           No leads found
                         </h3>
                         <p className="text-amber-700 text-sm max-w-md">
-                          {searchTerm || selectedCategory !== "All"
+                          {searchTerm || selectedCategory !== "All" 
                             ? "Try adjusting your search or filter criteria to find more leads."
                             : "You haven't received any leads yet. When people contact you through your company page, they'll appear here."}
                         </p>
                         {!searchTerm && selectedCategory === "All" && (
                           <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200 max-w-sm">
                             <p className="text-xs text-amber-600">
-                              <strong>Tip:</strong> Share your company page to
-                              start receiving leads from potential customers.
+                              <strong>Tip:</strong> Share your company page to start receiving leads from potential customers.
                             </p>
                           </div>
                         )}
@@ -559,11 +537,13 @@ const LeadsPage: React.FC = () => {
       {/* Message Modal */}
       {showMessageModal && selectedLead && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-xl w-full h-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="bg-amber-500 px-6 py-4 rounded-t-2xl">
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold text-white">Lead Details</h3>
+                <h3 className="text-xl font-bold text-white">
+                  Lead Details
+                </h3>
                 <button
                   onClick={closeMessageModal}
                   className="text-white hover:text-amber-200 transition-colors"
@@ -578,9 +558,7 @@ const LeadsPage: React.FC = () => {
               {/* Lead Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                  <h4 className="font-semibold text-amber-800 mb-2">
-                    Lead Information
-                  </h4>
+                  <h4 className="font-semibold text-amber-800 mb-2">Lead Information</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-amber-600">Name:</span>
@@ -590,53 +568,39 @@ const LeadsPage: React.FC = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-amber-600">Company:</span>
-                      <span className="font-medium text-amber-800">
-                        {selectedLead.company}
-                      </span>
+                      <span className="font-medium text-amber-800">{selectedLead.company}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-amber-600">Subject:</span>
-                      <span className="font-medium text-amber-800">
-                        {selectedLead.subject}
-                      </span>
+                      <span className="font-medium text-amber-800">{selectedLead.subject}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-amber-600">Category:</span>
-                      <span className="font-medium text-amber-800">
-                        {selectedLead.category}
-                      </span>
+                      <span className="font-medium text-amber-800">{selectedLead.category}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                  <h4 className="font-semibold text-amber-800 mb-2">
-                    Timeline
-                  </h4>
+                  <h4 className="font-semibold text-amber-800 mb-2">Timeline</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-amber-600">Submitted:</span>
-                      <span className="font-medium text-amber-800">
-                        {formatDate(selectedLead.submittedAt)}
-                      </span>
+                      <span className="font-medium text-amber-800">{formatDate(selectedLead.submittedAt)}</span>
                     </div>
                     {selectedLead.viewedAt && (
                       <div className="flex justify-between">
                         <span className="text-amber-600">Viewed:</span>
-                        <span className="font-medium text-amber-800">
-                          {formatDate(selectedLead.viewedAt)}
-                        </span>
+                        <span className="font-medium text-amber-800">{formatDate(selectedLead.viewedAt)}</span>
                       </div>
                     )}
                     <div className="flex justify-between">
                       <span className="text-amber-600">Status:</span>
-                      <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          selectedLead.viewed
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        selectedLead.viewed 
+                          ? "bg-green-100 text-green-800" 
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}>
                         {selectedLead.viewed ? "Viewed" : "New"}
                       </span>
                     </div>
@@ -646,9 +610,7 @@ const LeadsPage: React.FC = () => {
 
               {/* Message Section */}
               <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                <h4 className="font-semibold text-amber-800 mb-3">
-                  Message from Lead
-                </h4>
+                <h4 className="font-semibold text-amber-800 mb-3">Message from Lead</h4>
                 <div className="bg-white rounded-lg p-4 border border-amber-100 min-h-[120px]">
                   <p className="text-amber-800 leading-relaxed whitespace-pre-wrap">
                     {selectedLead.message || "No message provided."}
@@ -659,9 +621,7 @@ const LeadsPage: React.FC = () => {
               {/* Privacy Notice */}
               <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
                 <p className="text-xs text-blue-700">
-                  <strong>Privacy Notice:</strong> Contact information (email,
-                  phone) is hidden for privacy protection. Use the chat feature
-                  to communicate with this lead.
+                  <strong>Privacy Notice:</strong> Contact information (email, phone) is hidden for privacy protection. Use the chat feature to communicate with this lead.
                 </p>
               </div>
 
@@ -698,24 +658,18 @@ const LeadsPage: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                   <span className="text-lg font-semibold">
-                    {selectedLead.firstName.charAt(0)}
-                    {selectedLead.lastName.charAt(0)}
+                    {selectedLead.firstName.charAt(0)}{selectedLead.lastName.charAt(0)}
                   </span>
                 </div>
                 <div>
                   <h3 className="font-semibold text-white">
                     {selectedLead.firstName} {selectedLead.lastName}
                   </h3>
-                  <p className="text-xs text-white/80">
-                    {selectedLead.company}
-                  </p>
+                  <p className="text-xs text-white/80">{selectedLead.company}</p>
                 </div>
               </div>
               <button
-                onClick={() => {
-                  setShowChatModal(false);
-                  if (intervalId.current) clearInterval(intervalId.current);
-                }}
+                onClick={() => setShowChatModal(false)}
                 className="p-2 hover:bg-white/20 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5 text-white" />
@@ -728,27 +682,19 @@ const LeadsPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-gray-500 text-xs">Name:</span>
-                    <p className="font-medium text-gray-900">
-                      {selectedLead.firstName} {selectedLead.lastName}
-                    </p>
+                    <p className="font-medium text-gray-900">{selectedLead.firstName} {selectedLead.lastName}</p>
                   </div>
                   <div>
                     <span className="text-gray-500 text-xs">Company:</span>
-                    <p className="font-medium text-gray-900">
-                      {selectedLead.company}
-                    </p>
+                    <p className="font-medium text-gray-900">{selectedLead.company}</p>
                   </div>
                   <div>
                     <span className="text-gray-500 text-xs">Subject:</span>
-                    <p className="font-medium text-gray-900">
-                      {selectedLead.subject}
-                    </p>
+                    <p className="font-medium text-gray-900">{selectedLead.subject}</p>
                   </div>
                   <div>
                     <span className="text-gray-500 text-xs">Category:</span>
-                    <p className="font-medium text-gray-900">
-                      {selectedLead.category}
-                    </p>
+                    <p className="font-medium text-gray-900">{selectedLead.category}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
@@ -763,10 +709,7 @@ const LeadsPage: React.FC = () => {
                 </div>
                 <div className="bg-white rounded-lg p-3 border border-gray-200">
                   <p className="text-sm text-gray-700 leading-relaxed">
-                    <span className="font-medium text-gray-900">
-                      Original Message:
-                    </span>{" "}
-                    {selectedLead.message || "No message provided."}
+                    <span className="font-medium text-gray-900">Original Message:</span> {selectedLead.message || "No message provided."}
                   </p>
                 </div>
               </div>
@@ -778,9 +721,7 @@ const LeadsPage: React.FC = () => {
                 {chatMessages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`flex ${
-                      msg.sender === "user" ? "justify-start" : "justify-end"
-                    }`}
+                    className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div className="max-w-xs lg:max-w-md">
                       <div
@@ -791,17 +732,13 @@ const LeadsPage: React.FC = () => {
                         }`}
                       >
                         <p className="text-sm break-words">{msg.message}</p>
-                        <div
-                          className={`flex items-center justify-end gap-1 mt-1 text-xs ${
-                            msg.sender === "user"
-                              ? "text-gray-500"
-                              : "text-gray-400"
-                          }`}
-                        >
+                        <div className={`flex items-center justify-end gap-1 mt-1 text-xs ${
+                          msg.sender === "user" ? "text-gray-500" : "text-gray-400"
+                        }`}>
                           <span>
-                            {new Date(msg.timestamp).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
+                            {new Date(msg.timestamp).toLocaleTimeString([], { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
                             })}
                           </span>
                           {msg.sender === "user" && (

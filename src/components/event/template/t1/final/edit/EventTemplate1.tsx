@@ -186,7 +186,7 @@ const EventTemplate1: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { draftId, userId, isAIgen } = useParams();
   const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData } = useTemplate();
-  
+
   // Component states to collect data from all sections (similar to App.tsx)
   const [componentStates, setComponentStates] = useState<ComponentStates>({
     header: {
@@ -323,11 +323,11 @@ const EventTemplate1: React.FC = () => {
         }
 
         const data = await response.json();
-        
+
         // Set both AIGenData and finalTemplate similar to App.tsx
         setFinalTemplate(data.data);
         setAIGenData(data.data);
-        
+
         // Initialize component states with fetched data or default values
         if (data.data.content) {
           setComponentStates({
@@ -335,7 +335,7 @@ const EventTemplate1: React.FC = () => {
             ...data.data.content
           });
         }
-        
+
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching template data:", error);
@@ -417,6 +417,7 @@ const EventTemplate1: React.FC = () => {
         onStateChange={createStateChangeHandler('Agenda')}
       />
       <SponsorsSection
+        userId={userId}
         sponsorsData={componentStates.sponsorsData}
         onStateChange={createStateChangeHandler('sponsorsData')}
       />
@@ -429,7 +430,7 @@ const EventTemplate1: React.FC = () => {
         footerData={componentStates.footer}
         onStateChange={createStateChangeHandler('footer')}
       />
-      
+
       <Publish />
       <Toaster position="top-right" richColors />
     </div>
