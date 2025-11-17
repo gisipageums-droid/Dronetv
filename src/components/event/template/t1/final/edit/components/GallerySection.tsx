@@ -1,39 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Edit, Save, X, Plus, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const initialGalleryItems = [
-  {
-    type: 'video',
-    src: 'https://www.youtube.com/embed/tZw1ouQhef0?autoplay=0&mute=1&controls=1&loop=1&playlist=tZw1ouQhef0',
-    title: 'Drone Innovation Video 1'
-  },
-  {
-    type: 'video',
-    src: 'https://www.youtube.com/embed/Mwn-_bvzkYA?autoplay=0&mute=1&controls=1&loop=1&playlist=Mwn-_bvzkYA',
-    title: 'Drone Innovation Video 2'
-  },
-  {
-    type: 'video',
-    src: 'https://www.youtube.com/embed/UBf6wACbMwY?autoplay=0&mute=1&controls=1&loop=1&playlist=UBf6wACbMwY',
-    title: 'Drone Innovation Video 3'
-  },
-  {
-    type: 'video',
-    src: 'https://www.youtube.com/embed/4lMdajZ0kGg?autoplay=0&mute=1&controls=1&loop=1&playlist=4lMdajZ0kGg',
-    title: 'Drone Innovation Video 4'
-  },
-  {
-    type: 'video',
-    src: 'https://www.youtube.com/embed/KL-vhCrcWjY?autoplay=0&mute=1&controls=1&loop=1&playlist=KL-vhCrcWjY',
-    title: 'Drone Innovation Video 5'
-  }
-];
+interface GalleryItem {
+  type: string;
+  src: string;
+  title: string;
+}
 
-const GallerySection = () => {
+interface GalleryContent {
+  title: string;
+  titleHighlight: string;
+  subtitle: string;
+  items: GalleryItem[];
+}
+
+interface GallerySectionProps {
+  galleryData?: GalleryContent;
+  onStateChange?: (data: GalleryContent) => void;
+}
+
+/** Default data structure */
+const defaultGalleryContent: GalleryContent = {
+  title: "Exhibitors",
+  titleHighlight: "Interview",
+  subtitle: "Catch our exclusive interviews with top exhibitors sharing their insights and innovations.",
+  items: [
+    {
+      type: 'video',
+      src: 'https://www.youtube.com/embed/tZw1ouQhef0?autoplay=0&mute=1&controls=1&loop=1&playlist=tZw1ouQhef0',
+      title: 'Video 1'
+    },
+    {
+      type: 'video',
+      src: 'https://www.youtube.com/embed/Mwn-_bvzkYA?autoplay=0&mute=1&controls=1&loop=1&playlist=Mwn-_bvzkYA',
+      title: 'Video 2'
+    }
+  ]
+};
+
+const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateChange }) => {
   const [editMode, setEditMode] = useState(false);
-  
+  const [galleryContent, setGalleryContent] = useState<GalleryContent>(defaultGalleryContent);
+  const [backupContent, setBackupContent] = useState<GalleryContent>(defaultGalleryContent);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Update local state when prop data changes
+  useEffect(() => {
+    if (galleryData) {
+      setGalleryContent(galleryData);
+      setBackupContent(galleryData);
+    }
+  }, [galleryData]);
+
   // Helper function to convert YouTube URLs to embed format
   const convertToEmbedUrl = (url: string): string => {
+    if (!url) return "";
+    
     // If it's already an embed URL, return as is
     if (url.includes('youtube.com/embed/')) {
       return url;
@@ -61,19 +83,14 @@ const GallerySection = () => {
     return url;
   };
 
-  const [galleryContent, setGalleryContent] = useState({
-    title: "Exhibitors",
-    titleHighlight: "Interview",
-    subtitle: "Catch our exclusive interviews with top exhibitors sharing their insights and innovations.",
-    items: initialGalleryItems
-  });
-  
-  const [backupContent, setBackupContent] = useState(galleryContent);
-  const [currentSlide, setCurrentSlide] = useState(0);
-
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(galleryContent);
+    } else {
+      // When saving, call onStateChange to update parent component
+      if (onStateChange) {
+        onStateChange(galleryContent);
+      }
     }
     setEditMode(!editMode);
   };
@@ -84,22 +101,43 @@ const GallerySection = () => {
   };
 
   // Handle input changes for gallery items
-  const handleInputChange = (e, index, field) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number, field: keyof GalleryItem) => {
     const newItems = [...galleryContent.items];
-    newItems[index][field] = e.target.value;
-    setGalleryContent({ ...galleryContent, items: newItems });
+    newItems[index] = { ...newItems[index], [field]: e.target.value };
+    const updatedContent = { ...galleryContent, items: newItems };
+    setGalleryContent(updatedContent);
   };
 
   // Add a new gallery item
   const handleAddVideo = () => {
-    const newItems = [...galleryContent.items, { type: 'video', src: '', title: '' }];
-    setGalleryContent({ ...galleryContent, items: newItems });
+    const newItem: GalleryItem = { 
+      type: 'video', 
+      src: '', 
+      title: 'New Video' 
+    };
+    const updatedContent = { 
+      ...galleryContent, 
+      items: [...galleryContent.items, newItem] 
+    };
+    setGalleryContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
   };
 
   // Remove a gallery item
-  const handleRemoveVideo = (index) => {
+  const handleRemoveVideo = (index: number) => {
     const newItems = galleryContent.items.filter((_, i) => i !== index);
-    setGalleryContent({ ...galleryContent, items: newItems });
+    const updatedContent = { ...galleryContent, items: newItems };
+    setGalleryContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
+    
+    // Adjust current slide if needed
+    if (currentSlide >= newItems.length) {
+      setCurrentSlide(Math.max(0, newItems.length - 1));
+    }
   };
 
   // Custom carousel navigation
@@ -120,7 +158,7 @@ const GallerySection = () => {
             {editMode ? (
               <>
                 <button
-                  onClick={() => setEditMode(false)}
+                  onClick={handleEditToggle}
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg border border-green-700 hover:bg-green-700 transition"
                 >
                   <Save size={18} /> Save
@@ -148,20 +186,29 @@ const GallerySection = () => {
                 <input
                   type="text"
                   value={galleryContent.title}
-                  onChange={(e) => setGalleryContent({ ...galleryContent, title: e.target.value })}
+                  onChange={(e) => {
+                    const updatedContent = { ...galleryContent, title: e.target.value };
+                    setGalleryContent(updatedContent);
+                  }}
                   className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
                 />
                 <input
                   type="text"
                   value={galleryContent.titleHighlight}
-                  onChange={(e) => setGalleryContent({ ...galleryContent, titleHighlight: e.target.value })}
+                  onChange={(e) => {
+                    const updatedContent = { ...galleryContent, titleHighlight: e.target.value };
+                    setGalleryContent(updatedContent);
+                  }}
                   className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
                 />
               </div>
               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
               <textarea
                 value={galleryContent.subtitle}
-                onChange={(e) => setGalleryContent({ ...galleryContent, subtitle: e.target.value })}
+                onChange={(e) => {
+                  const updatedContent = { ...galleryContent, subtitle: e.target.value };
+                  setGalleryContent(updatedContent);
+                }}
                 className="text-gray-600 text-lg max-w-2xl mx-auto bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
                 rows={2}
               />
@@ -181,73 +228,107 @@ const GallerySection = () => {
 
         {editMode ? (
           <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {galleryContent.items.map((item: any, index: number) => (
-                <div key={index} className="flex flex-col gap-2 p-4 bg-gray-100 rounded-2xl shadow-md border border-gray-200">
-                  <input
-                    type="text"
-                    value={item.title}
-                    onChange={(e) => handleInputChange(e, index, 'title')}
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    placeholder="Video Title"
-                  />
-                  <input
-                    type="url"
-                    value={item.src}
-                    onChange={(e) => handleInputChange(e, index, 'src')}
-                    className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    placeholder="Paste any YouTube URL (will be auto-converted)"
-                  />
-                  <div className="text-gray-500 text-xs mt-1">
-                    <p>Supported: youtu.be, youtube.com/watch, youtube.com/embed</p>
-                  </div>
+            {galleryContent.items.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500 mb-4">No videos added yet.</p>
+                <button
+                  onClick={handleAddVideo}
+                  className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors shadow-lg mx-auto"
+                >
+                  <Plus size={18} /> Add First Video
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {galleryContent.items.map((item: GalleryItem, index: number) => (
+                    <div key={index} className="flex flex-col gap-2 p-4 bg-gray-100 rounded-2xl shadow-md border border-gray-200">
+                      <input
+                        type="text"
+                        value={item.title}
+                        onChange={(e) => handleInputChange(e, index, 'title')}
+                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Video Title"
+                      />
+                      <input
+                        type="url"
+                        value={item.src}
+                        onChange={(e) => handleInputChange(e, index, 'src')}
+                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Paste any YouTube URL (will be auto-converted)"
+                      />
+                      <div className="text-gray-500 text-xs mt-1">
+                        <p>Supported: youtu.be, youtube.com/watch, youtube.com/embed</p>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveVideo(index)}
+                        className="p-2 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                      >
+                        <Trash2 size={18} className="mx-auto" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-center gap-4 mt-8">
                   <button
-                    onClick={() => handleRemoveVideo(index)}
-                    className="p-2 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    onClick={handleAddVideo}
+                    className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors shadow-lg"
                   >
-                    <Trash2 size={18} className="mx-auto" />
+                    <Plus size={18} /> Add Video
                   </button>
                 </div>
-              ))}
-            </div>
-            <div className="flex justify-center gap-4 mt-8">
-              <button
-                onClick={handleAddVideo}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors shadow-lg"
-              >
-                <Plus size={18} /> Add Video
-              </button>
-            </div>
+              </>
+            )}
           </div>
         ) : (
           <div className="relative">
-            <div className="relative overflow-hidden rounded-2xl shadow-lg">
-              <iframe
-                key={galleryContent.items[currentSlide]?.src}
-                src={convertToEmbedUrl(galleryContent.items[currentSlide]?.src || '')}
-                title={galleryContent.items[currentSlide]?.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-[530px] rounded-xl"
-              ></iframe>
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
-                <h3 className="text-white font-semibold text-lg">{galleryContent.items[currentSlide]?.title}</h3>
+            {galleryContent.items.length === 0 ? (
+              <div className="text-center py-16 bg-gray-100 rounded-2xl">
+                <p className="text-gray-500 text-lg">No videos available</p>
+                <p className="text-gray-400 text-sm mt-2">Add videos in edit mode</p>
               </div>
-            </div>
-            {galleryContent.items.length > 1 && (
+            ) : (
               <>
-                <button
-                  onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
-                >
-                  <ChevronLeft size={24} />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
-                >
-                  <ChevronRight size={24} />
-                </button>
+                <div className="relative overflow-hidden rounded-2xl shadow-lg">
+                  <iframe
+                    key={galleryContent.items[currentSlide]?.src}
+                    src={convertToEmbedUrl(galleryContent.items[currentSlide]?.src || '')}
+                    title={galleryContent.items[currentSlide]?.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-[530px] rounded-xl"
+                  ></iframe>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                    <h3 className="text-white font-semibold text-lg">{galleryContent.items[currentSlide]?.title}</h3>
+                  </div>
+                </div>
+                {galleryContent.items.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevSlide}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button
+                      onClick={nextSlide}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                      {galleryContent.items.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentSlide(index)}
+                          className={`w-3 h-3 rounded-full transition-colors ${
+                            currentSlide === index ? 'bg-white' : 'bg-white/50'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>

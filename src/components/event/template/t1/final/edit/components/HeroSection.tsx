@@ -1,8 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, MapPin, Clock, ArrowRight, Edit, Save, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+interface HeroSectionProps {
+  heroData?: {
+    title: string;
+    date: string;
+    time: string;
+    location: string;
+    eventDate: string;
+    startDate: string;
+    endDate: string;
+    startTime: string;
+    endTime: string;
+    videoUrl: string;
+    highlights: string[];
+    btn1: string;
+    btn2: string;
+  };
+  onStateChange?: (data: any) => void;
+}
 
-const HeroSection: React.FC = () => {
+const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) => {
   const [editMode, setEditMode] = useState(false);
+  const navigate = useNavigate();
+
+  const scrollToSection = (href: string) => {
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+   
+  };
   const [countdown, setCountdown] = useState({
     days: 0,
     hours: 0,
@@ -11,6 +39,36 @@ const HeroSection: React.FC = () => {
     isEventStarted: false,
     isEventExpired: false
   });
+
+  // Initialize with prop data or default values
+  const [heroContent, setHeroContent] = useState({
+    title: "demo Event",
+    date: " to ",
+    time: " - ",
+    location: ", ",
+    eventDate: "T:00",
+    startDate: "",
+    endDate: "",
+    startTime: "",
+    endTime: "",
+    videoUrl: "",
+    highlights: [
+      "Highlight 1",
+      "Highlight 2"
+    ],
+    btn1: "Register to Visit",
+    btn2: "Exhibitor Enquiry",
+  });
+
+  const [backupContent, setBackupContent] = useState(heroContent);
+
+  // Update local state when prop data changes
+  useEffect(() => {
+    if (heroData) {
+      setHeroContent(heroData);
+      setBackupContent(heroData);
+    }
+  }, [heroData]);
 
   // Helper function for ordinal suffixes
   const getOrdinalSuffix = (day: number): string => {
@@ -25,6 +83,8 @@ const HeroSection: React.FC = () => {
 
   // Helper function to convert YouTube URLs to embed format
   const convertToEmbedUrl = (url: string): string => {
+    if (!url) return "";
+    
     // If it's already an embed URL, return as is
     if (url.includes('youtube.com/embed/')) {
       return url;
@@ -52,34 +112,11 @@ const HeroSection: React.FC = () => {
     return url;
   };
 
-  const [heroContent, setHeroContent] = useState({
-    title: "Drone Expo 2025",
-    date: "25th – 27th September 2025",
-    time: "9:00 AM - 6:00 PM",
-    location: "Bombay Exhibition Centre, NESCO, Mumbai",
-    eventDate: "2025-09-25T09:00:00", // September 25, 2025 at 9:00 AM
-    startDate: "2025-09-25",
-    endDate: "2025-09-27",
-    startTime: "09:00",
-    endTime: "18:00",
-    videoUrl: "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0",
-    highlights: [
-      "Interaction with Key Buyers",
-      "Launch New Products",
-      "Showcase Your Products & Services",
-      "Understand Market Competition",
-      "Build Brand Awareness",
-      "Know About Visitors",
-    ],
-    btn1: "Register to Visit",
-    btn2: "Exhibitor Enquiry",
-  });
-
-  const [backupContent, setBackupContent] = useState(heroContent);
-
   // Countdown timer effect
   useEffect(() => {
     const updateCountdown = () => {
+      if (!heroContent.eventDate || !heroContent.endDate || !heroContent.endTime) return;
+      
       const now = new Date().getTime();
       const eventStartTime = new Date(heroContent.eventDate).getTime();
       const eventEndTime = new Date(`${heroContent.endDate}T${heroContent.endTime}:00`).getTime();
@@ -139,6 +176,11 @@ const HeroSection: React.FC = () => {
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(heroContent); // save current before editing
+    } else {
+      // When saving, call onStateChange to update parent component
+      if (onStateChange) {
+        onStateChange(heroContent);
+      }
     }
     setEditMode(!editMode);
   };
@@ -155,23 +197,25 @@ const HeroSection: React.FC = () => {
     >
       {/* YouTube Video BG */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-        <iframe
-          key={heroContent.videoUrl} // Force reload when URL changes
-          className="w-full h-full object-cover"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            minHeight: "100vh",
-          }}
-          src={convertToEmbedUrl(heroContent.videoUrl)}
-          title="Event Background Video"
-          frameBorder="0"
-          allow="autoplay; encrypted-media; fullscreen"
-          allowFullScreen
-        />
+    
+          <iframe
+            key={heroContent.videoUrl} // Force reload when URL changes
+            className="w-full h-full object-cover"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              minHeight: "100vh",
+            }}
+            src={convertToEmbedUrl(heroContent.videoUrl||"https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0")}
+            title="Event Background Video"
+            frameBorder="0"
+            allow="autoplay; encrypted-media; fullscreen"
+            allowFullScreen
+          />
+        
         <div className="absolute inset-0 bg-black/60 z-10"></div>
       </div>
 
@@ -213,7 +257,8 @@ const HeroSection: React.FC = () => {
               onChange={(e) =>
                 setHeroContent({ ...heroContent, title: e.target.value })
               }
-              className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight px-4 py-2 rounded-md w-full"
+              placeholder="Event Title"
+              className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight px-4 py-2 rounded-md w-full max-w-2xl mx-auto bg-white/20 backdrop-blur-sm"
             />
           ) : (
             <h1 className="text-5xl md:text-7xl font-bold text-[#FFD400] mb-6 leading-tight">
@@ -232,6 +277,7 @@ const HeroSection: React.FC = () => {
                   onChange={(e) =>
                     setHeroContent({ ...heroContent, date: e.target.value })
                   }
+                  placeholder="Date"
                   className="bg-white text-black px-2 py-1 rounded-md"
                 />
               ) : (
@@ -247,6 +293,7 @@ const HeroSection: React.FC = () => {
                   onChange={(e) =>
                     setHeroContent({ ...heroContent, time: e.target.value })
                   }
+                  placeholder="Time"
                   className="bg-white text-black px-2 py-1 rounded-md"
                 />
               ) : (
@@ -262,6 +309,7 @@ const HeroSection: React.FC = () => {
                   onChange={(e) =>
                     setHeroContent({ ...heroContent, location: e.target.value })
                   }
+                  placeholder="Location"
                   className="bg-white text-black px-2 py-1 rounded-md"
                 />
               ) : (
@@ -378,6 +426,8 @@ const HeroSection: React.FC = () => {
                 <button
                   onClick={() => {
                     // Auto-generate display date from selected dates
+                    if (!heroContent.startDate) return;
+                    
                     const startDate = new Date(heroContent.startDate);
                     const endDate = new Date(heroContent.endDate);
                     const startDay = startDate.getDate();
@@ -386,16 +436,21 @@ const HeroSection: React.FC = () => {
                     const year = startDate.getFullYear();
                     
                     // Format start and end times
-                    const startTimeFormatted = new Date(`2000-01-01T${heroContent.startTime}:00`).toLocaleTimeString('en-US', { 
-                      hour: 'numeric', 
-                      minute: '2-digit', 
-                      hour12: true 
-                    });
-                    const endTimeFormatted = new Date(`2000-01-01T${heroContent.endTime}:00`).toLocaleTimeString('en-US', { 
-                      hour: 'numeric', 
-                      minute: '2-digit', 
-                      hour12: true 
-                    });
+                    const startTimeFormatted = heroContent.startTime 
+                      ? new Date(`2000-01-01T${heroContent.startTime}:00`).toLocaleTimeString('en-US', { 
+                          hour: 'numeric', 
+                          minute: '2-digit', 
+                          hour12: true 
+                        })
+                      : "9:00 AM";
+                    
+                    const endTimeFormatted = heroContent.endTime 
+                      ? new Date(`2000-01-01T${heroContent.endTime}:00`).toLocaleTimeString('en-US', { 
+                          hour: 'numeric', 
+                          minute: '2-digit', 
+                          hour12: true 
+                        })
+                      : "6:00 PM";
                     
                     const displayDate = startDay === endDay 
                       ? `${startDay}${getOrdinalSuffix(startDay)} ${month} ${year}`
@@ -458,6 +513,7 @@ const HeroSection: React.FC = () => {
                       highlights: newHighlights,
                     });
                   }}
+                  placeholder={`Highlight ${i + 1}`}
                   className="bg-white text-black px-2 py-1 rounded-md w-full"
                 />
               ) : (
@@ -476,10 +532,11 @@ const HeroSection: React.FC = () => {
                   onChange={(e) =>
                     setHeroContent({ ...heroContent, btn1: e.target.value })
                   }
+                  placeholder="Button 1 Text"
                   className="bg-white text-black px-2 py-1 rounded-md"
                 />
               ) : (
-                <span>{heroContent.btn1}</span>
+                <span onClick={() => scrollToSection("#contact")}>{heroContent.btn1}</span>
               )}
               <ArrowRight
                 size={20}
@@ -495,10 +552,11 @@ const HeroSection: React.FC = () => {
                   onChange={(e) =>
                     setHeroContent({ ...heroContent, btn2: e.target.value })
                   }
+                  placeholder="Button 2 Text"
                   className="bg-white text-black px-2 py-1 rounded-md"
                 />
               ) : (
-                <span>{heroContent.btn2}</span>
+                <span onClick={() => scrollToSection("#contact")}>{heroContent.btn2}</span>
               )}
               <ArrowRight
                 size={20}

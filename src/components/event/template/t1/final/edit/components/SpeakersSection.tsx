@@ -1,44 +1,65 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { Edit2, Save, X, Plus, Trash2, Edit } from 'lucide-react';
 
-/** initial data */
-const initialSpeakers = [
-  {
-    day: "Day 1 (24th April'25)",
-    speakers: [
-      { id: 1, name: "Commodore Santosh", title: "Executive Director", company: "ECIL, Hyderabad", avatar: "CS" },
-      { id: 2, name: "Dr. Nagendra Babu", title: "", company: "Zen Technologies", avatar: "NB" },
-      { id: 3, name: "Dr. Samir V. Kamat", title: "Chairman", company: "DRDO", avatar: "SK" },
-      { id: 4, name: "Lt. Gen. Manish Erry", title: "AVSM, SM", company: "DG Strategic Planning", avatar: "ME" },
-      { id: 5, name: "Lt. Gen. Neeraj Varshney", title: "VSM", company: "Commandant MCEME", avatar: "NV" },
-      { id: 6, name: "Lt. Gen. V.G. Khandare", title: "PVSM, AVSM, SM", company: "Principal Advisor (USG), Dept. of Defence", avatar: "VK" },
-      { id: 7, name: "Maj Gen (Dr.) RK Raina", title: "Director", company: "SISDSS", avatar: "RR" },
-      { id: 8, name: "Maj Gen MLN Sravan Kumar (Retd)", title: "", company: "", avatar: "SK" }
-    ]
-  },
-  {
-    day: "Day 2 (25th April'25)",
-    speakers: [
-      { id: 15, name: "Col Harison Verma (Retd.)", title: "COO", company: "Aerospace Services India Ltd", avatar: "HV" },
-      { id: 16, name: "Dr. (Smt.) Chandrika Kaushik", title: "DG PC & SI", company: "DRDO", avatar: "CK" },
-      { id: 17, name: "Dr. Girish Kant Pandey", title: "Principal", company: "Govt. KRD College", avatar: "GP" },
-      { id: 18, name: "Dr. P. Rajalakshmi", title: "", company: "NMICPS TiHAN Foundation, IIT Hyderabad", avatar: "PR" },
-      { id: 19, name: "Dr. Sangita Rao Achary Addanki", title: "", company: "DLIC, DRDO", avatar: "SA" },
-      { id: 20, name: "Lt. Gen. Sanjay Verma", title: "PVSM, AVSM, VSM, Bar to VSM", company: "", avatar: "SV" }
-    ]
-  },
-  {
-    day: "Day 3 (26th April'25)",
-    speakers: [
-      { id: 28, name: "Dr Pranay Kumar", title: "", company: "", avatar: "PK" },
-      { id: 29, name: "Dr. Sunil Khetarpal", title: "Director", company: "Association of Healthcare Providers India", avatar: "SK" },
-      { id: 30, name: "Mr. Anuraag Tiwari", title: "Director", company: "GKD Tactix.ai", avatar: "AT" },
-      { id: 31, name: "Mr. Arul Rajesh Gedala", title: "Race director", company: "FPV India", avatar: "AG" },
-      { id: 32, name: "Mr. Sanjay Kumar", title: "Co-Founder", company: "EON Space Labs Pvt. Ltd.", avatar: "SK" },
-      { id: 33, name: "Mr. Vishal Saurav", title: "CEO-founder", company: "XBOOM", avatar: "VS" }
-    ]
+interface Speaker {
+  name: string;
+  company: string;
+  id: number;
+  avatar: string;
+  title: string;
+}
+
+interface SpeakerDay {
+  day: string;
+  speakers: Speaker[];
+}
+
+interface SpeakersHeaderContent {
+  sectionTitle: string;
+  eventTitle: string;
+  subtitle: string;
+}
+
+interface SpeakersDataContent {
+  speakers: SpeakerDay[];
+  headerContent: SpeakersHeaderContent;
+}
+
+interface SpeakersSectionProps {
+  speakersData?: SpeakersDataContent;
+  onStateChange?: (data: SpeakersDataContent) => void;
+}
+
+/** Default data structure */
+const defaultSpeakersData: SpeakersDataContent = {
+  speakers: [
+    {
+      "day": "Day 1 (Date)",
+      "speakers": [
+        {
+          "name": "Speaker Name",
+          "company": "Organization",
+          "id": 1,
+          "avatar": "Initials",
+          "title": "Designation"
+        }
+      ]
+    },
+    {
+      "day": "Day 2 (Date)",
+      "speakers": []
+    },
+    {
+      "day": "Day 3 (Date)",
+      "speakers": []
+    }
+  ],
+  "headerContent": {
+    "sectionTitle": "Speakers",
+    "eventTitle": "Professional Event",
+    "subtitle": "Meet our distinguished speakers who will share their expertise and insights"
   }
-];
+};
 
 /* Utility functions */
 const getColorForAvatar = (name = '') => {
@@ -64,7 +85,7 @@ const SpeakerCard = memo(
     speaker, dayIndex, speakerIndex,
     isEditing, editForm, isEditMode,
     onEdit, onSave, onCancel, onDelete, onFormChange
-  }) => {
+  }: any) => {
     if (isEditing) {
       return (
         <div className="bg-white rounded-xl shadow-xl p-6">
@@ -125,89 +146,102 @@ const SpeakerCard = memo(
   }
 );
 
-const SpeakersSection = () => {
+const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onStateChange }) => {
   /* --------------------------
-      MERGED MAIN STATE HERE
+      MAIN STATE WITH DYNAMIC DATA
      -------------------------- */
-  const [speakersData, setSpeakersData] = useState({
-    speakers: initialSpeakers,
-    headerContent: {
-      eventTitle: 'Drone Expo 2025',
-      sectionTitle: 'Speakers',
-      subtitle: 'Meet our distinguished speakers who will share their expertise and insights'
-    }
-  });
+  const [localSpeakersData, setLocalSpeakersData] = useState<SpeakersDataContent>(defaultSpeakersData);
+  const [backupData, setBackupData] = useState<SpeakersDataContent>(defaultSpeakersData);
 
   /* --------------------------
-      OTHER STATES REMAIN SAME
+      OTHER STATES
      -------------------------- */
-  const [editingCard, setEditingCard] = useState(null);
-  const [editForm, setEditForm] = useState({});
+  const [editingCard, setEditingCard] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Speaker>>({});
   const [activeDay, setActiveDay] = useState(0);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [headerBackup, setHeaderBackup] = useState(speakersData.headerContent);
 
-  const { speakers, headerContent } = speakersData;
+  const { speakers, headerContent } = localSpeakersData;
+
+  /* --------------------------
+      Update local state when prop data changes
+     -------------------------- */
+  useEffect(() => {
+    if (speakersData) {
+      setLocalSpeakersData(speakersData);
+      setBackupData(speakersData);
+    }
+  }, [speakersData]);
+
+  /* --------------------------
+      Notify parent of state changes
+     -------------------------- */
+  const notifyParent = useCallback((data: SpeakersDataContent) => {
+    if (onStateChange) {
+      onStateChange(data);
+    }
+  }, [onStateChange]);
 
   /* --------------------------
         Header Editing
      -------------------------- */
   const startHeaderEdit = () => {
-    setHeaderBackup(headerContent);
+    setBackupData(localSpeakersData);
     setIsEditMode(true);
   };
 
   const saveHeaderEdit = () => {
+    notifyParent(localSpeakersData);
     setEditingCard(null);
     setEditForm({});
     setIsEditMode(false);
   };
 
   const cancelHeaderEdit = () => {
-    setSpeakersData(prev => ({
-      ...prev,
-      headerContent: headerBackup
-    }));
+    setLocalSpeakersData(backupData);
     setIsEditMode(false);
   };
 
   /* --------------------------
         Update Header Text
      -------------------------- */
-  const updateHeaderField = (field, value) => {
-    setSpeakersData(prev => ({
-      ...prev,
-      headerContent: { ...prev.headerContent, [field]: value }
-    }));
+  const updateHeaderField = (field: keyof SpeakersHeaderContent, value: string) => {
+    const updatedData = {
+      ...localSpeakersData,
+      headerContent: { ...localSpeakersData.headerContent, [field]: value }
+    };
+    setLocalSpeakersData(updatedData);
   };
 
   /* --------------------------
         Update Speakers
      -------------------------- */
-  const handleEdit = (dayIndex, speakerIndex, speaker) => {
+  const handleEdit = (dayIndex: number, speakerIndex: number, speaker: Speaker) => {
     setEditingCard(`${dayIndex}-${speakerIndex}`);
     setEditForm(speaker);
   };
 
-  const handleSave = (dayIndex, speakerIndex) => {
-    const updated = speakersData.speakers.map((day, dIndex) =>
+  const handleSave = (dayIndex: number, speakerIndex: number) => {
+    const updatedSpeakers = speakers.map((day, dIndex) =>
       dIndex === dayIndex
         ? {
             ...day,
             speakers: day.speakers.map((sp, sIndex) =>
               sIndex === speakerIndex
-                ? { ...editForm, avatar: getInitials(editForm.name) }
+                ? { ...editForm, avatar: getInitials(editForm.name) } as Speaker
                 : sp
             )
           }
         : day
     );
 
-    setSpeakersData(prev => ({
-      ...prev,
-      speakers: updated
-    }));
+    const updatedData = {
+      ...localSpeakersData,
+      speakers: updatedSpeakers
+    };
 
+    setLocalSpeakersData(updatedData);
+    notifyParent(updatedData);
     setEditingCard(null);
     setEditForm({});
   };
@@ -216,8 +250,8 @@ const SpeakersSection = () => {
     setEditingCard(null);
   };
 
-  const handleDelete = (dayIndex, speakerIndex) => {
-    const updated = speakersData.speakers.map((day, dIndex) =>
+  const handleDelete = (dayIndex: number, speakerIndex: number) => {
+    const updatedSpeakers = speakers.map((day, dIndex) =>
       dIndex === dayIndex
         ? {
             ...day,
@@ -226,14 +260,17 @@ const SpeakersSection = () => {
         : day
     );
 
-    setSpeakersData(prev => ({
-      ...prev,
-      speakers: updated
-    }));
+    const updatedData = {
+      ...localSpeakersData,
+      speakers: updatedSpeakers
+    };
+
+    setLocalSpeakersData(updatedData);
+    notifyParent(updatedData);
   };
 
-  const handleAddSpeaker = (dayIndex) => {
-    const newSpeaker = {
+  const handleAddSpeaker = (dayIndex: number) => {
+    const newSpeaker: Speaker = {
       id: Date.now(),
       name: "New Speaker",
       title: "",
@@ -241,16 +278,19 @@ const SpeakersSection = () => {
       avatar: "NS"
     };
 
-    const updated = speakersData.speakers.map((day, dIndex) =>
+    const updatedSpeakers = speakers.map((day, dIndex) =>
       dIndex === dayIndex
         ? { ...day, speakers: [...day.speakers, newSpeaker] }
         : day
     );
 
-    setSpeakersData(prev => ({
-      ...prev,
-      speakers: updated
-    }));
+    const updatedData = {
+      ...localSpeakersData,
+      speakers: updatedSpeakers
+    };
+
+    setLocalSpeakersData(updatedData);
+    notifyParent(updatedData);
 
     const newIndex = speakers[dayIndex].speakers.length;
     setEditingCard(`${dayIndex}-${newIndex}`);
@@ -260,43 +300,50 @@ const SpeakersSection = () => {
   /* --------------------------
           Day Editing
      -------------------------- */
-  const handleDayEdit = (dayIndex, newValue) => {
-    const updated = speakersData.speakers.map((day, dIndex) =>
+  const handleDayEdit = (dayIndex: number, newValue: string) => {
+    const updatedSpeakers = speakers.map((day, dIndex) =>
       dIndex === dayIndex
         ? { ...day, day: newValue }
         : day
     );
 
-    setSpeakersData(prev => ({
-      ...prev,
-      speakers: updated
-    }));
+    const updatedData = {
+      ...localSpeakersData,
+      speakers: updatedSpeakers
+    };
+
+    setLocalSpeakersData(updatedData);
+    notifyParent(updatedData);
   };
 
   const handleAddDay = () => {
-    const newDay = {
+    const newDay: SpeakerDay = {
       day: `Day ${speakers.length + 1} (New Date)`,
       speakers: []
     };
 
-    setSpeakersData(prev => ({
-      ...prev,
-      speakers: [...prev.speakers, newDay]
-    }));
+    const updatedData = {
+      ...localSpeakersData,
+      speakers: [...speakers, newDay]
+    };
 
+    setLocalSpeakersData(updatedData);
+    notifyParent(updatedData);
     setActiveDay(speakers.length);
   };
 
-  const handleRemoveDay = (dayIndex) => {
+  const handleRemoveDay = (dayIndex: number) => {
     if (speakers.length <= 1) return;
 
-    const updated = speakers.filter((_, index) => index !== dayIndex);
+    const updatedSpeakers = speakers.filter((_, index) => index !== dayIndex);
 
-    setSpeakersData(prev => ({
-      ...prev,
-      speakers: updated
-    }));
+    const updatedData = {
+      ...localSpeakersData,
+      speakers: updatedSpeakers
+    };
 
+    setLocalSpeakersData(updatedData);
+    notifyParent(updatedData);
     setActiveDay(Math.max(0, dayIndex - 1));
   };
 
@@ -304,7 +351,7 @@ const SpeakersSection = () => {
             Render UI
      -------------------------- */
   return (
-    <section className="py-20 bg-gray-50 min-h-screen">
+    <section id="speakers" className="py-20 bg-gray-50 min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl relative">
         
         {/* Header */}

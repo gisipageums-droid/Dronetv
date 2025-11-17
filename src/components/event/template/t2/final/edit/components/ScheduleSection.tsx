@@ -11,6 +11,8 @@ const TEXT_LIMITS = {
   SCHEDULE_TITLE: 100,
   SCHEDULE_LOCATION: 60,
   SCHEDULE_SPEAKER: 60,
+  DAY_LABEL: 20,
+  DAY_DATE: 30,
 };
 
 // Custom Button component
@@ -60,6 +62,13 @@ interface ScheduleItem {
   location: string;
   speaker: string;
   type: string;
+  description?: string;
+}
+
+interface DayData {
+  label: string;
+  date: string;
+  items: ScheduleItem[];
 }
 
 interface ScheduleData {
@@ -67,168 +76,96 @@ interface ScheduleData {
   heading: string;
   description: string;
   days: {
-    [key: number]: ScheduleItem[];
+    [key: number]: DayData;
   };
 }
 
 interface ScheduleProps {
-  scheduleData?: ScheduleData;
+  scheduleData?: any;
   onStateChange?: (data: ScheduleData) => void;
   userId?: string;
-  professionalId?: string;
+  eventId?: string;
   templateSelection?: string;
 }
 
-// Default data
-const defaultData: ScheduleData = {
-  subtitle: "Event Schedule",
-  heading: "Three Days of Excellence",
-  description: "Carefully curated sessions designed to maximize your learning and networking opportunities.",
-  days: {
-    1: [
-      {
-        id: '1-1',
-        time: '8:00 AM - 9:00 AM',
-        title: 'Registration & Welcome Coffee',
-        location: 'Main Lobby',
-        speaker: 'Event Team',
-        type: 'registration',
-      },
-      {
-        id: '1-2',
-        time: '9:00 AM - 11:00 AM',
-        title: 'Opening Keynote: The Future is Now',
-        location: 'Grand Hall A',
-        speaker: 'Dr. Sarah Mitchell',
-        type: 'keynote',
-      },
-      {
-        id: '1-3',
-        time: '11:15 AM - 12:30 PM',
-        title: 'Panel: Innovating in Uncertain Times',
-        location: 'Conference Room B',
-        speaker: 'Marcus Chen, Elena Rodriguez',
-        type: 'panel',
-      },
-      {
-        id: '1-4',
-        time: '12:30 PM - 2:00 PM',
-        title: 'Networking Lunch',
-        location: 'Terrace Garden',
-        speaker: 'All Attendees',
-        type: 'break',
-      },
-      {
-        id: '1-5',
-        time: '2:00 PM - 5:00 PM',
-        title: 'Hands-on Innovation Workshop',
-        location: 'Innovation Lab',
-        speaker: 'James Taylor',
-        type: 'workshop',
-      },
-      {
-        id: '1-6',
-        time: '5:30 PM - 7:00 PM',
-        title: 'Welcome Reception',
-        location: 'Rooftop Terrace',
-        speaker: 'All Attendees',
-        type: 'networking',
-      },
-    ],
-    2: [
-      {
-        id: '2-1',
-        time: '9:00 AM - 10:30 AM',
-        title: 'Emerging Technologies Workshop',
-        location: 'Tech Hub',
-        speaker: 'Dr. Amara Okafor',
-        type: 'workshop',
-      },
-      {
-        id: '2-2',
-        time: '10:45 AM - 12:15 PM',
-        title: 'Building Sustainable Solutions',
-        location: 'Grand Hall A',
-        speaker: 'Marcus Chen',
-        type: 'keynote',
-      },
-      {
-        id: '2-3',
-        time: '12:15 PM - 1:45 PM',
-        title: 'Lunch & Exhibition Tour',
-        location: 'Exhibition Hall',
-        speaker: 'All Attendees',
-        type: 'break',
-      },
-      {
-        id: '2-4',
-        time: '2:00 PM - 3:30 PM',
-        title: 'Design Thinking Masterclass',
-        location: 'Design Studio',
-        speaker: 'Elena Rodriguez',
-        type: 'workshop',
-      },
-      {
-        id: '2-5',
-        time: '3:45 PM - 5:15 PM',
-        title: 'Scaling Your Business',
-        location: 'Conference Room A',
-        speaker: 'David Kim',
-        type: 'session',
-      },
-      {
-        id: '2-6',
-        time: '7:00 PM - 10:00 PM',
-        title: 'Gala Dinner & Awards Ceremony',
-        location: 'Grand Ballroom',
-        speaker: 'All Attendees',
-        type: 'networking',
-      },
-    ],
-    3: [
-      {
-        id: '3-1',
-        time: '9:00 AM - 10:30 AM',
-        title: 'Digital Transformation Strategies',
-        location: 'Grand Hall A',
-        speaker: 'James Taylor',
-        type: 'keynote',
-      },
-      {
-        id: '3-2',
-        time: '10:45 AM - 12:00 PM',
-        title: 'Interactive Q&A with All Speakers',
-        location: 'Conference Room B',
-        speaker: 'All Speakers',
-        type: 'panel',
-      },
-      {
-        id: '3-3',
-        time: '12:00 PM - 1:30 PM',
-        title: 'Farewell Lunch',
-        location: 'Terrace Garden',
-        speaker: 'All Attendees',
-        type: 'break',
-      },
-      {
-        id: '3-4',
-        time: '1:45 PM - 3:00 PM',
-        title: 'Closing Keynote & Future Outlook',
-        location: 'Grand Hall A',
-        speaker: 'Dr. Sarah Mitchell',
-        type: 'keynote',
-      },
-      {
-        id: '3-5',
-        time: '3:00 PM - 3:30 PM',
-        title: 'Closing Remarks & See You Next Year',
-        location: 'Grand Hall A',
-        speaker: 'Event Team',
-        type: 'closing',
-      },
-    ],
-  }
+// Helper function to convert array-based days to object-based days
+const convertDaysArrayToObject = (daysArray: any[]): { [key: number]: DayData } => {
+  const daysObject: { [key: number]: DayData } = {};
+  
+  daysArray.forEach((day, index) => {
+    const dayNumber = index + 1;
+    daysObject[dayNumber] = {
+      label: day.label || `Day ${dayNumber}`,
+      date: day.date?.includes(' - ') ? day.date.split(' - ')[1] : day.date || `March ${15 + dayNumber}, 2024`,
+      items: (day.sessions || []).map((session: any) => ({
+        id: session.id || `${dayNumber}-${Date.now()}-${Math.random()}`,
+        time: session.time || '9:00 AM - 10:00 AM',
+        title: session.title || 'New Session',
+        location: session.location || 'Main Hall',
+        speaker: session.speaker || 'Speaker Name',
+        type: session.type || 'session',
+        description: session.description || ''
+      }))
+    };
+  });
+  
+  return daysObject;
 };
+
+// Helper function to create default data from the provided structure
+const createDefaultData = (): ScheduleData => {
+  const providedData = {
+    subtitle: "event schedule",
+    heading: "Event Schedule",
+    description: "Comprehensive day-wise agenda and sessions",
+    days: [
+      {
+        date: "Day 89- March 15, 2024",
+        sessions: [
+          {
+            speaker: "Dr. Emily Watson",
+            description: "Explore the latest trends and applications of AI in various industries.",
+            location: "Main Hall",
+            id: "1",
+            time: "9:00 AM - 10:00 AM",
+            title: "Innovations in Artificial Intelligence",
+            type: "keynote"
+          },
+          {
+            speaker: "Alex Johnson",
+            description: "Get hands-on experience with AI tools and techniques.",
+            location: "Workshop Room A",
+            id: "2",
+            time: "10:30 AM - 12:00 PM",
+            title: "Hands-on AI Workshop",
+            type: "workshop"
+          },
+          {
+            speaker: "",
+            description: "Enjoy a networking lunch with peers and experts.",
+            location: "Grand Ballroom",
+            id: "3",
+            time: "12:00 PM - 1:00 PM",
+            title: "Networking Lunch",
+            type: "break"
+          }
+        ],
+        id: "day1",
+        label: "Day 1"
+      }
+    ]
+  };
+
+  return {
+    subtitle: providedData.subtitle,
+    heading: providedData.heading,
+    description: providedData.description,
+    days: convertDaysArrayToObject(providedData.days)
+  };
+};
+
+// Default data from provided structure
+const defaultData: ScheduleData = createDefaultData();
 
 // Type options with colors
 const typeOptions = [
@@ -242,9 +179,9 @@ const typeOptions = [
   { value: 'closing', label: 'Closing', color: 'bg-amber-600' },
 ];
 
-// Editable Text Component
+// Editable Text Component - FIXED VERSION
 const EditableText = ({ 
-  value, 
+  value = '', 
   onChange, 
   multiline = false, 
   className = "", 
@@ -252,52 +189,56 @@ const EditableText = ({
   charLimit, 
   rows = 3 
 }: {
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   multiline?: boolean;
   className?: string;
   placeholder?: string;
   charLimit?: number;
   rows?: number;
-}) => (
-  <div className="relative">
-    {multiline ? (
-      <div className="relative">
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
-          placeholder={placeholder}
-          rows={rows}
-          maxLength={charLimit}
-        />
-        {charLimit && (
-          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
-            {value.length}/{charLimit}
-          </div>
-        )}
-      </div>
-    ) : (
-      <div className="relative">
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
-          placeholder={placeholder}
-          maxLength={charLimit}
-        />
-        {charLimit && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
-            {value.length}/{charLimit}
-          </div>
-        )}
-      </div>
-    )}
-  </div>
-);
+}) => {
+  const safeValue = value || '';
+  
+  return (
+    <div className="relative">
+      {multiline ? (
+        <div className="relative">
+          <textarea
+            value={safeValue}
+            onChange={(e) => onChange(e.target.value)}
+            className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+            placeholder={placeholder}
+            rows={rows}
+            maxLength={charLimit}
+          />
+          {charLimit && (
+            <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+              {safeValue.length}/{charLimit}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="relative">
+          <input
+            type="text"
+            value={safeValue}
+            onChange={(e) => onChange(e.target.value)}
+            className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+            placeholder={placeholder}
+            maxLength={charLimit}
+          />
+          {charLimit && (
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+              {safeValue.length}/{charLimit}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
-export function ScheduleSection({ scheduleData, onStateChange, userId, professionalId, templateSelection }: ScheduleProps) {
+export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -309,8 +250,33 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
   // Initialize data from props
   useEffect(() => {
     if (scheduleData && !dataLoaded) {
-      setData(scheduleData);
-      setTempData(scheduleData);
+      let convertedData: ScheduleData;
+      
+      if (scheduleData.days && Array.isArray(scheduleData.days)) {
+        // Convert array-based days to object-based days
+        convertedData = {
+          subtitle: scheduleData.subtitle || defaultData.subtitle,
+          heading: scheduleData.heading || defaultData.heading,
+          description: scheduleData.description || defaultData.description,
+          days: convertDaysArrayToObject(scheduleData.days)
+        };
+      } else {
+        // Use as-is if already in correct format
+        convertedData = {
+          subtitle: scheduleData.subtitle || defaultData.subtitle,
+          heading: scheduleData.heading || defaultData.heading,
+          description: scheduleData.description || defaultData.description,
+          days: scheduleData.days || defaultData.days
+        };
+      }
+      
+      setData(convertedData);
+      setTempData(convertedData);
+      setDataLoaded(true);
+    } else if (!dataLoaded) {
+      // Use default data if no scheduleData provided
+      setData(defaultData);
+      setTempData(defaultData);
       setDataLoaded(true);
     }
   }, [scheduleData, dataLoaded]);
@@ -351,7 +317,7 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
   // Schedule management functions
   const addScheduleItem = useCallback((day: number) => {
     const newItem: ScheduleItem = {
-      id: `${day}-${Date.now()}`,
+      id: `${day}-${Date.now()}-${Math.random()}`,
       time: '9:00 AM - 10:00 AM',
       title: 'New Session',
       location: 'Main Hall',
@@ -361,7 +327,10 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
     
     const updatedDays = {
       ...tempData.days,
-      [day]: [...(tempData.days[day] || []), newItem]
+      [day]: {
+        ...tempData.days[day],
+        items: [...(tempData.days[day]?.items || []), newItem]
+      }
     };
     
     setTempData(prev => ({ ...prev, days: updatedDays }));
@@ -370,7 +339,10 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
   const removeScheduleItem = useCallback((day: number, itemId: string) => {
     const updatedDays = {
       ...tempData.days,
-      [day]: tempData.days[day].filter(item => item.id !== itemId)
+      [day]: {
+        ...tempData.days[day],
+        items: (tempData.days[day]?.items || []).filter(item => item.id !== itemId)
+      }
     };
     
     setTempData(prev => ({ ...prev, days: updatedDays }));
@@ -379,16 +351,19 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
   const updateScheduleItem = useCallback((day: number, itemId: string, field: keyof ScheduleItem, value: string) => {
     const updatedDays = {
       ...tempData.days,
-      [day]: tempData.days[day].map(item =>
-        item.id === itemId ? { ...item, [field]: value } : item
-      )
+      [day]: {
+        ...tempData.days[day],
+        items: (tempData.days[day]?.items || []).map(item =>
+          item.id === itemId ? { ...item, [field]: value } : item
+        )
+      }
     };
     
     setTempData(prev => ({ ...prev, days: updatedDays }));
   }, [tempData.days]);
 
   const moveScheduleItem = useCallback((day: number, itemId: string, direction: 'up' | 'down') => {
-    const items = [...tempData.days[day]];
+    const items = [...(tempData.days[day]?.items || [])];
     const currentIndex = items.findIndex(item => item.id === itemId);
     
     if (direction === 'up' && currentIndex > 0) {
@@ -399,17 +374,26 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
     
     const updatedDays = {
       ...tempData.days,
-      [day]: items
+      [day]: {
+        ...tempData.days[day],
+        items: items
+      }
     };
     
     setTempData(prev => ({ ...prev, days: updatedDays }));
   }, [tempData.days]);
 
   const addDay = useCallback(() => {
-    const newDayNumber = Math.max(...Object.keys(tempData.days).map(Number)) + 1;
+    const dayNumbers = Object.keys(tempData.days).map(Number);
+    const newDayNumber = dayNumbers.length > 0 ? Math.max(...dayNumbers) + 1 : 1;
+    
     const updatedDays = {
       ...tempData.days,
-      [newDayNumber]: []
+      [newDayNumber]: {
+        label: `Day ${newDayNumber}`,
+        date: `March ${15 + newDayNumber}, 2024`,
+        items: []
+      }
     };
     
     setTempData(prev => ({ ...prev, days: updatedDays }));
@@ -429,6 +413,18 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
     }
   }, [tempData.days, activeDay]);
 
+  const updateDayField = useCallback((day: number, field: keyof DayData, value: string) => {
+    const updatedDays = {
+      ...tempData.days,
+      [day]: {
+        ...tempData.days[day],
+        [field]: value
+      }
+    };
+    
+    setTempData(prev => ({ ...prev, days: updatedDays }));
+  }, [tempData.days]);
+
   const updateField = useCallback((field: keyof ScheduleData, value: string) => {
     setTempData(prev => ({ ...prev, [field]: value }));
   }, []);
@@ -439,6 +435,11 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
   const getTypeColor = (type: string) => {
     const typeOption = typeOptions.find(option => option.value === type);
     return typeOption ? typeOption.color : 'bg-gray-400';
+  };
+
+  // Safe access to day data
+  const getDayData = (day: number) => {
+    return displayData.days[day] || { label: `Day ${day}`, date: '', items: [] };
   };
 
   return (
@@ -536,31 +537,61 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
           <div className="flex justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 flex-wrap px-4">
             {Object.keys(displayData.days).map(dayNumber => {
               const day = parseInt(dayNumber);
-              const dayItems = displayData.days[day] || [];
+              const dayData = getDayData(day);
               
               return (
-                <div key={day} className="flex items-center gap-2">
-                  <button
-                    onClick={() => setActiveDay(day)}
-                    className={`px-6 sm:px-8 py-3 sm:py-4 rounded-xl transition-all duration-300 text-sm sm:text-base ${
-                      activeDay === day
-                        ? 'bg-yellow-400 text-gray-900 shadow-lg scale-105'
-                        : 'bg-white text-gray-600 hover:bg-yellow-50 border border-gray-200'
-                    }`}
-                  >
-                    Day {day}
-                    <div className="text-xs sm:text-sm mt-1">March {14 + day}, 2025</div>
-                  </button>
-                  
-                  {/* Edit Day Controls */}
-                  {isEditing && Object.keys(displayData.days).length > 1 && (
-                    <CustomButton
-                      onClick={() => removeDay(day)}
-                      size="sm"
-                      className="bg-red-500 hover:bg-red-600 text-white p-2"
+                <div key={day} className="flex flex-col items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setActiveDay(day)}
+                      className={`px-6 sm:px-8 py-3 sm:py-4 rounded-xl transition-all duration-300 text-sm sm:text-base min-w-[120px] ${
+                        activeDay === day
+                          ? 'bg-yellow-400 text-gray-900 shadow-lg scale-105'
+                          : 'bg-white text-gray-600 hover:bg-yellow-50 border border-gray-200'
+                      }`}
                     >
-                      <Trash2 className="w-3 h-3" />
-                    </CustomButton>
+                      {isEditing ? (
+                        <div className="text-center">
+                          <EditableText
+                            value={dayData.label}
+                            onChange={(value) => updateDayField(day, 'label', value)}
+                            className="text-sm sm:text-base font-semibold text-center"
+                            placeholder="Day label"
+                            charLimit={TEXT_LIMITS.DAY_LABEL}
+                          />
+                          <EditableText
+                            value={dayData.date}
+                            onChange={(value) => updateDayField(day, 'date', value)}
+                            className="text-xs sm:text-sm mt-1 text-center"
+                            placeholder="Date"
+                            charLimit={TEXT_LIMITS.DAY_DATE}
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <div className="font-semibold">{dayData.label}</div>
+                          <div className="text-xs sm:text-sm mt-1">{dayData.date}</div>
+                        </>
+                      )}
+                    </button>
+                    
+                    {/* Edit Day Controls */}
+                    {isEditing && Object.keys(displayData.days).length > 1 && (
+                      <CustomButton
+                        onClick={() => removeDay(day)}
+                        size="sm"
+                        className="bg-red-500 hover:bg-red-600 text-white p-2"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </CustomButton>
+                    )}
+                  </div>
+                  
+                  {/* Schedule item count badge */}
+                  {isEditing && (
+                    <div className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full border">
+                      {dayData.items.length} items
+                    </div>
                   )}
                 </div>
               );
@@ -570,7 +601,7 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
             {isEditing && (
               <button
                 onClick={addDay}
-                className="px-4 py-3 bg-white text-gray-600 hover:bg-yellow-50 border border-dashed border-gray-300 rounded-xl transition-all duration-300"
+                className="px-4 py-3 bg-white text-gray-600 hover:bg-yellow-50 border border-dashed border-gray-300 rounded-xl transition-all duration-300 h-[84px] flex items-center justify-center"
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -579,7 +610,7 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
 
           {/* Schedule Items */}
           <div className="space-y-4 sm:space-y-6">
-            {(displayData.days[activeDay] || []).map((item, index) => (
+            {getDayData(activeDay).items.map((item, index) => (
               <div
                 key={item.id}
                 className="group bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-transparent hover:border-amber-500 relative"
@@ -599,7 +630,7 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
                       onClick={() => moveScheduleItem(activeDay, item.id, 'down')}
                       size="sm"
                       className="bg-gray-500 hover:bg-gray-600 text-white p-1"
-                      disabled={index === (displayData.days[activeDay]?.length || 0) - 1}
+                      disabled={index === getDayData(activeDay).items.length - 1}
                     >
                       <ChevronDown className="w-3 h-3" />
                     </CustomButton>
@@ -691,6 +722,9 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
                         <h3 className="text-gray-900 mb-3 group-hover:text-amber-600 transition-colors text-base sm:text-lg md:text-xl">
                           {item.title}
                         </h3>
+                        {item.description && (
+                          <p className="text-gray-600 text-sm mb-3">{item.description}</p>
+                        )}
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-gray-600 text-sm sm:text-base">
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
@@ -724,7 +758,7 @@ export function ScheduleSection({ scheduleData, onStateChange, userId, professio
           </div>
 
           {/* Empty State */}
-          {(!displayData.days[activeDay] || displayData.days[activeDay].length === 0) && !isEditing && (
+          {(getDayData(activeDay).items.length === 0) && !isEditing && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">

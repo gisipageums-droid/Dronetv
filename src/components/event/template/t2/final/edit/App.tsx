@@ -12,6 +12,8 @@ import { ExhibitorsSection } from './components/ExhibitorsSection';
 import { GallerySection } from './components/GallerySection';
 import { ContactSection } from './components/ContactSection';
 import Publish from './components/Publish';
+import Back from './components/Back';
+import { Footer } from './components/FooterSection';
 
 // Define types for the component states
 interface ComponentStates {
@@ -27,20 +29,20 @@ interface ComponentStates {
 }
 
 interface AIGenData {
-  professionalId: string;
+  eventId: string;
   userId: string;
   submissionId: string;
   templateSelection: string;
   content?: ComponentStates;
 }
 
-export default function Edit_event_t2() {
-  const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData, publishProfessionalTemplate } = useTemplate();
+export default function FinalEdit_event_t2() {
+  const { setFinalTemplate, AIGenData, setAIGenData } = useTemplate();
   const [componentStates, setComponentStates] = useState<ComponentStates>({});
   const [isLoading, setIsLoading] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
-  // const { userId, professionalId } = useParams();
+  const { userId, eventId } = useParams();
 
   // Memoize the collectComponentState function with proper dependencies
   const collectComponentState = useCallback((componentName: keyof ComponentStates, state: any) => {
@@ -92,58 +94,61 @@ export default function Edit_event_t2() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fetch template data
-  // useEffect(() => {
-  //   const fetchTemplateData = async () => {
-  //     try {
-  //       setIsLoading(true);
-  //       const response = await fetch(`https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=event-template`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json'
-  //         },
-  //       });
+  // Enhanced fetch function with corrected data mapping
+  useEffect(() => {
+    const fetchTemplateData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`https://2lksnliog8.execute-api.ap-south-1.amazonaws.com/prod/${eventId}/${userId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
 
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         console.log('Response status:', data);
-  //         setFinalTemplate(data[0]);
-  //         setAIGenData(data[0]);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Fetched template data:', data.content);
+          
+          // Corrected data mapping - extract the nested content
+          const templateContent = data.content;
+          const templateData = data;
 
-  //         if (data[0].content) {
-  //           setComponentStates(data[0].content);
-  //         } else {
-  //           toast.error("No content found in response");
-  //           setComponentStates({});
-  //         }
-  //       } else {
-  //         console.error('Failed to fetch template data:', response.status);
-  //         toast.error('Failed to load template data');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching template data:', error);
-  //       toast.error('Error loading template data');
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+          setFinalTemplate(templateData);
+          setAIGenData(templateData);
+          
+          if (templateContent) {
+            setComponentStates(templateContent);
+          } else {
+            toast.error("No content found in response");
+            setComponentStates({});
+          }
+        } else {
+          toast.error('Failed to load template data');
+        }
+      } catch (error) {
+        console.error('Error loading template data:', error);
+        toast.error('Error loading template data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   if (userId && professionalId) {
-  //     fetchTemplateData();
-  //   }
-  // }, [userId, professionalId, setFinalTemplate, setAIGenData]);
+    if (userId && eventId) {
+      fetchTemplateData();
+    }
+  }, [userId, eventId, setFinalTemplate, setAIGenData]);
 
-  // Show loading state
-  // if (isLoading) {
-  //   return (
-  //     <div className="min-h-screen bg-white flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
-  //         <p className="mt-4 text-gray-600">Loading event template data...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading event template data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white transition-colors duration-300">
@@ -160,9 +165,6 @@ export default function Edit_event_t2() {
           <HeroSection
             heroData={componentStates.heroContent}
             onStateChange={createStateChangeHandler('heroContent')}
-            userId={AIGenData.userId}
-            professionalId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
           />
         </section>
 
@@ -171,9 +173,6 @@ export default function Edit_event_t2() {
           <EventsSection
             eventsData={componentStates.eventsContent}
             onStateChange={createStateChangeHandler('eventsContent')}
-            userId={AIGenData.userId}
-            professionalId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
           />
         </section>
 
@@ -182,9 +181,6 @@ export default function Edit_event_t2() {
           <HighlightsSection
             highlightsData={componentStates.highlightsContent}
             onStateChange={createStateChangeHandler('highlightsContent')}
-            userId={AIGenData.userId}
-            professionalId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
           />
         </section>
 
@@ -193,9 +189,7 @@ export default function Edit_event_t2() {
           <SpeakersSection
             speakersData={componentStates.speakersContent}
             onStateChange={createStateChangeHandler('speakersContent')}
-            userId={AIGenData.userId}
-            professionalId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
+            userId={AIGenData.userId || "rajalok10375@gmail.com"}
           />
         </section>
 
@@ -204,9 +198,6 @@ export default function Edit_event_t2() {
           <ScheduleSection
             scheduleData={componentStates.scheduleContent}
             onStateChange={createStateChangeHandler('scheduleContent')}
-            userId={AIGenData.userId}
-            professionalId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
           />
         </section>
 
@@ -215,9 +206,7 @@ export default function Edit_event_t2() {
           <ExhibitorsSection
             exhibitorsData={componentStates.exhibitorsContent}
             onStateChange={createStateChangeHandler('exhibitorsContent')}
-            userId={AIGenData.userId}
-            professionalId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
+            userId={AIGenData.userId || "rajalok10375@gmail.com"}
           />
         </section>
 
@@ -226,9 +215,7 @@ export default function Edit_event_t2() {
           <GallerySection
             galleryData={componentStates.galleryContent}
             onStateChange={createStateChangeHandler('galleryContent')}
-            userId={AIGenData.userId}
-            professionalId={AIGenData.professionalId}
-            templateSelection={AIGenData.templateSelection}
+            userId={AIGenData.userId || "rajalok10375@gmail.com"}
           />
         </section>
 
@@ -237,10 +224,17 @@ export default function Edit_event_t2() {
           <ContactSection
           />
         </section>
+
+        <Footer
+          footerData={componentStates.footerContent}
+          onStateChange={createStateChangeHandler('footerContent')}/>
+
       </main>
 
       {/* Publish Component */}
       <Publish />
+
+      <Back />
 
       {/* Toast Notifications */}
       <ToastContainer
@@ -253,9 +247,8 @@ export default function Edit_event_t2() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        style={{ zIndex: 9999 }}
+        style={{ zIndex: 9999999 }}
       />
-
     </div>
   );
 }

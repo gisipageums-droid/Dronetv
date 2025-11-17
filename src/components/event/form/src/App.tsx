@@ -2032,7 +2032,7 @@ function EventsForm() {
       // Navigate to event preview/edit page
       setTimeout(() => {
         // navigate(`/event/edit/${finalSubmissionId}/${emil}`);
-        navigate(`/edit/event/t2/${draftId}/${email}`);
+        navigate(`/edit/event/${response.details.templateSelection==1?"t1":"t2"}/AIgen/${response.draftId}/${response.userId}`);
       }, 30000);
     } catch (err) {
       console.error(err);

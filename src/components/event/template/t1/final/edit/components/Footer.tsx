@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Facebook,
   Twitter,
@@ -11,52 +11,75 @@ import {
   Edit,
   Save,
   X,
+  Plus,
+  Trash2,
 } from "lucide-react";
 
-const Footer: React.FC = () => {
+interface QuickLink {
+  name: string;
+  href: string;
+}
+
+interface SocialLink {
+  icon: string;
+  href: string;
+  label: string;
+}
+
+interface FooterContent {
+  eventName: string;
+  description: string;
+  quickLinksTitle: string;
+  quickLinks: QuickLink[];
+  socialLinks: SocialLink[];
+}
+
+interface FooterProps {
+  footerData?: FooterContent;
+  onStateChange?: (data: FooterContent) => void;
+}
+
+/** Default data structure */
+const defaultFooterContent: FooterContent = {
+  eventName: "demo Event",
+  description: "Event description",
+  quickLinksTitle: "Quick Links",
+  quickLinks: [
+    { name: "Home", href: "#home" },
+    { name: "About", href: "#about" },
+    { name: "Speakers", href: "#speakers" },
+    { name: "Agenda", href: "#agenda" },
+    { name: "Contact", href: "#contact" },
+  ],
+  socialLinks: [
+    { icon: "Facebook", href: "https://facebook.com", label: "Facebook" },
+    { icon: "Instagram", href: "https://instagram.com", label: "Instagram" },
+    { icon: "Linkedin", href: "https://linkedin.com", label: "LinkedIn" },
+    { icon: "Youtube", href: "https://youtube.com", label: "YouTube" },
+  ],
+};
+
+const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
   const [editMode, setEditMode] = useState(false);
+  const [footerContent, setFooterContent] = useState<FooterContent>(defaultFooterContent);
+  const [backupContent, setBackupContent] = useState<FooterContent>(defaultFooterContent);
 
-  const [footerContent, setFooterContent] = useState({
-    eventName: "Drone Expo 2025",
-    description:
-      "Drone Expo is a leading drone technology platform enabling innovators, professionals, and companies to collaborate and grow globally.",
-    quickLinksTitle: "Quick Links",
-    quickLinks: [
-      { name: "Home", href: "#home" },
-      { name: "About", href: "#about" },
-      { name: "Speakers", href: "#speakers" },
-      { name: "Agenda", href: "#agenda" },
-      { name: "Contact", href: "#contact" },
-    ],
-    socialLinks: [
-      {
-        icon: "Facebook",
-        href: "https://www.facebook.com/DroneExpo.in/",
-        label: "Facebook",
-      },
-      {
-        icon: "Instagram",
-        href: "https://www.instagram.com/droneexpo.in/",
-        label: "Instagram",
-      },
-      {
-        icon: "Linkedin",
-        href: "https://www.linkedin.com/company/droneexpo",
-        label: "LinkedIn",
-      },
-      {
-        icon: "Youtube",
-        href: "https://www.youtube.com/@droneexpo",
-        label: "YouTube",
-      },
-    ],
-  });
-
-  const [backupContent, setBackupContent] = useState(footerContent);
+  // Update local state when prop data changes
+  useEffect(() => {
+    if (footerData) {
+      setFooterContent(footerData);
+      setBackupContent(footerData);
+    }
+  }, [footerData]);
 
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(footerContent);
+    } else {
+      // When saving, call onStateChange to update parent component
+      if (onStateChange) {
+        onStateChange(footerContent);
+      }
     }
     setEditMode(!editMode);
   };
@@ -64,6 +87,58 @@ const Footer: React.FC = () => {
   const handleCancel = () => {
     setFooterContent(backupContent);
     setEditMode(false);
+  };
+
+  // Add new quick link
+  const addQuickLink = () => {
+    const newQuickLink: QuickLink = { name: "New Link", href: "#" };
+    const updatedContent = {
+      ...footerContent,
+      quickLinks: [...footerContent.quickLinks, newQuickLink]
+    };
+    setFooterContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
+  };
+
+  // Remove quick link
+  const removeQuickLink = (index: number) => {
+    const updatedQuickLinks = footerContent.quickLinks.filter((_, i) => i !== index);
+    const updatedContent = {
+      ...footerContent,
+      quickLinks: updatedQuickLinks
+    };
+    setFooterContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
+  };
+
+  // Add new social link
+  const addSocialLink = () => {
+    const newSocialLink: SocialLink = { icon: "Facebook", href: "https://", label: "Social Media" };
+    const updatedContent = {
+      ...footerContent,
+      socialLinks: [...footerContent.socialLinks, newSocialLink]
+    };
+    setFooterContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
+  };
+
+  // Remove social link
+  const removeSocialLink = (index: number) => {
+    const updatedSocialLinks = footerContent.socialLinks.filter((_, i) => i !== index);
+    const updatedContent = {
+      ...footerContent,
+      socialLinks: updatedSocialLinks
+    };
+    setFooterContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
   };
 
   const getSocialIcon = (iconName: string) => {
@@ -128,12 +203,10 @@ const Footer: React.FC = () => {
                 <input
                   type="text"
                   value={footerContent.eventName}
-                  onChange={(e) =>
-                    setFooterContent({
-                      ...footerContent,
-                      eventName: e.target.value,
-                    })
-                  }
+                  onChange={(e) => {
+                    const updatedContent = { ...footerContent, eventName: e.target.value };
+                    setFooterContent(updatedContent);
+                  }}
                   placeholder="Event Name"
                   className="bg-white text-black px-3 py-2 rounded-md text-2xl font-bold w-full"
                 />
@@ -147,13 +220,12 @@ const Footer: React.FC = () => {
             {editMode ? (
               <textarea
                 value={footerContent.description}
-                onChange={(e) =>
-                  setFooterContent({
-                    ...footerContent,
-                    description: e.target.value,
-                  })
-                }
-                className="text-gray-400 mb-6 leading-relaxed bg-white text-black px-2 py-1 rounded-md w-full h-24"
+                onChange={(e) => {
+                  const updatedContent = { ...footerContent, description: e.target.value };
+                  setFooterContent(updatedContent);
+                }}
+                className="text-gray-400 mb-6 leading-relaxed bg-white text-black px-3 py-2 rounded-md w-full h-24 resize-y"
+                placeholder="Event description"
               />
             ) : (
               <p className="text-gray-400 mb-6 leading-relaxed">
@@ -164,61 +236,71 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div>
-            {editMode ? (
-              <input
-                type="text"
-                value={footerContent.quickLinksTitle}
-                onChange={(e) =>
-                  setFooterContent({
-                    ...footerContent,
-                    quickLinksTitle: e.target.value,
-                  })
-                }
-                className="text-xl font-bold mb-4 text-[#FFD400] bg-white text-black px-2 py-1 rounded-md"
-              />
-            ) : (
-              <h3 className="text-xl font-bold mb-4 text-[#FFD400]">
-                {footerContent.quickLinksTitle}
-              </h3>
-            )}
+            <div className="flex items-center gap-2 mb-4">
+              {editMode ? (
+                <input
+                  type="text"
+                  value={footerContent.quickLinksTitle}
+                  onChange={(e) => {
+                    const updatedContent = { ...footerContent, quickLinksTitle: e.target.value };
+                    setFooterContent(updatedContent);
+                  }}
+                  className="text-xl font-bold text-[#FFD400] bg-white text-black px-2 py-1 rounded-md flex-1"
+                />
+              ) : (
+                <h3 className="text-xl font-bold text-[#FFD400]">
+                  {footerContent.quickLinksTitle}
+                </h3>
+              )}
+              {editMode && (
+                <button
+                  onClick={addQuickLink}
+                  className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-md text-sm hover:bg-blue-700 transition"
+                >
+                  <Plus size={14} /> Add
+                </button>
+              )}
+            </div>
+            
             <ul className="space-y-2">
               {footerContent.quickLinks.map((link, index) => (
-                <li key={index}>
+                <li key={index} className="flex items-center gap-2">
                   {editMode ? (
-                    <div className="flex gap-2 mb-2">
-                      <input
-                        type="text"
-                        value={link.name}
-                        onChange={(e) => {
-                          const newQuickLinks = [...footerContent.quickLinks];
-                          newQuickLinks[index] = {
-                            ...link,
-                            name: e.target.value,
-                          };
-                          setFooterContent({
-                            ...footerContent,
-                            quickLinks: newQuickLinks,
-                          });
-                        }}
-                        className="bg-white text-black px-2 py-1 rounded-md text-sm flex-1"
-                      />
-                      <input
-                        type="text"
-                        value={link.href}
-                        onChange={(e) => {
-                          const newQuickLinks = [...footerContent.quickLinks];
-                          newQuickLinks[index] = {
-                            ...link,
-                            href: e.target.value,
-                          };
-                          setFooterContent({
-                            ...footerContent,
-                            quickLinks: newQuickLinks,
-                          });
-                        }}
-                        className="bg-white text-black px-2 py-1 rounded-md text-sm flex-1"
-                      />
-                    </div>
+                    <>
+                      <div className="flex gap-2 flex-1">
+                        <input
+                          type="text"
+                          value={link.name}
+                          onChange={(e) => {
+                            const newQuickLinks = [...footerContent.quickLinks];
+                            newQuickLinks[index] = { ...link, name: e.target.value };
+                            const updatedContent = { ...footerContent, quickLinks: newQuickLinks };
+                            setFooterContent(updatedContent);
+                          }}
+                          className="bg-white text-black px-2 py-1 rounded-md text-sm flex-1"
+                          placeholder="Link Name"
+                        />
+                        <input
+                          type="text"
+                          value={link.href}
+                          onChange={(e) => {
+                            const newQuickLinks = [...footerContent.quickLinks];
+                            newQuickLinks[index] = { ...link, href: e.target.value };
+                            const updatedContent = { ...footerContent, quickLinks: newQuickLinks };
+                            setFooterContent(updatedContent);
+                          }}
+                          className="bg-white text-black px-2 py-1 rounded-md text-sm flex-1"
+                          placeholder="Link URL"
+                        />
+                      </div>
+                      <button
+                        onClick={() => removeQuickLink(index)}
+                        className="p-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                        title="Remove Link"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </>
                   ) : (
                     <button
                       onClick={() => scrollToSection(link.href)}
@@ -231,130 +313,97 @@ const Footer: React.FC = () => {
               ))}
             </ul>
           </div>
+        </div>
 
-          {/* Newsletter
-          <div>
-            {editMode ? (
-              <input
-                type="text"
-                value={footerContent.newsletterTitle}
-                onChange={(e) =>
-                  setFooterContent({ ...footerContent, newsletterTitle: e.target.value })
-                }
-                className="text-xl font-bold mb-4 text-[#FFD400] bg-white text-black px-2 py-1 rounded-md"
-              />
-            ) : (
-              <h3 className="text-xl font-bold mb-4 text-[#FFD400]">
-                {footerContent.newsletterTitle}
-              </h3>
-            )}
-            {editMode ? (
-              <textarea
-                value={footerContent.newsletterDescription}
-                onChange={(e) =>
-                  setFooterContent({ ...footerContent, newsletterDescription: e.target.value })
-                }
-                className="text-gray-400 mb-4 bg-white text-black px-2 py-1 rounded-md w-full h-16"
-              />
-            ) : (
-              <p className="text-gray-400 mb-4">
-                {footerContent.newsletterDescription}
-              </p>
-            )}
-            <div className="flex flex-col gap-3">
-              {editMode ? (
-                <input
-                  type="text"
-                  value={footerContent.emailPlaceholder}
-                  onChange={(e) =>
-                    setFooterContent({ ...footerContent, emailPlaceholder: e.target.value })
-                  }
-                  className="bg-white text-black px-2 py-1 rounded-md"
-                />
-              ) : (
-                <input
-                  type="email"
-                  placeholder={footerContent.emailPlaceholder}
-                  className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-white placeholder-gray-400"
-                />
-              )}
-            </div>
-          </div> */}
-
+        {/* Social Links Section */}
+        <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex gap-4">
-              {footerContent.socialLinks.map((social, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  {editMode ? (
-                    <div className="flex gap-2 mb-2">
-                      <select
-                        value={social.icon}
-                        onChange={(e) => {
-                          const newSocialLinks = [...footerContent.socialLinks];
-                          newSocialLinks[index] = {
-                            ...social,
-                            icon: e.target.value,
-                          };
-                          setFooterContent({
-                            ...footerContent,
-                            socialLinks: newSocialLinks,
-                          });
-                        }}
-                        className="bg-white text-black px-2 py-1 rounded-md text-sm"
+            <div className="flex flex-col md:flex-row items-center gap-4 w-full">
+              <div className="flex items-center gap-2 mb-4 md:mb-0">
+                <span className="text-gray-400">Follow us:</span>
+                {editMode && (
+                  <button
+                    onClick={addSocialLink}
+                    className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-md text-sm hover:bg-blue-700 transition"
+                  >
+                    <Plus size={14} /> Add Social
+                  </button>
+                )}
+              </div>
+              
+              <div className="flex gap-4 flex-wrap">
+                {footerContent.socialLinks.map((social, index) => (
+                  <div key={index} className="flex flex-col items-center relative">
+                    {editMode ? (
+                      <div className="flex gap-2 mb-2 p-2 bg-gray-800 rounded-lg">
+                        <select
+                          value={social.icon}
+                          onChange={(e) => {
+                            const newSocialLinks = [...footerContent.socialLinks];
+                            newSocialLinks[index] = { ...social, icon: e.target.value };
+                            const updatedContent = { ...footerContent, socialLinks: newSocialLinks };
+                            setFooterContent(updatedContent);
+                          }}
+                          className="bg-white text-black px-2 py-1 rounded-md text-sm"
+                        >
+                          <option value="Facebook">Facebook</option>
+                          <option value="Twitter">Twitter</option>
+                          <option value="Instagram">Instagram</option>
+                          <option value="Linkedin">LinkedIn</option>
+                          <option value="Youtube">YouTube</option>
+                        </select>
+                        <input
+                          type="text"
+                          value={social.href}
+                          onChange={(e) => {
+                            const newSocialLinks = [...footerContent.socialLinks];
+                            newSocialLinks[index] = { ...social, href: e.target.value };
+                            const updatedContent = { ...footerContent, socialLinks: newSocialLinks };
+                            setFooterContent(updatedContent);
+                          }}
+                          placeholder="URL"
+                          className="bg-white text-black px-2 py-1 rounded-md text-sm"
+                        />
+                        <input
+                          type="text"
+                          value={social.label}
+                          onChange={(e) => {
+                            const newSocialLinks = [...footerContent.socialLinks];
+                            newSocialLinks[index] = { ...social, label: e.target.value };
+                            const updatedContent = { ...footerContent, socialLinks: newSocialLinks };
+                            setFooterContent(updatedContent);
+                          }}
+                          placeholder="Label"
+                          className="bg-white text-black px-2 py-1 rounded-md text-sm"
+                        />
+                        <button
+                          onClick={() => removeSocialLink(index)}
+                          className="p-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                          title="Remove Social Link"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ) : (
+                      <a
+                        href={social.href}
+                        aria-label={social.label}
+                        className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        <option value="Facebook">Facebook</option>
-                        <option value="Twitter">Twitter</option>
-                        <option value="Instagram">Instagram</option>
-                        <option value="Linkedin">LinkedIn</option>
-                        <option value="Youtube">YouTube</option>
-                      </select>
-                      <input
-                        type="text"
-                        value={social.href}
-                        onChange={(e) => {
-                          const newSocialLinks = [...footerContent.socialLinks];
-                          newSocialLinks[index] = {
-                            ...social,
-                            href: e.target.value,
-                          };
-                          setFooterContent({
-                            ...footerContent,
-                            socialLinks: newSocialLinks,
-                          });
-                        }}
-                        placeholder="URL"
-                        className="bg-white text-black px-2 py-1 rounded-md text-sm"
-                      />
-                      <input
-                        type="text"
-                        value={social.label}
-                        onChange={(e) => {
-                          const newSocialLinks = [...footerContent.socialLinks];
-                          newSocialLinks[index] = {
-                            ...social,
-                            label: e.target.value,
-                          };
-                          setFooterContent({
-                            ...footerContent,
-                            socialLinks: newSocialLinks,
-                          });
-                        }}
-                        placeholder="Label"
-                        className="bg-white text-black px-2 py-1 rounded-md text-sm"
-                      />
-                    </div>
-                  ) : (
-                    <a
-                      href={social.href}
-                      aria-label={social.label}
-                      className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
-                    >
-                      {getSocialIcon(social.icon)}
-                    </a>
-                  )}
-                </div>
-              ))}
+                        {getSocialIcon(social.icon)}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
+          </div>
+          
+          {/* Copyright */}
+          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+            <p>© {new Date().getFullYear()} {footerContent.eventName}. All rights reserved.</p>
           </div>
         </div>
       </div>

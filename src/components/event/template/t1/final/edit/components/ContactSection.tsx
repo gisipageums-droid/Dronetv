@@ -1,183 +1,186 @@
 import React, { useState } from "react";
-import { Mail, Phone, MapPin, User, Edit2, Save, X } from "lucide-react";
 
 const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({
-    companyName: "",
     fullName: "",
-    mobile: "",
     email: "",
+    mobile: "",
+    companyName: "",
+    designation: "",
+    country: "",
     website: "",
     enquiryType: "",
+    message: "",
   });
-
-  const [contactInfo, setContactInfo] = useState({
-    company: "Services International",
-    phones: "011-45055579, +91 9354688923, +91 8882210038, +91 73883 37522",
-    email: "info@droneexpo.in",
-    address: "D-4 LSC, A Block, Naraina Vihar, New Delhi - 110028",
-    chinaContacts: [
-      {
-        name: "Lydia Li",
-        phone: "+86-13122908685",
-        email: "lina@damuite.com",
-      },
-      {
-        name: "Ting Ma",
-        phone: "+86-17002117355",
-        email: "2881778361@qq.com",
-      },
-    ],
-    chinaAddress:
-      "Shanghai Damuite Exhibition Service Co., Ltd No.1088, New Jinqiao Road, Pudong District Shanghai China",
-  });
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState(contactInfo);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleContactChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: string
-  ) => {
-    setEditForm({ ...editForm, [field]: e.target.value });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted:", formData);
-  };
-
-  const handleSaveContact = () => {
-    setContactInfo(editForm);
-    setIsEditing(false);
+    console.log("Form Submitted:", formData);
   };
 
   return (
     <section id="contact" className="py-20 bg-gray-50">
       {/* Header */}
       <div className="text-center mb-16">
-        <h2
-          data-aos="fade-up"
-          className="text-4xl md:text-5xl font-bold text-black mb-4"
-        >
+        <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
           Register & <span className="text-[#FF0000]">Contact</span>
         </h2>
-        <div
-          data-aos="fade-up"
-          data-aos-delay="200"
-          className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"
-        ></div>
-        <p
-          data-aos="fade-up"
-          data-aos-delay="400"
-          className="text-gray-600 text-lg max-w-2xl mx-auto"
-        >
-          Ready to join us? Register now or get in touch for more information
-          about the summit.
+
+        <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+
+        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          Ready to participate? Fill the form below & our team will contact you shortly.
         </p>
       </div>
 
-      {/* Content Grid */}
-      <div className="max-w-[1170px] mx-auto px-4 grid grid-cols-1 items-start justify-center gap-16">
-       
-        {/* Right Card - Form */}
+      {/* Contact Form */}
+      <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-10">
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-lg p-8 grid grid-cols-1 md:grid-cols-2 items-start gap-6 w-[75%] mx-auto"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
+          {/* Full Name */}
           <div>
-            <label className="block mb-1 font-medium">Company Name  *</label>
-            <input
-              name="companyName"
-              value={formData.companyName}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Full Name *</label>
+            <label className="block mb-1 font-semibold">Full Name *</label>
             <input
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter your full name"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
             />
           </div>
 
+          {/* Email */}
           <div>
-            <label className="block mb-1 font-medium">Mobile *</label>
-            <div className="flex gap-2">
-              <select className="border border-gray-300 rounded-lg px-2">
-                <option>India (+91)</option>
-              </select>
-              <input
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                required
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Email *</label>
+            <label className="block mb-1 font-semibold">Email *</label>
             <input
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              placeholder="example@email.com"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
             />
           </div>
 
+          {/* Mobile */}
           <div>
-            <label className="block mb-1 font-medium">Website</label>
+            <label className="block mb-1 font-semibold">Mobile *</label>
+            <div className="flex gap-2">
+              <select className="border border-gray-300 rounded-lg px-3">
+                <option>+91</option>
+              </select>
+
+              <input
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleChange}
+                required
+                placeholder="9876543210"
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-3"
+              />
+            </div>
+          </div>
+
+          {/* Company Name */}
+          <div>
+            <label className="block mb-1 font-semibold">Company Name *</label>
+            <input
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+              required
+              placeholder="Your company name"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+          </div>
+
+          {/* Designation */}
+          <div>
+            <label className="block mb-1 font-semibold">Designation *</label>
+            <input
+              name="designation"
+              value={formData.designation}
+              onChange={handleChange}
+              required
+              placeholder="Your role / title"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+          </div>
+
+          {/* Country */}
+          <div>
+            <label className="block mb-1 font-semibold">Country *</label>
+            <input
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              required
+              placeholder="Enter your country"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+          </div>
+
+          {/* Website */}
+          <div>
+            <label className="block mb-1 font-semibold">Website</label>
             <input
               name="website"
               value={formData.website}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              placeholder="https://yourcompany.com"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
             />
           </div>
 
+          {/* Enquiry Type */}
           <div>
-            <label className="block mb-1 font-medium">Enquiry Type</label>
+            <label className="block mb-1 font-semibold">Enquiry Type *</label>
             <select
               name="enquiryType"
               value={formData.enquiryType}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
             >
-              <option value="">Select Enquiry Type</option>
+              <option value="">Select Option</option>
               <option value="general">General</option>
-              <option value="product">Product</option>
+              <option value="delegate">Delegate Registration</option>
               <option value="sponsorship">Sponsorship</option>
               <option value="exhibition">Exhibition</option>
             </select>
           </div>
 
-          <div className="col-span-1 md:col-span-2 flex items-start gap-2">
-            <input type="checkbox" id="robotCheck" />
-            <label htmlFor="robotCheck">I'm not a robot</label>
+          {/* Message */}
+          <div className="col-span-1 md:col-span-2">
+            <label className="block mb-1 font-semibold">Message</label>
+            <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="Write your message..."
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 h-32"
+            />
           </div>
 
-          <button
-            type="submit"
-            className="w-full col-span-2 bg-[#003D73] text-white font-semibold py-3 rounded-lg hover:bg-blue-900 transition-all"
-          >
-            Submit
-          </button>
+          {/* Submit */}
+          <div className="col-span-1 md:col-span-2">
+            <button
+              type="submit"
+              className="w-full bg-[#003D73] text-white font-bold py-3 rounded-lg hover:bg-blue-900 transition-all"
+            >
+              Submit
+            </button>
+          </div>
         </form>
       </div>
     </section>

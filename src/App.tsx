@@ -95,6 +95,7 @@ import Edit_event_t2 from "./components/event/template/t2/final/edit/App";
 import EventSelect from "./components/event/select-template/Event-select";
 import EventLeads from "./components/UserDashboard/components/common/EventLeads";
 
+
 const HomePage = () => (
   <>
     <Hero />
@@ -250,8 +251,8 @@ const AppContent = () => {
           {/* <Route path="/user/event/edit/2/" element={<EventTemplateEdit2 />} />  */}
           <Route path="/preview/event/t1" element={<Event_T1 />} />
           <Route path="/preview/event/t2" element={<Event_T2 />} />
-          <Route path="/edit/event/t1" element={<Edit_event_t1 />} />
-          <Route path="/edit/event/t2" element={<Edit_event_t2 />} />
+          <Route path="/edit/event/t1/:isAIgen/:draftId/:userId" element={<Edit_event_t1 />} />
+          <Route path="/edit/event/t2/:isAIgen/:draftId/:userId" element={<Edit_event_t2 />} />
           <Route path="/event/select" element={<EventSelect />} />
           <Route path="/event/leads/:eventName/:eventId" element={
 

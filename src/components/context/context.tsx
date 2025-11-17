@@ -98,6 +98,7 @@ interface TemplateContextType {
   setFinaleDataReview: React.Dispatch<React.SetStateAction<any | []>>;
   editPublishTemplate: () => void;
   publishProfessionalTemplate: () => void;
+  publishEventsTemplate: () => void;
   // Add the missing properties:
   haveAccount: boolean;
   setHaveAccount: React.Dispatch<React.SetStateAction<boolean>>;
@@ -355,6 +356,46 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
   }
 
+  // event form
+  async function publishEventsTemplate() {
+    if (Object.keys(finalTemplate).length === 0) {
+      toast.error("No content to publish");
+      return;
+    }
+
+    try {
+      const data ={content:finalTemplate, submissionId:AIGenData.eventId
+}
+      const response = await fetch(
+        `https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/prod/events-publish/${AIGenData.userId}/${AIGenData.eventId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body:
+          JSON.stringify(data),
+          
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Upload successful:", result);
+      toast.success(
+        "Your template is successfully published and now it is under review"
+      );
+      navigate("/user-events");
+      setAIGenData({});
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error("Something went wrong...");
+    }
+  }
+
   return (
     <TemplateContext.Provider
       value={{
@@ -373,7 +414,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         editPublishTemplate,
         navModel,
         navigatemodel,
-        getAIgenData
+        getAIgenData,
+        publishEventsTemplate
       }}
     >
       {children}

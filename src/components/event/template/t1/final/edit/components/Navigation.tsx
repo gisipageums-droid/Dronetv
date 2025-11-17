@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, Edit, Save } from "lucide-react";
 
-const Navigation: React.FC = () => {
+interface NavigationProps {
+  headerData?: {
+    eventName: string;
+    ctaText: string;
+    navItems: Array<{
+      name: string;
+      href: string;
+    }>;
+  };
+  onStateChange?: (data: any) => void;
+}
+
+const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
+// console.log(headerData);
 
+  // Initialize with prop data or default values
   const [navContent, setNavContent] = useState({
-    eventName: "Drone Expo 2025",
+    eventName: "demo Event",
     ctaText: "Register Now",
     navItems: [
       { name: "Home", href: "#home" },
@@ -22,6 +36,14 @@ const Navigation: React.FC = () => {
 
   const [backupContent, setBackupContent] = useState(navContent);
 
+  // Update local state when prop data changes
+  useEffect(() => {
+    if (headerData) {
+      setNavContent(headerData);
+      setBackupContent(headerData);
+    }
+  }, [headerData]);
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -34,6 +56,11 @@ const Navigation: React.FC = () => {
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(navContent);
+    } else {
+      // When saving, call onStateChange to update parent component
+      if (onStateChange) {
+        onStateChange(navContent);
+      }
     }
     setEditMode(!editMode);
   };

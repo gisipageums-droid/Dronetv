@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Edit,
   Save,
@@ -11,54 +11,88 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const initialAgendaThemes = {
-  1: {
-    title: "Theme: Defence & Homeland Security",
-    note: "(Sessions conducted by Rashtriya Raksha University as Knowledge Partner)",
-    bullets: [
-      "The role of drones in security, surveillance, and defense operations",
-      "Perspectives from military, law enforcement, and intelligence agencies",
-      "UAV integration in counter-terrorism, border security, and critical infrastructure protection",
-    ],
-  },
-  2: {
-    title: "Theme: Smart City, GIS & Mapping",
-    note: "",
-    bullets: [
-      "UAV applications in urban planning, geospatial intelligence, and infrastructure development",
-      "Advancements in GIS, digital twins, and spatial data for smart city planning",
-      "Drone-based land surveying, mapping, and cadastral updates",
-    ],
-  },
-  3: {
-    title: "Theme: Irrigation, AI, Space & Drones",
-    note: "",
-    bullets: [
-      "Innovations in precision agriculture, water management, and rural development",
-      "AI-driven UAV applications for automation and real-time analytics",
-      "Integration of drones with space technology for remote sensing and data collection",
-    ],
+interface Theme {
+  title: string;
+  note: string;
+  bullets: string[];
+}
+
+interface AgendaContent {
+  title: string;
+  titleHighlight: string;
+  subtitle: string;
+  themes: {
+    [key: string]: Theme;
+  };
+}
+
+interface AgendaSectionProps {
+  agendaData?: AgendaContent;
+  onStateChange?: (data: AgendaContent) => void;
+}
+
+/** Default data structure */
+const defaultAgendaContent: AgendaContent = {
+  title: "Event",
+  titleHighlight: "Themes",
+  subtitle: "Each day focuses on a powerful industry-relevant theme.",
+  themes: {
+    1: {
+      title: "Theme 1",
+      note: "Theme description or note",
+      bullets: [
+        "Key point 1",
+        "Key point 2",
+        "Key point 3"
+      ],
+    },
+    2: {
+      title: "Theme 2",
+      note: "",
+      bullets: [
+        "Key point 1",
+        "Key point 2"
+      ],
+    },
+    3: {
+      title: "Theme 3",
+      note: "",
+      bullets: [
+        "Key point 1"
+      ],
+    },
   },
 };
 
-const AgendaSection: React.FC = () => {
+const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange }) => {
   const [activeDay, setActiveDay] = useState(1);
   const [editMode, setEditMode] = useState(false);
 
-  const [agendaContent, setAgendaContent] = useState({
-    title: "Event",
-    titleHighlight: "Themes",
-    subtitle: "Each day focuses on a powerful industry-relevant theme.",
-    themes: initialAgendaThemes,
-  });
+  const [agendaContent, setAgendaContent] = useState<AgendaContent>(defaultAgendaContent);
+  const [backupContent, setBackupContent] = useState<AgendaContent>(defaultAgendaContent);
+  const [editForm, setEditForm] = useState<Theme | null>(null);
 
-  const [backupContent, setBackupContent] = useState(agendaContent);
-  const [editForm, setEditForm] = useState(null);
+  // Update local state when prop data changes
+  useEffect(() => {
+    if (agendaData) {
+      setAgendaContent(agendaData);
+      setBackupContent(agendaData);
+      // Set edit form to current active day's theme if available
+      if (agendaData.themes[activeDay]) {
+        setEditForm(agendaData.themes[activeDay]);
+      }
+    }
+  }, [agendaData, activeDay]);
 
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(agendaContent);
       setEditForm({ ...agendaContent.themes[activeDay] });
+    } else {
+      // When saving, call onStateChange to update parent component
+      if (onStateChange) {
+        onStateChange(agendaContent);
+      }
     }
     setEditMode(!editMode);
   };
@@ -72,20 +106,25 @@ const AgendaSection: React.FC = () => {
   // Add new day
   const handleAddDay = () => {
     const dayKeys = Object.keys(agendaContent.themes).map(Number);
-    const newDayNumber = Math.max(...dayKeys) + 1;
-    const newDay = {
+    const newDayNumber = dayKeys.length > 0 ? Math.max(...dayKeys) + 1 : 1;
+    const newDay: Theme = {
       title: `Day ${newDayNumber} Theme`,
       note: "New theme description",
       bullets: ["New bullet point"],
     };
 
-    setAgendaContent({
+    const updatedContent = {
       ...agendaContent,
       themes: {
         ...agendaContent.themes,
         [newDayNumber]: newDay,
       },
-    });
+    };
+
+    setAgendaContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
     setActiveDay(newDayNumber);
     setEditForm(newDay);
   };
@@ -97,10 +136,15 @@ const AgendaSection: React.FC = () => {
 
     if (dayKeys.length === 0) return; // Don't remove if it's the last day
 
-    setAgendaContent({
+    const updatedContent = {
       ...agendaContent,
       themes: remainingThemes,
-    });
+    };
+
+    setAgendaContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
 
     // Set active day to first available day if current day was removed
     if (activeDay === dayToRemove) {
@@ -111,43 +155,57 @@ const AgendaSection: React.FC = () => {
   };
 
   // Handle input changes for title and note
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditForm((prev) => ({ ...prev, [name]: value }));
+    setEditForm((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
   // Handle changes for a specific bullet point
-  const handleBulletChange = (e, index) => {
+  const handleBulletChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    if (!editForm) return;
+    
     const newBullets = [...editForm.bullets];
     newBullets[index] = e.target.value;
-    setEditForm((prev) => ({ ...prev, bullets: newBullets }));
+    setEditForm((prev) => (prev ? { ...prev, bullets: newBullets } : null));
   };
 
   // Add a new bullet point
   const handleAddBullet = () => {
-    setEditForm((prev) => ({ ...prev, bullets: [...prev.bullets, ""] }));
+    if (!editForm) return;
+    
+    setEditForm((prev) => (prev ? { ...prev, bullets: [...prev.bullets, ""] } : null));
   };
 
   // Remove a bullet point
-  const handleRemoveBullet = (index) => {
+  const handleRemoveBullet = (index: number) => {
+    if (!editForm) return;
+    
     const newBullets = editForm.bullets.filter((_, i) => i !== index);
-    setEditForm((prev) => ({ ...prev, bullets: newBullets }));
+    setEditForm((prev) => (prev ? { ...prev, bullets: newBullets } : null));
   };
 
   // Save changes to the main state and exit edit mode
   const handleSave = () => {
+    if (!editForm) return;
+    
     const updatedThemes = {
       ...agendaContent.themes,
       [activeDay]: editForm,
     };
-    setAgendaContent({ ...agendaContent, themes: updatedThemes });
+    
+    const updatedContent = { ...agendaContent, themes: updatedThemes };
+    
+    setAgendaContent(updatedContent);
+    if (onStateChange) {
+      onStateChange(updatedContent);
+    }
     setEditMode(false);
     setEditForm(null);
   };
 
   // Render the themes based on the current mode
   const renderThemeContent = () => {
-    const theme = editMode ? editForm : agendaContent.themes[activeDay];
+    const theme = editMode && editForm ? editForm : agendaContent.themes[activeDay];
 
     if (!theme) {
       return null;
@@ -242,7 +300,7 @@ const AgendaSection: React.FC = () => {
             {editMode ? (
               <>
                 <button
-                  onClick={() => setEditMode(false)}
+                  onClick={handleEditToggle}
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg border border-green-700 hover:bg-green-700 transition"
                 >
                   <Save size={18} /> Save
