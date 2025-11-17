@@ -309,9 +309,9 @@ const Events: React.FC = () => {
   const handleEdit = async (eventId: string, templateSelection: string) => {
     try {
       if (templateSelection === "template-1") {
-        navigate(`/user/events/edit/1/${eventId}/user123`);
+        navigate(`/edit/event/t1/pub/${eventId}/${user?.userData?.email}`);
       } else if (templateSelection === "template-2") {
-        navigate(`/user/events/edit/2/${eventId}/user123`);
+        navigate(`/edit/event/t2/pub/${eventId}/${user?.userData?.email}`);
       }
     } catch (error) {
       console.error("Error loading template for editing:", error);

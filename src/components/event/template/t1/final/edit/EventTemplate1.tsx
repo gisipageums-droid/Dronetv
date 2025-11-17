@@ -307,7 +307,7 @@ const EventTemplate1: React.FC = () => {
         } else {
           // Replace with your actual API for non-AIgen case
           response = await fetch(
-            `YOUR_NON_AIGEN_API_HERE?draftId=${draftId}&userId=${userId}`,
+            `https://2lksnliog8.execute-api.ap-south-1.amazonaws.com/prod/${draftId}/${userId}`,
             {
               method: "GET",
               headers: {
@@ -315,6 +315,7 @@ const EventTemplate1: React.FC = () => {
               },
             }
           );
+
         }
 
         if (!response.ok) {
