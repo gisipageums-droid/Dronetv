@@ -201,7 +201,12 @@ const LeadsPage: React.FC = () => {
     const id = setInterval(async () => {
       try {
         const response = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`
+          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`,{
+            headers: {
+            "Content-Type": "application/json",
+            "X-User-Email": userId,
+          },
+          }
         );
         const data = await response.json();
 
@@ -264,12 +269,10 @@ const LeadsPage: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "X-User-Email": userId,
           },
           body: JSON.stringify({
             leadId: selectedLead.leadId,
-            userId: userId,
-            senderType: "lead",
-            senderName: user?.userData?.fullName || user?.fullName || "You",
             message: messageToSend,
           }),
         }
