@@ -286,6 +286,7 @@ const Events: React.FC = () => {
   const [events, setEvents] = useState<EventCard[]>([]);
   const [loading, setloading] = useState(true);
 
+  //get data
   useEffect(() => {
     setloading(true);
 
