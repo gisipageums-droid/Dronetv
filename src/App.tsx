@@ -95,6 +95,10 @@ import Edit_event_t2 from "./components/event/template/t2/final/edit/App";
 import EventSelect from "./components/event/select-template/Event-select";
 import EventLeads from "./components/UserDashboard/components/common/EventLeads";
 //main App.tsx
+import BuyTokenPage from "./components/UserDashboard/pages/Buy";
+import TransactionHistory from "./components/UserDashboard/pages/transaction";
+import RechargePlans from "./components/UserDashboard/pages/Plans";
+
 
 const HomePage = () => (
   <>
@@ -262,6 +266,8 @@ const AppContent = () => {
           } />
 
 
+
+
           {/* excel extraction route */}
           <Route path="/excel" element={<ExcelDataProcessor />} />
           <Route path="/extract-text" element={<DocumentTextExtractor />} />
@@ -309,6 +315,38 @@ const AppContent = () => {
               <UserDashboardLayout>
                 <ProfilePage />
               </UserDashboardLayout>
+            }
+          />
+
+          <Route
+            path="/user-recharge"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <RechargePlans />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-buy"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <BuyTokenPage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-transactions"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <TransactionHistory />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
