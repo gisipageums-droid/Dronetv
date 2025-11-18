@@ -72,7 +72,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       );
 
       const emailExists = response.data.exists;
-      
+
       setEmailCheckResult({
         exists: emailExists,
         message: response.data.message,
@@ -138,40 +138,40 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
 
   // ===== Date of Incorporation (custom dropdowns) =====
-const days = Array.from({ length: 31 }, (_, i) => i + 1);
-const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
 
-// Split current date (if exists)
-const [year, month, day] = formData.yearEstablished
-  ? formData.yearEstablished.split("-")
-  : ["", "", ""];
+  // Split current date (if exists)
+  const [year, month, day] = formData.yearEstablished
+    ? formData.yearEstablished.split("-")
+    : ["", "", ""];
 
-// Handle dropdown changes
-const handleChange = (field, value) => {
-  const newDate = {
-    year: field === "year" ? value : year,
-    month: field === "month" ? value : month,
-    day: field === "day" ? value : day,
+  // Handle dropdown changes
+  const handleChange = (field, value) => {
+    const newDate = {
+      year: field === "year" ? value : year,
+      month: field === "month" ? value : month,
+      day: field === "day" ? value : day,
+    };
+
+    // Only update when at least year and month are selected
+    updateFormData({
+      yearEstablished: `${newDate.year || ""}-${newDate.month || ""}-${newDate.day || ""}`,
+    });
   };
 
-  // Only update when at least year and month are selected
-  updateFormData({
-    yearEstablished: `${newDate.year || ""}-${newDate.month || ""}-${newDate.day || ""}`,
-  });
-};
 
 
 
 
-
-React.useEffect(() => {
-  console.log("Form data updated:", formData);
-}, [formData]);
+  React.useEffect(() => {
+    console.log("Form data updated:", formData);
+  }, [formData]);
 
 
 
@@ -202,11 +202,10 @@ React.useEffect(() => {
               {categoryOptions.map(({ value, description }) => (
                 <label
                   key={value}
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${
-                    formData.companyCategory.includes(value)
+                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${formData.companyCategory.includes(value)
                       ? "border-amber-500 bg-yellow-50 shadow-md"
                       : "border-amber-300 hover:border-amber-400"
-                  }`}
+                    }`}
                 >
                   <input
                     type="checkbox"
@@ -226,20 +225,18 @@ React.useEffect(() => {
                     className="sr-only"
                   />
                   <h3
-                    className={`text-lg font-bold mb-2 ${
-                      formData.companyCategory.includes(value)
+                    className={`text-lg font-bold mb-2 ${formData.companyCategory.includes(value)
                         ? "text-amber-900"
                         : "text-gray-700"
-                    }`}
+                      }`}
                   >
                     {value}
                   </h3>
                   <p
-                    className={`text-xs text-center ${
-                      formData.companyCategory.includes(value)
+                    className={`text-xs text-center ${formData.companyCategory.includes(value)
                         ? "text-amber-700"
                         : "text-gray-500"
-                    }`}
+                      }`}
                   >
                     {description}
                   </p>
@@ -288,7 +285,7 @@ React.useEffect(() => {
                     placeholder="Enter phone number"
                   />
 
-         
+
 
                   <div className="md:col-span-2">
                     <FormInput
@@ -306,28 +303,28 @@ React.useEffect(() => {
                       </p>
                     )}
 
-                             
+
 
 
 
                   </div>
-    {/* Director LinkedIn */}
-    <FormInput
-      label="Director LinkedIn"
-      type="url"
-      value={formData.directorLinkedin || ""}
-      onChange={(value) => updateFormData({ directorLinkedin: value })}
-      placeholder="https://linkedin.com/in/username"
-    />
+                  {/* Director LinkedIn */}
+                  <FormInput
+                    label="Director LinkedIn"
+                    type="url"
+                    value={formData.directorLinkedin || ""}
+                    onChange={(value) => updateFormData({ directorLinkedin: value })}
+                    placeholder="https://linkedin.com/in/username"
+                  />
 
-    {/* Director Twitter */}
-    <FormInput
-      label="Director Twitter"
-      type="url"
-      value={formData.directorTwitter || ""}
-      onChange={(value) => updateFormData({ directorTwitter: value })}
-      placeholder="https://twitter.com/username"
-    />
+                  {/* Director Twitter */}
+                  <FormInput
+                    label="Director Twitter"
+                    type="url"
+                    value={formData.directorTwitter || ""}
+                    onChange={(value) => updateFormData({ directorTwitter: value })}
+                    placeholder="https://twitter.com/username"
+                  />
                 </div>
               </div>
 
@@ -374,82 +371,82 @@ React.useEffect(() => {
 
 
 
-{/* Date of Incorporation */}
-{/* ===== Custom Date of Incorporation ===== */}
-<div className="flex flex-col gap-2">
-  <label className="text-sm font-medium">Date of Incorporation</label>
+                  {/* Date of Incorporation */}
+                  {/* ===== Custom Date of Incorporation ===== */}
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium">Date of Incorporation</label>
 
-  <div className="flex gap-2">
-    {/* Day */}
-    <select
-      className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
-      value={day || new Date().getDate().toString().padStart(2, "0")}
-      onChange={(e) => handleChange("day", e.target.value)}
-    >
-      <option value="">Day</option>
-      {days.map((d) => (
-        <option key={d} value={String(d).padStart(2, "0")}>
-          {d}
-        </option>
-      ))}
-    </select>
+                    <div className="flex gap-2">
+                      {/* Day */}
+                      <select
+                        className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
+                        value={day || new Date().getDate().toString().padStart(2, "0")}
+                        onChange={(e) => handleChange("day", e.target.value)}
+                      >
+                        <option value="">Day</option>
+                        {days.map((d) => (
+                          <option key={d} value={String(d).padStart(2, "0")}>
+                            {d}
+                          </option>
+                        ))}
+                      </select>
 
-    {/* Month */}
-    <select
-      className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
-      value={month || String(new Date().getMonth() + 1).padStart(2, "0")}
-      onChange={(e) => handleChange("month", e.target.value)}
-    >
-      <option value="">Month</option>
-      {months.map((m, i) => (
-        <option key={i} value={String(i + 1).padStart(2, "0")}>
-          {m}
-        </option>
-      ))}
-    </select>
+                      {/* Month */}
+                      <select
+                        className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
+                        value={month || String(new Date().getMonth() + 1).padStart(2, "0")}
+                        onChange={(e) => handleChange("month", e.target.value)}
+                      >
+                        <option value="">Month</option>
+                        {months.map((m, i) => (
+                          <option key={i} value={String(i + 1).padStart(2, "0")}>
+                            {m}
+                          </option>
+                        ))}
+                      </select>
 
-    {/* Year */}
-    <select
-      className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
-      value={year || new Date().getFullYear().toString()}
-      onChange={(e) => handleChange("year", e.target.value)}
-    >
-      <option value="">Year</option>
-      {years
-        .slice()
-        .reverse()
-        .map((y) => (
-          <option key={y} value={y}>
-            {y}
-          </option>
-        ))}
-    </select>
-  </div>
+                      {/* Year */}
+                      <select
+                        className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
+                        value={year || new Date().getFullYear().toString()}
+                        onChange={(e) => handleChange("year", e.target.value)}
+                      >
+                        <option value="">Year</option>
+                        {years
+                          .slice()
+                          .reverse()
+                          .map((y) => (
+                            <option key={y} value={y}>
+                              {y}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
 
-  {/* ===== Contextual helper text ===== */}
-  <p className="text-xs text-amber-700 mt-1">
-    {(() => {
-      const today = new Date();
-      const selectedDate =
-        year && month && day
-          ? new Date(`${year}-${month}-${day}`)
-          : new Date(); // Use current date as default
+                    {/* ===== Contextual helper text ===== */}
+                    <p className="text-xs text-amber-700 mt-1">
+                      {(() => {
+                        const today = new Date();
+                        const selectedDate =
+                          year && month && day
+                            ? new Date(`${year}-${month}-${day}`)
+                            : new Date(); // Use current date as default
 
-      const isToday =
-        selectedDate.toDateString() === today.toDateString();
-      const isThisMonth =
-        selectedDate.getMonth() === today.getMonth() &&
-        selectedDate.getFullYear() === today.getFullYear();
-      const isThisYear =
-        selectedDate.getFullYear() === today.getFullYear();
+                        const isToday =
+                          selectedDate.toDateString() === today.toDateString();
+                        const isThisMonth =
+                          selectedDate.getMonth() === today.getMonth() &&
+                          selectedDate.getFullYear() === today.getFullYear();
+                        const isThisYear =
+                          selectedDate.getFullYear() === today.getFullYear();
 
-      if (isToday) return "📅 This is today's date.";
-      if (isThisMonth) return "🗓 This month is ongoing.";
-      if (isThisYear) return "📆 This year is currently ongoing.";
-      return "📅 Default set to today's date";
-    })()}
-  </p>
-</div>
+                        if (isToday) return "📅 This is today's date.";
+                        if (isThisMonth) return "🗓 This month is ongoing.";
+                        if (isThisYear) return "📆 This year is currently ongoing.";
+                        return "📅 Default set to today's date";
+                      })()}
+                    </p>
+                  </div>
 
 
 
@@ -457,7 +454,15 @@ React.useEffect(() => {
                     label="Website URL "
                     type="url"
                     value={formData.websiteUrl}
-                    onChange={(value) => updateFormData({ websiteUrl: value })}
+                    onChange={(value) => {
+                      // Ensure URL starts with https://www.
+                      let url = value.trim();
+                      if (url && !url.match(/^https:\/\/www\./i)) {
+                        // If it doesn't start with https://www., add it
+                        url = `https://www.${url.replace(/^(https?:\/\/)?(www\.)?/i, '')}`;
+                      }
+                      updateFormData({ websiteUrl: url });
+                    }}
                     required
                     placeholder="https://www.yourcompany.com"
                   />
@@ -490,7 +495,7 @@ React.useEffect(() => {
                       onChange={(value) => updateFormData({ gstin: value })}
                       placeholder="GST number"
                     />
-                   
+
                   </div>
 
                   <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
@@ -744,7 +749,7 @@ React.useEffect(() => {
 
             <div className="mb-4">
               <p className="mb-4 text-sm text-slate-600">
-                We need to verify if this email is already associated with an existing account. 
+                We need to verify if this email is already associated with an existing account.
                 Please enter the User email to continue.
               </p>
 
@@ -760,22 +765,19 @@ React.useEffect(() => {
 
               {emailCheckResult && (
                 <div
-                  className={`mt-3 p-3 rounded-lg flex items-start ${
-                    emailCheckResult.exists
+                  className={`mt-3 p-3 rounded-lg flex items-start ${emailCheckResult.exists
                       ? "bg-green-50 border border-green-200"
                       : "bg-blue-50 border border-blue-200"
-                  }`}
+                    }`}
                 >
                   <AlertCircle
-                    className={`w-4 h-4 mt-0.5 mr-2 ${
-                      emailCheckResult.exists ? "text-green-600" : "text-blue-600"
-                    }`}
+                    className={`w-4 h-4 mt-0.5 mr-2 ${emailCheckResult.exists ? "text-green-600" : "text-blue-600"
+                      }`}
                   />
                   <div>
                     <p
-                      className={`text-sm font-medium ${
-                        emailCheckResult.exists ? "text-green-800" : "text-blue-800"
-                      }`}
+                      className={`text-sm font-medium ${emailCheckResult.exists ? "text-green-800" : "text-blue-800"
+                        }`}
                     >
                       {emailCheckResult.message}
                     </p>
@@ -796,13 +798,13 @@ React.useEffect(() => {
 
 
 
-                  
+
                 </div>
               )}
 
 
 
-              
+
             </div>
 
             <div className="flex justify-end space-x-3">

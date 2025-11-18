@@ -124,7 +124,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                     size={18}
                     className="text-blue-600 mt-0.5 flex-shrink-0"
                   />
-                  <p className="text-sm text-blue-800">
+                  <p className="text-sm text-blue-800 text-justify">
                     Thank you for completing your listing!
                     Your listing will be reviewed and will go live as soon as possible if your information aligns with our{" "}
                     <button
@@ -132,7 +132,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                         setModel(false);
                         setTermsModel(true);
                       }}
-                      className="text-blue-800 underline font-medium hover:text-blue-900 transition-colors inline-flex items-center gap-1"
+                      className="text-red-600 underline font-medium hover:text-red-700 transition-colors"
                     >
                       terms and conditions
                     </button>
@@ -141,7 +141,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                     This action cannot be undone.
                   </p>
                 </div>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-justify">
                   Are you sure you want to submit your listing for review?
                 </p>
               </div>
@@ -149,7 +149,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
               {/* Modal Footer */}
               <div className="flex gap-3 justify-end">
                 <motion.button
-                  whileTap={{ scale: 0.9 }}
+                  whileTap={{ scale: 0.95 }}
                   whileHover={{ scale: 1.1 }}
                   onClick={() => setModel(false)}
                   className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
@@ -157,7 +157,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                   Cancel
                 </motion.button>
                 <motion.button
-                  whileTap={{ scale: 0.9 }}
+                  whileTap={{ scale: 0.95 }}
                   whileHover={{ scale: 1.1 }}
                   onClick={() => {
                     // Add your publish logic here
@@ -207,7 +207,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
               {/* Modal Body - Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-6">
                 <div className="prose prose-lg max-w-none">
-                  <pre className="whitespace-pre-wrap font-sans text-gray-700 text-sm leading-relaxed">
+                  <pre className="whitespace-pre-wrap font-sans text-gray-700 text-sm leading-relaxed text-justify">
                     {termsContent}
                   </pre>
                 </div>

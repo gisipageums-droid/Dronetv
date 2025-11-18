@@ -1483,7 +1483,7 @@
 //       // Update initial state reference to current state
 //       initialBlogState.current = blogSection;
 //       setHasUnsavedChanges(false);
-      
+
 //       // Clear pending images
 //       setPendingImages({});
 //       // Exit edit mode
@@ -2628,7 +2628,7 @@ export default function Blog({
         } else if (selectedPost) {
           setSelectedPost((s: any) => ({ ...s, image: awsImageUrl }));
         }
-        
+
         // Remove from pending images since it's uploaded
         setPendingImages((prev) => {
           const newPending = { ...prev };
@@ -2639,7 +2639,7 @@ export default function Blog({
           }
           return newPending;
         });
-        
+
         toast.success("Image cropped and uploaded to AWS successfully!");
       } else {
         // If upload fails, keep the preview URL and set as pending
@@ -2719,7 +2719,7 @@ export default function Blog({
       // Update initial state reference to current state
       initialBlogState.current = blogSection;
       setHasUnsavedChanges(false);
-      
+
       // Clear pending images
       setPendingImages({});
       // Exit edit mode
@@ -2998,7 +2998,7 @@ export default function Blog({
                 </div>
               </div>
             ) : (
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-justify">
                 {blogSection.header.desc}
               </p>
             )}
@@ -3217,7 +3217,7 @@ export default function Blog({
                         <h3 className="font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem]">
                           {post.title}
                         </h3>
-                        <p className="text-muted-foreground text-sm line-clamp-3 min-h-[4.5rem]">
+                        <p className="text-muted-foreground text-sm line-clamp-3 min-h-[4.5rem] text-justify">
                           {post.excerpt}
                         </p>
                       </>

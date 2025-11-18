@@ -648,7 +648,7 @@ export default function Services({
                 <h2 className="text-3xl font-bold">
                   {servicesSection.heading.head}
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-justify">
                   {servicesSection.heading.desc}
                 </p>
               </>
@@ -858,10 +858,10 @@ export default function Services({
                       </>
                     ) : (
                       <>
-                        <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
+                        <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem] text-justify">
                           {service.description}
                         </p>
-                        <p className="mt-1 text-xs italic text-gray-500">
+                        <p className="mt-1 text-xs italic text-gray-500 text-justify">
                           Category: {service.category}
                         </p>
                       </>
@@ -1024,7 +1024,7 @@ export default function Services({
                     </div>
                   </div>
                 ) : (
-                  <p className="mb-3 text-sm text-muted-foreground">
+                  <p className="mb-3 text-sm text-muted-foreground text-justify">
                     {
                       servicesSection.services[selectedServiceIndex]
                         .detailedDescription
@@ -1207,7 +1207,7 @@ export default function Services({
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm">
+                      <p className="text-sm text-justify">
                         {servicesSection.services[selectedServiceIndex].pricing}
                       </p>
                     )}
@@ -1252,7 +1252,7 @@ export default function Services({
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm">
+                      <p className="text-sm text-justify">
                         {
                           servicesSection.services[selectedServiceIndex]
                             .timeline

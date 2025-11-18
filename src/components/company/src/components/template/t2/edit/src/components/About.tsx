@@ -662,7 +662,7 @@ export default function About({
                     </div>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed text-justify">
                     {aboutState.description2}
                   </p>
                 )}
@@ -722,7 +722,7 @@ export default function About({
                     </div>
                   </div>
                 ) : (
-                  <p className="text-lg text-muted-foreground leading-relaxed">
+                  <p className="text-lg text-muted-foreground leading-relaxed text-justify">
                     {aboutState.description1}
                   </p>
                 )}

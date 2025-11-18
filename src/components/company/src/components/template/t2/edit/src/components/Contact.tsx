@@ -144,11 +144,10 @@ export default function Contact({ onStateChange }) {
                     }))
                   }
                   maxLength={80}
-                  className={`w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground ${
-                    contactSection.header.title.length >= 80
+                  className={`w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground ${contactSection.header.title.length >= 80
                       ? "border-red-500"
                       : ""
-                  }`}
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {contactSection.header.title.length}/80
@@ -186,11 +185,10 @@ export default function Contact({ onStateChange }) {
                       }))
                     }
                     maxLength={100}
-                    className={`w-full mb-2 text-lg text-center bg-transparent border-b text-muted-foreground ${
-                      contactSection.header.descriptionPart1.length >= 100
+                    className={`w-full mb-2 text-lg text-center bg-transparent border-b text-muted-foreground ${contactSection.header.descriptionPart1.length >= 100
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
                     {contactSection.header.descriptionPart1.length}/100
@@ -214,11 +212,10 @@ export default function Contact({ onStateChange }) {
                       }))
                     }
                     maxLength={30}
-                    className={`w-full mb-2 text-lg font-semibold text-center bg-transparent border-b text-red-accent ${
-                      contactSection.header.descriptionPart2.length >= 30
+                    className={`w-full mb-2 text-lg font-semibold text-center bg-transparent border-b text-red-accent ${contactSection.header.descriptionPart2.length >= 30
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
                     {contactSection.header.descriptionPart2.length}/30
@@ -242,11 +239,10 @@ export default function Contact({ onStateChange }) {
                       }))
                     }
                     maxLength={10}
-                    className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${
-                      contactSection.header.descriptionPart3.length >= 10
+                    className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${contactSection.header.descriptionPart3.length >= 10
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
                     {contactSection.header.descriptionPart3.length}/10
@@ -260,7 +256,7 @@ export default function Contact({ onStateChange }) {
               </div>
             ) : (
               <>
-                <p className="inline text-lg text-muted-foreground">
+                <p className="inline text-lg text-muted-foreground text-justify">
                   {contactSection.header.descriptionPart1}
                 </p>
                 <motion.span
@@ -303,7 +299,7 @@ export default function Contact({ onStateChange }) {
                     Send us a message
                   </span>
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground text-justify">
                   We'll get back to you within 24 hours during business days.
                 </p>
               </CardHeader>
@@ -496,7 +492,7 @@ export default function Contact({ onStateChange }) {
                   whileInView="visible"
                   viewport={{ once: true }}
                 >
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground text-justify">
                     We typically respond within 24 hours during business days.
                   </p>
                 </motion.div>

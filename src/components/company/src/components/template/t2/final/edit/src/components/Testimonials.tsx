@@ -1284,7 +1284,7 @@ export default function Testimonials({
 
       // Wait for all uploads to complete
       const results = await Promise.allSettled(uploadPromises);
-      
+
       const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
       const failedUploads = results.filter(result => result.status === 'rejected').length;
 
@@ -1299,7 +1299,7 @@ export default function Testimonials({
       const successfulIndices = results
         .filter(result => result.status === 'fulfilled')
         .map(result => result.value.index);
-      
+
       setPendingTestimonialImages(prev => {
         const updated = { ...prev };
         successfulIndices.forEach(index => {
@@ -1323,7 +1323,7 @@ export default function Testimonials({
       if (Object.keys(pendingTestimonialImages).length > 0) {
         await handleImageUpload();
       }
-      
+
       // Exit edit mode
       setIsEditing(false);
       toast.success("Testimonials section saved!");
@@ -1437,31 +1437,28 @@ export default function Testimonials({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -1505,11 +1502,10 @@ export default function Testimonials({
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className={`w-full rounded py-2 text-sm ${
-                    isUploading 
-                      ? "bg-gray-400 cursor-not-allowed text-white" 
+                  className={`w-full rounded py-2 text-sm ${isUploading
+                      ? "bg-gray-400 cursor-not-allowed text-white"
                       : "bg-green-600 hover:bg-green-700 text-white"
-                  }`}
+                    }`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
@@ -1536,11 +1532,10 @@ export default function Testimonials({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save & Exit"}
               </motion.button>
@@ -1579,11 +1574,10 @@ export default function Testimonials({
                     value={testimonialsSection.headline.title}
                     onChange={(e) => updateHeadline("title", e.target.value)}
                     maxLength={80}
-                    className={`text-3xl md:text-4xl text-foreground mb-4 w-full text-center bg-transparent border-b font-bold ${
-                      testimonialsSection.headline.title.length >= 80
+                    className={`text-3xl md:text-4xl text-foreground mb-4 w-full text-center bg-transparent border-b font-bold ${testimonialsSection.headline.title.length >= 80
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
                     {testimonialsSection.headline.title.length}/80
@@ -1600,11 +1594,10 @@ export default function Testimonials({
                     value={testimonialsSection.headline.description}
                     onChange={(e) => updateHeadline("description", e.target.value)}
                     maxLength={200}
-                    className={`text-lg text-muted-foreground w-full text-center bg-transparent border-b ${
-                      testimonialsSection.headline.description.length >= 200
+                    className={`text-lg text-muted-foreground w-full text-center bg-transparent border-b ${testimonialsSection.headline.description.length >= 200
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                     rows={2}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
@@ -1622,7 +1615,7 @@ export default function Testimonials({
                 <h2 className="text-3xl md:text-4xl text-foreground mb-4">
                   {testimonialsSection.headline.title}
                 </h2>
-                <p className="text-lg text-muted-foreground">
+                <p className="text-lg text-muted-foreground text-justify">
                   {testimonialsSection.headline.description}
                 </p>
               </>
@@ -1703,7 +1696,7 @@ export default function Testimonials({
                       onImageSelect={handleTestimonialImageSelect}
                       hasPendingImage={
                         pendingTestimonialImages[
-                          index % testimonialsSection.testimonials.length
+                        index % testimonialsSection.testimonials.length
                         ]
                       }
                     />
@@ -1777,9 +1770,8 @@ function TestimonialCard({
                     updateTestimonial(index, "quote", e.target.value)
                   }
                   maxLength={300}
-                  className={`text-card-foreground leading-relaxed w-full border-b bg-transparent min-h-[120px] ${
-                    testimonial.quote.length >= 300 ? "border-red-500" : ""
-                  }`}
+                  className={`text-card-foreground leading-relaxed w-full border-b bg-transparent min-h-[120px] ${testimonial.quote.length >= 300 ? "border-red-500" : ""
+                    }`}
                   rows={4}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
@@ -1808,7 +1800,7 @@ function TestimonialCard({
               transition={{ duration: 0.3 }}
             >
               <ImageWithFallback
-                src={testimonial.image|| user}
+                src={testimonial.image || user}
                 alt={testimonial.name}
                 className="w-full h-full object-cover"
               />
@@ -1858,9 +1850,8 @@ function TestimonialCard({
                         updateTestimonial(index, "name", e.target.value)
                       }
                       maxLength={50}
-                      className={`font-medium text-card-foreground w-full border-b bg-transparent ${
-                        testimonial.name.length >= 50 ? "border-red-500" : ""
-                      }`}
+                      className={`font-medium text-card-foreground w-full border-b bg-transparent ${testimonial.name.length >= 50 ? "border-red-500" : ""
+                        }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {testimonial.name.length}/50
@@ -1879,9 +1870,8 @@ function TestimonialCard({
                         updateTestimonial(index, "role", e.target.value)
                       }
                       maxLength={60}
-                      className={`text-sm text-muted-foreground w-full border-b bg-transparent mt-1 ${
-                        testimonial.role.length >= 60 ? "border-red-500" : ""
-                      }`}
+                      className={`text-sm text-muted-foreground w-full border-b bg-transparent mt-1 ${testimonial.role.length >= 60 ? "border-red-500" : ""
+                        }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {testimonial.role.length}/60

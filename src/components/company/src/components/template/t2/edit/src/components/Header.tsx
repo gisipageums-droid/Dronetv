@@ -320,6 +320,7 @@ export default function Header({
   return (
     <>
       {/* Updated Cropping Modal - Matches Header1.tsx styling */}
+
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -488,11 +489,11 @@ export default function Header({
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="cover
-                         w-full h-full bg-transparent scale-110"
+                        className="object-contain w-[70px] h-[70px]"
+
                       />
                     ) : (
-                      <span className="text-lg font-bold">
+                      <span className="text-lg font-bold text-black">
                         {content.logoUrl}
                       </span>
                     )}
@@ -506,7 +507,7 @@ export default function Header({
                   className="hidden font-bold"
                 />
               </div>
-              {isEditing ? (
+              {/* {isEditing ? (
                 <input
                   type="text"
                   value={content.companyName}
@@ -523,7 +524,7 @@ export default function Header({
                     {content.companyName}
                   </motion.span>
                 </div>
-              )}
+              )} */}
             </div>
 
             {/* Desktop Nav - Centered with proper spacing */}

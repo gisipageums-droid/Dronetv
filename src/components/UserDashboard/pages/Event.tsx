@@ -211,11 +211,11 @@ const EventCard: React.FC<EventCardProps> = ({
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
             <span className="font-semibold text-yellow-700 text-sm">
-              {event?.eventDate
-                ? formatDate(event?.eventDate)
+              {event?.createdAt
+                ? formatDate(event?.createdAt)
                 : "Date not available"}
             </span>
-            <span className="text-xs text-yellow-600">Event Date</span>
+            <span className="text-xs text-yellow-600">Created Date</span>
           </div>
 
           {/* Action Buttons */}
@@ -277,29 +277,19 @@ const Events: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-
-
-
-
   const { user } = useUserAuth();
   console.log("user", user);
   const [events, setEvents] = useState<EventCard[]>([]);
+  console.log("events", events)
   const [loading, setloading] = useState(true);
 
   //get data
   useEffect(() => {
     setloading(true);
 
-
-    // axios.get.then((response) => {
-    //   console.log(response.data);
-    // });
-
     axios.get<EventResponse>(`https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user?.userData?.email}`).then((response) => {
       console.log(response.data);
       setEvents(response.data.cards);
-
-
     }).catch((error) => {
       console.log(error);
     }).finally(() => {
@@ -430,7 +420,7 @@ const Events: React.FC = () => {
         />
       </div>
 
-      {loading ? ( // Set to true to see skeleton loading
+      {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array(6)
             .fill(0)

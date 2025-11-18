@@ -7,6 +7,7 @@ import Cropper from "react-easy-crop";
 
 export default function Hero({
   heroData,
+  headerData,
   onStateChange,
   userId,
   publishedId,
@@ -39,8 +40,9 @@ export default function Hero({
   const [prevZoom, setPrevZoom] = useState(1);
 
   // Consolidated state
+  console.log("heroState", headerData.name)
   const [heroState, setHeroState] = useState({
-    badgeText: "Trusted by 20+ Companies",
+    badgeText: headerData?.name || "Company",
     heading: heroData?.title || "Transform Your Business with Innovation",
     description:
       heroData?.subtitle ||
@@ -697,7 +699,7 @@ export default function Hero({
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xl text-red-600 max-w-lg inline">
+                    <p className="text-xl text-red-600 max-w-lg text-justify">
                       {heroState.description}
                     </p>
                   )}
