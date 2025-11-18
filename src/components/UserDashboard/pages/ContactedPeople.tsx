@@ -39,6 +39,10 @@ interface ChatMessage {
 }
 
 const ContactedPeople: React.FC = () => {
+  //changes
+  const { user } = useUserAuth();
+  const userId = user?.email || user?.userData?.email;
+
   const [viewMode, setViewMode] = useState<"card" | "table">("card");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");

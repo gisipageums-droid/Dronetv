@@ -3,7 +3,7 @@ import { useUserAuth } from "../../../context/context";
 import { useLocation, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MessageCircle, Send, X, Check, CheckCheck, Clock } from "lucide-react";
-
+//changes
 interface Lead {
   leadId: string;
   company: string;
