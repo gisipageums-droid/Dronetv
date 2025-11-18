@@ -94,6 +94,7 @@ import Edit_event_t1 from "./components/event/template/t1/final/edit/EventTempla
 import Edit_event_t2 from "./components/event/template/t2/final/edit/App";
 import EventSelect from "./components/event/select-template/Event-select";
 import EventLeads from "./components/UserDashboard/components/common/EventLeads";
+//main App.tsx
 import BuyTokenPage from "./components/UserDashboard/pages/Buy";
 import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";

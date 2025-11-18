@@ -287,6 +287,7 @@ const EventTemplate1: React.FC = () => {
       },
     }));
   }, [componentStates, setFinalTemplate, AIGenData]);
+  //fethching data
 
   const fetchTemplateData = useCallback(
     async (draftId: string, userId: string, isAIgen: string) => {
