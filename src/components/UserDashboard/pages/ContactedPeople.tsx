@@ -16,17 +16,36 @@ import {
   CheckCheck,
   Calendar,
 } from "lucide-react";
+import { useUserAuth } from "../../context/context";
 
-interface ContactedEntity {
-  id: string;
-  name: string;
-  type: "company" | "service" | "product" | "professional" | "event";
-  description: string;
-  lastContacted: string;
-  contactPerson?: string;
-  email?: string;
-  phone?: string;
-  unreadCount?: number;
+interface ApiResponse {
+  success: boolean;
+  mode: string;
+  leads: Lead[];
+  totalCount: number;
+}
+
+interface Lead {
+  leadId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  company: string;
+  companyName: string;
+  category: string;
+  publishedId: string;
+  submittedAt: string;
+  viewed: boolean;
+  totalMessages: number;
+  unreadCount: number;
+  lastMessageAt: string;
+  lastMessage: {
+    senderType: string;
+    senderName: string;
+    message: string;
+    timestamp: string;
+  };
 }
 
 interface ChatMessage {
