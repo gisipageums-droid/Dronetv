@@ -721,7 +721,7 @@ export default function Footer({
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-400 max-w-md">
+                  <p className="text-gray-400 max-w-md text-justify">
                     {footerContent.companyInfo.description}
                   </p>
                 )}
@@ -774,12 +774,12 @@ export default function Footer({
                 ) : (
                   <>
                     {footerContent.companyInfo.email && (
-                      <p className="text-gray-400">
+                      <p className="text-gray-400 text-justify">
                         {footerContent.companyInfo.email}
                       </p>
                     )}
                     {footerContent.companyInfo.phone && (
-                      <p className="text-gray-400">
+                      <p className="text-gray-400 text-justify">
                         {footerContent.companyInfo.phone}
                       </p>
                     )}

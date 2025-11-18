@@ -139,11 +139,10 @@ export default function Contact({ onStateChange, contactData }) {
                       }))
                     }
                     maxLength={80}
-                    className={`w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground ${
-                      contactSection.header.title.length >= 80
+                    className={`w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground ${contactSection.header.title.length >= 80
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
                     {contactSection.header.title.length}/80
@@ -181,11 +180,10 @@ export default function Contact({ onStateChange, contactData }) {
                         }))
                       }
                       maxLength={100}
-                      className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${
-                        contactSection.header.descriptionPart1.length >= 100
+                      className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${contactSection.header.descriptionPart1.length >= 100
                           ? "border-red-500"
                           : ""
-                      }`}
+                        }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {contactSection.header.descriptionPart1.length}/100
@@ -196,8 +194,8 @@ export default function Contact({ onStateChange, contactData }) {
                       )}
                     </div>
                   </div>
-                  
-                  
+
+
 
                   <div className="relative w-full mb-2">
                     <input
@@ -212,11 +210,10 @@ export default function Contact({ onStateChange, contactData }) {
                         }))
                       }
                       maxLength={50}
-                      className={`w-full text-lg font-semibold text-center bg-transparent border-b text-red-accent ${
-                        contactSection.header.descriptionPart2.length >= 50
+                      className={`w-full text-lg font-semibold text-center bg-transparent border-b text-red-accent ${contactSection.header.descriptionPart2.length >= 50
                           ? "border-red-500"
                           : ""
-                      }`}
+                        }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {contactSection.header.descriptionPart2.length}/50
@@ -241,11 +238,10 @@ export default function Contact({ onStateChange, contactData }) {
                         }))
                       }
                       maxLength={80}
-                      className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${
-                        contactSection.header.descriptionPart3.length >= 80
+                      className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${contactSection.header.descriptionPart3.length >= 80
                           ? "border-red-500"
                           : ""
-                      }`}
+                        }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {contactSection.header.descriptionPart3.length}/80
@@ -259,7 +255,7 @@ export default function Contact({ onStateChange, contactData }) {
                 </div>
               ) : (
                 <>
-                  <p className="inline text-lg text-muted-foreground">
+                  <p className="inline text-lg text-muted-foreground text-justify">
                     {contactSection.header.descriptionPart1}
                   </p>
                   <motion.span
@@ -302,7 +298,7 @@ export default function Contact({ onStateChange, contactData }) {
                       Send us a message
                     </span>
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground text-justify">
                     We'll get back to you within 24 hours during business days.
                   </p>
                 </CardHeader>
@@ -499,7 +495,7 @@ export default function Contact({ onStateChange, contactData }) {
                     whileInView="visible"
                     viewport={{ once: true }}
                   >
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground text-justify">
                       We typically respond within 24 hours during business days.
                     </p>
                   </motion.div>

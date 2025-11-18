@@ -306,8 +306,7 @@ export default function Testimonials({
               errorData
             );
             throw new Error(
-              `Testimonial image upload failed: ${
-                errorData.message || "Unknown error"
+              `Testimonial image upload failed: ${errorData.message || "Unknown error"
               }`
             );
           }
@@ -434,11 +433,10 @@ export default function Testimonials({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
@@ -508,11 +506,10 @@ export default function Testimonials({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
@@ -551,21 +548,20 @@ export default function Testimonials({
                       }))
                     }
                     maxLength={TEXT_LIMITS.headlineTitle}
-                    className={`text-3xl md:text-4xl font-bold text-foreground bg-transparent border-b outline-none w-full max-w-2xl mx-auto text-center ${
-                      testimonialsSection.headline.title.length >=
-                      TEXT_LIMITS.headlineTitle
+                    className={`text-3xl md:text-4xl font-bold text-foreground bg-transparent border-b outline-none w-full max-w-2xl mx-auto text-center ${testimonialsSection.headline.title.length >=
+                        TEXT_LIMITS.headlineTitle
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
                     <div>
                       {testimonialsSection.headline.title.length >=
                         TEXT_LIMITS.headlineTitle && (
-                        <span className="text-red-500 font-bold">
-                          ⚠️ Character limit reached!
-                        </span>
-                      )}
+                          <span className="text-red-500 font-bold">
+                            ⚠️ Character limit reached!
+                          </span>
+                        )}
                     </div>
                     <div>
                       {testimonialsSection.headline.title.length}/
@@ -586,21 +582,20 @@ export default function Testimonials({
                       }))
                     }
                     maxLength={TEXT_LIMITS.headlineDescription}
-                    className={`text-lg text-muted-foreground bg-transparent border-b outline-none w-full max-w-3xl mx-auto text-center ${
-                      testimonialsSection.headline.description.length >=
-                      TEXT_LIMITS.headlineDescription
+                    className={`text-lg text-muted-foreground bg-transparent border-b outline-none w-full max-w-3xl mx-auto text-center ${testimonialsSection.headline.description.length >=
+                        TEXT_LIMITS.headlineDescription
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
                     <div>
                       {testimonialsSection.headline.description.length >=
                         TEXT_LIMITS.headlineDescription && (
-                        <span className="text-red-500 font-bold">
-                          ⚠️ Character limit reached!
-                        </span>
-                      )}
+                          <span className="text-red-500 font-bold">
+                            ⚠️ Character limit reached!
+                          </span>
+                        )}
                     </div>
                     <div>
                       {testimonialsSection.headline.description.length}/
@@ -614,7 +609,7 @@ export default function Testimonials({
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                   {testimonialsSection.headline.title}
                 </h2>
-                <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+                <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto text-justify">
                   {testimonialsSection.headline.description}
                 </p>
               </>
@@ -638,11 +633,10 @@ export default function Testimonials({
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-5 h-5 ${
-                            i < testimonial.rating
+                          className={`w-5 h-5 ${i < testimonial.rating
                               ? "text-yellow-400 fill-current"
                               : "text-gray-300"
-                          }`}
+                            }`}
                         />
                       ))}
                     </div>
@@ -656,21 +650,20 @@ export default function Testimonials({
                             updateTestimonial(idx, "quote", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.testimonialQuote}
-                          className={`flex-1 text-muted-foreground bg-transparent border-b outline-none w-full resize-none min-h-[80px] ${
-                            testimonial.quote.length >=
-                            TEXT_LIMITS.testimonialQuote
+                          className={`flex-1 text-muted-foreground bg-transparent border-b outline-none w-full resize-none min-h-[80px] ${testimonial.quote.length >=
+                              TEXT_LIMITS.testimonialQuote
                               ? "border-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
                         <div className="flex justify-between text-xs text-gray-500 mt-1">
                           <div>
                             {testimonial.quote.length >=
                               TEXT_LIMITS.testimonialQuote && (
-                              <span className="text-red-500 font-bold">
-                                ⚠️ Character limit reached!
-                              </span>
-                            )}
+                                <span className="text-red-500 font-bold">
+                                  ⚠️ Character limit reached!
+                                </span>
+                              )}
                           </div>
                           <div>
                             {testimonial.quote.length}/
@@ -679,7 +672,7 @@ export default function Testimonials({
                         </div>
                       </div>
                     ) : (
-                      <p className="flex-1 text-muted-foreground mb-6">
+                      <p className="flex-1 text-muted-foreground mb-6 text-justify">
                         {testimonial.quote}
                       </p>
                     )}
@@ -737,12 +730,11 @@ export default function Testimonials({
                                   updateTestimonial(idx, "name", e.target.value)
                                 }
                                 maxLength={TEXT_LIMITS.testimonialName}
-                                className={`font-semibold text-card-foreground bg-transparent border-b outline-none w-full ${
-                                  testimonial.name.length >=
-                                  TEXT_LIMITS.testimonialName
+                                className={`font-semibold text-card-foreground bg-transparent border-b outline-none w-full ${testimonial.name.length >=
+                                    TEXT_LIMITS.testimonialName
                                     ? "border-red-500"
                                     : ""
-                                }`}
+                                  }`}
                               />
                               <div className="text-right text-xs text-gray-500 mt-1">
                                 {testimonial.name.length}/
@@ -756,12 +748,11 @@ export default function Testimonials({
                                   updateTestimonial(idx, "role", e.target.value)
                                 }
                                 maxLength={TEXT_LIMITS.testimonialRole}
-                                className={`text-sm text-muted-foreground bg-transparent border-b outline-none w-full ${
-                                  testimonial.role.length >=
-                                  TEXT_LIMITS.testimonialRole
+                                className={`text-sm text-muted-foreground bg-transparent border-b outline-none w-full ${testimonial.role.length >=
+                                    TEXT_LIMITS.testimonialRole
                                     ? "border-red-500"
                                     : ""
-                                }`}
+                                  }`}
                               />
                               <div className="text-right text-xs text-gray-500 mt-1">
                                 {testimonial.role.length}/
@@ -774,7 +765,7 @@ export default function Testimonials({
                             <h4 className="font-semibold text-card-foreground truncate">
                               {testimonial.name}
                             </h4>
-                            <p className="text-sm text-muted-foreground truncate">
+                            <p className="text-sm text-muted-foreground truncate text-justify">
                               {testimonial.role}
                             </p>
                           </>

@@ -659,7 +659,7 @@ const Gallery = ({
                 <h2 className="mb-4 text-3xl font-bold">
                   {contentState.heading.title}
                 </h2>
-                <p className="max-w-3xl mx-auto text-lg">
+                <p className="max-w-3xl mx-auto text-lg text-justify">
                   {contentState.heading.description}
                 </p>
               </>
@@ -789,11 +789,11 @@ const Gallery = ({
                         }`}>
                         {image.title}
                       </h3>
-                      <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      <p className={`text-sm text-justify ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                         }`}>
                         {image.category}
                       </p>
-                      <p className={`text-sm mt-1 ${theme === "dark" ? "text-gray-300" : "text-gray-500"
+                      <p className={`text-sm mt-1 text-justify ${theme === "dark" ? "text-gray-300" : "text-gray-500"
                         }`}>
                         {image.description}
                       </p>
@@ -838,7 +838,7 @@ const Gallery = ({
           {/* Show message when maximum images reached */}
           {isEditing && contentState.images.length >= 6 && (
             <div className="p-4 mt-6 text-center border border-yellow-200 rounded-lg bg-yellow-50">
-              <p className="text-yellow-700">
+              <p className="text-yellow-700 text-justify">
                 Maximum 6 images reached. Remove an image to add a new one.
               </p>
             </div>
@@ -879,7 +879,7 @@ const Gallery = ({
                 <h3 className="text-xl font-semibold">
                   {contentState.images[selectedImage].title}
                 </h3>
-                <p className="text-gray-300">
+                <p className="text-gray-300 text-justify">
                   {contentState.images[selectedImage].category}
                 </p>
               </div>

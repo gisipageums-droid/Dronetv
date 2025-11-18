@@ -587,7 +587,7 @@ export default function Blog({
                 </div>
               </div>
             ) : (
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-justify">
                 {blogSection.header.desc}
               </p>
             )}
@@ -806,7 +806,7 @@ export default function Blog({
                         <h3 className="font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem]">
                           {post.title}
                         </h3>
-                        <p className="text-muted-foreground text-sm line-clamp-3 min-h-[4.5rem]">
+                        <p className="text-muted-foreground text-sm line-clamp-3 min-h-[4.5rem] text-justify">
                           {post.excerpt}
                         </p>
                       </>

@@ -644,8 +644,8 @@ export default function EditableAbout({
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
                       }`}
                   >
                     1:1 (Square)
@@ -653,8 +653,8 @@ export default function EditableAbout({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
                       }`}
                   >
                     4:3 (Standard)
@@ -662,8 +662,8 @@ export default function EditableAbout({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-white text-gray-700 border-gray-300'
                       }`}
                   >
                     16:9 (Widescreen)
@@ -916,10 +916,10 @@ export default function EditableAbout({
                   </>
                 ) : (
                   <>
-                    <p className="text-gray-600 leading-relaxed text-base">
+                    <p className="text-gray-600 leading-relaxed text-base text-justify">
                       {displayContent.description1}
                     </p>
-                    <p className="text-gray-600 leading-relaxed text-base">
+                    <p className="text-gray-600 leading-relaxed text-base text-justify">
                       {displayContent.description2}
                     </p>
                   </>
@@ -937,12 +937,12 @@ export default function EditableAbout({
                       value={displayContent.mission}
                       field="mission"
                       multiline={true}
-                      className="text-gray-700 text-sm leading-relaxed w-full"
+                      className="text-gray-700 text-sm leading-relaxed w-full text-justify"
                       placeholder="Mission statement"
                       maxLength={500}
                     />
                   ) : (
-                    <p className="text-gray-700 text-sm leading-relaxed">
+                    <p className="text-gray-700 text-sm leading-relaxed text-justify">
                       {displayContent.mission}
                     </p>
                   )}
@@ -956,12 +956,12 @@ export default function EditableAbout({
                       value={displayContent.vision}
                       field="vision"
                       multiline={true}
-                      className="text-gray-700 text-sm leading-relaxed w-full"
+                      className="text-gray-700 text-sm leading-relaxed w-full text-justify"
                       placeholder="Vision statement"
                       maxLength={500}
                     />
                   ) : (
-                    <p className="text-gray-700 text-sm leading-relaxed">
+                    <p className="text-gray-700 text-sm leading-relaxed text-justify">
                       {displayContent.vision}
                     </p>
                   )}
@@ -1019,7 +1019,7 @@ export default function EditableAbout({
                         className="flex items-start gap-3 text-gray-700 text-sm"
                       >
                         <span className="text-green-600 mt-0.5">•</span>
-                        <span>{cert}</span>
+                        <span className="text-justify">{cert}</span>
                       </li>
                     ))}
                   </ul>
@@ -1077,7 +1077,7 @@ export default function EditableAbout({
                         className="flex items-start gap-3 text-gray-700 text-sm"
                       >
                         <span className="text-yellow-600 mt-0.5">•</span>
-                        <span>{achievement}</span>
+                        <span className="text-justify">{achievement}</span>
                       </li>
                     ))}
                   </ul>
@@ -1191,7 +1191,7 @@ export default function EditableAbout({
                         className="flex items-start gap-3 text-gray-700 text-sm"
                       >
                         <span className="text-green-600 mt-0.5">•</span>
-                        <span>{cert}</span>
+                        <span className="text-justify">{cert}</span>
                       </li>
                     ))}
                   </ul>
@@ -1249,7 +1249,7 @@ export default function EditableAbout({
                         className="flex items-start gap-3 text-gray-700 text-sm"
                       >
                         <span className="text-yellow-600 mt-0.5">•</span>
-                        <span>{achievement}</span>
+                        <span className="text-justify">{achievement}</span>
                       </li>
                     ))}
                   </ul>

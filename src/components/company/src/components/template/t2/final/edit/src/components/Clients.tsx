@@ -606,7 +606,7 @@
 //                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
 //                   {clientsSection.headline.title}
 //                 </h2>
-//                 <p className="text-muted-foreground text-lg">
+//                 <p className="text-muted-foreground text-lg text-justify">
 //                   {clientsSection.headline.description}
 //                 </p>
 //               </>
@@ -1158,7 +1158,7 @@
 //       // Update initial state reference to current state
 //       initialClientsState.current = clientsSection;
 //       setHasUnsavedChanges(false);
-      
+
 //       // Clear pending images
 //       setPendingImages({});
 //       setIsEditing(false);
@@ -1443,7 +1443,7 @@
 //                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
 //                   {clientsSection.headline.title}
 //                 </h2>
-//                 <p className="text-muted-foreground text-lg">
+//                 <p className="text-muted-foreground text-lg text-justify">
 //                   {clientsSection.headline.description}
 //                 </p>
 //               </>
@@ -2021,7 +2021,7 @@ export default function Clients({
 
       // Wait for all uploads to complete
       const results = await Promise.allSettled(uploadPromises);
-      
+
       const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
       const failedUploads = results.filter(result => result.status === 'rejected').length;
 
@@ -2036,7 +2036,7 @@ export default function Clients({
       const successfulIndices = results
         .filter(result => result.status === 'fulfilled')
         .map(result => result.value.index);
-      
+
       setPendingImages(prev => {
         const updated = { ...prev };
         successfulIndices.forEach(index => {
@@ -2060,11 +2060,11 @@ export default function Clients({
       if (Object.keys(pendingImages).length > 0) {
         await handleImageUpload();
       }
-      
+
       // Update initial state reference to current state
       initialClientsState.current = JSON.parse(JSON.stringify(clientsSection));
       setHasUnsavedChanges(false);
-      
+
       // Exit edit mode
       setIsEditing(false);
       toast.success("Clients section saved!");
@@ -2170,11 +2170,10 @@ export default function Clients({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Circular)
                   </button>
@@ -2220,11 +2219,10 @@ export default function Clients({
                 <Button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className={`w-full ${
-                    isUploading 
-                      ? "bg-gray-400 cursor-not-allowed" 
-                      : "bg-green-600 hover:bg-green-700"
-                  } text-white`}
+                  className={`w-full ${isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700"
+                    } text-white`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
                 </Button>
@@ -2260,13 +2258,12 @@ export default function Clients({
                   whileHover={{ y: -1, scaleX: 1.1 }}
                   onClick={handleSave}
                   disabled={isUploading}
-                  className={`${
-                    isUploading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : hasUnsavedChanges || Object.keys(pendingImages).length > 0
+                  className={`${isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : hasUnsavedChanges || Object.keys(pendingImages).length > 0
                       ? "bg-green-600 hover:shadow-2xl"
                       : "bg-gray-400 cursor-not-allowed"
-                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                    } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
                 >
                   {isUploading ? "Uploading..." : "Save & Exit"}
                 </motion.button>
@@ -2305,11 +2302,10 @@ export default function Clients({
                     value={clientsSection.headline.title}
                     onChange={(e) => updateHeadline("title", e.target.value)}
                     maxLength={80}
-                    className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${
-                      clientsSection.headline.title.length >= 80
-                        ? "border-red-500"
-                        : ""
-                    }`}
+                    className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${clientsSection.headline.title.length >= 80
+                      ? "border-red-500"
+                      : ""
+                      }`}
                   />
                   <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
                     {clientsSection.headline.title.length}/80
@@ -2326,11 +2322,10 @@ export default function Clients({
                     value={clientsSection.headline.description}
                     onChange={(e) => updateHeadline("description", e.target.value)}
                     maxLength={200}
-                    className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${
-                      clientsSection.headline.description.length >= 200
-                        ? "border-red-500"
-                        : ""
-                    }`}
+                    className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${clientsSection.headline.description.length >= 200
+                      ? "border-red-500"
+                      : ""
+                      }`}
                     rows={2}
                   />
                   <div className="text-right text-xs text-gray-500 mt-1">
@@ -2348,7 +2343,7 @@ export default function Clients({
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                   {clientsSection.headline.title}
                 </h2>
-                <p className="text-muted-foreground text-lg">
+                <p className="text-muted-foreground text-lg text-justify">
                   {clientsSection.headline.description}
                 </p>
               </>
@@ -2388,9 +2383,8 @@ export default function Clients({
             )}
 
             <motion.div
-              className={`flex gap-10 items-start text-center ${
-                !isEditing ? "animate-marquee" : ""
-              }`}
+              className={`flex gap-10 items-start text-center ${!isEditing ? "animate-marquee" : ""
+                }`}
               variants={containerVariants}
               whileInView={{ opacity: [0, 1], y: [-50, 0] }}
               transition={{ duration: 1 }}
@@ -2478,9 +2472,8 @@ export default function Clients({
                               )
                             }
                             maxLength={50}
-                            className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${
-                              client.name.length >= 50 ? "border-red-500" : ""
-                            }`}
+                            className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {client.name.length}/50
@@ -2495,10 +2488,10 @@ export default function Clients({
                         {pendingImages[
                           index % clientsSection.clients.length
                         ] && (
-                          <p className="text-xs text-green-600 mt-1">
-                            ✓ Image uploaded to AWS
-                          </p>
-                        )}
+                            <p className="text-xs text-green-600 mt-1">
+                              ✓ Image uploaded to AWS
+                            </p>
+                          )}
 
                         <Button
                           size="sm"

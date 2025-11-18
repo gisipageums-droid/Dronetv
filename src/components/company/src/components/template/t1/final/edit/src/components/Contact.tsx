@@ -236,7 +236,7 @@ export default function EditableContact({
               />
             </div>
           ) : (
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg">
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg text-justify">
               {displayData.description}
             </p>
           )}
@@ -281,7 +281,7 @@ export default function EditableContact({
                 />
               </div>
             ) : (
-              <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm">
+              <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm text-justify">
                 {displayData.formDescription}
               </p>
             )}
@@ -480,7 +480,7 @@ export default function EditableContact({
                   />
                 </div>
               ) : (
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 text-justify">
                   {displayData.consultationDescription}
                 </p>
               )}
