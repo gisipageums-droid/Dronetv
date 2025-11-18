@@ -12,6 +12,7 @@ import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
 import Publish from "./components/Publish";
 import { Toaster } from "sonner";
+import Back from "./components/Back";
 
 interface EventTemplateData {
   draftId?: string;
@@ -431,7 +432,7 @@ const EventTemplate1: React.FC = () => {
         footerData={componentStates.footer}
         onStateChange={createStateChangeHandler('footer')}
       />
-
+      <Back />
       <Publish />
       <Toaster position="top-right" richColors />
     </div>
