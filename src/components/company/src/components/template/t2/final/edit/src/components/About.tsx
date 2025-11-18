@@ -653,8 +653,8 @@ export default function About({
                       onChange={(e) =>
                         updateField("description2", e.target.value)
                       }
-                      maxLength={500}
-                      className={`w-full bg-transparent border-b text-muted-foreground outline-none ${aboutState.description2.length >= 500
+                      maxLength={600}
+                      className={`w-full bg-transparent border-b text-muted-foreground outline-none ${aboutState.description2.length >= 600
                         ? "border-red-500"
                         : "border-muted-foreground"
                         }`}
@@ -662,19 +662,19 @@ export default function About({
                     />
                     <div className="flex justify-between items-center mt-1">
                       <div>
-                        {aboutState.description2.length >= 500 && (
+                        {aboutState.description2.length >= 600 && (
                           <span className="text-red-500 text-xs font-bold">
                             ⚠️ Character limit reached!
                           </span>
                         )}
                       </div>
                       <div
-                        className={`text-xs ${aboutState.description2.length >= 500
+                        className={`text-xs ${aboutState.description2.length >= 600
                           ? "text-red-500"
                           : "text-gray-500"
                           }`}
                       >
-                        {aboutState.description2.length}/500
+                        {aboutState.description2.length}/600
                       </div>
                     </div>
                   </div>
@@ -714,8 +714,8 @@ export default function About({
                       onChange={(e) =>
                         updateField("description1", e.target.value)
                       }
-                      maxLength={500}
-                      className={`w-full bg-transparent border-b text-lg text-muted-foreground outline-none ${aboutState.description1.length >= 500
+                      maxLength={600}
+                      className={`w-full bg-transparent border-b text-lg text-muted-foreground outline-none ${aboutState.description1.length >= 600
                         ? "border-red-500"
                         : "border-muted-foreground"
                         }`}
@@ -723,19 +723,19 @@ export default function About({
                     />
                     <div className="flex justify-between items-center mt-1">
                       <div>
-                        {aboutState.description1.length >= 500 && (
+                        {aboutState.description1.length >= 600 && (
                           <span className="text-red-500 text-xs font-bold">
                             ⚠️ Character limit reached!
                           </span>
                         )}
                       </div>
                       <div
-                        className={`text-xs ${aboutState.description1.length >= 500
+                        className={`text-xs ${aboutState.description1.length >= 600
                           ? "text-red-500"
                           : "text-gray-500"
                           }`}
                       >
-                        {aboutState.description1.length}/500
+                        {aboutState.description1.length}/600
                       </div>
                     </div>
                   </div>
@@ -982,13 +982,13 @@ export default function About({
                 <textarea
                   value={aboutState.visionDesc}
                   onChange={(e) => updateField("visionDesc", e.target.value)}
-                  maxLength={500}
-                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.visionDesc.length >= 500 ? "border-red-500" : ""
+                  maxLength={600}
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.visionDesc.length >= 600 ? "border-red-500" : ""
                     }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
-                  {aboutState.visionDesc.length}/500
-                  {aboutState.visionDesc.length >= 500 && (
+                  {aboutState.visionDesc.length}/600
+                  {aboutState.visionDesc.length >= 600 && (
                     <span className="ml-2 text-red-500 font-bold">
                       Limit reached!
                     </span>
@@ -1116,13 +1116,13 @@ export default function About({
                 <textarea
                   value={aboutState.missionDesc}
                   onChange={(e) => updateField("missionDesc", e.target.value)}
-                  maxLength={500}
-                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.missionDesc.length >= 500 ? "border-red-500" : ""
+                  maxLength={600}
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.missionDesc.length >= 600 ? "border-red-500" : ""
                     }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
-                  {aboutState.missionDesc.length}/500
-                  {aboutState.missionDesc.length >= 500 && (
+                  {aboutState.missionDesc.length}/600
+                  {aboutState.missionDesc.length >= 600 && (
                     <span className="ml-2 text-red-500 font-bold">
                       Limit reached!
                     </span>
