@@ -67,6 +67,7 @@ const toast = {
 };
 
 const ContactedPeople: React.FC = () => {
+  //changes
   const { user } = useUserAuth();
   const userId = user?.email || user?.userData?.email;
 

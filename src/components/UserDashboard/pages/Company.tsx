@@ -3,7 +3,7 @@ import { Search, MapPin, Building2, Edit, Eye, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import { toast } from "sonner";
-
+//changes
 interface Company {
   publishedId: string;
   userId: string;
