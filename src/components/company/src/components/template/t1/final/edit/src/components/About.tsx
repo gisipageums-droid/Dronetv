@@ -28,8 +28,9 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant] || variants.default} ${sizes[size] || sizes.default
-        } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant] || variants.default} ${
+        sizes[size] || sizes.default
+      } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -330,7 +331,9 @@ export default function EditableAbout({
       // Upload office image if there's a pending file
       if (pendingImageFile) {
         if (!userId || !publishedId || !templateSelection) {
-          toast.error("Missing user information. Please refresh and try again.");
+          toast.error(
+            "Missing user information. Please refresh and try again."
+          );
           setIsUploading(false);
           return;
         }
@@ -357,7 +360,9 @@ export default function EditableAbout({
             toast.success("Image uploaded successfully!");
           } else {
             const errorData = await uploadResponse.json();
-            toast.error(`Image upload failed: ${errorData.message || "Unknown error"}`);
+            toast.error(
+              `Image upload failed: ${errorData.message || "Unknown error"}`
+            );
             setIsUploading(false);
             return;
           }
@@ -623,32 +628,37 @@ export default function EditableAbout({
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -664,7 +674,9 @@ export default function EditableAbout({
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
+                    onClick={() =>
+                      setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))
+                    }
                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
                   >
                     −
@@ -680,7 +692,9 @@ export default function EditableAbout({
                   />
                   <button
                     type="button"
-                    onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
+                    onClick={() =>
+                      setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))
+                    }
                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
                   >
                     +
@@ -781,7 +795,11 @@ export default function EditableAbout({
                   ) : (
                     <Save className="w-4 h-4 mr-2" />
                   )}
-                  {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+                  {isUploading
+                    ? "Uploading..."
+                    : isSaving
+                    ? "Saving..."
+                    : "Save"}
                 </Button>
                 <Button
                   onClick={handleCancel}
@@ -904,7 +922,7 @@ export default function EditableAbout({
                       multiline={true}
                       className="text-gray-600 leading-relaxed text-base"
                       placeholder="Company description part 1"
-                      maxLength={500}
+                      maxLength={600}
                     />
                     <EditableText
                       value={displayContent.description2}
@@ -912,7 +930,7 @@ export default function EditableAbout({
                       multiline={true}
                       className="text-gray-600 leading-relaxed text-base"
                       placeholder="Company description part 2"
-                      maxLength={500}
+                      maxLength={600}
                     />
                   </>
                 ) : (
@@ -940,7 +958,7 @@ export default function EditableAbout({
                       multiline={true}
                       className="text-gray-700 text-sm leading-relaxed w-full"
                       placeholder="Mission statement"
-                      maxLength={500}
+                      maxLength={600}
                     />
                   ) : (
                     <p className="text-gray-700 text-sm leading-relaxed text-justify">
@@ -959,7 +977,7 @@ export default function EditableAbout({
                       multiline={true}
                       className="text-gray-700 text-sm leading-relaxed w-full"
                       placeholder="Vision statement"
-                      maxLength={500}
+                      maxLength={600}
                     />
                   ) : (
                     <p className="text-gray-700 text-sm leading-relaxed text-justify">
@@ -1092,11 +1110,21 @@ export default function EditableAbout({
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-4"
             >
-              <div className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer" onClick={() => { if (isEditing) (fileInputRef.current as HTMLInputElement | null)?.click(); }}>
+              <div
+                className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer"
+                onClick={() => {
+                  if (isEditing)
+                    (fileInputRef.current as HTMLInputElement | null)?.click();
+                }}
+              >
                 {isEditing && (
                   <div className="absolute top-4 right-4 z-10">
                     <Button
-                      onClick={() => (fileInputRef.current as HTMLInputElement | null)?.click()}
+                      onClick={() =>
+                        (
+                          fileInputRef.current as HTMLInputElement | null
+                        )?.click()
+                      }
                       size="sm"
                       variant="outline"
                       className="bg-white/90 backdrop-blur-sm shadow-md border-gray-300 hover:bg-white"
@@ -1126,10 +1154,16 @@ export default function EditableAbout({
                   src={getImageSource()}
                   alt="Office"
                   className="w-full h-auto object-cover transition-opacity duration-300 scale-110"
-                  onClick={() => { if (isEditing) (fileInputRef.current as HTMLInputElement | null)?.click(); }}
+                  onClick={() => {
+                    if (isEditing)
+                      (
+                        fileInputRef.current as HTMLInputElement | null
+                      )?.click();
+                  }}
                   onError={(e) => {
                     console.error("Image failed to load:", e);
-                    (e.target as HTMLImageElement).src = "https://via.placeholder.com/500x300?text=Office+Image";
+                    (e.target as HTMLImageElement).src =
+                      "https://via.placeholder.com/500x300?text=Office+Image";
                   }}
                 />
                 {isEditing && (
