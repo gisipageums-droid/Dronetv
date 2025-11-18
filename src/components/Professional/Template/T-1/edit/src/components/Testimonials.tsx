@@ -625,7 +625,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           </div>
         )}
 
-        <div className="space-y-1">
+        <div className="space-y-1 ">
           <textarea
             placeholder="Testimonial content *"
             value={formData.content}
@@ -876,7 +876,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                         </div>
                       </div>
 
-                      <blockquote className="mb-6 italic leading-relaxed text-gray-700 dark:text-gray-300">
+                      <blockquote className="mb-6 text-justify italic leading-relaxed text-gray-700 dark:text-gray-300">
                         "{testimonial.content}"
                       </blockquote>
 
@@ -906,13 +906,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                           }}
                         />
                         <div className="flex-1">
-                          <h3 className="font-bold text-gray-900 dark:text-white">
+                          <h3 className="font-bold text-justify text-gray-900 dark:text-white">
                             {testimonial.name}
                           </h3>
-                          <p className="text-sm font-medium text-orange-500">
+                          <p className="text-sm text-justify font-medium text-orange-500">
                             {testimonial.position}
                           </p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">
+                          <p className="text-xs text-justify text-gray-600 dark:text-gray-400">
                             {testimonial.company}
                           </p>
                         </div>
