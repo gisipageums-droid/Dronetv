@@ -102,7 +102,7 @@ const colorOptions = [
 // Default speakers data
 const defaultSpeakersData: SpeakersData = {
   "subtitle": "expert speakers",
-  "heading": "Meet Our Speakers", 
+  "heading": "Meet Our Speakers",
   "description": "Industry leaders and experts",
   "speakers": [
     {
@@ -112,7 +112,7 @@ const defaultSpeakersData: SpeakersData = {
         "linkedin": ""
       },
       "role": "EXACT role",
-      "name": "EXACT NAME from brochure", 
+      "name": "EXACT NAME from brochure",
       "bio": "100-150 word professional bio",
       "topic": "Session topic",
       "company": "EXACT company",
@@ -123,14 +123,14 @@ const defaultSpeakersData: SpeakersData = {
 };
 
 // Editable Text Component
-const EditableText = ({ 
-  value, 
-  onChange, 
-  multiline = false, 
-  className = "", 
-  placeholder = "", 
-  charLimit, 
-  rows = 3 
+const EditableText = ({
+  value,
+  onChange,
+  multiline = false,
+  className = "",
+  placeholder = "",
+  charLimit,
+  rows = 3
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -185,8 +185,8 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
   const [dataLoaded, setDataLoaded] = useState(false);
   const [data, setData] = useState<SpeakersData>(defaultSpeakersData);
   const [tempData, setTempData] = useState<SpeakersData>(defaultSpeakersData);
-  const [pendingImages, setPendingImages] = useState<{file: File; speakerId: string}[]>([]);
-  
+  const [pendingImages, setPendingImages] = useState<{ file: File; speakerId: string }[]>([]);
+
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -201,7 +201,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
   useEffect(() => {
     if (speakersData && !dataLoaded) {
       console.log('Initializing speakers data:', speakersData);
-      
+
       // Transform API data to component format with proper fallbacks
       const transformedSpeakers = speakersData.speakers?.map(speaker => ({
         id: speaker.id || Date.now().toString(),
@@ -225,11 +225,11 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
         description: speakersData.description || "Industry leaders and experts",
         speakers: transformedSpeakers
       };
-      
+
       setData(transformedData);
       setTempData(transformedData);
       setDataLoaded(true);
-      
+
       // Notify parent of initial state
       if (onStateChange) {
         onStateChange(transformedData);
@@ -239,7 +239,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
       setData(defaultSpeakersData);
       setTempData(defaultSpeakersData);
       setDataLoaded(true);
-      
+
       if (onStateChange) {
         onStateChange(defaultSpeakersData);
       }
@@ -300,7 +300,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<{file: File; previewUrl: string}> => {
+  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<{ file: File; previewUrl: string }> => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -325,7 +325,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         if (!blob) throw new Error('Canvas is empty');
-        const file = new File([blob], `speaker-${Date.now()}.jpg`, { 
+        const file = new File([blob], `speaker-${Date.now()}.jpg`, {
           type: 'image/jpeg',
           lastModified: Date.now()
         });
@@ -338,20 +338,20 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || !croppingForSpeaker) return;
-      
+
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-      
+
       // Add to pending images
       setPendingImages(prev => [...prev, { file, speakerId: croppingForSpeaker }]);
-      
+
       // Update preview immediately
       const updatedSpeakers = tempData.speakers.map(speaker =>
-        speaker.id === croppingForSpeaker 
+        speaker.id === croppingForSpeaker
           ? { ...speaker, image: previewUrl }
           : speaker
       );
       setTempData(prev => ({ ...prev, speakers: updatedSpeakers }));
-      
+
       toast.success('Speaker image updated! Click Save to upload to S3.');
       setShowCropper(false);
       setImageToCrop(null);
@@ -378,7 +378,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('userId', userId);
-    formData.append('fieldName', fieldName+ Date.now());
+    formData.append('fieldName', fieldName + Date.now());
 
     const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`, {
       method: 'POST',
@@ -397,16 +397,16 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      
+
       // Handle image uploads to S3
       if (pendingImages.length > 0) {
         setIsUploading(true);
         const updatedSpeakers = [...tempData.speakers];
-        
+
         for (const pending of pendingImages) {
           try {
             const s3Url = await uploadImageToS3(pending.file, `speaker-image-${pending.speakerId}`);
-            
+
             const speakerIndex = updatedSpeakers.findIndex(s => s.id === pending.speakerId);
             if (speakerIndex !== -1) {
               updatedSpeakers[speakerIndex].image = s3Url;
@@ -419,7 +419,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
             return;
           }
         }
-        
+
         setTempData(prev => ({ ...prev, speakers: updatedSpeakers }));
       }
 
@@ -453,18 +453,18 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
 
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       // Update local state
       setData(tempData);
       setPendingImages([]);
       setIsEditing(false);
-      
+
       if (onStateChange) {
         onStateChange(tempData);
       }
-      
-      toast.success(pendingImages.length > 0 
-        ? 'Speakers section saved with new images!' 
+
+      toast.success(pendingImages.length > 0
+        ? 'Speakers section saved with new images!'
         : 'Speakers section updated successfully!');
     } catch (error) {
       console.error('Error saving speakers:', error);
@@ -502,7 +502,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
   const removeSpeaker = useCallback((speakerId: string) => {
     const updatedSpeakers = tempData.speakers.filter(speaker => speaker.id !== speakerId);
     setTempData(prev => ({ ...prev, speakers: updatedSpeakers }));
-    
+
     // Remove any pending upload for this speaker
     setPendingImages(prev => prev.filter(p => p.speakerId !== speakerId));
   }, [tempData.speakers]);
@@ -523,11 +523,11 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
 
   const updateSocialLink = useCallback((speakerId: string, platform: keyof Speaker['socialLinks'], value: string) => {
     const updatedSpeakers = tempData.speakers.map(speaker =>
-      speaker.id === speakerId 
-        ? { 
-            ...speaker, 
-            socialLinks: { ...speaker.socialLinks, [platform]: value } 
-          } 
+      speaker.id === speakerId
+        ? {
+          ...speaker,
+          socialLinks: { ...speaker.socialLinks, [platform]: value }
+        }
         : speaker
     );
     setTempData(prev => ({ ...prev, speakers: updatedSpeakers }));
@@ -669,16 +669,16 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                       <User className="w-10 h-10 text-gray-700" />
                     </div>
                   )}
-                  
+
                   {/* Image Upload (Edit Mode) */}
                   {isEditing && (
                     <label className="absolute bottom-2 right-2 cursor-pointer bg-black/70 text-white p-1 rounded text-xs hover:bg-black/90 transition-colors">
                       <Upload className="w-3 h-3" />
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={(e) => handleImageSelect(e, speaker.id)} 
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageSelect(e, speaker.id)}
                       />
                     </label>
                   )}
@@ -709,8 +709,8 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                         placeholder="Company"
                         charLimit={TEXT_LIMITS.SPEAKER_COMPANY}
                       />
-                      
-                      
+
+
 
                       {/* Topic */}
                       <EditableText
@@ -754,7 +754,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                 </div>
               </div>
             ))}
-            
+
             {/* Add New Speaker Card (edit mode) */}
             {isEditing && (
               <div
@@ -822,8 +822,8 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                     onChange={(e) => setZoom(Number(e.target.value))}
                     className="flex-1"
                   />
-                  <button 
-                    onClick={applyCrop} 
+                  <button
+                    onClick={applyCrop}
                     className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                   >
                     Apply Crop

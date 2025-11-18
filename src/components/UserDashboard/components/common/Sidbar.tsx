@@ -6,6 +6,9 @@ import {
   Menu,
   X,
   User,
+  Wallet,
+  Receipt,
+  Clock1,
   MessageSquare,
 
   LogOut,
@@ -25,6 +28,9 @@ const navLinks = [
       href: "/user-professionals",
     },
     { icon: Calendar, label: "Events", href: "/user-events" },
+    { icon: Wallet, label: "Recharge", href: "/user-recharge" },
+    { icon: Clock1, label: "Transaction History", href: "/user-transactions" },
+
     { icon: MessageSquare, label: "Contacted People", href: "/user-contacted" },
   ];
   return (
