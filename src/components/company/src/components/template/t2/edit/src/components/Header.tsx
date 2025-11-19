@@ -456,16 +456,16 @@ export default function Header({
             {/* Logo + Company - keep space and long company names */}
             <div className="flex items-center flex-shrink-0 min-w-0 mr-6 lg:mr-10">
               {/* Removed rotation animation from logo container */}
-              <div className="relative flex items-center justify-center flex-shrink-0 w-[70px] h-[70px] mr-2 overflow-hidden rounded-lg bg-transparent">
+              <div className="relative flex items-center justify-center flex-shrink-0 w-[70px] h-[70px] mr-2 overflow-hidden rounded-lg bg-transparent group">
                 {isEditing ? (
-                  <div className="relative w-[45px] h-[45px]  bg-transparent">
+                  <div className="relative w-[50px] h-[50px] bg-transparent">
                     {content.logoUrl &&
                       (content.logoUrl.startsWith("data:") ||
                         content.logoUrl.startsWith("http")) ? (
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className=" w-full h-full bg-transparent scale-110"
+                        className="w-full h-full bg-transparent cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                       />
                     ) : (
                       <span className="text-lg font-bold">
@@ -482,15 +482,14 @@ export default function Header({
                     </div>
                   </div>
                 ) : (
-                  <div className="w-[45px] h-[45px] bg-transparent">
+                  <div className="w-[50px] h-[50px] bg-transparent">
                     {content.logoUrl &&
                       (content.logoUrl.startsWith("data:") ||
                         content.logoUrl.startsWith("http")) ? (
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="object-contain w-[70px] h-[70px]"
-
+                        className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                       />
                     ) : (
                       <span className="text-lg font-bold text-black">
@@ -507,24 +506,6 @@ export default function Header({
                   className="hidden font-bold"
                 />
               </div>
-              {/* {isEditing ? (
-                <input
-                  type="text"
-                  value={content.companyName}
-                  onChange={(e) => updateContent("companyName", e.target.value)}
-                  className={`bg-transparent border-b text-xl font-medium outline-none max-w-[140px] pr-2 ${editInputClasses}`}
-                />
-              ) : (
-                <div className="flex items-center min-w-0">
-                  <motion.span
-                    className={`lg:text-xl text-sm font-medium whitespace-nowrap max-w-[140px] lg:max-w-[260px] ${theme === "dark" ? "text-white" : "text-black"
-                      }`}
-                    title={content.companyName}
-                  >
-                    {content.companyName}
-                  </motion.span>
-                </div>
-              )} */}
             </div>
 
             {/* Desktop Nav - Centered with proper spacing */}

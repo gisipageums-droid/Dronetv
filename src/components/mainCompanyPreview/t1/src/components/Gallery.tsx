@@ -6,7 +6,7 @@ import { Badge } from "./ui/badge";
 export default function GallerySection({ galleryData }) {
     const [isVisible, setIsVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
-    
+
     const sectionRef = useRef(null);
 
     // Intersection Observer for visibility
@@ -40,7 +40,7 @@ export default function GallerySection({ galleryData }) {
 
     const goToNext = () => {
         if (selectedImage !== null) {
-            setSelectedImage((prev) => 
+            setSelectedImage((prev) =>
                 prev === galleryData.images.length - 1 ? 0 : prev + 1
             );
         }
@@ -48,7 +48,7 @@ export default function GallerySection({ galleryData }) {
 
     const goToPrev = () => {
         if (selectedImage !== null) {
-            setSelectedImage((prev) => 
+            setSelectedImage((prev) =>
                 prev === 0 ? galleryData.images.length - 1 : prev - 1
             );
         }
@@ -87,7 +87,7 @@ export default function GallerySection({ galleryData }) {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isVisible ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                        className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
+                        className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg text-justify"
                     >
                         {galleryData.heading.description}
                     </motion.p>
@@ -105,7 +105,7 @@ export default function GallerySection({ galleryData }) {
                                 duration: 0.8,
                                 ease: [0.16, 1, 0.3, 1],
                             }}
-                            whileHover={{ 
+                            whileHover={{
                                 y: -5,
                                 scale: 1.02
                             }}
@@ -127,12 +127,12 @@ export default function GallerySection({ galleryData }) {
                                         <span className="text-gray-500">No image</span>
                                     </div>
                                 )}
-                                
+
                                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
                                     <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
                                         <h3 className="font-semibold">{image.title}</h3>
                                         <p className="text-sm">{image.category}</p>
-                                        <p className="text-xs mt-1 opacity-90">{image.description}</p>
+                                        <p className="text-xs mt-1 opacity-90 text-justify">{image.description}</p>
                                     </div>
                                 </div>
                             </div>
@@ -143,7 +143,7 @@ export default function GallerySection({ galleryData }) {
 
             {/* Lightbox Modal */}
             {selectedImage !== null && (
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="fixed top-[8rem] inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
@@ -154,14 +154,14 @@ export default function GallerySection({ galleryData }) {
                     >
                         <X size={24} />
                     </button>
-                    
+
                     <button
                         onClick={goToPrev}
                         className="absolute left-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
                     >
                         <ChevronLeft size={32} />
                     </button>
-                    
+
                     <button
                         onClick={goToNext}
                         className="absolute right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
@@ -178,7 +178,7 @@ export default function GallerySection({ galleryData }) {
                         <div className="text-white text-center mt-4">
                             <h3 className="text-xl font-semibold">{galleryData.images[selectedImage].title}</h3>
                             <p className="text-gray-300">{galleryData.images[selectedImage].category}</p>
-                            <p className="text-gray-400 text-sm mt-2">{galleryData.images[selectedImage].description}</p>
+                            <p className="text-gray-400 text-sm mt-2 text-justify">{galleryData.images[selectedImage].description}</p>
                         </div>
                     </div>
                 </motion.div>

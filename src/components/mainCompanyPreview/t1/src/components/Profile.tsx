@@ -164,7 +164,7 @@ export default function CompanyProfile({ profileData }) {
                 {profileState.companyName}
               </h2>
 
-              <p className="text-lg text-gray-700 mt-4 max-w-xl">
+              <p className="text-lg text-gray-700 mt-4 max-w-xl text-justify">
                 {profileState.description}
               </p>
             </motion.div>
@@ -172,32 +172,32 @@ export default function CompanyProfile({ profileData }) {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-6 mt-8">
               {[{
-                  label: "Happy Clients",
-                  value: `${profileState.satisfiedCustomers}+`,
-                  field: "satisfiedCustomers",
-                  delay: 0.6,
-                },
-                {
-                  label: "Projects Delivered",
-                  value: `${profileState.projectsDelivered}+`,
-                  field: "projectsDelivered",
-                  delay: 1.0,
-                },].map((stat, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: stat.delay, duration: 0.6 }}
-                    className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-yellow-100 hover:shadow-md transition-shadow"
-                  >
-                    <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
-                      {stat.value}
-                    </div>
-                    <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
-                      {stat.label}
-                    </div>
-                  </motion.div>
-                ))}
+                label: "Happy Clients",
+                value: `${profileState.satisfiedCustomers}+`,
+                field: "satisfiedCustomers",
+                delay: 0.6,
+              },
+              {
+                label: "Projects Delivered",
+                value: `${profileState.projectsDelivered}+`,
+                field: "projectsDelivered",
+                delay: 1.0,
+              },].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: stat.delay, duration: 0.6 }}
+                  className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-yellow-100 hover:shadow-md transition-shadow"
+                >
+                  <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              ))}
             </div>
 
             {/* Core Values */}

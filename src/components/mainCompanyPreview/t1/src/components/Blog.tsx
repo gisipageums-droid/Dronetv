@@ -123,7 +123,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
             {blog.title}
           </h1>
 
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 leading-relaxed text-justify">
             {blog.excerpt}
           </p>
 
@@ -149,7 +149,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
           )}
 
           {/* Main Content */}
-          <div className="text-gray-700 dark:text-gray-300 leading-7 space-y-4 text-sm">
+          <div className="text-gray-700 dark:text-gray-300 leading-7 space-y-4 text-sm text-justify">
             {blog.content ? (
               <div dangerouslySetInnerHTML={{ __html: blog.content }} />
             ) : (
@@ -226,15 +226,15 @@ export default function Blog({ blogData }: { blogData?: any }) {
         category: post.category,
         date: post.date
           ? new Date(post.date).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })
           : new Date().toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            }),
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }),
         author: post.author || "",
         readTime: post.readTime || "",
         outline: post.outline || [],
@@ -268,7 +268,7 @@ export default function Blog({ blogData }: { blogData?: any }) {
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
                 {content.header.title}
               </h2>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600 dark:text-gray-300 text-justify">
                 {content.header.desc}
               </p>
             </motion.div>
@@ -317,7 +317,7 @@ export default function Blog({ blogData }: { blogData?: any }) {
                           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                             {b.title}
                           </h3>
-                          <p className="text-gray-600 dark:text-gray-300 h-full overflow-auto">
+                          <p className="text-gray-600 dark:text-gray-300 h-full overflow-auto text-justify">
                             {b.excerpt}
                           </p>
                           <div className="flex justify-between items-center mt-4 absolute bottom-4">

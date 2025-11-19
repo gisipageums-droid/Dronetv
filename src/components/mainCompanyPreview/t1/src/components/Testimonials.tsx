@@ -48,7 +48,7 @@ export default function Testimonials({ content }) {
           <h2 className='text-3xl font-bold text-gray-900 mb-4'>
             {testimonialsData.headline.title}
           </h2>
-          <p className='text-gray-600 max-w-2xl mx-auto'>
+          <p className='text-gray-600 max-w-2xl mx-auto text-justify'>
             {testimonialsData.headline.description}
           </p>
         </div>
@@ -98,7 +98,7 @@ export default function Testimonials({ content }) {
                     </div>
 
                     <div className='mb-6'>
-                      <blockquote className='text-lg text-gray-700 italic'>
+                      <blockquote className='text-lg text-gray-700 italic text-justify'>
                         "{testimonial.quote}"
                       </blockquote>
                     </div>
@@ -122,11 +122,10 @@ export default function Testimonials({ content }) {
               <button
                 key={index}
                 onClick={() => setCurrent(index)}
-                className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                  index === current
+                className={`w-3 h-3 rounded-full transition-colors duration-200 ${index === current
                     ? "bg-blue-600"
                     : "bg-gray-300 hover:bg-gray-400"
-                }`}
+                  }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
             ))}

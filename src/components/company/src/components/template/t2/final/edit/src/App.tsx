@@ -69,7 +69,7 @@ export default function App() {
     };
   }, [pub, userId, setFinaleDataReview]);
 
-  // ✅ Stable callback to collect each section’s data
+  // ✅ Stable callback to collect each section's data
   const collectComponentState = useCallback((componentName: string, state: any) => {
     setComponentStates((prev) => ({
       ...prev,
@@ -148,7 +148,11 @@ export default function App() {
           templateSelection={finaleDataReview.templateSelection}
         />
         <main>
-          <Hero heroData={finaleDataReview.content.hero} onStateChange={heroStateChange} {...finaleDataReview} />
+          <Hero heroData={finaleDataReview.content.hero} onStateChange={heroStateChange} {...finaleDataReview}
+            headerData={finaleDataReview.content.header}
+            companyName={finaleDataReview.companyName} // Add companyName prop
+
+          />
           <About aboutData={finaleDataReview.content.about} onStateChange={aboutStateChange} {...finaleDataReview} />
           <Profile profileData={finaleDataReview.content.profile} onStateChange={profileStateChange} {...finaleDataReview} />
           <Product productData={finaleDataReview.content.products} onStateChange={productsStateChange} {...finaleDataReview} />

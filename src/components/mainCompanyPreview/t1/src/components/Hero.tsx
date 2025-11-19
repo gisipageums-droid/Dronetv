@@ -48,7 +48,7 @@ export default function Hero({ heroData }) {
             </motion.h1>
 
             <motion.p
-              className='text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed'
+              className='text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed text-justify'
               variants={itemVariants}
             >
               {heroData.description}
@@ -106,7 +106,7 @@ export default function Hero({ heroData }) {
               <motion.div className='relative' variants={imageVariants}>
                 <div className='relative'>
                   <img
-                    src={heroData.hero1Image||'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800'}
+                    src={heroData.hero1Image || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800'}
                     alt='Innovation showcase'
                     className='w-full h-auto object-contain rounded-3xl shadow-2xl'
                     style={{ maxHeight: '70vh' }}
@@ -120,7 +120,7 @@ export default function Hero({ heroData }) {
                 >
                   <div className='relative'>
                     <img
-                      src={heroData.hero3Image||'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400'}
+                      src={heroData.hero3Image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400'}
                       alt='Tech innovation'
                       className='block w-auto h-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] object-contain rounded-2xl shadow-xl border-4 border-white'
                     />

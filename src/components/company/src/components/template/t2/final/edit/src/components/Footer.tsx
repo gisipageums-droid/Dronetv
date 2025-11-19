@@ -664,20 +664,16 @@ export default function Footer({
                 variants={itemVariants}
               >
                 <div className="flex items-center">
-                  <div className="relative flex items-center justify-center w-8 h-8 mr-2 overflow-hidden rounded-lg">
+                  <div className="relative flex items-center justify-center mr-3 overflow-hidden rounded-lg group">
                     {isEditing ? (
-                      <div className="relative w-full h-full">
+                      <div className="relative">
                         {footerContent.companyInfo.logoUrl &&
-                          (footerContent.companyInfo.logoUrl.startsWith(
-                            "data:"
-                          ) ||
-                            footerContent.companyInfo.logoUrl.startsWith(
-                              "http"
-                            )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith("data:") ||
+                            footerContent.companyInfo.logoUrl.startsWith("http")) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl || logo}
                             alt="Logo"
-                            className="object-contain w-full h-full"
+                            className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                           />
                         ) : (
                           <span className="text-lg font-bold text-black">
@@ -696,16 +692,12 @@ export default function Footer({
                     ) : (
                       <>
                         {footerContent.companyInfo.logoUrl &&
-                          (footerContent.companyInfo.logoUrl.startsWith(
-                            "data:"
-                          ) ||
-                            footerContent.companyInfo.logoUrl.startsWith(
-                              "http"
-                            )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith("data:") ||
+                            footerContent.companyInfo.logoUrl.startsWith("http")) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
-                            className="object-contain w-[70px] h-[70px]"
+                            className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                           />
                         ) : (
                           <span className="text-lg font-medium text-black">
@@ -722,6 +714,7 @@ export default function Footer({
                       className="hidden font-bold"
                     />
                   </div>
+                  {/* Company name editing code remains the same */}
                   {isEditing ? (
                     <div className="relative">
                       <input
@@ -751,6 +744,7 @@ export default function Footer({
                   )}
                 </div>
 
+                {/* Description editing code remains the same */}
                 {isEditing ? (
                   <div className="relative">
                     <textarea
