@@ -251,15 +251,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
 
           {/* Title */}
           {editMode ? (
-            <input
-              type="text"
-              value={heroContent.title}
-              onChange={(e) =>
-                setHeroContent({ ...heroContent, title: e.target.value })
-              }
-              placeholder="Event Title"
-              className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight px-4 py-2 rounded-md w-full max-w-2xl mx-auto bg-white/20 backdrop-blur-sm"
-            />
+            <div className="mb-6">
+              <input
+                type="text"
+                value={heroContent.title}
+                onChange={(e) =>
+                  setHeroContent({ ...heroContent, title: e.target.value })
+                }
+                placeholder="Event Title"
+                maxLength={100}
+                className="text-5xl md:text-7xl font-bold text-white mb-1 leading-tight px-4 py-2 rounded-md w-full max-w-2xl mx-auto bg-white/20 backdrop-blur-sm"
+              />
+              <div className="text-sm text-gray-300 text-right max-w-2xl mx-auto">
+                {heroContent.title.length}/100
+              </div>
+            </div>
           ) : (
             <h1 className="text-5xl md:text-7xl font-bold text-[#FFD400] mb-6 leading-tight">
               {heroContent.title}
@@ -271,15 +277,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
             <div className="flex items-center gap-2">
               <Calendar size={20} className="text-[#FFD400]" />
               {editMode ? (
-                <input
-                  type="text"
-                  value={heroContent.date}
-                  onChange={(e) =>
-                    setHeroContent({ ...heroContent, date: e.target.value })
-                  }
-                  placeholder="Date"
-                  className="bg-white text-black px-2 py-1 rounded-md"
-                />
+                <div className="flex flex-col">
+                  <input
+                    type="text"
+                    value={heroContent.date}
+                    onChange={(e) =>
+                      setHeroContent({ ...heroContent, date: e.target.value })
+                    }
+                    placeholder="Date"
+                    maxLength={50}
+                    className="bg-white text-black px-2 py-1 rounded-md"
+                  />
+                  <div className="text-xs text-gray-300 text-right">
+                    {heroContent.date.length}/50
+                  </div>
+                </div>
               ) : (
                 <span>{heroContent.date}</span>
               )}
@@ -287,15 +299,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
             <div className="flex items-center gap-2">
               <Clock size={20} className="text-[#FFD400]" />
               {editMode ? (
-                <input
-                  type="text"
-                  value={heroContent.time}
-                  onChange={(e) =>
-                    setHeroContent({ ...heroContent, time: e.target.value })
-                  }
-                  placeholder="Time"
-                  className="bg-white text-black px-2 py-1 rounded-md"
-                />
+                <div className="flex flex-col">
+                  <input
+                    type="text"
+                    value={heroContent.time}
+                    onChange={(e) =>
+                      setHeroContent({ ...heroContent, time: e.target.value })
+                    }
+                    placeholder="Time"
+                    maxLength={50}
+                    className="bg-white text-black px-2 py-1 rounded-md"
+                  />
+                  <div className="text-xs text-gray-300 text-right">
+                    {heroContent.time.length}/50
+                  </div>
+                </div>
               ) : (
                 <span>{heroContent.time}</span>
               )}
@@ -303,15 +321,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
             <div className="flex items-center gap-2">
               <MapPin size={20} className="text-[#FFD400]" />
               {editMode ? (
-                <input
-                  type="text"
-                  value={heroContent.location}
-                  onChange={(e) =>
-                    setHeroContent({ ...heroContent, location: e.target.value })
-                  }
-                  placeholder="Location"
-                  className="bg-white text-black px-2 py-1 rounded-md"
-                />
+                <div className="flex flex-col">
+                  <input
+                    type="text"
+                    value={heroContent.location}
+                    onChange={(e) =>
+                      setHeroContent({ ...heroContent, location: e.target.value })
+                    }
+                    placeholder="Location"
+                    maxLength={100}
+                    className="bg-white text-black px-2 py-1 rounded-md"
+                  />
+                  <div className="text-xs text-gray-300 text-right">
+                    {heroContent.location.length}/100
+                  </div>
+                </div>
               ) : (
                 <span>{heroContent.location}</span>
               )}
@@ -484,8 +508,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
                     setHeroContent({ ...heroContent, videoUrl: e.target.value })
                   }
                   placeholder="Paste any YouTube URL (will be auto-converted)"
+                  maxLength={500}
                   className="bg-white text-black px-3 py-2 rounded-md w-full max-w-lg"
                 />
+                <div className="text-gray-300 text-sm mt-1 text-right max-w-lg mx-auto">
+                  {heroContent.videoUrl.length}/500
+                </div>
                 <div className="text-gray-300 text-sm mt-2 space-y-1">
                   <p><strong>Supported formats:</strong></p>
                   <p>• https://youtu.be/VIDEO_ID</p>
@@ -498,24 +526,29 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
           )}
 
           {/* Highlights */}
-          <div className="text-white text-lg max-w-3xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-left">
+          <div className="text-white text-lg max-w-3xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-left">
             {heroContent.highlights.map((highlight, i) =>
               editMode ? (
-                <input
-                  key={i}
-                  type="text"
-                  value={highlight}
-                  onChange={(e) => {
-                    const newHighlights = [...heroContent.highlights];
-                    newHighlights[i] = e.target.value;
-                    setHeroContent({
-                      ...heroContent,
-                      highlights: newHighlights,
-                    });
-                  }}
-                  placeholder={`Highlight ${i + 1}`}
-                  className="bg-white text-black px-2 py-1 rounded-md w-full"
-                />
+                <div key={i} className="flex flex-col">
+                  <input
+                    type="text"
+                    value={highlight}
+                    onChange={(e) => {
+                      const newHighlights = [...heroContent.highlights];
+                      newHighlights[i] = e.target.value;
+                      setHeroContent({
+                        ...heroContent,
+                        highlights: newHighlights,
+                      });
+                    }}
+                    placeholder={`Highlight ${i + 1}`}
+                    maxLength={200}
+                    className="bg-white text-black px-2 py-1 rounded-md w-full"
+                  />
+                  <div className="text-xs text-gray-300 text-right mt-1">
+                    {highlight.length}/200
+                  </div>
+                </div>
               ) : (
                 <p key={i}>• {highlight}</p>
               )
@@ -524,17 +557,23 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            <div className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
               {editMode ? (
-                <input
-                  type="text"
-                  value={heroContent.btn1}
-                  onChange={(e) =>
-                    setHeroContent({ ...heroContent, btn1: e.target.value })
-                  }
-                  placeholder="Button 1 Text"
-                  className="bg-white text-black px-2 py-1 rounded-md"
-                />
+                <div className="flex flex-col items-center">
+                  <input
+                    type="text"
+                    value={heroContent.btn1}
+                    onChange={(e) =>
+                      setHeroContent({ ...heroContent, btn1: e.target.value })
+                    }
+                    placeholder="Button 1 Text"
+                    maxLength={50}
+                    className="bg-white text-black px-2 py-1 rounded-md text-center"
+                  />
+                  <div className="text-xs text-gray-700 text-right mt-1">
+                    {heroContent.btn1.length}/50
+                  </div>
+                </div>
               ) : (
                 <span onClick={() => scrollToSection("#contact")}>{heroContent.btn1}</span>
               )}
@@ -542,19 +581,25 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
                 size={20}
                 className="transform group-hover:translate-x-1 transition-transform"
               />
-            </button>
+            </div>
 
-            <button className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105">
+            <div className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105">
               {editMode ? (
-                <input
-                  type="text"
-                  value={heroContent.btn2}
-                  onChange={(e) =>
-                    setHeroContent({ ...heroContent, btn2: e.target.value })
-                  }
-                  placeholder="Button 2 Text"
-                  className="bg-white text-black px-2 py-1 rounded-md"
-                />
+                <div className="flex flex-col items-center">
+                  <input
+                    type="text"
+                    value={heroContent.btn2}
+                    onChange={(e) =>
+                      setHeroContent({ ...heroContent, btn2: e.target.value })
+                    }
+                    placeholder="Button 2 Text"
+                    maxLength={50}
+                    className="bg-white text-black px-2 py-1 rounded-md text-center"
+                  />
+                  <div className="text-xs text-gray-700 text-right mt-1">
+                    {heroContent.btn2.length}/50
+                  </div>
+                </div>
               ) : (
                 <span onClick={() => scrollToSection("#contact")}>{heroContent.btn2}</span>
               )}
@@ -562,7 +607,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
                 size={20}
                 className="transform group-hover:translate-x-1 transition-transform"
               />
-            </button>
+            </div>
           </div>
         </div>
       </div>

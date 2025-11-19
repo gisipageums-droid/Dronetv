@@ -13,11 +13,13 @@ interface NavigationProps {
   onStateChange?: (data: any) => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) => {
+const Navigation: React.FC<NavigationProps> = ({
+  headerData,
+  onStateChange,
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
-// console.log(headerData);
 
   // Initialize with prop data or default values
   const [navContent, setNavContent] = useState({
@@ -31,7 +33,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) =>
       { name: "Partners", href: "#sponsors" },
       { name: "Videos", href: "#gallery" },
       { name: "Contact", href: "#contact" },
-    ]
+    ],
   });
 
   const [backupContent, setBackupContent] = useState(navContent);
@@ -95,14 +97,14 @@ const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) =>
                 onClick={handleEditToggle}
                 className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition text-xs md:text-sm"
               >
-                <Save size={16} className="md:w-[18px] md:h-[18px]" /> 
+                <Save size={16} className="md:w-[18px] md:h-[18px]" />
                 <span className="hidden sm:inline">Save</span>
               </button>
               <button
                 onClick={handleCancel}
                 className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition text-xs md:text-sm"
               >
-                <X size={16} className="md:w-[18px] md:h-[18px]" /> 
+                <X size={16} className="md:w-[18px] md:h-[18px]" />
                 <span className="hidden sm:inline">Cancel</span>
               </button>
             </>
@@ -111,7 +113,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) =>
               onClick={handleEditToggle}
               className="flex items-center gap-1 bg-black/60 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg border border-white/30 hover:bg-black/80 transition text-xs md:text-sm"
             >
-              <Edit size={16} className="md:w-[18px] md:h-[18px]" /> 
+              <Edit size={16} className="md:w-[18px] md:h-[18px]" />
               <span className="hidden sm:inline">Edit</span>
             </button>
           )}
@@ -121,19 +123,27 @@ const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) =>
           {/* Event Name */}
           <div className="flex items-center flex-1 mr-4">
             {editMode ? (
-              <input
-                type="text"
-                value={navContent.eventName}
-                onChange={(e) =>
-                  setNavContent({ ...navContent, eventName: e.target.value })
-                }
-                placeholder="Event Name"
-                className="bg-white text-black px-2 py-1 md:px-3 md:py-2 rounded-md text-sm md:text-lg font-bold w-full max-w-xs"
-              />
+              <div className="flex flex-col w-full max-w-xs">
+                <input
+                  type="text"
+                  value={navContent.eventName}
+                  onChange={(e) =>
+                    setNavContent({ ...navContent, eventName: e.target.value })
+                  }
+                  placeholder="Event Name"
+                  maxLength={50}
+                  className="bg-white text-black px-2 py-1 md:px-3 md:py-2 rounded-md text-sm md:text-lg font-bold w-full"
+                />
+                <div className="text-xs text-gray-500 mt-1 text-right">
+                  {navContent.eventName.length}/50
+                </div>
+              </div>
             ) : (
-              <h1 className={`text-lg md:text-xl lg:text-2xl font-bold transition-colors duration-300 truncate ${
-                isScrolled ? "text-black" : "text-white"
-              }`}>
+              <h1
+                className={`text-lg md:text-xl lg:text-2xl font-bold transition-colors duration-300 truncate ${
+                  isScrolled ? "text-black" : "text-white"
+                }`}
+              >
                 {navContent.eventName}
               </h1>
             )}
@@ -145,28 +155,52 @@ const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) =>
               <div key={index} className="flex flex-col">
                 {editMode ? (
                   <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      value={item.name}
-                      onChange={(e) => {
-                        const newNavItems = [...navContent.navItems];
-                        newNavItems[index] = { ...item, name: e.target.value };
-                        setNavContent({ ...navContent, navItems: newNavItems });
-                      }}
-                      className="bg-white text-black px-2 py-1 rounded-md text-xs w-20"
-                      placeholder="Name"
-                    />
-                    <input
-                      type="text"
-                      value={item.href}
-                      onChange={(e) => {
-                        const newNavItems = [...navContent.navItems];
-                        newNavItems[index] = { ...item, href: e.target.value };
-                        setNavContent({ ...navContent, navItems: newNavItems });
-                      }}
-                      className="bg-white text-black px-2 py-1 rounded-md text-xs w-20"
-                      placeholder="#href"
-                    />
+                    <div className="flex flex-col">
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => {
+                          const newNavItems = [...navContent.navItems];
+                          newNavItems[index] = {
+                            ...item,
+                            name: e.target.value,
+                          };
+                          setNavContent({
+                            ...navContent,
+                            navItems: newNavItems,
+                          });
+                        }}
+                        maxLength={50}
+                        className="bg-white text-black px-2 py-1 rounded-md text-xs w-20"
+                        placeholder="Name"
+                      />
+                      <div className="text-xs text-gray-500 text-right">
+                        {item.name.length}/50
+                      </div>
+                    </div>
+                    <div className="flex flex-col">
+                      <input
+                        type="text"
+                        value={item.href}
+                        onChange={(e) => {
+                          const newNavItems = [...navContent.navItems];
+                          newNavItems[index] = {
+                            ...item,
+                            href: e.target.value,
+                          };
+                          setNavContent({
+                            ...navContent,
+                            navItems: newNavItems,
+                          });
+                        }}
+                        maxLength={50}
+                        className="bg-white text-black px-2 py-1 rounded-md text-xs w-20"
+                        placeholder="#href"
+                      />
+                      <div className="text-xs text-gray-500 text-right">
+                        {item.href.length}/50
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <button
@@ -189,15 +223,21 @@ const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) =>
           <div className="hidden lg:block">
             {editMode ? (
               <div className="flex flex-col gap-2">
-                <input
-                  type="text"
-                  value={navContent.ctaText}
-                  onChange={(e) =>
-                    setNavContent({ ...navContent, ctaText: e.target.value })
-                  }
-                  placeholder="CTA Text"
-                  className="bg-white text-black px-2 py-1 rounded-md text-xs w-24"
-                />
+                <div className="flex flex-col">
+                  <input
+                    type="text"
+                    value={navContent.ctaText}
+                    onChange={(e) =>
+                      setNavContent({ ...navContent, ctaText: e.target.value })
+                    }
+                    placeholder="CTA Text"
+                    maxLength={50}
+                    className="bg-white text-black px-2 py-1 rounded-md text-xs w-24"
+                  />
+                  <div className="text-xs text-gray-500 text-right">
+                    {navContent.ctaText.length}/50
+                  </div>
+                </div>
               </div>
             ) : (
               <a
@@ -225,47 +265,84 @@ const Navigation: React.FC<NavigationProps> = ({ headerData, onStateChange }) =>
           <div className="lg:hidden mt-4 py-4 bg-white/95 backdrop-blur-md rounded-lg shadow-lg">
             {editMode ? (
               <div className="px-4 space-y-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Edit Navigation</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                  Edit Navigation
+                </h3>
                 {navContent.navItems.map((item, index) => (
                   <div key={index} className="space-y-2">
-                    <label className="text-xs text-gray-600">Item {index + 1}</label>
+                    <label className="text-xs text-gray-600">
+                      Item {index + 1}
+                    </label>
                     <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) => {
-                          const newNavItems = [...navContent.navItems];
-                          newNavItems[index] = { ...item, name: e.target.value };
-                          setNavContent({ ...navContent, navItems: newNavItems });
-                        }}
-                        className="flex-1 bg-white text-black px-2 py-1 rounded-md text-sm border"
-                        placeholder="Name"
-                      />
-                      <input
-                        type="text"
-                        value={item.href}
-                        onChange={(e) => {
-                          const newNavItems = [...navContent.navItems];
-                          newNavItems[index] = { ...item, href: e.target.value };
-                          setNavContent({ ...navContent, navItems: newNavItems });
-                        }}
-                        className="flex-1 bg-white text-black px-2 py-1 rounded-md text-sm border"
-                        placeholder="#href"
-                      />
+                      <div className="flex-1 flex flex-col">
+                        <input
+                          type="text"
+                          value={item.name}
+                          onChange={(e) => {
+                            const newNavItems = [...navContent.navItems];
+                            newNavItems[index] = {
+                              ...item,
+                              name: e.target.value,
+                            };
+                            setNavContent({
+                              ...navContent,
+                              navItems: newNavItems,
+                            });
+                          }}
+                          maxLength={100}
+                          className="bg-white text-black px-2 py-1 rounded-md text-sm border"
+                          placeholder="Name"
+                        />
+                        <div className="text-xs text-gray-500 text-right mt-1">
+                          {item.name.length}/100
+                        </div>
+                      </div>
+                      <div className="flex-1 flex flex-col">
+                        <input
+                          type="text"
+                          value={item.href}
+                          onChange={(e) => {
+                            const newNavItems = [...navContent.navItems];
+                            newNavItems[index] = {
+                              ...item,
+                              href: e.target.value,
+                            };
+                            setNavContent({
+                              ...navContent,
+                              navItems: newNavItems,
+                            });
+                          }}
+                          maxLength={200}
+                          className="bg-white text-black px-2 py-1 rounded-md text-sm border"
+                          placeholder="#href"
+                        />
+                        <div className="text-xs text-gray-500 text-right mt-1">
+                          {item.href.length}/200
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
                 <div className="space-y-2">
                   <label className="text-xs text-gray-600">CTA Button</label>
-                  <input
-                    type="text"
-                    value={navContent.ctaText}
-                    onChange={(e) =>
-                      setNavContent({ ...navContent, ctaText: e.target.value })
-                    }
-                    placeholder="CTA Text"
-                    className="w-full bg-white text-black px-2 py-1 rounded-md text-sm border"
-                  />
+                  <div className="flex flex-col">
+                    <input
+                      type="text"
+                      value={navContent.ctaText}
+                      onChange={(e) =>
+                        setNavContent({
+                          ...navContent,
+                          ctaText: e.target.value,
+                        })
+                      }
+                      placeholder="CTA Text"
+                      maxLength={50}
+                      className="w-full bg-white text-black px-2 py-1 rounded-md text-sm border"
+                    />
+                    <div className="text-xs text-gray-500 text-right mt-1">
+                      {navContent.ctaText.length}/50
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (

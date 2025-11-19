@@ -183,35 +183,53 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
           {editMode ? (
             <>
               <div className="flex items-center justify-center gap-2 mb-4">
-                <input
-                  type="text"
-                  value={galleryContent.title}
-                  onChange={(e) => {
-                    const updatedContent = { ...galleryContent, title: e.target.value };
-                    setGalleryContent(updatedContent);
-                  }}
-                  className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
-                />
-                <input
-                  type="text"
-                  value={galleryContent.titleHighlight}
-                  onChange={(e) => {
-                    const updatedContent = { ...galleryContent, titleHighlight: e.target.value };
-                    setGalleryContent(updatedContent);
-                  }}
-                  className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
-                />
+                <div>
+                  <input
+                    type="text"
+                    value={galleryContent.title}
+                    onChange={(e) => {
+                      const updatedContent = { ...galleryContent, title: e.target.value };
+                      setGalleryContent(updatedContent);
+                    }}
+                    maxLength={50}
+                    className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                  />
+                  <div className="text-sm text-gray-500 text-right mt-1">
+                    {galleryContent.title.length}/50
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    value={galleryContent.titleHighlight}
+                    onChange={(e) => {
+                      const updatedContent = { ...galleryContent, titleHighlight: e.target.value };
+                      setGalleryContent(updatedContent);
+                    }}
+                    maxLength={50}
+                    className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                  />
+                  <div className="text-sm text-gray-500 text-right mt-1">
+                    {galleryContent.titleHighlight.length}/50
+                  </div>
+                </div>
               </div>
               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-              <textarea
-                value={galleryContent.subtitle}
-                onChange={(e) => {
-                  const updatedContent = { ...galleryContent, subtitle: e.target.value };
-                  setGalleryContent(updatedContent);
-                }}
-                className="text-gray-600 text-lg max-w-2xl mx-auto bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
-                rows={2}
-              />
+              <div className="max-w-2xl mx-auto">
+                <textarea
+                  value={galleryContent.subtitle}
+                  onChange={(e) => {
+                    const updatedContent = { ...galleryContent, subtitle: e.target.value };
+                    setGalleryContent(updatedContent);
+                  }}
+                  maxLength={200}
+                  className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+                  rows={2}
+                />
+                <div className="text-sm text-gray-500 text-right mt-1">
+                  {galleryContent.subtitle.length}/200
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -243,20 +261,32 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {galleryContent.items.map((item: GalleryItem, index: number) => (
                     <div key={index} className="flex flex-col gap-2 p-4 bg-gray-100 rounded-2xl shadow-md border border-gray-200">
-                      <input
-                        type="text"
-                        value={item.title}
-                        onChange={(e) => handleInputChange(e, index, 'title')}
-                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        placeholder="Video Title"
-                      />
-                      <input
-                        type="url"
-                        value={item.src}
-                        onChange={(e) => handleInputChange(e, index, 'src')}
-                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        placeholder="Paste any YouTube URL (will be auto-converted)"
-                      />
+                      <div>
+                        <input
+                          type="text"
+                          value={item.title}
+                          onChange={(e) => handleInputChange(e, index, 'title')}
+                          maxLength={100}
+                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          placeholder="Video Title"
+                        />
+                        <div className="text-xs text-gray-500 text-right mt-1">
+                          {item.title.length}/100
+                        </div>
+                      </div>
+                      <div>
+                        <input
+                          type="url"
+                          value={item.src}
+                          onChange={(e) => handleInputChange(e, index, 'src')}
+                          maxLength={500}
+                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          placeholder="Paste any YouTube URL (will be auto-converted)"
+                        />
+                        <div className="text-xs text-gray-500 text-right mt-1">
+                          {item.src.length}/500
+                        </div>
+                      </div>
                       <div className="text-gray-500 text-xs mt-1">
                         <p>Supported: youtu.be, youtube.com/watch, youtube.com/embed</p>
                       </div>

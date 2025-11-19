@@ -278,12 +278,21 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         <div className="border-t border-gray-100"></div>
+        <div className="flex justify-between gap-2 flex-col">
+
         <motion.button
           whileTap={{ scale: [0.9, 1] }}
           className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200">
           <Link to={'/admin/professional'} >Professionals </Link>
 
         </motion.button>
+        <motion.button
+          whileTap={{ scale: [0.9, 1] }}
+          className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200">
+          <Link to={'/admin/event/dashboard'} >Events </Link>
+
+        </motion.button>
+            </div>
       </div>
     </div>
   );
