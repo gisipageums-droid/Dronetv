@@ -613,7 +613,7 @@ export default function Hero({
                   className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
                   variants={itemVariants}
                 >
-                  <CheckCircle className="w-4 h-4 mr-2" />
+
                   {isEditing ? (
                     <div className="relative">
                       <input

@@ -362,7 +362,7 @@ export default function Header({
                   <motion.img
                     src={headerState.logoSrc || logo}
                     alt="Logo"
-                    className="w-[40px] h-[40px] rounded-xl scale-110 "
+                    className="w-[50px] h-[50px] rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
                     animate={{
                       y: [0, -5, 0],
                       transition: {

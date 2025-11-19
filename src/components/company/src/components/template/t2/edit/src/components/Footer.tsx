@@ -604,7 +604,7 @@ export default function Footer({
                   transition={{ duration: 0.3 }}
                 >
                   <motion.div
-                    className="relative w-14 h-14 rounded-lg flex items-center justify-center mr-2 overflow-hidden"
+                    className="relative rounded-lg flex items-center justify-center mr-3 overflow-hidden group"
                     whileHover={{
                       rotate: 360,
                       boxShadow: "0 0 20px rgba(250, 204, 21, 0.4)",
@@ -612,18 +612,14 @@ export default function Footer({
                     transition={{ duration: 0.6 }}
                   >
                     {isEditing ? (
-                      <div className="relative w-full h-full">
+                      <div className="relative">
                         {footerContent.companyInfo.logoUrl &&
-                          (footerContent.companyInfo.logoUrl.startsWith(
-                            "data:"
-                          ) ||
-                            footerContent.companyInfo.logoUrl.startsWith(
-                              "http"
-                            )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith("data:") ||
+                            footerContent.companyInfo.logoUrl.startsWith("http")) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl || logo}
                             alt="Logo"
-                            className="w-full h-full object-contain scale-110"
+                            className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                           />
                         ) : (
                           <span className="text-lg font-bold text-black">
@@ -642,16 +638,12 @@ export default function Footer({
                     ) : (
                       <>
                         {footerContent.companyInfo.logoUrl &&
-                          (footerContent.companyInfo.logoUrl.startsWith(
-                            "data:"
-                          ) ||
-                            footerContent.companyInfo.logoUrl.startsWith(
-                              "http"
-                            )) ? (
+                          (footerContent.companyInfo.logoUrl.startsWith("data:") ||
+                            footerContent.companyInfo.logoUrl.startsWith("http")) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
-                            className="object-contain w-[70px] h-[70px]"
+                            className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                           />
                         ) : (
                           <span className="text-lg font-medium text-black">
@@ -668,6 +660,8 @@ export default function Footer({
                       className="hidden font-bold"
                     />
                   </motion.div>
+
+                  {/* Company name editing code remains the same */}
                   {isEditing ? (
                     <div className="relative w-full">
                       <input
@@ -697,6 +691,7 @@ export default function Footer({
                   )}
                 </motion.div>
 
+                {/* Rest of the company info code remains the same */}
                 {isEditing ? (
                   <div className="relative">
                     <textarea
@@ -726,6 +721,7 @@ export default function Footer({
                   </p>
                 )}
 
+                {/* Email and phone editing code remains the same */}
                 {isEditing ? (
                   <>
                     <div className="relative">

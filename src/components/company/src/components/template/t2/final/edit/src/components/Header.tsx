@@ -520,17 +520,16 @@ export default function Header({
           <div className="flex items-center justify-between h-16">
             {/* Logo + Company */}
             <div className="flex items-center flex-shrink-0 min-w-0 mr-6 lg:mr-10">
-              <div className="relative flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 overflow-hidden rounded-lg shadow-md">
-                {/* Your logo code remains the same */}
+              <div className="relative flex items-center justify-center flex-shrink-0 mr-2 overflow-hidden rounded-lg shadow-md group">
                 {isEditing ? (
-                  <div className="relative w-[56px] h-[56px]">
+                  <div className="relative">
                     {content.logoUrl &&
                       (content.logoUrl.startsWith("data:") ||
                         content.logoUrl.startsWith("http")) ? (
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="object-contain w-full h-full "
+                        className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                       />
                     ) : (
                       <span className="text-lg font-bold text-black">
@@ -554,7 +553,7 @@ export default function Header({
                       <img
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="object-contain w-[70px] h-[70px]"
+                        className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                       />
                     ) : (
                       <span className="text-lg font-bold text-black">
@@ -571,25 +570,6 @@ export default function Header({
                   className="hidden font-bold"
                 />
               </div>
-
-              {/* Add this company name section back */}
-              {/* {isEditing ? (
-                <input
-                  type="text"
-                  value={content.companyName}
-                  onChange={(e) => updateContent("companyName", e.target.value)}
-                  className="bg-transparent border-b border-primary text-xl font-medium outline-none max-w-[140px] pr-2"
-                />
-              ) : (
-                <div className="flex items-center min-w-0">
-                  <span
-                    className="lg:text-xl text-sm font-medium whitespace-nowrap max-w-[140px] lg:max-w-[260px]"
-                    title={content.companyName}
-                  >
-                    {content.companyName}
-                  </span>
-                </div>
-              )} */}
             </div>
 
             {/* Desktop Nav - Centered with proper spacing */}
