@@ -1,4 +1,3 @@
-
 import { Button } from "./ui/button";
 import {
   Menu,
@@ -38,22 +37,36 @@ export default function Header({
   const [isUploading, setIsUploading] = useState(false);
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const logoImgRef = useRef<HTMLImageElement | null>(null);
 
-  const [content, setContent] = useState({
-    logoUrl: headerData?.logo,
-    companyName: headerData?.name || "Company",
-    navItems: [
-      { id: 1, label: "Home", href: "#home", color: "primary" },
-      { id: 2, label: "About", href: "#about", color: "primary" },
-      { id: 3, label: "Our Team", href: "#our-team", color: "primary" },
-      { id: 4, label: "Product", href: "#product", color: "primary" },
-      { id: 5, label: "Services", href: "#services", color: "red-accent" },
-      { id: 6, label: "Gallery", href: "#gallery", color: "primary" },
-      { id: 7, label: "Blog", href: "#blog", color: "primary" },
-      { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
-      { id: 9, label: "Clients", href: "#clients", color: "primary" },
-    ],
-    ctaText: "Get Started",
+  // Track initial state to detect changes
+  const initialHeaderState = useRef(null);
+
+  // Logo dimensions state - FIXED: Smaller default size
+  const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
+
+  // Aspect ratio selection state
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState("original"); // "original", "1:1", "16:9"
+
+  const [content, setContent] = useState(() => {
+    const initialState = {
+      logoUrl: headerData?.logo || logo,
+      companyName: headerData?.name || "Company",
+      navItems: [
+        { id: 1, label: "Home", href: "#home", color: "primary" },
+        { id: 2, label: "About", href: "#about", color: "primary" },
+        { id: 3, label: "Our Team", href: "#our-team", color: "primary" },
+        { id: 4, label: "Product", href: "#product", color: "primary" },
+        { id: 5, label: "Services", href: "#services", color: "red-accent" },
+        { id: 6, label: "Gallery", href: "#gallery", color: "primary" },
+        { id: 7, label: "Blog", href: "#blog", color: "primary" },
+        { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
+        { id: 9, label: "Clients", href: "#clients", color: "primary" },
+      ],
+      ctaText: "Get Started",
+    };
+    initialHeaderState.current = initialState;
+    return initialState;
   });
 
   // choose container width based on companyName length (adjust threshold as needed)
@@ -62,25 +75,91 @@ export default function Header({
       ? "min-w-[1270px]"
       : "max-w-7xl";
 
-  // Cropping states
+  // Cropping states - ENHANCED WITH ADVANCED LOGIC
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
-
-  // Dynamic zoom calculation states
-  const [mediaSize, setMediaSize] = useState<{
-    width: number;
-    height: number;
-    naturalWidth: number;
-    naturalHeight: number;
-  } | null>(null);
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
-  const [prevZoom, setPrevZoom] = useState(1); // Enforce 4:3
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
+
+  // Load logo dimensions when logo URL changes - FIXED: Smaller max size
+  useEffect(() => {
+    if (content.logoUrl && (content.logoUrl.startsWith("data:") || content.logoUrl.startsWith("http"))) {
+      const img = new Image();
+      img.onload = () => {
+        // Calculate dimensions while maintaining aspect ratio - REDUCED MAX SIZE
+        const maxSize = 60; // Reduced from 80 to 60 to prevent overflow
+        let width = img.naturalWidth;
+        let height = img.naturalHeight;
+
+        // Maintain aspect ratio while fitting within maxSize
+        if (width > height) {
+          height = (height / width) * maxSize;
+          width = maxSize;
+        } else {
+          width = (width / height) * maxSize;
+          height = maxSize;
+        }
+
+        // Ensure minimum size
+        const minSize = 25; // Reduced from 30 to 25
+        if (width < minSize) {
+          height = (height / width) * minSize;
+          width = minSize;
+        }
+        if (height < minSize) {
+          width = (width / height) * minSize;
+          height = minSize;
+        }
+
+        // Additional constraint: Ensure height doesn't exceed header height
+        const maxHeaderHeight = 45; // Header height is 64px (h-16), so 45px is safe
+        if (height > maxHeaderHeight) {
+          width = (width / height) * maxHeaderHeight;
+          height = maxHeaderHeight;
+        }
+
+        setLogoDimensions({
+          width: Math.round(width),
+          height: Math.round(height)
+        });
+      };
+      img.src = content.logoUrl;
+    } else {
+      // Reset to default size for text logos
+      setLogoDimensions({ width: 50, height: 50 });
+    }
+  }, [content.logoUrl]);
+
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      setMinZoomDynamic(0.1);
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
+  useEffect(() => {
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
 
   // Notify parent of state changes
   useEffect(() => {
@@ -89,27 +168,67 @@ export default function Header({
     }
   }, [content, onStateChange]);
 
-  // Compute dynamic min zoom (free pan/zoom)
-  useEffect(() => {
-    if (mediaSize && cropAreaSize) {
-      const coverW = cropAreaSize.width / mediaSize.width;
-      const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.1);
-      setMinZoomDynamic(computedMin);
-      setZoom((z) => (z < computedMin ? computedMin : z));
-    }
-  }, [mediaSize, cropAreaSize]);
-
-  // Track previous zoom only (no auto recentre to allow free panning)
-  useEffect(() => {
-    setPrevZoom(zoom);
-  }, [zoom]);
-
   const updateContent = (field: string, value: string) => {
     setContent((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Logo cropping functionality
+  // NEW: Function to upload image to AWS
+  const uploadImageToAWS = async (file, imageField) => {
+    if (!userId || !publishedId || !templateSelection) {
+      console.error("Missing required props:", {
+        userId,
+        publishedId,
+        templateSelection,
+      });
+      toast.error("Missing user information. Please refresh and try again.");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("sectionName", "header");
+    formData.append("imageField", `${imageField}_${Date.now()}`);
+    formData.append("templateSelection", templateSelection);
+
+    console.log(`Uploading ${imageField} to S3:`, file);
+
+    try {
+      const uploadResponse = await fetch(
+        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
+        return uploadData.imageUrl;
+      } else {
+        const errorData = await uploadResponse.json();
+        console.error(`${imageField} upload failed:`, errorData);
+        toast.error(
+          `${imageField} upload failed: ${errorData.message || "Unknown error"}`
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error uploading ${imageField}:`, error);
+      toast.error(`Error uploading image. Please try again.`);
+      return null;
+    }
+  };
+
+  // Handle cancel editing
+  const handleCancel = () => {
+    // Reset to initial state
+    setContent(initialHeaderState.current);
+    setPendingLogoFile(null);
+    setIsEditing(false);
+  };
+
+  // Logo cropping functionality - UPDATED WITH ADVANCED LOGIC
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -129,24 +248,48 @@ export default function Header({
       setImageToCrop(reader.result);
       setOriginalFile(file);
       setShowCropper(true);
-      setAspectRatio(4 / 3);
-      setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setCrop({ x: 0, y: 0 });
+      // Reset to original aspect ratio when new image is loaded
+      setSelectedAspectRatio("original");
     };
-
     reader.readAsDataURL(file);
 
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    e.target.value = "";
+  };
+
+  // Get aspect ratio value based on selection
+  const getAspectRatio = () => {
+    switch (selectedAspectRatio) {
+      case "1:1":
+        return 1;
+      case "16:9":
+        return 16 / 9;
+      case "original":
+      default:
+        return logoDimensions.width / logoDimensions.height;
     }
   };
 
-  // Cropper functions
+  // Get display text for aspect ratio
+  const getAspectRatioText = () => {
+    switch (selectedAspectRatio) {
+      case "1:1":
+        return "1:1";
+      case "16:9":
+        return "16:9";
+      case "original":
+      default:
+        return `${logoDimensions.width}:${logoDimensions.height}`;
+    }
+  };
+
+  // Cropper functions - FROM ADVANCED LOGIC
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
+  // Helper function to create image element
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
@@ -156,13 +299,56 @@ export default function Header({
       image.src = url;
     });
 
+  // Function to get cropped image - UPDATED WITH PROPER DIMENSIONS TO PREVENT OVERFLOW
   const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    // Calculate output dimensions based on selected aspect ratio
+    let outputWidth, outputHeight;
+    let displayWidth, displayHeight; // For header display
+
+    switch (selectedAspectRatio) {
+      case "1:1":
+        // Square - use smaller dimensions for header display
+        outputWidth = 200;
+        outputHeight = 200;
+        displayWidth = 45;  // Reduced from 50 to 45 to prevent overflow
+        displayHeight = 45; // Reduced from 50 to 45 to prevent overflow
+        break;
+      case "16:9":
+        // Landscape - 16:9 ratio with reduced height
+        outputWidth = 320;
+        outputHeight = 180;
+        displayWidth = 55;  // Reduced from 60 to 55
+        displayHeight = 31; // Reduced from 34 to 31 (55 * 9/16)
+        break;
+      case "original":
+      default:
+        // Use original logo dimensions with header constraints
+        const maxHeaderSize = 45; // Maximum size to fit in header
+        outputWidth = logoDimensions.width > 200 ? 200 : logoDimensions.width;
+        outputHeight = logoDimensions.height > 200 ? 200 : logoDimensions.height;
+
+        // Ensure display dimensions don't overflow header
+        if (logoDimensions.width > maxHeaderSize || logoDimensions.height > maxHeaderSize) {
+          if (logoDimensions.width > logoDimensions.height) {
+            displayWidth = maxHeaderSize;
+            displayHeight = (logoDimensions.height / logoDimensions.width) * maxHeaderSize;
+          } else {
+            displayHeight = maxHeaderSize;
+            displayWidth = (logoDimensions.width / logoDimensions.height) * maxHeaderSize;
+          }
+        } else {
+          displayWidth = logoDimensions.width;
+          displayHeight = logoDimensions.height;
+        }
+        break;
+    }
+
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
     ctx.drawImage(
       image,
@@ -172,19 +358,19 @@ export default function Header({
       pixelCrop.height,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      outputWidth,
+      outputHeight
     );
 
     return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          const fileName = originalFile
-            ? `cropped-${originalFile.name}`
-            : `cropped-logo-${Date.now()}.jpg`;
+          const pngName = originalFile
+            ? `cropped-logo-${originalFile.name.replace(/\.[^.]+$/, "")}.png`
+            : `cropped-logo-${Date.now()}.png`;
 
-          const file = new File([blob], fileName, {
-            type: "image/jpeg",
+          const file = new File([blob], pngName, {
+            type: "image/png",
             lastModified: Date.now(),
           });
 
@@ -193,14 +379,18 @@ export default function Header({
           resolve({
             file,
             previewUrl,
+            dimensions: {
+              width: Math.round(displayWidth),  // Use display dimensions for header
+              height: Math.round(displayHeight) // Use display dimensions for header
+            }
           });
         },
-        "image/jpeg",
-        0.95
+        "image/png"
       );
     });
   };
 
+  // Apply crop and UPLOAD IMMEDIATELY to AWS - UPDATED
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels) {
@@ -208,27 +398,45 @@ export default function Header({
         return;
       }
 
-      const { file, previewUrl } = await getCroppedImg(
+      setIsUploading(true);
+
+      const { file, previewUrl, dimensions } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
 
-      // Update preview immediately
+      // Update logo dimensions with display dimensions
+      setLogoDimensions(dimensions);
+
+      // Show preview immediately with blob URL (temporary)
       setContent((prev) => ({ ...prev, logoUrl: previewUrl }));
 
-      // Set the file for upload on save
-      setPendingLogoFile(file);
+      // UPLOAD TO AWS IMMEDIATELY
+      const awsImageUrl = await uploadImageToAWS(file, "logoUrl");
 
-      toast.success("Logo cropped successfully! Click Save to upload to S3.");
+      if (awsImageUrl) {
+        // Update with actual S3 URL
+        setContent((prev) => ({ ...prev, logoUrl: awsImageUrl }));
+        setPendingLogoFile(null);
+        toast.success("Logo cropped and uploaded to AWS successfully!");
+      } else {
+        // If upload fails, keep the preview URL and set as pending
+        setPendingLogoFile(file);
+        toast.warning("Logo cropped but upload failed. It will be saved locally.");
+      }
+
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
     } catch (error) {
       console.error("Error cropping logo:", error);
       toast.error("Error cropping logo. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
+  // Cancel cropping - UPDATED
   const cancelCrop = () => {
     setShowCropper(false);
     setImageToCrop(null);
@@ -237,67 +445,38 @@ export default function Header({
     setZoom(1);
   };
 
+  // Reset zoom and rotation - UPDATED
   const resetCropSettings = () => {
     setZoom(1);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Save button handler with S3 upload
+  // Save button handler - only handles text changes and failed uploads now
   const handleSave = async () => {
     try {
       setIsUploading(true);
 
-      // If there's a pending logo, upload it first
+      // Upload any pending logo that failed during automatic upload
       if (pendingLogoFile) {
-        if (!userId || !publishedId || !templateSelection) {
-          console.error("Missing required props:", {
-            userId,
-            publishedId,
-            templateSelection,
-          });
-          toast.error(
-            "Missing user information. Please refresh and try again."
-          );
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", pendingLogoFile);
-        formData.append("sectionName", "header");
-        formData.append("imageField", `logoUrl  ${Date.now()}`);
-        formData.append("templateSelection", templateSelection);
-
-        const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL
-          setContent((prev) => ({ ...prev, logoUrl: uploadData.imageUrl }));
-          setPendingLogoFile(null); // Clear pending file
-          console.log("Logo uploaded to S3:", uploadData.imageUrl);
+        const awsImageUrl = await uploadImageToAWS(pendingLogoFile, "logoUrl");
+        if (awsImageUrl) {
+          setContent((prev) => ({ ...prev, logoUrl: awsImageUrl }));
+          setPendingLogoFile(null);
         } else {
-          const errorData = await uploadResponse.json();
-          console.error("Logo upload failed:", errorData);
-          toast.error(
-            `Logo upload failed: ${errorData.message || "Unknown error"}`
-          );
-          return; // Don't exit edit mode
+          toast.error("Failed to upload logo");
+          return;
         }
       }
 
+      // Update initial state reference to current state
+      initialHeaderState.current = content;
+
       // Exit edit mode
       setIsEditing(false);
-      toast.success("Header section saved with S3 URLs ready for publish");
+      toast.success("Header section saved!");
     } catch (error) {
       console.error("Error saving header section:", error);
       toast.error("Error saving changes. Please try again.");
-      // Keep in edit mode so user can retry
     } finally {
       setIsUploading(false);
     }
@@ -319,8 +498,7 @@ export default function Header({
 
   return (
     <>
-      {/* Updated Cropping Modal - Matches Header1.tsx styling */}
-
+      {/* Updated Cropping Modal - ENHANCED WITH ASPECT RATIO OPTIONS */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -330,11 +508,13 @@ export default function Header({
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-white rounded-xl max-w-4xl w-full h-[80vh] flex flex-col"
           >
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">Crop Logo (4:3 Ratio)</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Logo ({getAspectRatioText()} Ratio)
+              </h3>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
@@ -343,63 +523,83 @@ export default function Header({
               </button>
             </div>
 
-            {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
-              <div className="relative w-full h-full">
-                <Cropper
-                  image={imageToCrop}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={aspectRatio}
-                  minZoom={minZoomDynamic}
-                  maxZoom={5}
-                  restrictPosition={false}
-                  zoomWithScroll={true}
-                  zoomSpeed={0.2}
-                  onMediaLoaded={(ms) => setMediaSize(ms)}
-                  onCropAreaChange={(area) => setCropAreaSize(area)}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={true}
-                  cropShape="rect"
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
+            {/* Aspect Ratio Selection */}
+            <div className="p-4 border-b border-gray-200 bg-white">
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm font-medium text-gray-700 mr-2">Aspect Ratio:</span>
+                <button
+                  onClick={() => setSelectedAspectRatio("original")}
+                  className={`px-3 py-1 text-sm rounded border ${selectedAspectRatio === "original"
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                    }`}
+                >
+                  Original
+                </button>
+                <button
+                  onClick={() => setSelectedAspectRatio("1:1")}
+                  className={`px-3 py-1 text-sm rounded border ${selectedAspectRatio === "1:1"
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                    }`}
+                >
+                  1:1 (Square)
+                </button>
+                <button
+                  onClick={() => setSelectedAspectRatio("16:9")}
+                  className={`px-3 py-1 text-sm rounded border ${selectedAspectRatio === "16:9"
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                    }`}
+                >
+                  16:9 (Landscape)
+                </button>
               </div>
             </div>
 
-            {/* Controls - 4:3 only */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Button - Only 4:3 */}
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    4:3 (Standard)
-                  </button>
-                </div>
-              </div>
+            {/* Cropper Area */}
+            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                aspect={getAspectRatio()} // Dynamic aspect ratio based on selection
+                minZoom={minZoomDynamic}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area, areaPixels) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
+                showGrid={true}
+                cropShape="rect"
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </div>
 
-              {/* Zoom Control - Simplified */}
+            {/* Controls */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
+                  <span className="flex items-center gap-2 text-gray-700">
+                    Zoom
+                  </span>
                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
@@ -413,7 +613,7 @@ export default function Header({
                 />
               </div>
 
-              {/* Action Buttons - Consistent with Header1.tsx */}
+              {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
@@ -429,9 +629,10 @@ export default function Header({
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                  disabled={isUploading}
+                  className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm font-medium`}
                 >
-                  Apply Crop
+                  {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
               </div>
             </div>
@@ -456,19 +657,35 @@ export default function Header({
             {/* Logo + Company - keep space and long company names */}
             <div className="flex items-center flex-shrink-0 min-w-0 mr-6 lg:mr-10">
               {/* Removed rotation animation from logo container */}
-              <div className="relative flex items-center justify-center flex-shrink-0 w-[70px] h-[70px] mr-2 overflow-hidden rounded-lg bg-transparent group">
+              <div className="relative flex items-center justify-center flex-shrink-0 mr-2 overflow-hidden rounded-lg bg-transparent group">
                 {isEditing ? (
-                  <div className="relative w-[50px] h-[50px] bg-transparent">
+                  <div className="relative">
                     {content.logoUrl &&
                       (content.logoUrl.startsWith("data:") ||
                         content.logoUrl.startsWith("http")) ? (
                       <img
+                        ref={logoImgRef}
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="w-full h-full bg-transparent cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                          maxHeight: '45px', // Added max height constraint
+                        }}
+                        className="bg-transparent cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                       />
                     ) : (
-                      <span className="text-lg font-bold">
+                      <span
+                        className="text-lg font-bold text-black"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          maxHeight: '45px', // Added max height constraint
+                        }}
+                      >
                         {content.logoUrl}
                       </span>
                     )}
@@ -482,17 +699,33 @@ export default function Header({
                     </div>
                   </div>
                 ) : (
-                  <div className="w-[50px] h-[50px] bg-transparent">
+                  <div>
                     {content.logoUrl &&
                       (content.logoUrl.startsWith("data:") ||
                         content.logoUrl.startsWith("http")) ? (
                       <img
+                        ref={logoImgRef}
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                          maxHeight: '45px', // Added max height constraint
+                        }}
+                        className="cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                       />
                     ) : (
-                      <span className="text-lg font-bold text-black">
+                      <span
+                        className="text-lg font-bold text-black"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          maxHeight: '45px', // Added max height constraint
+                        }}
+                      >
                         {content.logoUrl}
                       </span>
                     )}
@@ -558,35 +791,47 @@ export default function Header({
               <ThemeToggle />
 
               {/* Edit/Save Buttons */}
-              {isEditing ? (
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ y: -1, scaleX: 1.1 }}
-                  onClick={handleSave}
-                  disabled={isUploading}
-                  className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:font-semibold"
-                    } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl whitespace-nowrap`}
-                >
-                  {isUploading ? (
-                    "Uploading..."
-                  ) : (
-                    <>
-                      <Save size={16} className="inline mr-1" /> Save
-                    </>
-                  )}
-                </motion.button>
-              ) : (
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ y: -1, scaleX: 1.1 }}
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold whitespace-nowrap"
-                >
-                  Edit
-                </motion.button>
-              )}
+              <div className="flex gap-2">
+                {isEditing ? (
+                  <>
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      whileHover={{ y: -1, scaleX: 1.05 }}
+                      onClick={handleCancel}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold whitespace-nowrap"
+                    >
+                      Cancel
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      whileHover={{ y: -1, scaleX: 1.1 }}
+                      onClick={handleSave}
+                      disabled={isUploading}
+                      className={`${isUploading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-green-600 hover:font-semibold"
+                        } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl whitespace-nowrap`}
+                    >
+                      {isUploading ? (
+                        "Uploading..."
+                      ) : (
+                        <>
+                          <Save size={16} className="inline mr-1" /> Save
+                        </>
+                      )}
+                    </motion.button>
+                  </>
+                ) : (
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ y: -1, scaleX: 1.1 }}
+                    onClick={() => setIsEditing(true)}
+                    className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold whitespace-nowrap"
+                  >
+                    Edit
+                  </motion.button>
+                )}
+              </div>
             </div>
 
             {/* Mobile menu button */}

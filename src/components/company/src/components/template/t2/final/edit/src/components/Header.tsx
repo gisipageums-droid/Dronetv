@@ -1,5 +1,3 @@
-
-
 import { Button } from "./ui/button";
 import {
   Menu,
@@ -33,6 +31,7 @@ export default function Header({
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const logoImgRef = useRef<HTMLImageElement | null>(null);
 
   // Track initial state to detect changes
   const initialHeaderState = useRef(null);
@@ -56,6 +55,12 @@ export default function Header({
   const [isDragging, setIsDragging] = useState(false);
   const PAN_STEP = 10;
 
+  // Logo dimensions state
+  const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
+
+  // Aspect ratio selection state
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState("original"); // "original", "1:1", "16:9"
+
   // Initialize content state
   const [content, setContent] = useState(() => {
     const initialState = headerData || {
@@ -66,6 +71,48 @@ export default function Header({
     initialHeaderState.current = initialState;
     return initialState;
   });
+
+  // Load logo dimensions when logo URL changes
+  useEffect(() => {
+    if (content.logoUrl && (content.logoUrl.startsWith("data:") || content.logoUrl.startsWith("http"))) {
+      const img = new Image();
+      img.onload = () => {
+        // Calculate dimensions while maintaining aspect ratio
+        const maxSize = 60; // Maximum size for display
+        let width = img.naturalWidth;
+        let height = img.naturalHeight;
+
+        // Maintain aspect ratio while fitting within maxSize
+        if (width > height) {
+          height = (height / width) * maxSize;
+          width = maxSize;
+        } else {
+          width = (width / height) * maxSize;
+          height = maxSize;
+        }
+
+        // Ensure minimum size
+        const minSize = 30;
+        if (width < minSize) {
+          height = (height / width) * minSize;
+          width = minSize;
+        }
+        if (height < minSize) {
+          width = (width / height) * minSize;
+          height = minSize;
+        }
+
+        setLogoDimensions({
+          width: Math.round(width),
+          height: Math.round(height)
+        });
+      };
+      img.src = content.logoUrl;
+    } else {
+      // Reset to default size for text logos
+      setLogoDimensions({ width: 50, height: 50 });
+    }
+  }, [content.logoUrl]);
 
   // Allow more zoom-out; do not enforce cover when media/crop sizes change
   useEffect(() => {
@@ -220,10 +267,40 @@ export default function Header({
       setShowCropper(true);
       setZoom(1);
       setCrop({ x: 0, y: 0 });
+      // Reset to original aspect ratio when new image is loaded
+      setSelectedAspectRatio("original");
     };
     reader.readAsDataURL(file);
 
     e.target.value = "";
+  };
+
+  // Get aspect ratio value based on selection
+  const getAspectRatio = () => {
+    switch (selectedAspectRatio) {
+      case "1:1":
+        return 1;
+      case "16:9":
+        return 16 / 9;
+
+      case "original":
+      default:
+        return logoDimensions.width / logoDimensions.height;
+    }
+  };
+
+  // Get display text for aspect ratio
+  const getAspectRatioText = () => {
+    switch (selectedAspectRatio) {
+      case "1:1":
+        return "1:1";
+      case "16:9":
+        return "16:9";
+
+      case "original":
+      default:
+        return `${logoDimensions.width}:${logoDimensions.height}`;
+    }
   };
 
   // Cropper functions - FROM GALLERY
@@ -241,15 +318,34 @@ export default function Header({
       image.src = url;
     });
 
-  // Function to get cropped image - UPDATED WITH FIXED 1:1 RATIO FOR LOGO
+  // Function to get cropped image - UPDATED WITH DYNAMIC SIZE BASED ON SELECTED ASPECT RATIO
   const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Fixed output size for 1:1 ratio (Logo)
-    const outputWidth = 200;
-    const outputHeight = 200;
+    // Calculate output dimensions based on selected aspect ratio
+    let outputWidth, outputHeight;
+
+    switch (selectedAspectRatio) {
+      case "1:1":
+        // Square - use the smaller dimension for both width and height
+        outputWidth = 200;
+        outputHeight = 110;
+        break;
+      case "16:9":
+        // Landscape - 16:9 ratio with reduced height
+        outputWidth = 320;  // 16 * 20
+        outputHeight = 180; // 9 * 20
+        break;
+
+      case "original":
+      default:
+        // Use original logo dimensions
+        outputWidth = logoDimensions.width > 200 ? 200 : logoDimensions.width;
+        outputHeight = logoDimensions.height > 200 ? 200 : logoDimensions.height;
+        break;
+    }
 
     canvas.width = outputWidth;
     canvas.height = outputHeight;
@@ -283,6 +379,7 @@ export default function Header({
           resolve({
             file,
             previewUrl,
+            dimensions: { width: outputWidth, height: outputHeight }
           });
         },
         "image/png"
@@ -300,10 +397,13 @@ export default function Header({
 
       setIsUploading(true);
 
-      const { file, previewUrl } = await getCroppedImg(
+      const { file, previewUrl, dimensions } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
+
+      // Update logo dimensions with cropped image dimensions
+      setLogoDimensions(dimensions);
 
       // Show preview immediately with blob URL (temporary)
       setContent((prev) => ({ ...prev, logoUrl: previewUrl }));
@@ -396,7 +496,7 @@ export default function Header({
 
   return (
     <>
-      {/* Updated Cropping Modal - ENHANCED WITH GALLERY LOGIC */}
+      {/* Updated Cropping Modal - ENHANCED WITH ASPECT RATIO OPTIONS */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -411,7 +511,7 @@ export default function Header({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop Logo (1:1 Ratio)
+                Crop Logo ({getAspectRatioText()} Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
@@ -421,13 +521,47 @@ export default function Header({
               </button>
             </div>
 
+            {/* Aspect Ratio Selection */}
+            <div className="p-4 border-b border-gray-200 bg-white">
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm font-medium text-gray-700 mr-2">Aspect Ratio:</span>
+                <button
+                  onClick={() => setSelectedAspectRatio("original")}
+                  className={`px-3 py-1 text-sm rounded border ${selectedAspectRatio === "original"
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                    }`}
+                >
+                  Original
+                </button>
+                <button
+                  onClick={() => setSelectedAspectRatio("1:1")}
+                  className={`px-3 py-1 text-sm rounded border ${selectedAspectRatio === "1:1"
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                    }`}
+                >
+                  1:1 (Square)
+                </button>
+                <button
+                  onClick={() => setSelectedAspectRatio("16:9")}
+                  className={`px-3 py-1 text-sm rounded border ${selectedAspectRatio === "16:9"
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                    }`}
+                >
+                  16:9 (Landscape)
+                </button>
+              </div>
+            </div>
+
             {/* Cropper Area */}
             <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                aspect={1} // ✅ FIXED 1:1 ASPECT RATIO FOR LOGO
+                aspect={getAspectRatio()} // Dynamic aspect ratio based on selection
                 minZoom={minZoomDynamic}
                 maxZoom={5}
                 restrictPosition={false}
@@ -440,7 +574,7 @@ export default function Header({
                 onCropAreaChange={(area, areaPixels) => setCropAreaSize(area)}
                 onInteractionStart={() => setIsDragging(true)}
                 onInteractionEnd={() => setIsDragging(false)}
-                showGrid={true} // ✅ Better alignment like Gallery
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -504,7 +638,7 @@ export default function Header({
         </motion.div>
       )}
 
-      {/* Rest of the header code remains exactly the same */}
+      {/* Rest of the header code with dynamic logo sizing */}
       <motion.header
         className={`fixed top-16 left-0 right-0 border-b z-10 ${theme === "dark"
           ? "bg-gray-800 border-gray-700 text-gray-300"
@@ -527,12 +661,26 @@ export default function Header({
                       (content.logoUrl.startsWith("data:") ||
                         content.logoUrl.startsWith("http")) ? (
                       <img
+                        ref={logoImgRef}
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                        }}
+                        className="cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                       />
                     ) : (
-                      <span className="text-lg font-bold text-black">
+                      <span
+                        className="text-lg font-bold text-black"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
                         {content.logoUrl}
                       </span>
                     )}
@@ -551,12 +699,26 @@ export default function Header({
                       (content.logoUrl.startsWith("data:") ||
                         content.logoUrl.startsWith("http")) ? (
                       <img
+                        ref={logoImgRef}
                         src={content.logoUrl || logo}
                         alt="Logo"
-                        className="w-[50px] h-[50px] cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                        }}
+                        className="cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
                       />
                     ) : (
-                      <span className="text-lg font-bold text-black">
+                      <span
+                        className="text-lg font-bold text-black"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
                         {content.logoUrl}
                       </span>
                     )}
