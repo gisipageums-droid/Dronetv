@@ -90,24 +90,42 @@ const SpeakerCard = memo(
       return (
         <div className="bg-white rounded-xl shadow-xl p-6">
           <div className="space-y-4">
-            <input
-              value={editForm.name || ''}
-              onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="Speaker Name"
-            />
-            <input
-              value={editForm.title || ''}
-              onChange={(e) => onFormChange({ ...editForm, title: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="Title"
-            />
-            <input
-              value={editForm.company || ''}
-              onChange={(e) => onFormChange({ ...editForm, company: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="Company"
-            />
+            <div>
+              <input
+                value={editForm.name || ''}
+                onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
+                maxLength={50}
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="Speaker Name"
+              />
+              <div className="text-xs text-gray-500 text-right mt-1">
+                {(editForm.name || '').length}/50
+              </div>
+            </div>
+            <div>
+              <input
+                value={editForm.title || ''}
+                onChange={(e) => onFormChange({ ...editForm, title: e.target.value })}
+                maxLength={100}
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="Title"
+              />
+              <div className="text-xs text-gray-500 text-right mt-1">
+                {(editForm.title || '').length}/100
+              </div>
+            </div>
+            <div>
+              <input
+                value={editForm.company || ''}
+                onChange={(e) => onFormChange({ ...editForm, company: e.target.value })}
+                maxLength={100}
+                className="w-full px-3 py-2 border rounded-lg"
+                placeholder="Company"
+              />
+              <div className="text-xs text-gray-500 text-right mt-1">
+                {(editForm.company || '').length}/100
+              </div>
+            </div>
             <div className="flex gap-2">
               <button onClick={onSave} className="px-3 py-1 bg-green-600 text-white rounded-lg">
                 <Save size={14} /> Save
@@ -358,28 +376,44 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
         <div className="text-center mb-16">
           {isEditMode ? (
             <div className="max-w-3xl mx-auto space-y-4">
-              
-              <input
-                type="text"
-                value={headerContent.eventTitle}
-                onChange={(e) => updateHeaderField("eventTitle", e.target.value)}
-                className="w-full text-4xl font-bold px-4 py-3 border rounded-xl"
-              />
+              <div>
+                <input
+                  type="text"
+                  value={headerContent.eventTitle}
+                  onChange={(e) => updateHeaderField("eventTitle", e.target.value)}
+                  maxLength={100}
+                  className="w-full text-4xl font-bold px-4 py-3 border rounded-xl"
+                />
+                <div className="text-sm text-gray-500 text-right mt-1">
+                  {headerContent.eventTitle.length}/100
+                </div>
+              </div>
 
-              <input
-                type="text"
-                value={headerContent.sectionTitle}
-                onChange={(e) => updateHeaderField("sectionTitle", e.target.value)}
-                className="w-full text-2xl font-bold px-4 py-3 border rounded-xl"
-              />
+              <div>
+                <input
+                  type="text"
+                  value={headerContent.sectionTitle}
+                  onChange={(e) => updateHeaderField("sectionTitle", e.target.value)}
+                  maxLength={100}
+                  className="w-full text-2xl font-bold px-4 py-3 border rounded-xl"
+                />
+                <div className="text-sm text-gray-500 text-right mt-1">
+                  {headerContent.sectionTitle.length}/100
+                </div>
+              </div>
 
-              <input
-                type="text"
-                value={headerContent.subtitle}
-                onChange={(e) => updateHeaderField("subtitle", e.target.value)}
-                className="w-full text-lg px-4 py-3 border rounded-xl"
-              />
-
+              <div>
+                <input
+                  type="text"
+                  value={headerContent.subtitle}
+                  onChange={(e) => updateHeaderField("subtitle", e.target.value)}
+                  maxLength={200}
+                  className="w-full text-lg px-4 py-3 border rounded-xl"
+                />
+                <div className="text-sm text-gray-500 text-right mt-1">
+                  {headerContent.subtitle.length}/200
+                </div>
+              </div>
             </div>
           ) : (
             <>
@@ -416,14 +450,20 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
             {speakers.map((day, index) => (
               <div key={index} className="relative">
                 {isEditMode ? (
-                  <input
-                    value={day.day}
-                    onChange={(e) => handleDayEdit(index, e.target.value)}
-                    onClick={() => setActiveDay(index)}
-                    className={`px-6 py-3 rounded-xl border ${
-                      activeDay === index ? 'bg-yellow-500 text-white' : ''
-                    }`}
-                  />
+                  <div>
+                    <input
+                      value={day.day}
+                      onChange={(e) => handleDayEdit(index, e.target.value)}
+                      onClick={() => setActiveDay(index)}
+                      maxLength={50}
+                      className={`px-6 py-3 rounded-xl border ${
+                        activeDay === index ? 'bg-yellow-500 text-white' : ''
+                      }`}
+                    />
+                    <div className="text-xs text-gray-500 text-right mt-1">
+                      {day.day.length}/50
+                    </div>
+                  </div>
                 ) : (
                   <button
                     onClick={() => setActiveDay(index)}

@@ -129,14 +129,20 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
         {/* Heading */}
         <div className="text-center mb-16">
           {editMode ? (
-            <input
-              type="text"
-              value={aboutContent.heading}
-              onChange={(e) =>
-                setAboutContent({ ...aboutContent, heading: e.target.value })
-              }
-              className="text-4xl md:text-5xl font-bold text-black mb-4 px-3 py-2 rounded-md w-full max-w-4xl mx-auto border border-gray-300"
-            />
+            <div className="mb-4">
+              <input
+                type="text"
+                value={aboutContent.heading}
+                onChange={(e) =>
+                  setAboutContent({ ...aboutContent, heading: e.target.value })
+                }
+                maxLength={100}
+                className="text-4xl md:text-5xl font-bold text-black px-3 py-2 rounded-md w-full max-w-4xl mx-auto border border-gray-300"
+              />
+              <div className="text-sm text-gray-500 text-right max-w-4xl mx-auto mt-1">
+                {aboutContent.heading.length}/100
+              </div>
+            </div>
           ) : (
             <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
               {aboutContent.heading}
@@ -145,14 +151,20 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
 
           {editMode ? (
-            <textarea
-              value={aboutContent.subText}
-              onChange={(e) =>
-                setAboutContent({ ...aboutContent, subText: e.target.value })
-              }
-              className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed w-full border border-gray-300 px-3 py-2 rounded-md resize-y"
-              rows={3}
-            />
+            <div className="max-w-4xl mx-auto">
+              <textarea
+                value={aboutContent.subText}
+                onChange={(e) =>
+                  setAboutContent({ ...aboutContent, subText: e.target.value })
+                }
+                maxLength={500}
+                className="text-gray-600 text-lg leading-relaxed w-full border border-gray-300 px-3 py-2 rounded-md resize-y"
+                rows={3}
+              />
+              <div className="text-sm text-gray-500 text-right mt-1">
+                {aboutContent.subText.length}/500
+              </div>
+            </div>
           ) : (
             <p className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed">
               {aboutContent.subText}
@@ -193,31 +205,43 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                 </div>
                 
                 {editMode ? (
-                  <input
-                    type="text"
-                    value={item.title}
-                    onChange={(e) => {
-                      const updated = [...aboutContent.features];
-                      updated[index].title = e.target.value;
-                      setAboutContent({ ...aboutContent, features: updated });
-                    }}
-                    className="text-xl font-semibold mb-2 px-2 py-1 rounded-md w-full border border-gray-300"
-                  />
+                  <div className="mb-2">
+                    <input
+                      type="text"
+                      value={item.title}
+                      onChange={(e) => {
+                        const updated = [...aboutContent.features];
+                        updated[index].title = e.target.value;
+                        setAboutContent({ ...aboutContent, features: updated });
+                      }}
+                      maxLength={100}
+                      className="text-xl font-semibold px-2 py-1 rounded-md w-full border border-gray-300"
+                    />
+                    <div className="text-xs text-gray-500 text-right mt-1">
+                      {item.title.length}/100
+                    </div>
+                  </div>
                 ) : (
                   <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
                 )}
                 
                 {editMode ? (
-                  <textarea
-                    value={item.description}
-                    onChange={(e) => {
-                      const updated = [...aboutContent.features];
-                      updated[index].description = e.target.value;
-                      setAboutContent({ ...aboutContent, features: updated });
-                    }}
-                    className="text-gray-600 w-full px-2 py-1 rounded-md border border-gray-300 resize-y"
-                    rows={3}
-                  />
+                  <div>
+                    <textarea
+                      value={item.description}
+                      onChange={(e) => {
+                        const updated = [...aboutContent.features];
+                        updated[index].description = e.target.value;
+                        setAboutContent({ ...aboutContent, features: updated });
+                      }}
+                      maxLength={200}
+                      className="text-gray-600 w-full px-2 py-1 rounded-md border border-gray-300 resize-y"
+                      rows={3}
+                    />
+                    <div className="text-xs text-gray-500 text-right mt-1">
+                      {item.description.length}/200
+                    </div>
+                  </div>
                 ) : (
                   <p className="text-gray-600">{item.description}</p>
                 )}
@@ -231,25 +255,43 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
           {editMode ? (
             <>
               <div className="flex items-center justify-center gap-2 mb-4">
-                <input
-                  type="text"
-                  value={aboutContent.zonesTitle}
-                  onChange={(e) => setAboutContent({ ...aboutContent, zonesTitle: e.target.value })}
-                  className="text-3xl font-bold text-[#FFD400] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
-                />
-                <input
-                  type="text"
-                  value={aboutContent.zonesTitleHighlight}
-                  onChange={(e) => setAboutContent({ ...aboutContent, zonesTitleHighlight: e.target.value })}
-                  className="text-3xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
-                />
+                <div>
+                  <input
+                    type="text"
+                    value={aboutContent.zonesTitle}
+                    onChange={(e) => setAboutContent({ ...aboutContent, zonesTitle: e.target.value })}
+                    maxLength={50}
+                    className="text-3xl font-bold text-[#FFD400] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                  />
+                  <div className="text-xs text-gray-500 text-right mt-1">
+                    {aboutContent.zonesTitle.length}/50
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    value={aboutContent.zonesTitleHighlight}
+                    onChange={(e) => setAboutContent({ ...aboutContent, zonesTitleHighlight: e.target.value })}
+                    maxLength={50}
+                    className="text-3xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                  />
+                  <div className="text-xs text-gray-500 text-right mt-1">
+                    {aboutContent.zonesTitleHighlight.length}/50
+                  </div>
+                </div>
               </div>
-              <textarea
-                value={aboutContent.zonesSubtitle}
-                onChange={(e) => setAboutContent({ ...aboutContent, zonesSubtitle: e.target.value })}
-                className="text-gray-600 text-lg max-w-3xl mx-auto bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
-                rows={2}
-              />
+              <div className="max-w-3xl mx-auto">
+                <textarea
+                  value={aboutContent.zonesSubtitle}
+                  onChange={(e) => setAboutContent({ ...aboutContent, zonesSubtitle: e.target.value })}
+                  maxLength={200}
+                  className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+                  rows={2}
+                />
+                <div className="text-sm text-gray-500 text-right mt-1">
+                  {aboutContent.zonesSubtitle.length}/200
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -291,16 +333,22 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                 )}
                 
                 {editMode ? (
-                  <input
-                    type="text"
-                    value={zone.title}
-                    onChange={(e) => {
-                      const updated = [...aboutContent.zones];
-                      updated[index].title = e.target.value;
-                      setAboutContent({ ...aboutContent, zones: updated });
-                    }}
-                    className="text-xl font-semibold text-[#FF0000] mb-2 px-2 py-1 rounded-md w-full border border-gray-300"
-                  />
+                  <div className="mb-2">
+                    <input
+                      type="text"
+                      value={zone.title}
+                      onChange={(e) => {
+                        const updated = [...aboutContent.zones];
+                        updated[index].title = e.target.value;
+                        setAboutContent({ ...aboutContent, zones: updated });
+                      }}
+                      maxLength={100}
+                      className="text-xl font-semibold text-[#FF0000] px-2 py-1 rounded-md w-full border border-gray-300"
+                    />
+                    <div className="text-xs text-gray-500 text-right mt-1">
+                      {zone.title.length}/100
+                    </div>
+                  </div>
                 ) : (
                   <h4 className="text-xl font-semibold text-[#FF0000] mb-2">
                     {zone.title}
@@ -308,16 +356,22 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                 )}
                 
                 {editMode ? (
-                  <textarea
-                    value={zone.description}
-                    onChange={(e) => {
-                      const updated = [...aboutContent.zones];
-                      updated[index].description = e.target.value;
-                      setAboutContent({ ...aboutContent, zones: updated });
-                    }}
-                    className="text-gray-700 w-full px-2 py-1 rounded-md border border-gray-300 resize-y"
-                    rows={3}
-                  />
+                  <div>
+                    <textarea
+                      value={zone.description}
+                      onChange={(e) => {
+                        const updated = [...aboutContent.zones];
+                        updated[index].description = e.target.value;
+                        setAboutContent({ ...aboutContent, zones: updated });
+                      }}
+                      maxLength={200}
+                      className="text-gray-700 w-full px-2 py-1 rounded-md border border-gray-300 resize-y"
+                      rows={3}
+                    />
+                    <div className="text-xs text-gray-500 text-right mt-1">
+                      {zone.description.length}/200
+                    </div>
+                  </div>
                 ) : (
                   <p className="text-gray-700 leading-relaxed">{zone.description}</p>
                 )}

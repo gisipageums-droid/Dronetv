@@ -54,8 +54,12 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   const [editMode, setEditMode] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [sponsorsContent, setSponsorsContent] = useState<SponsorsDataContent>(defaultSponsorsContent);
-  const [backupContent, setBackupContent] = useState<SponsorsDataContent>(defaultSponsorsContent);
+  const [sponsorsContent, setSponsorsContent] = useState<SponsorsDataContent>(
+    defaultSponsorsContent
+  );
+  const [backupContent, setBackupContent] = useState<SponsorsDataContent>(
+    defaultSponsorsContent
+  );
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
 
   // Cropping states
@@ -65,7 +69,9 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [originalFile, setOriginalFile] = useState<File | null>(null);
-  const [croppingForPartner, setCroppingForPartner] = useState<string | null>(null);
+  const [croppingForPartner, setCroppingForPartner] = useState<string | null>(
+    null
+  );
   const [aspectRatio] = useState(3 / 2); // Better aspect for logos
 
   // Use the remembered fixed minZoom
@@ -74,16 +80,30 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
 
   const ensurePartnerIds = (partnersInput: any[]): Partner[] => {
     return partnersInput.map((p, idx) => {
-      if (p && p.id) return { id: String(p.id), header: p.header ?? "Partner", image: p.image ?? "/images/partner-placeholder.png" };
-      const newId = (typeof crypto !== "undefined" && (crypto as any).randomUUID)
-        ? (crypto as any).randomUUID()
-        : `temp-${Date.now()}-${idx}`;
-      return { id: newId, header: p.header ?? "Partner", image: p.image ?? "/images/partner-placeholder.png" };
+      if (p && p.id)
+        return {
+          id: String(p.id),
+          header: p.header ?? "Partner",
+          image: p.image ?? "/images/partner-placeholder.png",
+        };
+      const newId =
+        typeof crypto !== "undefined" && (crypto as any).randomUUID
+          ? (crypto as any).randomUUID()
+          : `temp-${Date.now()}-${idx}`;
+      return {
+        id: newId,
+        header: p.header ?? "Partner",
+        image: p.image ?? "/images/partner-placeholder.png",
+      };
     });
   };
 
   useEffect(() => {
-    if (sponsorsData && sponsorsData.title && Array.isArray(sponsorsData.partners)) {
+    if (
+      sponsorsData &&
+      sponsorsData.title &&
+      Array.isArray(sponsorsData.partners)
+    ) {
       const normalized: SponsorsDataContent = {
         title: sponsorsData.title,
         titleHighlight: sponsorsData.titleHighlight ?? "",
@@ -95,31 +115,34 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   }, [sponsorsData]);
 
   // ---------- Image / crop helpers ----------
-  const handleImageSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>, partnerId?: string) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleImageSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, partnerId?: string) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
-      return;
-    }
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size must be less than 5MB");
+        return;
+      }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImageToCrop(reader.result as string);
-      setOriginalFile(file);
-      setCroppingForPartner(partnerId ?? NEW_SENTINEL);
-      setShowCropper(true);
-      setZoom(1);
-      setCrop({ x: 0, y: 0 });
-    };
-    reader.readAsDataURL(file);
-    e.currentTarget.value = "";
-  }, []);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageToCrop(reader.result as string);
+        setOriginalFile(file);
+        setCroppingForPartner(partnerId ?? NEW_SENTINEL);
+        setShowCropper(true);
+        setZoom(1);
+        setCrop({ x: 0, y: 0 });
+      };
+      reader.readAsDataURL(file);
+      e.currentTarget.value = "";
+    },
+    []
+  );
 
   const onCropComplete = useCallback((_: any, croppedPixels: any) => {
     setCroppedAreaPixels(croppedPixels);
@@ -134,7 +157,10 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<{ file: File; previewUrl: string }> => {
+  const getCroppedImg = async (
+    imageSrc: string,
+    pixelCrop: any
+  ): Promise<{ file: File; previewUrl: string }> => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -156,23 +182,31 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
     );
 
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        if (!blob) throw new Error("Canvas is empty");
-        const file = new File([blob], `sponsor-${Date.now()}.jpg`, {
-          type: "image/jpeg",
-          lastModified: Date.now(),
-        });
-        const previewUrl = URL.createObjectURL(blob);
-        resolve({ file, previewUrl });
-      }, "image/jpeg", 0.95);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) throw new Error("Canvas is empty");
+          const file = new File([blob], `sponsor-${Date.now()}.jpg`, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+          const previewUrl = URL.createObjectURL(blob);
+          resolve({ file, previewUrl });
+        },
+        "image/jpeg",
+        0.95
+      );
     });
   };
 
   const applyCrop = async () => {
     try {
-      if (!imageToCrop || !croppedAreaPixels || croppingForPartner === null) return;
+      if (!imageToCrop || !croppedAreaPixels || croppingForPartner === null)
+        return;
 
-      const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      const { file, previewUrl } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels
+      );
 
       if (croppingForPartner === NEW_SENTINEL) {
         const tempId = `temp-${Date.now()}`;
@@ -182,8 +216,14 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
           image: previewUrl,
         };
 
-        setSponsorsContent((prev) => ({ ...prev, partners: [...prev.partners, newPartner] }));
-        setPendingImages((prev) => [...prev, { file, partnerId: tempId, isNew: true }]);
+        setSponsorsContent((prev) => ({
+          ...prev,
+          partners: [...prev.partners, newPartner],
+        }));
+        setPendingImages((prev) => [
+          ...prev,
+          { file, partnerId: tempId, isNew: true },
+        ]);
         toast.success("Partner added! Click Save to upload logo to S3.");
       } else {
         setSponsorsContent((prev) => {
@@ -193,7 +233,10 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
           return { ...prev, partners };
         });
 
-        setPendingImages((prev) => [...prev, { file, partnerId: croppingForPartner }]);
+        setPendingImages((prev) => [
+          ...prev,
+          { file, partnerId: croppingForPartner },
+        ]);
         toast.success("Logo updated! Click Save to upload to S3.");
       }
 
@@ -232,7 +275,10 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
       const zoomChange = -delta * 0.0015;
       setZoom((z) => {
         const next = +(z + zoomChange).toFixed(3);
-        return Math.max(REMEMBERED_MIN_ZOOM, Math.min(REMEMBERED_MAX_ZOOM, next));
+        return Math.max(
+          REMEMBERED_MIN_ZOOM,
+          Math.min(REMEMBERED_MAX_ZOOM, next)
+        );
       });
       return;
     }
@@ -263,11 +309,18 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
       } else if (ev.key === "ArrowRight") {
         ev.preventDefault();
         setCrop((c) => ({ x: +(c.x + step * 0.03).toFixed(3), y: c.y }));
-      } else if ((ev.ctrlKey || ev.metaKey) && (ev.key === "+" || ev.key === "=")) {
+      } else if (
+        (ev.ctrlKey || ev.metaKey) &&
+        (ev.key === "+" || ev.key === "=")
+      ) {
         // ctrl + + to zoom in
-        setZoom((z) => Math.min(REMEMBERED_MAX_ZOOM, +(z + REMEMBERED_ZOOM_STEP).toFixed(2)));
+        setZoom((z) =>
+          Math.min(REMEMBERED_MAX_ZOOM, +(z + REMEMBERED_ZOOM_STEP).toFixed(2))
+        );
       } else if ((ev.ctrlKey || ev.metaKey) && ev.key === "-") {
-        setZoom((z) => Math.max(REMEMBERED_MIN_ZOOM, +(z - REMEMBERED_ZOOM_STEP).toFixed(2)));
+        setZoom((z) =>
+          Math.max(REMEMBERED_MIN_ZOOM, +(z - REMEMBERED_ZOOM_STEP).toFixed(2))
+        );
       }
     };
 
@@ -276,7 +329,10 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   }, [showCropper]);
 
   // ---------- Upload to S3 (API) ----------
-  const uploadImageToS3 = async (file: File, fieldName: string): Promise<string> => {
+  const uploadImageToS3 = async (
+    file: File,
+    fieldName: string
+  ): Promise<string> => {
     if (!userId) {
       throw new Error("User ID is required for image upload");
     }
@@ -324,9 +380,14 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
 
         for (const pending of pendingImages) {
           try {
-            const s3Url = await uploadImageToS3(pending.file, `sponsor-logo-${pending.partnerId}`);
+            const s3Url = await uploadImageToS3(
+              pending.file,
+              `sponsor-logo-${pending.partnerId}`
+            );
 
-            const idx = updatedPartners.findIndex((p) => p.id === pending.partnerId);
+            const idx = updatedPartners.findIndex(
+              (p) => p.id === pending.partnerId
+            );
             if (idx !== -1) {
               updatedPartners[idx].image = s3Url;
               if (pending.isNew) {
@@ -379,7 +440,10 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
       header: "New Partner",
       image: "/images/partner-placeholder.png",
     };
-    setSponsorsContent((prev) => ({ ...prev, partners: [...prev.partners, newPartner] }));
+    setSponsorsContent((prev) => ({
+      ...prev,
+      partners: [...prev.partners, newPartner],
+    }));
   };
 
   const addPartnerWithImage = () => {
@@ -414,14 +478,19 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   };
 
   const removePartner = (partnerId: string) => {
-    setSponsorsContent((prev) => ({ ...prev, partners: prev.partners.filter((p) => p.id !== partnerId) }));
+    setSponsorsContent((prev) => ({
+      ...prev,
+      partners: prev.partners.filter((p) => p.id !== partnerId),
+    }));
     setPendingImages((prev) => prev.filter((pi) => pi.partnerId !== partnerId));
   };
 
   const updatePartnerHeader = (partnerId: string, header: string) => {
     setSponsorsContent((prev) => ({
       ...prev,
-      partners: prev.partners.map((p) => (p.id === partnerId ? { ...p, header } : p)),
+      partners: prev.partners.map((p) =>
+        p.id === partnerId ? { ...p, header } : p
+      ),
     }));
   };
 
@@ -437,7 +506,11 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 disabled={isSaving || isUploading}
                 className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
               >
-                {isUploading || isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save size={18} />}
+                {isUploading || isSaving ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Save size={18} />
+                )}
                 {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
               </button>
 
@@ -483,22 +556,47 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
         <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
           {editMode ? (
             <div className="flex gap-2 justify-center">
-              <input
-                type="text"
-                value={sponsorsContent.title}
-                onChange={(e) => setSponsorsContent({ ...sponsorsContent, title: e.target.value })}
-                className="border px-2 py-1 rounded"
-              />
-              <input
-                type="text"
-                value={sponsorsContent.titleHighlight}
-                onChange={(e) => setSponsorsContent({ ...sponsorsContent, titleHighlight: e.target.value })}
-                className="border px-2 py-1 rounded text-red-600"
-              />
+              <div>
+                <input
+                  type="text"
+                  value={sponsorsContent.title}
+                  onChange={(e) =>
+                    setSponsorsContent({
+                      ...sponsorsContent,
+                      title: e.target.value,
+                    })
+                  }
+                  maxLength={50}
+                  className="border px-2 py-1 rounded"
+                />
+                <div className="text-xs text-gray-500 text-right mt-1">
+                  {sponsorsContent.title.length}/50
+                </div>
+              </div>
+              <div>
+                <input
+                  type="text"
+                  value={sponsorsContent.titleHighlight}
+                  onChange={(e) =>
+                    setSponsorsContent({
+                      ...sponsorsContent,
+                      titleHighlight: e.target.value,
+                    })
+                  }
+                  maxLength={50}
+                  className="border px-2 py-1 rounded text-red-600"
+                />
+                <div className="text-xs text-gray-500 text-right mt-1">
+                  {sponsorsContent.titleHighlight.length}/50
+                </div>
+              </div>
             </div>
           ) : (
             <>
-              {sponsorsContent.title} <span className="text-red-600">{sponsorsContent.titleHighlight}</span>
+              {sponsorsContent.title}{" "}
+              <span className="text-red-600">
+                {sponsorsContent.titleHighlight}
+              </span>
             </>
           )}
         </h2>
@@ -508,7 +606,10 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
         <div className="max-w-6xl mx-auto rounded-[28px] bg-white shadow-xl p-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-12">
             {sponsorsContent.partners.map((partner) => (
-              <div key={partner.id} className="relative text-center flex flex-col items-center gap-4">
+              <div
+                key={partner.id}
+                className="relative text-center flex flex-col items-center gap-4"
+              >
                 {editMode && (
                   <button
                     onClick={() => removePartner(partner.id)}
@@ -520,12 +621,20 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
 
                 {editMode ? (
                   <div className="flex flex-col gap-2 w-full items-center">
-                    <input
-                      type="text"
-                      value={partner.header}
-                      onChange={(e) => updatePartnerHeader(partner.id, e.target.value)}
-                      className="border px-2 py-1 rounded text-sm w-full"
-                    />
+                    <div className="w-full">
+                      <input
+                        type="text"
+                        value={partner.header}
+                        onChange={(e) =>
+                          updatePartnerHeader(partner.id, e.target.value)
+                        }
+                        maxLength={100}
+                        className="border px-2 py-1 rounded text-sm w-full"
+                      />
+                      <div className="text-xs text-gray-500 text-right mt-1">
+                        {partner.header.length}/100
+                      </div>
+                    </div>
 
                     <div className="relative group">
                       <img
@@ -547,11 +656,15 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                         />
                       </label>
                     </div>
-                    <span className="text-xs text-gray-500">Click logo to replace</span>
+                    <span className="text-xs text-gray-500">
+                      Click logo to replace
+                    </span>
                   </div>
                 ) : (
                   <>
-                    <h3 className="text-xs sm:text-sm font-semibold uppercase">{partner.header}</h3>
+                    <h3 className="text-xs sm:text-sm font-semibold uppercase">
+                      {partner.header}
+                    </h3>
                     <img
                       src={partner.image}
                       alt={partner.header}
@@ -574,7 +687,10 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
             <div className="bg-white rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
               <div className="p-4 border-b flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Crop Logo</h3>
-                <button onClick={cancelCrop} className="p-1 hover:bg-gray-200 rounded">
+                <button
+                  onClick={cancelCrop}
+                  className="p-1 hover:bg-gray-200 rounded"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -608,7 +724,14 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
 
                 <div className="flex items-center gap-2 w-full">
                   <button
-                    onClick={() => setZoom((z) => Math.max(REMEMBERED_MIN_ZOOM, +(z - REMEMBERED_ZOOM_STEP).toFixed(2)))}
+                    onClick={() =>
+                      setZoom((z) =>
+                        Math.max(
+                          REMEMBERED_MIN_ZOOM,
+                          +(z - REMEMBERED_ZOOM_STEP).toFixed(2)
+                        )
+                      )
+                    }
                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
                     type="button"
                   >
@@ -626,7 +749,14 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                   />
 
                   <button
-                    onClick={() => setZoom((z) => Math.min(REMEMBERED_MAX_ZOOM, +(z + REMEMBERED_ZOOM_STEP).toFixed(2)))}
+                    onClick={() =>
+                      setZoom((z) =>
+                        Math.min(
+                          REMEMBERED_MAX_ZOOM,
+                          +(z + REMEMBERED_ZOOM_STEP).toFixed(2)
+                        )
+                      )
+                    }
                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
                     type="button"
                   >
@@ -642,7 +772,10 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                   </button>
                 </div>
 
-                <button onClick={applyCrop} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                <button
+                  onClick={applyCrop}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
                   Apply Crop
                 </button>
               </div>

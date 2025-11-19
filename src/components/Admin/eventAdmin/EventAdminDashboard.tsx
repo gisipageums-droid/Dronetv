@@ -964,9 +964,25 @@ const EventAdminDashboard: React.FC = () => {
     }
   };
 
-  const handlePreview = (eventId: string, userId: string) => {
-    navigate(`/edit/event/${userId}/${eventId}`);
-  };
+const handlePreview = (eventId: string, userId: string) => {
+  // Find the event to get its templateSelection
+  const event = events.find(e => e.eventId === eventId);
+  if (!event) {
+    toast.error("Event not found");
+    return;
+  }
+
+  // Handle both template selection formats
+  if (event.templateSelection === "template-1" || event.templateSelection === "1") {
+    navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
+  } else if (event.templateSelection === "template-2" || event.templateSelection === "2") {
+    navigate(`/edit/event/t2/admin/${eventId}/${userId}`);
+  } else {
+    // Default to template 1 if unknown
+    console.warn(`Unknown template selection: ${event.templateSelection}, defaulting to template 1`);
+    navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
+  }
+};
 
   const handleApprove = async (eventId: string, userId: string) => {
     try {

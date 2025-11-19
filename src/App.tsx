@@ -90,7 +90,7 @@ import AdminCompanyForm from "./components/AdminCompanyForm";
 import FinalT1 from "./components/mainProfessionalPreview/t1/src/App";
 import Event_T1 from "./components/event/template/t1/src/EventTemplate1"
 import Event_T2 from "./components/event/template/t2/src/App";
-import Edit_event_t1 from "./components/event/template/t1/final/edit/EventTemplate1";
+import Edit_event_t1 from "./components/event/template/t1/edit/EventTemplate1";
 import Edit_event_t2 from "./components/event/template/t2/final/edit/App";
 import EventSelect from "./components/event/select-template/Event-select";
 import EventLeads from "./components/UserDashboard/components/common/EventLeads";
