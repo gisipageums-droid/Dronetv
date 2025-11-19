@@ -138,6 +138,7 @@ export default function App() {
         <main>
           <Hero
             heroData={AIGenData?.content?.hero}
+            headerData={AIGenData?.content?.company}
             onStateChange={handleHeroChange}
             publishedId={AIGenData.publishedId}
             userId={AIGenData.userId}

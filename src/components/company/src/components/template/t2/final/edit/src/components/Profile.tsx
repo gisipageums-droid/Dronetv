@@ -1201,7 +1201,7 @@
 
 //       // Wait for all uploads to complete
 //       const results = await Promise.allSettled(uploadPromises);
-      
+
 //       const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
 //       const failedUploads = results.filter(result => result.status === 'rejected').length;
 
@@ -1216,7 +1216,7 @@
 //       const successfulIndices = results
 //         .filter(result => result.status === 'fulfilled')
 //         .map(result => result.value.index);
-      
+
 //       setPendingImages(prev => {
 //         const updated = { ...prev };
 //         successfulIndices.forEach(index => {
@@ -1240,7 +1240,7 @@
 //       if (Object.keys(pendingImages).length > 0) {
 //         await handleImageUpload();
 //       }
-      
+
 //       // Exit edit mode
 //       setIsEditing(false);
 //       toast.success("Profile section saved!");
@@ -1886,9 +1886,9 @@ const Profile = ({
       teamMembers: prev.teamMembers.map((m, i) =>
         i === index
           ? {
-              ...m,
-              socialLinks: { ...m.socialLinks, [platform]: value },
-            }
+            ...m,
+            socialLinks: { ...m.socialLinks, [platform]: value },
+          }
           : m
       ),
     }));
@@ -2014,14 +2014,14 @@ const Profile = ({
       if (awsImageUrl) {
         // Update with actual S3 URL
         updateTeamMemberField(croppingIndex, "image", awsImageUrl);
-        
+
         // Remove from pending images since it's uploaded
         setPendingImages((prev) => {
           const newPending = { ...prev };
           delete newPending[croppingIndex];
           return newPending;
         });
-        
+
         toast.success("Profile image cropped and uploaded to AWS successfully!");
       } else {
         // If upload fails, keep the preview URL and set as pending
@@ -2084,7 +2084,7 @@ const Profile = ({
 
       // Wait for all uploads to complete
       const results = await Promise.allSettled(uploadPromises);
-      
+
       const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
       const failedUploads = results.filter(result => result.status === 'rejected').length;
 
@@ -2099,7 +2099,7 @@ const Profile = ({
       const successfulIndices = results
         .filter(result => result.status === 'fulfilled')
         .map(result => result.value.index);
-      
+
       setPendingImages(prev => {
         const updated = { ...prev };
         successfulIndices.forEach(index => {
@@ -2123,7 +2123,7 @@ const Profile = ({
       if (Object.keys(pendingImages).length > 0) {
         await handleImageUpload();
       }
-      
+
       // Exit edit mode
       setIsEditing(false);
       toast.success("Profile section saved!");
@@ -2211,11 +2211,10 @@ const Profile = ({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
@@ -2290,11 +2289,10 @@ const Profile = ({
       {/* Main Profile Section */}
       <section
         id="our-team"
-        className={`py-20 theme-transition ${
-          theme === "dark"
+        className={`py-20 theme-transition ${theme === "dark"
             ? "bg-black text-gray-100"
             : "bg-gray-50 text-gray-900"
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
@@ -2305,11 +2303,10 @@ const Profile = ({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
+                className={`${isUploading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
               >
                 <Save size={16} />
                 {isUploading ? "Uploading..." : "Save & Exit"}
@@ -2343,9 +2340,8 @@ const Profile = ({
                   value={contentState.heading}
                   onChange={(e) => updateHeading(e.target.value)}
                   maxLength={100}
-                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full ${
-                    contentState.heading.length >= 100 ? "border-red-500" : ""
-                  }`}
+                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full ${contentState.heading.length >= 100 ? "border-red-500" : ""
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {contentState.heading.length}/100
@@ -2368,11 +2364,10 @@ const Profile = ({
                   value={contentState.subheading}
                   onChange={(e) => updateSubheading(e.target.value)}
                   maxLength={200}
-                  className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${
-                    contentState.subheading.length >= 200
+                  className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${contentState.subheading.length >= 200
                       ? "border-red-500"
                       : ""
-                  }`}
+                    }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {contentState.subheading.length}/200
@@ -2384,7 +2379,7 @@ const Profile = ({
                 </div>
               </div>
             ) : (
-              <p className="text-lg max-w-3xl mx-auto">
+              <p className="text-lg max-w-3xl mx-auto text-justify">
                 {contentState.subheading}
               </p>
             )}
@@ -2394,9 +2389,8 @@ const Profile = ({
             {contentState.teamMembers.map((member, index) => (
               <motion.div
                 key={member.id}
-                className={`rounded-lg overflow-hidden shadow-lg ${
-                  theme === "dark" ? "bg-gray-900" : "bg-white"
-                }`}
+                className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
+                  }`}
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
               >
@@ -2441,9 +2435,8 @@ const Profile = ({
                           updateTeamMemberField(index, "name", e.target.value)
                         }
                         maxLength={50}
-                        className={`text-xl font-semibold mb-1 border-b bg-transparent text-center w-full ${
-                          member.name.length >= 50 ? "border-red-500" : ""
-                        }`}
+                        className={`text-xl font-semibold mb-1 border-b bg-transparent text-center w-full ${member.name.length >= 50 ? "border-red-500" : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {member.name.length}/50
@@ -2468,9 +2461,8 @@ const Profile = ({
                           updateTeamMemberField(index, "role", e.target.value)
                         }
                         maxLength={60}
-                        className={`font-medium mb-3 border-b bg-transparent text-center w-full ${
-                          member.role.length >= 60 ? "border-red-500" : ""
-                        }`}
+                        className={`font-medium mb-3 border-b bg-transparent text-center w-full ${member.role.length >= 60 ? "border-red-500" : ""
+                          }`}
                         style={{ color: "#facc15" }}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
@@ -2498,21 +2490,18 @@ const Profile = ({
                         updateTeamMemberField(index, "bio", e.target.value)
                       }
                       maxLength={200}
-                      className={`text-sm border-b bg-transparent text-center w-full ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-600"
-                      } ${
-                        member.bio.length >= 200
+                      className={`text-sm border-b bg-transparent text-center w-full ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                        } ${member.bio.length >= 200
                           ? "border-red-500"
                           : member.bio.length >= 180
-                          ? "border-orange-500"
-                          : ""
-                      }`}
+                            ? "border-orange-500"
+                            : ""
+                        }`}
                     />
                   ) : (
                     <p
-                      className={`text-sm ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-600"
-                      }`}
+                      className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                        } text-justify`}
                     >
                       {member.bio}
                     </p>
@@ -2562,11 +2551,10 @@ const Profile = ({
 
             {isEditing && (
               <motion.div
-                className={`rounded-lg flex items-center justify-center border-dashed ${
-                  theme === "dark"
+                className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
                     ? "bg-gray-900 border-gray-700"
                     : "bg-white border-gray-300"
-                } border-2`}
+                  } border-2`}
                 whileHover={{ scale: 1.02 }}
               >
                 <motion.button

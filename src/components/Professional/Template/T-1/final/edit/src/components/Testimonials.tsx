@@ -876,7 +876,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                         </div>
                       </div>
 
-                      <blockquote className="mb-6 italic leading-relaxed text-gray-700 dark:text-gray-300">
+                      <blockquote className="text-justify mb-6 italic leading-relaxed text-gray-700 dark:text-gray-300">
                         "{testimonial.content}"
                       </blockquote>
 

@@ -121,7 +121,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
                 <span className="text-xs bg-indigo-600 px-2 py-1 rounded-full">
                   {blog.category}
                 </span>
-                <p className="text-xs mt-1 opacity-90">
+                <p className="text-xs mt-1 opacity-90 text-justify">
                   {blog.date} • {blog.readTime || "5 min read"}
                 </p>
               </div>
@@ -135,7 +135,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
             {blog.title}
           </h1>
 
-          <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+          <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed text-justify">
             {blog.excerpt}
           </p>
 
@@ -161,19 +161,19 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
           )}
 
           {/* Main Content */}
-          <div className="text-gray-700 dark:text-gray-300 leading-6 space-y-3 text-xs max-h-40 overflow-y-auto">
+          <div className="text-gray-700 dark:text-gray-300 leading-6 space-y-3 text-xs max-h-40 overflow-y-auto text-justify">
             {blog.content ? (
               <div dangerouslySetInnerHTML={{ __html: blog.content }} />
             ) : (
               <>
-                <p>
+                <p className="text-justify">
                   Drone technology is rapidly transforming industries across
                   India, offering innovative solutions that were once considered
                   impossible. From agriculture to construction, the applications
                   of drone technology are vast and continually expanding.
                 </p>
 
-                <p>
+                <p className="text-justify">
                   In the agricultural sector, drones equipped with multispectral
                   sensors can monitor crop health, detect pest infestations, and
                   optimize irrigation. This technology enables farmers to make
@@ -181,11 +181,11 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
                   reduced resource consumption.
                 </p>
 
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mt-4 mb-2">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mt-4 mb-2 text-justify">
                   The Future of Drone Technology
                 </h3>
 
-                <p>
+                <p className="text-justify">
                   As regulations evolve and technology advances, we can expect
                   to see even more innovative applications of drones in various
                   sectors. The integration of AI and machine learning with drone
@@ -770,7 +770,7 @@ export default function Blog({
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
                   {displayContent.header.title}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-justify text-gray-600 dark:text-gray-300">
                   {displayContent.header.desc}
                 </p>
               </>
@@ -829,7 +829,7 @@ export default function Blog({
                               />
                             </label>
                             {pendingImages[b.id] && (
-                              <p className="text-xs text-orange-600 bg-white/80 p-1 rounded mt-1">
+                              <p className="text-justify text-xs text-orange-600 bg-white/80 p-1 rounded mt-1">
                                 Image selected: {pendingImages[b.id].name}
                               </p>
                             )}
@@ -933,7 +933,7 @@ export default function Blog({
                             <h3 className="text-xl mb-2 font-semibold text-gray-900 dark:text-white">
                               {b.title}
                             </h3>
-                            <p className="text-gray-600 dark:text-gray-300 h-full overflow-auto">
+                            <p className="text-justify text-gray-600 dark:text-gray-300 h-full overflow-auto">
                               {b.excerpt}
                             </p>
                             <div className="flex justify-between items-center mt-4 absolute bottom-4">
@@ -1033,15 +1033,15 @@ export default function Blog({
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-justify text-sm font-medium text-gray-700 mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     1:1 (Square)
@@ -1049,8 +1049,8 @@ export default function Blog({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     4:3 (Standard)
@@ -1058,8 +1058,8 @@ export default function Blog({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     16:9 (Widescreen)

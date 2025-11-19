@@ -105,7 +105,7 @@ export function Certifications({ certificationsData }: CertificationsProps) {
   const stats = processStatsData();
 
   return (
-    <section id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
+    <section id="certifications" className="py-20 text-justify bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div 

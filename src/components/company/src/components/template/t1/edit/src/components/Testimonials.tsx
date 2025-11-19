@@ -566,7 +566,7 @@ export default function EditableTestimonials({
     return (
       <div className={`group relative ${className}`}>
         {multiline ? (
-          <blockquote className="text-lg text-gray-700 italic">
+          <blockquote className="text-lg text-gray-700 italic text-justify">
             "{value}"
           </blockquote>
         ) : (
@@ -672,7 +672,7 @@ export default function EditableTestimonials({
               </div>
             </div>
           ) : (
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-gray-600 max-w-2xl mx-auto text-justify">
               {tempData.headline.description}
             </p>
           )}
@@ -751,7 +751,7 @@ export default function EditableTestimonials({
                     </div>
 
                     <div className="border-t pt-6">
-                      <p className="text-gray-600">
+                      <p className="text-gray-600 text-justify">
                         <EditableField
                           testimonial={testimonial}
                           index={index}
@@ -786,11 +786,10 @@ export default function EditableTestimonials({
                 <button
                   key={index}
                   onClick={() => setCurrent(index)}
-                  className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                    index === current
-                      ? "bg-blue-600"
-                      : "bg-gray-300 hover:bg-gray-400"
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-colors duration-200 ${index === current
+                    ? "bg-blue-600"
+                    : "bg-gray-300 hover:bg-gray-400"
+                    }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
               ))}
@@ -866,31 +865,28 @@ export default function EditableTestimonials({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>

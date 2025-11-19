@@ -120,11 +120,11 @@ export default function MainProTemp2() {
         <Skills 
           skillData={finaleDataReview.content.skillContent}
         />
-        <Services 
-          serviceData={finaleDataReview.content.serviceContent}
-        />
         <Projects 
           projectData={finaleDataReview.content.projectContent}
+        />
+        <Services 
+          serviceData={finaleDataReview.content.serviceContent}
         />
         <Certifications 
           certificationsData={finaleDataReview.content.certificationsContent}
