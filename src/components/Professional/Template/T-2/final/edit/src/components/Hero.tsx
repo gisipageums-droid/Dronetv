@@ -818,7 +818,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
               ) : (
                 <div 
                   ref={descriptionRef}
-                  className="text-xl text-muted-foreground leading-relaxed whitespace-pre-wrap break-words"
+                  className="text-xl text-justify text-muted-foreground leading-relaxed whitespace-pre-wrap break-words"
                 >
                   {displayData.description}
                 </div>

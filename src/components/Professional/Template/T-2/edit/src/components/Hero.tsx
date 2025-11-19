@@ -642,7 +642,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
     <section 
       id="home" 
       ref={heroRef}
-      className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20 relative"
+      className="text-justify min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20 relative"
     >
       {/* Image Cropper Modal */}
       {showCropper &&

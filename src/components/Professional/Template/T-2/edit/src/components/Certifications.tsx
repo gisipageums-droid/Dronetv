@@ -515,7 +515,7 @@ export function Certifications({ certData, onStateChange, userId, professionalId
   }
 
   return (
-    <section ref={certificationsRef} id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
+    <section ref={certificationsRef} id="certifications" className="py-20 text-justify bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
       {/* Image Cropper Modal - UPDATED WITH ZOOM OUT LOGIC */}
       {showCropper && (
         <motion.div

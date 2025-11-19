@@ -197,7 +197,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-400 mb-6 leading-relaxed max-w-md">
+              <p className="text-gray-400 mb-6 text-justify leading-relaxed max-w-md">
                 {content.personalInfo.description}
               </p>
             )}

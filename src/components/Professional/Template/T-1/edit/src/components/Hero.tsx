@@ -358,7 +358,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                   </div>
                 </div>
               ) : (
-                <p className="text-lg lg:text-xl text-gray-700 dark:text-gray-300">
+                <p className="text-lg text-justify lg:text-xl text-gray-700 dark:text-gray-300">
                   {heroContent.description}
                 </p>
               )}

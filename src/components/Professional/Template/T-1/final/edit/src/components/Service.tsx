@@ -393,7 +393,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
   };
 
   return (
-    <section id="services" className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section id="services" className="py-20 text-justify bg-gray-50 dark:bg-gray-800">
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Edit Mode Toggle */}
         <div className="absolute top-0 right-0">
@@ -488,7 +488,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                   {serviceContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
-              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+              <p className=" max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
                 {serviceContent.description}
               </p>
             </>

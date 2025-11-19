@@ -528,7 +528,7 @@ export function About({
   }
 
   return (
-    <section ref={aboutRef} id="about" className="relative py-20 bg-background">
+    <section ref={aboutRef} id="about" className="relative text-justify py-20 bg-background">
       {/* Image Cropper Modal */}
       {showCropper && (
         <motion.div

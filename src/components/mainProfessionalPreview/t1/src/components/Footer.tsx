@@ -34,7 +34,7 @@ const Footer: React.FC<FooterProps> = ({ content }) => {
   }, [content]);
 
   return (
-    <footer className="bg-dark-300 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
+    <footer className="bg-dark-300 text-justify border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Info Section */}

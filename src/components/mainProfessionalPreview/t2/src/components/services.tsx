@@ -113,7 +113,7 @@ export function Services({ serviceData }: ServicesProps) {
     }
 
     return (
-        <section id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
+        <section id="services" className="py-20 text-justify bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <motion.div

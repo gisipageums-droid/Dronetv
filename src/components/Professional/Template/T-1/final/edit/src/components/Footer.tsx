@@ -89,7 +89,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   };
 
   return (
-    <footer className="bg-dark-300 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
+    <footer className="bg-dark-300 text-justify border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
         {onSave && (
           <div className="absolute top-6 right-6 z-20 flex gap-3">

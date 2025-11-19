@@ -37,7 +37,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ content }) => {
   const testimonialContent = content || defaultContent;
 
   return (
-    <section id="testimonials" className="py-20 bg-white dark:bg-gray-900">
+    <section id="testimonials" className="py-20 text-justify bg-white dark:bg-gray-900">
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div

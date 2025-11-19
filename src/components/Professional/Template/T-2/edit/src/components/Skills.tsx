@@ -318,7 +318,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-16 "
         >
           {isEditing ? (
             <>
@@ -420,7 +420,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
               ) : (
                 <>
                   <h3 className="text-xl text-foreground mb-2">{skill.title}</h3>
-                  <p className="text-muted-foreground mb-4">{skill.description}</p>
+                  <p className="text-muted-foreground mb-4 text-justify">{skill.description}</p>
                 </>
               )}
 

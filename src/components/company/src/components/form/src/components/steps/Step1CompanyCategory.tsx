@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { StepProps } from "../../types/form";
-import { Building2, User, Phone, Globe, X, Mail, AlertCircle } from "lucide-react";
+import { Building2, User, Phone, Globe, X, Mail, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { FormInput } from "../FormInput";
 import { PhoneInput } from "../PhoneInput";
 import { CountryStateSelect } from "../CountryStateSelect";
 import { FormStep } from "../FormStep";
 import { useUserAuth } from "../../../../../../../context/context";
 import axios from "axios";
+import "./step1.css";
 
 interface Step1CompanyCategoryProps extends StepProps {
   checkCompanyName: (name: string) => void;
@@ -17,6 +18,279 @@ interface Step1CompanyCategoryProps extends StepProps {
   } | null;
   isCheckingName: boolean;
 }
+
+// Custom Date Picker Component
+const ScrollDatePicker: React.FC<{
+  value: string;
+  onChange: (date: string) => void;
+}> = ({ value, onChange }) => {
+  // Parse the initial value or use current date as default
+  const parseDate = (dateStr: string) => {
+    if (!dateStr) {
+      const now = new Date();
+      return {
+        day: now.getDate().toString().padStart(2, "0"),
+        month: (now.getMonth() + 1).toString().padStart(2, "0"),
+        year: now.getFullYear().toString()
+      };
+    }
+    
+    try {
+      const [year, month, day] = dateStr.split("-");
+      return {
+        day: day || new Date().getDate().toString().padStart(2, "0"),
+        month: month || (new Date().getMonth() + 1).toString().padStart(2, "0"),
+        year: year || new Date().getFullYear().toString()
+      };
+    } catch (error) {
+      const now = new Date();
+      return {
+        day: now.getDate().toString().padStart(2, "0"),
+        month: (now.getMonth() + 1).toString().padStart(2, "0"),
+        year: now.getFullYear().toString()
+      };
+    }
+  };
+
+  const [selectedDate, setSelectedDate] = useState(() => parseDate(value));
+  const [isScrolling, setIsScrolling] = useState(false);
+  
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+  const months = [
+    { name: "January", value: "01" },
+    { name: "February", value: "02" },
+    { name: "March", value: "03" },
+    { name: "April", value: "04" },
+    { name: "May", value: "05" },
+    { name: "June", value: "06" },
+    { name: "July", value: "07" },
+    { name: "August", value: "08" },
+    { name: "September", value: "09" },
+    { name: "October", value: "10" },
+    { name: "November", value: "11" },
+    { name: "December", value: "12" }
+  ];
+  
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => (currentYear - i).toString());
+
+  const dayRef = useRef<HTMLDivElement>(null);
+  const monthRef = useRef<HTMLDivElement>(null);
+  const yearRef = useRef<HTMLDivElement>(null);
+
+  const handleDateChange = (type: 'day' | 'month' | 'year', newValue: string) => {
+    const newDate = {
+      ...selectedDate,
+      [type]: newValue
+    };
+    
+    // Validate the date (especially for February and leap years)
+    const day = parseInt(newDate.day);
+    const month = parseInt(newDate.month);
+    const year = parseInt(newDate.year);
+    
+    let validatedDay = newDate.day;
+    
+    // Check if the selected day is valid for the selected month and year
+    if (type !== 'day') {
+      const daysInMonth = new Date(year, month, 0).getDate();
+      if (day > daysInMonth) {
+        validatedDay = daysInMonth.toString().padStart(2, "0");
+      }
+    }
+    
+    const finalDate = {
+      ...newDate,
+      day: validatedDay
+    };
+    
+    setSelectedDate(finalDate);
+    
+    // Format date as YYYY-MM-DD
+    const dateString = `${finalDate.year}-${finalDate.month}-${finalDate.day}`;
+    onChange(dateString);
+  };
+
+  // Scroll to selected item on mount and when selectedDate changes
+  useEffect(() => {
+    if (isScrolling) return;
+
+    const scrollToSelected = (container: HTMLDivElement | null, selectedValue: string) => {
+      if (!container) return;
+      
+      setTimeout(() => {
+        const selectedElement = container.querySelector(`[data-value="${selectedValue}"]`);
+        if (selectedElement) {
+          const containerHeight = container.clientHeight;
+          const elementTop = (selectedElement as HTMLElement).offsetTop;
+          const elementHeight = (selectedElement as HTMLElement).clientHeight;
+          container.scrollTop = elementTop - (containerHeight - elementHeight) / 2;
+        }
+      }, 100);
+    };
+
+    scrollToSelected(dayRef.current, selectedDate.day);
+    scrollToSelected(monthRef.current, selectedDate.month);
+    scrollToSelected(yearRef.current, selectedDate.year);
+  }, [selectedDate.day, selectedDate.month, selectedDate.year, isScrolling]);
+
+  // Update when value prop changes from parent
+  useEffect(() => {
+    if (value && !isScrolling) {
+      const parsed = parseDate(value);
+      setSelectedDate(parsed);
+    }
+  }, [value, isScrolling]);
+
+  // Handle scroll events to prevent reset during user interaction
+  useEffect(() => {
+    const containers = [dayRef.current, monthRef.current, yearRef.current];
+    
+    const handleScrollStart = () => {
+      setIsScrolling(true);
+    };
+    
+    const handleScrollEnd = () => {
+      setTimeout(() => {
+        setIsScrolling(false);
+      }, 150);
+    };
+
+    containers.forEach(container => {
+      if (container) {
+        container.addEventListener('scroll', handleScrollStart);
+        container.addEventListener('scrollend', handleScrollEnd);
+        container.addEventListener('touchmove', handleScrollStart);
+        container.addEventListener('touchend', handleScrollEnd);
+      }
+    });
+
+    return () => {
+      containers.forEach(container => {
+        if (container) {
+          container.removeEventListener('scroll', handleScrollStart);
+          container.removeEventListener('scrollend', handleScrollEnd);
+          container.removeEventListener('touchmove', handleScrollStart);
+          container.removeEventListener('touchend', handleScrollEnd);
+        }
+      });
+    };
+  }, []);
+
+  interface ScrollColumnProps {
+    items: Array<{ value: string; label: string }>;
+    selectedValue: string;
+    onSelect: (value: string) => void;
+  }
+
+  const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
+    ({ items, selectedValue, onSelect }, ref) => {
+      const handleClick = (value: string) => {
+        setIsScrolling(true);
+        onSelect(value);
+        // Reset scrolling state after a short delay
+        setTimeout(() => setIsScrolling(false), 100);
+      };
+
+      return (
+        <div 
+          ref={ref}
+          className="flex-1 h-32 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
+          style={{
+            scrollBehavior: 'smooth',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          {/* Top padding */}
+          <div className="h-12"></div>
+          
+          {items.map((item) => (
+            <div
+              key={item.value}
+              data-value={item.value}
+              className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
+                ${selectedValue === item.value
+                  ? 'text-amber-600 font-bold text-lg scale-105 bg-amber-50 rounded-lg mx-1'
+                  : 'text-gray-500 hover:text-gray-700'
+                }`}
+              onClick={() => handleClick(item.value)}
+            >
+              {item.label}
+            </div>
+          ))}
+          
+          {/* Bottom padding */}
+          <div className="h-12"></div>
+        </div>
+      );
+    }
+  );
+
+  ScrollColumn.displayName = "ScrollColumn";
+
+  return (
+    <div className="bg-white border border-amber-200 rounded-xl p-4 date-picker-card animate-fade-in-up">
+      <div className="text-center mb-4">
+        <h3 className="font-semibold text-gray-800">Date of Incorporation</h3>
+        <p className="text-xs text-gray-600 mt-1">
+          Select your company's incorporation date
+        </p>
+      </div>
+
+      {/* Date Picker */}
+      <div className="flex items-center justify-between mb-2 px-4">
+        <div className="flex-1 text-center">
+          <span className="text-xs font-medium text-gray-500">DAY</span>
+        </div>
+        <div className="flex-1 text-center">
+          <span className="text-xs font-medium text-gray-500">MONTH</span>
+        </div>
+        <div className="flex-1 text-center">
+          <span className="text-xs font-medium text-gray-500">YEAR</span>
+        </div>
+      </div>
+
+      <div className="relative">
+        {/* Selection Highlight */}
+        <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-12 bg-amber-100 border-2 border-amber-300 rounded-lg pointer-events-none date-picker-highlight"></div>
+        
+        <div className="flex items-stretch h-32 relative z-10">
+          {/* Day Column */}
+          <ScrollColumn
+            ref={dayRef}
+            items={days.map(day => ({ value: day, label: parseInt(day).toString() }))}
+            selectedValue={selectedDate.day}
+            onSelect={(value) => handleDateChange('day', value)}
+          />
+
+          {/* Month Column */}
+          <ScrollColumn
+            ref={monthRef}
+            items={months.map(month => ({ value: month.value, label: month.name.substring(0, 3) }))}
+            selectedValue={selectedDate.month}
+            onSelect={(value) => handleDateChange('month', value)}
+          />
+
+          {/* Year Column */}
+          <ScrollColumn
+            ref={yearRef}
+            items={years.map(year => ({ value: year, label: year }))}
+            selectedValue={selectedDate.year}
+            onSelect={(value) => handleDateChange('year', value)}
+          />
+        </div>
+      </div>
+
+      {/* Selected Date Display */}
+      <div className="text-center mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+        <p className="text-sm text-gray-600">Selected Date</p>
+        <p className="font-semibold text-amber-700">
+          {parseInt(selectedDate.day)} {months.find(m => m.value === selectedDate.month)?.name} {selectedDate.year}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   formData,
@@ -45,7 +319,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
   // State for email verification modal
   const { isLogin, setAccountEmail } = useUserAuth();
-  const [showEmailModal, setShowEmailModal] = useState(!isLogin); // Show modal if not logged in
+  const [showEmailModal, setShowEmailModal] = useState(!isLogin);
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [emailCheckResult, setEmailCheckResult] = useState<{
     exists: boolean;
@@ -79,14 +353,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       });
 
       if (emailExists) {
-        // Email exists - store in context and close modal
         setAccountEmail(email);
         setTimeout(() => {
           setShowEmailModal(false);
           setEmailCheckResult(null);
         }, 1500);
       }
-      // If email doesn't exist, don't close modal automatically - let user decide
     } catch (error) {
       console.error("Error checking email:", error);
       setEmailCheckResult({
@@ -120,60 +392,26 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     }
   };
 
-  // Function to close modal when email doesn't exist (user wants to create new account)
+  // Function to close modal when email doesn't exist
   const handleModalClose = () => {
     setShowEmailModal(false);
     setEmailCheckResult(null);
-    // Don't clear the field - let user proceed with new email
   };
 
   // Function to handle modal input change
   const handleModalEmailChange = (value: string) => {
     setTempDirectorEmail(value);
-    // Also update the form data in real-time so field stays in sync
     updateFormData({ directorEmail: value });
   };
 
-
-
-
-  // ===== Date of Incorporation (custom dropdowns) =====
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ];
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
-
-  // Split current date (if exists)
-  const [year, month, day] = formData.yearEstablished
-    ? formData.yearEstablished.split("-")
-    : ["", "", ""];
-
-  // Handle dropdown changes
-  const handleChange = (field, value) => {
-    const newDate = {
-      year: field === "year" ? value : year,
-      month: field === "month" ? value : month,
-      day: field === "day" ? value : day,
-    };
-
-    // Only update when at least year and month are selected
-    updateFormData({
-      yearEstablished: `${newDate.year || ""}-${newDate.month || ""}-${newDate.day || ""}`,
-    });
+  // Handle date change from the custom picker
+  const handleDateChange = (date: string) => {
+    updateFormData({ yearEstablished: date });
   };
-
-
-
-
 
   React.useEffect(() => {
     console.log("Form data updated:", formData);
   }, [formData]);
-
-
 
   return (
     <>
@@ -194,50 +432,39 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               Company Category
             </h2>
             <p className="mb-4 text-sm text-slate-600">
-              Select your company's main business category (you can select
-              multiple)
+              Select your company's main business category (you can select multiple)
             </p>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {categoryOptions.map(({ value, description }) => (
                 <label
                   key={value}
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${formData.companyCategory.includes(value)
+                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${
+                    formData.companyCategory.includes(value)
                       ? "border-amber-500 bg-yellow-50 shadow-md"
                       : "border-amber-300 hover:border-amber-400"
-                    }`}
+                  }`}
                 >
                   <input
                     type="checkbox"
                     checked={formData.companyCategory.includes(value)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        handleCategoryChange([
-                          ...formData.companyCategory,
-                          value,
-                        ]);
+                        handleCategoryChange([...formData.companyCategory, value]);
                       } else {
-                        handleCategoryChange(
-                          formData.companyCategory.filter((cat) => cat !== value)
-                        );
+                        handleCategoryChange(formData.companyCategory.filter((cat) => cat !== value));
                       }
                     }}
                     className="sr-only"
                   />
-                  <h3
-                    className={`text-lg font-bold mb-2 ${formData.companyCategory.includes(value)
-                        ? "text-amber-900"
-                        : "text-gray-700"
-                      }`}
-                  >
+                  <h3 className={`text-lg font-bold mb-2 ${
+                    formData.companyCategory.includes(value) ? "text-amber-900" : "text-gray-700"
+                  }`}>
                     {value}
                   </h3>
-                  <p
-                    className={`text-xs text-center ${formData.companyCategory.includes(value)
-                        ? "text-amber-700"
-                        : "text-gray-500"
-                      }`}
-                  >
+                  <p className={`text-xs text-center ${
+                    formData.companyCategory.includes(value) ? "text-amber-700" : "text-gray-500"
+                  }`}>
                     {description}
                   </p>
                 </label>
@@ -246,9 +473,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
             {formData.companyCategory.length === 0 && (
               <div className="py-4 text-center">
-                <p className="text-gray-500">
-                  Please select at least one category to continue
-                </p>
+                <p className="text-gray-500">Please select at least one category to continue</p>
               </div>
             )}
           </div>
@@ -285,8 +510,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     placeholder="Enter phone number"
                   />
 
-
-
                   <div className="md:col-span-2">
                     <FormInput
                       label="Director Email"
@@ -302,13 +525,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                         Note: We'll verify this email to ensure it's not already registered
                       </p>
                     )}
-
-
-
-
-
                   </div>
-                  {/* Director LinkedIn */}
+                  
                   <FormInput
                     label="Director LinkedIn"
                     type="url"
@@ -317,7 +535,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     placeholder="https://linkedin.com/in/username"
                   />
 
-                  {/* Director Twitter */}
                   <FormInput
                     label="Director Twitter"
                     type="url"
@@ -328,14 +545,13 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                 </div>
               </div>
 
-              {/* Rest of your form sections remain the same */}
               {/* Company Information */}
               <div className="p-3 border rounded-lg bg-yellow-50 border-amber-200">
                 <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
                   <Building2 className="w-5 h-5 mr-2" />
                   Company Information
                 </h3>
-                <div className="relative grid grid-cols-1 gap-2 md:grid-cols-2">
+                <div className="relative grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormInput
                     label="Company Name"
                     value={formData.companyName}
@@ -356,109 +572,32 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       Checking availability...
                     </div>
                   )}
-                  {companyNameStatus &&
-                    !companyNameStatus.available &&
-                    companyNameStatus.suggestions && (
-                      <div className="text-xs absolute left-[9rem] top-[3.6rem] text-yellow-700 mt-1">
-                        Suggestions: {companyNameStatus.suggestions.join(", ")}
-                      </div>
-                    )}
+                  {companyNameStatus && !companyNameStatus.available && companyNameStatus.suggestions && (
+                    <div className="text-xs absolute left-[9rem] top-[3.6rem] text-yellow-700 mt-1">
+                      Suggestions: {companyNameStatus.suggestions.join(", ")}
+                    </div>
+                  )}
                   {companyNameStatus && companyNameStatus.available && (
                     <div className="text-xs absolute left-2 top-[3.9rem] text-green-700">
                       {companyNameStatus.message}
                     </div>
                   )}
 
-
-
-                  {/* Date of Incorporation */}
-                  {/* ===== Custom Date of Incorporation ===== */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium">Date of Incorporation</label>
-
-                    <div className="flex gap-2">
-                      {/* Day */}
-                      <select
-                        className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
-                        value={day || new Date().getDate().toString().padStart(2, "0")}
-                        onChange={(e) => handleChange("day", e.target.value)}
-                      >
-                        <option value="">Day</option>
-                        {days.map((d) => (
-                          <option key={d} value={String(d).padStart(2, "0")}>
-                            {d}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* Month */}
-                      <select
-                        className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
-                        value={month || String(new Date().getMonth() + 1).padStart(2, "0")}
-                        onChange={(e) => handleChange("month", e.target.value)}
-                      >
-                        <option value="">Month</option>
-                        {months.map((m, i) => (
-                          <option key={i} value={String(i + 1).padStart(2, "0")}>
-                            {m}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* Year */}
-                      <select
-                        className="border border-amber-200 p-2 rounded-md flex-1 bg-white"
-                        value={year || new Date().getFullYear().toString()}
-                        onChange={(e) => handleChange("year", e.target.value)}
-                      >
-                        <option value="">Year</option>
-                        {years
-                          .slice()
-                          .reverse()
-                          .map((y) => (
-                            <option key={y} value={y}>
-                              {y}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-
-                    {/* ===== Contextual helper text ===== */}
-                    <p className="text-xs text-amber-700 mt-1">
-                      {(() => {
-                        const today = new Date();
-                        const selectedDate =
-                          year && month && day
-                            ? new Date(`${year}-${month}-${day}`)
-                            : new Date(); // Use current date as default
-
-                        const isToday =
-                          selectedDate.toDateString() === today.toDateString();
-                        const isThisMonth =
-                          selectedDate.getMonth() === today.getMonth() &&
-                          selectedDate.getFullYear() === today.getFullYear();
-                        const isThisYear =
-                          selectedDate.getFullYear() === today.getFullYear();
-
-                        if (isToday) return "📅 This is today's date.";
-                        if (isThisMonth) return "🗓 This month is ongoing.";
-                        if (isThisYear) return "📆 This year is currently ongoing.";
-                        return "📅 Default set to today's date";
-                      })()}
-                    </p>
+                  {/* Custom Date Picker */}
+                  <div className="md:col-span-2">
+                    <ScrollDatePicker
+                      value={formData.yearEstablished}
+                      onChange={handleDateChange}
+                    />
                   </div>
 
-
-
                   <FormInput
-                    label="Website URL "
+                    label="Website URL"
                     type="url"
                     value={formData.websiteUrl}
                     onChange={(value) => {
-                      // Ensure URL starts with https://www.
                       let url = value.trim();
                       if (url && !url.match(/^https:\/\/www\./i)) {
-                        // If it doesn't start with https://www., add it
                         url = `https://www.${url.replace(/^(https?:\/\/)?(www\.)?/i, '')}`;
                       }
                       updateFormData({ websiteUrl: url });
@@ -495,7 +634,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       onChange={(value) => updateFormData({ gstin: value })}
                       placeholder="GST number"
                     />
-
                   </div>
 
                   <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
@@ -503,9 +641,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       label="CIN"
                       value={formData.socialLinks?.cin || ""}
                       onChange={(value) =>
-                        updateFormData({
-                          socialLinks: { ...formData.socialLinks, cin: value },
-                        })
+                        updateFormData({ socialLinks: { ...formData.socialLinks, cin: value } })
                       }
                       placeholder="Corporate Identity Number"
                     />
@@ -513,9 +649,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       label="UDYAM"
                       value={formData.socialLinks?.udyam || ""}
                       onChange={(value) =>
-                        updateFormData({
-                          socialLinks: { ...formData.socialLinks, udyam: value },
-                        })
+                        updateFormData({ socialLinks: { ...formData.socialLinks, udyam: value } })
                       }
                       placeholder="UDYAM Registration Number"
                     />
@@ -523,9 +657,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       label="PAN"
                       value={formData.socialLinks?.pan || ""}
                       onChange={(value) =>
-                        updateFormData({
-                          socialLinks: { ...formData.socialLinks, pan: value },
-                        })
+                        updateFormData({ socialLinks: { ...formData.socialLinks, pan: value } })
                       }
                       placeholder="PAN Number"
                     />
@@ -543,9 +675,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                   <FormInput
                     label="Contact Person Name"
                     value={formData.altContactName}
-                    onChange={(value) =>
-                      updateFormData({ altContactName: value })
-                    }
+                    onChange={(value) => updateFormData({ altContactName: value })}
                     required
                     placeholder="Full name"
                   />
@@ -561,9 +691,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       label="Contact Email"
                       type="email"
                       value={formData.altContactEmail}
-                      onChange={(value) =>
-                        updateFormData({ altContactEmail: value })
-                      }
+                      onChange={(value) => updateFormData({ altContactEmail: value })}
                       required
                       placeholder="contact@company.com"
                     />
@@ -631,12 +759,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       type="url"
                       value={formData.socialLinks?.linkedin || ""}
                       onChange={(value) =>
-                        updateFormData({
-                          socialLinks: {
-                            ...formData.socialLinks,
-                            linkedin: value,
-                          },
-                        })
+                        updateFormData({ socialLinks: { ...formData.socialLinks, linkedin: value } })
                       }
                       placeholder="https://linkedin.com/company/yourcompany"
                     />
@@ -645,12 +768,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       type="url"
                       value={formData.socialLinks?.facebook || ""}
                       onChange={(value) =>
-                        updateFormData({
-                          socialLinks: {
-                            ...formData.socialLinks,
-                            facebook: value,
-                          },
-                        })
+                        updateFormData({ socialLinks: { ...formData.socialLinks, facebook: value } })
                       }
                       placeholder="https://facebook.com/yourcompany"
                     />
@@ -662,12 +780,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       type="url"
                       value={formData.socialLinks?.instagram || ""}
                       onChange={(value) =>
-                        updateFormData({
-                          socialLinks: {
-                            ...formData.socialLinks,
-                            instagram: value,
-                          },
-                        })
+                        updateFormData({ socialLinks: { ...formData.socialLinks, instagram: value } })
                       }
                       placeholder="https://instagram.com/yourcompany"
                     />
@@ -676,12 +789,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       type="url"
                       value={formData.socialLinks?.twitter || ""}
                       onChange={(value) =>
-                        updateFormData({
-                          socialLinks: {
-                            ...formData.socialLinks,
-                            twitter: value,
-                          },
-                        })
+                        updateFormData({ socialLinks: { ...formData.socialLinks, twitter: value } })
                       }
                       placeholder="https://twitter.com/yourcompany"
                     />
@@ -693,12 +801,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       type="url"
                       value={formData.socialLinks?.youtube || ""}
                       onChange={(value) =>
-                        updateFormData({
-                          socialLinks: {
-                            ...formData.socialLinks,
-                            youtube: value,
-                          },
-                        })
+                        updateFormData({ socialLinks: { ...formData.socialLinks, youtube: value } })
                       }
                       placeholder="https://youtube.com/@yourcompany"
                     />
@@ -706,9 +809,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       label="Support Email"
                       type="email"
                       value={formData.supportEmail || ""}
-                      onChange={(value) =>
-                        updateFormData({ supportEmail: value })
-                      }
+                      onChange={(value) => updateFormData({ supportEmail: value })}
                       placeholder="support@company.com"
                     />
                   </div>
@@ -735,14 +836,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <Mail className="w-6 h-6 mr-2 text-blue-600" />
-                <h3 className="text-lg font-bold capitalize text-slate-900">
-                  Verify user Email
-                </h3>
+                <h3 className="text-lg font-bold capitalize text-slate-900">Verify user Email</h3>
               </div>
-              <button
-                onClick={handleModalClose}
-                className="transition-colors text-slate-400 hover:text-slate-600"
-              >
+              <button onClick={handleModalClose} className="transition-colors text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -764,21 +860,16 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               />
 
               {emailCheckResult && (
-                <div
-                  className={`mt-3 p-3 rounded-lg flex items-start ${emailCheckResult.exists
-                      ? "bg-green-50 border border-green-200"
-                      : "bg-blue-50 border border-blue-200"
-                    }`}
-                >
-                  <AlertCircle
-                    className={`w-4 h-4 mt-0.5 mr-2 ${emailCheckResult.exists ? "text-green-600" : "text-blue-600"
-                      }`}
-                  />
+                <div className={`mt-3 p-3 rounded-lg flex items-start ${
+                  emailCheckResult.exists ? "bg-green-50 border border-green-200" : "bg-blue-50 border border-blue-200"
+                }`}>
+                  <AlertCircle className={`w-4 h-4 mt-0.5 mr-2 ${
+                    emailCheckResult.exists ? "text-green-600" : "text-blue-600"
+                  }`} />
                   <div>
-                    <p
-                      className={`text-sm font-medium ${emailCheckResult.exists ? "text-green-800" : "text-blue-800"
-                        }`}
-                    >
+                    <p className={`text-sm font-medium ${
+                      emailCheckResult.exists ? "text-green-800" : "text-blue-800"
+                    }`}>
                       {emailCheckResult.message}
                     </p>
                     {emailCheckResult.exists && (
@@ -791,20 +882,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                         This email is not registered. Click Cancel to use this email for a new account.
                       </p>
                     )}
-
-
                   </div>
-
-
-
-
-
                 </div>
               )}
-
-
-
-
             </div>
 
             <div className="flex justify-end space-x-3">
