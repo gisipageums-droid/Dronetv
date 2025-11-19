@@ -9,23 +9,21 @@ const Profile = ({ profileData }) => {
   return (
     <section
       id="our-team"
-      className={`py-20 theme-transition ${
-        theme === "dark" ? "bg-black text-gray-100" : "bg-gray-50 text-gray-900"
-      }`}
+      className={`py-20 theme-transition ${theme === "dark" ? "bg-black text-gray-100" : "bg-gray-50 text-gray-900"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">{profileData.heading}</h2>
-          <p className="text-lg max-w-3xl mx-auto">{profileData.subheading}</p>
+          <p className="text-lg max-w-3xl mx-auto text-justify">{profileData.subheading}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {profileData.teamMembers.map((member) => (
             <motion.div
               key={member.id}
-              className={`rounded-lg overflow-hidden shadow-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-white"
-              }`}
+              className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
+                }`}
               whileHover={{ y: -5 }}
               transition={{ duration: 0.2 }}
             >
@@ -46,9 +44,8 @@ const Profile = ({ profileData }) => {
                   {member.role}
                 </p>
                 <p
-                  className={`text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-600"
-                  }`}
+                  className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                    } text-justify`}
                 >
                   {member.bio}
                 </p>

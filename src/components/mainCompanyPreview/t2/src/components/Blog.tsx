@@ -66,7 +66,7 @@ export default function Blog({ blogData }) {
                 <h2 className="text-3xl md:text-4xl text-foreground mb-6">{blogData.header.title}</h2>
               )}
               {blogData.header.desc && blogData.header.desc.length > 0 && (
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{blogData.header.desc}</p>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-justify">{blogData.header.desc}</p>
               )}
             </motion.div>
 

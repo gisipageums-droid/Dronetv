@@ -463,7 +463,7 @@ export default function Contact({ contactData, publishedId }) {
       const data = await response.json();
       if (response.ok && data.success) {
         // alert("✅ Message sent successfully!");
-          toast.success(" Your message sent successfully!");
+        toast.success(" Your message sent successfully!");
         setFormData({
           firstName: "",
           lastName: "",
@@ -482,7 +482,7 @@ export default function Contact({ contactData, publishedId }) {
     } catch (error) {
       console.error(error);
       // alert("⚠️ Network error. Please check your connection.");
-       toast.error("❌ Something went wrong while sending your message.");
+      toast.error("❌ Something went wrong while sending your message.");
     } finally {
       setLoading(false);
     }
@@ -509,19 +509,19 @@ export default function Contact({ contactData, publishedId }) {
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">
             {contactData.header.title}
           </h2>
-          <p className="text-lg text-muted-foreground inline">
+          <p className="text-lg text-muted-foreground inline text-justify">
             {contactData.header.descriptionPart1}
           </p>
           <span className="text-lg text-red-accent font-semibold">
             {contactData.header.descriptionPart2}
           </span>
-          <span className="text-lg text-muted-foreground">
+          <span className="text-lg text-muted-foreground text-justify">
             {contactData.header.descriptionPart3}
           </span>
         </motion.div>
 
         <div className="max-w-[700px] mx-auto">
-          {/* ✅ Contact Form with API integration */}
+          {/*  Contact Form with API integration */}
           <motion.div
             initial={{ x: -100, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
@@ -533,7 +533,7 @@ export default function Contact({ contactData, publishedId }) {
                 <CardTitle className="text-card-foreground">
                   Send us a message
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground text-justify">
                   We'll get back to you within 24 hours during business days.
                 </p>
               </CardHeader>
@@ -642,7 +642,7 @@ export default function Contact({ contactData, publishedId }) {
                     {loading ? "Sending..." : "Send Message"}
                   </Button>
 
-                  <p className="text-center text-sm text-muted-foreground">
+                  <p className="text-center text-sm text-muted-foreground text-justify">
                     We typically respond within 24 hours during business days.
                   </p>
                 </CardContent>

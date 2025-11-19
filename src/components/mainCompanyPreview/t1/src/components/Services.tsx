@@ -99,7 +99,7 @@ export default function Services({ serviceData }) {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {serviceData.heading.head}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto text-justify">
             {serviceData.heading.desc}
           </p>
         </motion.div>
@@ -118,11 +118,10 @@ export default function Services({ serviceData }) {
                 setActiveCategory(cat);
                 setVisibleCount(6);
               }}
-              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
-                activeCategory === cat
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${activeCategory === cat
                   ? "bg-orange-400 text-white shadow-lg scale-105"
                   : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -155,7 +154,7 @@ export default function Services({ serviceData }) {
                   <CardTitle>{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
-                  <p className="text-sm text-gray-600 mb-4 flex-1 h-[70px] overflow-auto">
+                  <p className="text-sm text-gray-600 mb-4 flex-1 h-[70px] overflow-auto text-justify">
                     {service.description}
                   </p>
 
@@ -236,7 +235,7 @@ export default function Services({ serviceData }) {
               <div className="overflow-y-auto max-h-[calc(90vh-16rem)] p-8">
                 {/* Description */}
                 <div className="mb-8">
-                  <p className="text-gray-700 text-lg leading-relaxed">
+                  <p className="text-gray-700 text-lg leading-relaxed text-justify">
                     {selectedService.detailedDescription ||
                       selectedService.description}
                   </p>
@@ -256,7 +255,7 @@ export default function Services({ serviceData }) {
                             className="flex gap-3 items-start bg-green-50 p-4 rounded-lg"
                           >
                             <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-700">{benefit}</span>
+                            <span className="text-gray-700 text-justify">{benefit}</span>
                           </div>
                         ))}
                       </div>
@@ -279,7 +278,7 @@ export default function Services({ serviceData }) {
                             <span className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
                               {pi + 1}
                             </span>
-                            <span className="text-gray-700 pt-1">{step}</span>
+                            <span className="text-gray-700 pt-1 text-justify">{step}</span>
                           </div>
                         ))}
                       </div>
@@ -293,7 +292,7 @@ export default function Services({ serviceData }) {
                       <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
                         <span className="text-yellow-600">💰</span> Pricing
                       </h3>
-                      <p className="text-gray-700 text-lg font-semibold">
+                      <p className="text-gray-700 text-lg font-semibold text-justify">
                         {selectedService.pricing}
                       </p>
                     </div>
@@ -303,7 +302,7 @@ export default function Services({ serviceData }) {
                       <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
                         <span className="text-purple-600">⏱️</span> Timeline
                       </h3>
-                      <p className="text-gray-700 text-lg font-semibold">
+                      <p className="text-gray-700 text-lg font-semibold text-justify">
                         {selectedService.timeline}
                       </p>
                     </div>

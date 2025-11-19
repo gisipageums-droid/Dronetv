@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
-import logo from"/logos/logo.svg"
+import logo from "/logos/logo.svg"
 export default function Footer({ content }) {
   // Use the content prop directly
   let { isSubscribed, setIsSubscribed } = useState(false);
@@ -74,17 +74,17 @@ export default function Footer({ content }) {
             variants={itemVariants}
           >
             <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-              <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400">
+              <span className="flex flex-row items-center gap-2 text-xl font-bold text-yellow-400">
                 <img
                   src={footerData.brand.logoUrl || logo}
                   alt="Logo"
-                  className="h-4 w-4 md:w-[40px] md:h-[40px] rounded-xl"  
+                  className="w-[50px] h-[50px] rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
                 />
                 {footerData.brand.name}
               </span>
             </div>
 
-            <p className="text-gray-300 text-sm leading-relaxed mb-6">
+            <p className="text-gray-300 text-sm leading-relaxed mb-6 text-justify">
               {footerData.brand.description}
             </p>
           </motion.div>
