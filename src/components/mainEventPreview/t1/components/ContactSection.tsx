@@ -1,27 +1,57 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
 
-const ContactSection: React.FC = () => {
+interface ContactSectionProps {
+  id?: string;
+}
+
+const ContactSection: React.FC<ContactSectionProps> = ({ id }) => {
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
-    mobile: "",
-    companyName: "",
-    designation: "",
-    country: "",
-    website: "",
-    enquiryType: "",
+    phone: "",
+    company: "",
+    subject: "",
+    category: "",
     message: "",
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+
+    try {
+      const res = await fetch(
+        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/event-leads-resource`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            publishedEventId: id,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      await res.json();
+      toast.success("Form submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -35,7 +65,8 @@ const ContactSection: React.FC = () => {
         <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
 
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          Ready to participate? Fill the form below & our team will contact you shortly.
+          Ready to participate? Fill the form below & our team will contact you
+          shortly.
         </p>
       </div>
 
@@ -45,12 +76,25 @@ const ContactSection: React.FC = () => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {/* Full Name */}
+          {/* first Name */}
           <div>
-            <label className="block mb-1 font-semibold">Full Name *</label>
+            <label className="block mb-1 font-semibold">First Name *</label>
             <input
-              name="fullName"
-              value={formData.fullName}
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+              placeholder="Enter your full name"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+          </div>
+
+          {/* last name */}
+          <div>
+            <label className="block mb-1 font-semibold">Last Name *</label>
+            <input
+              name="lastName"
+              value={formData.lastName}
               onChange={handleChange}
               required
               placeholder="Enter your full name"
@@ -72,17 +116,17 @@ const ContactSection: React.FC = () => {
             />
           </div>
 
-          {/* Mobile */}
+          {/* Phone */}
           <div>
-            <label className="block mb-1 font-semibold">Mobile *</label>
+            <label className="block mb-1 font-semibold">Phone *</label>
             <div className="flex gap-2">
               <select className="border border-gray-300 rounded-lg px-3">
                 <option>+91</option>
               </select>
 
               <input
-                name="mobile"
-                value={formData.mobile}
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
                 required
                 placeholder="9876543210"
@@ -91,12 +135,12 @@ const ContactSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Company Name */}
+          {/* Company */}
           <div>
             <label className="block mb-1 font-semibold">Company Name *</label>
             <input
-              name="companyName"
-              value={formData.companyName}
+              name="company"
+              value={formData.company}
               onChange={handleChange}
               required
               placeholder="Your company name"
@@ -104,50 +148,24 @@ const ContactSection: React.FC = () => {
             />
           </div>
 
-          {/* Designation */}
-          <div>
-            <label className="block mb-1 font-semibold">Designation *</label>
-            <input
-              name="designation"
-              value={formData.designation}
-              onChange={handleChange}
-              required
-              placeholder="Your role / title"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3"
-            />
-          </div>
-
-          {/* Country */}
-          <div>
-            <label className="block mb-1 font-semibold">Country *</label>
-            <input
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              required
-              placeholder="Enter your country"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3"
-            />
-          </div>
-
-          {/* Website */}
+          {/* Website
           <div>
             <label className="block mb-1 font-semibold">Website</label>
             <input
               name="website"
-              value={formData.website}
+              value={formData.category}
               onChange={handleChange}
               placeholder="https://yourcompany.com"
               className="w-full border border-gray-300 rounded-lg px-4 py-3"
             />
-          </div>
+          </div> */}
 
-          {/* Enquiry Type */}
+          {/* subject */}
           <div>
             <label className="block mb-1 font-semibold">Enquiry Type *</label>
             <select
-              name="enquiryType"
-              value={formData.enquiryType}
+              name="subject"
+              value={formData.subject}
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-3"
