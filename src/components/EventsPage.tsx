@@ -1,20 +1,172 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, ChevronDown, Calendar, MapPin, Clock, Users, ArrowRight, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+// Countdown component for event cards
+const EventCountdown = ({ eventDate, eventTime }) => {
+  const [countdown, setCountdown] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    isEventStarted: false,
+    isEventExpired: false
+  });
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      if (!eventDate || !eventTime) return;
+      
+      // Parse event date and time from the API data
+      const eventDateParts = eventDate.split(' to ');
+      const eventTimeParts = eventTime.split(' - ');
+      
+      const startDate = eventDateParts[0] || eventDate;
+      const startTime = eventTimeParts[0] || eventTime;
+      
+      // Convert 12-hour time to 24-hour for Date parsing
+      const convertTo24Hour = (time12h) => {
+        const [time, modifier] = time12h.trim().split(' ');
+        let [hours, minutes] = time.split(':');
+        
+        if (hours === '12') {
+          hours = '00';
+        }
+        
+        if (modifier === 'PM') {
+          hours = parseInt(hours, 10) + 12;
+        }
+        
+        return `${hours}:${minutes}`;
+      };
+
+      const startTime24 = convertTo24Hour(startTime);
+      const eventDateTime = new Date(`${startDate}T${startTime24}:00`).getTime();
+      const now = new Date().getTime();
+      const distance = eventDateTime - now;
+
+      if (distance < 0) {
+        setCountdown({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          isEventStarted: false,
+          isEventExpired: true
+        });
+      } else {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        setCountdown({
+          days,
+          hours,
+          minutes,
+          seconds,
+          isEventStarted: false,
+          isEventExpired: false
+        });
+      }
+    };
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(timer);
+  }, [eventDate, eventTime]);
+
+  if (countdown.isEventExpired) {
+    return (
+      <div className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded">
+        Event Ended
+      </div>
+    );
+  }
+
+  if (countdown.isEventStarted) {
+    return (
+      <div className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded">
+        Live Now
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded">
+      {countdown.days > 0 ? `${countdown.days}d ` : ''}
+      {countdown.hours}h {countdown.minutes}m {countdown.seconds}s
+    </div>
+  );
+};
+
 const EventsPage = () => {
   const [selectedType, setSelectedType] = useState('All');
   const [sortBy, setSortBy] = useState('upcoming');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allEvents, setAllEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const eventsPerPage = 12;
   const navigate = useNavigate();
 
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.cards) {
+          // Transform API data to match our event structure
+          const transformedEvents = data.cards.map(card => ({
+            id: card.eventId,
+            name: card.eventName,
+            description: card.shortDescription,
+            date: card.eventDate,
+            location: card.location,
+            time: card.eventTime,
+            attendees: "Not specified", // Default since API doesn't provide
+            image: card.thumbnailUrl || card.previewImage || "/images/default-event-image.png",
+            type: card.category || "General",
+            status: card.isApproved ? "upcoming" : "pending",
+            price: "Free", // Default since API doesn't provide
+            featured: false, // Default since API doesn't provide
+            cleanUrl: card.cleanUrl,
+            templateSelection: card.templateSelection,
+            eventDate: card.eventDate, // Keep original for countdown
+            eventTime: card.eventTime, // Keep original for countdown
+          }));
+          
+          setAllEvents(transformedEvents);
+        } else {
+          setAllEvents([]);
+        }
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching events:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   const handleAddEventClick = () => {
-    navigate('/event/select'); // Navigate to the /add-event route
+    navigate('/event/select');
   };
 
-  const eventTypes = ['All', 'Expo', 'Webinar', 'Conference', 'Workshop', 'Summit', 'Trade Show'];
+  const eventTypes = ['All', 'Expo', 'Webinar', 'Conference', 'Workshop', 'Summit', 'Trade Show', 'General'];
   const sortOptions = [
     { value: 'upcoming', label: 'Sort by Upcoming' },
     { value: 'past', label: 'Sort by Past Events' },
@@ -22,169 +174,7 @@ const EventsPage = () => {
     { value: 'date', label: 'Sort by Date' }
   ];
 
-  const allEvents = [
-    {
-      id: 1,
-      name: "Drone Expo & Conference 2025",
-      description: "Join us in Mumbai for the premier Drone Expo & Conference where innovation, networking, and industry insights converge. Meet key buyers, launch and showcase new products, understand market competition, and build brand awareness. Explore specialized zones, attend technical conferences, and engage with top speakers from defense, tech, and academia.",
-      date: "September 25-27, 2025",
-      location: "Mumbai, India",
-      time: "9:00 AM - 6:00 PM",
-      attendees: "5,000+",
-      image: "/images/droneexpo_cover.jpg",
-      type: "Expo & Conference",
-      status: "upcoming",
-      price: "Premium",
-      featured: true
-    },
-
-    // {
-    //   id: 2,
-    //   name: "AI in Aviation Summit",
-    //   description: "Exploring the future of artificial intelligence in aviation and autonomous flight systems.",
-    //   date: "April 22-23, 2024",
-    //   location: "Austin, TX",
-    //   time: "10:00 AM - 5:00 PM",
-    //   attendees: "1,200+",
-    //   image: "https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Summit",
-    //   status: "upcoming",
-    //   price: "Free",
-    //   featured: true
-    // },
-    // {
-    //   id: 3,
-    //   name: "GIS Mapping Workshop",
-    //   description: "Hands-on workshop covering advanced GIS mapping techniques using drone technology.",
-    //   date: "May 10, 2024",
-    //   location: "Denver, CO",
-    //   time: "1:00 PM - 4:00 PM",
-    //   attendees: "150+",
-    //   image: "https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Workshop",
-    //   status: "upcoming",
-    //   price: "Paid",
-    //   featured: true
-    // },
-    // {
-    //   id: 4,
-    //   name: "Commercial Drone Expo",
-    //   description: "Showcase of the latest commercial drone technologies and applications across industries.",
-    //   date: "June 5-7, 2024",
-    //   location: "Chicago, IL",
-    //   time: "9:00 AM - 7:00 PM",
-    //   attendees: "3,000+",
-    //   image: "https://images.pexels.com/photos/442587/pexels-photo-442587.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Expo",
-    //   status: "upcoming",
-    //   price: "Premium"
-    // },
-    // {
-    //   id: 5,
-    //   name: "Drone Safety Webinar Series",
-    //   description: "Online webinar series covering drone safety regulations and best practices.",
-    //   date: "July 15, 2024",
-    //   location: "Online",
-    //   time: "2:00 PM - 3:30 PM",
-    //   attendees: "500+",
-    //   image: "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Webinar",
-    //   status: "upcoming",
-    //   price: "Free"
-    // },
-    // {
-    //   id: 6,
-    //   name: "Autonomous Flight Systems Conference",
-    //   description: "Technical conference focusing on autonomous flight systems and AI integration.",
-    //   date: "August 20-22, 2024",
-    //   location: "Seattle, WA",
-    //   time: "9:00 AM - 6:00 PM",
-    //   attendees: "1,800+",
-    //   image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Conference",
-    //   status: "upcoming",
-    //   price: "Premium"
-    // },
-    // {
-    //   id: 7,
-    //   name: "Drone Racing Championship",
-    //   description: "International drone racing championship with live competitions and demonstrations.",
-    //   date: "September 12-14, 2024",
-    //   location: "Las Vegas, NV",
-    //   time: "10:00 AM - 8:00 PM",
-    //   attendees: "5,000+",
-    //   image: "https://images.pexels.com/photos/724712/pexels-photo-724712.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Trade Show",
-    //   status: "upcoming",
-    //   price: "Paid"
-    // },
-    // {
-    //   id: 8,
-    //   name: "Environmental Monitoring Workshop",
-    //   description: "Workshop on using drones for environmental monitoring and conservation efforts.",
-    //   date: "October 8, 2024",
-    //   location: "Portland, OR",
-    //   time: "1:00 PM - 5:00 PM",
-    //   attendees: "200+",
-    //   image: "https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Workshop",
-    //   status: "upcoming",
-    //   price: "Paid"
-    // },
-    // {
-    //   id: 9,
-    //   name: "Drone Tech Innovation Summit 2023",
-    //   description: "Past summit showcasing breakthrough innovations in drone technology.",
-    //   date: "November 15-16, 2023",
-    //   location: "Boston, MA",
-    //   time: "9:00 AM - 6:00 PM",
-    //   attendees: "1,500+",
-    //   image: "https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Summit",
-    //   status: "past",
-    //   price: "Premium"
-    // },
-    // {
-    //   id: 10,
-    //   name: "Agricultural Drones Conference 2023",
-    //   description: "Past conference focused on drone applications in precision agriculture.",
-    //   date: "October 20-21, 2023",
-    //   location: "Phoenix, AZ",
-    //   time: "8:00 AM - 5:00 PM",
-    //   attendees: "800+",
-    //   image: "https://images.pexels.com/photos/1034662/pexels-photo-1034662.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Conference",
-    //   status: "past",
-    //   price: "Paid"
-    // },
-    // {
-    //   id: 11,
-    //   name: "Drone Delivery Systems Expo 2023",
-    //   description: "Past expo showcasing the latest in drone delivery technology and logistics.",
-    //   date: "September 8-10, 2023",
-    //   location: "Miami, FL",
-    //   time: "10:00 AM - 7:00 PM",
-    //   attendees: "2,200+",
-    //   image: "https://images.pexels.com/photos/442587/pexels-photo-442587.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Expo",
-    //   status: "past",
-    //   price: "Premium"
-    // },
-    // {
-    //   id: 12,
-    //   name: "Smart Cities Drone Integration Workshop 2023",
-    //   description: "Past workshop on integrating drones into smart city infrastructure.",
-    //   date: "August 25, 2023",
-    //   location: "New York, NY",
-    //   time: "2:00 PM - 6:00 PM",
-    //   attendees: "300+",
-    //   image: "https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg?auto=compress&cs=tinysrgb&w=600",
-    //   type: "Workshop",
-    //   status: "past",
-    //   price: "Paid"
-    // }
-  ];
-
+  // Filter and sort events
   useEffect(() => {
     let filtered = allEvents;
 
@@ -209,16 +199,16 @@ const EventsPage = () => {
           if (a.status !== b.status) {
             return a.status === 'upcoming' ? -1 : 1;
           }
-          return new Date(a.date) - new Date(b.date);
+          return a.name.localeCompare(b.name);
         case 'past':
           if (a.status !== b.status) {
             return a.status === 'past' ? -1 : 1;
           }
-          return new Date(b.date) - new Date(a.date);
+          return b.name.localeCompare(a.name);
         case 'name':
           return a.name.localeCompare(b.name);
         case 'date':
-          return new Date(a.date) - new Date(b.date);
+          return a.name.localeCompare(b.name);
         default:
           return 0;
       }
@@ -226,7 +216,7 @@ const EventsPage = () => {
 
     setFilteredEvents(filtered);
     setCurrentPage(1);
-  }, [selectedType, sortBy, searchQuery]);
+  }, [selectedType, sortBy, searchQuery, allEvents]);
 
   const featuredEvents = allEvents.filter(event => event.featured);
   const indexOfLastEvent = currentPage * eventsPerPage;
@@ -242,6 +232,7 @@ const EventsPage = () => {
       case 'Expo': return 'bg-gray-700';
       case 'Webinar': return 'bg-gray-600';
       case 'Trade Show': return 'bg-black';
+      case 'General': return 'bg-blue-500';
       default: return 'bg-gray-800';
     }
   };
@@ -259,10 +250,44 @@ const EventsPage = () => {
     return status === 'upcoming' ? 'bg-green-500' : 'bg-gray-500';
   };
 
-
-  const handleViewDetailsClick = () => {
-    navigate('/event/droneexpo'); // Redirect to the specified URL
+  const handleViewDetailsClick = (event) => {
+    console.log(event);
+    if (event.templateSelection === 'template-1') {
+     navigate(`/event/${event.name}`);
+    } else {
+      navigate(`/events/${event.name}`);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-yellow-400 pt-16 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
+          <p className="mt-4 text-black text-lg">Loading events...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-yellow-400 pt-16 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 max-w-md mx-auto">
+            <h3 className="text-2xl font-bold text-black mb-2">Error Loading Events</h3>
+            <p className="text-black/60 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-black text-yellow-400 px-6 py-2 rounded-lg hover:bg-gray-800 transition"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-yellow-400 pt-16">
@@ -278,12 +303,12 @@ const EventsPage = () => {
             Events Calendar
           </h1>
           <p className="text-xl text-black/80 max-w-2xl mx-auto mb-4">
-            Highlights from our events and collaborations.
+            Discover amazing events from our community
           </p>
           <div className="w-24 h-1 bg-black mx-auto rounded-full mb-6"></div>
         </div>
 
-        {/* "List your Event" button positioned at the bottom-right corner */}
+        {/* "List your Event" button */}
         <div className="absolute top-4 right-10 z-10 pointer-events-auto">
           <button
             onClick={handleAddEventClick}
@@ -292,10 +317,7 @@ const EventsPage = () => {
             List your Event
           </button>
         </div>
-
-
       </section>
-
 
       {/* Filter Section */}
       <section className="py-3 bg-yellow-400 sticky top-16 z-40 border-b border-black/10">
@@ -368,86 +390,88 @@ const EventsPage = () => {
         </div>
       </section>
 
-      {/* Featured Events Section */}
-      <section className="py-4 bg-gradient-to-b from-yellow-400 to-yellow-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Featured Events Section - Only show if there are featured events */}
+      {featuredEvents.length > 0 && (
+        <section className="py-4 bg-gradient-to-b from-yellow-400 to-yellow-300">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl md:text-4xl font-black text-black mb-8 text-center">
+              Featured Events
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featuredEvents.map((event, index) => (
+                <div
+                  key={event.id}
+                  className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 border-2 border-black/20 hover:border-black/40"
+                  style={{
+                    animationDelay: `${index * 200}ms`,
+                    animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`
+                  }}
+                >
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={event.image}
+                      alt={event.name}
+                      className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110 border-b-2 border-black/10"
+                    />
 
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredEvents.map((event, index) => (
-              <div
-                key={event.id}
-                className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 border-2 border-black/20 hover:border-black/40"
-                style={{
-                  animationDelay: `${index * 200}ms`,
-                  animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`
-                }}
-              >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={event.image}
-                    alt={event.name}
-                    className={`w-full ${event.id === 1 ? 'h-60 object-contain scale-90' : 'h-48 object-cover'} transition-all duration-700 group-hover:scale-100 border-b-2 border-black/10`}
-                  />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <div
+                        onClick={() => handleViewDetailsClick(event)}
+                        className="bg-yellow-400 text-black px-6 py-3 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300 flex items-center gap-2"
+                      >
+                        <span>View Event Details</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </div>
 
+                    <div className={`absolute top-4 right-4 ${getTypeColor(event.type)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg`}>
+                      {event.type}
+                    </div>
 
+                    {/* Countdown Timer - Bottom Right */}
+                     <div className="absolute bottom-4 right-4">
+                      <EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} />
+                    </div> 
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                    <div className="absolute top-4 left-4 bg-yellow-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-current" />
+                      Featured
+                    </div>
 
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                    <div
-                      onClick={handleViewDetailsClick}  // Attach the onClick handler here
-                      className="bg-yellow-400 text-black px-6 py-3 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300 flex items-center gap-2"
-                    >
-                      <span>View Event Details</span>
-                      <ArrowRight className="h-4 w-4" />
+                    <div className={`absolute bottom-4 left-4 ${getPriceColor(event.price)} text-white px-2 py-1 rounded-lg text-xs font-medium`}>
+                      {event.price}
                     </div>
                   </div>
 
-                  <div className={`absolute top-4 right-4 ${getTypeColor(event.type)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg`}>
-                    {event.type}
-                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300">
+                      {event.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
 
-                  <div className={`absolute bottom-4 right-4 ${getPriceColor(event.price)} text-white px-2 py-1 rounded-lg text-xs font-medium`}>
-                    {event.price}
-                  </div>
-
-                  <div className="absolute top-4 left-4 bg-yellow-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
-                    <Star className="h-3 w-3 fill-current" />
-                    Featured
-                  </div>
-
-                  <div className={`absolute bottom-4 left-4 ${getStatusColor(event.status)} text-white px-2 py-1 rounded-lg text-xs font-bold capitalize`}>
-                    {event.status}
+                    <div className="space-y-2">
+                      <div className="flex items-center text-gray-600 text-sm">
+                        <Calendar className="h-4 w-4 mr-2 text-yellow-600" />
+                        {event.date}
+                      </div>
+                      <div className="flex items-center text-gray-600 text-sm">
+                        <MapPin className="h-4 w-4 mr-2 text-yellow-600" />
+                        {event.location}
+                      </div>
+                      <div className="flex items-center text-gray-600 text-sm">
+                        <Users className="h-4 w-4 mr-2 text-yellow-600" />
+                        {event.attendees}
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300">
-                    {event.name}
-                  </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <Calendar className="h-4 w-4 mr-2 text-yellow-600" />
-                      {event.date}
-                    </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <MapPin className="h-4 w-4 mr-2 text-yellow-600" />
-                      {event.location}
-                    </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <Users className="h-4 w-4 mr-2 text-yellow-600" />
-                      {event.attendees} Expected
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Events Grid Section */}
       <section className="py-16 bg-yellow-400">
@@ -492,7 +516,7 @@ const EventsPage = () => {
 
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
                         <div
-                          onClick={() => navigate('/company/droneexpo')} // Use the navigate function directly for this button
+                          onClick={() => handleViewDetailsClick(event)}
                           className="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300 flex items-center gap-2"
                         >
                           <span>View Details</span>
@@ -500,17 +524,13 @@ const EventsPage = () => {
                         </div>
                       </div>
 
-
                       <div className={`absolute top-3 right-3 ${getTypeColor(event.type)} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg`}>
                         {event.type}
                       </div>
 
-                      <div className={`absolute bottom-3 right-3 ${getPriceColor(event.price)} text-white px-2 py-1 rounded-lg text-xs font-medium`}>
-                        {event.price}
-                      </div>
 
-                      <div className={`absolute bottom-3 left-3 ${getStatusColor(event.status)} text-white px-2 py-1 rounded-lg text-xs font-bold capitalize`}>
-                        {event.status}
+                      <div className={`absolute bottom-3 left-3 ${getPriceColor(event.price)} text-white px-2 py-1 rounded-lg text-xs font-medium`}>
+                        {event.price}
                       </div>
                     </div>
                   </div>
@@ -534,6 +554,11 @@ const EventsPage = () => {
                         <Users className="h-3 w-3 mr-1 text-yellow-600" />
                         {event.attendees}
                       </div>
+                      {/* Countdown Timer - Bottom Right */}
+                      <div className="absolute bottom-3 right-3">
+                        <EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} />
+                      </div>
+
                     </div>
                   </div>
                 </div>
