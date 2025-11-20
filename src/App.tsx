@@ -92,8 +92,10 @@ import Event_T1 from "./components/event/template/t1/src/EventTemplate1"
 import Event_T2 from "./components/event/template/t2/src/App";
 import Edit_event_t1 from "./components/event/template/t1/edit/EventTemplate1";
 
+import Edit_event_t2 from "./components/event/template/t2/edit/App";
 import EventSelect from "./components/event/select-template/Event-select";
 import EventLeads from "./components/UserDashboard/components/common/EventLeads";
+import MainEvent1 from "./components/mainEventPreview/t1/EventTemplate1"
 //main App.tsx
 import BuyTokenPage from "./components/UserDashboard/pages/Buy";
 import TransactionHistory from "./components/UserDashboard/pages/transaction";
@@ -258,6 +260,7 @@ const AppContent = () => {
           <Route path="/preview/event/t2" element={<Event_T2 />} />
           <Route path="/edit/event/t1/:isAIgen/:draftId/:userId" element={<Edit_event_t1 />} />
           <Route path="/edit/event/t2/:isAIgen/:draftId/:userId" element={<Edit_event_t2 />} />
+          <Route path="/event/:eventName" element={<MainEvent1 />} />
           <Route path="/event/select" element={<EventSelect />} />
           <Route path="/event/leads/:eventName/:eventId" element={
 

@@ -173,10 +173,10 @@ interface SocialLink {
 const EventTemplate1: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { draftId, userId, isAIgen, eventName } = useParams();
+  const {  eventName } = useParams();
   const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData } = useTemplate();
 
-  const fetchTemplateData = async (draftId: string, userId: string, isAIgen: string, eventName: string) => {
+  const fetchTemplateData = async (eventName: string) => {
     try {
       setIsLoading(true);
      const response = await fetch(
@@ -195,8 +195,8 @@ const EventTemplate1: React.FC = () => {
       }
 
       const data = await response.json();
-      setFinalTemplate(data.data);
-      setAIGenData(data.data);
+      setFinalTemplate(data.data.data);
+      setAIGenData(data.data.data);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching template data:", error);
@@ -207,13 +207,13 @@ const EventTemplate1: React.FC = () => {
   };
 
   useEffect(() => {
-    if (draftId && userId && isAIgen) {
-      fetchTemplateData(draftId, userId, isAIgen, eventName);
+    if (eventName) {
+      fetchTemplateData(eventName);
     } else {
       setError("Required parameters not found in URL");
       setIsLoading(false);
     }
-  }, [draftId, userId, isAIgen]);
+  }, [eventName]);
 
   if (isLoading) {
     return (
@@ -261,13 +261,12 @@ const EventTemplate1: React.FC = () => {
       <SpeakersSection speakersData={finalTemplate.content.speakersData} />
       <AgendaSection agendaData={finalTemplate.content.Agenda} />
       <SponsorsSection
-        userId={userId}
         sponsorsData={finalTemplate.content.sponsorsData}
       />
       <GallerySection galleryData={finalTemplate.content.Gallery} />
       <ContactSection />
       <Footer footerData={finalTemplate.content.footer} />
-      {isAIgen === "AIgen" ? null : <Back />}
+      <Back />
       <Toaster position="top-right" richColors />
     </div>
   );
