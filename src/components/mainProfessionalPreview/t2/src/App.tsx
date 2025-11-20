@@ -118,7 +118,7 @@ export default function MainProTemp2() {
           aboutData={finaleDataReview.content.aboutContent}
         />
         <Skills 
-          skillData={finaleDataReview.content.skillContent}
+          skillsData={finaleDataReview.content.skillContent}
         />
         <Projects 
           projectData={finaleDataReview.content.projectContent}

@@ -3,6 +3,14 @@ import { motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+// Import your static skill images
+import skill1 from '../../../../../Images/skill1.png';
+import skill2 from '../../../../../Images/skill2.png';
+import skill3 from '../../../../../Images/skill3.jpeg';
+import skill4 from '../../../../../Images/skill4.png';
+import skill5 from '../../../../../Images/skill5.jpeg';
+
+
 // Text limits
 const TEXT_LIMITS = {
   HEADER_TITLE: 60,
@@ -78,13 +86,16 @@ interface SkillsProps {
   templateSelection?: string;
 }
 
-export function Skills({ skillsData, onStateChange, userId, professionalId, templateSelection }: SkillsProps) {
+export function Skills({ skillsData, onStateChange }: SkillsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const skillsRef = useRef<HTMLDivElement>(null);
+
+  // Array of imported skill images
+  const skillImages = [skill1, skill2, skill3, skill4, skill5];
 
   // Initialize with skillsData or empty structure
   const [data, setData] = useState<SkillsData>(() =>
@@ -107,28 +118,19 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
     }
   );
 
-  // Helper function to get first letter of skill name
-  const getSkillInitial = (skillTitle: string) => {
-    return skillTitle.charAt(0).toUpperCase();
-  };
-
-  // Helper function to generate background color based on skill initial
-  const getSkillIconColor = (skillTitle: string) => {
-    const colors = [
-      'bg-yellow-400'
-    ];
-    const charCode = skillTitle.charCodeAt(0) || 0;
-    return colors[charCode % colors.length];
-  };
-
-  // Modified icon rendering logic - using first letter
-  const renderSkillIcon = (skill: Skill) => {
-    const initial = getSkillInitial(skill.title);
-    const bgColor = getSkillIconColor(skill.title);
+  // Modified icon rendering logic - using static images
+  const renderSkillIcon = (skill: Skill, index: number) => {
+    // Use modulo to cycle through images if there are more skills than images
+    const imageIndex = index % skillImages.length;
+    const imageSrc = skillImages[imageIndex];
 
     return (
-      <div className={`w-16 h-16 ${bgColor} rounded-full flex items-center justify-center`}>
-        <span className="text-2xl font-bold text-gray-900">{initial}</span>
+      <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden border-2 border-yellow-400">
+        <img 
+          src={imageSrc} 
+          alt={skill.title}
+          className="w-full h-full object-cover"
+        />
       </div>
     );
   };
@@ -387,7 +389,7 @@ export function Skills({ skillsData, onStateChange, userId, professionalId, temp
                 transition={{ duration: 0.5 }}
                 className="flex items-center justify-center mb-4"
               >
-                {renderSkillIcon(skill)}
+                {renderSkillIcon(skill, index)}
               </motion.div>
 
               {isEditing ? (
