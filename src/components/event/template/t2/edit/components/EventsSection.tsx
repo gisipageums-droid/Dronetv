@@ -141,7 +141,7 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
     if (isVisible && !dataLoaded && !isLoading) {
       fetchEventsData();
     }
-  }, [isVisible, dataLoaded, isLoading, eventsData]);
+  }, [isVisible, dataLoaded, isLoading]);
 
   const handleEdit = () => {
     setIsEditing(true);

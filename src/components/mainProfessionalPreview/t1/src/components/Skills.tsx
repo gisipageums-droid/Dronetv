@@ -14,6 +14,13 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
+// Import your static skill images
+import skill1 from '../.../../../../../Professional/Images/skill1.png';
+import skill2 from '../.../../../../../Professional/Images/skill2.png';
+import skill3 from '../.../../../../../Professional/Images/skill3.jpeg';
+import skill4 from '../.../../../../../Professional/Images/skill4.png';
+import skill5 from '../.../../../../../Professional/Images/skill5.jpeg';
+
 interface Skill {
   name: string;
   level: number;
@@ -87,6 +94,15 @@ const getIconForSkill = (
 
 const Skills: React.FC<SkillsProps> = ({ content }) => {
   const [skillContent, setSkillContent] = useState<SkillContent | null>(null);
+
+  // Array of imported skill images
+  const skillImages = [skill1, skill2, skill3, skill4, skill5];
+
+  // Function to get image for category based on index
+  const getCategoryImage = (categoryIndex: number) => {
+    const imageIndex = categoryIndex % skillImages.length;
+    return skillImages[imageIndex];
+  };
 
   useEffect(() => {
     if (content) {
@@ -163,8 +179,13 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
               >
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center flex-1">
-                    <div className="w-10 h-10 flex items-center justify-center uppercase text-xl font-extrabold text-white bg-yellow-500 p-2 rounded-full mr-2">
-                      <span className="">{category.title[0]}</span>
+                    {/* Replaced first letter icon with image */}
+                    <div className="w-12 h-12 flex items-center justify-center overflow-hidden rounded-full mr-3 border-2">
+                      <img 
+                        src={getCategoryImage(categoryIndex)} 
+                        alt={category.title}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
