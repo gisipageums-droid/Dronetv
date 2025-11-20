@@ -173,9 +173,6 @@ console.log("user name", AIGenData.user_name);
         <Skills
           skillsData={componentStates.skillContent}
           onStateChange={createStateChangeHandler('skillContent')}
-          userId={AIGenData.userId}
-          professionalId={AIGenData.professionalId}
-          templateSelection={AIGenData.templateSelection}
         />
 
         

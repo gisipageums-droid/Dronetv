@@ -71,20 +71,29 @@ interface ContactItem {
 }
 
 interface FooterData {
-    logoText: string;
-    description: string;
+    eventInfo: {
+        name: string;
+        description: string;
+    };
     quickLinks: FooterLink[];
     moreLinks: FooterLink[];
-    contactInfo: ContactItem[];
-    copyright: string;
-    newsletterPlaceholder: string;
-    newsletterButton: string;
-    bottomLinks: FooterLink[];
+    bottomSection: {
+        copyrightText: string;
+        afterCopyrightText?: string;
+        privacyPolicy?: {
+            href: string;
+            label: string;
+        };
+        termsOfService?: {
+            href: string;
+            label: string;
+        };
+    };
 }
 
 interface FooterProps {
     footerData?: any;
-    onStateChange?: (data: FooterData) => void;
+    onStateChange?: (data: any) => void;
 }
 
 export function Footer({ footerData, onStateChange }: FooterProps) {
@@ -98,8 +107,10 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
     console.log('Footer component rendered with data:', footerData);
 
     const defaultFooterData: FooterData = {
-        logoText: "EventPro 2025",
-        description: "Creating unforgettable experiences through exceptional events. Join us in making memories that last a lifetime.",
+        eventInfo: {
+            name: "EventPro 2025",
+            description: "Creating unforgettable experiences through exceptional events. Join us in making memories that last a lifetime."
+        },
         quickLinks: [
             { id: '1', label: 'Home', href: '#home' },
             { id: '2', label: 'Events', href: '#events' },
@@ -112,88 +123,37 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
             { id: '7', label: 'Gallery', href: '#gallery' },
             { id: '8', label: 'Contact', href: '#contact' }
         ],
-        contactInfo: [
-            { icon: 'Mail', text: 'hello@eventpro.com', href: 'mailto:hello@eventpro.com' },
-            { icon: 'Phone', text: '+1 (555) 123-4567', href: 'tel:+15551234567' },
-            { icon: 'MapPin', text: '123 Event Street, City, State 12345' }
-        ],
-        copyright: "© 2025 EventPro. All rights reserved.",
-        newsletterPlaceholder: "Enter your email",
-        newsletterButton: "Subscribe",
-        bottomLinks: [
-            { id: '9', label: 'Privacy Policy', href: '#' },
-            { id: '10', label: 'Terms of Service', href: '#' },
-            { id: '11', label: 'Cookie Policy', href: '#' }
-        ]
+        bottomSection: {
+            copyrightText: "© 2025 EventPro. All rights reserved.",
+            afterCopyrightText: "Powered by DroneTV Events",
+            privacyPolicy: {
+                href: '#privacy',
+                label: 'Privacy Policy'
+            },
+            termsOfService: {
+                href: '#terms',
+                label: 'Terms of Service'
+            }
+        }
     };
 
-    // Transform backend data to component format
-    const transformFooterData = useCallback((data: any): FooterData => {
-        if (!data) return defaultFooterData;
-        
-        // Check if data is already in FooterData format
-        if (data.logoText && data.description) {
-            return data;
-        }
-        
-        // Transform from backend format to component format
-        const footerContent = data.footerContent || data;
-        
-        return {
-            logoText: footerContent.eventInfo?.name || defaultFooterData.logoText,
-            description: footerContent.eventInfo?.description || defaultFooterData.description,
-            quickLinks: (footerContent.quickLinks || defaultFooterData.quickLinks).map((link: any, index: number) => ({
-                id: link.id || `quick-${index}`,
-                label: link.label,
-                href: link.href
-            })),
-            moreLinks: (footerContent.moreLinks || defaultFooterData.moreLinks).map((link: any, index: number) => ({
-                id: link.id || `more-${index}`,
-                label: link.label,
-                href: link.href
-            })),
-            contactInfo: defaultFooterData.contactInfo,
-            copyright: footerContent.bottomSection?.copyrightText || defaultFooterData.copyright,
-            newsletterPlaceholder: defaultFooterData.newsletterPlaceholder,
-            newsletterButton: defaultFooterData.newsletterButton,
-            bottomLinks: [
-                ...(footerContent.bottomSection?.privacyPolicy ? [{
-                    id: 'privacy',
-                    label: footerContent.bottomSection.privacyPolicy.label,
-                    href: footerContent.bottomSection.privacyPolicy.href
-                }] : []),
-                ...(footerContent.bottomSection?.termsOfService ? [{
-                    id: 'terms',
-                    label: footerContent.bottomSection.termsOfService.label,
-                    href: footerContent.bottomSection.termsOfService.href
-                }] : [])
-            ].length > 0 ? [
-                ...(footerContent.bottomSection?.privacyPolicy ? [{
-                    id: 'privacy',
-                    label: footerContent.bottomSection.privacyPolicy.label,
-                    href: footerContent.bottomSection.privacyPolicy.href
-                }] : []),
-                ...(footerContent.bottomSection?.termsOfService ? [{
-                    id: 'terms',
-                    label: footerContent.bottomSection.termsOfService.label,
-                    href: footerContent.bottomSection.termsOfService.href
-                }] : [])
-            ] : defaultFooterData.bottomLinks
-        };
-    }, []);
-
-    const [data, setData] = useState<FooterData>(() => transformFooterData(footerData));
-    const [tempData, setTempData] = useState<FooterData>(() => transformFooterData(footerData));
+    // Use backend data directly
+    const [data, setData] = useState<FooterData>(() => 
+        footerData?.footerContent || defaultFooterData
+    );
+    const [tempData, setTempData] = useState<FooterData>(() => 
+        footerData?.footerContent || defaultFooterData
+    );
 
     // Initialize data only once when component mounts
     useEffect(() => {
         if (footerData && !dataLoaded) {
-            const transformedData = transformFooterData(footerData);
-            setData(transformedData);
-            setTempData(transformedData);
+            const backendData = footerData || defaultFooterData;
+            setData(backendData);
+            setTempData(backendData);
             setDataLoaded(true);
         }
-    }, []); // Empty dependency array - runs only once
+    }, []);
 
     // Footer EditableText component
     const FooterEditableText = useCallback(({
@@ -281,7 +241,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
         setIsLoading(true);
         try {
             const response = await new Promise<FooterData>((resolve) =>
-                setTimeout(() => resolve(transformFooterData(footerData)), 1200)
+                setTimeout(() => resolve(footerData?.footerContent || defaultFooterData), 1200)
             );
             setData(response);
             setTempData(response);
@@ -295,14 +255,14 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
         if (isVisible && !dataLoaded && !isLoading) {
             fetchFooterData();
         }
-    }, [isVisible, dataLoaded, isLoading]); // Removed footerData from dependencies
+    }, [isVisible, dataLoaded, isLoading]);
 
     const handleEdit = () => {
         setIsEditing(true);
         setTempData({ ...data });
     };
 
-    // Save function
+    // Save function - maintains backend structure
     const handleSave = async () => {
         try {
             setIsSaving(true);
@@ -310,7 +270,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
             // Save the updated data
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
 
-            // Update both states
+            // Update both states with backend structure
             setData(tempData);
 
             setIsEditing(false);
@@ -329,22 +289,16 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
         setIsEditing(false);
     };
 
-    // Update functions with useCallback
-    const updateBasicField = useCallback((field: keyof FooterData, value: string) => {
+    // Update functions with useCallback - using backend structure
+    const updateEventInfo = useCallback((field: keyof FooterData['eventInfo'], value: string) => {
         setTempData(prev => ({
             ...prev,
-            [field]: value
+            eventInfo: {
+                ...prev.eventInfo,
+                [field]: value
+            }
         }));
     }, []);
-
-    const updateContactInfo = useCallback((index: number, field: keyof ContactItem, value: string) => {
-        const updatedContact = [...tempData.contactInfo];
-        updatedContact[index] = { ...updatedContact[index], [field]: value };
-        setTempData(prev => ({
-            ...prev,
-            contactInfo: updatedContact
-        }));
-    }, [tempData.contactInfo]);
 
     const updateQuickLink = useCallback((index: number, field: keyof FooterLink, value: string) => {
         const updatedLinks = [...tempData.quickLinks];
@@ -364,14 +318,41 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
         }));
     }, [tempData.moreLinks]);
 
-    const updateBottomLink = useCallback((index: number, field: keyof FooterLink, value: string) => {
-        const updatedLinks = [...tempData.bottomLinks];
-        updatedLinks[index] = { ...updatedLinks[index], [field]: value };
+    const updateBottomSection = useCallback((field: keyof FooterData['bottomSection'], value: string) => {
         setTempData(prev => ({
             ...prev,
-            bottomLinks: updatedLinks
+            bottomSection: {
+                ...prev.bottomSection,
+                [field]: value
+            }
         }));
-    }, [tempData.bottomLinks]);
+    }, []);
+
+    const updatePrivacyPolicy = useCallback((field: keyof FooterData['bottomSection']['privacyPolicy'], value: string) => {
+        setTempData(prev => ({
+            ...prev,
+            bottomSection: {
+                ...prev.bottomSection,
+                privacyPolicy: {
+                    ...prev.bottomSection.privacyPolicy,
+                    [field]: value
+                }
+            }
+        }));
+    }, [tempData.bottomSection?.privacyPolicy]);
+
+    const updateTermsOfService = useCallback((field: keyof FooterData['bottomSection']['termsOfService'], value: string) => {
+        setTempData(prev => ({
+            ...prev,
+            bottomSection: {
+                ...prev.bottomSection,
+                termsOfService: {
+                    ...prev.bottomSection.termsOfService,
+                    [field]: value
+                }
+            }
+        }));
+    }, [tempData.bottomSection?.termsOfService]);
 
     const removeQuickLink = useCallback((index: number) => {
         if (tempData.quickLinks.length <= 1) {
@@ -396,30 +377,6 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
             moreLinks: updatedLinks
         }));
     }, [tempData.moreLinks]);
-
-    const removeContactInfo = useCallback((index: number) => {
-        if (tempData.contactInfo.length <= 1) {
-            toast.error("You must have at least one contact info");
-            return;
-        }
-        const updatedContact = tempData.contactInfo.filter((_, i) => i !== index);
-        setTempData(prev => ({
-            ...prev,
-            contactInfo: updatedContact
-        }));
-    }, [tempData.contactInfo]);
-
-    const removeBottomLink = useCallback((index: number) => {
-        if (tempData.bottomLinks.length <= 1) {
-            toast.error("You must have at least one bottom link");
-            return;
-        }
-        const updatedLinks = tempData.bottomLinks.filter((_, i) => i !== index);
-        setTempData(prev => ({
-            ...prev,
-            bottomLinks: updatedLinks
-        }));
-    }, [tempData.bottomLinks]);
 
     const displayData = isEditing ? tempData : data;
 
@@ -503,34 +460,34 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                         >
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
-                                    <span className="text-white font-semibold text-lg">E</span>
+                                    <span className="text-white font-semibold text-lg uppercase">{displayData.eventInfo.name.charAt(0)}</span>
                                 </div>
                                 {isEditing ? (
                                     <FooterEditableText
-                                        value={displayData.logoText}
-                                        onChange={(value) => updateBasicField('logoText', value)}
+                                        value={displayData.eventInfo.name}
+                                        onChange={(value) => updateEventInfo('name', value)}
                                         charLimit={FOOTER_TEXT_LIMITS.LOGO_TEXT}
                                         className="text-xl font-semibold flex-1"
-                                        placeholder="Logo Text"
+                                        placeholder="Event Name"
                                     />
                                 ) : (
-                                    <span className="text-gray-900 text-xl font-semibold">{displayData.logoText}</span>
+                                    <span className="text-gray-900 text-xl font-semibold">{displayData.eventInfo.name}</span>
                                 )}
                             </div>
 
                             {isEditing ? (
                                 <FooterEditableText
-                                    value={displayData.description}
-                                    onChange={(value) => updateBasicField('description', value)}
+                                    value={displayData.eventInfo.description}
+                                    onChange={(value) => updateEventInfo('description', value)}
                                     charLimit={FOOTER_TEXT_LIMITS.DESCRIPTION}
                                     className="text-sm mb-4"
-                                    placeholder="Description"
+                                    placeholder="Event Description"
                                     multiline
                                     rows={3}
                                 />
                             ) : (
                                 <p className="text-gray-600 text-sm mb-4">
-                                    {displayData.description}
+                                    {displayData.eventInfo.description}
                                 </p>
                             )}
                         </motion.div>
@@ -543,20 +500,39 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                             viewport={{ once: true }}
                             className="lg:col-span-1 ml-40"
                         >
-                            <h3 className="text-gray-900 font-semibold text-lg  mb-4">Quick Links</h3>
-                                <ul className="space-y-3">
-                                    {defaultFooterData.quickLinks.map((link) => (
-                                        <li key={link.id}>
+                            <h3 className="text-gray-900 font-semibold text-lg mb-4">Quick Links</h3>
+                            <ul className="space-y-3">
+                                {displayData.quickLinks.map((link, index) => (
+                                    <li key={link.id}>
+                                        {isEditing ? (
+                                            <div className="flex gap-2 items-center">
+                                                <FooterEditableText
+                                                    value={link.label}
+                                                    onChange={(value) => updateQuickLink(index, 'label', value)}
+                                                    charLimit={FOOTER_TEXT_LIMITS.LINK_LABEL}
+                                                    className="text-sm flex-1"
+                                                    placeholder="Link Label"
+                                                />
+                                                <Button
+                                                    onClick={() => removeQuickLink(index)}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </Button>
+                                            </div>
+                                        ) : (
                                             <a
                                                 href={link.href}
                                                 className="text-gray-600 hover:text-yellow-600 transition-colors text-sm"
                                             >
                                                 {link.label}
                                             </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
                         </motion.div>
 
                         {/* More Links */}
@@ -568,19 +544,38 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                             className="lg:col-span-1 ml-40"
                         >
                             <h3 className="text-gray-900 font-semibold text-lg mb-4">More Links</h3>
-                                <ul className="space-y-3">
-                                    {defaultFooterData.moreLinks.map((link) => (
-                                        <li key={link.id}>
+                            <ul className="space-y-3">
+                                {displayData.moreLinks.map((link, index) => (
+                                    <li key={link.id}>
+                                        {isEditing ? (
+                                            <div className="flex gap-2 items-center">
+                                                <FooterEditableText
+                                                    value={link.label}
+                                                    onChange={(value) => updateMoreLink(index, 'label', value)}
+                                                    charLimit={FOOTER_TEXT_LIMITS.LINK_LABEL}
+                                                    className="text-sm flex-1"
+                                                    placeholder="Link Label"
+                                                />
+                                                <Button
+                                                    onClick={() => removeMoreLink(index)}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </Button>
+                                            </div>
+                                        ) : (
                                             <a
                                                 href={link.href}
                                                 className="text-gray-600 hover:text-yellow-600 transition-colors text-sm"
                                             >
                                                 {link.label}
                                             </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
                         </motion.div>
                     </div>
                 </div>

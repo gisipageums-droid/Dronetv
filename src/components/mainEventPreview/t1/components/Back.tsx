@@ -6,7 +6,7 @@ export default function Publish() {
 
   return (
     <>
-      <motion.div className="fixed bottom-20 right-[13rem] z-50">
+      <motion.div className="fixed bottom-20 right-[3rem] z-50">
         <motion.button
           onClick={() => navigate(-1)}
           className="bg-gray-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"

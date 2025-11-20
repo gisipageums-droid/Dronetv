@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@anvikjs/react-infinite-scroll-calendar": "^1.0.3",
     "@aws-sdk/client-s3": "^3.863.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",

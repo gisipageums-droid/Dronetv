@@ -1541,7 +1541,7 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "../../context/FormContext";
-import { Plus, Minus, Trash2, Globe, Mail, Phone, MapPin, Share2, Calendar, Upload, Eye, X, RefreshCw, FileText, Image as ImageIcon } from "lucide-react";
+import { Plus, Minus, Trash2, Globe, Mail, Phone, MapPin, Share2, Calendar, Upload, Eye, X, RefreshCw, FileText, Image as ImageIcon, Video } from "lucide-react";
 import { PhoneInput } from "../common/PhoneInput";
 
 interface ExhibitorInterview {
@@ -1612,6 +1612,7 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
   const tags = data.tags || [];
   const published = data.published || false;
   const lastModified = data.lastModified || "";
+  const backgroundVideoUrl = data.backgroundVideoUrl || "";
 
   // Get userId from your form data or context - make sure this is an email
   const userId = "event-user@example.com"; // Use a default email for events
@@ -1971,6 +1972,85 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
     if (media.file) {
       await handleFileUpload(index, media.file);
     }
+  };
+
+  // Background Video Section
+  const renderBackgroundVideo = () => {
+    return (
+      <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+        <div>
+          <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <Video className="w-5 h-5 text-purple-500" />
+            Background Video
+          </h3>
+          <p className="text-sm text-slate-600 mt-1">
+            Add a background video URL for your event (YouTube, Vimeo, or direct video link)
+          </p>
+        </div>
+
+        <div>
+          <label className="block mb-2 font-medium text-slate-700 text-sm">
+            Background Video URL
+          </label>
+          <input
+            type="url"
+            value={backgroundVideoUrl}
+            onChange={(e) => updateField("backgroundVideoUrl", e.target.value)}
+            className={baseInputClasses}
+            placeholder="https://example.com/video.mp4 or https://youtube.com/embed/..."
+          />
+          <p className="text-xs text-slate-500 mt-2">
+            Supported: MP4, WebM, Ogg files or YouTube/Vimeo embed URLs
+          </p>
+        </div>
+
+        {/* Video Preview */}
+        {backgroundVideoUrl && (
+          <div className="mt-4">
+            <label className="block mb-2 font-medium text-slate-700 text-sm">
+              Video Preview
+            </label>
+            <div className="aspect-video bg-slate-200 rounded-lg overflow-hidden">
+              <video 
+                src={backgroundVideoUrl} 
+                controls 
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  // If direct video fails, try embedding as iframe for YouTube/Vimeo
+                  const videoElement = e.currentTarget;
+                  const parent = videoElement.parentElement;
+                  
+                  // Check if it's a YouTube or Vimeo URL
+                  if (backgroundVideoUrl.includes('youtube') || backgroundVideoUrl.includes('youtu.be') || backgroundVideoUrl.includes('vimeo')) {
+                    videoElement.style.display = 'none';
+                    
+                    let embedUrl = backgroundVideoUrl;
+                    if (backgroundVideoUrl.includes('youtube.com/watch?v=')) {
+                      embedUrl = backgroundVideoUrl.replace('youtube.com/watch?v=', 'youtube.com/embed/');
+                    } else if (backgroundVideoUrl.includes('youtu.be/')) {
+                      embedUrl = backgroundVideoUrl.replace('youtu.be/', 'youtube.com/embed/');
+                    } else if (backgroundVideoUrl.includes('vimeo.com/')) {
+                      embedUrl = backgroundVideoUrl.replace('vimeo.com/', 'player.vimeo.com/video/');
+                    }
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.src = embedUrl;
+                    iframe.className = 'w-full h-full';
+                    iframe.allowFullscreen = true;
+                    
+                    if (parent) {
+                      parent.appendChild(iframe);
+                    }
+                  }
+                }}
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Exhibitor Interviews Section
@@ -2942,6 +3022,7 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
         {step.title}
       </h2>
 
+      {renderBackgroundVideo()}
       {renderExhibitorInterviews()}
       {renderMediaGallery()}
       {renderContactInfo()}
@@ -2958,6 +3039,12 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
           <div>
             <h4 className="font-medium text-amber-800 mb-2">Media</h4>
             <div className="space-y-1">
+              <div className="flex justify-between">
+                <span>Background Video:</span>
+                <span className="font-medium">
+                  {backgroundVideoUrl ? 'Added' : 'Not Added'}
+                </span>
+              </div>
               <div className="flex justify-between">
                 <span>Interviews:</span>
                 <span className="font-medium">{exhibitorInterviews.length}</span>
