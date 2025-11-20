@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useTemplate } from "../../../../../context/context";
+import { useTemplate } from "../../../../context/context";
 import Navigation from "./components/Navigation";
 import HeroSection from "./components/HeroSection";
 import AboutSection from "./components/AboutSection";
@@ -186,90 +186,96 @@ const EventTemplate1: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { draftId, userId, isAIgen } = useParams();
-  const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData } = useTemplate();
+  const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData } =
+    useTemplate();
 
   // Component states to collect data from all sections (similar to App.tsx)
   const [componentStates, setComponentStates] = useState<ComponentStates>({
     header: {
-      eventName: '',
-      ctaText: '',
-      navItems: []
+      eventName: "",
+      ctaText: "",
+      navItems: [],
     },
     hero: {
-      title: '',
-      date: '',
-      time: '',
-      location: '',
-      eventDate: '',
-      startDate: '',
-      endDate: '',
-      startTime: '',
-      endTime: '',
-      videoUrl: '',
+      title: "",
+      date: "",
+      time: "",
+      location: "",
+      eventDate: "",
+      startDate: "",
+      endDate: "",
+      startTime: "",
+      endTime: "",
+      videoUrl: "",
       highlights: [],
-      btn1: '',
-      btn2: ''
+      btn1: "",
+      btn2: "",
     },
     about: {
-      heading: '',
-      subText: '',
+      heading: "",
+      subText: "",
       features: [],
-      zonesTitle: '',
-      zonesTitleHighlight: '',
-      zonesSubtitle: '',
-      zones: []
+      zonesTitle: "",
+      zonesTitleHighlight: "",
+      zonesSubtitle: "",
+      zones: [],
     },
     Agenda: {
-      title: '',
-      titleHighlight: '',
-      subtitle: '',
-      themes: {}
+      title: "",
+      titleHighlight: "",
+      subtitle: "",
+      themes: {},
     },
     speakersData: {
       speakers: [],
       headerContent: {
-        sectionTitle: '',
-        eventTitle: '',
-        subtitle: ''
-      }
+        sectionTitle: "",
+        eventTitle: "",
+        subtitle: "",
+      },
     },
     Gallery: {
-      title: '',
-      titleHighlight: '',
-      subtitle: '',
-      items: []
+      title: "",
+      titleHighlight: "",
+      subtitle: "",
+      items: [],
     },
     sponsorsData: {
-      title: '',
-      titleHighlight: '',
-      partners: []
+      title: "",
+      titleHighlight: "",
+      partners: [],
     },
     footer: {
-      eventName: '',
-      description: '',
-      quickLinksTitle: '',
+      eventName: "",
+      description: "",
+      quickLinksTitle: "",
       quickLinks: [],
-      socialLinks: []
-    }
+      socialLinks: [],
+    },
   });
 
   // Memoize the collectComponentState function with proper dependencies
-  const collectComponentState = useCallback((componentName: keyof ComponentStates, state: any) => {
-    setComponentStates(prev => ({
-      ...prev,
-      [componentName]: state,
-    }));
-  }, []);
+  const collectComponentState = useCallback(
+    (componentName: keyof ComponentStates, state: any) => {
+      setComponentStates((prev) => ({
+        ...prev,
+        [componentName]: state,
+      }));
+    },
+    []
+  );
 
   // Memoize callback creators to prevent recreation on every render
-  const createStateChangeHandler = useCallback(<K extends keyof ComponentStates>(
-    componentName: K
-  ) => (state: Partial<ComponentStates[K]>) => {
-    setComponentStates(prev => ({
-      ...prev,
-      [componentName]: { ...prev[componentName], ...state }
-    }));
-  }, []);
+  const createStateChangeHandler = useCallback(
+    <K extends keyof ComponentStates>(componentName: K) =>
+      (state: Partial<ComponentStates[K]>) => {
+        setComponentStates((prev) => ({
+          ...prev,
+          [componentName]: { ...prev[componentName], ...state },
+        }));
+      },
+    []
+  );
 
   // Update finalTemplate whenever componentStates changes (similar to App.tsx)
   useEffect(() => {
@@ -317,7 +323,6 @@ const EventTemplate1: React.FC = () => {
               },
             }
           );
-
         }
 
         if (!response.ok) {
@@ -334,7 +339,7 @@ const EventTemplate1: React.FC = () => {
         if (data.data.content) {
           setComponentStates({
             ...componentStates, // Keep existing state as fallback
-            ...data.data.content
+            ...data.data.content,
           });
         }
 
@@ -400,37 +405,37 @@ const EventTemplate1: React.FC = () => {
     <div className="bg-gray-50">
       <Navigation
         headerData={componentStates.header}
-        onStateChange={createStateChangeHandler('header')}
+        onStateChange={createStateChangeHandler("header")}
       />
       <HeroSection
         heroData={componentStates.hero}
-        onStateChange={createStateChangeHandler('hero')}
+        onStateChange={createStateChangeHandler("hero")}
       />
       <AboutSection
         aboutData={componentStates.about}
-        onStateChange={createStateChangeHandler('about')}
+        onStateChange={createStateChangeHandler("about")}
       />
       <SpeakersSection
         speakersData={componentStates.speakersData}
-        onStateChange={createStateChangeHandler('speakersData')}
+        onStateChange={createStateChangeHandler("speakersData")}
       />
       <AgendaSection
         agendaData={componentStates.Agenda}
-        onStateChange={createStateChangeHandler('Agenda')}
+        onStateChange={createStateChangeHandler("Agenda")}
       />
       <SponsorsSection
         userId={userId}
         sponsorsData={componentStates.sponsorsData}
-        onStateChange={createStateChangeHandler('sponsorsData')}
+        onStateChange={createStateChangeHandler("sponsorsData")}
       />
       <GallerySection
         galleryData={componentStates.Gallery}
-        onStateChange={createStateChangeHandler('Gallery')}
+        onStateChange={createStateChangeHandler("Gallery")}
       />
       <ContactSection />
       <Footer
         footerData={componentStates.footer}
-        onStateChange={createStateChangeHandler('footer')}
+        onStateChange={createStateChangeHandler("footer")}
       />
       <Back />
       <Publish />

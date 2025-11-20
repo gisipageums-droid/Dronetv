@@ -12,6 +12,7 @@ export default function Hero({
   userId,
   publishedId,
   templateSelection,
+  companyName,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [pendingImageFile, setPendingImageFile] = useState(null);
@@ -71,7 +72,7 @@ export default function Hero({
 
   const [heroState, setHeroState] = useState(() => {
     const initialState = {
-      badgeText: heroData?.badgeText || "Trusted by 20+ Companies",
+      badgeText: companyName || "Trusted by 20+ Companies",
       heading: heroData?.heading || "Transform Your Business with Innovation",
       description:
         heroData?.description ||
@@ -619,7 +620,7 @@ export default function Hero({
                   className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
                   variants={itemVariants}
                 >
-                  <CheckCircle className="w-4 h-4 mr-2" />
+
                   {isEditing ? (
                     <div className="relative">
                       <input

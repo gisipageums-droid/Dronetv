@@ -78,10 +78,10 @@ export default function About({ aboutData }) {
 
             {/* Description */}
             <div className="space-y-4">
-              <p className="text-gray-600 leading-relaxed text-base">
+              <p className="text-gray-600 leading-relaxed text-base text-justify">
                 {aboutData.description1}
               </p>
-              <p className="text-gray-600 leading-relaxed text-base">
+              <p className="text-gray-600 leading-relaxed text-base text-justify">
                 {aboutData.description2}
               </p>
             </div>
@@ -92,7 +92,7 @@ export default function About({ aboutData }) {
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
                   <span className="text-blue-600">🎯</span> Mission
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed">
+                <p className="text-gray-700 text-sm leading-relaxed text-justify">
                   {aboutData.mission}
                 </p>
               </div>
@@ -100,7 +100,7 @@ export default function About({ aboutData }) {
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
                   <span className="text-purple-600">👁️</span> Vision
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed">
+                <p className="text-gray-700 text-sm leading-relaxed text-justify">
                   {aboutData.vision}
                 </p>
               </div>

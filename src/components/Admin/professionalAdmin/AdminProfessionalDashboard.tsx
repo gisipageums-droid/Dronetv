@@ -309,16 +309,24 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Divider */}
         <div className="border-t border-gray-100"></div>
       </div>
+      <div className="flex gap-2 flex-col">
+
       <motion.button
         whileTap={{ scale: [0.9, 1] }}
         className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
-      >
+        >
         <Link to={"/admin/company/dashboard"}>Companies </Link>
       </motion.button>
+      <motion.button
+        whileTap={{ scale: [0.9, 1] }}
+        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+        >
+        <Link to={"/admin/event/dashboard"}>Events </Link>
+      </motion.button>
+        </div>
     </div>
   );
 };
-
 
 // Professional Card Component
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
@@ -335,8 +343,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
     professional.professionalName?.charAt(0) || "P"
   }%3C/text%3E%3C/svg%3E`;
 
-  
-let navigate = useNavigate();
+  let navigate = useNavigate();
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -454,26 +461,25 @@ let navigate = useNavigate();
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-2">
-         
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
                 // onPreview(professional.professionalId);
-                   if (professional.templateSelection === "template-1") {
-        navigate(
-          `/user/professionals/edit/1/${professional.professionalId}/${professional.userId}`
-        );
-      } else if (professional.templateSelection === "template-2") {
-        navigate(
-          `/user/professionals/edit/2/${professional.professionalId}/${professional.userId}`
-        );
-      }
+                if (professional.templateSelection === "template-1") {
+                  navigate(
+                    `/user/professionals/edit/1/${professional.professionalId}/${professional.userId}`
+                  );
+                } else if (professional.templateSelection === "template-2") {
+                  navigate(
+                    `/user/professionals/edit/2/${professional.professionalId}/${professional.userId}`
+                  );
+                }
               }}
               disabled={disabled}
               className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Eye className="w-3 h-3 md:w-4 md:h-4" />
-             Edit/ Preview
+              Edit/ Preview
             </button>
 
             <button
@@ -912,7 +918,10 @@ const AdminProfessionalDashboard: React.FC = () => {
     isOpen: false,
     data: null,
   });
-  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; professionalId: string | null }>({
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    professionalId: string | null;
+  }>({
     isOpen: false,
     professionalId: null,
   });
@@ -1041,7 +1050,9 @@ const AdminProfessionalDashboard: React.FC = () => {
     if (!deleteModal.professionalId) return;
     try {
       setIsMutating(true);
-      const result = await apiService.deleteProfessional(deleteModal.professionalId);
+      const result = await apiService.deleteProfessional(
+        deleteModal.professionalId
+      );
 
       if (result.message === "Professional template deleted successfully") {
         toast.success("Professional deleted successfully");
@@ -1168,7 +1179,9 @@ const AdminProfessionalDashboard: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setDeleteModal({ isOpen: false, professionalId: null })}
+            onClick={() =>
+              setDeleteModal({ isOpen: false, professionalId: null })
+            }
           >
             <motion.div
               className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
@@ -1186,7 +1199,9 @@ const AdminProfessionalDashboard: React.FC = () => {
                   </h3>
                 </div>
                 <button
-                  onClick={() => setDeleteModal({ isOpen: false, professionalId: null })}
+                  onClick={() =>
+                    setDeleteModal({ isOpen: false, professionalId: null })
+                  }
                   className="p-1 rounded-full hover:bg-gray-100 transition-colors"
                 >
                   <X size={20} className="text-gray-500" />
@@ -1200,7 +1215,8 @@ const AdminProfessionalDashboard: React.FC = () => {
                     className="text-red-600 mt-0.5 flex-shrink-0"
                   />
                   <p className="text-sm text-red-800">
-                    This action cannot be undone. All data for this professional will be permanently deleted.
+                    This action cannot be undone. All data for this professional
+                    will be permanently deleted.
                   </p>
                 </div>
                 <p className="text-gray-600">
@@ -1212,7 +1228,9 @@ const AdminProfessionalDashboard: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ scale: 1.1 }}
-                  onClick={() => setDeleteModal({ isOpen: false, professionalId: null })}
+                  onClick={() =>
+                    setDeleteModal({ isOpen: false, professionalId: null })
+                  }
                   className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
                   disabled={isMutating}
                 >

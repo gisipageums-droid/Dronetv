@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CheckCircle, X, Upload, AlertCircle } from "lucide-react";
-import { useTemplate } from "./../../../../../../context/context";
+import { useTemplate } from "../../../../../context/context";
 
 export default function Publish() {
   const [model, setModel] = useState(false);
@@ -125,14 +124,18 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                     className="text-blue-600 mt-0.5 flex-shrink-0"
                   />
                   <p className="text-sm text-blue-800">
-                    Thank You for completing your listing! Your listing will be reviewed and will go live as soon as possible if your information aligns with our{" "}
+                    Thank You for completing your listing! Your listing will be
+                    reviewed and will go live as soon as possible if your
+                    information aligns with our{" "}
                     <button
                       onClick={() => setTermsModel(true)}
                       className="text-red-600 underline font-medium hover:text-red-800 transition-colors"
                     >
                       terms and conditions
                     </button>
-                    . You'll receive an email notification once it's published. Please make sure all the content provided is correct before submitting. This action cannot be undone.
+                    . You'll receive an email notification once it's published.
+                    Please make sure all the content provided is correct before
+                    submitting. This action cannot be undone.
                   </p>
                 </div>
                 <p className="text-gray-600">

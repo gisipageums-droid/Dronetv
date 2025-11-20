@@ -111,7 +111,7 @@ export default function Products({ productData }) {
           <h3 className="text-2xl font-semibold text-gray-700 mb-4">
             {content.sectionSubtitle}
           </h3>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto text-justify">
             {content.sectionDescription}
             {content.trustText && (
               <span className="font-bold text-yellow-600">
@@ -133,11 +133,10 @@ export default function Products({ productData }) {
             <button
               key={cat}
               onClick={() => setSelected(cat)}
-              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
-                selected === cat
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${selected === cat
                   ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
                   : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -175,10 +174,9 @@ export default function Products({ productData }) {
                   <div className="p-5 flex-1 flex flex-col">
                     <div className="mb-3">
                       <Badge
-                        className={`${
-                          product.categoryColor ||
+                        className={`${product.categoryColor ||
                           "bg-gray-100 text-gray-700"
-                        }`}
+                          }`}
                       >
                         {product.category}
                       </Badge>
@@ -188,7 +186,7 @@ export default function Products({ productData }) {
                       {product.title}
                     </h3>
 
-                    <p className="text-gray-600 text-sm mb-4 flex-1">
+                    <p className="text-gray-600 text-sm mb-4 flex-1 text-justify">
                       {product.description
                         ? product.description.slice(0, 30) + "..."
                         : ""}
@@ -245,10 +243,9 @@ export default function Products({ productData }) {
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="flex items-center gap-3 mb-3">
                     <Badge
-                      className={`${
-                        selectedProduct.categoryColor ||
+                      className={`${selectedProduct.categoryColor ||
                         "bg-yellow-400 text-gray-900"
-                      }`}
+                        }`}
                     >
                       {selectedProduct.category}
                     </Badge>
@@ -271,7 +268,7 @@ export default function Products({ productData }) {
                   <h3 className="text-xl font-bold text-gray-900 mb-3">
                     About This Product
                   </h3>
-                  <p className="text-gray-700 text-base leading-relaxed mb-4">
+                  <p className="text-gray-700 text-base leading-relaxed mb-4 text-justify">
                     {selectedProduct.detailedDescription ||
                       selectedProduct.description}
                   </p>
@@ -327,7 +324,7 @@ export default function Products({ productData }) {
                       <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
                         <span className="text-green-600">💰</span> Pricing
                       </h3>
-                      <p className="text-gray-900 text-xl font-bold">
+                      <p className="text-gray-900 text-xl font-bold text-justify">
                         {selectedProduct.pricing}
                       </p>
                     </div>
@@ -338,7 +335,7 @@ export default function Products({ productData }) {
                         <span className="text-purple-600">⏱️</span> Delivery
                         Timeline
                       </h3>
-                      <p className="text-gray-900 text-xl font-bold">
+                      <p className="text-gray-900 text-xl font-bold text-justify">
                         {selectedProduct.timeline}
                       </p>
                     </div>

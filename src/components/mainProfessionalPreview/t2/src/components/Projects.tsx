@@ -120,7 +120,7 @@ export function Projects({ projectData }: ProjectsProps) {
   }
 
   return (
-    <section ref={projectsRef} id="projects" className="py-20 bg-background">
+    <section ref={projectsRef} id="projects" className="py-20 text-justify bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <motion.div

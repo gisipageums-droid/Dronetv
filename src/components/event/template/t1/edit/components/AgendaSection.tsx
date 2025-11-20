@@ -214,30 +214,48 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
     if (editMode) {
       return (
         <div className="space-y-6">
-          <input
-            type="text"
-            name="title"
-            value={theme.title}
-            onChange={handleInputChange}
-            className="w-full text-xl md:text-2xl font-bold text-black border-b border-gray-300 focus:outline-none focus:border-[#FF0000] transition-colors bg-transparent text-center"
-          />
-          <input
-            type="text"
-            name="note"
-            value={theme.note}
-            onChange={handleInputChange}
-            className="w-full text-sm text-gray-500 font-medium border-b border-gray-300 focus:outline-none focus:border-blue-400 transition-colors bg-transparent text-center"
-            placeholder="Optional Note"
-          />
+          <div>
+            <input
+              type="text"
+              name="title"
+              value={theme.title}
+              onChange={handleInputChange}
+              maxLength={100}
+              className="w-full text-xl md:text-2xl font-bold text-black border-b border-gray-300 focus:outline-none focus:border-[#FF0000] transition-colors bg-transparent text-center"
+            />
+            <div className="text-sm text-gray-500 text-right mt-1">
+              {theme.title.length}/100
+            </div>
+          </div>
+          <div>
+            <input
+              type="text"
+              name="note"
+              value={theme.note}
+              onChange={handleInputChange}
+              maxLength={200}
+              className="w-full text-sm text-gray-500 font-medium border-b border-gray-300 focus:outline-none focus:border-blue-400 transition-colors bg-transparent text-center"
+              placeholder="Optional Note"
+            />
+            <div className="text-sm text-gray-500 text-right mt-1">
+              {theme.note.length}/200
+            </div>
+          </div>
           <ul className="text-left list-none space-y-4 text-gray-700 text-base">
             {theme.bullets.map((point, idx) => (
               <li key={idx} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={point}
-                  onChange={(e) => handleBulletChange(e, idx)}
-                  className="w-full p-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={point}
+                    onChange={(e) => handleBulletChange(e, idx)}
+                    maxLength={500}
+                    className="w-full p-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  <div className="text-xs text-gray-500 text-right mt-1">
+                    {point.length}/500
+                  </div>
+                </div>
                 <button
                   onClick={() => handleRemoveBullet(idx)}
                   className="p-1 text-red-500 hover:bg-red-100 rounded-full"
@@ -325,41 +343,59 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
           {editMode ? (
             <>
               <div className="flex items-center justify-center gap-2 mb-4">
-                <input
-                  type="text"
-                  value={agendaContent.title}
-                  onChange={(e) =>
-                    setAgendaContent({
-                      ...agendaContent,
-                      title: e.target.value,
-                    })
-                  }
-                  className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
-                />
-                <input
-                  type="text"
-                  value={agendaContent.titleHighlight}
-                  onChange={(e) =>
-                    setAgendaContent({
-                      ...agendaContent,
-                      titleHighlight: e.target.value,
-                    })
-                  }
-                  className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
-                />
+                <div>
+                  <input
+                    type="text"
+                    value={agendaContent.title}
+                    onChange={(e) =>
+                      setAgendaContent({
+                        ...agendaContent,
+                        title: e.target.value,
+                      })
+                    }
+                    maxLength={100}
+                    className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                  />
+                  <div className="text-sm text-gray-500 text-right mt-1">
+                    {agendaContent.title.length}/100
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    value={agendaContent.titleHighlight}
+                    onChange={(e) =>
+                      setAgendaContent({
+                        ...agendaContent,
+                        titleHighlight: e.target.value,
+                      })
+                    }
+                    maxLength={50}
+                    className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                  />
+                  <div className="text-sm text-gray-500 text-right mt-1">
+                    {agendaContent.titleHighlight.length}/50
+                  </div>
+                </div>
               </div>
               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
-              <textarea
-                value={agendaContent.subtitle}
-                onChange={(e) =>
-                  setAgendaContent({
-                    ...agendaContent,
-                    subtitle: e.target.value,
-                  })
-                }
-                className="text-gray-600 text-lg max-w-2xl mx-auto bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
-                rows={2}
-              />
+              <div className="max-w-2xl mx-auto">
+                <textarea
+                  value={agendaContent.subtitle}
+                  onChange={(e) =>
+                    setAgendaContent({
+                      ...agendaContent,
+                      subtitle: e.target.value,
+                    })
+                  }
+                  maxLength={200}
+                  className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+                  rows={2}
+                />
+                <div className="text-sm text-gray-500 text-right mt-1">
+                  {agendaContent.subtitle.length}/200
+                </div>
+              </div>
             </>
           ) : (
             <>

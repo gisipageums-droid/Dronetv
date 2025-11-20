@@ -1,7 +1,8 @@
 import { motion } from "motion/react";
 
-export default function Hero({ heroData }) {
+export default function Hero({ heroData, headerData }) {
   // Consolidated state with fallbacks
+  console.log("heroData", headerData.companyName);
   const heroState = {
     ...heroData,
     heroImage:
@@ -90,13 +91,13 @@ export default function Hero({ heroData }) {
             animate="visible"
           >
             <div className="space-y-4">
-              {/* Badge */}
+              {/* Badge - Now showing company name */}
               <motion.div
                 className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
                 variants={itemVariants}
               >
                 <span className="font-bold text-sm">
-                  {heroState.badgeText}
+                  {headerData.companyName}
                 </span>
               </motion.div>
 
@@ -113,10 +114,10 @@ export default function Hero({ heroData }) {
               {/* Description */}
               <motion.div variants={itemVariants}>
                 {/* <p className="text-xl text-muted-foreground max-w-lg inline"> */}
-                <p className="text-xl text-red-500 max-w-lg inline">
+                <p className="text-xl text-red-500 max-w-lg inline text-justify">
                   {heroState.description}
                   <span className="text-red-accent font-semibold">
-                   {" "} {heroState.highlightDesc}
+                    {" "} {heroState.highlightDesc}
                   </span>
                   .
                 </p>
@@ -181,7 +182,7 @@ export default function Hero({ heroData }) {
           >
             {/* Main image container */}
             <div className="relative w-full -mt-6 md:-mt-8 xl:-mt-10">
-              <motion.div 
+              <motion.div
                 className="relative"
                 variants={imageVariants}
               >
@@ -192,7 +193,7 @@ export default function Hero({ heroData }) {
                       src={heroState.heroImage}
                       alt="Modern business team collaborating"
                       className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
-                      style={{ 
+                      style={{
                         maxHeight: '360px',
                         width: 'auto',
                         margin: '0 auto'

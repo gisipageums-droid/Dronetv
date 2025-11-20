@@ -63,7 +63,7 @@ const RechargePlans: React.FC = () => {
                 <div className="absolute top-6 right-6 z-20 md:top-8 md:right-8">
                     <button
                         className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50"
-                        onClick={() =>(navigate('/user-buy'))}
+                        onClick={() => (navigate('/user-buy'))}
                         aria-label="Buy recharge tokens"
                     >
                         <span className="hidden sm:inline">Buy Token</span>
@@ -89,8 +89,8 @@ const RechargePlans: React.FC = () => {
                                 <div
                                     key={plan.id}
                                     className={`relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border ${plan.popular
-                                            ? 'border-amber-400 ring-1 ring-amber-200'
-                                            : 'border-amber-200'
+                                        ? 'border-amber-400 ring-1 ring-amber-200'
+                                        : 'border-amber-200'
                                         }`}
                                 >
                                     {/* Popular Badge */}
@@ -117,16 +117,16 @@ const RechargePlans: React.FC = () => {
                                             >
                                                 <span
                                                     className={`flex-1 text-center text-xs font-medium py-1.5 rounded-full transition-colors ${!isYearly
-                                                            ? 'text-amber-800 bg-white shadow-sm'
-                                                            : 'text-amber-600'
+                                                        ? 'text-amber-800 bg-white shadow-sm'
+                                                        : 'text-amber-600'
                                                         }`}
                                                 >
                                                     Monthly
                                                 </span>
                                                 <span
                                                     className={`flex-1 text-center text-xs font-medium py-1.5 rounded-full transition-colors ${isYearly
-                                                            ? 'text-amber-800 bg-white shadow-sm'
-                                                            : 'text-amber-600'
+                                                        ? 'text-amber-800 bg-white shadow-sm'
+                                                        : 'text-amber-600'
                                                         }`}
                                                 >
                                                     Yearly
@@ -178,8 +178,8 @@ const RechargePlans: React.FC = () => {
                                         {/* CTA Button */}
                                         <button
                                             className={`w-full py-2.5 font-semibold rounded-lg text-sm transition-all ${plan.popular
-                                                    ? 'bg-amber-500 hover:bg-amber-600 text-white shadow'
-                                                    : 'bg-amber-100 hover:bg-amber-200 text-amber-800'
+                                                ? 'bg-amber-500 hover:bg-amber-600 text-white shadow'
+                                                : 'bg-amber-100 hover:bg-amber-200 text-amber-800'
                                                 }`}
                                         >
                                             Select Plan

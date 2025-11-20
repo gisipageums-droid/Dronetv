@@ -368,7 +368,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
   return (
     <section
       id="skills"
-      className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
+      className="py-20 text-justify bg-white dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Content Wrapper */}

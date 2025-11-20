@@ -339,7 +339,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   }
 
   return (
-    <section ref={clientsRef} className="py-20 bg-background">
+    <section ref={clientsRef} className="py-20  bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>

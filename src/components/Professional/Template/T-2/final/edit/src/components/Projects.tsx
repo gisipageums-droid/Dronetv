@@ -500,7 +500,7 @@ export function Projects({ projectsData, onStateChange, userId, professionalId, 
   }, []);
 
   return (
-    <section id="projects" className="relative py-20 bg-background">
+    <section id="projects" className="relative text-justify py-20 bg-background">
       {/* Image Cropper Modal - UPDATED WITH ZOOM OUT LOGIC */}
       {showCropper && (
         <motion.div

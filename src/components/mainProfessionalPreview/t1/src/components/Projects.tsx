@@ -60,7 +60,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
   };
 
   return (
-    <section id="projects" className="py-20 bg-white dark:bg-gray-900">
+    <section id="projects" className="py-20 text-justify bg-white dark:bg-gray-900">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
