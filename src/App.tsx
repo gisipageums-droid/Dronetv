@@ -100,7 +100,7 @@ import MainEvent1 from "./components/mainEventPreview/t1/EventTemplate1"
 import BuyTokenPage from "./components/UserDashboard/pages/Buy";
 import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
-import Edit_event_t2 from "./components/event/template/t2/edit/App";
+
 
 
 const HomePage = () => (
