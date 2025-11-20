@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
+import { useUserAuth } from "../../context/context";
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
 const RechargePlans: React.FC = () => {
     const [animatingCard, setAnimatingCard] = useState<string | null>(null);
 
@@ -7,24 +12,24 @@ const RechargePlans: React.FC = () => {
         {
             id: 'basic',
             name: 'Basic',
-            monthly: { price: 9.99, billed: 'billed monthly' },
-            yearly: { price: 95.99, billed: 'billed monthly ($5.88 total)' },
+            monthly: { price: 886, billed: 'billed monthly' },
+            yearly: { price: 8510, billed: 'billed monthly (₹521 total)' },
             features: ['5GB Data', 'Unlimited Calls', '100 SMS/day'],
             popular: false,
         },
         {
             id: 'pro',
             name: 'Pro',
-            monthly: { price: 19.99, billed: 'billed monthly' },
-            yearly: { price: 155.99, billed: 'billed monthly ($15.88 total)' },
+            monthly: { price: 1772, billed: 'billed monthly' },
+            yearly: { price: 13830, billed: 'billed monthly (₹1408 total)' },
             features: ['20GB Data', 'Unlimited Calls & SMS', '5G Access', 'Roaming'],
             popular: true,
         },
         {
             id: 'premium',
             name: 'Premium',
-            monthly: { price: 29.99, billed: 'billed monthly' },
-            yearly: { price: 235.99, billed: 'billed monthly ($25.88 total)' },
+            monthly: { price: 2659, billed: 'billed monthly' },
+            yearly: { price: 20923, billed: 'billed monthly (₹2295 total)' },
             features: ['Unlimited Data', 'Unlimited Calls & SMS', '5G+ Access', 'Global Roaming', 'Priority Support'],
             popular: false,
         },
@@ -35,6 +40,105 @@ const RechargePlans: React.FC = () => {
         setTimeout(() => setAnimatingCard(null), 300);
     };
     const navigate = useNavigate();
+    const { user } = useUserAuth();
+    const { Razorpay } = useRazorpay();
+    const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
+
+    const TOKEN_RATE = 10; // ₹10 = 1 token
+
+    const handleSelectPlan = async (plan: any, isYearly: boolean) => {
+        if (!user) {
+            toast.error("Please login to purchase a plan");
+            navigate('/login');
+            return;
+        }
+
+        const price = isYearly ? plan.yearly.price : plan.monthly.price;
+        const tokenCount = Math.floor(price / TOKEN_RATE);
+        const planName = `${plan.name} (${isYearly ? 'Yearly' : 'Monthly'})`;
+
+        setProcessingPlanId(plan.id);
+
+        try {
+            // Step 1: Place Order
+            const orderData = {
+                userId: user?.userData?.userId || user?.userData?.email,
+                amount: price,
+                tokenCount: tokenCount,
+                currency: "INR",
+                email: user?.userData?.email || '',
+                name: user?.userData?.fullName || '',
+                phone: user?.userData?.phone || '',
+                notes: {
+                    planId: plan.id,
+                    planName: planName,
+                    period: isYearly ? 'yearly' : 'monthly'
+                }
+            };
+
+            const placeOrderResponse = await axios.post('https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/place-order', orderData);
+
+            if (!placeOrderResponse.data.success) {
+                throw new Error(placeOrderResponse.data.message || 'Failed to create order');
+            }
+
+            const { transactionId, razorpayOrderId, key, order } = placeOrderResponse.data.data;
+
+            // Step 2: Initialize Razorpay
+            const options: RazorpayOrderOptions = {
+                key: key,
+                amount: order.amount,
+                currency: order.currency,
+                name: "DRONTV",
+                description: `Purchase ${planName} - ${tokenCount} Tokens`,
+                image: "https://www.dronetv.in/images/Drone%20tv%20.in.png",
+                order_id: razorpayOrderId,
+                handler: async (response) => {
+                    try {
+                        // Step 3: Confirm Order
+                        const confirmData = {
+                            payment_id: response.razorpay_payment_id,
+                            order_id: response.razorpay_order_id,
+                            transactionId: transactionId
+                        };
+
+                        const confirmResponse = await axios.post('https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/confirm-order', confirmData);
+
+                        if (confirmResponse.data.success) {
+                            toast.success(`Plan purchased successfully! ${tokenCount} tokens added.`);
+                        } else {
+                            toast.error(confirmResponse.data.message || 'Payment verification failed');
+                        }
+                    } catch (error: any) {
+                        console.error('Confirm order error:', error);
+                        toast.error('Payment verification failed. Please contact support.');
+                    }
+                },
+                prefill: {
+                    name: user?.userData?.fullName || '',
+                    email: user?.userData?.email || '',
+                    contact: user?.userData?.phone || ''
+                },
+                theme: {
+                    color: "#F59E0B",
+                },
+                modal: {
+                    ondismiss: () => {
+                        setProcessingPlanId(null);
+                    }
+                }
+            };
+
+            const razorpayInstance = new Razorpay(options);
+            razorpayInstance.open();
+
+        } catch (error: any) {
+            console.error('Payment error:', error);
+            toast.error(error.message || 'Failed to initiate payment');
+        } finally {
+            setProcessingPlanId(null);
+        }
+    };
 
     return (
         <>
@@ -95,7 +199,7 @@ const RechargePlans: React.FC = () => {
                                 >
                                     {/* Popular Badge */}
                                     {plan.popular && (
-                                        <div className="absolute top-4 right-[-30px] bg-amber-400 text-amber-900 font-bold text-xs py-1 px-7 rotate-45 z-10">
+                                        <div className="absolute top-8 right-[-30px] bg-amber-400 text-amber-900 font-bold text-xs py-1 px-7 rotate-45 z-10 ">
                                             Most Popular
                                         </div>
                                     )}
@@ -116,7 +220,7 @@ const RechargePlans: React.FC = () => {
                                                 aria-label={`${plan.name} plan: toggle monthly/yearly`}
                                             >
                                                 <span
-                                                    className={`flex-1 text-center text-xs font-medium py-1.5 rounded-full transition-colors ${!isYearly
+                                                    className={`flex-1 text-center text-xs font-medium py-1.5 rounded-full transition-colors z-10 relative ${!isYearly
                                                         ? 'text-amber-800 bg-white shadow-sm'
                                                         : 'text-amber-600'
                                                         }`}
@@ -124,7 +228,7 @@ const RechargePlans: React.FC = () => {
                                                     Monthly
                                                 </span>
                                                 <span
-                                                    className={`flex-1 text-center text-xs font-medium py-1.5 rounded-full transition-colors ${isYearly
+                                                    className={`flex-1 text-center text-xs font-medium py-1.5 rounded-full transition-colors z-10 relative ${isYearly
                                                         ? 'text-amber-800 bg-white shadow-sm'
                                                         : 'text-amber-600'
                                                         }`}
@@ -144,7 +248,7 @@ const RechargePlans: React.FC = () => {
                                                 {plan.name}
                                             </h2>
                                             <div className="flex items-baseline justify-center mb-1">
-                                                <span className="text-lg text-amber-900">$</span>
+                                                <span className="text-lg text-amber-900">₹</span>
                                                 <span
                                                     className={`text-4xl font-extrabold text-amber-600 mx-1 transition-all duration-300 ${animatingCard === plan.id ? 'animate-price-pulse' : ''
                                                         }`}
@@ -177,12 +281,24 @@ const RechargePlans: React.FC = () => {
 
                                         {/* CTA Button */}
                                         <button
-                                            className={`w-full py-2.5 font-semibold rounded-lg text-sm transition-all ${plan.popular
+                                            onClick={() => handleSelectPlan(plan, isYearly)}
+                                            disabled={processingPlanId === plan.id}
+                                            className={`w-full py-2.5 font-semibold rounded-lg text-sm transition-all flex justify-center items-center ${plan.popular
                                                 ? 'bg-amber-500 hover:bg-amber-600 text-white shadow'
                                                 : 'bg-amber-100 hover:bg-amber-200 text-amber-800'
-                                                }`}
+                                                } ${processingPlanId === plan.id ? 'opacity-75 cursor-not-allowed' : ''}`}
                                         >
-                                            Select Plan
+                                            {processingPlanId === plan.id ? (
+                                                <>
+                                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Processing...
+                                                </>
+                                            ) : (
+                                                'Select Plan'
+                                            )}
                                         </button>
                                     </div>
                                 </div>

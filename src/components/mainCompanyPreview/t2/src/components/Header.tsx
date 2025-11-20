@@ -93,7 +93,7 @@ export default function Header({ headerData }) {
           <div className="flex rounded-lg items-center group">
             <div className="rounded-lg flex items-center justify-center flex-shrink-0 mr-2">
               <img
-                src={headerData.logoUrl || logo}
+                src={headerData?.logoUrl || logo}
                 alt="Logo"
                 className="w-[50px] h-[50px] mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
               />
@@ -128,15 +128,15 @@ export default function Header({ headerData }) {
           </nav>
 
           {/* Right side - Improved responsive spacing and sizing */}
-          <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0 ">
+          <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0">
             <div className="hidden lg:block">
-              <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap text-sm px-3 py-2 md:px-4 md:py-2  ">
+              <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap text-sm px-3 py-2 md:px-4 md:py-2">
                 <a
                   href="#contact"
                   onClick={(e) => handleDesktopNavigation(e, '#contact')}
-                  className="text-xs sm:text-sm "
+                  className="text-xs sm:text-sm"
                 >
-                  {headerData.ctaText}
+                  {headerData?.ctaText || "Get Started"}
                 </a>
               </Button>
             </div>
@@ -147,7 +147,7 @@ export default function Header({ headerData }) {
           </div>
 
           {/* Mobile menu button - Improved visibility */}
-          <motion.div className=" flex items-center space-x-2 flex-shrink-0 lg:hidden">
+          <motion.div className="flex items-center space-x-2 flex-shrink-0 lg:hidden">
             {/* Show ThemeToggle on mobile when menu is closed */}
             <AnimatePresence>
               {!isMenuOpen && (
@@ -155,7 +155,6 @@ export default function Header({ headerData }) {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="" // Hide on very small screens when menu is open
                 >
                   <ThemeToggle />
                 </motion.div>
@@ -211,10 +210,10 @@ export default function Header({ headerData }) {
                   variants={itemVariants}
                 >
                   <Button
-                    className="bg-primary text-black hover:bg-primary/90 w-full shadow-lg py-3 text-base font-medium  "
+                    className="bg-primary text-black hover:bg-primary/90 w-full shadow-lg py-3 text-base font-medium"
                     onClick={() => handleScrollToSection('#contact')}
                   >
-                    {headerData.ctaText}
+                    {headerData?.ctaText || "Get Started"}
                   </Button>
                 </motion.div>
               </motion.nav>
