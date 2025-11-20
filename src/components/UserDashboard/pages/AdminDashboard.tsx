@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Search, Users, Briefcase, Calendar } from "lucide-react";
-import { useUserAuth } from "../../context/context"
+import { useUserAuth } from "../../context/context";
 import {
   PieChart,
   Pie,
@@ -50,10 +50,15 @@ const AdminDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
   const [recentProfessional, setRecentProfessional] = useState<Lead[]>([]);
+  const [recentEvent, setRecentEvent] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [professionalLoading, setProfessionalLoading] = useState(true);
+  const [eventLoading, setEventLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [professionalError, setProfessionalError] = useState<string | null>(null);
+  const [professionalError, setProfessionalError] = useState<string | null>(
+    null
+  );
+  const [eventError, setEventError] = useState<string | null>(null);
   const [companyCount, setCompanyCount] = useState(0);
   const [professionalCount, setProfessionalCount] = useState(0);
 
@@ -75,7 +80,7 @@ const AdminDashboard: React.FC = () => {
       label: "Events",
       value: 52,
       icon: Calendar,
-      color: "bg-green-500"
+      color: "bg-green-500",
     },
   ];
 
@@ -99,34 +104,35 @@ const AdminDashboard: React.FC = () => {
 
   const { user } = useUserAuth();
   const userDetails = user?.userData;
-  // console.log("userDetails", userDetails.email)
 
-
-
-  let getCategory = async () => {
-    let fetchData = await fetch(`https://kgm0ckp0uf.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `);
-    let resData = await fetchData.json();
+  const getCategory = useCallback(async () => {
+    const fetchData = await fetch(
+      `https://kgm0ckp0uf.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+    );
+    const resData = await fetchData.json();
     setCompanyCount(resData.count);
-  }
+  }, [userDetails.email]);
 
-  let getProfessionalCount = () => {
-    axios.get(`https://5otjcn6oi1.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `)
+  const getProfessionalCount = useCallback(() => {
+    axios
+      .get(
+        `https://5otjcn6oi1.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+      )
       .then((res) => {
         setProfessionalCount(res.data.count);
       })
       .catch((err) => {
         console.log(err);
-      })
-  }
+      });
+  }, [userDetails.email]);
 
   useEffect(() => {
     getCategory();
     getProfessionalCount();
-  }, []);
+  }, [getCategory, getProfessionalCount]);
 
-
-  // Fetch leads from API
-  const fetchRecentCompaniesLeads = async () => {
+  // fetch for company recent leads
+  const fetchRecentCompaniesLeads = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -150,10 +156,10 @@ const AdminDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userDetails?.email]);
 
-  //api for professional recent leads unviewed :        
-  const fetchRecentProfessionalLeads = async () => {
+  // fetch professional recent leads
+  const fetchRecentProfessionalLeads = useCallback(async () => {
     try {
       setProfessionalLoading(true);
       const response = await fetch(
@@ -172,17 +178,51 @@ const AdminDashboard: React.FC = () => {
         throw new Error("Failed to fetch leads");
       }
     } catch (err) {
-      setProfessionalError(err instanceof Error ? err.message : "An error occurred");
+      setProfessionalError(
+        err instanceof Error ? err.message : "An error occurred"
+      );
       console.error("Error fetching leads:", err);
     } finally {
       setProfessionalLoading(false);
     }
-  };
+  }, [userDetails?.email]);
+
+  // fetch event recent leads
+  const fetchRecentEventLeads = useCallback(async () => {
+    try {
+      setEventLoading(true);
+      const response = await fetch(
+        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: ApiResponse = await response.json();
+
+      if (data.success) {
+        setRecentEvent(data.leads);
+      } else {
+        throw new Error("Failed to fetch leads");
+      }
+    } catch (err) {
+      setEventError(err instanceof Error ? err.message : "An error occurred");
+      console.error("Error fetching leads:", err);
+    } finally {
+      setEventLoading(false);
+    }
+  }, [userDetails?.email]);
 
   useEffect(() => {
     fetchRecentCompaniesLeads();
     fetchRecentProfessionalLeads();
-  }, []);
+    fetchRecentEventLeads();
+  }, [
+    fetchRecentCompaniesLeads,
+    fetchRecentProfessionalLeads,
+    fetchRecentEventLeads,
+  ]);
 
   const getStatusColor = (viewed: boolean) => {
     return viewed
@@ -192,17 +232,16 @@ const AdminDashboard: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const getStatusText = (viewed: boolean) => {
     return viewed ? "Viewed" : "Unviewed";
   };
-
 
   return (
     <div className="min-h-screen bg-amber-50 p-8">
@@ -409,8 +448,12 @@ const AdminDashboard: React.FC = () => {
                     key={lead.leadId}
                     className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
                   >
-                    <td className="py-3 px-4 text-white">{lead.firstName} {lead.lastName}</td>
-                    <td className="py-3 px-4 text-slate-300">{lead.category}</td>
+                    <td className="py-3 px-4 text-white">
+                      {lead.firstName} {lead.lastName}
+                    </td>
+                    <td className="py-3 px-4 text-slate-300">
+                      {lead.category}
+                    </td>
                     <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
                     <td className="py-3 px-4">
                       <span
@@ -438,8 +481,8 @@ const AdminDashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Recent Professional Leads List - NEW TABLE */}
-      <div className="bg-slate-700 rounded-lg p-6 shadow-lg">
+      {/* Recent Professional Leads List */}
+      <div className="bg-slate-700 rounded-lg p-6 shadow-lg mb-8">
         <h2 className="text-xl font-bold text-white mb-4">
           Recent Professional Leads ({recentProfessional.length})
         </h2>
@@ -506,9 +549,86 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {!professionalLoading && !professionalError && recentProfessional.length === 0 && (
+        {!professionalLoading &&
+          !professionalError &&
+          recentProfessional.length === 0 && (
+            <div className="text-center py-4">
+              <p className="text-slate-300">No professional leads found</p>
+            </div>
+          )}
+      </div>
+
+      {/* Recent Events Leads List */}
+      <div className="bg-slate-700 rounded-lg p-6 shadow-lg mb-8">
+        <h2 className="text-xl font-bold text-white mb-4">
+          Recent Event Leads ({recentEvent.length})
+        </h2>
+
+        {eventLoading && (
           <div className="text-center py-4">
-            <p className="text-slate-300">No professional leads found</p>
+            <p className="text-slate-300">Loading event leads...</p>
+          </div>
+        )}
+
+        {eventError && (
+          <div className="text-center py-4">
+            <p className="text-red-400">Error: {eventError}</p>
+          </div>
+        )}
+
+        {!eventLoading && !eventError && (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-600">
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Name
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Phone
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Subject
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentEvent.map((lead) => (
+                  <tr
+                    key={lead.leadId}
+                    className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
+                  >
+                    <td className="py-3 px-4 text-white">{lead.firstName} </td>
+                    <td className="py-3 px-4 text-white">{lead.phone}</td>
+                    <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          lead.viewed
+                        )}`}
+                      >
+                        {getStatusText(lead.viewed)}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-400">
+                      {formatDate(lead.submittedAt)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {!eventLoading && !eventError && recentEvent.length === 0 && (
+          <div className="text-center py-4">
+            <p className="text-slate-300">No event leads found</p>
           </div>
         )}
       </div>
