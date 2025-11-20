@@ -606,7 +606,7 @@ export default function Header({
                         companyName: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 text-sm bg-white border rounded md:text-base min-w-[120px]"
+                    className="w-full px-1 py-2 text-sm bg-white border rounded md:text-base min-w-[120px]"
                     placeholder="Company Name"
                     maxLength={CHAR_LIMITS.companyName}
                     style={{

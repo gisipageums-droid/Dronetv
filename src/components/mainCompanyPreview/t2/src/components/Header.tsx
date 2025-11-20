@@ -93,7 +93,7 @@ export default function Header({ headerData }) {
           <div className="flex rounded-lg items-center group">
             <div className="rounded-lg flex items-center justify-center flex-shrink-0 mr-2">
               <img
-                src={headerData.logoUrl || logo}
+                src={headerData?.logoUrl || logo}
                 alt="Logo"
                 className="w-[50px] h-[50px] mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
               />
@@ -136,7 +136,7 @@ export default function Header({ headerData }) {
                   onClick={(e) => handleDesktopNavigation(e, '#contact')}
                   className="text-xs sm:text-sm "
                 >
-                  {headerData.ctaText}
+                  {headerData?.ctaText}
                 </a>
               </Button>
             </div>
@@ -214,7 +214,7 @@ export default function Header({ headerData }) {
                     className="bg-primary text-black hover:bg-primary/90 w-full shadow-lg py-3 text-base font-medium  "
                     onClick={() => handleScrollToSection('#contact')}
                   >
-                    {headerData.ctaText}
+                    {headerData?.ctaText}
                   </Button>
                 </motion.div>
               </motion.nav>
