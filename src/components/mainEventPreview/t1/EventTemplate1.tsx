@@ -195,8 +195,8 @@ const EventTemplate1: React.FC = () => {
       }
 
       const data = await response.json();
-      setFinalTemplate(data.data);
-      setAIGenData(data.data);
+      setFinalTemplate(data.data.data);
+      setAIGenData(data.data.data);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching template data:", error);

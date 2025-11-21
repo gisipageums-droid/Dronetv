@@ -39,8 +39,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
     isEventExpired: false
   });
 
-  // Use prop data or default values
-  const heroContent = heroData || {
+  // Initialize with prop data or default values
+  const [heroContent] = useState({
     title: "demo Event",
     date: " to ",
     time: " - ",
@@ -57,7 +57,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
     ],
     btn1: "Register to Visit",
     btn2: "Exhibitor Enquiry",
-  };
+    ...heroData
+  });
 
   // Helper function to convert YouTube URLs to embed format
   const convertToEmbedUrl = (url: string): string => {
@@ -169,7 +170,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
             height: "100%",
             minHeight: "100vh",
           }}
-          src={convertToEmbedUrl(heroContent.videoUrl || "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0")}
+          src={convertToEmbedUrl(heroContent.videoUrl||"https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0")}
           title="Event Background Video"
           frameBorder="0"
           allow="autoplay; encrypted-media; fullscreen"
@@ -244,7 +245,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           </div>
 
           {/* Highlights */}
-          <div className="text-white text-lg max-w-3xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-left">
+          <div className="text-white text-lg max-w-3xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-left">
             {heroContent.highlights.map((highlight, i) => (
               <p key={i}>• {highlight}</p>
             ))}
@@ -252,27 +253,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button 
-              onClick={() => scrollToSection("#contact")}
-              className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              <span>{heroContent.btn1}</span>
+            <div className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
+              <span onClick={() => scrollToSection("#contact")}>{heroContent.btn1}</span>
               <ArrowRight
                 size={20}
                 className="transform group-hover:translate-x-1 transition-transform"
               />
-            </button>
+            </div>
 
-            <button 
-              onClick={() => scrollToSection("#contact")}
-              className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105"
-            >
-              <span>{heroContent.btn2}</span>
+            <div className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105">
+              <span onClick={() => scrollToSection("#contact")}>{heroContent.btn2}</span>
               <ArrowRight
                 size={20}
                 className="transform group-hover:translate-x-1 transition-transform"
               />
-            </button>
+            </div>
           </div>
         </div>
       </div>

@@ -299,9 +299,9 @@ const Events: React.FC = () => {
 
   const handleEdit = async (eventId: string, templateSelection: string) => {
     try {
-      if (templateSelection === "template-1") {
+      if (templateSelection === "1") {
         navigate(`/edit/event/t1/final/${eventId}/${user?.userData?.email}`);
-      } else if (templateSelection === "template-2") {
+      } else if (templateSelection === "2") {
         navigate(`/edit/event/t2/final/${eventId}/${user?.userData?.email}`);
       }
     } catch (error) {
@@ -312,9 +312,9 @@ const Events: React.FC = () => {
 
   const handlePreview = async (eventId: string, templateSelection: string) => {
     try {
-      if (templateSelection === "template-1") {
+      if (templateSelection === "1") {
         navigate(`/user/events/preview/1/${eventId}/user123`);
-      } else if (templateSelection === "template-2") {
+      } else if (templateSelection === "2") {
         navigate(`/user/events/preview/2/${eventId}/user123`);
       }
     } catch (error) {

@@ -252,7 +252,7 @@ const EventsPage = () => {
 
   const handleViewDetailsClick = (event) => {
     console.log(event);
-    if (event.templateSelection === 'template-1') {
+    if (event.templateSelection === '1') {
      navigate(`/event/${event.name}`);
     } else {
       navigate(`/events/${event.name}`);
