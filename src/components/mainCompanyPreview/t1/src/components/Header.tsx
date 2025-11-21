@@ -1,4 +1,3 @@
-
 import { motion } from "motion/react";
 import logo from "/logos/logo.svg";
 import { useState } from "react";
@@ -70,7 +69,7 @@ export default function Header({ headerData }) {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <motion.img
-                    src={headerData.logoSrc || logo}
+                    src={headerData?.logoSrc || logo}
                     alt="Logo"
                     className="w-[50px] h-[50px] mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl"
                     animate={{
@@ -87,13 +86,22 @@ export default function Header({ headerData }) {
               </div>
 
               <span className="text-lg sm:text-xl md:text-2xl flex-shrink-0">
-                {headerData.companyName}
+                {headerData?.companyName || "Your Company"}
               </span>
             </motion.div>
 
             {/* Desktop Navigation */}
             <nav className="items-center hidden mr-16 space-x-4 md:flex lg:space-x-6 lg:mr-20">
-              {headerData.navItems.map((item, index) => (
+              {(headerData?.navItems || [
+                "Home",
+                "About",
+                "Profile",
+                "Services",
+                "Product",
+                "Gallery",
+                "Blog",
+                "Testimonials",
+              ]).map((item, index) => (
                 <a
                   key={index}
                   href={`#${item.toLowerCase()}`}
@@ -150,7 +158,16 @@ export default function Header({ headerData }) {
         className="md:hidden dark:bg-gray-900 dark:border-gray-700"
       >
         <div className="flex gap-1 w-[100%] flex-col">
-          {headerData.navItems.map((item, index) => (
+          {(headerData?.navItems || [
+            "Home",
+            "About",
+            "Profile",
+            "Services",
+            "Product",
+            "Gallery",
+            "Blog",
+            "Testimonials",
+          ]).map((item, index) => (
             <a
               key={index}
               href={`#${item.toLowerCase()}`}

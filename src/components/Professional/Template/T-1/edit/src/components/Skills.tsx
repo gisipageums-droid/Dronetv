@@ -20,6 +20,13 @@ import {
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
+// Import your static skill images
+import skill1 from '../../../../../Images/skill1.png';
+import skill2 from '../../../../../Images/skill2.png';
+import skill3 from '../../../../../Images/skill3.jpeg';
+import skill4 from '../../../../../Images/skill4.png';
+import skill5 from '../../../../../Images/skill5.jpeg';
+
 interface Skill {
   name: string;
   level: number;
@@ -97,6 +104,9 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [technologiesInput, setTechnologiesInput] = useState("");
 
+  // Array of imported skill images
+  const skillImages = [skill1, skill2, skill3 , skill4, skill5];
+
   // Character limits
   const CHAR_LIMITS = {
     heading: 100,
@@ -132,6 +142,12 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
     if (current >= max) return "text-red-500";
     if (current >= max * 0.9) return "text-yellow-500";
     return "text-gray-500";
+  };
+
+  // Function to get image for category based on index
+  const getCategoryImage = (categoryIndex: number) => {
+    const imageIndex = categoryIndex % skillImages.length;
+    return skillImages[imageIndex];
   };
 
   const handleSkillUpdate = useCallback(
@@ -511,8 +527,12 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center flex-1">
                     {!isEditing && (
-                      <div className="w-10 h-10 flex items-center justify-center uppercase text-xl font-extrabold text-white bg-yellow-500 p-2 rounded-full mr-2">
-                        <span className="">{category.title[0]}</span>
+                      <div className="w-12 h-12 flex items-center justify-center overflow-hidden rounded-full mr-3 border-2">
+                        <img 
+                          src={getCategoryImage(categoryIndex)} 
+                          alt={category.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     )}
 
@@ -735,7 +755,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400 italic">
                     No technologies specified
-                  </p>
+                    </p>
                 )}
               </div>
             )}

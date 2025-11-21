@@ -2,6 +2,11 @@ import { Cloud, Code, Database, Globe, Loader2, Smartphone, Zap } from 'lucide-r
 import { motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import skill1 from '../../../../Professional/Images/skill1.png';
+import skill2 from '../../../../Professional/Images/skill2.png';
+import skill3 from '../../../../Professional/Images/skill3.jpeg';
+import skill4 from '../../../../Professional/Images/skill4.png';
+import skill5 from '../../../../Professional/Images/skill5.jpeg';
 
 interface Skill {
   id: string;
@@ -35,41 +40,19 @@ export function Skills({ skillsData }: SkillsProps) {
     skillsData || { skills: [], header: { title: 'My Skills', subtitle: 'A showcase of my technical skills and expertise.' } }
   );
 
-  // Helper function to get icon component from string name
-  const getIconComponent = (iconName: string) => {
-    const iconMap: { [key: string]: any } = {
-      Code, Database, Cloud, Smartphone, Globe, Zap, Cpu: Zap
-    };
-    return iconMap[iconName] || Zap;
-  };
+  // Static images array
+  const staticImages = [skill1, skill2, skill3, skill4, skill5];
 
-  // Icon rendering logic
-  const renderSkillIcon = (skill: Skill) => {
-    // Priority 1: iconUrl (uploaded image)
-    if (skill.iconUrl) {
-      return (
-        <ImageWithFallback
-          src={skill.iconUrl}
-          alt={skill.title}
-          className="w-8 h-8 object-contain"
-        />
-      );
-    }
-    
-    // Priority 2: icon (can be either component or string)
-    if (skill.icon) {
-      // If icon is a string (from backend), get the component
-      if (typeof skill.icon === 'string') {
-        const IconComponent = getIconComponent(skill.icon);
-        return <IconComponent className="w-8 h-8 text-gray-900" />;
-      }
-      // If icon is already a component (default case)
-      const IconComponent = skill.icon;
-      return <IconComponent className="w-8 h-8 text-gray-900" />;
-    }
-    
-    // Priority 3: fallback icon
-    return <Zap className="w-8 h-8 text-gray-900" />;
+  // Icon rendering logic - using static images with cycling
+  const renderSkillIcon = (index: number) => {
+    const imageIndex = index % staticImages.length;
+    return (
+      <ImageWithFallback
+        src={staticImages[imageIndex]}
+        alt="Skill icon"
+        className="w-full h-full object-cover rounded-full"
+      />
+    );
   };
 
   // Update data when skillsData prop changes
@@ -127,7 +110,7 @@ export function Skills({ skillsData }: SkillsProps) {
   }
 
   return (
-    <section ref={skillsRef} id="skills" className="py-20 text-justify bg-yellow-50 dark:bg-yellow-900/20">
+    <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -136,10 +119,10 @@ export function Skills({ skillsData }: SkillsProps) {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             {data.header.title}
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             {data.header.subtitle}
           </p>
         </motion.div>
@@ -152,34 +135,40 @@ export function Skills({ skillsData }: SkillsProps) {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              whileHover={{ y: -10 }}
-              className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+              whileHover={{ 
+                y: -10,
+                scale: 1.02,
+                transition: { duration: 0.3 }
+              }}
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700"
             >
-              {/* Icon Display */}
+              {/* Icon Display - Using static images with cycling */}
               <motion.div
-                whileHover={{ scale: 1.1, rotate: 360 }}
-                transition={{ duration: 0.5 }}
-                className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mb-4"
+                className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mb-4 overflow-hidden"
               >
-                {renderSkillIcon(skill)}
+                {renderSkillIcon(index)}
               </motion.div>
 
-              <h3 className="text-xl text-foreground mb-2">{skill.title}</h3>
-              <p className="text-muted-foreground mb-4">{skill.description}</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                {skill.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                {skill.description}
+              </p>
 
               {/* Progress Bar */}
               <div className="relative">
-                <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                  <span>Proficiency</span>
-                  <span>{skill.level}%</span>
+                <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  <span className="font-medium">Proficiency</span>
+                  <span className="font-semibold">{skill.level}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${skill.level}%` }}
-                    transition={{ duration: 1, delay: index * 0.1 }}
+                    transition={{ duration: 1, delay: index * 0.1, ease: "easeOut" }}
                     viewport={{ once: true }}
-                    className="bg-yellow-400 h-2 rounded-full"
+                    className="bg-yellow-400 h-3 rounded-full shadow-inner"
                   />
                 </div>
               </div>
