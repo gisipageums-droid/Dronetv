@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Facebook,
   Twitter,
   Instagram,
   Linkedin,
   Youtube,
-  Mail,
-  Phone,
-  MapPin,
   Edit,
   Save,
   X,
@@ -61,10 +58,15 @@ const defaultFooterContent: FooterContent = {
 
 const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
   const [editMode, setEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [footerContent, setFooterContent] =
     useState<FooterContent>(defaultFooterContent);
   const [backupContent, setBackupContent] =
     useState<FooterContent>(defaultFooterContent);
+
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Update local state when prop data changes
   useEffect(() => {
@@ -74,21 +76,103 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
     }
   }, [footerData]);
 
+  // Auto-save function
+  const autoSave = useCallback(async () => {
+    if (!onStateChange || !editMode) return;
+
+    setIsSaving(true);
+
+    // Simulate API call delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    onStateChange(footerContent);
+    setLastSaved(new Date());
+    setIsSaving(false);
+  }, [footerContent, editMode, onStateChange]);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (editMode && onStateChange) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save (1 second debounce)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 1000);
+
+      // Cleanup timeout on unmount or when dependencies change
+      return () => {
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+      };
+    }
+  }, [footerContent, editMode, autoSave, onStateChange]);
+
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(footerContent);
-    } else {
-      // When saving, call onStateChange to update parent component
-      if (onStateChange) {
-        onStateChange(footerContent);
-      }
     }
     setEditMode(!editMode);
   };
 
   const handleCancel = () => {
     setFooterContent(backupContent);
+    if (onStateChange) {
+      onStateChange(backupContent); // Sync with parent
+    }
     setEditMode(false);
+  };
+
+  // Update header fields
+  const updateHeaderField = (
+    field: keyof Pick<
+      FooterContent,
+      "eventName" | "description" | "quickLinksTitle"
+    >,
+    value: string
+  ) => {
+    setFooterContent((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // Update quick link
+  const updateQuickLink = (
+    index: number,
+    field: keyof QuickLink,
+    value: string
+  ) => {
+    const newQuickLinks = [...footerContent.quickLinks];
+    newQuickLinks[index] = {
+      ...newQuickLinks[index],
+      [field]: value,
+    };
+    setFooterContent((prev) => ({
+      ...prev,
+      quickLinks: newQuickLinks,
+    }));
+  };
+
+  // Update social link
+  const updateSocialLink = (
+    index: number,
+    field: keyof SocialLink,
+    value: string
+  ) => {
+    const newSocialLinks = [...footerContent.socialLinks];
+    newSocialLinks[index] = {
+      ...newSocialLinks[index],
+      [field]: value,
+    };
+    setFooterContent((prev) => ({
+      ...prev,
+      socialLinks: newSocialLinks,
+    }));
   };
 
   // Add new quick link
@@ -99,9 +183,6 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
       quickLinks: [...footerContent.quickLinks, newQuickLink],
     };
     setFooterContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
   };
 
   // Remove quick link
@@ -114,9 +195,6 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
       quickLinks: updatedQuickLinks,
     };
     setFooterContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
   };
 
   // Add new social link
@@ -131,9 +209,6 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
       socialLinks: [...footerContent.socialLinks, newSocialLink],
     };
     setFooterContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
   };
 
   // Remove social link
@@ -146,9 +221,6 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
       socialLinks: updatedSocialLinks,
     };
     setFooterContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
   };
 
   const getSocialIcon = (iconName: string) => {
@@ -179,14 +251,28 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
     <footer className="bg-black text-white relative">
       <div className="container mx-auto px-4 py-16">
         {/* Edit/Save/Cancel Buttons */}
-        <div className="absolute top-6 right-6 z-30 flex gap-3">
+        <div className="absolute top-6 right-6 z-30 flex gap-3 items-center">
+          {/* Auto-save status */}
+          {editMode && onStateChange && (
+            <div className="text-sm text-gray-400 mr-2 bg-gray-800 px-3 py-1 rounded-lg hidden sm:block">
+              {isSaving ? (
+                <span className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                  Saving...
+                </span>
+              ) : lastSaved ? (
+                <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
+              ) : null}
+            </div>
+          )}
+
           {editMode ? (
             <>
               <button
                 onClick={handleEditToggle}
                 className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
               >
-                <Save size={18} /> Save
+                <Save size={18} /> Done
               </button>
               <button
                 onClick={handleCancel}
@@ -214,13 +300,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                   <input
                     type="text"
                     value={footerContent.eventName}
-                    onChange={(e) => {
-                      const updatedContent = {
-                        ...footerContent,
-                        eventName: e.target.value,
-                      };
-                      setFooterContent(updatedContent);
-                    }}
+                    onChange={(e) =>
+                      updateHeaderField("eventName", e.target.value)
+                    }
                     maxLength={50}
                     placeholder="Event Name"
                     className="bg-white text-black px-3 py-2 rounded-md text-2xl font-bold w-full"
@@ -240,15 +322,11 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
               <div>
                 <textarea
                   value={footerContent.description}
-                  onChange={(e) => {
-                    const updatedContent = {
-                      ...footerContent,
-                      description: e.target.value,
-                    };
-                    setFooterContent(updatedContent);
-                  }}
+                  onChange={(e) =>
+                    updateHeaderField("description", e.target.value)
+                  }
                   maxLength={200}
-                  className="text-gray-400 mb-6 leading-relaxed bg-white text-black px-3 py-2 rounded-md w-full h-24 resize-y"
+                  className="mb-6 leading-relaxed bg-white text-black px-3 py-2 rounded-md w-full h-24 resize-y"
                   placeholder="Event description"
                 />
                 <div className="text-xs text-gray-500 text-right mt-1">
@@ -270,15 +348,11 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                   <input
                     type="text"
                     value={footerContent.quickLinksTitle}
-                    onChange={(e) => {
-                      const updatedContent = {
-                        ...footerContent,
-                        quickLinksTitle: e.target.value,
-                      };
-                      setFooterContent(updatedContent);
-                    }}
+                    onChange={(e) =>
+                      updateHeaderField("quickLinksTitle", e.target.value)
+                    }
                     maxLength={50}
-                    className="text-xl font-bold text-[#FFD400] bg-white text-black px-2 py-1 rounded-md w-full"
+                    className="text-xl font-bold bg-white text-black px-2 py-1 rounded-md w-full"
                   />
                   <div className="text-xs text-gray-500 text-right mt-1">
                     {footerContent.quickLinksTitle.length}/50
@@ -309,20 +383,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                           <input
                             type="text"
                             value={link.name}
-                            onChange={(e) => {
-                              const newQuickLinks = [
-                                ...footerContent.quickLinks,
-                              ];
-                              newQuickLinks[index] = {
-                                ...link,
-                                name: e.target.value,
-                              };
-                              const updatedContent = {
-                                ...footerContent,
-                                quickLinks: newQuickLinks,
-                              };
-                              setFooterContent(updatedContent);
-                            }}
+                            onChange={(e) =>
+                              updateQuickLink(index, "name", e.target.value)
+                            }
                             maxLength={50}
                             className="bg-white text-black px-2 py-1 rounded-md text-sm w-full"
                             placeholder="Link Name"
@@ -335,20 +398,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                           <input
                             type="text"
                             value={link.href}
-                            onChange={(e) => {
-                              const newQuickLinks = [
-                                ...footerContent.quickLinks,
-                              ];
-                              newQuickLinks[index] = {
-                                ...link,
-                                href: e.target.value,
-                              };
-                              const updatedContent = {
-                                ...footerContent,
-                                quickLinks: newQuickLinks,
-                              };
-                              setFooterContent(updatedContent);
-                            }}
+                            onChange={(e) =>
+                              updateQuickLink(index, "href", e.target.value)
+                            }
                             maxLength={200}
                             className="bg-white text-black px-2 py-1 rounded-md text-sm w-full"
                             placeholder="Link URL"
@@ -406,20 +458,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                       <div className="flex gap-2 mb-2 p-2 bg-gray-800 rounded-lg">
                         <select
                           value={social.icon}
-                          onChange={(e) => {
-                            const newSocialLinks = [
-                              ...footerContent.socialLinks,
-                            ];
-                            newSocialLinks[index] = {
-                              ...social,
-                              icon: e.target.value,
-                            };
-                            const updatedContent = {
-                              ...footerContent,
-                              socialLinks: newSocialLinks,
-                            };
-                            setFooterContent(updatedContent);
-                          }}
+                          onChange={(e) =>
+                            updateSocialLink(index, "icon", e.target.value)
+                          }
                           className="bg-white text-black px-2 py-1 rounded-md text-sm"
                         >
                           <option value="Facebook">Facebook</option>
@@ -432,20 +473,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                           <input
                             type="text"
                             value={social.href}
-                            onChange={(e) => {
-                              const newSocialLinks = [
-                                ...footerContent.socialLinks,
-                              ];
-                              newSocialLinks[index] = {
-                                ...social,
-                                href: e.target.value,
-                              };
-                              const updatedContent = {
-                                ...footerContent,
-                                socialLinks: newSocialLinks,
-                              };
-                              setFooterContent(updatedContent);
-                            }}
+                            onChange={(e) =>
+                              updateSocialLink(index, "href", e.target.value)
+                            }
                             maxLength={200}
                             placeholder="URL"
                             className="bg-white text-black px-2 py-1 rounded-md text-sm"
@@ -458,20 +488,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                           <input
                             type="text"
                             value={social.label}
-                            onChange={(e) => {
-                              const newSocialLinks = [
-                                ...footerContent.socialLinks,
-                              ];
-                              newSocialLinks[index] = {
-                                ...social,
-                                label: e.target.value,
-                              };
-                              const updatedContent = {
-                                ...footerContent,
-                                socialLinks: newSocialLinks,
-                              };
-                              setFooterContent(updatedContent);
-                            }}
+                            onChange={(e) =>
+                              updateSocialLink(index, "label", e.target.value)
+                            }
                             maxLength={50}
                             placeholder="Label"
                             className="bg-white text-black px-2 py-1 rounded-md text-sm"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Edit,
   Save,
@@ -67,6 +67,11 @@ const defaultAgendaContent: AgendaContent = {
 const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange }) => {
   const [activeDay, setActiveDay] = useState(1);
   const [editMode, setEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = React.useRef<NodeJS.Timeout>();
 
   const [agendaContent, setAgendaContent] = useState<AgendaContent>(defaultAgendaContent);
   const [backupContent, setBackupContent] = useState<AgendaContent>(defaultAgendaContent);
@@ -84,21 +89,55 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
     }
   }, [agendaData, activeDay]);
 
+  // Auto-save function
+  const autoSave = useCallback(async () => {
+    if (!onStateChange || !editMode) return;
+
+    setIsSaving(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    onStateChange(agendaContent);
+    setLastSaved(new Date());
+    setIsSaving(false);
+  }, [agendaContent, editMode, onStateChange]);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (editMode && onStateChange) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save (1 second debounce)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 1000);
+
+      // Cleanup timeout on unmount or when dependencies change
+      return () => {
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+      };
+    }
+  }, [agendaContent, editMode, autoSave, onStateChange]);
+
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(agendaContent);
       setEditForm({ ...agendaContent.themes[activeDay] });
-    } else {
-      // When saving, call onStateChange to update parent component
-      if (onStateChange) {
-        onStateChange(agendaContent);
-      }
     }
     setEditMode(!editMode);
   };
 
   const handleCancel = () => {
     setAgendaContent(backupContent);
+    if (onStateChange) {
+      onStateChange(backupContent); // Sync with parent
+    }
     setEditMode(false);
     setEditForm(null);
   };
@@ -122,9 +161,6 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
     };
 
     setAgendaContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
     setActiveDay(newDayNumber);
     setEditForm(newDay);
   };
@@ -142,9 +178,6 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
     };
 
     setAgendaContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
 
     // Set active day to first available day if current day was removed
     if (activeDay === dayToRemove) {
@@ -158,6 +191,15 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditForm((prev) => (prev ? { ...prev, [name]: value } : null));
+    
+    // Update main content immediately for auto-save
+    if (editForm) {
+      const updatedThemes = {
+        ...agendaContent.themes,
+        [activeDay]: { ...editForm, [name]: value },
+      };
+      setAgendaContent({ ...agendaContent, themes: updatedThemes });
+    }
   };
 
   // Handle changes for a specific bullet point
@@ -167,13 +209,28 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
     const newBullets = [...editForm.bullets];
     newBullets[index] = e.target.value;
     setEditForm((prev) => (prev ? { ...prev, bullets: newBullets } : null));
+    
+    // Update main content immediately for auto-save
+    const updatedThemes = {
+      ...agendaContent.themes,
+      [activeDay]: { ...editForm, bullets: newBullets },
+    };
+    setAgendaContent({ ...agendaContent, themes: updatedThemes });
   };
 
   // Add a new bullet point
   const handleAddBullet = () => {
     if (!editForm) return;
     
-    setEditForm((prev) => (prev ? { ...prev, bullets: [...prev.bullets, ""] } : null));
+    const newBullets = [...editForm.bullets, ""];
+    setEditForm((prev) => (prev ? { ...prev, bullets: newBullets } : null));
+    
+    // Update main content immediately for auto-save
+    const updatedThemes = {
+      ...agendaContent.themes,
+      [activeDay]: { ...editForm, bullets: newBullets },
+    };
+    setAgendaContent({ ...agendaContent, themes: updatedThemes });
   };
 
   // Remove a bullet point
@@ -182,6 +239,13 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
     
     const newBullets = editForm.bullets.filter((_, i) => i !== index);
     setEditForm((prev) => (prev ? { ...prev, bullets: newBullets } : null));
+    
+    // Update main content immediately for auto-save
+    const updatedThemes = {
+      ...agendaContent.themes,
+      [activeDay]: { ...editForm, bullets: newBullets },
+    };
+    setAgendaContent({ ...agendaContent, themes: updatedThemes });
   };
 
   // Save changes to the main state and exit edit mode
@@ -196,11 +260,16 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
     const updatedContent = { ...agendaContent, themes: updatedThemes };
     
     setAgendaContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
     setEditMode(false);
     setEditForm(null);
+  };
+
+  // Update header fields
+  const updateHeaderField = (field: keyof Pick<AgendaContent, 'title' | 'titleHighlight' | 'subtitle'>, value: string) => {
+    setAgendaContent(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   // Render the themes based on the current mode
@@ -279,7 +348,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
               onClick={handleSave}
               className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-semibold hover:bg-green-600 transition-colors shadow-lg"
             >
-              <Save size={18} /> Save
+              <Save size={18} /> Done
             </button>
             <button
               onClick={handleCancel}
@@ -314,14 +383,28 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
       <div className="container mx-auto px-4 max-w-7xl relative">
         <div className="text-center mb-12 relative">
           {/* Edit/Save/Cancel Buttons */}
-          <div className="absolute top-0 right-0 flex gap-3">
+          <div className="absolute top-0 right-0 flex gap-3 items-center">
+            {/* Auto-save status */}
+            {editMode && onStateChange && (
+              <div className="text-sm text-gray-600 mr-2 bg-gray-100 px-3 py-1 rounded-lg hidden sm:block">
+                {isSaving ? (
+                  <span className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    Saving...
+                  </span>
+                ) : lastSaved ? (
+                  <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
+                ) : null}
+              </div>
+            )}
+            
             {editMode ? (
               <>
                 <button
                   onClick={handleEditToggle}
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg border border-green-700 hover:bg-green-700 transition"
                 >
-                  <Save size={18} /> Save
+                  <Save size={18} /> Done
                 </button>
                 <button
                   onClick={handleCancel}
@@ -347,12 +430,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                   <input
                     type="text"
                     value={agendaContent.title}
-                    onChange={(e) =>
-                      setAgendaContent({
-                        ...agendaContent,
-                        title: e.target.value,
-                      })
-                    }
+                    onChange={(e) => updateHeaderField('title', e.target.value)}
                     maxLength={100}
                     className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
                   />
@@ -364,12 +442,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                   <input
                     type="text"
                     value={agendaContent.titleHighlight}
-                    onChange={(e) =>
-                      setAgendaContent({
-                        ...agendaContent,
-                        titleHighlight: e.target.value,
-                      })
-                    }
+                    onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
                     maxLength={50}
                     className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
                   />
@@ -382,12 +455,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
               <div className="max-w-2xl mx-auto">
                 <textarea
                   value={agendaContent.subtitle}
-                  onChange={(e) =>
-                    setAgendaContent({
-                      ...agendaContent,
-                      subtitle: e.target.value,
-                    })
-                  }
+                  onChange={(e) => updateHeaderField('subtitle', e.target.value)}
                   maxLength={200}
                   className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
                   rows={2}

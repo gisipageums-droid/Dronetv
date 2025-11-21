@@ -100,7 +100,7 @@ import MainEvent1 from "./components/mainEventPreview/t1/EventTemplate1"
 import BuyTokenPage from "./components/UserDashboard/pages/Buy";
 import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
-
+import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 
 
 const HomePage = () => (
@@ -181,6 +181,8 @@ const AppContent = () => {
           <Route path="/logout" element={<Logout />} />
           <Route path="reset-password/:id" element={<ResetPassword />} />
           {/* admin dashboard */}
+
+          <Route path="/admin/plans" element={<AdminTokenPlan/>}/>
           <Route path="/admin/company/dashboard" element={<AdminDashboard />} />
           <Route
             path="/admin/companies/preview/1/:publishedId/:userId"

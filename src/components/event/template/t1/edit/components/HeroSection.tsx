@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Calendar, MapPin, Clock, ArrowRight, Edit, Save, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 interface HeroSectionProps {
   heroData?: {
     title: string;
@@ -22,15 +23,20 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) => {
   const [editMode, setEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const navigate = useNavigate();
+
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = React.useRef<NodeJS.Timeout>();
 
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
-   
   };
+
   const [countdown, setCountdown] = useState({
     days: 0,
     hours: 0,
@@ -69,6 +75,42 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
       setBackupContent(heroData);
     }
   }, [heroData]);
+
+  // Auto-save function
+  const autoSave = useCallback(async () => {
+    if (!onStateChange || !editMode) return;
+
+    setIsSaving(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    onStateChange(heroContent);
+    setLastSaved(new Date());
+    setIsSaving(false);
+  }, [heroContent, editMode, onStateChange]);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (editMode && onStateChange) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save (1 second debounce)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 1000);
+
+      // Cleanup timeout on unmount or when dependencies change
+      return () => {
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+      };
+    }
+  }, [heroContent, editMode, autoSave, onStateChange]);
 
   // Helper function for ordinal suffixes
   const getOrdinalSuffix = (day: number): string => {
@@ -176,18 +218,26 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(heroContent); // save current before editing
-    } else {
-      // When saving, call onStateChange to update parent component
-      if (onStateChange) {
-        onStateChange(heroContent);
-      }
     }
     setEditMode(!editMode);
   };
 
   const handleCancel = () => {
     setHeroContent(backupContent); // restore backup
+    if (onStateChange) {
+      onStateChange(backupContent); // Sync with parent
+    }
     setEditMode(false);
+  };
+
+  // Helper function to update highlights
+  const updateHighlight = (index: number, value: string) => {
+    const newHighlights = [...heroContent.highlights];
+    newHighlights[index] = value;
+    setHeroContent({
+      ...heroContent,
+      highlights: newHighlights,
+    });
   };
 
   return (
@@ -197,25 +247,23 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
     >
       {/* YouTube Video BG */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-    
-          <iframe
-            key={heroContent.videoUrl} // Force reload when URL changes
-            className="w-full h-full object-cover"
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              minHeight: "100vh",
-            }}
-            src={convertToEmbedUrl(heroContent.videoUrl||"https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0")}
-            title="Event Background Video"
-            frameBorder="0"
-            allow="autoplay; encrypted-media; fullscreen"
-            allowFullScreen
-          />
-        
+        <iframe
+          key={heroContent.videoUrl} // Force reload when URL changes
+          className="w-full h-full object-cover"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            minHeight: "100vh",
+          }}
+          src={convertToEmbedUrl(heroContent.videoUrl||"https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0")}
+          title="Event Background Video"
+          frameBorder="0"
+          allow="autoplay; encrypted-media; fullscreen"
+          allowFullScreen
+        />
         <div className="absolute inset-0 bg-black/60 z-10"></div>
       </div>
 
@@ -223,14 +271,28 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
       <div className="container mx-auto px-4 relative z-20 text-center pt-32">
         <div className="max-w-4xl mx-auto">
           {/* Edit/Save/Cancel Buttons */}
-          <div className="absolute top-20 right-6 z-30 flex gap-3">
+          <div className="absolute top-20 right-6 z-30 flex gap-3 items-center">
+            {/* Auto-save status */}
+            {editMode && onStateChange && (
+              <div className="text-sm text-white mr-2 bg-black/40 px-3 py-1 rounded-lg hidden sm:block">
+                {isSaving ? (
+                  <span className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                    Saving...
+                  </span>
+                ) : lastSaved ? (
+                  <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
+                ) : null}
+              </div>
+            )}
+            
             {editMode ? (
               <>
                 <button
                   onClick={handleEditToggle}
                   className="flex items-center my-20 gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                 >
-                  <Save size={18} /> Save
+                  <Save size={18} /> Done
                 </button>
                 <button
                   onClick={handleCancel}
@@ -533,14 +595,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
                   <input
                     type="text"
                     value={highlight}
-                    onChange={(e) => {
-                      const newHighlights = [...heroContent.highlights];
-                      newHighlights[i] = e.target.value;
-                      setHeroContent({
-                        ...heroContent,
-                        highlights: newHighlights,
-                      });
-                    }}
+                    onChange={(e) => updateHighlight(i, e.target.value)}
                     placeholder={`Highlight ${i + 1}`}
                     maxLength={200}
                     className="bg-white text-black px-2 py-1 rounded-md w-full"
