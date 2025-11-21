@@ -32,7 +32,7 @@ const templates: Template[] = [
     // {
     //     id: 2,
     //     name: "Modern Event Template",
-    //     imgpath: TPL2,
+    //     imgpath: "../images/select.jpg",
     //     description:
     //         "Clean design with bright hero section — perfect for conferences and meetups.",
     //     features: ["Hero Section", "Schedule", "Speakers", "Responsive Design"],
