@@ -128,7 +128,7 @@ const SpeakerCard = memo(
             </div>
             <div className="flex gap-2">
               <button onClick={onSave} className="px-3 py-1 bg-green-600 text-white rounded-lg">
-                <Save size={14} /> Save
+                <Save size={14} /> Done
               </button>
               <button onClick={onCancel} className="px-3 py-1 bg-gray-500 text-white rounded-lg">
                 <X size={14} /> Cancel
@@ -170,6 +170,8 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
      -------------------------- */
   const [localSpeakersData, setLocalSpeakersData] = useState<SpeakersDataContent>(defaultSpeakersData);
   const [backupData, setBackupData] = useState<SpeakersDataContent>(defaultSpeakersData);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   /* --------------------------
       OTHER STATES
@@ -178,6 +180,9 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
   const [editForm, setEditForm] = useState<Partial<Speaker>>({});
   const [activeDay, setActiveDay] = useState(0);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = React.useRef<NodeJS.Timeout>();
 
   const { speakers, headerContent } = localSpeakersData;
 
@@ -192,13 +197,44 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
   }, [speakersData]);
 
   /* --------------------------
-      Notify parent of state changes
+      Auto-save function
      -------------------------- */
-  const notifyParent = useCallback((data: SpeakersDataContent) => {
-    if (onStateChange) {
-      onStateChange(data);
+  const autoSave = useCallback(async () => {
+    if (!onStateChange || !isEditMode) return;
+
+    setIsSaving(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    onStateChange(localSpeakersData);
+    setLastSaved(new Date());
+    setIsSaving(false);
+  }, [localSpeakersData, isEditMode, onStateChange]);
+
+  /* --------------------------
+      Debounced auto-save effect
+     -------------------------- */
+  useEffect(() => {
+    if (isEditMode && onStateChange) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save (1 second debounce)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 1000);
+
+      // Cleanup timeout on unmount or when dependencies change
+      return () => {
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+      };
     }
-  }, [onStateChange]);
+  }, [localSpeakersData, isEditMode, autoSave, onStateChange]);
 
   /* --------------------------
         Header Editing
@@ -209,7 +245,6 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
   };
 
   const saveHeaderEdit = () => {
-    notifyParent(localSpeakersData);
     setEditingCard(null);
     setEditForm({});
     setIsEditMode(false);
@@ -217,6 +252,9 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
 
   const cancelHeaderEdit = () => {
     setLocalSpeakersData(backupData);
+    if (onStateChange) {
+      onStateChange(backupData); // Sync with parent
+    }
     setIsEditMode(false);
   };
 
@@ -259,7 +297,6 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
     };
 
     setLocalSpeakersData(updatedData);
-    notifyParent(updatedData);
     setEditingCard(null);
     setEditForm({});
   };
@@ -284,7 +321,6 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
     };
 
     setLocalSpeakersData(updatedData);
-    notifyParent(updatedData);
   };
 
   const handleAddSpeaker = (dayIndex: number) => {
@@ -308,7 +344,6 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
     };
 
     setLocalSpeakersData(updatedData);
-    notifyParent(updatedData);
 
     const newIndex = speakers[dayIndex].speakers.length;
     setEditingCard(`${dayIndex}-${newIndex}`);
@@ -331,7 +366,6 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
     };
 
     setLocalSpeakersData(updatedData);
-    notifyParent(updatedData);
   };
 
   const handleAddDay = () => {
@@ -346,7 +380,6 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
     };
 
     setLocalSpeakersData(updatedData);
-    notifyParent(updatedData);
     setActiveDay(speakers.length);
   };
 
@@ -361,7 +394,6 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
     };
 
     setLocalSpeakersData(updatedData);
-    notifyParent(updatedData);
     setActiveDay(Math.max(0, dayIndex - 1));
   };
 
@@ -426,19 +458,33 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
           )}
 
           {/* Edit Buttons */}
-          <div className="absolute top-0 right-0 flex gap-2">
+          <div className="absolute top-0 right-0 flex gap-2 items-center">
+            {/* Auto-save status */}
+            {isEditMode && onStateChange && (
+              <div className="text-sm text-gray-600 mr-2 bg-white/80 px-3 py-1 rounded-lg hidden sm:block">
+                {isSaving ? (
+                  <span className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    Saving...
+                  </span>
+                ) : lastSaved ? (
+                  <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
+                ) : null}
+              </div>
+            )}
+            
             {isEditMode ? (
               <>
                 <button onClick={saveHeaderEdit} className="px-6 py-3 bg-blue-600 text-white rounded-xl">
-                  <Save size={18} />
+                  <Save size={18} /> Done
                 </button>
                 <button onClick={cancelHeaderEdit} className="px-6 py-3 bg-red-500 text-white rounded-xl">
-                  <X size={18} />
+                  <X size={18} /> Cancel
                 </button>
               </>
             ) : (
               <button onClick={startHeaderEdit} className="px-6 py-3 bg-green-500 text-white rounded-xl">
-                <Edit size={18} />
+                <Edit size={18} /> Edit
               </button>
             )}
           </div>

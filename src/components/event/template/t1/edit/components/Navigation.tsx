@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Menu, X, Edit, Save } from "lucide-react";
 
 interface NavigationProps {
@@ -20,6 +20,8 @@ const Navigation: React.FC<NavigationProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   // Initialize with prop data or default values
   const [navContent, setNavContent] = useState({
@@ -38,6 +40,9 @@ const Navigation: React.FC<NavigationProps> = ({
 
   const [backupContent, setBackupContent] = useState(navContent);
 
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = React.useRef<NodeJS.Timeout>();
+
   // Update local state when prop data changes
   useEffect(() => {
     if (headerData) {
@@ -55,20 +60,56 @@ const Navigation: React.FC<NavigationProps> = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Auto-save function
+  const autoSave = useCallback(async () => {
+    if (!onStateChange) return;
+
+    setIsSaving(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    onStateChange(navContent);
+    setLastSaved(new Date());
+    setIsSaving(false);
+  }, [navContent, onStateChange]);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (editMode && onStateChange) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save (1 second debounce)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 1000);
+
+      // Cleanup timeout on unmount or when dependencies change
+      return () => {
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+      };
+    }
+  }, [navContent, editMode, autoSave]);
+
   const handleEditToggle = () => {
     if (!editMode) {
+      // Entering edit mode - backup current state
       setBackupContent(navContent);
-    } else {
-      // When saving, call onStateChange to update parent component
-      if (onStateChange) {
-        onStateChange(navContent);
-      }
     }
     setEditMode(!editMode);
   };
 
   const handleCancel = () => {
+    // Revert to backup content and trigger auto-save to sync with parent
     setNavContent(backupContent);
+    if (onStateChange) {
+      onStateChange(backupContent);
+    }
     setEditMode(false);
   };
 
@@ -78,6 +119,19 @@ const Navigation: React.FC<NavigationProps> = ({
       element.scrollIntoView({ behavior: "smooth" });
     }
     setIsMobileMenuOpen(false);
+  };
+
+  // Helper function to update nav items
+  const updateNavItem = (index: number, field: 'name' | 'href', value: string) => {
+    const newNavItems = [...navContent.navItems];
+    newNavItems[index] = {
+      ...newNavItems[index],
+      [field]: value
+    };
+    setNavContent({
+      ...navContent,
+      navItems: newNavItems
+    });
   };
 
   return (
@@ -90,7 +144,21 @@ const Navigation: React.FC<NavigationProps> = ({
     >
       <div className="container mx-auto px-4">
         {/* Edit/Save/Cancel Buttons - Responsive */}
-        <div className="absolute top-2 right-4 z-30 flex gap-2">
+        <div className="absolute top-2 right-4 z-30 flex gap-2 items-center">
+          {/* Auto-save status */}
+          {editMode && onStateChange && (
+            <div className="text-xs text-gray-500 mr-2 hidden sm:block">
+              {isSaving ? (
+                <span className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  Saving...
+                </span>
+              ) : lastSaved ? (
+                <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
+              ) : null}
+            </div>
+          )}
+          
           {editMode ? (
             <>
               <button
@@ -98,7 +166,7 @@ const Navigation: React.FC<NavigationProps> = ({
                 className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition text-xs md:text-sm"
               >
                 <Save size={16} className="md:w-[18px] md:h-[18px]" />
-                <span className="hidden sm:inline">Save</span>
+                <span className="hidden sm:inline">Done</span>
               </button>
               <button
                 onClick={handleCancel}
@@ -159,17 +227,7 @@ const Navigation: React.FC<NavigationProps> = ({
                       <input
                         type="text"
                         value={item.name}
-                        onChange={(e) => {
-                          const newNavItems = [...navContent.navItems];
-                          newNavItems[index] = {
-                            ...item,
-                            name: e.target.value,
-                          };
-                          setNavContent({
-                            ...navContent,
-                            navItems: newNavItems,
-                          });
-                        }}
+                        onChange={(e) => updateNavItem(index, 'name', e.target.value)}
                         maxLength={50}
                         className="bg-white text-black px-2 py-1 rounded-md text-xs w-20"
                         placeholder="Name"
@@ -182,17 +240,7 @@ const Navigation: React.FC<NavigationProps> = ({
                       <input
                         type="text"
                         value={item.href}
-                        onChange={(e) => {
-                          const newNavItems = [...navContent.navItems];
-                          newNavItems[index] = {
-                            ...item,
-                            href: e.target.value,
-                          };
-                          setNavContent({
-                            ...navContent,
-                            navItems: newNavItems,
-                          });
-                        }}
+                        onChange={(e) => updateNavItem(index, 'href', e.target.value)}
                         maxLength={50}
                         className="bg-white text-black px-2 py-1 rounded-md text-xs w-20"
                         placeholder="#href"
@@ -278,17 +326,7 @@ const Navigation: React.FC<NavigationProps> = ({
                         <input
                           type="text"
                           value={item.name}
-                          onChange={(e) => {
-                            const newNavItems = [...navContent.navItems];
-                            newNavItems[index] = {
-                              ...item,
-                              name: e.target.value,
-                            };
-                            setNavContent({
-                              ...navContent,
-                              navItems: newNavItems,
-                            });
-                          }}
+                          onChange={(e) => updateNavItem(index, 'name', e.target.value)}
                           maxLength={100}
                           className="bg-white text-black px-2 py-1 rounded-md text-sm border"
                           placeholder="Name"
@@ -301,17 +339,7 @@ const Navigation: React.FC<NavigationProps> = ({
                         <input
                           type="text"
                           value={item.href}
-                          onChange={(e) => {
-                            const newNavItems = [...navContent.navItems];
-                            newNavItems[index] = {
-                              ...item,
-                              href: e.target.value,
-                            };
-                            setNavContent({
-                              ...navContent,
-                              navItems: newNavItems,
-                            });
-                          }}
+                          onChange={(e) => updateNavItem(index, 'href', e.target.value)}
                           maxLength={200}
                           className="bg-white text-black px-2 py-1 rounded-md text-sm border"
                           placeholder="#href"

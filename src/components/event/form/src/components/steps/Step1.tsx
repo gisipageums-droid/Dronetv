@@ -1,8 +1,8 @@
 
+
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "../../context/FormContext";
 import axios from "axios";
-
 
 
 
@@ -13,8 +13,6 @@ const ScrollDatePicker: React.FC<{
   title?: string;
   description?: string;
 }> = ({ value, onChange, title = "Date", description = "Select date" }) => {
-  // ... (keep all the existing ScrollDatePicker code as is)
-  // [Previous ScrollDatePicker implementation remains unchanged]
   // Parse the initial value or use current date as default
   const parseDate = (dateStr: string) => {
     if (!dateStr) {

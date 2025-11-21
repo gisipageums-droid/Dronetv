@@ -54,6 +54,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   const [editMode, setEditMode] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [sponsorsContent, setSponsorsContent] = useState<SponsorsDataContent>(
     defaultSponsorsContent
   );
@@ -61,6 +62,9 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
     defaultSponsorsContent
   );
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
+
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = React.useRef<NodeJS.Timeout>();
 
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
@@ -113,6 +117,42 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
       setBackupContent(normalized);
     }
   }, [sponsorsData]);
+
+  // Auto-save function
+  const autoSave = useCallback(async () => {
+    if (!onStateChange || !editMode) return;
+
+    setIsSaving(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    onStateChange(sponsorsContent);
+    setLastSaved(new Date());
+    setIsSaving(false);
+  }, [sponsorsContent, editMode, onStateChange]);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (editMode && onStateChange) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save (1 second debounce)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 1000);
+
+      // Cleanup timeout on unmount or when dependencies change
+      return () => {
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+      };
+    }
+  }, [sponsorsContent, editMode, autoSave, onStateChange]);
 
   // ---------- Image / crop helpers ----------
   const handleImageSelect = useCallback(
@@ -198,46 +238,80 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
     });
   };
 
+  // Auto-upload to AWS after cropping
+  const uploadImageToS3 = async (
+    file: File,
+    fieldName: string
+  ): Promise<string> => {
+    if (!userId) {
+      throw new Error("User ID is required for image upload");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userId", userId);
+    formData.append("fieldName", fieldName + Date.now());
+
+    const uploadResponse = await fetch(
+      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!uploadResponse.ok) {
+      const errorData = await uploadResponse.json().catch(() => ({}));
+      throw new Error(errorData.message || "Image upload failed");
+    }
+
+    const uploadData = await uploadResponse.json();
+    return uploadData.s3Url;
+  };
+
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || croppingForPartner === null)
         return;
 
+      setIsUploading(true);
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
+
+      // Auto-upload to AWS immediately after cropping
+      let s3Url = previewUrl; // Fallback to preview URL if upload fails
+      try {
+        s3Url = await uploadImageToS3(
+          file,
+          `sponsor-logo-${croppingForPartner === NEW_SENTINEL ? 'new' : croppingForPartner}`
+        );
+        toast.success("Logo uploaded successfully!");
+      } catch (uploadError) {
+        console.error("Error uploading to S3:", uploadError);
+        toast.error("Logo cropped but upload failed. Using local preview.");
+      }
 
       if (croppingForPartner === NEW_SENTINEL) {
         const tempId = `temp-${Date.now()}`;
         const newPartner: Partner = {
           id: tempId,
           header: "New Partner",
-          image: previewUrl,
+          image: s3Url,
         };
 
         setSponsorsContent((prev) => ({
           ...prev,
           partners: [...prev.partners, newPartner],
         }));
-        setPendingImages((prev) => [
-          ...prev,
-          { file, partnerId: tempId, isNew: true },
-        ]);
-        toast.success("Partner added! Click Save to upload logo to S3.");
       } else {
         setSponsorsContent((prev) => {
           const partners = prev.partners.map((p) =>
-            p.id === croppingForPartner ? { ...p, image: previewUrl } : p
+            p.id === croppingForPartner ? { ...p, image: s3Url } : p
           );
           return { ...prev, partners };
         });
-
-        setPendingImages((prev) => [
-          ...prev,
-          { file, partnerId: croppingForPartner },
-        ]);
-        toast.success("Logo updated! Click Save to upload to S3.");
       }
 
       setShowCropper(false);
@@ -250,6 +324,8 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -328,42 +404,9 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
     return () => window.removeEventListener("keydown", handleKey);
   }, [showCropper]);
 
-  // ---------- Upload to S3 (API) ----------
-  const uploadImageToS3 = async (
-    file: File,
-    fieldName: string
-  ): Promise<string> => {
-    if (!userId) {
-      throw new Error("User ID is required for image upload");
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("userId", userId);
-    formData.append("fieldName", fieldName + Date.now());
-
-    const uploadResponse = await fetch(
-      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    if (!uploadResponse.ok) {
-      const errorData = await uploadResponse.json().catch(() => ({}));
-      throw new Error(errorData.message || "Image upload failed");
-    }
-
-    const uploadData = await uploadResponse.json();
-    return uploadData.s3Url;
-  };
-
   // ---------- Edit / Save / Cancel logic ----------
   const handleEditToggle = () => {
-    if (editMode && onStateChange) {
-      onStateChange(sponsorsContent);
-    } else {
+    if (!editMode) {
       setBackupContent(sponsorsContent);
     }
     setEditMode((v) => !v);
@@ -372,63 +415,22 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   const handleSave = async () => {
     try {
       setIsSaving(true);
-
-      if (pendingImages.length > 0) {
-        setIsUploading(true);
-
-        const updatedPartners = [...sponsorsContent.partners];
-
-        for (const pending of pendingImages) {
-          try {
-            const s3Url = await uploadImageToS3(
-              pending.file,
-              `sponsor-logo-${pending.partnerId}`
-            );
-
-            const idx = updatedPartners.findIndex(
-              (p) => p.id === pending.partnerId
-            );
-            if (idx !== -1) {
-              updatedPartners[idx].image = s3Url;
-              if (pending.isNew) {
-                updatedPartners[idx].id = Date.now().toString();
-              }
-            } else {
-              updatedPartners.push({
-                id: pending.isNew ? Date.now().toString() : pending.partnerId,
-                header: "New Partner",
-                image: s3Url,
-              });
-            }
-          } catch (err) {
-            console.error(`Error uploading ${pending.partnerId}`, err);
-            toast.error("Failed to upload logo. Please try again.");
-            setIsUploading(false);
-            setIsSaving(false);
-            return;
-          }
-        }
-
-        setSponsorsContent((prev) => ({ ...prev, partners: updatedPartners }));
-        setPendingImages([]);
-      }
-
       await new Promise((r) => setTimeout(r, 400));
       setEditMode(false);
-      if (onStateChange) onStateChange({ ...sponsorsContent });
       toast.success("Sponsors saved successfully!");
     } catch (err) {
       console.error("Error saving sponsors:", err);
       toast.error("Error saving changes. Please try again.");
     } finally {
       setIsSaving(false);
-      setIsUploading(false);
     }
   };
 
   const handleCancel = () => {
     setSponsorsContent(backupContent);
-    setPendingImages([]);
+    if (onStateChange) {
+      onStateChange(backupContent); // Sync with parent
+    }
     setEditMode(false);
   };
 
@@ -482,7 +484,6 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
       ...prev,
       partners: prev.partners.filter((p) => p.id !== partnerId),
     }));
-    setPendingImages((prev) => prev.filter((pi) => pi.partnerId !== partnerId));
   };
 
   const updatePartnerHeader = (partnerId: string, header: string) => {
@@ -494,11 +495,33 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
     }));
   };
 
+  // Update header fields
+  const updateHeaderField = (field: 'title' | 'titleHighlight', value: string) => {
+    setSponsorsContent(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   // ---------- RENDER ----------
   return (
     <section id="sponsors" className="py-20 bg-white relative">
       <div className="container mx-auto px-4 text-center">
-        <div className="absolute top-6 right-6 z-30 flex gap-3">
+        <div className="absolute top-6 right-6 z-30 flex gap-3 items-center">
+          {/* Auto-save status */}
+          {editMode && onStateChange && (
+            <div className="text-sm text-gray-600 mr-2 bg-white/80 px-3 py-1 rounded-lg hidden sm:block">
+              {isSaving ? (
+                <span className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  Saving...
+                </span>
+              ) : lastSaved ? (
+                <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
+              ) : null}
+            </div>
+          )}
+          
           {editMode ? (
             <>
               <button
@@ -506,12 +529,12 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 disabled={isSaving || isUploading}
                 className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
               >
-                {isUploading || isSaving ? (
+                {isSaving ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
                   <Save size={18} />
                 )}
-                {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+                Done
               </button>
 
               <button
@@ -560,12 +583,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 <input
                   type="text"
                   value={sponsorsContent.title}
-                  onChange={(e) =>
-                    setSponsorsContent({
-                      ...sponsorsContent,
-                      title: e.target.value,
-                    })
-                  }
+                  onChange={(e) => updateHeaderField('title', e.target.value)}
                   maxLength={50}
                   className="border px-2 py-1 rounded"
                 />
@@ -577,12 +595,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 <input
                   type="text"
                   value={sponsorsContent.titleHighlight}
-                  onChange={(e) =>
-                    setSponsorsContent({
-                      ...sponsorsContent,
-                      titleHighlight: e.target.value,
-                    })
-                  }
+                  onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
                   maxLength={50}
                   className="border px-2 py-1 rounded text-red-600"
                 />
@@ -774,9 +787,17 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
 
                 <button
                   onClick={applyCrop}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  disabled={isUploading}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
                 >
-                  Apply Crop
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    "Apply Crop & Upload"
+                  )}
                 </button>
               </div>
             </div>

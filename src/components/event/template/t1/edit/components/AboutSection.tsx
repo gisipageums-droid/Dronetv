@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Edit, Save, X } from "lucide-react";
 
 interface AboutSectionProps {
@@ -22,6 +22,11 @@ interface AboutSectionProps {
 
 const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange }) => {
   const [editMode, setEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = React.useRef<NodeJS.Timeout>();
 
   // Default data structure
   const defaultAboutContent = {
@@ -55,20 +60,54 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
     }
   }, [aboutData]);
 
+  // Auto-save function
+  const autoSave = useCallback(async () => {
+    if (!onStateChange || !editMode) return;
+
+    setIsSaving(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    onStateChange(aboutContent);
+    setLastSaved(new Date());
+    setIsSaving(false);
+  }, [aboutContent, editMode, onStateChange]);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (editMode && onStateChange) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save (1 second debounce)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 1000);
+
+      // Cleanup timeout on unmount or when dependencies change
+      return () => {
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+      };
+    }
+  }, [aboutContent, editMode, autoSave, onStateChange]);
+
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(aboutContent); // store before edit
-    } else {
-      // When saving, call onStateChange to update parent component
-      if (onStateChange) {
-        onStateChange(aboutContent);
-      }
     }
     setEditMode(!editMode);
   };
 
   const handleCancel = () => {
     setAboutContent(backupContent); // restore backup
+    if (onStateChange) {
+      onStateChange(backupContent); // Sync with parent
+    }
     setEditMode(false);
   };
 
@@ -96,18 +135,46 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
     setAboutContent({ ...aboutContent, zones: newZones });
   };
 
+  // Helper function to update feature
+  const updateFeature = (index: number, field: 'title' | 'description', value: string) => {
+    const updated = [...aboutContent.features];
+    updated[index][field] = value;
+    setAboutContent({ ...aboutContent, features: updated });
+  };
+
+  // Helper function to update zone
+  const updateZone = (index: number, field: 'title' | 'description', value: string) => {
+    const updated = [...aboutContent.zones];
+    updated[index][field] = value;
+    setAboutContent({ ...aboutContent, zones: updated });
+  };
+
   return (
     <section id="about" className="py-20 bg-white">
       <div className="relative container max-w-7xl mx-auto px-4">
         {/* Edit / Save / Cancel */}
-        <div className="absolute top-0 right-2 z-30 flex gap-3">
+        <div className="absolute top-0 right-2 z-30 flex gap-3 items-center">
+          {/* Auto-save status */}
+          {editMode && onStateChange && (
+            <div className="text-sm text-gray-600 mr-2 bg-gray-100 px-3 py-1 rounded-lg hidden sm:block">
+              {isSaving ? (
+                <span className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  Saving...
+                </span>
+              ) : lastSaved ? (
+                <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
+              ) : null}
+            </div>
+          )}
+          
           {editMode ? (
             <>
               <button
                 onClick={handleEditToggle}
                 className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
               >
-                <Save size={18} /> Save
+                <Save size={18} /> Done
               </button>
               <button
                 onClick={handleCancel}
@@ -209,11 +276,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                     <input
                       type="text"
                       value={item.title}
-                      onChange={(e) => {
-                        const updated = [...aboutContent.features];
-                        updated[index].title = e.target.value;
-                        setAboutContent({ ...aboutContent, features: updated });
-                      }}
+                      onChange={(e) => updateFeature(index, 'title', e.target.value)}
                       maxLength={100}
                       className="text-xl font-semibold px-2 py-1 rounded-md w-full border border-gray-300"
                     />
@@ -229,11 +292,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                   <div>
                     <textarea
                       value={item.description}
-                      onChange={(e) => {
-                        const updated = [...aboutContent.features];
-                        updated[index].description = e.target.value;
-                        setAboutContent({ ...aboutContent, features: updated });
-                      }}
+                      onChange={(e) => updateFeature(index, 'description', e.target.value)}
                       maxLength={200}
                       className="text-gray-600 w-full px-2 py-1 rounded-md border border-gray-300 resize-y"
                       rows={3}
@@ -337,11 +396,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                     <input
                       type="text"
                       value={zone.title}
-                      onChange={(e) => {
-                        const updated = [...aboutContent.zones];
-                        updated[index].title = e.target.value;
-                        setAboutContent({ ...aboutContent, zones: updated });
-                      }}
+                      onChange={(e) => updateZone(index, 'title', e.target.value)}
                       maxLength={100}
                       className="text-xl font-semibold text-[#FF0000] px-2 py-1 rounded-md w-full border border-gray-300"
                     />
@@ -359,11 +414,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                   <div>
                     <textarea
                       value={zone.description}
-                      onChange={(e) => {
-                        const updated = [...aboutContent.zones];
-                        updated[index].description = e.target.value;
-                        setAboutContent({ ...aboutContent, zones: updated });
-                      }}
+                      onChange={(e) => updateZone(index, 'description', e.target.value)}
                       maxLength={200}
                       className="text-gray-700 w-full px-2 py-1 rounded-md border border-gray-300 resize-y"
                       rows={3}

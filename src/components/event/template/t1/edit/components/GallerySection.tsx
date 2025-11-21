@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Edit, Save, X, Plus, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface GalleryItem {
@@ -40,9 +40,14 @@ const defaultGalleryContent: GalleryContent = {
 
 const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateChange }) => {
   const [editMode, setEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [galleryContent, setGalleryContent] = useState<GalleryContent>(defaultGalleryContent);
   const [backupContent, setBackupContent] = useState<GalleryContent>(defaultGalleryContent);
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Update local state when prop data changes
   useEffect(() => {
@@ -51,6 +56,42 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
       setBackupContent(galleryData);
     }
   }, [galleryData]);
+
+  // Auto-save function
+  const autoSave = useCallback(async () => {
+    if (!onStateChange || !editMode) return;
+
+    setIsSaving(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    onStateChange(galleryContent);
+    setLastSaved(new Date());
+    setIsSaving(false);
+  }, [galleryContent, editMode, onStateChange]);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (editMode && onStateChange) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save (1 second debounce)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 1000);
+
+      // Cleanup timeout on unmount or when dependencies change
+      return () => {
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+      };
+    }
+  }, [galleryContent, editMode, autoSave, onStateChange]);
 
   // Helper function to convert YouTube URLs to embed format
   const convertToEmbedUrl = (url: string): string => {
@@ -86,17 +127,15 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
   const handleEditToggle = () => {
     if (!editMode) {
       setBackupContent(galleryContent);
-    } else {
-      // When saving, call onStateChange to update parent component
-      if (onStateChange) {
-        onStateChange(galleryContent);
-      }
     }
     setEditMode(!editMode);
   };
 
   const handleCancel = () => {
     setGalleryContent(backupContent);
+    if (onStateChange) {
+      onStateChange(backupContent); // Sync with parent
+    }
     setEditMode(false);
   };
 
@@ -120,9 +159,6 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
       items: [...galleryContent.items, newItem] 
     };
     setGalleryContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
   };
 
   // Remove a gallery item
@@ -130,14 +166,19 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
     const newItems = galleryContent.items.filter((_, i) => i !== index);
     const updatedContent = { ...galleryContent, items: newItems };
     setGalleryContent(updatedContent);
-    if (onStateChange) {
-      onStateChange(updatedContent);
-    }
     
     // Adjust current slide if needed
     if (currentSlide >= newItems.length) {
       setCurrentSlide(Math.max(0, newItems.length - 1));
     }
+  };
+
+  // Update header fields
+  const updateHeaderField = (field: keyof Pick<GalleryContent, 'title' | 'titleHighlight' | 'subtitle'>, value: string) => {
+    setGalleryContent(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   // Custom carousel navigation
@@ -154,14 +195,28 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16 relative">
           {/* Edit/Save/Cancel Buttons */}
-          <div className="absolute top-0 right-0 flex gap-3">
+          <div className="absolute top-0 right-0 flex gap-3 items-center">
+            {/* Auto-save status */}
+            {editMode && onStateChange && (
+              <div className="text-sm text-gray-600 mr-2 bg-gray-100 px-3 py-1 rounded-lg hidden sm:block">
+                {isSaving ? (
+                  <span className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    Saving...
+                  </span>
+                ) : lastSaved ? (
+                  <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
+                ) : null}
+              </div>
+            )}
+            
             {editMode ? (
               <>
                 <button
                   onClick={handleEditToggle}
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg border border-green-700 hover:bg-green-700 transition"
                 >
-                  <Save size={18} /> Save
+                  <Save size={18} /> Done
                 </button>
                 <button
                   onClick={handleCancel}
@@ -187,10 +242,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                   <input
                     type="text"
                     value={galleryContent.title}
-                    onChange={(e) => {
-                      const updatedContent = { ...galleryContent, title: e.target.value };
-                      setGalleryContent(updatedContent);
-                    }}
+                    onChange={(e) => updateHeaderField('title', e.target.value)}
                     maxLength={50}
                     className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
                   />
@@ -202,10 +254,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                   <input
                     type="text"
                     value={galleryContent.titleHighlight}
-                    onChange={(e) => {
-                      const updatedContent = { ...galleryContent, titleHighlight: e.target.value };
-                      setGalleryContent(updatedContent);
-                    }}
+                    onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
                     maxLength={50}
                     className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
                   />
@@ -218,10 +267,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
               <div className="max-w-2xl mx-auto">
                 <textarea
                   value={galleryContent.subtitle}
-                  onChange={(e) => {
-                    const updatedContent = { ...galleryContent, subtitle: e.target.value };
-                    setGalleryContent(updatedContent);
-                  }}
+                  onChange={(e) => updateHeaderField('subtitle', e.target.value)}
                   maxLength={200}
                   className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
                   rows={2}
