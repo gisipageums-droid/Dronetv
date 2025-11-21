@@ -1,4 +1,4 @@
-import { Edit2, Save, Upload, X, Loader2, RotateCw, ZoomIn } from "lucide-react";
+import { Edit2, Upload, X, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "react-toastify";
@@ -19,7 +19,6 @@ export default function Header({
   };
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -43,9 +42,9 @@ export default function Header({
   const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
   const PAN_STEP = 10;
 
-  // Combined state
+  // Combined state - static version (no edit mode for text)
   const [headerState, setHeaderState] = useState({
-    logoSrc: headerData?.logo || "/images/logos/logo.svg",
+    logoSrc: headerData?.logo || logo,
     companyName: headerData?.name || "Your Company",
     navItems: [
       "Home",
@@ -418,35 +417,9 @@ export default function Header({
     setCrop({ x: 0, y: 0 });
   };
 
-  // Updated Save button handler - only handles text changes and failed uploads now
-  const handleSave = async () => {
-    try {
-      setIsUploading(true);
-
-      // Upload any pending logo that failed during automatic upload
-      if (pendingLogoFile) {
-        const awsImageUrl = await uploadImageToAWS(pendingLogoFile, "logoSrc");
-        if (awsImageUrl) {
-          setHeaderState((prev) => ({
-            ...prev,
-            logoSrc: awsImageUrl,
-          }));
-          setPendingLogoFile(null);
-        } else {
-          toast.error("Failed to upload logo");
-          return;
-        }
-      }
-
-      // Exit edit mode
-      setIsEditing(false);
-      toast.success("Header section saved!");
-    } catch (error) {
-      console.error("Error saving header section:", error);
-      toast.error("Error saving changes. Please try again.");
-    } finally {
-      setIsUploading(false);
-    }
+  // Function to trigger file input for logo upload
+  const handleEditLogo = () => {
+    fileInputRef.current?.click();
   };
 
   const headerStyles: React.CSSProperties = {
@@ -486,40 +459,9 @@ export default function Header({
         transition={{ duration: 0.6 }}
       >
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-[16rem] h-16 mx-auto min-w-7xl ">
-            {/* Responsive Edit/Save Button Container */}
-            <div className="absolute md:right-0 right-[60px]  z-[999999999]">
-              {isEditing ? (
-                <button
-                  onClick={handleSave}
-                  disabled={isUploading}
-                  className={`flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 ${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600"
-                    } text-white rounded-lg shadow text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]`}
-                >
-                  {isUploading ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      <span className="">Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save size={16} className="inline mr-1" />
-                      <span className="">Save</span>
-                    </>
-                  )}
-                </button>
-              ) : (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 w-[30px] md:min-w-[40px]"
-                >
-                  <Edit2 size={16} />
-                  <span className="hidden xs:inline">Edit</span>
-                </button>
-              )}
-            </div>
+          <div className="flex items-center justify-between  py-[8px] mx-auto max-w-7xl ">
+            {/* Logo Edit Button */}
+
 
             {/* Logo + Company Name */}
             <motion.div
@@ -543,46 +485,43 @@ export default function Header({
                   whileTap={{ scale: 0.9 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
-                  <motion.img
-                    ref={logoImgRef}
-                    src={headerState.logoSrc || logo}
-                    alt="Logo"
-                    style={{
-                      width: `${logoDimensions.width}px`,
-                      height: `${logoDimensions.height}px`,
-                      maxHeight: '45px',
-                    }}
-                    className="rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
-                    animate={{
-                      y: [0, -5, 0],
-                      transition: {
-                        duration: 3,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        ease: "easeInOut",
-                      },
-                    }}
-                  />
+                  <div className="relative">
+
+
+                    <motion.img
+                      ref={logoImgRef}
+                      src={headerState.logoSrc || logo}
+                      alt="Logo"
+                      style={{
+                        width: `${logoDimensions.width}px`,
+                        height: `${logoDimensions.height}px`,
+                        maxHeight: '45px',
+                      }}
+                      className="rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
+                      animate={{
+                        y: [0, -5, 0],
+                        transition: {
+                          duration: 3,
+                          repeat: Infinity,
+                          repeatType: "reverse",
+                          ease: "easeInOut",
+                        },
+                      }}
+                      onClick={handleEditLogo}
+                    />
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 z-[999999999]">
+                      <button
+                        onClick={handleEditLogo}
+                        className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
+                      >
+                        <Edit2 size={16} />
+                        <span className="hidden xs:inline">Edit Logo</span>
+                      </button>
+                    </div>
+                  </div>
+
                 </motion.div>
 
-                {isEditing && (
-                  <div className="absolute left-0 z-30 p-2 rounded shadow-lg -bottom-16 bg-white/90">
-                    <p className="mb-1 text-xs text-gray-600">Upload Logo:</p>
-                    <motion.button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="flex items-center justify-center w-full gap-1 p-2 text-xs bg-gray-200 rounded shadow hover:bg-gray-300"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Upload size={12} />
-                    </motion.button>
-                    {pendingLogoFile && (
-                      <p className="text-xs text-orange-600 mt-1 max-w-[120px] truncate">
-                        Selected: {pendingLogoFile.name}
-                      </p>
-                    )}
-                  </div>
-                )}
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -592,72 +531,23 @@ export default function Header({
                 />
               </div>
 
-              {/* Editable Company Name */}
-              {isEditing ? (
-                <div className="flex flex-col min-w-[120px]">
-                  <input
-                    type="text"
-                    value={headerState.companyName}
-                    onChange={(e) =>
-                      setHeaderState((prev) => ({
-                        ...prev,
-                        companyName: e.target.value,
-                      }))
-                    }
-                    className="w-full px-3 py-2 text-sm bg-white border rounded md:text-base min-w-[120px]"
-                    placeholder="Company Name"
-                    maxLength={CHAR_LIMITS.companyName}
-                    style={{
-                      width: "100%",
-                      minWidth: "120px",
-                      maxWidth: "200px"
-                    }}
-                  />
-                  <div className="text-xs text-gray-500 text-right mt-1">
-                    {headerState.companyName.length}/{CHAR_LIMITS.companyName} characters
-                  </div>
-                </div>
-              ) : (
-                <span className="text-lg sm:text-xl md:text-2xl flex-shrink-0">
-                  {headerState.companyName}
-                </span>
-              )}
+              {/* Company Name - Static */}
+              {/* <span className="text-lg sm:text-xl md:text-2xl flex-shrink-0">
+                {headerState.companyName}
+              </span> */}
             </motion.div>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - Static */}
             <nav className="items-center hidden mr-16 space-x-4 md:flex lg:space-x-6 lg:mr-20">
-              {headerState.navItems.map((item, index) =>
-                isEditing ? (
-                  <div key={index} className="flex flex-col">
-                    <input
-                      type="text"
-                      value={item}
-                      onChange={(e) => {
-                        const updated = [...headerState.navItems];
-                        updated[index] = e.target.value;
-                        setHeaderState((prev) => ({
-                          ...prev,
-                          navItems: updated,
-                        }));
-                      }}
-                      className="w-24 px-3 py-2 text-sm bg-white border rounded lg:w-28"
-                      placeholder={`Nav ${index + 1}`}
-                      maxLength={CHAR_LIMITS.navItem}
-                    />
-                    <div className="text-xs text-gray-500 text-right mt-1">
-                      {item.length}/{CHAR_LIMITS.navItem} characters
-                    </div>
-                  </div>
-                ) : (
-                  <a
-                    key={index}
-                    href={`#${item.toLowerCase()}`}
-                    className="text-sm font-medium text-black transition-colors duration-300 hover:text-yellow-600 lg:text-base"
-                  >
-                    {item}
-                  </a>
-                )
-              )}
+              {headerState.navItems.map((item, index) => (
+                <a
+                  key={index}
+                  href={`#${item.toLowerCase()}`}
+                  className="text-sm font-medium text-black transition-colors duration-300 hover:text-yellow-600 lg:text-base"
+                >
+                  {item}
+                </a>
+              ))}
             </nav>
 
             {/* Mobile Menu Button */}
@@ -700,56 +590,23 @@ export default function Header({
         </div>
       </motion.header>
 
-      {/* Mobile Navigation Menu */}
+      {/* Mobile Navigation Menu - Static */}
       <div
         style={{ ...mobileMenuStyles }}
         className="md:hidden dark:bg-gray-900 dark:border-gray-700"
       >
         <div className="flex gap-1 w-[100%] flex-col ">
-          {headerState.navItems.map((item, index) =>
-            isEditing ? (
-              <div key={index} className="flex flex-col p-2">
-                <input
-                  type="text"
-                  value={item}
-                  onChange={(e) => {
-                    const updated = [...headerState.navItems];
-                    updated[index] = e.target.value;
-                    setHeaderState((prev) => ({ ...prev, navItems: updated }));
-                  }}
-                  className="w-full px-3 py-2 text-base bg-white border rounded"
-                  placeholder={`Navigation Item ${index + 1}`}
-                  maxLength={CHAR_LIMITS.navItem}
-                />
-                <div className="text-xs text-gray-500 text-right mt-1">
-                  {item.length}/{CHAR_LIMITS.navItem} characters
-                </div>
-              </div>
-            ) : (
-              <a
-                key={index}
-                href={`#${item.toLowerCase()}`}
-                className="px-3 py-2 font-medium text-black transition-colors duration-300 rounded-lg hover:text-yellow-600 hover:bg-gray-50"
-                onClick={closeMobileMenu}
-              >
-                {item}
-              </a>
-            )
-          )}
+          {headerState.navItems.map((item, index) => (
+            <a
+              key={index}
+              href={`#${item.toLowerCase()}`}
+              className="px-3 py-2 font-medium text-black transition-colors duration-300 rounded-lg hover:text-yellow-600 hover:bg-gray-50"
+              onClick={closeMobileMenu}
+            >
+              {item}
+            </a>
+          ))}
         </div>
-
-        {/* Edit Mode Instructions */}
-        {isEditing && (
-          <div className="p-4 bg-blue-50 border-t border-blue-200">
-            <p className="text-sm text-blue-800 mb-2">
-              <strong>Edit Mode Active:</strong> Character limits:
-            </p>
-            <ul className="text-xs text-blue-800 space-y-1">
-              <li>• <strong>Company Name:</strong> {CHAR_LIMITS.companyName} characters</li>
-              <li>• <strong>Navigation Items:</strong> {CHAR_LIMITS.navItem} characters each</li>
-            </ul>
-          </div>
-        )}
       </div>
 
       {/* Enhanced Crop Modal with Advanced Features */}

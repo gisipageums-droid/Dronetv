@@ -18,6 +18,8 @@ import Back from "./components/Back";
 
 export default function App() {
   const { finaleDataReview, setFinalTemplate, setFinaleDataReview } = useTemplate();
+
+  // console.log("finaleDataReview",finaleDataReview.content.company.name)
   const [componentStates, setComponentStates] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -138,6 +140,7 @@ export default function App() {
       />
       <Hero
         heroData={finaleDataReview.content.hero}
+        companyName={finaleDataReview.content.company.name}
         onStateChange={heroStateChange}
         publishedId={finaleDataReview.publishedId}
         userId={finaleDataReview.userId}
