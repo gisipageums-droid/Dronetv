@@ -353,6 +353,9 @@
 //   );
 // };
 
+import React, { useState, useEffect, useRef } from "react";
+import { useForm } from "../../context/FormContext";
+import axios from "axios";
 
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "../../context/FormContext";
@@ -364,6 +367,8 @@ const ScrollDatePicker: React.FC<{
   title?: string;
   description?: string;
 }> = ({ value, onChange, title = "Date", description = "Select date" }) => {
+  // ... (keep all the existing ScrollDatePicker code as is)
+  // [Previous ScrollDatePicker implementation remains unchanged]
   // Parse the initial value or use current date as default
   const parseDate = (dateStr: string) => {
     if (!dateStr) {
@@ -670,6 +675,15 @@ export const Step1 = ({
     venueAddress: 200,
   };
 
+  // State for event title availability check
+  const [eventTitleStatus, setEventTitleStatus] = useState<{
+    available: boolean;
+    suggestions?: string[];
+    message: string;
+  } | null>(null);
+  const [isCheckingEventTitle, setIsCheckingEventTitle] = useState(false);
+  const eventTitleCheckTimer = useRef<NodeJS.Timeout | null>(null);
+
   // Auto-fill today's date and current time when countdown is enabled and target date is empty
   useEffect(() => {
     if (data.countdownEnabled && !data.countdownTargetDate) {
@@ -696,6 +710,59 @@ export const Step1 = ({
 
     setStepValid?.(isValid);
   }, [data, step.fields, setStepValid]);
+
+  // Function to check event title availability
+  const checkEventTitle = async (title: string) => {
+    if (!title.trim()) {
+      setEventTitleStatus(null);
+      return;
+    }
+
+    setIsCheckingEventTitle(true);
+    try {
+      const response = await axios.get(
+        `https://9fszydao5h.execute-api.ap-south-1.amazonaws.com/prod/events/check-name?name=${encodeURIComponent(title)}`
+      );
+      
+      setEventTitleStatus(response.data);
+    } catch (error) {
+      console.error("Error checking event title:", error);
+      setEventTitleStatus({
+        available: false,
+        message: "Error checking event title availability. Please try again.",
+      });
+    } finally {
+      setIsCheckingEventTitle(false);
+    }
+  };
+
+  // Debounced event title check
+  const handleEventTitleChange = (value: string) => {
+    updateField("eventTitle", value);
+
+    // Clear existing timer
+    if (eventTitleCheckTimer.current) {
+      clearTimeout(eventTitleCheckTimer.current);
+    }
+
+    // Set new timer for debounced API call
+    if (value.trim()) {
+      eventTitleCheckTimer.current = setTimeout(() => {
+        checkEventTitle(value);
+      }, 500); // 500ms debounce
+    } else {
+      setEventTitleStatus(null);
+    }
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (eventTitleCheckTimer.current) {
+        clearTimeout(eventTitleCheckTimer.current);
+      }
+    };
+  }, []);
 
   // Handle date change for countdown target
   const handleCountdownDateChange = (date: string, time: string) => {
@@ -773,6 +840,70 @@ export const Step1 = ({
               }}
             />
           </div>
+        </div>
+      );
+    }
+
+    // Handle eventTitle field with availability check
+    if (field.id === "eventTitle") {
+      return (
+        <div className="relative">
+          <input
+            type={field.type}
+            className={`${baseClasses} ${charLimit ? "pr-10" : ""} ${
+              eventTitleStatus && !eventTitleStatus.available
+                ? "border-red-300 focus:ring-red-400"
+                : eventTitleStatus?.available
+                ? "border-green-300 focus:ring-green-400"
+                : ""
+            }`}
+            value={currentValue}
+            onChange={(e) => {
+              if (charLimit && e.target.value.length > charLimit) {
+                e.target.value = e.target.value.slice(0, charLimit);
+              }
+              handleEventTitleChange(e.target.value);
+            }}
+            required={field.required}
+            placeholder={field.placeholder || ""}
+            maxLength={charLimit}
+          />
+          {charLimit && (
+            <div
+              className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
+                charsRemaining && charsRemaining < 10
+                  ? "text-red-500"
+                  : "text-slate-500"
+              }`}
+            >
+              {charsRemaining}
+            </div>
+          )}
+
+          {/* Event Title Availability Status */}
+          {isCheckingEventTitle && (
+            <div className="absolute left-0 top-full mt-1 text-xs text-blue-600">
+              Checking availability...
+            </div>
+          )}
+          {eventTitleStatus && !eventTitleStatus.available && (
+            <div className="absolute left-0 top-full mt-1">
+              <div className="text-xs text-red-600 mb-1">
+                {eventTitleStatus.message}
+              </div>
+              {eventTitleStatus.suggestions && eventTitleStatus.suggestions.length > 0 && (
+                <div className="text-xs text-amber-700">
+                  <span className="font-medium">Suggestions:</span>{" "}
+                  {eventTitleStatus.suggestions.join(", ")}
+                </div>
+              )}
+            </div>
+          )}
+          {eventTitleStatus && eventTitleStatus.available && (
+            <div className="absolute left-0 top-full mt-1 text-xs text-green-600">
+              {eventTitleStatus.message || "Event title is available!"}
+            </div>
+          )}
         </div>
       );
     }
