@@ -115,7 +115,7 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
         </div>
 
         {/* Social Links Section */}
-        <div className="border-t border-gray-800 pt-8">
+        {/* <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex flex-col md:flex-row items-center gap-4 w-full">
               <div className="flex items-center gap-2 mb-4 md:mb-0">
@@ -139,11 +139,11 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
             </div>
           </div>
           
-          {/* Copyright */}
+          
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
             <p>© {new Date().getFullYear()} {footerContent.eventName}. All rights reserved.</p>
           </div>
-        </div>
+        </div> */}
       </div>
     </footer>
   );

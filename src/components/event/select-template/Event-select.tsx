@@ -2,11 +2,10 @@ import { motion } from "framer-motion";
 import React, { useState } from "react";
 import { FiArrowRight, FiCheck, FiExternalLink, FiEye, FiStar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
+import TPL1 from "/images/event t1.png";
 
 const TPL2 =
     "https://images.unsplash.com/photo-1531058020387-3be344556be6?q=80&w=1200&auto=format&fit=crop";
-
 type Template = {
     id: number;
     name: string;
@@ -22,7 +21,7 @@ const templates: Template[] = [
     {
         id: 1,
         name: "formal Event Template",
-        imgpath: TPL2,
+        imgpath: TPL1,
         description:
             "Clean design with bright hero section — perfect for conferences and meetups.",
         features: ["Hero Section", "Schedule", "Speakers", "Responsive Design"],
@@ -30,17 +29,17 @@ const templates: Template[] = [
         rating: 5,
         tags: ["formal"],
     },
-    {
-        id: 2,
-        name: "Modern Event Template",
-        imgpath: TPL2,
-        description:
-            "Clean design with bright hero section — perfect for conferences and meetups.",
-        features: ["Hero Section", "Schedule", "Speakers", "Responsive Design"],
-        path: "/preview/event/t2",
-        rating: 4.8,
-        tags: ["Modern", "Popular"],
-    },
+    // {
+    //     id: 2,
+    //     name: "Modern Event Template",
+    //     imgpath: TPL2,
+    //     description:
+    //         "Clean design with bright hero section — perfect for conferences and meetups.",
+    //     features: ["Hero Section", "Schedule", "Speakers", "Responsive Design"],
+    //     path: "/preview/event/t2",
+    //     rating: 4.8,
+    //     tags: ["Modern", "Popular"],
+    // },
 ];
 
 const EventSelect: React.FC = () => {
@@ -115,7 +114,7 @@ const EventSelect: React.FC = () => {
                             <div className="relative h-56 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg mb-6 overflow-hidden">
                                 {tpl.imgpath ? (
                                     <img
-                                        src="../images/select.jpg"
+                                        src={tpl.imgpath}
                                         alt={`${tpl.name} Preview`}
                                         className="w-full h-full transition-transform duration-500 group-hover:scale-105"
                                     />

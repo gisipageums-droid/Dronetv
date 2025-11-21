@@ -264,12 +264,12 @@ const EventTemplate1: React.FC = () => {
         sponsorsData={finalTemplate.content.sponsorsData}
       />
       <GallerySection galleryData={finalTemplate.content.Gallery} />
-      <ContactSection />
+      <ContactSection id={finalTemplate.eventId} />
       <Footer footerData={finalTemplate.content.footer} />
       <Back />
       <Toaster position="top-right" richColors />
     </div>
-  );npm 
+  );
 };
 
 export default EventTemplate1;

@@ -1,2181 +1,5 @@
 // import { useState, useEffect } from "react";
 // import { useForm } from "../../context/FormContext";
-// import { MultiSelect } from "../common/MultiSelect";
-// import { PhoneInput } from "../common/PhoneInput";
-// import { CountryStateSelect } from "../common/CountryStateSelect";
-// import { DatePicker } from "../common/DatePicker";
-
-// export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
-//   const { data, updateField } = useForm();
-
-//   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
-//   const [checking, setChecking] = useState(false);
-
-//   // Check username availability when user types
-//   useEffect(() => {
-//     const user_name = data.basicInfo?.user_name || "";
-//     if (!user_name) {
-//       setUsernameAvailable(null);
-//       setStepValid?.(true);
-//       return;
-//     }
-
-//     const timer = setTimeout(async () => {
-//       try {
-//         setChecking(true);
-//         const res = await fetch(
-//           "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
-//           {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify({ user_name }),
-//           }
-//         );
-//         const json = await res.json();
-//         setUsernameAvailable(json.available);
-//         setStepValid?.(json.available);
-//       } catch (err) {
-//         console.error(err);
-//         setUsernameAvailable(null);
-//         setStepValid?.(true);
-//       } finally {
-//         setChecking(false);
-//       }
-//     }, 500);
-
-//     return () => clearTimeout(timer);
-//   }, [data.basicInfo?.user_name, setStepValid]);
-
-//   // Render input field based on type
-//   const renderInputField = (f: any, section: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
-
-//     // Handle country and state fields with dynamic API
-//     if ((f.id === "country" || f.id === "state") && (section.id === "basicInfo" || section.id === "addressInformation")) {
-//       // For country and state fields, we'll handle them together in the section rendering
-//       // This is a placeholder that won't be used since we'll render CountryStateSelect directly
-//       return null;
-//     }
-
-//     // Handle gender dropdown
-//     if (f.id === "gender") {
-//       return (
-//         <select
-//           className={baseClasses}
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(e) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: e.target.value 
-//             })
-//           }
-//         >
-//           <option value="">Select Gender</option>
-//           <option value="male">Male</option>
-//           <option value="female">Female</option>
-//           <option value="non-binary">Non-binary</option>
-//           <option value="prefer-not-to-say">Prefer not to say</option>
-//         </select>
-//       );
-//     }
-
-//     // Handle phone fields with IDD functionality
-//     const isPhoneField = f.type === "tel" || 
-//                         f.id.toLowerCase().includes("phone") || 
-//                         f.id.toLowerCase().includes("mobile") || 
-//                         f.id.toLowerCase().includes("contact");
-    
-//     if (isPhoneField) {
-//       return (
-//         <PhoneInput
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(value) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: value 
-//             })
-//           }
-//           placeholder={f.placeholder || "Enter phone number"}
-//           required={f.required}
-//           className=""
-//         />
-//       );
-//     }
-
-//     // Handle date fields with calendar UI
-//     const isDateField = f.type === "date" || 
-//                        f.id.toLowerCase().includes("date") || 
-//                        f.id.toLowerCase().includes("birth") || 
-//                        f.id.toLowerCase().includes("dob") || 
-//                        f.id.toLowerCase().includes("established") || 
-//                        f.id.toLowerCase().includes("incorporation");
-    
-//     if (isDateField) {
-//       return (
-//         <DatePicker
-//           label={f.label}
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(value) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: value 
-//             })
-//           }
-//           required={f.required}
-//           placeholder={f.placeholder || "Select date"}
-//         />
-//       );
-//     }
-
-//     return (
-//       <input
-//         type={f.type}
-//         required={f.required}
-//         placeholder={f.placeholder || ""}
-//         className={`${baseClasses} ${
-//           section.id === "basicInfo" && f.id === "user_name" && usernameAvailable === false
-//             ? "border-red-500 focus:ring-red-300"
-//             : ""
-//         }`}
-//         value={data[section.id]?.[f.id] || ""}
-//         onChange={(e) =>
-//           updateField(section.id, { 
-//             ...data[section.id], 
-//             [f.id]: e.target.value 
-//           })
-//         }
-//       />
-//     );
-//   };
-
-//   // Render a section
-//   const renderSection = (section: any) => {
-//     // Check if this section should use 2-column layout
-//     const useTwoColumns = section.id === "socialMediaLinks" || section.id === "alternateContact";
-    
-//     return (
-//       <div key={section.id} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6">
-//         <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
-//           {section.title}
-//         </h3>
-        
-//         {useTwoColumns ? (
-//           // 2-column grid layout
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//             {section.fields.map((f: any) => {
-//               // Skip country and state fields as they will be rendered together
-//               if (f.id === "country" || f.id === "state") return null;
-              
-//               // Check if this is a date field (DatePicker handles its own label)
-//               const isDateField = f.type === "date" || 
-//                                  f.id.toLowerCase().includes("date") || 
-//                                  f.id.toLowerCase().includes("birth") || 
-//                                  f.id.toLowerCase().includes("dob") || 
-//                                  f.id.toLowerCase().includes("established") || 
-//                                  f.id.toLowerCase().includes("incorporation");
-              
-//               return (
-//                 <div key={f.id} className="flex flex-col">
-//                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
-//                     </label>
-//                   )}
-//                   {renderInputField(f, section)}
-//                 </div>
-//               );
-//             })}
-            
-//             {/* Render CountryStateSelect if this section has country/state fields */}
-//             {section.fields.some((f: any) => f.id === "country" || f.id === "state") && (
-//               <div className="md:col-span-2">
-//                 <CountryStateSelect
-//                   countryValue={data[section.id]?.country || ""}
-//                   stateValue={data[section.id]?.state || ""}
-//                   onCountryChange={(value) => updateField(section.id, { 
-//                     ...data[section.id], 
-//                     country: value 
-//                   })}
-//                   onStateChange={(value) => updateField(section.id, { 
-//                     ...data[section.id], 
-//                     state: value 
-//                   })}
-//                   countryRequired={section.fields.find((f: any) => f.id === "country")?.required}
-//                   stateRequired={section.fields.find((f: any) => f.id === "state")?.required}
-//                 />
-//               </div>
-//             )}
-//           </div>
-//         ) : (
-//           // Single column layout for basicInfo and addressInformation
-//           <div className="space-y-4">
-//             {section.fields.map((f: any) => {
-//               // Skip country and state fields as they will be rendered together
-//               if (f.id === "country" || f.id === "state") return null;
-              
-//               // Check if this is a date field (DatePicker handles its own label)
-//               const isDateField = f.type === "date" || 
-//                                  f.id.toLowerCase().includes("date") || 
-//                                  f.id.toLowerCase().includes("birth") || 
-//                                  f.id.toLowerCase().includes("dob") || 
-//                                  f.id.toLowerCase().includes("established") || 
-//                                  f.id.toLowerCase().includes("incorporation");
-              
-//               return (
-//                 <div key={f.id} className="flex flex-col">
-//                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
-//                     </label>
-//                   )}
-//                   {renderInputField(f, section)}
-//                   {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
-//                     <span className={`text-xs mt-1 ${
-//                       usernameAvailable === false ? 'text-red-600' : 
-//                       usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
-//                     }`}>
-//                       {checking
-//                         ? "Checking availability..."
-//                         : usernameAvailable === false
-//                         ? "❌ Username is taken"
-//                         : usernameAvailable === true
-//                         ? "✅ Username is available"
-//                         : ""}
-//                     </span>
-//                   )}
-//                 </div>
-//               );
-//             })}
-            
-//             {/* Render CountryStateSelect if this section has country/state fields */}
-//             {section.fields.some((f: any) => f.id === "country" || f.id === "state") && (
-//               <CountryStateSelect
-//                 countryValue={data[section.id]?.country || ""}
-//                 stateValue={data[section.id]?.state || ""}
-//                 onCountryChange={(value) => updateField(section.id, { 
-//                   ...data[section.id], 
-//                   country: value 
-//                 })}
-//                 onStateChange={(value) => updateField(section.id, { 
-//                   ...data[section.id], 
-//                   state: value 
-//                 })}
-//                 countryRequired={section.fields.find((f: any) => f.id === "country")?.required}
-//                 stateRequired={section.fields.find((f: any) => f.id === "state")?.required}
-//               />
-//             )}
-//           </div>
-//         )}
-//       </div>
-//     );
-//   };
-
-//   // Reorder sections to desired sequence
-//   const getOrderedSections = () => {
-//     if (!step.sections) return [];
-    
-//     const basicInfo = step.sections.find((s: any) => s.id === "basicInfo");
-//     const addressInfo = step.sections.find((s: any) => s.id === "addressInformation");
-//     const alternateContact = step.sections.find((s: any) => s.id === "alternateContact");
-//     const socialMedia = step.sections.find((s: any) => s.id === "socialMediaLinks");
-    
-//     return [basicInfo, addressInfo, alternateContact, socialMedia].filter(Boolean);
-//   };
-
-//   return (
-//     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
-//         {step.title}
-//       </h2>
-
-//       {step.categories && (
-//         <div className="mb-8">
-//           <h3 className="text-lg font-semibold text-slate-900 mb-3">Professional Category</h3>
-//           <p className="text-sm text-slate-600 mb-4">
-//             Select your Professional's main business category (you can select multiple)
-//           </p>
-//           <div className="flex justify-center">
-//             <MultiSelect
-//               options={step.categories.available}
-//               selected={data.categories}
-//               onChange={(vals) => updateField("categories", vals)}
-//               variant="categories"
-//             />
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Render All Sections in Correct Order */}
-//       {step.sections ? (
-//         getOrderedSections().map(renderSection)
-//       ) : (
-//         /* Fallback for old structure - render only basicInfo */
-//         <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-//           <div className="space-y-4">
-//             {step.basicInfo?.fields.map((f: any) => (
-//               <div key={f.id} className="flex flex-col">
-//                 <label className="mb-1 font-semibold text-slate-900 text-sm">{f.label}</label>
-//                 <input
-//                   type={f.type}
-//                   required={f.required}
-//                   placeholder={f.placeholder || ""}
-//                   className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm
-//                     ${
-//                       f.id === "user_name" && usernameAvailable === false
-//                         ? "border-red-500 focus:ring-red-300"
-//                         : ""
-//                     }`}
-//                   value={data.basicInfo?.[f.id] || ""}
-//                   onChange={(e) =>
-//                     updateField("basicInfo", { ...data.basicInfo, [f.id]: e.target.value })
-//                   }
-//                 />
-//                 {f.id === "user_name" && data.basicInfo?.user_name && (
-//                   <span className="text-xs mt-1">
-//                     {checking
-//                       ? "Checking availability..."
-//                       : usernameAvailable === false
-//                       ? "Username is taken"
-//                       : usernameAvailable === true
-//                       ? "Username is available"
-//                       : ""}
-//                   </span>
-//                 )}
-//               </div>
-//             ))}
-//           </div>
-          
-//         </div>
-//       )}
-//     </>
-//   );
-// };
-
-
-// import { useState, useEffect } from "react";
-// import { useForm } from "../../context/FormContext";
-// import { MultiSelect } from "../common/MultiSelect";
-// import { PhoneInput } from "../common/PhoneInput";
-// import { CountryStateSelect } from "../common/CountryStateSelect";
-// import { DatePicker } from "../common/DatePicker";
-
-// export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
-//   const { data, updateField } = useForm();
-
-//   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
-//   const [checking, setChecking] = useState(false);
-
-//   // Check username availability when user types
-//   useEffect(() => {
-//     const user_name = data.basicInfo?.user_name || "";
-//     if (!user_name) {
-//       setUsernameAvailable(null);
-//       setStepValid?.(true);
-//       return;
-//     }
-
-//     const timer = setTimeout(async () => {
-//       try {
-//         setChecking(true);
-//         const res = await fetch(
-//           "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
-//           {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify({ user_name }),
-//           }
-//         );
-//         const json = await res.json();
-//         setUsernameAvailable(json.available);
-//         setStepValid?.(json.available);
-//       } catch (err) {
-//         console.error(err);
-//         setUsernameAvailable(null);
-//         setStepValid?.(true);
-//       } finally {
-//         setChecking(false);
-//       }
-//     }, 500);
-
-//     return () => clearTimeout(timer);
-//   }, [data.basicInfo?.user_name, setStepValid]);
-
-//   // Render input field based on type
-//   const renderInputField = (f: any, section: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
-
-//     // Handle country and state fields with dynamic API
-//     if ((f.id === "country" || f.id === "state") && (section.id === "basicInfo" || section.id === "addressInformation")) {
-//       // For country and state fields, we'll handle them together in the section rendering
-//       // This is a placeholder that won't be used since we'll render CountryStateSelect directly
-//       return null;
-//     }
-
-//     // Handle gender dropdown
-//     if (f.id === "gender") {
-//       return (
-//         <select
-//           className={baseClasses}
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(e) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: e.target.value 
-//             })
-//           }
-//         >
-//           <option value="">Select Gender</option>
-//           <option value="male">Male</option>
-//           <option value="female">Female</option>
-//           <option value="non-binary">Non-binary</option>
-//           <option value="prefer-not-to-say">Prefer not to say</option>
-//         </select>
-//       );
-//     }
-
-//     // Handle phone fields with IDD functionality - ONLY for specific contact phone field
-//     const isContactPhoneField = section.id === "alternateContact" && f.id === "contactPhone";
-    
-//     if (isContactPhoneField) {
-//       return (
-//         <PhoneInput
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(value) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: value 
-//             })
-//           }
-//           placeholder={f.placeholder || "Enter phone number"}
-//           required={f.required}
-//           className=""
-//         />
-//       );
-//     }
-
-//     // For other phone-like fields, use regular input
-//     const isPhoneField = (f.type === "tel" || 
-//                         f.id.toLowerCase().includes("phone") || 
-//                         f.id.toLowerCase().includes("mobile") || 
-//                         f.id.toLowerCase().includes("contact")) && 
-//                         !isContactPhoneField; // Exclude the specific contact phone field
-    
-//     if (isPhoneField) {
-//       return (
-//         <input
-//           type="tel"
-//           required={f.required}
-//           placeholder={f.placeholder || ""}
-//           className={baseClasses}
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(e) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: e.target.value 
-//             })
-//           }
-//         />
-//       );
-//     }
-
-//     // Handle date fields with calendar UI
-//     const isDateField = f.type === "date" || 
-//                        f.id.toLowerCase().includes("date") || 
-//                        f.id.toLowerCase().includes("birth") || 
-//                        f.id.toLowerCase().includes("dob") || 
-//                        f.id.toLowerCase().includes("established") || 
-//                        f.id.toLowerCase().includes("incorporation");
-    
-//     if (isDateField) {
-//       return (
-//         <DatePicker
-//           label={f.label}
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(value) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: value 
-//             })
-//           }
-//           required={f.required}
-//           placeholder={f.placeholder || "Select date"}
-//         />
-//       );
-//     }
-
-//     return (
-//       <input
-//         type={f.type}
-//         required={f.required}
-//         placeholder={f.placeholder || ""}
-//         className={`${baseClasses} ${
-//           section.id === "basicInfo" && f.id === "user_name" && usernameAvailable === false
-//             ? "border-red-500 focus:ring-red-300"
-//             : ""
-//         }`}
-//         value={data[section.id]?.[f.id] || ""}
-//         onChange={(e) =>
-//           updateField(section.id, { 
-//             ...data[section.id], 
-//             [f.id]: e.target.value 
-//           })
-//         }
-//       />
-//     );
-//   };
-
-//   // Render a section
-//   const renderSection = (section: any) => {
-//     // Check if this section should use 2-column layout
-//     const useTwoColumns = section.id === "socialMediaLinks" || section.id === "alternateContact";
-    
-//     return (
-//       <div key={section.id} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6">
-//         <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
-//           {section.title}
-//         </h3>
-        
-//         {useTwoColumns ? (
-//           // 2-column grid layout
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//             {section.fields.map((f: any) => {
-//               // Skip country and state fields as they will be rendered together
-//               if (f.id === "country" || f.id === "state") return null;
-              
-//               // Check if this is a date field (DatePicker handles its own label)
-//               const isDateField = f.type === "date" || 
-//                                  f.id.toLowerCase().includes("date") || 
-//                                  f.id.toLowerCase().includes("birth") || 
-//                                  f.id.toLowerCase().includes("dob") || 
-//                                  f.id.toLowerCase().includes("established") || 
-//                                  f.id.toLowerCase().includes("incorporation");
-              
-//               return (
-//                 <div key={f.id} className="flex flex-col">
-//                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
-//                     </label>
-//                   )}
-//                   {renderInputField(f, section)}
-//                 </div>
-//               );
-//             })}
-            
-//             {/* Render CountryStateSelect if this section has country/state fields */}
-//             {section.fields.some((f: any) => f.id === "country" || f.id === "state") && (
-//               <div className="md:col-span-2">
-//                 <CountryStateSelect
-//                   countryValue={data[section.id]?.country || ""}
-//                   stateValue={data[section.id]?.state || ""}
-//                   onCountryChange={(value) => updateField(section.id, { 
-//                     ...data[section.id], 
-//                     country: value 
-//                   })}
-//                   onStateChange={(value) => updateField(section.id, { 
-//                     ...data[section.id], 
-//                     state: value 
-//                   })}
-//                   countryRequired={section.fields.find((f: any) => f.id === "country")?.required}
-//                   stateRequired={section.fields.find((f: any) => f.id === "state")?.required}
-//                 />
-//               </div>
-//             )}
-//           </div>
-//         ) : (
-//           // Single column layout for basicInfo and addressInformation
-//           <div className="space-y-4">
-//             {section.fields.map((f: any) => {
-//               // Skip country and state fields as they will be rendered together
-//               if (f.id === "country" || f.id === "state") return null;
-              
-//               // Check if this is a date field (DatePicker handles its own label)
-//               const isDateField = f.type === "date" || 
-//                                  f.id.toLowerCase().includes("date") || 
-//                                  f.id.toLowerCase().includes("birth") || 
-//                                  f.id.toLowerCase().includes("dob") || 
-//                                  f.id.toLowerCase().includes("established") || 
-//                                  f.id.toLowerCase().includes("incorporation");
-              
-//               return (
-//                 <div key={f.id} className="flex flex-col">
-//                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
-//                     </label>
-//                   )}
-//                   {renderInputField(f, section)}
-//                   {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
-//                     <span className={`text-xs mt-1 ${
-//                       usernameAvailable === false ? 'text-red-600' : 
-//                       usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
-//                     }`}>
-//                       {checking
-//                         ? "Checking availability..."
-//                         : usernameAvailable === false
-//                         ? "❌ Username is taken"
-//                         : usernameAvailable === true
-//                         ? "✅ Username is available"
-//                         : ""}
-//                     </span>
-//                   )}
-//                 </div>
-//               );
-//             })}
-            
-//             {/* Render CountryStateSelect if this section has country/state fields */}
-//             {section.fields.some((f: any) => f.id === "country" || f.id === "state") && (
-//               <CountryStateSelect
-//                 countryValue={data[section.id]?.country || ""}
-//                 stateValue={data[section.id]?.state || ""}
-//                 onCountryChange={(value) => updateField(section.id, { 
-//                   ...data[section.id], 
-//                   country: value 
-//                 })}
-//                 onStateChange={(value) => updateField(section.id, { 
-//                   ...data[section.id], 
-//                   state: value 
-//                 })}
-//                 countryRequired={section.fields.find((f: any) => f.id === "country")?.required}
-//                 stateRequired={section.fields.find((f: any) => f.id === "state")?.required}
-//               />
-//             )}
-//           </div>
-//         )}
-//       </div>
-//     );
-//   };
-
-//   // Reorder sections to desired sequence
-//   const getOrderedSections = () => {
-//     if (!step.sections) return [];
-    
-//     const basicInfo = step.sections.find((s: any) => s.id === "basicInfo");
-//     const addressInfo = step.sections.find((s: any) => s.id === "addressInformation");
-//     const alternateContact = step.sections.find((s: any) => s.id === "alternateContact");
-//     const socialMedia = step.sections.find((s: any) => s.id === "socialMediaLinks");
-    
-//     return [basicInfo, addressInfo, alternateContact, socialMedia].filter(Boolean);
-//   };
-
-//   return (
-//     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
-//         {step.title}
-//       </h2>
-
-//       {step.categories && (
-//         <div className="mb-8">
-//           <h3 className="text-lg font-semibold text-slate-900 mb-3">Professional Category</h3>
-//           <p className="text-sm text-slate-600 mb-4">
-//             Select your Professional's main business category (you can select multiple)
-//           </p>
-//           <div className="flex justify-center">
-//             <MultiSelect
-//               options={step.categories.available}
-//               selected={data.categories}
-//               onChange={(vals) => updateField("categories", vals)}
-//               variant="categories"
-//             />
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Render All Sections in Correct Order */}
-//       {step.sections ? (
-//         getOrderedSections().map(renderSection)
-//       ) : (
-//         /* Fallback for old structure - render only basicInfo */
-//         <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-//           <div className="space-y-4">
-//             {step.basicInfo?.fields.map((f: any) => (
-//               <div key={f.id} className="flex flex-col">
-//                 <label className="mb-1 font-semibold text-slate-900 text-sm">{f.label}</label>
-//                 <input
-//                   type={f.type}
-//                   required={f.required}
-//                   placeholder={f.placeholder || ""}
-//                   className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm
-//                     ${
-//                       f.id === "user_name" && usernameAvailable === false
-//                         ? "border-red-500 focus:ring-red-300"
-//                         : ""
-//                     }`}
-//                   value={data.basicInfo?.[f.id] || ""}
-//                   onChange={(e) =>
-//                     updateField("basicInfo", { ...data.basicInfo, [f.id]: e.target.value })
-//                   }
-//                 />
-//                 {f.id === "user_name" && data.basicInfo?.user_name && (
-//                   <span className="text-xs mt-1">
-//                     {checking
-//                       ? "Checking availability..."
-//                       : usernameAvailable === false
-//                       ? "Username is taken"
-//                       : usernameAvailable === true
-//                       ? "Username is available"
-//                       : ""}
-//                   </span>
-//                 )}
-//               </div>
-//             ))}
-//           </div>
-          
-//         </div>
-//       )}
-//     </>
-//   );
-// };
-
-// import { useState, useEffect } from "react";
-// import { useForm } from "../../context/FormContext";
-// import { MultiSelect } from "../common/MultiSelect";
-// import { PhoneInput } from "../common/PhoneInput";
-// import { CountryStateSelect } from "../common/CountryStateSelect";
-// import { DatePicker } from "../common/DatePicker";
-
-// export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
-//   const { data, updateField } = useForm();
-
-//   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
-//   const [checking, setChecking] = useState(false);
-//   const [originalUsername, setOriginalUsername] = useState<string | null>(null);
-
-//   // Set original username when component mounts or when data loads
-//   useEffect(() => {
-//     if (data.basicInfo?.user_name && !originalUsername) {
-//       setOriginalUsername(data.basicInfo.user_name);
-//       // Mark as available since it's the user's own username
-//       setUsernameAvailable(true);
-//       setStepValid?.(true);
-//     }
-//   }, [data.basicInfo?.user_name, originalUsername, setStepValid]);
-
-//   // Check username availability when user types
-//   useEffect(() => {
-//     const user_name = data.basicInfo?.user_name || "";
-    
-//     if (!user_name) {
-//       setUsernameAvailable(null);
-//       setStepValid?.(true);
-//       return;
-//     }
-
-//     // If username is the same as original (user's own username), don't check
-//     if (originalUsername && user_name === originalUsername) {
-//       setUsernameAvailable(true);
-//       setStepValid?.(true);
-//       return;
-//     }
-
-//     const timer = setTimeout(async () => {
-//       try {
-//         setChecking(true);
-//         const res = await fetch(
-//           "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
-//           {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify({ user_name }),
-//           }
-//         );
-//         const json = await res.json();
-//         setUsernameAvailable(json.available);
-//         setStepValid?.(json.available);
-//       } catch (err) {
-//         console.error(err);
-//         setUsernameAvailable(null);
-//         setStepValid?.(true);
-//       } finally {
-//         setChecking(false);
-//       }
-//     }, 500);
-
-//     return () => clearTimeout(timer);
-//   }, [data.basicInfo?.user_name, originalUsername, setStepValid]);
-
-//   // Render input field based on type
-//   const renderInputField = (f: any, section: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
-
-//     // Handle country and state fields with dynamic API
-//     if ((f.id === "country" || f.id === "state") && (section.id === "basicInfo" || section.id === "addressInformation")) {
-//       // For country and state fields, we'll handle them together in the section rendering
-//       // This is a placeholder that won't be used since we'll render CountryStateSelect directly
-//       return null;
-//     }
-
-//     // Handle gender dropdown
-//     if (f.id === "gender") {
-//       return (
-//         <select
-//           className={baseClasses}
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(e) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: e.target.value 
-//             })
-//           }
-//         >
-//           <option value="">Select Gender</option>
-//           <option value="male">Male</option>
-//           <option value="female">Female</option>
-//           <option value="non-binary">Non-binary</option>
-//           <option value="prefer-not-to-say">Prefer not to say</option>
-//         </select>
-//       );
-//     }
-
-//     // Handle phone fields with IDD functionality - ONLY for specific contact phone field
-//     const isContactPhoneField = section.id === "alternateContact" && f.id === "contactPhone";
-    
-//     if (isContactPhoneField) {
-//       return (
-//         <PhoneInput
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(value) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: value 
-//             })
-//           }
-//           placeholder={f.placeholder || "Enter phone number"}
-//           required={f.required}
-//           className=""
-//         />
-//       );
-//     }
-
-//     // For other phone-like fields, use regular input
-//     const isPhoneField = (f.type === "tel" || 
-//                         f.id.toLowerCase().includes("phone") || 
-//                         f.id.toLowerCase().includes("mobile") || 
-//                         f.id.toLowerCase().includes("contact")) && 
-//                         !isContactPhoneField; // Exclude the specific contact phone field
-    
-//     if (isPhoneField) {
-//       return (
-//         <input
-//           type="tel"
-//           required={f.required}
-//           placeholder={f.placeholder || ""}
-//           className={baseClasses}
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(e) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: e.target.value 
-//             })
-//           }
-//         />
-//       );
-//     }
-
-//     // Handle date fields with calendar UI
-//     const isDateField = f.type === "date" || 
-//                        f.id.toLowerCase().includes("date") || 
-//                        f.id.toLowerCase().includes("birth") || 
-//                        f.id.toLowerCase().includes("dob") || 
-//                        f.id.toLowerCase().includes("established") || 
-//                        f.id.toLowerCase().includes("incorporation");
-    
-//     if (isDateField) {
-//       return (
-//         <DatePicker
-//           label={f.label}
-//           value={data[section.id]?.[f.id] || ""}
-//           onChange={(value) =>
-//             updateField(section.id, { 
-//               ...data[section.id], 
-//               [f.id]: value 
-//             })
-//           }
-//           required={f.required}
-//           placeholder={f.placeholder || "Select date"}
-//         />
-//       );
-//     }
-
-//     return (
-//       <input
-//         type={f.type}
-//         required={f.required}
-//         placeholder={f.placeholder || ""}
-//         className={`${baseClasses} ${
-//           section.id === "basicInfo" && f.id === "user_name" && usernameAvailable === false
-//             ? "border-red-500 focus:ring-red-300"
-//             : ""
-//         }`}
-//         value={data[section.id]?.[f.id] || ""}
-//         onChange={(e) =>
-//           updateField(section.id, { 
-//             ...data[section.id], 
-//             [f.id]: e.target.value 
-//           })
-//         }
-//       />
-//     );
-//   };
-
-//   // Render a section
-//   const renderSection = (section: any) => {
-//     // Check if this section should use 2-column layout
-//     const useTwoColumns = section.id === "socialMediaLinks" || section.id === "alternateContact";
-    
-//     return (
-//       <div key={section.id} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6">
-//         <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
-//           {section.title}
-//         </h3>
-        
-//         {useTwoColumns ? (
-//           // 2-column grid layout
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//             {section.fields.map((f: any) => {
-//               // Skip country and state fields as they will be rendered together
-//               if (f.id === "country" || f.id === "state") return null;
-              
-//               // Check if this is a date field (DatePicker handles its own label)
-//               const isDateField = f.type === "date" || 
-//                                  f.id.toLowerCase().includes("date") || 
-//                                  f.id.toLowerCase().includes("birth") || 
-//                                  f.id.toLowerCase().includes("dob") || 
-//                                  f.id.toLowerCase().includes("established") || 
-//                                  f.id.toLowerCase().includes("incorporation");
-              
-//               return (
-//                 <div key={f.id} className="flex flex-col">
-//                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
-//                     </label>
-//                   )}
-//                   {renderInputField(f, section)}
-//                 </div>
-//               );
-//             })}
-            
-//             {/* Render CountryStateSelect if this section has country/state fields */}
-//             {section.fields.some((f: any) => f.id === "country" || f.id === "state") && (
-//               <div className="md:col-span-2">
-//                 <CountryStateSelect
-//                   countryValue={data[section.id]?.country || ""}
-//                   stateValue={data[section.id]?.state || ""}
-//                   onCountryChange={(value) => updateField(section.id, { 
-//                     ...data[section.id], 
-//                     country: value 
-//                   })}
-//                   onStateChange={(value) => updateField(section.id, { 
-//                     ...data[section.id], 
-//                     state: value 
-//                   })}
-//                   countryRequired={section.fields.find((f: any) => f.id === "country")?.required}
-//                   stateRequired={section.fields.find((f: any) => f.id === "state")?.required}
-//                 />
-//               </div>
-//             )}
-//           </div>
-//         ) : (
-//           // Single column layout for basicInfo and addressInformation
-//           <div className="space-y-4">
-//             {section.fields.map((f: any) => {
-//               // Skip country and state fields as they will be rendered together
-//               if (f.id === "country" || f.id === "state") return null;
-              
-//               // Check if this is a date field (DatePicker handles its own label)
-//               const isDateField = f.type === "date" || 
-//                                  f.id.toLowerCase().includes("date") || 
-//                                  f.id.toLowerCase().includes("birth") || 
-//                                  f.id.toLowerCase().includes("dob") || 
-//                                  f.id.toLowerCase().includes("established") || 
-//                                  f.id.toLowerCase().includes("incorporation");
-              
-//               return (
-//                 <div key={f.id} className="flex flex-col">
-//                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
-//                     </label>
-//                   )}
-//                   {renderInputField(f, section)}
-//                   {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
-//                     <span className={`text-xs mt-1 ${
-//                       usernameAvailable === false ? 'text-red-600' : 
-//                       usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
-//                     }`}>
-//                       {checking
-//                         ? "Checking availability..."
-//                         : usernameAvailable === false
-//                         ? "❌ Username is taken"
-//                         : usernameAvailable === true && originalUsername && data.basicInfo.user_name === originalUsername
-//                         ? "✅ Your username"
-//                         : usernameAvailable === true
-//                         ? "✅ Username is available"
-//                         : ""}
-//                     </span>
-//                   )}
-//                 </div>
-//               );
-//             })}
-            
-//             {/* Render CountryStateSelect if this section has country/state fields */}
-//             {section.fields.some((f: any) => f.id === "country" || f.id === "state") && (
-//               <CountryStateSelect
-//                 countryValue={data[section.id]?.country || ""}
-//                 stateValue={data[section.id]?.state || ""}
-//                 onCountryChange={(value) => updateField(section.id, { 
-//                   ...data[section.id], 
-//                   country: value 
-//                 })}
-//                 onStateChange={(value) => updateField(section.id, { 
-//                   ...data[section.id], 
-//                   state: value 
-//                 })}
-//                 countryRequired={section.fields.find((f: any) => f.id === "country")?.required}
-//                 stateRequired={section.fields.find((f: any) => f.id === "state")?.required}
-//               />
-//             )}
-//           </div>
-//         )}
-//       </div>
-//     );
-//   };
-
-//   // Reorder sections to desired sequence
-//   const getOrderedSections = () => {
-//     if (!step.sections) return [];
-    
-//     const basicInfo = step.sections.find((s: any) => s.id === "basicInfo");
-//     const addressInfo = step.sections.find((s: any) => s.id === "addressInformation");
-//     const alternateContact = step.sections.find((s: any) => s.id === "alternateContact");
-//     const socialMedia = step.sections.find((s: any) => s.id === "socialMediaLinks");
-    
-//     return [basicInfo, addressInfo, alternateContact, socialMedia].filter(Boolean);
-//   };
-
-//   return (
-//     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
-//         {step.title}
-//       </h2>
-
-//       {step.categories && (
-//         <div className="mb-8">
-//           <h3 className="text-lg font-semibold text-slate-900 mb-3">Professional Category</h3>
-//           <p className="text-sm text-slate-600 mb-4">
-//             Select your Professional's main business category (you can select multiple)
-//           </p>
-//           <div className="flex justify-center">
-//             <MultiSelect
-//               options={step.categories.available}
-//               selected={data.categories}
-//               onChange={(vals) => updateField("categories", vals)}
-//               variant="categories"
-//             />
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Render All Sections in Correct Order */}
-//       {step.sections ? (
-//         getOrderedSections().map(renderSection)
-//       ) : (
-//         /* Fallback for old structure - render only basicInfo */
-//         <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-//           <div className="space-y-4">
-//             {step.basicInfo?.fields.map((f: any) => (
-//               <div key={f.id} className="flex flex-col">
-//                 <label className="mb-1 font-semibold text-slate-900 text-sm">{f.label}</label>
-//                 <input
-//                   type={f.type}
-//                   required={f.required}
-//                   placeholder={f.placeholder || ""}
-//                   className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm
-//                     ${
-//                       f.id === "user_name" && usernameAvailable === false
-//                         ? "border-red-500 focus:ring-red-300"
-//                         : ""
-//                     }`}
-//                   value={data.basicInfo?.[f.id] || ""}
-//                   onChange={(e) =>
-//                     updateField("basicInfo", { ...data.basicInfo, [f.id]: e.target.value })
-//                   }
-//                 />
-//                 {f.id === "user_name" && data.basicInfo?.user_name && (
-//                   <span className={`text-xs mt-1 ${
-//                     usernameAvailable === false ? 'text-red-600' : 
-//                     usernameAvailable === true && originalUsername && data.basicInfo.user_name === originalUsername
-//                     ? 'text-green-600' : 'text-gray-600'
-//                   }`}>
-//                     {checking
-//                       ? "Checking availability..."
-//                       : usernameAvailable === false
-//                       ? "Username is taken"
-//                       : usernameAvailable === true && originalUsername && data.basicInfo.user_name === originalUsername
-//                       ? "Your username"
-//                       : usernameAvailable === true
-//                       ? "Username is available"
-//                       : ""}
-//                   </span>
-//                 )}
-//               </div>
-//             ))}
-//           </div>
-          
-//         </div>
-//       )}
-//     </>
-//   );
-// };
-
-
-
-// import { useState, useEffect } from "react";
-// import { useForm } from "../../context/FormContext";
-// import { DatePicker } from "../common/DatePicker";
-
-// export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
-//   const { data, updateField } = useForm();
-
-//   // Validation effect for required fields
-//   useEffect(() => {
-//     if (!step.fields) return;
-
-//     const requiredFields = step.fields.filter((field: any) => field.required);
-//     const isValid = requiredFields.every((field: any) => {
-//       const value = data[field.id];
-//       return value !== undefined && value !== null && value !== '';
-//     });
-
-//     setStepValid?.(isValid);
-//   }, [data, step.fields, setStepValid]);
-
-//   // Render input field based on type
-//   const renderInputField = (field: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-
-//     // Handle date fields
-//     if (field.type === "date") {
-//       return (
-//         <DatePicker
-//           value={data[field.id] || ""}
-//           onChange={(value) => updateField(field.id, value)}
-//           required={field.required}
-//           placeholder="Select date"
-//         />
-//       );
-//     }
-
-//     // Handle time fields
-//     if (field.type === "time") {
-//       return (
-//         <input
-//           type="time"
-//           className={baseClasses}
-//           value={data[field.id] || ""}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//         />
-//       );
-//     }
-
-//     // Handle datetime fields
-//     if (field.type === "datetime") {
-//       return (
-//         <input
-//           type="datetime-local"
-//           className={baseClasses}
-//           value={data[field.id] || ""}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//         />
-//       );
-//     }
-
-//     // Handle textarea fields
-//     if (field.type === "textarea") {
-//       return (
-//         <textarea
-//           className={`${baseClasses} min-h-[100px] resize-vertical`}
-//           value={data[field.id] || ""}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//           placeholder={field.placeholder || ""}
-//           rows={4}
-//         />
-//       );
-//     }
-
-//     // Handle checkbox fields
-//     if (field.type === "checkbox") {
-//       return (
-//         <div className="flex items-center">
-//           <input
-//             type="checkbox"
-//             className="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500"
-//             checked={data[field.id] || false}
-//             onChange={(e) => updateField(field.id, e.target.checked)}
-//           />
-//           <label className="ml-2 text-sm text-slate-700">
-//             Enable countdown
-//           </label>
-//         </div>
-//       );
-//     }
-
-//     // Default text input
-//     return (
-//       <input
-//         type={field.type}
-//         className={baseClasses}
-//         value={data[field.id] || ""}
-//         onChange={(e) => updateField(field.id, e.target.value)}
-//         required={field.required}
-//         placeholder={field.placeholder || ""}
-//       />
-//     );
-//   };
-
-//   // Generate human-readable label from field ID
-//   const generateLabel = (fieldId: string): string => {
-//     const labelMap: { [key: string]: string } = {
-//       eventTitle: "Event Title",
-//       eventTagline: "Event Tagline",
-//       startDate: "Start Date",
-//       endDate: "End Date",
-//       timeStart: "Start Time",
-//       timeEnd: "End Time",
-//       venueName: "Venue Name",
-//       venueAddress: "Venue Address",
-//       organizer: "Organizer",
-//       eventDescription: "Event Description",
-//       countdownEnabled: "Enable Countdown",
-//       countdownTargetDate: "Countdown Target Date"
-//     };
-
-//     return labelMap[fieldId] || fieldId
-//       .replace(/([A-Z])/g, ' $1')
-//       .replace(/^./, str => str.toUpperCase());
-//   };
-
-//   // Group fields for better layout
-//   const groupFields = () => {
-//     if (!step.fields) return [];
-
-//     const groups = [
-//       {
-//         title: "Event Details",
-//         fields: step.fields.filter((f: any) => 
-//           ['eventTitle', 'eventTagline', 'eventDescription'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Date & Time",
-//         fields: step.fields.filter((f: any) => 
-//           ['startDate', 'endDate', 'timeStart', 'timeEnd'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Venue Information",
-//         fields: step.fields.filter((f: any) => 
-//           ['venueName', 'venueAddress'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Organizer",
-//         fields: step.fields.filter((f: any) => 
-//           ['organizer'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Countdown Settings",
-//         fields: step.fields.filter((f: any) => 
-//           ['countdownEnabled', 'countdownTargetDate'].includes(f.id)
-//         )
-//       }
-//     ];
-
-//     return groups.filter(group => group.fields.length > 0);
-//   };
-
-//   const fieldGroups = groupFields();
-
-//   return (
-//     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
-//         {step.title}
-//       </h2>
-
-//       <div className="space-y-8">
-//         {fieldGroups.map((group, index) => (
-//           <div key={index} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-//             <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
-//               {group.title}
-//             </h3>
-            
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//               {group.fields.map((field: any) => {
-//                 // Special handling for countdown fields - show target date only when enabled
-//                 if (field.id === 'countdownTargetDate' && !data.countdownEnabled) {
-//                   return null;
-//                 }
-
-//                 // Full width for certain fields
-//                 const isFullWidth = [
-//                   'eventDescription', 
-//                   'venueAddress', 
-//                   'eventTagline'
-//                 ].includes(field.id);
-
-//                 return (
-//                   <div 
-//                     key={field.id} 
-//                     className={`flex flex-col ${isFullWidth ? 'md:col-span-2' : ''}`}
-//                   >
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {generateLabel(field.id)}
-//                       {field.required && <span className="text-red-500 ml-1">*</span>}
-//                     </label>
-//                     {renderInputField(field)}
-                    
-//                     {/* Helper text for specific fields */}
-//                     {field.id === 'countdownTargetDate' && (
-//                       <p className="text-xs text-slate-500 mt-1">
-//                         Set the date and time for the countdown timer
-//                       </p>
-//                     )}
-                    
-//                     {field.id === 'eventTagline' && (
-//                       <p className="text-xs text-slate-500 mt-1">
-//                         A catchy phrase that summarizes your event
-//                       </p>
-//                     )}
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </>
-//   );
-// };
-
-// import { useState, useEffect } from "react";
-// import { useForm } from "../../context/FormContext";
-// import { DatePicker } from "../common/DatePicker";
-
-// export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
-//   const { data, updateField } = useForm();
-
-//   // Validation effect for required fields - SIMPLIFIED VERSION
-//   useEffect(() => {
-//     if (!step.fields) return;
-
-//     const requiredFields = step.fields.filter((field: any) => field.required);
-//     const isValid = requiredFields.every((field: any) => {
-//       const value = data[field.id];
-//       return value !== undefined && value !== null && value !== '';
-//     });
-
-//     setStepValid?.(isValid);
-//   }, [data, step.fields, setStepValid]);
-
-//   // Render input field based on type
-//   const renderInputField = (field: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-
-//     // Handle date fields
-//     if (field.type === "date") {
-//       return (
-//         <DatePicker
-//           value={data[field.id] || ""}
-//           onChange={(value) => updateField(field.id, value)}
-//           required={field.required}
-//           placeholder="Select date"
-//         />
-//       );
-//     }
-
-//     // Handle time fields
-//     if (field.type === "time") {
-//       return (
-//         <input
-//           type="time"
-//           className={baseClasses}
-//           value={data[field.id] || ""}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//         />
-//       );
-//     }
-
-//     // Handle datetime fields
-//     if (field.type === "datetime") {
-//       return (
-//         <input
-//           type="datetime-local"
-//           className={baseClasses}
-//           value={data[field.id] || ""}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//         />
-//       );
-//     }
-
-//     // Handle textarea fields
-//     if (field.type === "textarea") {
-//       return (
-//         <textarea
-//           className={`${baseClasses} min-h-[100px] resize-vertical`}
-//           value={data[field.id] || ""}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//           placeholder={field.placeholder || ""}
-//           rows={4}
-//         />
-//       );
-//     }
-
-//     // Handle checkbox fields
-//     if (field.type === "checkbox") {
-//       return (
-//         <div className="flex items-center">
-//           <input
-//             type="checkbox"
-//             className="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500"
-//             checked={data[field.id] || false}
-//             onChange={(e) => updateField(field.id, e.target.checked)}
-//           />
-//           <label className="ml-2 text-sm text-slate-700">
-//             Enable countdown
-//           </label>
-//         </div>
-//       );
-//     }
-
-//     // Default text input
-//     return (
-//       <input
-//         type={field.type}
-//         className={baseClasses}
-//         value={data[field.id] || ""}
-//         onChange={(e) => updateField(field.id, e.target.value)}
-//         required={field.required}
-//         placeholder={field.placeholder || ""}
-//       />
-//     );
-//   };
-
-//   // Generate human-readable label from field ID
-//   const generateLabel = (fieldId: string): string => {
-//     const labelMap: { [key: string]: string } = {
-//       eventTitle: "Event Title",
-//       eventTagline: "Event Tagline",
-//       startDate: "Start Date",
-//       endDate: "End Date",
-//       timeStart: "Start Time",
-//       timeEnd: "End Time",
-//       venueName: "Venue Name",
-//       venueAddress: "Venue Address",
-//       organizer: "Organizer",
-//       eventDescription: "Event Description",
-//       countdownEnabled: "Enable Countdown",
-//       countdownTargetDate: "Countdown Target Date"
-//     };
-
-//     return labelMap[fieldId] || fieldId
-//       .replace(/([A-Z])/g, ' $1')
-//       .replace(/^./, str => str.toUpperCase());
-//   };
-
-//   // Group fields for better layout
-//   const groupFields = () => {
-//     if (!step.fields) return [];
-
-//     const groups = [
-//       {
-//         title: "Event Details",
-//         fields: step.fields.filter((f: any) => 
-//           ['eventTitle', 'eventTagline', 'eventDescription'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Date & Time",
-//         fields: step.fields.filter((f: any) => 
-//           ['startDate', 'endDate', 'timeStart', 'timeEnd'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Venue Information",
-//         fields: step.fields.filter((f: any) => 
-//           ['venueName', 'venueAddress'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Organizer",
-//         fields: step.fields.filter((f: any) => 
-//           ['organizer'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Countdown Settings",
-//         fields: step.fields.filter((f: any) => 
-//           ['countdownEnabled', 'countdownTargetDate'].includes(f.id)
-//         )
-//       }
-//     ];
-
-//     return groups.filter(group => group.fields.length > 0);
-//   };
-
-//   const fieldGroups = groupFields();
-
-//   return (
-//     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
-//         {step.title}
-//       </h2>
-
-//       <div className="space-y-8">
-//         {fieldGroups.map((group, index) => (
-//           <div key={index} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-//             <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
-//               {group.title}
-//             </h3>
-            
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//               {group.fields.map((field: any) => {
-//                 // Special handling for countdown fields - show target date only when enabled
-//                 if (field.id === 'countdownTargetDate' && !data.countdownEnabled) {
-//                   return null;
-//                 }
-
-//                 // Full width for certain fields
-//                 const isFullWidth = [
-//                   'eventDescription', 
-//                   'venueAddress', 
-//                   'eventTagline'
-//                 ].includes(field.id);
-
-//                 return (
-//                   <div 
-//                     key={field.id} 
-//                     className={`flex flex-col ${isFullWidth ? 'md:col-span-2' : ''}`}
-//                   >
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {generateLabel(field.id)}
-//                       {field.required && <span className="text-red-500 ml-1">*</span>}
-//                     </label>
-//                     {renderInputField(field)}
-                    
-//                     {/* Helper text for specific fields */}
-//                     {field.id === 'countdownTargetDate' && (
-//                       <p className="text-xs text-slate-500 mt-1">
-//                         Set the date and time for the countdown timer
-//                       </p>
-//                     )}
-                    
-//                     {field.id === 'eventTagline' && (
-//                       <p className="text-xs text-slate-500 mt-1">
-//                         A catchy phrase that summarizes your event
-//                       </p>
-//                     )}
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </>
-//   );
-// };
-
-
-// import { useState, useEffect } from "react";
-// import { useForm } from "../../context/FormContext";
-// import { DatePicker } from "../common/DatePicker";
-
-// export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
-//   const { data, updateField } = useForm();
-
-//   // Character limits configuration
-//   const characterLimits = {
-//     eventTitle: 25,
-//     eventTagline: 50,
-//     eventDescription: 200,
-//     venueName: 25,
-//     venueAddress: 200
-//   };
-
-//   // Validation effect for required fields - UPDATED VERSION
-//   useEffect(() => {
-//     if (!step.fields) return;
-
-//     const requiredFields = step.fields.filter((field: any) => field.required);
-//     const isValid = requiredFields.every((field: any) => {
-//       const value = data[field.id];
-//       return value !== undefined && value !== null && value !== '';
-//     });
-
-//     setStepValid?.(isValid);
-//   }, [data, step.fields, setStepValid]);
-
-//   // Render input field based on type
-//   const renderInputField = (field: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-//     const currentValue = data[field.id] || "";
-//     const charLimit = characterLimits[field.id as keyof typeof characterLimits];
-//     const charsRemaining = charLimit ? charLimit - currentValue.length : null;
-
-//     // Handle date fields
-//     if (field.type === "date") {
-//       return (
-//         <DatePicker
-//           value={currentValue}
-//           onChange={(value) => updateField(field.id, value)}
-//           required={field.required}
-//           placeholder="Select date"
-//         />
-//       );
-//     }
-
-//     // Handle time fields
-//     if (field.type === "time") {
-//       return (
-//         <input
-//           type="time"
-//           className={baseClasses}
-//           value={currentValue}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//         />
-//       );
-//     }
-
-//     // Handle datetime fields
-//     if (field.type === "datetime") {
-//       return (
-//         <input
-//           type="datetime-local"
-//           className={baseClasses}
-//           value={currentValue}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//         />
-//       );
-//     }
-
-//     // Handle textarea fields
-//     if (field.type === "textarea") {
-//       return (
-//         <div className="relative">
-//           <textarea
-//             className={`${baseClasses} min-h-[100px] resize-vertical pr-10`}
-//             value={currentValue}
-//             onChange={(e) => {
-//               if (charLimit && e.target.value.length > charLimit) {
-//                 e.target.value = e.target.value.slice(0, charLimit);
-//               }
-//               updateField(field.id, e.target.value);
-//             }}
-//             required={field.required}
-//             placeholder={field.placeholder || ""}
-//             rows={4}
-//             maxLength={charLimit}
-//           />
-//           {charLimit && (
-//             <div className={`absolute bottom-2 right-2 text-xs ${
-//               charsRemaining && charsRemaining < 10 ? 'text-red-500' : 'text-slate-500'
-//             }`}>
-//               {charsRemaining}
-//             </div>
-//           )}
-//         </div>
-//       );
-//     }
-
-//     // Handle checkbox fields
-//     if (field.type === "checkbox") {
-//       return (
-//         <div className="flex items-center">
-//           <input
-//             type="checkbox"
-//             className="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500"
-//             checked={data[field.id] || false}
-//             onChange={(e) => updateField(field.id, e.target.checked)}
-//           />
-//           <label className="ml-2 text-sm text-slate-700">
-//             Enable countdown
-//           </label>
-//         </div>
-//       );
-//     }
-
-//     // Default text input with character limit
-//     return (
-//       <div className="relative">
-//         <input
-//           type={field.type}
-//           className={`${baseClasses} ${charLimit ? 'pr-10' : ''}`}
-//           value={currentValue}
-//           onChange={(e) => {
-//             if (charLimit && e.target.value.length > charLimit) {
-//               e.target.value = e.target.value.slice(0, charLimit);
-//             }
-//             updateField(field.id, e.target.value);
-//           }}
-//           required={field.required}
-//           placeholder={field.placeholder || ""}
-//           maxLength={charLimit}
-//         />
-//         {charLimit && (
-//           <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
-//             charsRemaining && charsRemaining < 10 ? 'text-red-500' : 'text-slate-500'
-//           }`}>
-//             {charsRemaining}
-//           </div>
-//         )}
-//       </div>
-//     );
-//   };
-
-//   // Generate human-readable label from field ID
-//   const generateLabel = (fieldId: string): string => {
-//     const labelMap: { [key: string]: string } = {
-//       eventTitle: "Event Title",
-//       eventTagline: "Event Tagline",
-//       startDate: "Start Date",
-//       endDate: "End Date",
-//       timeStart: "Start Time",
-//       timeEnd: "End Time",
-//       venueName: "Venue Name",
-//       venueAddress: "Venue Address",
-//       organizer: "Organizer",
-//       eventDescription: "Event Description",
-//       countdownEnabled: "Enable Countdown",
-//       countdownTargetDate: "Countdown Target Date"
-//     };
-
-//     return labelMap[fieldId] || fieldId
-//       .replace(/([A-Z])/g, ' $1')
-//       .replace(/^./, str => str.toUpperCase());
-//   };
-
-//   // Group fields for better layout
-//   const groupFields = () => {
-//     if (!step.fields) return [];
-
-//     const groups = [
-//       {
-//         title: "Event Details",
-//         fields: step.fields.filter((f: any) => 
-//           ['eventTitle', 'eventTagline', 'eventDescription'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Date & Time",
-//         fields: step.fields.filter((f: any) => 
-//           ['startDate', 'endDate', 'timeStart', 'timeEnd'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Venue Information",
-//         fields: step.fields.filter((f: any) => 
-//           ['venueName', 'venueAddress'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Organizer",
-//         fields: step.fields.filter((f: any) => 
-//           ['organizer'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Countdown Settings",
-//         fields: step.fields.filter((f: any) => 
-//           ['countdownEnabled', 'countdownTargetDate'].includes(f.id)
-//         )
-//       }
-//     ];
-
-//     return groups.filter(group => group.fields.length > 0);
-//   };
-
-//   const fieldGroups = groupFields();
-
-//   return (
-//     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
-//         {step.title}
-//       </h2>
-
-//       <div className="space-y-8">
-//         {fieldGroups.map((group, index) => (
-//           <div key={index} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-//             <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
-//               {group.title}
-//             </h3>
-            
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//               {group.fields.map((field: any) => {
-//                 // Special handling for countdown fields - show target date only when enabled
-//                 if (field.id === 'countdownTargetDate' && !data.countdownEnabled) {
-//                   return null;
-//                 }
-
-//                 // Full width for certain fields
-//                 const isFullWidth = [
-//                   'eventDescription', 
-//                   'venueAddress', 
-//                   'eventTagline'
-//                 ].includes(field.id);
-
-//                 const charLimit = characterLimits[field.id as keyof typeof characterLimits];
-
-//                 return (
-//                   <div 
-//                     key={field.id} 
-//                     className={`flex flex-col ${isFullWidth ? 'md:col-span-2' : ''}`}
-//                   >
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {generateLabel(field.id)}
-//                       {field.required && <span className="text-red-500 ml-1">*</span>}
-//                       {charLimit && (
-//                         <span className="text-slate-500 text-xs font-normal ml-2">
-//                           (max {charLimit} characters)
-//                         </span>
-//                       )}
-//                     </label>
-//                     {renderInputField(field)}
-                    
-//                     {/* Helper text for specific fields */}
-//                     {field.id === 'countdownTargetDate' && (
-//                       <p className="text-xs text-slate-500 mt-1">
-//                         Set the date and time for the countdown timer
-//                       </p>
-//                     )}
-                    
-//                     {field.id === 'eventTagline' && (
-//                       <p className="text-xs text-slate-500 mt-1">
-//                         A catchy phrase that summarizes your event
-//                       </p>
-//                     )}
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </>
-//   );
-// };
-
-
-
-// import { useState, useEffect } from "react";
-// import { useForm } from "../../context/FormContext";
-// import { DatePicker } from "../common/DatePicker";
-
-// export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
-//   const { data, updateField } = useForm();
-
-//   // Character limits configuration
-//   const characterLimits = {
-//     eventTitle: 25,
-//     eventTagline: 50,
-//     eventDescription: 200,
-//     venueName: 25,
-//     venueAddress: 200
-//   };
-
-//   // Auto-fill today's date when countdown is enabled and target date is empty
-//   useEffect(() => {
-//     if (data.countdownEnabled && !data.countdownTargetDate) {
-//       const today = new Date();
-//       const year = today.getFullYear();
-//       const month = String(today.getMonth() + 1).padStart(2, '0');
-//       const day = String(today.getDate()).padStart(2, '0');
-//       const todayString = `${year}-${month}-${day}`;
-//       updateField('countdownTargetDate', todayString);
-//     }
-//   }, [data.countdownEnabled, data.countdownTargetDate, updateField]);
-
-//   // Validation effect for required fields - UPDATED VERSION
-//   useEffect(() => {
-//     if (!step.fields) return;
-
-//     const requiredFields = step.fields.filter((field: any) => field.required);
-//     const isValid = requiredFields.every((field: any) => {
-//       const value = data[field.id];
-//       return value !== undefined && value !== null && value !== '';
-//     });
-
-//     setStepValid?.(isValid);
-//   }, [data, step.fields, setStepValid]);
-
-//   // Render input field based on type
-//   const renderInputField = (field: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-//     const currentValue = data[field.id] || "";
-//     const charLimit = characterLimits[field.id as keyof typeof characterLimits];
-//     const charsRemaining = charLimit ? charLimit - currentValue.length : null;
-
-//     // Handle date fields - including countdownTargetDate with the styled DatePicker
-//     if (field.type === "date" || field.id === "countdownTargetDate") {
-//       return (
-//         <DatePicker
-//           value={currentValue}
-//           onChange={(value) => updateField(field.id, value)}
-//           required={field.required}
-//           placeholder="Select date"
-//         />
-//       );
-//     }
-
-//     // Handle time fields
-//     if (field.type === "time") {
-//       return (
-//         <input
-//           type="time"
-//           className={baseClasses}
-//           value={currentValue}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//         />
-//       );
-//     }
-
-//     // Handle datetime fields
-//     if (field.type === "datetime") {
-//       return (
-//         <input
-//           type="datetime-local"
-//           className={baseClasses}
-//           value={currentValue}
-//           onChange={(e) => updateField(field.id, e.target.value)}
-//           required={field.required}
-//         />
-//       );
-//     }
-
-//     // Handle textarea fields
-//     if (field.type === "textarea") {
-//       return (
-//         <div className="relative">
-//           <textarea
-//             className={`${baseClasses} min-h-[100px] resize-vertical pr-10`}
-//             value={currentValue}
-//             onChange={(e) => {
-//               if (charLimit && e.target.value.length > charLimit) {
-//                 e.target.value = e.target.value.slice(0, charLimit);
-//               }
-//               updateField(field.id, e.target.value);
-//             }}
-//             required={field.required}
-//             placeholder={field.placeholder || ""}
-//             rows={4}
-//             maxLength={charLimit}
-//           />
-//           {charLimit && (
-//             <div className={`absolute bottom-2 right-2 text-xs ${
-//               charsRemaining && charsRemaining < 10 ? 'text-red-500' : 'text-slate-500'
-//             }`}>
-//               {charsRemaining}
-//             </div>
-//           )}
-//         </div>
-//       );
-//     }
-
-//     // Handle checkbox fields
-//     if (field.type === "checkbox") {
-//       return (
-//         <div className="flex items-center">
-//           <input
-//             type="checkbox"
-//             className="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500"
-//             checked={data[field.id] || false}
-//             onChange={(e) => updateField(field.id, e.target.checked)}
-//           />
-//           <label className="ml-2 text-sm text-slate-700">
-//             Enable countdown
-//           </label>
-//         </div>
-//       );
-//     }
-
-//     // Default text input with character limit
-//     return (
-//       <div className="relative">
-//         <input
-//           type={field.type}
-//           className={`${baseClasses} ${charLimit ? 'pr-10' : ''}`}
-//           value={currentValue}
-//           onChange={(e) => {
-//             if (charLimit && e.target.value.length > charLimit) {
-//               e.target.value = e.target.value.slice(0, charLimit);
-//             }
-//             updateField(field.id, e.target.value);
-//           }}
-//           required={field.required}
-//           placeholder={field.placeholder || ""}
-//           maxLength={charLimit}
-//         />
-//         {charLimit && (
-//           <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
-//             charsRemaining && charsRemaining < 10 ? 'text-red-500' : 'text-slate-500'
-//           }`}>
-//             {charsRemaining}
-//           </div>
-//         )}
-//       </div>
-//     );
-//   };
-
-//   // Generate human-readable label from field ID
-//   const generateLabel = (fieldId: string): string => {
-//     const labelMap: { [key: string]: string } = {
-//       eventTitle: "Event Title",
-//       eventTagline: "Event Tagline",
-//       startDate: "Start Date",
-//       endDate: "End Date",
-//       timeStart: "Start Time",
-//       timeEnd: "End Time",
-//       venueName: "Venue Name",
-//       venueAddress: "Venue Address",
-//       organizer: "Organizer",
-//       eventDescription: "Event Description",
-//       countdownEnabled: "Enable Countdown",
-//       countdownTargetDate: "Countdown Target Date"
-//     };
-
-//     return labelMap[fieldId] || fieldId
-//       .replace(/([A-Z])/g, ' $1')
-//       .replace(/^./, str => str.toUpperCase());
-//   };
-
-//   // Group fields for better layout
-//   const groupFields = () => {
-//     if (!step.fields) return [];
-
-//     const groups = [
-//       {
-//         title: "Event Details",
-//         fields: step.fields.filter((f: any) => 
-//           ['eventTitle', 'eventTagline', 'eventDescription'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Date & Time",
-//         fields: step.fields.filter((f: any) => 
-//           ['startDate', 'endDate', 'timeStart', 'timeEnd'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Venue Information",
-//         fields: step.fields.filter((f: any) => 
-//           ['venueName', 'venueAddress'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Organizer",
-//         fields: step.fields.filter((f: any) => 
-//           ['organizer'].includes(f.id)
-//         )
-//       },
-//       {
-//         title: "Countdown Settings",
-//         fields: step.fields.filter((f: any) => 
-//           ['countdownEnabled', 'countdownTargetDate'].includes(f.id)
-//         )
-//       }
-//     ];
-
-//     return groups.filter(group => group.fields.length > 0);
-//   };
-
-//   const fieldGroups = groupFields();
-
-//   return (
-//     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
-//         {step.title}
-//       </h2>
-
-//       <div className="space-y-8">
-//         {fieldGroups.map((group, index) => (
-//           <div key={index} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-//             <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
-//               {group.title}
-//             </h3>
-            
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//               {group.fields.map((field: any) => {
-//                 // Special handling for countdown fields - show target date only when enabled
-//                 if (field.id === 'countdownTargetDate' && !data.countdownEnabled) {
-//                   return null;
-//                 }
-
-//                 // Full width for certain fields
-//                 const isFullWidth = [
-//                   'eventDescription', 
-//                   'venueAddress', 
-//                   'eventTagline'
-//                 ].includes(field.id);
-
-//                 const charLimit = characterLimits[field.id as keyof typeof characterLimits];
-
-//                 return (
-//                   <div 
-//                     key={field.id} 
-//                     className={`flex flex-col ${isFullWidth ? 'md:col-span-2' : ''}`}
-//                   >
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
-//                       {generateLabel(field.id)}
-//                       {field.required && <span className="text-red-500 ml-1">*</span>}
-//                       {charLimit && (
-//                         <span className="text-slate-500 text-xs font-normal ml-2">
-//                           (max {charLimit} characters)
-//                         </span>
-//                       )}
-//                     </label>
-//                     {renderInputField(field)}
-                    
-//                     {/* Helper text for specific fields */}
-//                     {field.id === 'countdownTargetDate' && (
-//                       <p className="text-xs text-slate-500 mt-1">
-//                         Set the date and time for the countdown timer
-//                       </p>
-//                     )}
-                    
-//                     {field.id === 'eventTagline' && (
-//                       <p className="text-xs text-slate-500 mt-1">
-//                         A catchy phrase that summarizes your event
-//                       </p>
-//                     )}
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </>
-//   );
-// };
-
-// import { useState, useEffect } from "react";
-// import { useForm } from "../../context/FormContext";
 // import { DatePicker } from "../common/DatePicker";
 
 // export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
@@ -2242,14 +66,19 @@
 //     const charLimit = characterLimits[field.id as keyof typeof characterLimits];
 //     const charsRemaining = charLimit ? charLimit - currentValue.length : null;
 
-//     // Handle countdownTargetDate with combined date and time pickers
+//     // Handle countdownTargetDate with date and time pickers on separate lines
 //     if (field.id === "countdownTargetDate") {
 //       const currentDate = currentValue.includes('T') ? currentValue.split('T')[0] : currentValue;
 //       const currentTime = currentValue.includes('T') ? currentValue.split('T')[1] : '00:00';
       
 //       return (
-//         <div className="flex gap-3 items-stretch">
-//           <div className="flex-[70%]">
+//         <div className="space-y-3">
+//           {/* Date Picker - Full width on first line */}
+//           <div>
+//             <label className="mb-1 font-medium text-slate-800 text-sm block">
+//               Date
+//               {field.required && <span className="text-red-500 ml-1">*</span>}
+//             </label>
 //             <DatePicker
 //               value={currentDate}
 //               onChange={(value) => handleCountdownDateChange(value, currentTime)}
@@ -2257,11 +86,16 @@
 //               placeholder="Select date"
 //             />
 //           </div>
-//           <div className="flex-[30%]">
+          
+//           {/* Time Input - Full width on second line */}
+//           <div>
+//             <label className="mb-1 font-medium text-slate-800 text-sm block">
+//               Time
+//               {field.required && <span className="text-red-500 ml-1">*</span>}
+//             </label>
 //             <input
 //               type="time"
-//               className={`${baseClasses} h-[42px]`}
-//               // className={`${baseClasses} h-full`}
+//               className={baseClasses}
 //               value={currentTime}
 //               onChange={(e) => handleCountdownDateChange(currentDate, e.target.value)}
 //               required={field.required}
@@ -2523,6 +357,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "../../context/FormContext";
 import axios from "axios";
 
+import React, { useState, useEffect, useRef } from "react";
+import { useForm } from "../../context/FormContext";
+
 // Custom Date Picker Component (same as in Step1CompanyCategory)
 const ScrollDatePicker: React.FC<{
   value: string;
@@ -2532,6 +369,292 @@ const ScrollDatePicker: React.FC<{
 }> = ({ value, onChange, title = "Date", description = "Select date" }) => {
   // ... (keep all the existing ScrollDatePicker code as is)
   // [Previous ScrollDatePicker implementation remains unchanged]
+  // Parse the initial value or use current date as default
+  const parseDate = (dateStr: string) => {
+    if (!dateStr) {
+      const now = new Date();
+      return {
+        day: now.getDate().toString().padStart(2, "0"),
+        month: (now.getMonth() + 1).toString().padStart(2, "0"),
+        year: now.getFullYear().toString(),
+      };
+    }
+
+    try {
+      const [year, month, day] = dateStr.split("-");
+      return {
+        day: day || new Date().getDate().toString().padStart(2, "0"),
+        month: month || (new Date().getMonth() + 1).toString().padStart(2, "0"),
+        year: year || new Date().getFullYear().toString(),
+      };
+    } catch (error) {
+      const now = new Date();
+      return {
+        day: now.getDate().toString().padStart(2, "0"),
+        month: (now.getMonth() + 1).toString().padStart(2, "0"),
+        year: now.getFullYear().toString(),
+      };
+    }
+  };
+
+  const [selectedDate, setSelectedDate] = useState(() => parseDate(value));
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const days = Array.from({ length: 31 }, (_, i) =>
+    (i + 1).toString().padStart(2, "0")
+  );
+  const months = [
+    { name: "January", value: "01" },
+    { name: "February", value: "02" },
+    { name: "March", value: "03" },
+    { name: "April", value: "04" },
+    { name: "May", value: "05" },
+    { name: "June", value: "06" },
+    { name: "July", value: "07" },
+    { name: "August", value: "08" },
+    { name: "September", value: "09" },
+    { name: "October", value: "10" },
+    { name: "November", value: "11" },
+    { name: "December", value: "12" },
+  ];
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) =>
+    (currentYear - i).toString()
+  );
+
+  const dayRef = useRef<HTMLDivElement>(null);
+  const monthRef = useRef<HTMLDivElement>(null);
+  const yearRef = useRef<HTMLDivElement>(null);
+
+  const handleDateChange = (
+    type: "day" | "month" | "year",
+    newValue: string
+  ) => {
+    const newDate = {
+      ...selectedDate,
+      [type]: newValue,
+    };
+
+    // Validate the date (especially for February and leap years)
+    const day = parseInt(newDate.day);
+    const month = parseInt(newDate.month);
+    const year = parseInt(newDate.year);
+
+    let validatedDay = newDate.day;
+
+    // Check if the selected day is valid for the selected month and year
+    if (type !== "day") {
+      const daysInMonth = new Date(year, month, 0).getDate();
+      if (day > daysInMonth) {
+        validatedDay = daysInMonth.toString().padStart(2, "0");
+      }
+    }
+
+    const finalDate = {
+      ...newDate,
+      day: validatedDay,
+    };
+
+    setSelectedDate(finalDate);
+
+    // Format date as YYYY-MM-DD
+    const dateString = `${finalDate.year}-${finalDate.month}-${finalDate.day}`;
+    onChange(dateString);
+  };
+
+  // Scroll to selected item on mount and when selectedDate changes
+  useEffect(() => {
+    if (isScrolling) return;
+
+    const scrollToSelected = (
+      container: HTMLDivElement | null,
+      selectedValue: string
+    ) => {
+      if (!container) return;
+
+      setTimeout(() => {
+        const selectedElement = container.querySelector(
+          `[data-value="${selectedValue}"]`
+        );
+        if (selectedElement) {
+          const containerHeight = container.clientHeight;
+          const elementTop = (selectedElement as HTMLElement).offsetTop;
+          const elementHeight = (selectedElement as HTMLElement).clientHeight;
+          container.scrollTop =
+            elementTop - (containerHeight - elementHeight) / 2;
+        }
+      }, 100);
+    };
+
+    scrollToSelected(dayRef.current, selectedDate.day);
+    scrollToSelected(monthRef.current, selectedDate.month);
+    scrollToSelected(yearRef.current, selectedDate.year);
+  }, [selectedDate.day, selectedDate.month, selectedDate.year, isScrolling]);
+
+  // Update when value prop changes from parent
+  useEffect(() => {
+    if (value && !isScrolling) {
+      const parsed = parseDate(value);
+      setSelectedDate(parsed);
+    }
+  }, [value, isScrolling]);
+
+  // Handle scroll events to prevent reset during user interaction
+  useEffect(() => {
+    const containers = [dayRef.current, monthRef.current, yearRef.current];
+
+    const handleScrollStart = () => {
+      setIsScrolling(true);
+    };
+
+    const handleScrollEnd = () => {
+      setTimeout(() => {
+        setIsScrolling(false);
+      }, 150);
+    };
+
+    containers.forEach((container) => {
+      if (container) {
+        container.addEventListener("scroll", handleScrollStart);
+        container.addEventListener("scrollend", handleScrollEnd);
+        container.addEventListener("touchmove", handleScrollStart);
+        container.addEventListener("touchend", handleScrollEnd);
+      }
+    });
+
+    return () => {
+      containers.forEach((container) => {
+        if (container) {
+          container.removeEventListener("scroll", handleScrollStart);
+          container.removeEventListener("scrollend", handleScrollEnd);
+          container.removeEventListener("touchmove", handleScrollStart);
+          container.removeEventListener("touchend", handleScrollEnd);
+        }
+      });
+    };
+  }, []);
+
+  interface ScrollColumnProps {
+    items: Array<{ value: string; label: string }>;
+    selectedValue: string;
+    onSelect: (value: string) => void;
+  }
+
+  const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
+    ({ items, selectedValue, onSelect }, ref) => {
+      const handleClick = (value: string) => {
+        setIsScrolling(true);
+        onSelect(value);
+        // Reset scrolling state after a short delay
+        setTimeout(() => setIsScrolling(false), 100);
+      };
+
+      return (
+        <div
+          ref={ref}
+          className="flex-1 h-32 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
+          style={{
+            scrollBehavior: "smooth",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
+          {/* Top padding */}
+          <div className="h-12"></div>
+
+          {items.map((item) => (
+            <div
+              key={item.value}
+              data-value={item.value}
+              className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
+                ${
+                  selectedValue === item.value
+                    ? "text-amber-600 font-bold text-lg scale-105 bg-amber-50 rounded-lg mx-1"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              onClick={() => handleClick(item.value)}
+            >
+              {item.label}
+            </div>
+          ))}
+
+          {/* Bottom padding */}
+          <div className="h-12"></div>
+        </div>
+      );
+    }
+  );
+
+  ScrollColumn.displayName = "ScrollColumn";
+
+  return (
+    <div className="bg-white border border-amber-200 rounded-xl p-4 date-picker-card animate-fade-in-up">
+      <div className="text-center mb-4">
+        <h3 className="font-semibold text-gray-800">{title}</h3>
+        <p className="text-xs text-gray-600 mt-1">{description}</p>
+      </div>
+
+      {/* Date Picker */}
+      <div className="flex items-center justify-between mb-2 px-4">
+        <div className="flex-1 text-center">
+          <span className="text-xs font-medium text-gray-500">DAY</span>
+        </div>
+        <div className="flex-1 text-center">
+          <span className="text-xs font-medium text-gray-500">MONTH</span>
+        </div>
+        <div className="flex-1 text-center">
+          <span className="text-xs font-medium text-gray-500">YEAR</span>
+        </div>
+      </div>
+
+      <div className="relative">
+        {/* Selection Highlight */}
+        <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-12 bg-amber-100 border-2 border-amber-300 rounded-lg pointer-events-none date-picker-highlight"></div>
+
+        <div className="flex items-stretch h-32 relative z-10">
+          {/* Day Column */}
+          <ScrollColumn
+            ref={dayRef}
+            items={days.map((day) => ({
+              value: day,
+              label: parseInt(day).toString(),
+            }))}
+            selectedValue={selectedDate.day}
+            onSelect={(value) => handleDateChange("day", value)}
+          />
+
+          {/* Month Column */}
+          <ScrollColumn
+            ref={monthRef}
+            items={months.map((month) => ({
+              value: month.value,
+              label: month.name.substring(0, 3),
+            }))}
+            selectedValue={selectedDate.month}
+            onSelect={(value) => handleDateChange("month", value)}
+          />
+
+          {/* Year Column */}
+          <ScrollColumn
+            ref={yearRef}
+            items={years.map((year) => ({ value: year, label: year }))}
+            selectedValue={selectedDate.year}
+            onSelect={(value) => handleDateChange("year", value)}
+          />
+        </div>
+      </div>
+
+      {/* Selected Date Display */}
+      <div className="text-center mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+        <p className="text-sm text-gray-600">Selected Date</p>
+        <p className="font-semibold text-amber-700">
+          {parseInt(selectedDate.day)}{" "}
+          {months.find((m) => m.value === selectedDate.month)?.name}{" "}
+          {selectedDate.year}
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export const Step1 = ({
