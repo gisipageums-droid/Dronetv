@@ -44,6 +44,7 @@ export default function EditableHero({
   userId,
   publishedId,
   templateSelection,
+  companyName,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,24 +54,32 @@ export default function EditableHero({
   const heroRef = useRef(null);
 
   // Default content with images
-  const defaultContent = heroData || {
-    heading: "A healthy meal delivered",
-    subheading: "to your door, every single day",
+  const defaultContent = {
+    heading: heroData?.heading || "A healthy meal delivered",
+    subheading: heroData?.subheading || "to your door, every single day",
     description:
+      heroData?.description ||
       "The smart 365-days-per-year food subscription that will make you eat healthy again. Tailored to your personal tastes and nutritional needs.",
-    primaryBtn: "Start eating well",
-    secondaryBtn: "Learn more",
-    primaryButtonLink: "#cta",
-    secondaryButtonLink: "#how",
-    trustText: "Over 250,000+ meals delivered last year!",
+    primaryBtn: heroData?.primaryBtn || "Start eating well",
+    secondaryBtn: heroData?.secondaryBtn || "Learn more",
+    primaryButtonLink: heroData?.primaryButtonLink || "#cta",
+    secondaryButtonLink: heroData?.secondaryButtonLink || "#how",
+    trustText: heroData?.trustText || "Over 250,000+ meals delivered last year!",
     hero1Image: Hero1,
     hero3Image: Hero3,
     customerImages: customerImages,
+    companyName: companyName || "Your Company",
   };
 
   // Consolidated state
-  const [heroState, setHeroState] = useState(defaultContent);
-  const [tempHeroState, setTempHeroState] = useState(defaultContent);
+  const [heroState, setHeroState] = useState({
+    ...defaultContent,
+    companyName: companyName || "Your Company"
+  });
+  const [tempHeroState, setTempHeroState] = useState({
+    ...defaultContent,
+    companyName: companyName || "Your Company"
+  });
 
   // Cropping states (same as Header.tsx)
   const [showCropper, setShowCropper] = useState(false);
@@ -645,7 +654,7 @@ export default function EditableHero({
       <section
         id="home"
         ref={heroRef}
-        className="relative h-100vh flex items-center py-52 sm:px-6 lg:px-8 lg:pb-32"
+        className="relative h-100vh flex items-center py-52 px-4 sm:px-6 lg:px-8 lg:pb-32"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${HeroBackground}')`,
           backgroundSize: "cover",
@@ -704,6 +713,17 @@ export default function EditableHero({
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto w-full ">
+          {!isEditing ? (
+            <p className="text-lg sm:text-xl md:text-2xl text-justify text-[red] relative z-20 mb-8 inline-block font-bold ">{heroState.companyName}</p>
+          ) : (
+            <EditableText
+              value={tempHeroState.companyName}
+              field="companyName"
+              className="text-lg sm:text-xl md:text-2xl text-left text-[#facc15] relative z-20 mb-8 inline-block max-w-[530px]"
+              placeholder="Company Name"
+              maxLength={50}
+            />
+          )}
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-center">
             <motion.div
               className="space-y-8 text-center lg:text-left order-2 lg:order-1"

@@ -21,7 +21,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const { AIGenData, setFinalTemplate, getAIgenData } = useTemplate();
   const { userId, draftId } = useParams();
-
   // Memoize the collectComponentState function
   const collectComponentState = useCallback((componentName, state) => {
     setComponentStates((prev) => ({
@@ -141,6 +140,8 @@ export default function App() {
       />
       <Hero
         heroData={AIGenData?.content?.hero}
+        companyName={AIGenData.content.company.name}
+
         onStateChange={handleHeroChange}
         publishedId={AIGenData?.publishedId}
         userId={AIGenData?.userId}
