@@ -1,19 +1,8 @@
 import { motion } from "motion/react";
 
-export default function Hero({ heroData, headerData }) {
-  // Consolidated state with fallbacks
-  console.log("heroData", headerData.companyName);
-  const heroState = {
-    ...heroData,
-    heroImage:
-      heroData?.heroImage ||
-      heroData?.heroImage ||
-      "https://images.unsplash.com/photo-1698047682129-c3e217ac08b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBidXNpbmVzcyUyMHRlYW0lMjBvZmZpY2V8ZW58MXx8fHwxNzU1NjE4MzQ4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    hero3Image:
-      heroData?.smallImage ||
-      heroData?.hero3Image ||
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG1lZXRpbmd8ZW58MXx8fHwxNzU1NjE5MDEzfDA&ixlib=rb-4.1.0&q=80&w=400",
-  };
+export default function Hero({ heroData }) {
+  // Use heroData directly without any fallbacks
+  const heroState = heroData || {};
 
   // Animations
   const containerVariants = {
@@ -91,86 +80,86 @@ export default function Hero({ heroData, headerData }) {
             animate="visible"
           >
             <div className="space-y-4">
-              {/* Badge - Now showing company name */}
-              <motion.div
-                className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
-                variants={itemVariants}
-              >
-                <span className="font-bold text-sm">
-                  {headerData.companyName}
-                </span>
-              </motion.div>
+              {/* Badge - Using heroData.badgeText */}
+              {heroState.badgeText && (
+                <motion.div
+                  className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
+                  variants={itemVariants}
+                >
+                  <span className="font-bold text-sm">
+                    {heroState.badgeText}
+                  </span>
+                </motion.div>
+              )}
 
               {/* Heading */}
               <motion.div variants={itemVariants}>
                 <h1 className="text-4xl md:text-6xl text-foreground leading-tight">
-                  {heroState.heading}{" "}
-                  <span className="text-primary">
-                    {heroState.highlight}
-                  </span>
+                  {heroState.heading}
                 </h1>
               </motion.div>
 
               {/* Description */}
               <motion.div variants={itemVariants}>
-                {/* <p className="text-xl text-muted-foreground max-w-lg inline"> */}
                 <p className="text-xl text-red-500 max-w-lg inline text-justify">
                   {heroState.description}
-                  <span className="text-red-accent font-semibold">
-                    {" "} {heroState.highlightDesc}
-                  </span>
-                  .
                 </p>
               </motion.div>
             </div>
 
             {/* Buttons */}
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4"
-              variants={itemVariants}
-            >
-              <button
-                size="lg"
-                className="bg-primary text-primary-foreground shadow-xl px-6 py-3 rounded-lg flex items-center"
+            {heroState.primaryBtn && (
+              <motion.div
+                className="flex flex-col sm:flex-row gap-4"
+                variants={itemVariants}
               >
-                <a href="#contact">{heroState.primaryBtn}</a>
-              </button>
-            </motion.div>
+                <button
+                  size="lg"
+                  className="bg-primary text-primary-foreground shadow-xl px-6 py-3 rounded-lg flex items-center"
+                >
+                  <a href="#contact">{heroState.primaryBtn}</a>
+                </button>
+              </motion.div>
+            )}
 
             {/* Trust text */}
-            <motion.div
-              className="flex items-center space-x-6 pt-4"
-              variants={itemVariants}
-            >
-              <div className="flex items-center space-x-2">
-                <div className="flex -space-x-2">
-                  <div className="w-8 h-8 bg-primary rounded-full border-2 border-background" />
-                  <div className="w-8 h-8 bg-primary/80 rounded-full border-2 border-background" />
-                  <div className="w-8 h-8 bg-red-accent rounded-full border-2 border-background" />
+            {heroState.trustText && (
+              <motion.div
+                className="flex items-center space-x-6 pt-4"
+                variants={itemVariants}
+              >
+                <div className="flex items-center space-x-2">
+                  <div className="flex -space-x-2">
+                    <div className="w-8 h-8 bg-primary rounded-full border-2 border-background" />
+                    <div className="w-8 h-8 bg-primary/80 rounded-full border-2 border-background" />
+                    <div className="w-8 h-8 bg-red-accent rounded-full border-2 border-background" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {heroState.trustText}
+                  </span>
                 </div>
-                <span className="text-sm text-muted-foreground">
-                  {heroState.trustText}
-                </span>
-              </div>
-            </motion.div>
+              </motion.div>
+            )}
 
             {/* Stats */}
-            <motion.div
-              className="grid grid-cols-3 gap-8 pt-8"
-              variants={itemVariants}
-            >
-              {heroState.stats.map((s) => (
-                <div key={s.id} className="group">
-                  <div className={`text-2xl font-bold group-hover:text-${s.color}`}>
-                    {s.value}
+            {heroState.stats && heroState.stats.length > 0 && (
+              <motion.div
+                className="grid grid-cols-3 gap-8 pt-8"
+                variants={itemVariants}
+              >
+                {heroState.stats.map((s) => (
+                  <div key={s.id} className="group">
+                    <div className={`text-2xl font-bold group-hover:text-${s.color}`}>
+                      {s.value}
+                    </div>
+                    <div className="text-muted-foreground">{s.label}</div>
+                    <div
+                      className={`w-8 h-1 bg-${s.color}/30 group-hover:bg-${s.color} mt-1`}
+                    />
                   </div>
-                  <div className="text-muted-foreground">{s.label}</div>
-                  <div
-                    className={`w-8 h-1 bg-${s.color}/30 group-hover:bg-${s.color} mt-1`}
-                  />
-                </div>
-              ))}
-            </motion.div>
+                ))}
+              </motion.div>
+            )}
           </motion.div>
 
           {/* Hero Image */}
@@ -189,16 +178,22 @@ export default function Hero({ heroData, headerData }) {
                 <div className="relative flex justify-center">
                   {/* Main Hero Image */}
                   <div className="relative">
-                    <img
-                      src={heroState.heroImage}
-                      alt="Modern business team collaborating"
-                      className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
-                      style={{
-                        maxHeight: '360px',
-                        width: 'auto',
-                        margin: '0 auto'
-                      }}
-                    />
+                    {heroState.heroImage ? (
+                      <img
+                        src={heroState.heroImage}
+                        alt="Modern business team collaborating"
+                        className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
+                        style={{
+                          maxHeight: '360px',
+                          width: 'auto',
+                          margin: '0 auto'
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full max-w-full h-64 bg-gray-200 rounded-3xl shadow-2xl flex items-center justify-center">
+                        <span className="text-gray-500">Hero Image</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Small overlapping image */}
@@ -208,11 +203,17 @@ export default function Hero({ heroData, headerData }) {
                     transition={{ delay: 0.3 }}
                   >
                     <div className="relative">
-                      <img
-                        src={heroState.hero3Image}
-                        alt="Additional business context"
-                        className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
-                      />
+                      {heroState.hero3Image ? (
+                        <img
+                          src={heroState.hero3Image}
+                          alt="Additional business context"
+                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
+                        />
+                      ) : (
+                        <div className="block w-32 h-24 bg-gray-200 rounded-2xl shadow-xl border-4 border-white flex items-center justify-center">
+                          <span className="text-gray-500 text-xs">Small Image</span>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
 

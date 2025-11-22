@@ -32,10 +32,7 @@ const imageVariants = {
 export default function EditableHero({
   heroData,
   onStateChange,
-  userId,
-  publishedId,
-  templateSelection,
-  companyName,
+  
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -54,16 +51,16 @@ export default function EditableHero({
     primaryButtonLink: heroData?.primaryButtonLink || "#cta",
     secondaryButtonLink: heroData?.secondaryButtonLink || "#how",
     trustText: heroData?.trustText || "Over 250,000+ meals delivered last year!",
-    hero1Image: Hero1,
-    hero3Image: Hero3,
-    customerImages: customerImages,
-    companyName: companyName || "Your Company",
+    hero1Image: heroData?.hero1Image || Hero1,
+    hero3Image: heroData?.hero3Image || Hero3,
+    customerImages: heroData?.customerImages || customerImages,
+    badgeText: heroData?.badgeText || "Your Company",
   };
 
   // Consolidated state
   const [heroState, setHeroState] = useState({
     ...defaultContent,
-    companyName: companyName || "Your Company"
+    badgeText: heroData?.badgeText || "Your Company"
   });
 
   useEffect(() => {
@@ -127,7 +124,7 @@ export default function EditableHero({
 
       <div className="relative z-10 max-w-7xl mx-auto w-full">
         <p className="text-lg sm:text-xl md:text-2xl text-justify text-[red] relative z-20 mb-8 inline-block font-bold">
-          {heroState.companyName}
+          {heroState.badgeText}
         </p>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-center">

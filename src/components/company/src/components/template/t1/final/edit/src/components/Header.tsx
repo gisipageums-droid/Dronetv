@@ -1,4 +1,4 @@
-import { Edit2, Upload, X, Loader2 } from "lucide-react";
+import { Edit2, Upload, X, Loader2, Save } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "react-toastify";
@@ -42,6 +42,10 @@ export default function Header({
   const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
   const PAN_STEP = 10;
 
+  // Edit mode state
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [tempLogoSrc, setTempLogoSrc] = useState(null);
+
   // Fixed state initialization
   const [headerState, setHeaderState] = useState(() => {
     return headerData || {
@@ -62,7 +66,9 @@ export default function Header({
 
   // Load logo dimensions when logo URL changes
   useEffect(() => {
-    if (headerState.logoSrc && (headerState.logoSrc.startsWith("data:") || headerState.logoSrc.startsWith("http"))) {
+    const logoSrcToUse = isEditMode && tempLogoSrc ? tempLogoSrc : headerState.logoSrc;
+
+    if (logoSrcToUse && (logoSrcToUse.startsWith("data:") || logoSrcToUse.startsWith("http"))) {
       const img = new Image();
       img.onload = () => {
         // Calculate dimensions while maintaining aspect ratio
@@ -102,11 +108,11 @@ export default function Header({
           height: Math.round(height)
         });
       };
-      img.src = headerState.logoSrc;
+      img.src = logoSrcToUse;
     } else {
       setLogoDimensions({ width: 50, height: 50 });
     }
-  }, [headerState.logoSrc]);
+  }, [headerState.logoSrc, tempLogoSrc, isEditMode]);
 
   // Allow more zoom-out; do not enforce cover when media/crop sizes change
   useEffect(() => {
@@ -370,21 +376,15 @@ export default function Header({
       // Update logo dimensions with display dimensions
       setLogoDimensions(dimensions);
 
-      // Show immediate local preview of cropped image
-      setHeaderState((prev) => ({
-        ...prev,
-        logoSrc: previewUrl,
-      }));
+      // Set temp logo for edit mode
+      setTempLogoSrc(previewUrl);
 
       // UPLOAD TO AWS IMMEDIATELY
       const awsImageUrl = await uploadImageToAWS(file, "logoSrc");
 
       if (awsImageUrl) {
-        // Update with actual S3 URL
-        setHeaderState((prev) => ({
-          ...prev,
-          logoSrc: awsImageUrl,
-        }));
+        // Update temp logo with actual S3 URL
+        setTempLogoSrc(awsImageUrl);
         setPendingLogoFile(null);
         toast.success("Logo cropped and uploaded to AWS successfully!");
       } else {
@@ -421,7 +421,35 @@ export default function Header({
 
   // Function to trigger file input for logo upload
   const handleEditLogo = () => {
-    fileInputRef.current?.click();
+    setIsEditMode(true);
+    setTempLogoSrc(headerState.logoSrc);
+  };
+
+  // Function to handle logo click in edit mode
+  const handleLogoClick = () => {
+    if (isEditMode) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  // Function to save changes
+  const handleSave = () => {
+    if (tempLogoSrc) {
+      setHeaderState(prev => ({
+        ...prev,
+        logoSrc: tempLogoSrc
+      }));
+    }
+    setIsEditMode(false);
+    setTempLogoSrc(null);
+    toast.success("Logo saved successfully!");
+  };
+
+  // Function to cancel editing
+  const handleCancel = () => {
+    setIsEditMode(false);
+    setTempLogoSrc(null);
+    toast.info("Changes cancelled");
   };
 
   const headerStyles: React.CSSProperties = {
@@ -462,18 +490,37 @@ export default function Header({
       >
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
 
-          <div className="absolute right-[40px] md:right-0  top-[50%] translate-y-[-50%] z-[999999999]">
-            <button
-              onClick={handleEditLogo}
-              className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
-            >
-              <Edit2 size={16} />
-              <span className="hidden xs:inline">Edit Logo</span>
-            </button>
+          {/* Edit/Save/Cancel Buttons */}
+          <div className="absolute right-[40px] md:right-0 top-[25%]  z-[999999999]">
+            {!isEditMode ? (
+              <button
+                onClick={handleEditLogo}
+                className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
+              >
+                <Edit2 size={16} />
+                <span className="hidden xs:inline">Edit Logo</span>
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSave}
+                  className="flex items-center gap-1 px-3 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 text-sm transition-all duration-200"
+                >
+                  <Save size={16} />
+                  <span className="hidden xs:inline">Save</span>
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 text-sm transition-all duration-200"
+                >
+                  <X size={16} />
+                  <span className="hidden xs:inline">Cancel</span>
+                </button>
+              </div>
+            )}
           </div>
-          <div className="flex items-center justify-between py-[8px]  mx-auto max-w-7xl ">
-            {/* Logo Edit Button - REMOVED */}
 
+          <div className="flex items-center justify-between py-[8px] mx-auto max-w-7xl ">
             {/* Logo + Company Name */}
             <motion.div
               className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
@@ -497,36 +544,43 @@ export default function Header({
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <div className="relative">
-                    <motion.img
-                      ref={logoImgRef}
-                      src={headerState.logoSrc || logo}
-                      alt="Logo"
-                      style={{
-                        width: `${logoDimensions.width}px`,
-                        height: `${logoDimensions.height}px`,
-                        maxHeight: '45px',
-                      }}
-                      className="rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
-                      animate={{
-                        y: [0, -5, 0],
-                        transition: {
-                          duration: 3,
-                          repeat: Infinity,
-                          repeatType: "reverse",
-                          ease: "easeInOut",
-                        },
-                      }}
-                      onClick={handleEditLogo}
-                    />
-                    {/* <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 z-[999999999]">
-                      <button
-                        onClick={handleEditLogo}
-                        className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
-                      >
-                        <Edit2 size={16} />
-                        <span className="hidden xs:inline">Edit Logo</span>
-                      </button>
-                    </div> */}
+                    <div
+                      className={`relative ${isEditMode ? 'cursor-pointer ring-2 ring-blue-500 rounded-lg' : ''}`}
+                      onClick={handleLogoClick}
+                    >
+                      <motion.img
+                        ref={logoImgRef}
+                        src={isEditMode && tempLogoSrc ? tempLogoSrc : headerState.logoSrc}
+                        alt="Logo"
+                        style={{
+                          width: `${logoDimensions.width}px`,
+                          height: `${logoDimensions.height}px`,
+                          maxHeight: '45px',
+                        }}
+                        className="rounded-xl transition-all duration-300 object-contain"
+                        animate={{
+                          y: [0, -5, 0],
+                          transition: {
+                            duration: 3,
+                            repeat: Infinity,
+                            repeatType: "reverse",
+                            ease: "easeInOut",
+                          },
+                        }}
+                      />
+
+                      {/* Upload Icon Overlay - Show only in edit mode */}
+                      {isEditMode && (
+                        <div className="absolute inset-0 bg-black bg-opacity-30 rounded-xl flex items-center justify-center transition-opacity duration-300">
+                          <div className="bg-white p-1.5 rounded-full shadow-lg">
+                            <Upload size={14} className="text-gray-700" />
+                          </div>
+                          <span className="absolute bottom-1 text-xs text-white bg-black bg-opacity-50 px-1 rounded">
+                            Click to upload
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
 
