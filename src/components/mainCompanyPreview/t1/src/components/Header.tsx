@@ -1,12 +1,172 @@
+import { Upload, X, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
-import logo from "/logos/logo.svg";
-import { useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { toast } from "react-toastify";
+import Cropper from "react-easy-crop";
+import logo from "/logos/logo.svg"
 
-export default function Header({ headerData }) {
+export default function Header({
+  headerData,
+  onStateChange,
+  userId,
+  publishedId,
+  templateSelection,
+}) {
+  // Character limits
+  const CHAR_LIMITS = {
+    companyName: 50,
+    navItem: 50,
+  };
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [pendingLogoFile, setPendingLogoFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const logoImgRef = useRef<HTMLImageElement | null>(null);
+
+  // Enhanced crop modal state with advanced features
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [originalFile, setOriginalFile] = useState(null);
+
+  // Advanced cropping states
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState("original");
+  const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
+  const PAN_STEP = 10;
+
+  // Fixed state initialization
+  const [headerState, setHeaderState] = useState(() => {
+    return headerData || {
+      logoSrc: logo,
+      companyName: "Your Company",
+      navItems: [
+        "Home",
+        "About",
+        "Profile",
+        "Services",
+        "Product",
+        "Gallery",
+        "Blog",
+        "Testimonials",
+      ],
+    };
+  });
+
+  // Load logo dimensions when logo URL changes
+  useEffect(() => {
+    if (headerState.logoSrc && (headerState.logoSrc.startsWith("data:") || headerState.logoSrc.startsWith("http"))) {
+      const img = new Image();
+      img.onload = () => {
+        // Calculate dimensions while maintaining aspect ratio
+        const maxSize = 60;
+        let width = img.naturalWidth;
+        let height = img.naturalHeight;
+
+        // Maintain aspect ratio while fitting within maxSize
+        if (width > height) {
+          height = (height / width) * maxSize;
+          width = maxSize;
+        } else {
+          width = (width / height) * maxSize;
+          height = maxSize;
+        }
+
+        // Ensure minimum size
+        const minSize = 25;
+        if (width < minSize) {
+          height = (height / width) * minSize;
+          width = minSize;
+        }
+        if (height < minSize) {
+          width = (width / height) * minSize;
+          height = minSize;
+        }
+
+        // Additional constraint: Ensure height doesn't exceed header height
+        const maxHeaderHeight = 45;
+        if (height > maxHeaderHeight) {
+          width = (width / height) * maxHeaderHeight;
+          height = maxHeaderHeight;
+        }
+
+        setLogoDimensions({
+          width: Math.round(width),
+          height: Math.round(height)
+        });
+      };
+      img.src = headerState.logoSrc;
+    } else {
+      setLogoDimensions({ width: 50, height: 50 });
+    }
+  }, [headerState.logoSrc]);
+
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      setMinZoomDynamic(0.1);
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
+  useEffect(() => {
+    if (!cropModalOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [cropModalOpen, nudge]);
+
+  // Add this useEffect to notify parent of state changes
+  useEffect(() => {
+    if (onStateChange) {
+      onStateChange(headerState);
+    }
+  }, [headerState, onStateChange]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  // Get aspect ratio value based on selection
+  const getAspectRatio = () => {
+    switch (selectedAspectRatio) {
+      case "1:1":
+        return 1;
+      case "16:9":
+        return 16 / 9;
+      case "original":
+      default:
+        return logoDimensions.width / logoDimensions.height;
+    }
+  };
+
+  // Get display text for aspect ratio
+  const getAspectRatioText = () => {
+    switch (selectedAspectRatio) {
+      case "1:1":
+        return "1:1";
+      case "16:9":
+        return "16:9";
+      case "original":
+      default:
+        return `${logoDimensions.width}:${logoDimensions.height}`;
+    }
+  };
 
   const headerStyles: React.CSSProperties = {
     position: "fixed",
@@ -45,13 +205,13 @@ export default function Header({ headerData }) {
         transition={{ duration: 0.6 }}
       >
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-[16rem] h-16 mx-auto min-w-7xl">
+          <div className="flex items-center justify-between py-[8px]  mx-auto max-w-7xl ">
             {/* Logo + Company Name */}
             <motion.div
-              className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400 group"
+              className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
               whileHover={{ scale: 1.05 }}
             >
-              {/* Logo with Animations */}
+              {/* Enhanced Logo with Animations */}
               <div className="relative flex-shrink-0">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
@@ -68,40 +228,40 @@ export default function Header({ headerData }) {
                   whileTap={{ scale: 0.9 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
-                  <motion.img
-                    src={headerData?.logoSrc || logo}
-                    alt="Logo"
-                    className="w-[50px] h-[50px] mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl"
-                    animate={{
-                      y: [0, -5, 0],
-                      transition: {
-                        duration: 3,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        ease: "easeInOut",
-                      },
-                    }}
-                  />
+                  <div className="relative">
+                    <motion.img
+                      ref={logoImgRef}
+                      src={headerState.logoSrc || logo}
+                      alt="Logo"
+                      style={{
+                        width: `${logoDimensions.width}px`,
+                        height: `${logoDimensions.height}px`,
+                        maxHeight: '45px',
+                      }}
+                      className="rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
+                      animate={{
+                        y: [0, -5, 0],
+                        transition: {
+                          duration: 3,
+                          repeat: Infinity,
+                          repeatType: "reverse",
+                          ease: "easeInOut",
+                        },
+                      }}
+                    />
+                  </div>
                 </motion.div>
               </div>
 
-              <span className="text-lg sm:text-xl md:text-2xl flex-shrink-0">
-                {headerData?.companyName || "Your Company"}
-              </span>
+              {/* Company Name */}
+              {/* <span className="text-lg sm:text-xl md:text-2xl flex-shrink-0">
+                {headerState.companyName}
+              </span> */}
             </motion.div>
 
             {/* Desktop Navigation */}
             <nav className="items-center hidden mr-16 space-x-4 md:flex lg:space-x-6 lg:mr-20">
-              {(headerData?.navItems || [
-                "Home",
-                "About",
-                "Profile",
-                "Services",
-                "Product",
-                "Gallery",
-                "Blog",
-                "Testimonials",
-              ]).map((item, index) => (
+              {headerState.navItems.map((item, index) => (
                 <a
                   key={index}
                   href={`#${item.toLowerCase()}`}
@@ -157,17 +317,8 @@ export default function Header({ headerData }) {
         style={{ ...mobileMenuStyles }}
         className="md:hidden dark:bg-gray-900 dark:border-gray-700"
       >
-        <div className="flex gap-1 w-[100%] flex-col">
-          {(headerData?.navItems || [
-            "Home",
-            "About",
-            "Profile",
-            "Services",
-            "Product",
-            "Gallery",
-            "Blog",
-            "Testimonials",
-          ]).map((item, index) => (
+        <div className="flex gap-1 w-[100%] flex-col ">
+          {headerState.navItems.map((item, index) => (
             <a
               key={index}
               href={`#${item.toLowerCase()}`}

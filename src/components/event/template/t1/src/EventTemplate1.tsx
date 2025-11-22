@@ -13,6 +13,7 @@ import SponsorsSection from "./components/SponsorsSection";
 import GallerySection from "./components/GallerySection";
 import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
+import Back from "./components/Back";
 
 const EventTemplate1: React.FC = () => {
   useEffect(() => {
@@ -34,6 +35,7 @@ const EventTemplate1: React.FC = () => {
       <SponsorsSection />
       <GallerySection />
       <ContactSection />
+      <Back/>
       <Footer />
     </div>
   );

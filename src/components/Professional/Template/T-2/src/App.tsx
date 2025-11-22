@@ -10,6 +10,7 @@ import { Projects } from './components/Projects';
 import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Services } from './components/Services';
+import Back from './components/Back';
 
 export default function ProTemp2() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -46,6 +47,7 @@ export default function ProTemp2() {
         <Contact />
       </main>
       <Footer />
+      <Back/>
     </div>
   );
 }
