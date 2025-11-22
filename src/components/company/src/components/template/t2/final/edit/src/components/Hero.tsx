@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "./ui/button";
 import { ArrowRight, Play, CheckCircle, X } from "lucide-react";
@@ -70,30 +69,29 @@ export default function Hero({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [showCropper, nudge]);
 
+  // Initialize state with dynamic heroData only - NO FALLBACKS
   const [heroState, setHeroState] = useState(() => {
-    const initialState = {
-      badgeText: companyName || "Trusted by 20+ Companies",
-      heading: heroData?.heading || "Transform Your Business with Innovation",
-      description:
-        heroData?.description ||
-        "We help companies scale and grow with cutting-edge solutions, expert guidance, and proven strategies that deliver exceptional results",
-      primaryBtn: heroData?.primaryBtn || "Get Started Today",
-      trustText: heroData?.trustText || "Join 20+ satisfied clients",
-      stats: [
-        { id: 1, value: "20", label: "Happy Clients", color: "red-accent" },
-        { id: 2, value: "80%", label: "Success Rate", color: "red-accent" },
-        { id: 3, value: "24/7", label: "Support", color: "primary" },
-      ],
-      heroImage:
-        heroData?.heroImage ||
-        "https://images.unsplash.com/photo-1698047682129-c3e217ac08b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBidXNpbmVzcyUyMHRlYW0lMjBvZmZpY2V8ZW58MXx8fHwxNzU1NjE4MzQ4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      hero3Image:
-        heroData?.hero3Image ||
-        "https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG1lZXRpbmd8ZW58MXx8fHwxNzU1NjE5MDEzfDA&ixlib=rb-4.1.0&q=80&w=400",
+    const initialState = heroData || {
+      badgeText: "",
+      heading: "",
+      description: "",
+      primaryBtn: "",
+      trustText: "",
+      stats: [],
+      heroImage: "",
+      hero3Image: ""
     };
     initialHeroState.current = initialState;
     return initialState;
   });
+
+  // Update state when heroData prop changes
+  useEffect(() => {
+    if (heroData) {
+      setHeroState(heroData);
+      initialHeroState.current = heroData;
+    }
+  }, [heroData]);
 
   // Add this useEffect to notify parent of state changes immediately
   useEffect(() => {
@@ -582,7 +580,6 @@ export default function Hero({
         </motion.div>
       )}
 
-
       {/* Main Hero Section */}
       <section
         id="home"
@@ -616,34 +613,35 @@ export default function Hero({
             >
               <div className="space-y-4">
                 {/* Badge */}
-                <motion.div
-                  className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
-                  variants={itemVariants}
-                >
-
-                  {isEditing ? (
-                    <div className="relative">
-                      <input
-                        value={heroState.badgeText}
-                        onChange={(e) =>
-                          updateField("badgeText", e.target.value)
-                        }
-                        maxLength={25}
-                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
-                          ? "border-red-500"
-                          : ""
-                          }`}
-                      />
-                      <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
-                        {heroState.badgeText.length >= 25 && "Limit reached!"}
+                {heroState.badgeText && (
+                  <motion.div
+                    className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
+                    variants={itemVariants}
+                  >
+                    {isEditing ? (
+                      <div className="relative">
+                        <input
+                          value={heroState.badgeText}
+                          onChange={(e) =>
+                            updateField("badgeText", e.target.value)
+                          }
+                          maxLength={25}
+                          className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
+                            ? "border-red-500"
+                            : ""
+                            }`}
+                        />
+                        <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
+                          {heroState.badgeText.length >= 25 && "Limit reached!"}
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <span className="font-bold text-sm">
-                      {heroState.badgeText}
-                    </span>
-                  )}
-                </motion.div>
+                    ) : (
+                      <span className="font-bold text-sm">
+                        {heroState.badgeText}
+                      </span>
+                    )}
+                  </motion.div>
+                )}
 
                 {/* Heading */}
                 <motion.div variants={itemVariants}>
@@ -746,142 +744,148 @@ export default function Hero({
                   </>
                 ) : (
                   <>
-                    <Button
-                      size="lg"
-                      className="bg-primary text-primary-foreground shadow-xl"
-                    >
-                      <a href="#contact">{heroState.primaryBtn}</a>
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
+                    {heroState.primaryBtn && (
+                      <Button
+                        size="lg"
+                        className="bg-primary text-primary-foreground shadow-xl"
+                      >
+                        <a href="#contact">{heroState.primaryBtn}</a>
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </Button>
+                    )}
                   </>
                 )}
               </motion.div>
 
               {/* Trust text */}
-              <motion.div
-                className="flex items-center space-x-6 pt-4"
-                variants={itemVariants}
-              >
-                <div className="flex items-center space-x-2">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 bg-primary rounded-full border-2 border-background" />
-                    <div className="w-8 h-8 bg-primary/80 rounded-full border-2 border-background" />
-                    <div className="w-8 h-8 bg-red-accent rounded-full border-2 border-background" />
-                  </div>
-                  {isEditing ? (
-                    <div className="relative">
-                      <input
-                        value={heroState.trustText}
-                        onChange={(e) =>
-                          updateField("trustText", e.target.value)
-                        }
-                        maxLength={60}
-                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
-                          ? "border-red-500"
-                          : ""
-                          }`}
-                      />
-                      <div className="text-right text-xs text-gray-500 mt-1">
-                        {heroState.trustText.length}/60
-                        {heroState.trustText.length >= 60 && (
-                          <span className="ml-2 text-red-500 font-bold">
-                            Character limit reached!
-                          </span>
-                        )}
-                      </div>
+              {heroState.trustText && (
+                <motion.div
+                  className="flex items-center space-x-6 pt-4"
+                  variants={itemVariants}
+                >
+                  <div className="flex items-center space-x-2">
+                    <div className="flex -space-x-2">
+                      <div className="w-8 h-8 bg-primary rounded-full border-2 border-background" />
+                      <div className="w-8 h-8 bg-primary/80 rounded-full border-2 border-background" />
+                      <div className="w-8 h-8 bg-red-accent rounded-full border-2 border-background" />
                     </div>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">
-                      {heroState.trustText}
-                    </span>
-                  )}
-                </div>
-              </motion.div>
-
-              {/* Stats */}
-              <motion.div
-                className="grid grid-cols-3 gap-8 pt-8"
-                variants={itemVariants}
-              >
-                {heroState.stats.map((s) => (
-                  <div key={s.id} className="group">
                     {isEditing ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="relative">
-                          <input
-                            value={s.value}
-                            onChange={(e) =>
-                              updateStat(s.id, "value", e.target.value)
-                            }
-                            maxLength={15}
-                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
-                              }`}
-                          />
-                          <div className="text-right text-xs text-gray-500 mt-1">
-                            {s.value.length}/15
-                            {s.value.length >= 15 && (
-                              <span className="ml-2 text-red-500 font-bold">
-                                Limit reached!
-                              </span>
-                            )}
-                          </div>
+                      <div className="relative">
+                        <input
+                          value={heroState.trustText}
+                          onChange={(e) =>
+                            updateField("trustText", e.target.value)
+                          }
+                          maxLength={60}
+                          className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
+                            ? "border-red-500"
+                            : ""
+                            }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {heroState.trustText.length}/60
+                          {heroState.trustText.length >= 60 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Character limit reached!
+                            </span>
+                          )}
                         </div>
-
-                        <div className="relative">
-                          <input
-                            value={s.label}
-                            onChange={(e) =>
-                              updateStat(s.id, "label", e.target.value)
-                            }
-                            maxLength={25}
-                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
-                              }`}
-                          />
-                          <div className="text-right text-xs text-gray-500 mt-1">
-                            {s.label.length}/25
-                            {s.label.length >= 25 && (
-                              <span className="ml-2 text-red-500 font-bold">
-                                Limit reached!
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        <motion.button
-                          whileTap={{ scale: 0.9 }}
-                          whileHover={{ scale: 1.2 }}
-                          onClick={() => removeStat(s.id)}
-                          className="text-red-500 cursor-pointer text-xs"
-                        >
-                          ✕ Remove
-                        </motion.button>
                       </div>
                     ) : (
-                      <>
-                        <div
-                          className={`text-2xl font-bold group-hover:text-${s.color}`}
-                        >
-                          {s.value}
-                        </div>
-                        <div className="text-muted-foreground">{s.label}</div>
-                        <div
-                          className={`w-8 h-1 bg-${s.color}/30 group-hover:bg-${s.color} mt-1`}
-                        />
-                      </>
+                      <span className="text-sm text-muted-foreground">
+                        {heroState.trustText}
+                      </span>
                     )}
                   </div>
-                ))}
-                {isEditing && (
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.2 }}
-                    onClick={addStat}
-                    className="text-green-600 cursor-pointer shadow-sm  text-sm font-medium"
-                  >
-                    + Add Stat
-                  </motion.button>
-                )}
-              </motion.div>
+                </motion.div>
+              )}
+
+              {/* Stats */}
+              {heroState.stats && heroState.stats.length > 0 && (
+                <motion.div
+                  className="grid grid-cols-3 gap-8 pt-8"
+                  variants={itemVariants}
+                >
+                  {heroState.stats.map((s) => (
+                    <div key={s.id} className="group">
+                      {isEditing ? (
+                        <div className="flex flex-col gap-1">
+                          <div className="relative">
+                            <input
+                              value={s.value}
+                              onChange={(e) =>
+                                updateStat(s.id, "value", e.target.value)
+                              }
+                              maxLength={15}
+                              className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
+                                }`}
+                            />
+                            <div className="text-right text-xs text-gray-500 mt-1">
+                              {s.value.length}/15
+                              {s.value.length >= 15 && (
+                                <span className="ml-2 text-red-500 font-bold">
+                                  Limit reached!
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="relative">
+                            <input
+                              value={s.label}
+                              onChange={(e) =>
+                                updateStat(s.id, "label", e.target.value)
+                              }
+                              maxLength={25}
+                              className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
+                                }`}
+                            />
+                            <div className="text-right text-xs text-gray-500 mt-1">
+                              {s.label.length}/25
+                              {s.label.length >= 25 && (
+                                <span className="ml-2 text-red-500 font-bold">
+                                  Limit reached!
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            whileHover={{ scale: 1.2 }}
+                            onClick={() => removeStat(s.id)}
+                            className="text-red-500 cursor-pointer text-xs"
+                          >
+                            ✕ Remove
+                          </motion.button>
+                        </div>
+                      ) : (
+                        <>
+                          <div
+                            className={`text-2xl font-bold group-hover:text-${s.color}`}
+                          >
+                            {s.value}
+                          </div>
+                          <div className="text-muted-foreground">{s.label}</div>
+                          <div
+                            className={`w-8 h-1 bg-${s.color}/30 group-hover:bg-${s.color} mt-1`}
+                          />
+                        </>
+                      )}
+                    </div>
+                  ))}
+                  {isEditing && (
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      whileHover={{ scale: 1.2 }}
+                      onClick={addStat}
+                      className="text-green-600 cursor-pointer shadow-sm  text-sm font-medium"
+                    >
+                      + Add Stat
+                    </motion.button>
+                  )}
+                </motion.div>
+              )}
             </motion.div>
 
             {/* Hero Image - FIXED DISPLAY */}
@@ -904,13 +908,19 @@ export default function Hero({
                           Recommended: 600×450px (4:3 ratio)
                         </div>
                       )}
-                      <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden">
-                        <img
-                          src={heroState.heroImage}
-                          alt="Modern business team collaborating"
-                          className="w-full h-full object-cover scale-110"
-                        />
-                      </div>
+                      {heroState.heroImage ? (
+                        <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden">
+                          <img
+                            src={heroState.heroImage}
+                            alt="Modern business team collaborating"
+                            className="w-full h-full object-cover scale-110"
+                          />
+                        </div>
+                      ) : (
+                        <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden flex items-center justify-center">
+                          <span className="text-gray-400">No hero image</span>
+                        </div>
+                      )}
                       {isEditing && (
                         <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
                           <svg
@@ -954,14 +964,19 @@ export default function Hero({
                             Recommended: 600×450px (4:3 ratio)
                           </div>
                         )}
-                        <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden">
-                          <img
-                            src={heroState.hero3Image}
-                            alt="Additional business context"
-                            className="w-full h-full object-cover scale-110"
-                          />
-
-                        </div>
+                        {heroState.hero3Image ? (
+                          <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden">
+                            <img
+                              src={heroState.hero3Image}
+                              alt="Additional business context"
+                              className="w-full h-full object-cover scale-110"
+                            />
+                          </div>
+                        ) : (
+                          <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">No small image</span>
+                          </div>
+                        )}
                         {isEditing && (
                           <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
                             <svg
