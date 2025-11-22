@@ -391,11 +391,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData, onStateChange }) =>
                       setHeroContent({ ...heroContent, location: e.target.value })
                     }
                     placeholder="Location"
-                    maxLength={100}
+                    maxLength={200}
                     className="bg-white text-black px-2 py-1 rounded-md"
                   />
                   <div className="text-xs text-gray-300 text-right">
-                    {heroContent.location.length}/100
+                    {heroContent.location.length}/200
                   </div>
                 </div>
               ) : (

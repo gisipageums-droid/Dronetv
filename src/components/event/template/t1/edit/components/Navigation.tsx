@@ -221,36 +221,7 @@ const Navigation: React.FC<NavigationProps> = ({
           <div className="hidden lg:flex lg:mx-20 items-center space-x-4 xl:space-x-8">
             {navContent.navItems.map((item, index) => (
               <div key={index} className="flex flex-col">
-                {editMode ? (
-                  <div className="flex flex-col gap-1">
-                    <div className="flex flex-col">
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) => updateNavItem(index, 'name', e.target.value)}
-                        maxLength={50}
-                        className="bg-white text-black px-2 py-1 rounded-md text-xs w-20"
-                        placeholder="Name"
-                      />
-                      <div className="text-xs text-gray-500 text-right">
-                        {item.name.length}/50
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <input
-                        type="text"
-                        value={item.href}
-                        onChange={(e) => updateNavItem(index, 'href', e.target.value)}
-                        maxLength={50}
-                        className="bg-white text-black px-2 py-1 rounded-md text-xs w-20"
-                        placeholder="#href"
-                      />
-                      <div className="text-xs text-gray-500 text-right">
-                        {item.href.length}/50
-                      </div>
-                    </div>
-                  </div>
-                ) : (
+                
                   <button
                     onClick={() => scrollToSection(item.href)}
                     className={`relative font-medium transition-colors duration-300 group text-sm xl:text-base ${
@@ -262,7 +233,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     {item.name}
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
                   </button>
-                )}
+                
               </div>
             ))}
           </div>

@@ -10,6 +10,7 @@ import Testimonials from './components/Testimonials';
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import Service from "./components/Service";
+import Back from "./components/Back";
 
 const App: React.FC = () => {
   return (
@@ -25,6 +26,7 @@ const App: React.FC = () => {
         <Testimonials />
         <Contact />
         <Footer />
+        <Back/>
       </div>
     </DarkModeProvider>
   );
