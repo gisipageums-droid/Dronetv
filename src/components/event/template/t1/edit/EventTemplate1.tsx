@@ -437,7 +437,9 @@ const EventTemplate1: React.FC = () => {
         footerData={componentStates.footer}
         onStateChange={createStateChangeHandler("footer")}
       />
+      {(isAIgen === "AIgen")?null:
       <Back />
+      }
       <Publish />
       <Toaster position="top-right" richColors />
     </div>
