@@ -8,6 +8,7 @@ import { ScheduleSection } from './components/ScheduleSection';
 import { ExhibitorsSection } from './components/ExhibitorsSection';
 import { GallerySection } from './components/GallerySection';
 import { ContactSection } from './components/ContactSection';
+import Back from './components/Back';
 
 export default function Event_T2() {
   const [activeSection, setActiveSection] = useState('home');
@@ -44,6 +45,7 @@ export default function Event_T2() {
       <ExhibitorsSection />
       <GallerySection />
       <ContactSection />
+      <Back/>
     </div>
   );
 }

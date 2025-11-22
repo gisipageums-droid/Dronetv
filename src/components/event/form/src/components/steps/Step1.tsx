@@ -64,7 +64,7 @@ const ScrollDatePicker: React.FC<{
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) =>
-    (currentYear - i).toString()
+    (currentYear + i).toString()
   );
 
   const dayRef = useRef<HTMLDivElement>(null);
