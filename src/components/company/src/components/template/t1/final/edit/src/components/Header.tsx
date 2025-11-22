@@ -461,6 +461,16 @@ export default function Header({
         transition={{ duration: 0.6 }}
       >
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
+
+          <div className="absolute right-[40px] md:right-0  top-[50%] translate-y-[-50%] z-[999999999]">
+            <button
+              onClick={handleEditLogo}
+              className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
+            >
+              <Edit2 size={16} />
+              <span className="hidden xs:inline">Edit Logo</span>
+            </button>
+          </div>
           <div className="flex items-center justify-between py-[8px]  mx-auto max-w-7xl ">
             {/* Logo Edit Button - REMOVED */}
 
@@ -508,7 +518,7 @@ export default function Header({
                       }}
                       onClick={handleEditLogo}
                     />
-                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 z-[999999999]">
+                    {/* <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 z-[999999999]">
                       <button
                         onClick={handleEditLogo}
                         className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
@@ -516,7 +526,7 @@ export default function Header({
                         <Edit2 size={16} />
                         <span className="hidden xs:inline">Edit Logo</span>
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                 </motion.div>
 
