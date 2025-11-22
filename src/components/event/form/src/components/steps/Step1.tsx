@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "../../context/FormContext";
 import axios from "axios";
@@ -7,13 +5,61 @@ import axios from "axios";
 
 
 // Custom Date Picker Component (same as in Step1CompanyCategory)
+interface ScrollColumnProps {
+  items: Array<{ value: string; label: string }>;
+  selectedValue: string;
+  onSelect: (value: string) => void;
+  setIsScrolling: (isScrolling: boolean) => void;
+}
+
+const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
+  ({ items, selectedValue, onSelect, setIsScrolling }, ref) => {
+    const handleClick = (value: string) => {
+      setIsScrolling(false);
+      onSelect(value);
+    };
+
+    return (
+      <div
+        ref={ref}
+        className="flex-1 h-32 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
+        style={{
+          scrollBehavior: "smooth",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        <div className="h-12"></div>
+        {items.map((item) => (
+          <div
+            key={item.value}
+            data-value={item.value}
+            className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
+              ${
+                selectedValue === item.value
+                  ? "text-amber-600 font-bold text-lg scale-105 bg-amber-50 rounded-lg mx-1"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            onClick={() => handleClick(item.value)}
+          >
+            {item.label}
+          </div>
+        ))}
+        <div className="h-12"></div>
+      </div>
+    );
+  }
+);
+
+ScrollColumn.displayName = "ScrollColumn";
+
+// 2. Updated ScrollDatePicker
 const ScrollDatePicker: React.FC<{
   value: string;
   onChange: (date: string) => void;
   title?: string;
   description?: string;
 }> = ({ value, onChange, title = "Date", description = "Select date" }) => {
-  // Parse the initial value or use current date as default
+  
   const parseDate = (dateStr: string) => {
     if (!dateStr) {
       const now = new Date();
@@ -23,7 +69,6 @@ const ScrollDatePicker: React.FC<{
         year: now.getFullYear().toString(),
       };
     }
-
     try {
       const [year, month, day] = dateStr.split("-");
       return {
@@ -62,8 +107,8 @@ const ScrollDatePicker: React.FC<{
     { name: "December", value: "12" },
   ];
 
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 100 }, (_, i) =>
+  const currentYear = new Date().getFullYear()-50;
+  const years = Array.from({ length: 250 }, (_, i) =>
     (currentYear + i).toString()
   );
 
@@ -75,19 +120,13 @@ const ScrollDatePicker: React.FC<{
     type: "day" | "month" | "year",
     newValue: string
   ) => {
-    const newDate = {
-      ...selectedDate,
-      [type]: newValue,
-    };
+    const newDate = { ...selectedDate, [type]: newValue };
 
-    // Validate the date (especially for February and leap years)
     const day = parseInt(newDate.day);
     const month = parseInt(newDate.month);
     const year = parseInt(newDate.year);
 
     let validatedDay = newDate.day;
-
-    // Check if the selected day is valid for the selected month and year
     if (type !== "day") {
       const daysInMonth = new Date(year, month, 0).getDate();
       if (day > daysInMonth) {
@@ -95,19 +134,14 @@ const ScrollDatePicker: React.FC<{
       }
     }
 
-    const finalDate = {
-      ...newDate,
-      day: validatedDay,
-    };
-
+    const finalDate = { ...newDate, day: validatedDay };
     setSelectedDate(finalDate);
-
-    // Format date as YYYY-MM-DD
+    
     const dateString = `${finalDate.year}-${finalDate.month}-${finalDate.day}`;
     onChange(dateString);
   };
 
-  // Scroll to selected item on mount and when selectedDate changes
+  // --- KEY FIX HERE ---
   useEffect(() => {
     if (isScrolling) return;
 
@@ -116,7 +150,6 @@ const ScrollDatePicker: React.FC<{
       selectedValue: string
     ) => {
       if (!container) return;
-
       setTimeout(() => {
         const selectedElement = container.querySelector(
           `[data-value="${selectedValue}"]`
@@ -125,26 +158,33 @@ const ScrollDatePicker: React.FC<{
           const containerHeight = container.clientHeight;
           const elementTop = (selectedElement as HTMLElement).offsetTop;
           const elementHeight = (selectedElement as HTMLElement).clientHeight;
-          container.scrollTop =
-            elementTop - (containerHeight - elementHeight) / 2;
+          
+          container.scrollTo({
+            top: elementTop - (containerHeight - elementHeight) / 2,
+            behavior: 'smooth'
+          });
         }
-      }, 100);
+      }, 50);
     };
 
     scrollToSelected(dayRef.current, selectedDate.day);
     scrollToSelected(monthRef.current, selectedDate.month);
     scrollToSelected(yearRef.current, selectedDate.year);
-  }, [selectedDate.day, selectedDate.month, selectedDate.year, isScrolling]);
 
-  // Update when value prop changes from parent
+  // REMOVED 'isScrolling' from this array. 
+  // Now it only auto-scrolls when the DATE actually changes.
+  }, [selectedDate.day, selectedDate.month, selectedDate.year]); 
+
+  
   useEffect(() => {
     if (value && !isScrolling) {
       const parsed = parseDate(value);
-      setSelectedDate(parsed);
+      if (parsed.day !== selectedDate.day || parsed.month !== selectedDate.month || parsed.year !== selectedDate.year) {
+         setSelectedDate(parsed);
+      }
     }
   }, [value, isScrolling]);
 
-  // Handle scroll events to prevent reset during user interaction
   useEffect(() => {
     const containers = [dayRef.current, monthRef.current, yearRef.current];
 
@@ -179,58 +219,6 @@ const ScrollDatePicker: React.FC<{
     };
   }, []);
 
-  interface ScrollColumnProps {
-    items: Array<{ value: string; label: string }>;
-    selectedValue: string;
-    onSelect: (value: string) => void;
-  }
-
-  const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
-    ({ items, selectedValue, onSelect }, ref) => {
-      const handleClick = (value: string) => {
-        setIsScrolling(true);
-        onSelect(value);
-        // Reset scrolling state after a short delay
-        setTimeout(() => setIsScrolling(false), 100);
-      };
-
-      return (
-        <div
-          ref={ref}
-          className="flex-1 h-32 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
-          style={{
-            scrollBehavior: "smooth",
-            WebkitOverflowScrolling: "touch",
-          }}
-        >
-          {/* Top padding */}
-          <div className="h-12"></div>
-
-          {items.map((item) => (
-            <div
-              key={item.value}
-              data-value={item.value}
-              className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
-                ${
-                  selectedValue === item.value
-                    ? "text-amber-600 font-bold text-lg scale-105 bg-amber-50 rounded-lg mx-1"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              onClick={() => handleClick(item.value)}
-            >
-              {item.label}
-            </div>
-          ))}
-
-          {/* Bottom padding */}
-          <div className="h-12"></div>
-        </div>
-      );
-    }
-  );
-
-  ScrollColumn.displayName = "ScrollColumn";
-
   return (
     <div className="bg-white border border-amber-200 rounded-xl p-4 date-picker-card animate-fade-in-up">
       <div className="text-center mb-4">
@@ -238,57 +226,40 @@ const ScrollDatePicker: React.FC<{
         <p className="text-xs text-gray-600 mt-1">{description}</p>
       </div>
 
-      {/* Date Picker */}
       <div className="flex items-center justify-between mb-2 px-4">
-        <div className="flex-1 text-center">
-          <span className="text-xs font-medium text-gray-500">DAY</span>
-        </div>
-        <div className="flex-1 text-center">
-          <span className="text-xs font-medium text-gray-500">MONTH</span>
-        </div>
-        <div className="flex-1 text-center">
-          <span className="text-xs font-medium text-gray-500">YEAR</span>
-        </div>
+        <div className="flex-1 text-center"><span className="text-xs font-medium text-gray-500">DAY</span></div>
+        <div className="flex-1 text-center"><span className="text-xs font-medium text-gray-500">MONTH</span></div>
+        <div className="flex-1 text-center"><span className="text-xs font-medium text-gray-500">YEAR</span></div>
       </div>
 
       <div className="relative">
-        {/* Selection Highlight */}
         <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-12 bg-amber-100 border-2 border-amber-300 rounded-lg pointer-events-none date-picker-highlight"></div>
 
         <div className="flex items-stretch h-32 relative z-10">
-          {/* Day Column */}
           <ScrollColumn
             ref={dayRef}
-            items={days.map((day) => ({
-              value: day,
-              label: parseInt(day).toString(),
-            }))}
+            items={days.map((day) => ({ value: day, label: parseInt(day).toString() }))}
             selectedValue={selectedDate.day}
             onSelect={(value) => handleDateChange("day", value)}
+            setIsScrolling={setIsScrolling}
           />
-
-          {/* Month Column */}
           <ScrollColumn
             ref={monthRef}
-            items={months.map((month) => ({
-              value: month.value,
-              label: month.name.substring(0, 3),
-            }))}
+            items={months.map((month) => ({ value: month.value, label: month.name.substring(0, 3) }))}
             selectedValue={selectedDate.month}
             onSelect={(value) => handleDateChange("month", value)}
+            setIsScrolling={setIsScrolling}
           />
-
-          {/* Year Column */}
           <ScrollColumn
             ref={yearRef}
             items={years.map((year) => ({ value: year, label: year }))}
             selectedValue={selectedDate.year}
             onSelect={(value) => handleDateChange("year", value)}
+            setIsScrolling={setIsScrolling}
           />
         </div>
       </div>
 
-      {/* Selected Date Display */}
       <div className="text-center mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
         <p className="text-sm text-gray-600">Selected Date</p>
         <p className="font-semibold text-amber-700">

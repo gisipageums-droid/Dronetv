@@ -65,20 +65,18 @@ export default function EditableHero({
     primaryButtonLink: heroData?.primaryButtonLink || "#cta",
     secondaryButtonLink: heroData?.secondaryButtonLink || "#how",
     trustText: heroData?.trustText || "Over 250,000+ meals delivered last year!",
-    hero1Image: Hero1,
-    hero3Image: Hero3,
-    customerImages: customerImages,
-    companyName: companyName || "Your Company",
+    hero1Image: heroData?.hero1Image || Hero1,
+    hero3Image: heroData?.hero3Image || Hero3,
+    customerImages: heroData?.customerImages || customerImages,
+    badgeText: heroData?.badgeText || "Your Company",
   };
 
   // Consolidated state
   const [heroState, setHeroState] = useState({
     ...defaultContent,
-    companyName: companyName || "Your Company"
   });
   const [tempHeroState, setTempHeroState] = useState({
     ...defaultContent,
-    companyName: companyName || "Your Company"
   });
 
   // Cropping states (same as Header.tsx)
@@ -714,11 +712,11 @@ export default function EditableHero({
 
         <div className="relative z-10 max-w-7xl mx-auto w-full ">
           {!isEditing ? (
-            <p className="text-lg sm:text-xl md:text-2xl text-justify text-[red] relative z-20 mb-8 inline-block font-bold ">{heroState.companyName}</p>
+            <p className="text-lg sm:text-xl md:text-2xl text-justify text-[red] relative z-20 mb-8 inline-block font-bold ">{heroState.badgeText}</p>
           ) : (
             <EditableText
-              value={tempHeroState.companyName}
-              field="companyName"
+              value={tempHeroState.badgeText}
+              field="badgeText"
               className="text-lg sm:text-xl md:text-2xl text-left text-[#facc15] relative z-20 mb-8 inline-block max-w-[530px]"
               placeholder="Company Name"
               maxLength={50}

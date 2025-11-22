@@ -96,7 +96,6 @@ export default function App() {
         <main>
           <Hero
             heroData={finaleDataReview.content.hero}
-            headerData={finaleDataReview.content.header}
 
           />
           <About
