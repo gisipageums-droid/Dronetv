@@ -299,6 +299,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                       <a
                         key={social.name}
                         href={social.href}
+                        target="_blank"
                         className={`group flex items-center space-x-3 p-4 rounded-xl border-2 border-gray-200 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105 ${social.color}`}
                         style={{ animationDelay: `${index * 100}ms` }}
                       >

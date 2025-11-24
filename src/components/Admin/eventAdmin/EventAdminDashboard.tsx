@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Search,
   MapPin,
@@ -15,7 +15,7 @@ import {
   Clock,
   Pen,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -649,20 +649,25 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         <div className="border-t border-gray-100"></div>
-
-        <div className="flex items-center w-full gap-2 flex-col">
-          <button
-            className="bg-yellow-500 text-white text-sm font-semibold px-4 py-2 rounded-lg w-full hover:bg-yellow-600 transition-all duration-200"
-            onClick={() => navigate("/admin/company/dashboard")}
+<div className="flex justify-between gap-2 flex-col">
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
           >
-            Companies
-          </button>
-          <button
-            className="bg-yellow-500 text-white text-sm font-semibold px-4 py-2 rounded-lg w-full hover:bg-yellow-600 transition-all duration-200"
-            onClick={() => navigate("/admin/professional")}
+            <Link to={"/admin/professional/dashboard"}>Professionals </Link>
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
           >
-            Professionals
-          </button>
+            <Link to={"/admin/company/dashboard"}>Companies </Link>
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+          >
+            <Link to={"/admin/plans"}>Admin Plans </Link>
+          </motion.button>
         </div>
       </div>
     </div>
@@ -821,14 +826,14 @@ const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
 
-        <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
+        {/* <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
           <div className="flex justify-between items-center text-xs text-gray-400">
             <span className="mr-2 truncate">
               ID: {event.eventId || "No ID"}
             </span>
             <span>v{event.version}</span>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -926,6 +931,8 @@ const EventAdminDashboard: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [recentEvents, setRecentEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(12);
   const [credentialsModal, setCredentialsModal] = useState<{
     isOpen: boolean;
     data: EventCredentialsData | null;
@@ -964,25 +971,33 @@ const EventAdminDashboard: React.FC = () => {
     }
   };
 
-const handlePreview = (eventId: string, userId: string) => {
-  // Find the event to get its templateSelection
-  const event = events.find(e => e.eventId === eventId);
-  if (!event) {
-    toast.error("Event not found");
-    return;
-  }
+  const handlePreview = (eventId: string, userId: string) => {
+    // Find the event to get its templateSelection
+    const event = events.find((e) => e.eventId === eventId);
+    if (!event) {
+      toast.error("Event not found");
+      return;
+    }
 
-  // Handle both template selection formats
-  if (event.templateSelection === "template-1" || event.templateSelection === "1") {
-    navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
-  } else if (event.templateSelection === "template-2" || event.templateSelection === "2") {
-    navigate(`/edit/event/t2/admin/${eventId}/${userId}`);
-  } else {
-    // Default to template 1 if unknown
-    console.warn(`Unknown template selection: ${event.templateSelection}, defaulting to template 1`);
-    navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
-  }
-};
+    // Handle both template selection formats
+    if (
+      event.templateSelection === "template-1" ||
+      event.templateSelection === "1"
+    ) {
+      navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
+    } else if (
+      event.templateSelection === "template-2" ||
+      event.templateSelection === "2"
+    ) {
+      navigate(`/edit/event/t2/admin/${eventId}/${userId}`);
+    } else {
+      // Default to template 1 if unknown
+      console.warn(
+        `Unknown template selection: ${event.templateSelection}, defaulting to template 1`
+      );
+      navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
+    }
+  };
 
   const handleApprove = async (eventId: string, userId: string) => {
     try {
@@ -1094,6 +1109,74 @@ const handlePreview = (eventId: string, userId: string) => {
     fetchEvents();
   }, []);
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter, sortBy]);
+
+  // Filter and Sort Logic
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) => {
+      const matchesSearch =
+        !searchTerm ||
+        (event.eventName &&
+          event.eventName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (event.location &&
+          event.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (event.category &&
+          event.category.toLowerCase().includes(searchTerm.toLowerCase()));
+
+      const matchesCategory =
+        categoryFilter === "All Categories" ||
+        (event.category && event.category === categoryFilter);
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [events, searchTerm, categoryFilter]);
+
+  const sortedEvents = useMemo(() => {
+    return [...filteredEvents].sort((a, b) => {
+      switch (sortBy) {
+        case "Sort by Location":
+          return (a.location || "").localeCompare(b.location || "");
+        case "Sort by Date":
+          const dateA = a.eventDate ? new Date(a.eventDate).getTime() : 0;
+          const dateB = b.eventDate ? new Date(b.eventDate).getTime() : 0;
+          return dateB - dateA;
+        case "Sort by Category":
+          return (a.category || "").localeCompare(b.category || "");
+        case "Sort by Latest":
+        default:
+          const createdA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const createdB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return createdB - createdA;
+      }
+    });
+  }, [filteredEvents, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedEvents.length / itemsPerPage));
+
+  const paginatedEvents = useMemo(() => {
+    return sortedEvents.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+  }, [sortedEvents, currentPage, itemsPerPage]);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="w-full min-h-screen h-full bg-blue-50">
       <Header />
@@ -1152,12 +1235,13 @@ const handlePreview = (eventId: string, userId: string) => {
                   </h2>
                 </div>
                 <span className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full">
-                  {events.length} {events.length === 1 ? "event" : "events"}
+                  {sortedEvents.length}{" "}
+                  {sortedEvents.length === 1 ? "event" : "events"}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
-                {events.map((event) => (
+                {paginatedEvents.map((event) => (
                   <div key={event.eventId} className="animate-fadeIn">
                     <EventCard
                       event={event}
@@ -1172,7 +1256,7 @@ const handlePreview = (eventId: string, userId: string) => {
               </div>
 
               <div>
-                {events.length === 0 && (
+                {sortedEvents.length === 0 && (
                   <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
                     <Calendar className="w-24 h-24 text-gray-400" />
                     <p className="text-sm font-semibold text-gray-400">
@@ -1182,24 +1266,30 @@ const handlePreview = (eventId: string, userId: string) => {
                 )}
               </div>
 
-              {/* Static Pagination */}
-              <div className="flex justify-center items-center mt-8">
-                <button
-                  className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={true}
-                >
-                  <ArrowRight className="w-4 h-4 rotate-180" />
-                  Previous
-                </button>
-                <span className="mx-4 text-sm text-gray-600">Page 1 of 1</span>
-                <button
-                  className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={true}
-                >
-                  Next
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-8">
+                  <button
+                    onClick={handlePrevPage}
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={currentPage <= 1}
+                  >
+                    <ArrowRight className="w-4 h-4 rotate-180" />
+                    Previous
+                  </button>
+                  <span className="mx-4 text-sm text-gray-600">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={handleNextPage}
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={currentPage >= totalPages}
+                  >
+                    Next
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>

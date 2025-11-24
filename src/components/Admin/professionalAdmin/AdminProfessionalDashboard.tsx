@@ -1,5 +1,4 @@
 import {
-  Award,
   CheckCircle,
   ChevronDown,
   Eye,
@@ -13,6 +12,7 @@ import {
   XCircle,
   Clock,
   AlertCircle,
+  ArrowRight,
 } from "lucide-react";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -114,6 +114,8 @@ interface MainContentProps {
   onClearFilters: () => void;
   onDelete: (professionalId: string) => void;
   isMutating?: boolean;
+  onNextPage: () => void;
+  onPrevPage: () => void;
 }
 
 interface ErrorMessageProps {
@@ -123,7 +125,6 @@ interface ErrorMessageProps {
 
 // Header Component
 const Header: React.FC = () => {
-  const navigate = useNavigate();
   return (
     <div className="h-[40vh] md:h-[60vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6">
       <div className="text-center max-w-3xl relative w-full">
@@ -322,6 +323,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
         >
         <Link to={"/admin/event/dashboard"}>Events </Link>
+      </motion.button>
+      <motion.button
+        whileTap={{ scale: [0.9, 1] }}
+        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+        >
+        <Link to={"/admin/plans"}>Admin Plans </Link>
       </motion.button>
         </div>
     </div>
@@ -533,14 +540,14 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         </div>
 
         {/* Additional Info */}
-        <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
-          <div className="flex justify-between items-center text-xs text-gray-400">
-            <span className="truncate mr-2">
-              ID: {professional.professionalId || "No ID"}
-            </span>
-            <span>v{professional.version}</span>
-          </div>
-        </div>
+          {/* <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
+            <div className="flex justify-between items-center text-xs text-gray-400">
+              <span className="truncate mr-2">
+                ID: {professional.professionalId || "No ID"}
+              </span>
+              <span>v{professional.version}</span>
+            </div>
+          </div> */}
       </div>
     </div>
   );
@@ -646,6 +653,8 @@ const MainContent: React.FC<MainContentProps> = ({
   onClearFilters,
   onDelete,
   isMutating = false,
+  onNextPage,
+  onPrevPage,
 }) => {
   if (loading)
     return (
@@ -757,6 +766,31 @@ const MainContent: React.FC<MainContentProps> = ({
             </div>
           )}
         </>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-8">
+          <button
+            onClick={onPrevPage}
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={currentPage <= 1}
+          >
+            <ArrowRight className="w-4 h-4 rotate-180" />
+            Previous
+          </button>
+          <span className="mx-4 text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={onNextPage}
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={currentPage >= totalPages}
+          >
+            Next
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       )}
     </div>
   );
@@ -908,7 +942,8 @@ const AdminProfessionalDashboard: React.FC = () => {
   const [categoryFilter, setCategoryFilter] =
     useState<string>("All Categories");
   const [sortBy, setSortBy] = useState<string>("Sort by Name");
-  const [currentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(12);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
     useState<boolean>(false);
   const [credentialsModal, setCredentialsModal] = useState<{
@@ -993,6 +1028,12 @@ const AdminProfessionalDashboard: React.FC = () => {
       const professional = professionals.find(
         (p) => p.professionalId === professionalId
       );
+
+      if (!professional) {
+        toast.error("Professional not found");
+        return;
+      }
+
       const result = await apiService.approveProfessional(
         professionalId,
         professional.userId
@@ -1020,6 +1061,12 @@ const AdminProfessionalDashboard: React.FC = () => {
       const professional = professionals.find(
         (p) => p.professionalId === professionalId
       );
+
+      if (!professional) {
+        toast.error("Professional not found");
+        return;
+      }
+
       const result = await apiService.rejectProfessional(
         professionalId,
         professional.userId
@@ -1074,6 +1121,7 @@ const AdminProfessionalDashboard: React.FC = () => {
     setSearchTerm("");
     setCategoryFilter("All Categories");
     setSortBy("Sort by Name");
+    setCurrentPage(1);
   };
 
   // Fetch all professionals from API
@@ -1101,6 +1149,11 @@ const AdminProfessionalDashboard: React.FC = () => {
   useEffect(() => {
     fetchProfessionals();
   }, []);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter, sortBy]);
 
   // Get unique categories from professionals
   const categories: string[] = [
@@ -1165,7 +1218,29 @@ const AdminProfessionalDashboard: React.FC = () => {
     }
   );
 
-  const totalPages = Math.max(1, Math.ceil(sortedProfessionals.length / 12));
+  const totalPages = Math.max(1, Math.ceil(sortedProfessionals.length / itemsPerPage));
+
+  // Calculate paginated professionals
+  const paginatedProfessionals = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return sortedProfessionals.slice(startIndex, endIndex);
+  }, [sortedProfessionals, currentPage, itemsPerPage]);
+
+  // Pagination Handlers
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-blue-100">
@@ -1298,7 +1373,7 @@ const AdminProfessionalDashboard: React.FC = () => {
 
         {/* Main Content Area */}
         <MainContent
-          professionals={sortedProfessionals}
+          professionals={paginatedProfessionals}
           recentProfessionals={recentProfessionals}
           currentPage={currentPage}
           totalPages={totalPages}
@@ -1318,6 +1393,8 @@ const AdminProfessionalDashboard: React.FC = () => {
           onClearFilters={handleClearFilters}
           onDelete={handleDelete}
           isMutating={isMutating}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
         />
       </div>
     </div>
