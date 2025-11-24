@@ -94,7 +94,7 @@ export default function Header({
       const img = new Image();
       img.onload = () => {
         // Calculate dimensions while maintaining aspect ratio - REDUCED MAX SIZE
-        const maxSize = 60; // Reduced from 80 to 60 to prevent overflow
+        const maxSize = 77; // Reduced from 80 to 60 to prevent overflow
         let width = img.naturalWidth;
         let height = img.naturalHeight;
 

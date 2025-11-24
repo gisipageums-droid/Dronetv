@@ -38,13 +38,13 @@ const BuyTokenPage: React.FC = () => {
         'Content-Type': 'application/json',
       }
     })
-    .then(response => {
-      return response.data;
-    })
-    .catch(error => {
-      console.error('Place order error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to place order');
-    });
+      .then(response => {
+        return response.data;
+      })
+      .catch(error => {
+        console.error('Place order error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to place order');
+      });
   };
 
   // Confirm Order API Call
@@ -54,13 +54,13 @@ const BuyTokenPage: React.FC = () => {
         'Content-Type': 'application/json',
       }
     })
-    .then(response => {
-      return response.data;
-    })
-    .catch(error => {
-      console.error('Confirm order error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to confirm order');
-    });
+      .then(response => {
+        return response.data;
+      })
+      .catch(error => {
+        console.error('Confirm order error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to confirm order');
+      });
   };
 
   const handlePayNow = async () => {
@@ -82,79 +82,79 @@ const BuyTokenPage: React.FC = () => {
       };
 
       placeOrder(orderData)
-      .then(placeOrderResponse => {
-        if (!placeOrderResponse.success) {
-          throw new Error(placeOrderResponse.message || 'Failed to create order');
-        }
-
-        const { transactionId, razorpayOrderId, key, order } = placeOrderResponse.data;
-
-        // Step 2: Initialize Razorpay Payment
-        const options: RazorpayOrderOptions = {
-          key: key || "rzp_test_sN9yGpladGdVuN", // Use key from API response
-          amount: order.amount, // Amount in paise from API
-          currency: order.currency  ,
-          name: "DRONTV",
-          description: `Purchase of ${tokens} tokens`,
-          image: "https://www.dronetv.in/images/Drone%20tv%20.in.png",
-          order_id: razorpayOrderId,
-          handler: async (response) => {
-            console.log('Payment Response:', response);
-            
-            try {
-              // Step 3: Confirm Order after successful payment
-              const confirmData = {
-                payment_id: response.razorpay_payment_id,
-                order_id: response.razorpay_order_id,
-                transactionId: transactionId
-              };
-
-              confirmOrder(confirmData)
-              .then(confirmResponse => {
-                if (confirmResponse.success) {
-                  setShowSuccess(true);
-                  setAmount('');
-                  alert(`Payment Successful! ${tokens} tokens added to your account.`);
-                } else {
-                  setErrorMessage(confirmResponse.message || 'Payment verification failed');
-                }
-              })
-              .catch(error => {
-                console.error('Confirm order error:', error);
-                setErrorMessage('Payment verification failed. Please contact support.');
-              });
-            } catch (error) {
-              console.error('Payment handler error:', error);
-              setErrorMessage(error.message || 'Payment processing failed. Please contact support.');
-            }
-          },
-          prefill: {
-            name: user?.userData?.fullName || 'Customer',
-            email: user?.userData?.email || '',
-            contact: user?.userData?.phone || '9999999999' // Fallback phone number
-          },
-          theme: {        
-            color: "#F59E0B", // Amber color to match your theme
-          },
-          modal: {
-            ondismiss: () => {
-              setIsProcessing(false);
-              console.log('Payment modal dismissed');
-            }
+        .then(placeOrderResponse => {
+          if (!placeOrderResponse.success) {
+            throw new Error(placeOrderResponse.message || 'Failed to create order');
           }
-        };
 
-        const razorpayInstance = new Razorpay(options);
-        razorpayInstance.open();
+          const { transactionId, razorpayOrderId, key, order } = placeOrderResponse.data;
 
-      })
-      .catch(error => {
-        console.error('Payment initiation error:', error);
-        setErrorMessage(error.message || 'Failed to initiate payment. Please try again.');
-      })
-      .finally(() => {
-        setIsProcessing(false);
-      });
+          // Step 2: Initialize Razorpay Payment
+          const options: RazorpayOrderOptions = {
+            key: key || "rzp_test_sN9yGpladGdVuN", // Use key from API response
+            amount: order.amount, // Amount in paise from API
+            currency: order.currency,
+            name: "DRONETV",
+            description: `Purchase of ${tokens} tokens`,
+            image: "https://www.dronetv.in/images/Drone%20tv%20.in.png",
+            order_id: razorpayOrderId,
+            handler: async (response) => {
+              console.log('Payment Response:', response);
+
+              try {
+                // Step 3: Confirm Order after successful payment
+                const confirmData = {
+                  payment_id: response.razorpay_payment_id,
+                  order_id: response.razorpay_order_id,
+                  transactionId: transactionId
+                };
+
+                confirmOrder(confirmData)
+                  .then(confirmResponse => {
+                    if (confirmResponse.success) {
+                      setShowSuccess(true);
+                      setAmount('');
+                      alert(`Payment Successful! ${tokens} tokens added to your account.`);
+                    } else {
+                      setErrorMessage(confirmResponse.message || 'Payment verification failed');
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Confirm order error:', error);
+                    setErrorMessage('Payment verification failed. Please contact support.');
+                  });
+              } catch (error) {
+                console.error('Payment handler error:', error);
+                setErrorMessage(error.message || 'Payment processing failed. Please contact support.');
+              }
+            },
+            prefill: {
+              name: user?.userData?.fullName || 'Customer',
+              email: user?.userData?.email || '',
+              contact: user?.userData?.phone || '9999999999' // Fallback phone number
+            },
+            theme: {
+              color: "#F59E0B", // Amber color to match your theme
+            },
+            modal: {
+              ondismiss: () => {
+                setIsProcessing(false);
+                console.log('Payment modal dismissed');
+              }
+            }
+          };
+
+          const razorpayInstance = new Razorpay(options);
+          razorpayInstance.open();
+
+        })
+        .catch(error => {
+          console.error('Payment initiation error:', error);
+          setErrorMessage(error.message || 'Failed to initiate payment. Please try again.');
+        })
+        .finally(() => {
+          setIsProcessing(false);
+        });
     } catch (error) {
       console.error('Payment initiation error:', error);
       setErrorMessage(error.message || 'Failed to initiate payment. Please try again.');

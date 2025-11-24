@@ -14,6 +14,14 @@ interface User {
   email: string;
   fullName: string;
   token?: string;
+  userData?: {
+    email?: string;
+    fullName?: string;
+    city?: string;
+    state?: string;
+    phone?: string;
+    [key: string]: any;
+  };
   // Add other user properties as needed
 }
 
@@ -22,6 +30,10 @@ interface UserAuthContextType {
   isLogin: boolean;
   login: (userData: User) => void;
   logout: () => void;
+  haveAccount: boolean;
+  setHaveAccount: React.Dispatch<React.SetStateAction<boolean>>;
+  accountEmail: string | null;
+  setAccountEmail: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const UserAuthContext = createContext<UserAuthContextType | undefined>(
@@ -99,11 +111,6 @@ interface TemplateContextType {
   editPublishTemplate: () => void;
   publishProfessionalTemplate: () => void;
   publishEventsTemplate: () => void;
-  // Add the missing properties:
-  haveAccount: boolean;
-  setHaveAccount: React.Dispatch<React.SetStateAction<boolean>>;
-  accountEmail: string | null;
-  setAccountEmail: React.Dispatch<React.SetStateAction<string | null>>;
   navModel: boolean;
   navigatemodel: () => JSX.Element;
   getAIgenData: (userId: string, draftId: string, templateSelection: string) => Promise<void>;
@@ -120,67 +127,65 @@ interface TemplateProviderProps {
 export const TemplateProvider: React.FC<TemplateProviderProps> = ({
   children,
 }) => {
-    const [draftDetails, setDraftDetails] = useState<any | []>({});
+  const [draftDetails, setDraftDetails] = useState<any | []>({});
   const [isPublishedTriggered, setIsPublishedTriggered] = useState<boolean>(false);
   const [finalTemplate, setFinalTemplate] = useState<any | []>({});
   const [AIGenData, setAIGenData] = useState<any>({});
   const [finaleDataReview, setFinaleDataReview] = useState<any | []>({});
   const [navModel, setNavModel] = useState(false);
-  const [haveAccount, setHaveAccount] = useState<boolean>(true);
-  const [accountEmail, setAccountEmail] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isLogin } = useUserAuth();
 
   function navigatemodel() {
-   
-      return (
+
+    return (
+      <motion.div
+        className="fixed top-0 left-0 w-full h-full backdrop-blur-md bg-black/70 flex items-center justify-center z-[999999]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
         <motion.div
-          className="fixed top-0 left-0 w-full h-full backdrop-blur-md bg-black/70 flex items-center justify-center z-[999999]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
         >
-          <motion.div
-            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="text-green-600" size={24} />
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Successfully Published!
-                </h3>
-              </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="text-green-600" size={24} />
+              <h3 className="text-xl font-semibold text-gray-900">
+                Successfully Published!
+              </h3>
             </div>
-            <div className="mb-6">
-              <p className="text-gray-600">
-                You have successfully published your template.
-              </p>
-            </div>
-            <div className="flex gap-3 justify-end">
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.1 }}
-                onClick={() => navigate("/")}
-                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
-              >
-                Go to Home
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.1 }}
-                onClick={() => navigate("/login")}
-                className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
-              >
-                Go to Login
-              </motion.button>
-            </div>
-          </motion.div>
+          </div>
+          <div className="mb-6">
+            <p className="text-gray-600">
+              You have successfully published your template.
+            </p>
+          </div>
+          <div className="flex gap-3 justify-end">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1 }}
+              onClick={() => navigate("/")}
+              className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
+            >
+              Go to Home
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1 }}
+              onClick={() => navigate("/login")}
+              className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
+            >
+              Go to Login
+            </motion.button>
+          </div>
         </motion.div>
-      );
- 
+      </motion.div>
+    );
+
   }
 
   const API = 'https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft';
@@ -194,13 +199,13 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(`${API}/${userId}/${draftId}?template=${templateSelection}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       // Add validation for the response data
       if (data && (data.content || data.publishedId)) {
         toast.success(`AI generated the data successfully`, { toastId: "ai-success2" });
@@ -364,8 +369,9 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
-      const data ={content:finalTemplate, submissionId:AIGenData.eventId
-}
+      const data = {
+        content: finalTemplate, submissionId: AIGenData.eventId
+      }
       const response = await fetch(
         `https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/prod/events-publish/${AIGenData.userId}/${AIGenData.eventId}`,
         {
@@ -374,8 +380,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
             "Content-Type": "application/json",
           },
           body:
-          JSON.stringify(data),
-          
+            JSON.stringify(data),
+
         }
       );
 

@@ -72,7 +72,7 @@ export default function Header({
       const img = new Image();
       img.onload = () => {
         // Calculate dimensions while maintaining aspect ratio
-        const maxSize = 60;
+        const maxSize = 77;
         let width = img.naturalWidth;
         let height = img.naturalHeight;
 

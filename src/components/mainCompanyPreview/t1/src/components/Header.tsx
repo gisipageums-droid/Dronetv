@@ -39,7 +39,7 @@ export default function Header({
   const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedAspectRatio, setSelectedAspectRatio] = useState("original");
-  const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
+  const [logoDimensions, setLogoDimensions] = useState({ width: 77, height: 50 });
   const PAN_STEP = 10;
 
   // Fixed state initialization
@@ -66,7 +66,7 @@ export default function Header({
       const img = new Image();
       img.onload = () => {
         // Calculate dimensions while maintaining aspect ratio
-        const maxSize = 60;
+        const maxSize = 77;
         let width = img.naturalWidth;
         let height = img.naturalHeight;
 
@@ -104,7 +104,7 @@ export default function Header({
       };
       img.src = headerState.logoSrc;
     } else {
-      setLogoDimensions({ width: 50, height: 50 });
+      setLogoDimensions({ width: 77, height: 50 });
     }
   }, [headerState.logoSrc]);
 
