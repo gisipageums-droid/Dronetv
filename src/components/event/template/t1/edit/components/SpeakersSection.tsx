@@ -157,8 +157,8 @@ const SpeakerCard = memo(
         </div>
 
         <h4 className="text-center font-bold mt-4">{speaker.name}</h4>
-        {speaker.title && <p className="text-center text-sm">{speaker.title}</p>}
-        {speaker.company && <p className="text-center text-sm text-gray-600">{speaker.company}</p>}
+        {speaker.title && <p className="text-justify text-sm">{speaker.title}</p>}
+        {speaker.company && <p className="text-justify text-sm text-gray-600">{speaker.company}</p>}
       </div>
     );
   }
@@ -453,7 +453,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
                 <span className="text-yellow-500">{headerContent.eventTitle}</span>
                 <span className="block text-3xl text-gray-800">{headerContent.sectionTitle}</span>
               </h2>
-              <p className="text-gray-600 mt-4">{headerContent.subtitle}</p>
+              <p className="text-gray-600 mt-4 text-justify">{headerContent.subtitle}</p>
             </>
           )}
 

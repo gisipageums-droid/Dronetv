@@ -5,10 +5,6 @@ import {
   X,
   Plus,
   Trash2,
-  Calendar,
-  MapPin,
-  Clock,
-  ArrowRight,
 } from "lucide-react";
 
 interface Theme {
@@ -367,7 +363,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
           {theme.title}
         </h3>
         {theme.note && (
-          <p className="text-sm text-gray-500 font-medium mb-4">{theme.note}</p>
+          <p className="text-sm text-gray-500 font-medium mb-4 text-justify">{theme.note}</p>
         )}
         <ul className="text-left list-disc list-inside space-y-3 text-gray-700 text-base">
           {theme.bullets.map((point, idx) => (
@@ -474,7 +470,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                 </span>
               </h2>
               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto text-justify">
                 {agendaContent.subtitle}
               </p>
             </>

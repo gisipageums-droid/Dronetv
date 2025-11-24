@@ -126,37 +126,30 @@ interface ErrorMessageProps {
 // Header Component
 const Header: React.FC = () => {
   return (
-    <div className="h-[40vh] md:h-[60vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6">
+    <div className="h-[40vh] md:h-[60vh] bg-orange-50 flex items-center justify-center px-4 sm:px-6">
       <div className="text-center max-w-3xl relative w-full">
         {/* Geometric Elements */}
-        <div className="absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-blue-200 rounded-full opacity-40"></div>
-        <div className="absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-blue-200 opacity-30 rounded-2xl"></div>
+        <div className="absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-yellow-200 rounded-full opacity-40"></div>
+        <div className="absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-yellow-200 opacity-30 rounded-2xl"></div>
 
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-8">
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-blue-400 rounded-full"></div>
-            <div className="w-4 h-4 md:w-6 md:h-6 border-2 border-blue-400"></div>
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-blue-600 rotate-45"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-amber-400 rounded-full"></div>
+            <div className="w-4 h-4 md:w-6 md:h-6 border-2 border-amber-400"></div>
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-amber-600 rotate-45"></div>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-light text-blue-900 mb-4 md:mb-6">
+          <h1 className="text-3xl md:text-5xl font-light text-yellow-900 mb-4 md:mb-6">
             Admin Dashboard
-            <span className="block text-xl md:text-3xl font-extralight text-blue-600 mt-1 md:mt-2">
+            <span className="block text-xl md:text-3xl font-extralight text-yellow-600 mt-1 md:mt-2">
               Professional Management
             </span>
           </h1>
 
-          <p className="text-base md:text-lg text-blue-700 mb-6 md:mb-10 max-w-xl mx-auto font-light">
+          <p className="text-base md:text-lg text-yellow-700 mb-6 md:mb-10 max-w-xl mx-auto font-light">
             Review and manage all professional profiles, credentials, and
             approvals.
           </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <div className="w-px h-8 md:h-12 bg-blue-300 hidden sm:block"></div>
-            <button className="text-blue-700 hover:text-blue-900 transition-colors duration-300 text-sm md:text-base sm:mt-0 mt-2">
-              Export Data
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -213,6 +206,7 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
 };
 
 /* Sidebar Filters Component */
+/* Sidebar Filters Component */
 const Sidebar: React.FC<SidebarProps> = ({
   searchTerm,
   onSearchChange,
@@ -233,17 +227,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className={`bg-blue-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 
+      className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
       ${
         isMobileSidebarOpen
-          ? "fixed inset-0 z-50 w-full overflow-y-auto"
+          ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
       }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-xl font-bold">Filters</h2>
-          <button onClick={onCloseMobileSidebar} className="p-2">
+          <h2 className="text-xl font-bold text-yellow-900">Filters</h2>
+          <button
+            onClick={onCloseMobileSidebar}
+            className="p-2 text-yellow-800"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -252,11 +249,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="space-y-6 md:space-y-8">
         {/* Search Section */}
         <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-900 block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Search Professionals
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-yellow-600" />
             <input
               type="text"
               placeholder="Search by name, location..."
@@ -264,14 +261,14 @@ const Sidebar: React.FC<SidebarProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onSearchChange(e.target.value)
               }
-              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 bg-gray-50 transition-colors"
+              className="w-full pl-10 pr-4 py-3 text-sm border border-yellow-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white/50 transition-colors placeholder-yellow-700/50 text-yellow-900"
             />
           </div>
         </div>
 
         {/* Category Filter */}
         <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-900 block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Category
           </label>
           <MinimalisticDropdown
@@ -284,7 +281,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Sort Filter */}
         <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-900 block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Sort by
           </label>
           <MinimalisticDropdown
@@ -302,35 +299,40 @@ const Sidebar: React.FC<SidebarProps> = ({
             onCategoryChange("All Categories");
             onSortChange("Sort by Name");
           }}
-          className="text-sm text-gray-500 hover:text-gray-700 transition-colors underline underline-offset-2"
+          className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
         >
           Clear all filters
         </button>
 
         {/* Divider */}
-        <div className="border-t border-gray-100"></div>
+        <div className="border-t border-yellow-200/50"></div>
       </div>
-      <div className="flex gap-2 flex-col">
-
-      <motion.button
-        whileTap={{ scale: [0.9, 1] }}
-        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+      <div className="flex gap-2 flex-col mt-6">
+        <motion.button
+          whileTap={{ scale: [0.9, 1] }}
+          className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
         >
-        <Link to={"/admin/company/dashboard"}>Companies </Link>
-      </motion.button>
-      <motion.button
-        whileTap={{ scale: [0.9, 1] }}
-        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+          <Link to={"/admin/company/dashboard"} className="w-full text-left">
+            Companies{" "}
+          </Link>
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: [0.9, 1] }}
+          className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
         >
-        <Link to={"/admin/event/dashboard"}>Events </Link>
-      </motion.button>
-      <motion.button
-        whileTap={{ scale: [0.9, 1] }}
-        className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+          <Link to={"/admin/event/dashboard"} className="w-full text-left">
+            Events{" "}
+          </Link>
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: [0.9, 1] }}
+          className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
         >
-        <Link to={"/admin/plans"}>Admin Plans </Link>
-      </motion.button>
-        </div>
+          <Link to={"/admin/plans"} className="w-full text-left">
+            Admin Plans{" "}
+          </Link>
+        </motion.button>
+      </div>
     </div>
   );
 };
@@ -397,11 +399,11 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   const statusStyle = getStatusBadge(professional.reviewStatus || "draft");
 
   return (
-    <div className="w-full h-full rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-blue-500 to-purple-600 group">
+    <div className="w-full h-full rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-amber-500 to-yellow-600 group bg-white">
       <div className="p-4 md:p-6 lg:p-8">
         <div className="flex items-center justify-between mb-4 md:mb-6">
           <div className="flex items-center gap-3 md:gap-4">
-            <div className="w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-white p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-purple-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
+            <div className="w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-white p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
               <img
                 src={professional.previewImage || placeholderImg}
                 alt={`${professional.professionalName} profile`}
@@ -443,7 +445,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             ).map((category: string, index: number) => (
               <span
                 key={index}
-                className="px-2 py-1 md:px-3 md:py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full"
+                className="px-2 py-1 md:px-3 md:py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full"
               >
                 {category}
               </span>
@@ -455,7 +457,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3 md:gap-6">
             <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1 md:px-4 md:py-2">
-              <span className="font-bold text-purple-600 text-xs md:text-sm">
+              <span className="font-bold text-amber-600 text-xs md:text-sm">
                 {professional.publishedDate
                   ? formatDate(professional.publishedDate)
                   : "Not published"}
@@ -483,7 +485,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                 }
               }}
               disabled={disabled}
-              className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-2 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Eye className="w-3 h-3 md:w-4 md:h-4" />
               Edit/ Preview
@@ -506,7 +508,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                 e.stopPropagation();
                 onApprove(professional.professionalId);
               }}
-              disabled={disabled}
+              disabled={disabled || professional.reviewStatus === "approved"}
               className="px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
@@ -518,7 +520,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                 e.stopPropagation();
                 onReject(professional.professionalId);
               }}
-              disabled={disabled}
+              disabled={disabled || professional.reviewStatus === "rejected"}
               className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <XCircle className="w-3 h-3 md:w-4 md:h-4" />
@@ -540,7 +542,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         </div>
 
         {/* Additional Info */}
-          {/* <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
+        {/* <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
             <div className="flex justify-between items-center text-xs text-gray-400">
               <span className="truncate mr-2">
                 ID: {professional.professionalId || "No ID"}
@@ -600,12 +602,12 @@ const RecentProfessionalsSection: React.FC<{
     <div className="mb-8">
       <div className="flex gap-3 items-center mb-6">
         <div className="flex gap-2 items-center">
-          <Clock className="w-6 h-6 text-blue-600" />
-          <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+          <Clock className="w-6 h-6 text-yellow-600" />
+          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
             Recent Professionals
           </h2>
         </div>
-        <span className="px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-full">
+        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
           Last 7 days
         </span>
       </div>
@@ -626,7 +628,7 @@ const RecentProfessionalsSection: React.FC<{
         ))}
       </div>
 
-      <div className="mt-6 border-t border-gray-200"></div>
+      <div className="mt-6 border-t border-yellow-200/50"></div>
     </div>
   );
 };
@@ -658,26 +660,26 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
   if (loading)
     return (
-      <div className="flex-1 bg-blue-50 px-4 md:px-8 py-8">
+      <div className="flex-1 bg-orange-50 px-4 md:px-8 py-8">
         <LoadingSpinner />
       </div>
     );
   if (error)
     return (
-      <div className="flex-1 bg-blue-50 px-4 md:px-8 py-8">
+      <div className="flex-1 bg-orange-50 px-4 md:px-8 py-8">
         <ErrorMessage error={error} onRetry={onRetry} />
       </div>
     );
 
   return (
-    <div className="flex-1 bg-blue-50 px-4 md:px-8 py-8">
+    <div className="flex-1 bg-orange-50 px-4 md:px-8 py-8">
       {/* Mobile filter button */}
       <button
         onClick={onOpenMobileSidebar}
-        className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200"
+        className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-200"
       >
-        <Menu className="w-4 h-4" />
-        <span>Filters</span>
+        <Menu className="w-4 h-4 text-yellow-800" />
+        <span className="text-yellow-900">Filters</span>
       </button>
 
       {/* Recent Professionals Section */}
@@ -694,17 +696,17 @@ const MainContent: React.FC<MainContentProps> = ({
       {/* Results Header */}
       <div className="flex items-center justify-between mb-6 md:mb-8 flex-wrap gap-3 md:gap-4">
         <div className="flex gap-2 items-center">
-          <User className="w-6 h-6 text-blue-600" />
-          <h2 className="text-xl md:text-2xl font-bold text-black">
+          <User className="w-6 h-6 text-yellow-600" />
+          <h2 className="text-xl md:text-2xl font-bold text-yellow-900">
             All Professionals ({totalCount || professionals.length})
           </h2>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
-          <span className="text-black font-medium text-sm md:text-base">
+          <span className="text-yellow-900 font-medium text-sm md:text-base">
             Page {currentPage} of {totalPages}
           </span>
           {hasMore && (
-            <span className="text-xs md:text-sm text-gray-600 bg-blue-100 px-2 py-1 md:px-3 md:py-1 rounded-full">
+            <span className="text-xs md:text-sm text-yellow-800 bg-yellow-100 px-2 py-1 md:px-3 md:py-1 rounded-full">
               More available
             </span>
           )}
@@ -740,15 +742,15 @@ const MainContent: React.FC<MainContentProps> = ({
             // Empty State with Filters Applied
             <div className="text-center py-12 md:py-16">
               <div className="text-6xl mb-4">🔍</div>
-              <p className="text-xl text-gray-700 mb-2">
+              <p className="text-xl text-yellow-800 mb-2">
                 No professionals match your filters
               </p>
-              <p className="text-gray-500 mb-6">
+              <p className="text-yellow-600 mb-6">
                 Try adjusting your search criteria or clear all filters
               </p>
               <button
                 onClick={onClearFilters}
-                className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                className="bg-amber-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-amber-600 transition-colors"
               >
                 Clear All Filters
               </button>
@@ -757,10 +759,10 @@ const MainContent: React.FC<MainContentProps> = ({
             // Empty State - No professionals at all
             <div className="text-center py-12 md:py-16">
               <div className="text-6xl mb-4">👨‍💼</div>
-              <p className="text-xl text-gray-700 mb-2">
+              <p className="text-xl text-yellow-800 mb-2">
                 No professionals found
               </p>
-              <p className="text-gray-500 mb-6">
+              <p className="text-yellow-600 mb-6">
                 There are no professional profiles in the system yet.
               </p>
             </div>
@@ -773,18 +775,18 @@ const MainContent: React.FC<MainContentProps> = ({
         <div className="flex justify-center items-center mt-8">
           <button
             onClick={onPrevPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-800 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage <= 1}
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
             Previous
           </button>
-          <span className="mx-4 text-sm text-gray-600">
+          <span className="mx-4 text-sm text-yellow-900">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={onNextPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-800 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage >= totalPages}
           >
             Next
@@ -1218,7 +1220,10 @@ const AdminProfessionalDashboard: React.FC = () => {
     }
   );
 
-  const totalPages = Math.max(1, Math.ceil(sortedProfessionals.length / itemsPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedProfessionals.length / itemsPerPage)
+  );
 
   // Calculate paginated professionals
   const paginatedProfessionals = useMemo(() => {

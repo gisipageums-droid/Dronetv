@@ -52,7 +52,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData }) => {
             {aboutContent.heading}
           </h2>
           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed">
+          <p className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed text-justify">
             {aboutContent.subText}
           </p>
         </div>
@@ -80,7 +80,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData }) => {
           <h3 className="text-3xl font-bold text-black mb-4">
             <span className="text-[#FFD400]">{aboutContent.zonesTitle}</span> {aboutContent.zonesTitleHighlight}
           </h3>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-3xl mx-auto text-justify">
             {aboutContent.zonesSubtitle}
           </p>
         </div>

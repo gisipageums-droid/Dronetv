@@ -477,20 +477,31 @@ const SORT_OPTIONS = [
 // -------------------- Header --------------------
 const Header: React.FC = () => {
   return (
-    <div className="h-[40vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6">
-      <div className="relative w-full max-w-3xl text-center">
-        <div className="relative z-10">
-          <h1 className="mb-4 text-3xl font-extrabold text-blue-900 md:text-5xl md:mb-6">
+    <div className="relative h-[40vh] bg-amber-50 flex items-center justify-center px-4 sm:px-6 overflow-hidden">
+      {/* Geometric Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+      </div>
+
+      <div className="relative w-full max-w-3xl text-center z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="mb-4 text-3xl font-extrabold text-yellow-900 md:text-5xl md:mb-6 tracking-tight">
             Admin Dashboard
-            <span className="block mt-1 text-xl font-bold text-blue-600 md:text-3xl md:mt-2">
+            <span className="block mt-2 text-transparent bg-clip-text bg-amber-600 ">
               Event Management
             </span>
           </h1>
 
-          <p className="mx-auto mb-6 max-w-xl text-base font-semibold text-blue-700 md:text-lg md:mb-10">
-            Review and manage all event listings, credentials, and approvals.
+          <p className="mx-auto mb-8 max-w-xl text-base font-medium text-yellow-800/80 md:text-lg leading-relaxed">
+            Review and manage all event listings, credentials, and approvals
+            with ease.
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -568,22 +579,22 @@ const Sidebar: React.FC<SidebarProps> = ({
     "Sort by Date",
     ...SORT_OPTIONS.filter((s) => s !== "Sort by Date"),
   ];
-  const navigate = useNavigate();
 
   return (
     <div
-      className={`bg-blue-50 p-4 md:p-8 h-full min-h-screen md:sticky md:top-0 border-r-2 border-gray-200 ${
+      className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
+      ${
         isMobileSidebarOpen
-          ? "overflow-y-auto fixed inset-0 z-50 w-full"
+          ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
       }`}
     >
       {isMobileSidebarOpen && (
-        <div className="flex justify-between items-center mt-16 mb-6 md:hidden">
-          <h2 className="text-xl font-bold">Filters</h2>
+        <div className="flex justify-between items-center mb-6 md:hidden">
+          <h2 className="text-xl font-bold text-yellow-900">Filters</h2>
           <button
             onClick={onCloseMobileSidebar}
-            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+            className="p-2 text-yellow-800"
             aria-label="Close filters"
           >
             <X className="w-5 h-5" />
@@ -592,13 +603,13 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <div className="space-y-6 md:space-y-8">
+        {/* Search Section */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">
-            Search
+          <label className="text-sm font-medium text-yellow-900 block">
+            Search Events
           </label>
-
           <div className="relative">
-            <Search className="absolute left-3 top-8 w-4 h-4 text-gray-400 transform -translate-y-1/2" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-yellow-600" />
             <input
               type="text"
               placeholder="Search events..."
@@ -606,14 +617,15 @@ const Sidebar: React.FC<SidebarProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onSearchChange(e.target.value)
               }
-              className="py-3 pr-4 pl-10 w-full text-sm bg-gray-50 rounded-lg border border-gray-200 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300"
+              className="w-full pl-10 pr-4 py-3 text-sm border border-yellow-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white/50 transition-colors placeholder-yellow-700/50 text-yellow-900"
               aria-label="Search events"
             />
           </div>
         </div>
 
+        {/* Category Filter */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">
+          <label className="text-sm font-medium text-yellow-900 block">
             Category
           </label>
           <MinimalisticDropdown
@@ -624,8 +636,9 @@ const Sidebar: React.FC<SidebarProps> = ({
           />
         </div>
 
+        {/* Sort Filter */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">
+          <label className="text-sm font-medium text-yellow-900 block">
             Sort by
           </label>
           <MinimalisticDropdown
@@ -637,36 +650,49 @@ const Sidebar: React.FC<SidebarProps> = ({
           />
         </div>
 
+        {/* Clear Filters */}
         <button
           onClick={() => {
             onSearchChange("");
             onCategoryChange("All Categories");
             onSortChange("Sort by Date");
           }}
-          className="text-sm text-gray-500 underline transition-colors hover:text-gray-700 underline-offset-2"
+          className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
         >
           Clear all filters
         </button>
 
-        <div className="border-t border-gray-100"></div>
-<div className="flex justify-between gap-2 flex-col">
+        {/* Divider */}
+        <div className="border-t border-yellow-200/50"></div>
+
+        {/* Navigation Links */}
+        <div className="flex gap-2 flex-col mt-6">
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
-            <Link to={"/admin/professional/dashboard"}>Professionals </Link>
+            <Link
+              to={"/admin/professional/dashboard"}
+              className="w-full text-left"
+            >
+              Professionals{" "}
+            </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
-            <Link to={"/admin/company/dashboard"}>Companies </Link>
+            <Link to={"/admin/company/dashboard"} className="w-full text-left">
+              Companies{" "}
+            </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
-            <Link to={"/admin/plans"}>Admin Plans </Link>
+            <Link to={"/admin/plans"} className="w-full text-left">
+              Admin Plans{" "}
+            </Link>
           </motion.button>
         </div>
       </div>
@@ -718,16 +744,16 @@ const EventCard: React.FC<EventCardProps> = ({
   const statusStyle = getStatusBadge(event.reviewStatus);
 
   return (
-    <div className="overflow-hidden w-full h-full rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group">
+    <div className="overflow-hidden w-full h-full rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group border-gradient-to-b from-amber-500 to-yellow-600 bg-white">
       <div className="p-4 md:p-6 lg:p-8">
         <div className="flex justify-between items-center mb-4 md:mb-6">
           <div className="flex gap-3 items-center md:gap-4">
-            <div className="flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16">
+            <div className="flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
               {event.previewImage ? (
                 <img
                   src={event.previewImage}
                   alt={`${event.eventName} logo`}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover rounded-lg transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
                   loading="lazy"
                 />
               ) : (
@@ -762,14 +788,16 @@ const EventCard: React.FC<EventCardProps> = ({
 
         <div className="mb-4 md:mb-6">
           <div className="flex flex-wrap gap-1 md:gap-2">
-            {event.category || "Category not specified"}
+            <span className="px-2 py-1 md:px-3 md:py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">
+              {event.category || "Category not specified"}
+            </span>
           </div>
         </div>
 
         <div className="flex flex-col gap-3">
           <div className="flex gap-3 items-center md:gap-6">
             <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg md:px-4 md:py-2">
-              <span className="text-xs font-bold text-purple-600 md:text-sm">
+              <span className="text-xs font-bold text-amber-600 md:text-sm">
                 {formatDate(event.createdAt)}
               </span>
               <span className="hidden text-xs text-gray-600 md:block">
@@ -781,7 +809,7 @@ const EventCard: React.FC<EventCardProps> = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => onPreview(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 md:text-sm"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-amber-700 bg-amber-100 rounded-lg transition-colors hover:bg-amber-200 md:text-sm"
               aria-label={`Preview ${event.eventName}`}
             >
               <Pen className="w-3 h-3 md:w-4 md:h-4" /> Edit /{" "}
@@ -799,8 +827,9 @@ const EventCard: React.FC<EventCardProps> = ({
 
             <button
               onClick={() => onApprove(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 md:text-sm"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label={`Approve ${event.eventName}`}
+              disabled={event.reviewStatus === "approved"}
             >
               <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
               Approve
@@ -808,8 +837,9 @@ const EventCard: React.FC<EventCardProps> = ({
 
             <button
               onClick={() => onReject(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 md:text-sm"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label={`Reject ${event.eventName}`}
+              disabled={event.reviewStatus === "rejected"}
             >
               <XCircle className="w-3 h-3 md:w-4 md:h-4" />
               Reject
@@ -825,15 +855,6 @@ const EventCard: React.FC<EventCardProps> = ({
             </button>
           </div>
         </div>
-
-        {/* <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
-          <div className="flex justify-between items-center text-xs text-gray-400">
-            <span className="mr-2 truncate">
-              ID: {event.eventId || "No ID"}
-            </span>
-            <span>v{event.version}</span>
-          </div>
-        </div> */}
       </div>
     </div>
   );
@@ -869,12 +890,12 @@ const RecentEventsSection: React.FC<{
     <div className="mb-8">
       <div className="flex gap-3 items-center mb-6">
         <div className="flex gap-2 items-center">
-          <Clock className="w-6 h-6 text-blue-600" />
-          <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+          <Clock className="w-6 h-6 text-yellow-600" />
+          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
             Recent Events
           </h2>
         </div>
-        <span className="px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-full">
+        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
           Last 7 days
         </span>
       </div>
@@ -894,7 +915,7 @@ const RecentEventsSection: React.FC<{
         ))}
       </div>
 
-      <div className="mt-6 border-t border-gray-200"></div>
+      <div className="mt-6 border-t border-yellow-200/50"></div>
     </div>
   );
 };
@@ -998,6 +1019,21 @@ const EventAdminDashboard: React.FC = () => {
       navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
     }
   };
+  const fetchEvents = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
+        );
+        const data = await response.json();
+        setEvents(data?.cards || []);
+        setRecentEvents(data?.cards?.slice(0, 3) || []);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const handleApprove = async (eventId: string, userId: string) => {
     try {
@@ -1018,13 +1054,7 @@ const EventAdminDashboard: React.FC = () => {
       );
 
       toast.success("Event approved successfully");
-      const updatedEvents = events.map((event) => {
-        if (event.eventId === eventId) {
-          return { ...event, reviewStatus: "approved" };
-        }
-        return event;
-      });
-      setEvents(updatedEvents);
+      fetchEvents();
     } catch (error) {
       console.error("Error approving event:", error);
       toast.error("Failed to approve event");
@@ -1050,13 +1080,7 @@ const EventAdminDashboard: React.FC = () => {
       );
 
       toast.success("Event rejected successfully");
-      const updatedEvents = events.map((event) => {
-        if (event.eventId === eventId) {
-          return { ...event, reviewStatus: "rejected" };
-        }
-        return event;
-      });
-      setEvents(updatedEvents);
+      fetchEvents();
     } catch (error) {
       console.error("Error rejecting event:", error);
       toast.error("Failed to rejecte event");
@@ -1080,9 +1104,7 @@ const EventAdminDashboard: React.FC = () => {
       );
 
       toast.success("Event deleted successfully");
-      const updatedEvents = events.filter((event) => event.eventId !== eventId);
-      setEvents(updatedEvents);
-      setRecentEvents(recentEvents.filter((e) => e.eventId != eventId));
+      fetchEvents();
     } catch (error) {
       console.error("Error deleting event:", error);
       toast.error("Failed to delete event");
@@ -1090,22 +1112,6 @@ const EventAdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
-        );
-        const data = await response.json();
-        setEvents(data?.cards || []);
-        setRecentEvents(data?.cards?.slice(0, 3) || []);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchEvents();
   }, []);
 
@@ -1178,7 +1184,7 @@ const EventAdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen h-full bg-blue-50">
+    <div className="w-full min-h-screen h-full bg-orange-50">
       <Header />
 
       {/* Credentials Modal */}
@@ -1211,7 +1217,7 @@ const EventAdminDashboard: React.FC = () => {
           onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
         />
 
-        <div className="flex-1 p-4 md:p-8 bg-blue-50">
+        <div className="flex-1 p-4 md:p-8 bg-orange-50">
           {loading ? (
             <LoadingSpinner />
           ) : (
@@ -1229,12 +1235,12 @@ const EventAdminDashboard: React.FC = () => {
               {/* All Events Section */}
               <div className="flex gap-3 items-center mb-6">
                 <div className="flex gap-2 items-center">
-                  <Calendar className="w-6 h-6 text-blue-600" />
-                  <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+                  <Calendar className="w-6 h-6 text-yellow-600" />
+                  <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
                     All Events
                   </h2>
                 </div>
-                <span className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full">
+                <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
                   {sortedEvents.length}{" "}
                   {sortedEvents.length === 1 ? "event" : "events"}
                 </span>
@@ -1271,7 +1277,7 @@ const EventAdminDashboard: React.FC = () => {
                 <div className="flex justify-center items-center mt-8">
                   <button
                     onClick={handlePrevPage}
-                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={currentPage <= 1}
                   >
                     <ArrowRight className="w-4 h-4 rotate-180" />
