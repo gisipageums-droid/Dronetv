@@ -91,11 +91,11 @@ export default function Header({ headerData }) {
         <div className="flex justify-between items-center h-16">
           {/* Logo - Only show logo image, removed company name */}
           <div className="flex rounded-lg items-center group">
-            <div className="rounded-lg flex items-center justify-center flex-shrink-0 mr-2">
+            <div className="rounded-lg flex items-center justify-center flex-shrink-0 mr-2  bg-red-800">
               <img
                 src={headerData?.logoUrl || logo}
                 alt="Logo"
-                className="w-[50px] h-[50px] mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
+                className="w-[77px] h-[45px] mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl bg-cover"
               />
             </div>
           </div>
