@@ -970,7 +970,7 @@ const ServiceDetailPage = () => {
 
         <div className="grid grid-cols-1 gap-12 mb-16 lg:grid-cols-3">
           {/* Service Details Section */}
-          <div className="space-y-8 lg:col-span-2">
+          <div className="space-y-8 lg:col-span-3">
             {/* Main Service Info */}
             <div className="p-8 bg-white rounded-3xl border-2 shadow-lg border-black/20">
               <div className="flex justify-between items-start mb-6">
@@ -1114,83 +1114,7 @@ const ServiceDetailPage = () => {
             </div>
           </div>
 
-          {/* Quotation Form Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <div className="p-8 bg-white rounded-3xl border-2 shadow-lg border-black/20">
-                {!isSubmitted ? (
-                  <>
-                    <h2 className="mb-6 text-2xl font-black text-black">Request Quote</h2>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div>
-                        <label htmlFor="name" className="block mb-2 text-sm font-bold text-black">
-                          Full Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          placeholder="Enter your full name"
-                          className="px-4 py-3 w-full placeholder-gray-500 text-black rounded-xl border-2 border-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
-                          required
-                        />
-                      </div>
-
-                      {/* Other form fields go here... */}
-
-                      <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="flex gap-3 justify-center items-center px-6 py-4 w-full text-lg font-bold text-white bg-black rounded-xl shadow-lg transition-all duration-300 transform hover:bg-gray-800 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isLoading ? (
-                          <div className="w-5 h-5 rounded-full border-2 animate-spin border-white/30 border-t-white"></div>
-                        ) : (
-                          <Send className="w-5 h-5" />
-                        )}
-                        <span>{isLoading ? 'Sending...' : 'Request Quote'}</span>
-                      </button>
-                    </form>
-                  </>
-                ) : (
-                  <div className="py-8 text-center">
-                    <div className="flex justify-center items-center p-6 mx-auto mb-6 w-20 h-20 bg-green-500 rounded-full">
-                      <CheckCircle className="w-10 h-10 text-white" />
-                    </div>
-                    <h3 className="mb-4 text-2xl font-bold text-black">Quote Requested!</h3>
-                    <p className="mb-6 text-gray-600">
-                      Thank you for your interest! {service.company} will contact you within 24 hours with a detailed quote.
-                    </p>
-                    <div className="text-sm text-gray-500">
-                      <p>Need immediate assistance?</p>
-                      <p className="font-semibold">Call {service.companyInfo.phone}</p>
-                    </div>
-                  </div>
-                )}
-                {/* Company Contact Info */}
-                <div className="pt-8 mt-8 border-t border-gray-200">
-                  <h3 className="mb-4 text-lg font-bold text-black">Contact {service.company}</h3>
-                  <div className="space-y-3">
-                    <div className="flex gap-3 items-center">
-                      <Phone className="w-4 h-4 text-yellow-600" />
-                      <span className="text-black">{service.companyInfo.phone}</span>
-                    </div>
-                    <div className="flex gap-3 items-center">
-                      <Mail className="w-4 h-4 text-yellow-600" />
-                      <span className="text-black">{service.companyInfo.email}</span>
-                    </div>
-                    <div className="flex gap-3 items-center">
-                      <MapPin className="w-4 h-4 text-yellow-600" />
-                      <span className="text-black">{service.location}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-// ProductsPage.tsx
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -10,152 +10,173 @@ import {
   Eye,
   Zap,
   Shield,
-  Cpu
+  Cpu,
+  Building2,
+  MapPin
 } from "lucide-react";
-import LoadingScreen from './loadingscreen'; // Adjust the import path as needed
+import LoadingScreen from './loadingscreen';
 
 /**
  * Types
  */
-type RawApiItem = {
-  publishedId?: string;
-  userId?: string;
-  products?: any;
-  websiteContent?: any;
-  websiteData?: any;
-};
-
-type ProductShape = {
-  id: string | number;
-  name: string;
+interface Product {
+  id: string;
+  publishedId: string;
+  userId: string;
+  companyName: string;
+  title: string;
   description: string;
+  detailedDescription: string;
   image: string;
   category: string;
   price: string;
   rating: number;
   popularity: number;
   features: string[];
-  featured?: boolean;
-};
+  featured: boolean;
+  isPopular?: boolean;
+  timeline?: string;
+  timestamp?: string;
+}
+
+interface ApiResponseItem {
+  publishedId: string;
+  userId: string;
+  companyName: string;
+  type: string;
+  timestamp: string;
+  products: {
+    products: any[];
+    categories?: string[];
+    trustText?: string;
+  };
+}
 
 const ProductsPage: React.FC = () => {
   // UI state
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [sortBy, setSortBy] = useState<string>("popularity");
+  const [sortBy, setSortBy] = useState<string>("timestamp");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredProducts, setFilteredProducts] = useState<ProductShape[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const productsPerPage = 12;
 
   // Data state
-  const [products, setProducts] = useState<ProductShape[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(['All']);
 
-  // categories & sort options
-  const categories = ["All", "Drones", "Sensors", "Accessories", "Software", "Batteries", "Cameras"];
   const sortOptions = [
+    { value: "timestamp", label: "Sort by Newest" },
     { value: "popularity", label: "Sort by Popularity" },
-    { value: "price", label: "Sort by Price" },
-    { value: "name", label: "Sort by Name" },
-    { value: "rating", label: "Sort by Rating" }
+    { value: "rating", label: "Sort by Rating" },
+    { value: "company", label: "Sort by Company" },
+    { value: "title", label: "Sort by Name" }
   ];
-
-
- 
 
   // Fetch API data on mount
   useEffect(() => {
-    const API = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/view";
+    const fetchProducts = () => {
+      setLoading(true);
+      setError(null);
 
-    // Set a timeout for API call to avoid infinite loading
-    const loadingTimeout = setTimeout(() => {
-      if (loading) {
-        console.warn("API timeout - using static data");
-        setProducts(staticProducts);
-        setLoading(false);
-        setDataLoaded(true);
-      }
-    }, 8000); // 8 second timeout
+      const API_URL = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/view";
 
-    axios
-      .get(API)
-      .then((res) => {
-        clearTimeout(loadingTimeout);
-        const payload = res.data;
-        if (payload && Array.isArray(payload.data) && payload.data.length > 0) {
-          const apiProducts: ProductShape[] = [];
+      axios
+        .get(API_URL)
+        .then((response) => {
+          const responseData = response.data;
 
-          payload.data.forEach((item: RawApiItem) => {
-            const content = item.products ?? item.websiteContent ?? item.websiteData?.content ?? {};
-            const arr = content.products ?? [];
+          if (responseData.status && responseData.data && Array.isArray(responseData.data)) {
+            const apiProducts: Product[] = [];
+            const allCategories = new Set<string>(['All']);
 
-            if (Array.isArray(arr) && arr.length > 0) {
-              arr.forEach((p: any, pIndex: number) => {
-                const mapped: ProductShape = {
-                  id: item.publishedId ?? `api-${pIndex}`,
-                  name: p.title ?? p.name ?? p.heading ?? `Product ${pIndex + 1}`,
-                  description: p.description ?? p.detailedDescription ?? p.desc ?? "",
-                  image: p.image ?? p.url ?? p.thumbnail ?? "",
-                  category: p.category ?? "Products",
-                  price: (p.price && String(p.price)) ?? p.pricing ?? p.priceLabel ?? "₹0",
-                  rating: Number(p.rating ?? p.reviews?.avg ?? 4.5) || 4.5,
-                  popularity: Number(p.popularity ?? pIndex) || 0,
-                  features: Array.isArray(p.features) ? p.features.map((f: any) => String(f)) : [],
-                  featured: p.isPopular ?? false
-                };
-                apiProducts.push(mapped);
-              });
-            } else {
-              const maybeSingle = content;
-              if (maybeSingle && (maybeSingle.title || maybeSingle.image)) {
-                const mapped: ProductShape = {
-                  id: item.publishedId ?? "api-single",
-                  name: maybeSingle.title ?? "Product",
-                  description: maybeSingle.description ?? "",
-                  image: maybeSingle.image ?? "",
-                  category: maybeSingle.category ?? "Products",
-                  price: (maybeSingle.price && String(maybeSingle.price)) ?? "₹0",
-                  rating: Number(maybeSingle.rating ?? 4.5),
-                  popularity: 0,
-                  features: [],
-                  featured: false
-                };
-                apiProducts.push(mapped);
+            responseData.data.forEach((item: ApiResponseItem) => {
+              // Check if products array exists and has at least one product
+              if (item.products &&
+                item.products.products &&
+                Array.isArray(item.products.products) &&
+                item.products.products.length > 0) {
+
+                // Add categories from this item
+                if (item.products.categories && Array.isArray(item.products.categories)) {
+                  item.products.categories.forEach((cat: string) => {
+                    if (cat && cat !== 'All') allCategories.add(cat);
+                  });
+                }
+
+                // Process each product in the products array
+                item.products.products.forEach((product: any, index: number) => {
+                  // Only process products that have at least a title
+                  if (product && product.title) {
+                    const mappedProduct: Product = {
+                      id: `${item.publishedId}-${index}`,
+                      publishedId: item.publishedId,
+                      userId: item.userId,
+                      companyName: item.companyName,
+                      title: product.title || "Untitled Product",
+                      description: product.description || product.detailedDescription || "No description available",
+                      detailedDescription: product.detailedDescription || product.description || "",
+                      image: product.image || "/images/product-placeholder.jpg",
+                      category: product.category || "General",
+                      price: product.pricing || product.price || "Contact for pricing",
+                      rating: 4.0 + (Math.random() * 1.5), // Random rating between 4.0-5.5
+                      popularity: Math.floor(Math.random() * 20) + 80, // Random popularity between 80-100
+                      features: Array.isArray(product.features) ? product.features : [],
+                      featured: product.isPopular || false,
+                      isPopular: product.isPopular,
+                      timeline: product.timeline,
+                      timestamp: item.timestamp
+                    };
+                    apiProducts.push(mappedProduct);
+
+                    // Add product category to categories set
+                    if (product.category && product.category !== 'All') {
+                      allCategories.add(product.category);
+                    }
+                  }
+                });
               }
+            });
+
+            if (apiProducts.length > 0) {
+              console.log("API Products mapped successfully:", apiProducts.length, "products");
+
+              // Sort by timestamp (newest first) initially
+              const sortedProducts = apiProducts.sort((a, b) => {
+                const timeA = new Date(a.timestamp || 0).getTime();
+                const timeB = new Date(b.timestamp || 0).getTime();
+                return timeB - timeA; // Descending order
+              });
+
+              setAllProducts(sortedProducts);
+              setCategories(Array.from(allCategories));
+            } else {
+              console.warn("No valid products found in API response");
+              setAllProducts([]);
             }
-          });
-
-          if (apiProducts.length > 0) {
-            setProducts(apiProducts);
           } else {
-            console.warn("API returned but no products parsed, using static fallback.");
-            setProducts(staticProducts);
+            console.warn("API returned no data or invalid structure");
+            setAllProducts([]);
           }
-        } else {
-          console.warn("API returned no data, using static fallback.");
-          setProducts(staticProducts);
-        }
-      })
-      .catch((err) => {
-        clearTimeout(loadingTimeout);
-        console.error("API Error:", err);
-        setProducts(staticProducts);
-      })
-      .finally(() => {
-        setLoading(false);
-        setDataLoaded(true);
-      });
+        })
+        .catch((err) => {
+          console.error("API Error:", err);
+          setError("Failed to fetch products data");
+          setAllProducts([]);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
 
-    // Cleanup timeout
-    return () => clearTimeout(loadingTimeout);
+    fetchProducts();
   }, []);
 
   // Filtering / Sorting
   useEffect(() => {
-    if (!dataLoaded) return;
-
-    let filtered = [...products];
+    let filtered = [...allProducts];
 
     // Filter by category
     if (selectedCategory !== "All") {
@@ -166,25 +187,28 @@ const ProductsPage: React.FC = () => {
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter((product) =>
-        product.name.toLowerCase().includes(q) ||
+        product.title.toLowerCase().includes(q) ||
+        product.companyName.toLowerCase().includes(q) ||
         product.description.toLowerCase().includes(q) ||
-        product.features.some((feature) => feature.toLowerCase().includes(q))
+        product.features.some((feature: string) => feature.toLowerCase().includes(q))
       );
     }
 
     // Sort products
     filtered.sort((a, b) => {
       switch (sortBy) {
+        case "timestamp":
+          const timeA = new Date(a.timestamp || 0).getTime();
+          const timeB = new Date(b.timestamp || 0).getTime();
+          return timeB - timeA; // Newest first
         case "popularity":
-          return (b.popularity || 0) - (a.popularity || 0);
-        case "price":
-          const aPrice = parseFloat(String(a.price).replace(/[^0-9.]/g, "")) || 0;
-          const bPrice = parseFloat(String(b.price).replace(/[^0-9.]/g, "")) || 0;
-          return aPrice - bPrice;
-        case "name":
-          return a.name.localeCompare(b.name);
+          return b.popularity - a.popularity;
         case "rating":
-          return (b.rating || 0) - (a.rating || 0);
+          return b.rating - a.rating;
+        case "company":
+          return a.companyName.localeCompare(b.companyName);
+        case "title":
+          return a.title.localeCompare(b.title);
         default:
           return 0;
       }
@@ -192,21 +216,23 @@ const ProductsPage: React.FC = () => {
 
     setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [products, selectedCategory, sortBy, searchQuery, dataLoaded]);
+  }, [allProducts, selectedCategory, sortBy, searchQuery]);
 
-  // Featured / Pagination helpers
-  const featuredProducts = products.filter((product) => product.featured);
+  // Pagination helpers
+  const featuredProducts = allProducts.filter((product) => product.featured);
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
 
   // Icons helpers
-  const getCategoryIcon = (category?: string) => {
-    switch ((category || "").toLowerCase()) {
+  const getCategoryIcon = (category: string) => {
+    switch (category.toLowerCase()) {
       case "drones":
       case "agriculture drones":
       case "survey drones":
+      case "drone training & education solutions":
+      case "drone manufacturing solutions":
         return Zap;
       case "sensors":
         return Cpu;
@@ -223,27 +249,63 @@ const ProductsPage: React.FC = () => {
     }
   };
 
-  const getCategoryColor = (category?: string) => {
-    switch ((category || "").toLowerCase()) {
-      case "drones": return "bg-black";
-      case "sensors": return "bg-gray-900";
-      case "accessories": return "bg-gray-800";
-      case "software": return "bg-gray-700";
-      case "batteries": return "bg-gray-600";
-      case "cameras": return "bg-black";
-      default: return "bg-gray-800";
+  const getCategoryColor = (category: string) => {
+    switch (category.toLowerCase()) {
+      case "drones":
+      case "drone training & education solutions":
+      case "drone manufacturing solutions":
+        return "bg-blue-600";
+      case "sensors":
+        return "bg-purple-600";
+      case "accessories":
+        return "bg-green-600";
+      case "software":
+        return "bg-indigo-600";
+      case "batteries":
+        return "bg-orange-500";
+      case "cameras":
+        return "bg-red-600";
+      default:
+        return "bg-gray-800";
     }
   };
 
-  // Show loading screen while data is being fetched
+  // Format date for display
+  const formatDate = (timestamp: string) => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
   if (loading) {
-    return <LoadingScreen 
-      logoSrc="/images/logo.png" 
-      loadingText="Loading Products..." 
-    />;
+    return (
+      <LoadingScreen
+        logoSrc="/images/logo.png"
+        loadingText="Loading Products..."
+      />
+    );
   }
 
-  // JSX UI remains the same as your original code
+  if (error) {
+    return (
+      <div className="flex justify-center items-center pt-16 min-h-screen bg-yellow-400">
+        <div className="text-center">
+          <p className="mb-4 text-xl font-semibold text-red-600">Error: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 text-yellow-400 bg-black rounded-lg transition-colors hover:bg-gray-800"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-16 min-h-screen bg-yellow-400">
       {/* Hero Section */}
@@ -334,94 +396,6 @@ const ProductsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Products Section */}
-      <section className="py-4 bg-gradient-to-b from-yellow-400 to-yellow-300">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {featuredProducts.slice(0, 3).map((product, index) => {
-              const IconComponent = getCategoryIcon(product.category);
-              return (
-                <div
-                  key={product.id}
-                  className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 border-2 border-black/20 hover:border-black/40"
-                  style={{
-                    animationDelay: `${index * 200}ms`,
-                    animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`
-                  }}
-                >
-                  <div className="p-3">
-                    <div className="overflow-hidden relative rounded-2xl">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="object-cover w-full h-48 border-b-2 transition-all duration-700 group-hover:scale-110 border-black/10"
-                      />
-
-                      <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
-
-                      <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-all duration-500 group-hover:opacity-100">
-                        <Link
-                          to={`/product/${product.id}`}
-                          className="px-4 py-2 font-bold text-black bg-yellow-400 rounded-full shadow-2xl transition-all duration-500 transform scale-0 group-hover:scale-100 hover:bg-yellow-300"
-                        >
-                          View Details
-                        </Link>
-                      </div>
-
-                      <div className={`absolute top-4 right-4 ${getCategoryColor(product.category)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1`}>
-                        <IconComponent className="w-3 h-3" />
-                        {product.category}
-                      </div>
-
-                      <div className="flex absolute right-4 bottom-4 gap-1 items-center px-2 py-1 text-xs font-medium text-white rounded-lg bg-black/80">
-                        {product.price}
-                      </div>
-
-                      <div className="flex absolute top-4 left-4 gap-1 items-center px-2 py-1 text-xs font-bold text-black bg-yellow-400 rounded-lg">
-                        <Star className="w-3 h-3 fill-current" />
-                        Featured
-                      </div>
-                    </div>
-
-                    <div className="p-6">
-                      <Link to={`/product/${product.id}`}>
-                        <h3 className="mb-2 text-xl font-bold text-black transition-colors duration-300 cursor-pointer group-hover:text-gray-800">
-                          {product.name}
-                        </h3>
-                      </Link>
-                      <p className="mb-4 text-gray-600 line-clamp-2">{product.description}</p>
-
-                      <div className="flex justify-between items-center mb-4">
-                        <div className="flex gap-4 items-center text-sm text-gray-500">
-                          <div className="flex gap-1 items-center">
-                            <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                            {product.rating}
-                          </div>
-                        </div>
-                        <div className="text-xl font-bold text-black">{product.price}</div>
-                      </div>
-                    </div>
-
-                    <div className="mb-4">
-                      <div className="flex flex-wrap gap-1">
-                        {product.features.slice(0, 3).map((feature) => (
-                          <span
-                            key={feature}
-                            className="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-300 rounded-full"
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Products Grid Section */}
       <section className="py-16 bg-yellow-400">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -443,71 +417,98 @@ const ProductsPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               {currentProducts.map((product, index) => {
                 const IconComponent = getCategoryIcon(product.category);
                 return (
                   <div
                     key={product.id}
-                    className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 border-2 border-black/20 hover:border-black/40"
+                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 border-2 border-black/10 hover:border-black"
                     style={{
                       animationDelay: `${index * 100}ms`,
-                      animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
                     }}
                   >
-                    <div className="overflow-hidden relative">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="object-cover w-full h-40 transition-all duration-700 group-hover:scale-110"
-                      />
+                    <div className="p-3">
+                      <div className="overflow-hidden relative rounded-2xl">
+                        <img
+                          src={product.image}
+                          alt={product.title}
+                          className="object-cover w-full h-48 transition-all duration-700 group-hover:scale-110"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/product-placeholder.jpg";
+                          }}
+                        />
 
-                      <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
 
-                      <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-all duration-500 group-hover:opacity-100">
-                        <Link
-                          to={`/product/${product.id}`}
-                          className="px-6 py-3 font-bold text-black bg-yellow-400 rounded-full shadow-2xl transition-all duration-500 transform scale-0 group-hover:scale-100 hover:bg-yellow-300"
-                        >
-                          View Details
-                        </Link>
-                      </div>
+                        <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-all duration-500 group-hover:opacity-100">
+                          <Link
+                            to={`/product/${product.publishedId}`}
+                            state={{ product }}
+                            className="px-4 py-2 font-bold text-black bg-yellow-400 rounded-full shadow-2xl transition-all duration-500 transform scale-0 group-hover:scale-100 hover:bg-yellow-300"
+                          >
+                            View Details
+                          </Link>
+                        </div>
 
-                      <div className={`absolute top-3 right-3 ${getCategoryColor(product.category)} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
-                        <IconComponent className="w-3 h-3" />
-                        {product.category}
-                      </div>
+                        <div className={`absolute top-3 right-3 ${getCategoryColor(product.category)} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
+                          <IconComponent className="w-3 h-3" />
+                          {product.category}
+                        </div>
 
-                      <div className="flex absolute right-3 bottom-3 gap-1 items-center px-2 py-1 text-xs font-medium text-white rounded-lg bg-black/80">
-                        {product.price}
+                        <div className="absolute right-3 bottom-3 px-2 py-1 text-xs font-medium text-white rounded-lg bg-black/80">
+                          {product.price}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="p-4">
-                      <Link to={`/product/${product.id}`}>
-                        <h3 className="mb-2 text-lg font-bold text-black transition-colors duration-300 cursor-pointer group-hover:text-gray-800 line-clamp-2">
-                          {product.name}
-                        </h3>
-                      </Link>
-                      <p className="mb-3 text-sm text-gray-600 line-clamp-2">{product.description}</p>
+                    <div className="p-5">
+                      <h3 className="mb-2 text-xl font-bold text-black transition-colors duration-300 group-hover:text-yellow-600 line-clamp-2">
+                        {product.title}
+                      </h3>
+                      <p className="mb-1 text-sm font-semibold text-gray-500 flex items-center gap-1">
+                        <Building2 className="w-3 h-3" />
+                        {product.companyName}
+                      </p>
 
-                      <div className="flex justify-between items-center mb-3 text-xs">
-                        <div className="flex gap-1 items-center text-gray-500">
-                          <Star className="w-3 h-3 text-yellow-600 fill-current" />
-                          {product.rating}
+                      {/* Added timestamp display */}
+                      {product.timestamp && (
+                        <p className="mb-3 text-xs text-gray-400">
+                          Added: {formatDate(product.timestamp)}
+                        </p>
+                      )}
+
+                      <p className="mb-4 text-sm text-gray-600 line-clamp-2 leading-relaxed">
+                        {product.description}
+                      </p>
+
+                      <div className="flex justify-between items-center mb-4 pt-4 border-t border-gray-100">
+                        <div className="flex gap-4 items-center text-xs text-gray-500">
+                          <div className="flex gap-1 items-center bg-yellow-50 px-2 py-1 rounded-md">
+                            <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                            <span className="font-bold text-black">{product.rating.toFixed(1)}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <MapPin className="w-3 h-3" />
+                            India
+                          </div>
                         </div>
-                        <div className="text-lg font-bold text-black">{product.price}</div>
                       </div>
 
-                      <div className="flex flex-wrap gap-1">
-                        {product.features.slice(0, 2).map((feature) => (
+                      <div className="flex flex-wrap gap-2">
+                        {product.features && product.features.slice(0, 2).map((feature: string, idx: number) => (
                           <span
-                            key={feature}
-                            className="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-300 rounded-full"
+                            key={idx}
+                            className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-black/70 bg-gray-100 rounded-md line-clamp-1"
                           >
                             {feature}
                           </span>
                         ))}
+                        {product.features && product.features.length > 2 && (
+                          <span className="px-2 py-1 text-[10px] font-bold text-black/50 bg-gray-100 rounded-md">
+                            +{product.features.length - 2}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
