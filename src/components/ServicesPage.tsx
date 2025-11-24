@@ -1,3 +1,5 @@
+
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -21,11 +23,14 @@ interface Service {
   process?: string[];
   timeline?: string;
   detailedDescription?: string;
+  userId?: string;
+  publishedId?: string;
+  timestamp?: string;
 }
 
 const ServicesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sortBy, setSortBy] = useState('popularity');
+  const [sortBy, setSortBy] = useState('timestamp'); // Changed default to timestamp for newest first
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredServices, setFilteredServices] = useState<Service[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,24 +38,20 @@ const ServicesPage = () => {
   const [allServices, setAllServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState(['All', 'Drone Technology', 'AI Solutions', 'GIS Services', 'Consulting', 'Training', 'Maintenance']);
+  const [categories, setCategories] = useState(['All']);
+
   const sortOptions = [
+    { value: 'timestamp', label: 'Sort by Newest' }, // New option
     { value: 'popularity', label: 'Sort by Popularity' },
     { value: 'rating', label: 'Sort by Rating' },
-    { value: 'price', label: 'Sort by Price' },
     { value: 'company', label: 'Sort by Company' }
   ];
-
-  // Static fallback services removed - only use API data
 
   // Fetch services data from API
   useEffect(() => {
     const fetchServices = () => {
       setLoading(true);
       setError(null);
-
-      // Don't set static services initially - wait for API data
-      // setAllServices(staticServices);
 
       const API_URL = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/services/view";
 
@@ -64,51 +65,73 @@ const ServicesPage = () => {
             const allCategories = new Set(['All']);
 
             responseData.data.forEach((item: any) => {
-              if (item.services && item.services.services && Array.isArray(item.services.services)) {
+              // Check if services array exists and has at least one service
+              if (item.services &&
+                item.services.services &&
+                Array.isArray(item.services.services) &&
+                item.services.services.length > 0) {
+
                 // Add categories from this item
                 if (item.services.categories && Array.isArray(item.services.categories)) {
                   item.services.categories.forEach((cat: string) => {
-                    if (cat !== 'All') allCategories.add(cat);
+                    if (cat && cat !== 'All') allCategories.add(cat);
                   });
                 }
 
-                // Map only the first service from each publishedId (one service per company)
-                if (item.services.services.length > 0) {
-                  const service = item.services.services[0]; // Take only first service
-                  const mappedService: Service = {
-                    id: item.publishedId, // Use publishedId as the main ID
-                    title: service.title || "Service",
-                    company: item.userId ? item.userId.split('@')[0] : "Company",
-                    description: service.description || service.detailedDescription || "",
-                    image: service.image || "/images/service1.jpg",
-                    category: service.category || "General",
-                    price: service.pricing || "Contact for pricing",
-                    rating: 4.5, // Default rating
-                    popularity: Math.floor(Math.random() * 20) + 80, // Random popularity between 80-100
-                    location: "India", // Default location
-                    features: service.features || [],
-                    featured: Math.random() > 0.7, // Random featured status
-                    benefits: service.benefits || [],
-                    process: service.process || [],
-                    timeline: service.timeline || "N/A",
-                    detailedDescription: service.detailedDescription || service.description || ""
-                  };
-                  apiServices.push(mappedService);
-                }
+                // Process each service in the services array
+                item.services.services.forEach((service: any, index: number) => {
+                  // Only process services that have at least a title
+                  if (service && service.title) {
+                    const mappedService: Service = {
+                      id: `${item.publishedId}-${index}`, // Unique ID for each service
+                      publishedId: item.publishedId,
+                      userId: item.userId,
+                      title: service.title || "Untitled Service",
+                      company: item.companyName || (item.userId ? item.userId.split('@')[0] : "Unknown Company"),
+                      description: service.description || service.detailedDescription || "No description available",
+                      image: service.image || "/images/service-placeholder.jpg",
+                      category: service.category || "General",
+                      price: service.pricing || "Contact for pricing",
+                      rating: 4.0 + (Math.random() * 1.5), // Random rating between 4.0-5.5
+                      popularity: Math.floor(Math.random() * 20) + 80, // Random popularity between 80-100
+                      location: "India",
+                      features: service.features || [],
+                      featured: Math.random() > 0.8,
+                      benefits: service.benefits || [],
+                      process: service.process || [],
+                      timeline: service.timeline || "N/A",
+                      detailedDescription: service.detailedDescription || service.description || "",
+                      timestamp: item.timestamp || new Date().toISOString()
+                    };
+                    apiServices.push(mappedService);
+
+                    // Add service category to categories set
+                    if (service.category && service.category !== 'All') {
+                      allCategories.add(service.category);
+                    }
+                  }
+                });
               }
             });
 
             if (apiServices.length > 0) {
               console.log("API Services mapped successfully:", apiServices.length, "services");
-              console.log("Sample service:", apiServices[0]);
-              setAllServices(apiServices);
+
+              // Sort by timestamp (newest first) initially
+              const sortedServices = apiServices.sort((a, b) => {
+                const timeA = new Date(a.timestamp || 0).getTime();
+                const timeB = new Date(b.timestamp || 0).getTime();
+                return timeB - timeA; // Descending order
+              });
+
+              setAllServices(sortedServices);
               setCategories(Array.from(allCategories));
             } else {
-              console.warn("API returned but no services parsed.");
+              console.warn("No valid services found in API response");
               setAllServices([]);
             }
           } else {
-            console.warn("API returned no data.");
+            console.warn("API returned no data or invalid structure");
             setAllServices([]);
           }
         })
@@ -126,16 +149,13 @@ const ServicesPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Filtering services - allServices count:", allServices.length);
-    console.log("Selected category:", selectedCategory);
-    console.log("Search query:", searchQuery);
-
     let filtered = allServices;
 
     // Filter by category
     if (selectedCategory !== 'All') {
-      filtered = filtered.filter(service => service.category === selectedCategory);
-      console.log("After category filter:", filtered.length);
+      filtered = filtered.filter(service =>
+        service.category === selectedCategory
+      );
     }
 
     // Filter by search query
@@ -144,22 +164,23 @@ const ServicesPage = () => {
         service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         service.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
         service.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        service.features.some((feature: string) =>
+        (service.features && service.features.some((feature: string) =>
           feature.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+        ))
       );
-      console.log("After search filter:", filtered.length);
     }
 
     // Sort services
     filtered.sort((a, b) => {
       switch (sortBy) {
+        case 'timestamp':
+          const timeA = new Date(a.timestamp || 0).getTime();
+          const timeB = new Date(b.timestamp || 0).getTime();
+          return timeB - timeA; // Newest first
         case 'popularity':
           return b.popularity - a.popularity;
         case 'rating':
           return b.rating - a.rating;
-        case 'price':
-          return parseFloat(a.price.replace(/[^0-9.]/g, '')) - parseFloat(b.price.replace(/[^0-9.]/g, ''));
         case 'company':
           return a.company.localeCompare(b.company);
         default:
@@ -167,12 +188,10 @@ const ServicesPage = () => {
       }
     });
 
-    console.log("Final filtered services count:", filtered.length);
     setFilteredServices(filtered);
     setCurrentPage(1);
   }, [allServices, selectedCategory, sortBy, searchQuery]);
 
-  const featuredServices = allServices.filter(service => service.featured);
   const indexOfLastService = currentPage * servicesPerPage;
   const indexOfFirstService = indexOfLastService - servicesPerPage;
   const currentServices = filteredServices.slice(indexOfFirstService, indexOfLastService);
@@ -186,27 +205,45 @@ const ServicesPage = () => {
       case 'Consulting': return Users;
       case 'Training': return Building2;
       case 'Maintenance': return Building2;
+      case 'Drone Training & Education Services': return Building2;
+      case 'UAV Manufacturing': return Drone;
+      case 'Drone training': return Building2;
       default: return Building2;
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Drone Technology': return 'bg-black';
-      case 'AI Solutions': return 'bg-gray-900';
-      case 'GIS Services': return 'bg-gray-800';
-      case 'Consulting': return 'bg-gray-700';
-      case 'Training': return 'bg-gray-600';
-      case 'Maintenance': return 'bg-black';
+      case 'Drone Technology':
+      case 'Drone Training & Education Services':
+      case 'Drone training':
+      case 'UAV Manufacturing':
+        return 'bg-blue-600';
+      case 'AI Solutions': return 'bg-purple-600';
+      case 'GIS Services': return 'bg-green-600';
+      case 'Consulting': return 'bg-indigo-600';
+      case 'Training': return 'bg-orange-500';
+      case 'Maintenance': return 'bg-red-600';
       default: return 'bg-gray-800';
     }
   };
 
+  // Format date for display
+  const formatDate = (timestamp: string) => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
   if (loading) {
     return (
-        <LoadingScreen
+      <LoadingScreen
         logoSrc="images/logo.png"
-        loadingText="Loading Companies..."
+        loadingText="Loading Services..."
       />
     );
   }
@@ -239,7 +276,6 @@ const ServicesPage = () => {
         <div className="relative z-10 px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
           <h1 className="mb-2 text-2xl font-black tracking-tight text-black md:text-5xl">
             Services Directory
-
           </h1>
           <p className="mx-auto mb-4 max-w-2xl text-xl text-black/80">
             Explore top services in Drone Tech, AI, and GIS.
@@ -318,105 +354,6 @@ const ServicesPage = () => {
         </div>
       </section>
 
-
-      {/* Featured Services Section */}
-      <section className="py-4 bg-gradient-to-b from-yellow-400 to-yellow-300">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {featuredServices.map((service, index) => {
-              const IconComponent = getCategoryIcon(service.category);
-
-              return (
-                <div
-                  key={service.id}
-                  className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 border-2 border-black/20 hover:border-black/40"
-                  style={{
-                    animationDelay: `${index * 200}ms`,
-                    animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`
-                  }}
-                >
-                  <div className="p-4">
-                    <div className="overflow-hidden relative rounded-2xl">
-                      <img
-                        src={service.image}
-                        alt={service.title}
-                        className="object-cover w-full h-48 transition-all duration-700 group-hover:scale-110"
-                      />
-
-                      <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
-
-                      <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-all duration-500 group-hover:opacity-100">
-                        <Link
-                          to={`/service/${service.id}`}
-                          className="px-4 py-2 font-bold text-black bg-yellow-400 rounded-full shadow-2xl transition-all duration-500 transform scale-0 group-hover:scale-100 hover:bg-yellow-300"
-                        >
-                          View Details
-                        </Link>
-                      </div>
-
-                      <div className={`absolute top-4 right-4 ${getCategoryColor(service.category)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1`}>
-                        <IconComponent className="w-3 h-3" />
-                        {service.category}
-                      </div>
-
-                      <div className="absolute right-4 bottom-4 px-2 py-1 text-xs font-medium text-white rounded-lg bg-black/80">
-                        {service.price}
-                      </div>
-
-                      <div className="flex absolute top-4 left-4 gap-1 items-center px-2 py-1 text-xs font-bold text-black bg-yellow-400 rounded-lg">
-                        <Star className="w-3 h-3 fill-current" />
-                        Featured
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    <h3 className="mb-2 text-xl font-bold text-black transition-colors duration-300 group-hover:text-gray-800">
-                      {service.title}
-                    </h3>
-                    <p className="mb-2 text-sm font-semibold text-gray-600">{service.company}</p>
-                    <p className="mb-4 text-gray-600 line-clamp-2">{service.description}</p>
-
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="flex gap-4 items-center text-sm text-gray-500">
-                        <div className="flex gap-1 items-center">
-                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                          {service.rating}
-                        </div>
-                        <div className="flex gap-1 items-center">
-                          <MapPin className="w-4 h-4" />
-                          {service.location}
-                        </div>
-                      </div>
-                      <div className="text-lg font-bold text-black">{service.price}</div>
-                    </div>
-
-                    <div className="mb-4">
-                      <div className="flex flex-wrap gap-1">
-                        {service.features.slice(0, 3).map((feature: string) => (
-                          <span
-                            key={feature}
-                            className="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-300 rounded-full"
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                        {service.features.length > 3 && (
-                          <span className="px-2 py-1 text-xs font-medium text-gray-600 bg-yellow-300 rounded-full">
-                            +{service.features.length - 3} more
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Services Grid Section */}
       <section className="py-16 bg-yellow-400">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -438,17 +375,16 @@ const ServicesPage = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               {currentServices.map((service, index) => {
                 const IconComponent = getCategoryIcon(service.category);
 
                 return (
                   <div
                     key={service.id}
-                    className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 border-2 border-black/20 hover:border-black/40"
+                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 border-2 border-black/10 hover:border-black"
                     style={{
                       animationDelay: `${index * 100}ms`,
-                      animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
                     }}
                   >
                     <div className="p-3">
@@ -456,21 +392,25 @@ const ServicesPage = () => {
                         <img
                           src={service.image}
                           alt={service.title}
-                          className="object-cover w-full h-40 transition-all duration-700 group-hover:scale-110"
+                          className="object-cover w-full h-48 transition-all duration-700 group-hover:scale-110"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/service-placeholder.jpg";
+                          }}
                         />
 
                         <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
 
                         <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-all duration-500 group-hover:opacity-100">
                           <Link
-                            to={`/service/${service.id}`}
+                            to={`/service/${service.publishedId}`}
+                            state={{ service }}
                             className="px-4 py-2 font-bold text-black bg-yellow-400 rounded-full shadow-2xl transition-all duration-500 transform scale-0 group-hover:scale-100 hover:bg-yellow-300"
                           >
                             View Details
                           </Link>
                         </div>
 
-                        <div className={`absolute top-3 right-3 ${getCategoryColor(service.category)} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
+                        <div className={`absolute top-3 right-3 ${getCategoryColor(service.category)} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
                           <IconComponent className="w-3 h-3" />
                           {service.category}
                         </div>
@@ -481,38 +421,50 @@ const ServicesPage = () => {
                       </div>
                     </div>
 
-                    <div className="p-4">
-                      <h3 className="mb-1 text-lg font-bold text-black transition-colors duration-300 group-hover:text-gray-800 line-clamp-2">
+                    <div className="p-5">
+                      <h3 className="mb-2 text-xl font-bold text-black transition-colors duration-300 group-hover:text-yellow-600 line-clamp-2">
                         {service.title}
                       </h3>
-                      <p className="mb-2 text-sm font-semibold text-gray-600">{service.company}</p>
-                      <p className="mb-3 text-sm text-gray-600 line-clamp-2">{service.description}</p>
+                      <p className="mb-1 text-sm font-semibold text-gray-500 flex items-center gap-1">
+                        <Building2 className="w-3 h-3" />
+                        {service.company}
+                      </p>
 
-                      <div className="flex justify-between items-center mb-3 text-xs">
-                        <div className="flex gap-3 items-center text-gray-500">
-                          <div className="flex gap-1 items-center">
+                      {/* Added timestamp display */}
+                      {service.timestamp && (
+                        <p className="mb-3 text-xs text-gray-400">
+                          Added: {formatDate(service.timestamp)}
+                        </p>
+                      )}
+
+                      <p className="mb-4 text-sm text-gray-600 line-clamp-2 leading-relaxed">
+                        {service.description}
+                      </p>
+
+                      <div className="flex justify-between items-center mb-4 pt-4 border-t border-gray-100">
+                        <div className="flex gap-4 items-center text-xs text-gray-500">
+                          <div className="flex gap-1 items-center bg-yellow-50 px-2 py-1 rounded-md">
                             <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                            {service.rating}
+                            <span className="font-bold text-black">{service.rating.toFixed(1)}</span>
                           </div>
                           <div className="flex gap-1 items-center">
                             <MapPin className="w-3 h-3" />
                             {service.location.split(',')[0]}
                           </div>
                         </div>
-                        <div className="text-sm font-bold text-black">{service.price}</div>
                       </div>
 
-                      <div className="flex flex-wrap gap-1">
-                        {service.features.slice(0, 2).map((feature: string) => (
+                      <div className="flex flex-wrap gap-2">
+                        {service.features && service.features.slice(0, 2).map((feature: string, idx: number) => (
                           <span
-                            key={feature}
-                            className="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-300 rounded-full"
+                            key={idx}
+                            className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-black/70 bg-gray-100 rounded-md line-clamp-1"
                           >
                             {feature}
                           </span>
                         ))}
-                        {service.features.length > 2 && (
-                          <span className="px-2 py-1 text-xs font-medium text-gray-600 bg-yellow-300 rounded-full">
+                        {service.features && service.features.length > 2 && (
+                          <span className="px-2 py-1 text-[10px] font-bold text-black/50 bg-gray-100 rounded-md">
                             +{service.features.length - 2}
                           </span>
                         )}

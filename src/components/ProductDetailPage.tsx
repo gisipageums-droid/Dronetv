@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Star, Heart, ShoppingCart, Truck, Shield, Award, Plus, Minus, Share2, Plane } from 'lucide-react';
+import { Star, Plane } from 'lucide-react';
 import LoadingScreen from './loadingscreen';
 interface ProductFeature {
   icon: React.ReactNode;
@@ -34,8 +34,7 @@ interface Product {
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+
   const [showZoom, setShowZoom] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [activeTab, setActiveTab] = useState('description');
@@ -151,7 +150,7 @@ const ProductDetailPage = () => {
 
   if (loading) {
     return (
-    <LoadingScreen
+      <LoadingScreen
         logoSrc="images/logo.png"
         loadingText="Loading Companies..."
       />
@@ -192,9 +191,7 @@ const ProductDetailPage = () => {
     setZoomPosition({ x, y });
   };
 
-  const handleQuantityChange = (change: number) => {
-    setQuantity(prev => Math.max(1, prev + change));
-  };
+
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -249,7 +246,7 @@ const ProductDetailPage = () => {
             </div>
           </div>
 
-          <div className="space-y-6">
+          {/* <div className="space-y-6">
             <div>
               <h1 className="mb-4 text-3xl font-black text-black md:text-4xl">{product.name}</h1>
               <div className="flex gap-4 items-center mb-4">
@@ -262,86 +259,8 @@ const ProductDetailPage = () => {
               <p className="text-lg text-black/80">{product.shortDescription}</p>
             </div>
 
-            <div className="p-6 bg-white rounded-2xl shadow-lg">
-              <div className="flex gap-4 items-center mb-4">
-                <span className="text-3xl font-black text-black">₹{product.price}</span>
-                {/* {product.originalPrice > product.price && (
-                  <span className="text-xl text-gray-500 line-through">${product.originalPrice}</span>
-                )} */}
-                {product.discount > 0 && (
-                  <span className="px-2 py-1 text-sm font-bold text-red-800 bg-red-100 rounded-full">Save ${product.originalPrice - product.price}</span>
-                )}
-              </div>
-              <div className="flex gap-2 items-center mb-4 text-green-600">
-                <Shield className="w-4 h-4" />
-                <span className="text-sm font-medium">In Stock - Ready to Ship</span>
-              </div>
 
-              {/* Quantity Section */}
-              <div className="space-y-4">
-                <div className="flex gap-4 items-center">
-                  <span className="font-semibold text-black">Quantity:</span>
-                  <div className="flex items-center rounded-xl border-2 border-gray-300">
-                    <button onClick={() => handleQuantityChange(-1)} className="p-2 hover:bg-gray-100">
-                      <Minus className="w-4 h-4" />
-                    </button>
-                    <span className="px-4 py-2 font-semibold">{quantity}</span>
-                    <button onClick={() => handleQuantityChange(1)} className="p-2 hover:bg-gray-100">
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <button className="flex-1 px-6 py-4 text-lg font-bold text-white bg-black rounded-xl hover:bg-gray-800">
-                    <ShoppingCart className="w-5 h-5" />
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={() => setIsWishlisted(!isWishlisted)}
-                    className={`px-4 py-4 rounded-xl border-2 transition-all ${isWishlisted ? 'text-red-600 bg-red-50 border-red-300' : 'text-gray-600 bg-white border-gray-300'}`}
-                  >
-                    <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-current' : ''}`} />
-                  </button>
-                  <button className="px-4 py-4 text-gray-600 rounded-xl border-2 border-gray-300">
-                    <Share2 className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Key Features */}
-            <div className="p-6 bg-white rounded-2xl shadow-lg">
-              <h3 className="mb-4 text-xl font-bold text-black">Key Features</h3>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {product.features.map((feature, index) => (
-                  <div key={index} className="flex gap-3 items-center p-3 bg-yellow-50 rounded-xl">
-                    {feature.icon}
-                    <span className="text-sm font-medium text-black">{feature.text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Shipping Info */}
-            <div className="p-6 bg-white rounded-2xl shadow-lg">
-              <h3 className="mb-4 text-xl font-bold text-black">Shipping & Returns</h3>
-              <div className="space-y-3">
-                <div className="flex gap-3 items-center">
-                  <Truck className="w-5 h-5 text-green-600" />
-                  <span className="text-black">{product.shipping.free}</span>
-                </div>
-                <div className="flex gap-3 items-center">
-                  <Shield className="w-5 h-5 text-blue-600" />
-                  <span className="text-black">{product.warranty}</span>
-                </div>
-                <div className="flex gap-3 items-center">
-                  <Award className="w-5 h-5 text-yellow-600" />
-                  <span className="text-black">30-day return policy</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Product Information Tabs */}
