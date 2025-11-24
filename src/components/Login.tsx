@@ -388,7 +388,7 @@ export default function Login() {
                 </button>
 
                 {/* Google Sign-In Button */}
-                <div className="flex flex-col items-center mt-4">
+                {/* <div className="flex flex-col items-center mt-4">
                   <div className="relative flex justify-center w-full">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-gray-300"></div>
@@ -409,7 +409,7 @@ export default function Login() {
                       />
                     </GoogleOAuthProvider>
                   </div>
-                </div>
+                </div> */}
               </form>
               <div className="mt-4">
                 <p className="text-sm text-gray-600">
