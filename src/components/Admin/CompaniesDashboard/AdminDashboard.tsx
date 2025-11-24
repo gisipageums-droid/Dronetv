@@ -1,9 +1,25 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Search, MapPin, ChevronDown, ArrowRight, Building2, Menu, X, Eye, Key, CheckCircle, XCircle, Trash2, Clock, AlertCircle, Edit } from "lucide-react";
+import {
+  Search,
+  MapPin,
+  ChevronDown,
+  ArrowRight,
+  Building2,
+  Menu,
+  X,
+  Eye,
+  Key,
+  CheckCircle,
+  XCircle,
+  Trash2,
+  Clock,
+  AlertCircle,
+  Edit,
+} from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from "motion/react";
 // -------------------- Types --------------------
 interface Company {
   publishedId: string;
@@ -114,7 +130,7 @@ const SORT_OPTIONS = [
   "Sort by Location",
   "Sort by Sector",
 ] as const;
-type SortOption = typeof SORT_OPTIONS[number];
+type SortOption = (typeof SORT_OPTIONS)[number];
 
 // -------------------- Small Hooks --------------------
 function useDebounce<T>(value: T, delay = 300) {
@@ -172,7 +188,12 @@ const Header: React.FC = () => {
 };
 
 // -------------------- Dropdown --------------------
-const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, options, placeholder }) => {
+const MinimalisticDropdown: React.FC<DropdownProps> = ({
+  value,
+  onChange,
+  options,
+  placeholder,
+}) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
@@ -183,14 +204,21 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className={value === options[0] ? "text-gray-500" : "text-gray-900"}>
+        <span
+          className={value === options[0] ? "text-gray-500" : "text-gray-900"}
+        >
           {value || options[0] || placeholder}
         </span>
-        <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
+        />
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-sm" role="listbox">
+        <div
+          className="absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-sm"
+          role="listbox"
+        >
           {options.map((option: string, idx: number) => (
             <button
               key={idx}
@@ -198,8 +226,11 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option ? "bg-gray-50 text-gray-900 font-medium" : "text-gray-700 hover:bg-gray-50"
-                }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                value === option
+                  ? "bg-gray-50 text-gray-900 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
               role="option"
               aria-selected={value === option}
             >
@@ -224,17 +255,27 @@ const Sidebar: React.FC<SidebarProps> = ({
   isMobileSidebarOpen,
   onCloseMobileSidebar,
 }) => {
-  const sortOptions: string[] = ["Sort by Date", ...SORT_OPTIONS.filter((s) => s !== "Sort by Date")];
+  const sortOptions: string[] = [
+    "Sort by Date",
+    ...SORT_OPTIONS.filter((s) => s !== "Sort by Date"),
+  ];
 
   return (
     <div
-      className={`bg-blue-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 ${isMobileSidebarOpen ? "overflow-y-auto fixed inset-0 z-50 w-full" : "hidden md:block md:w-80"
-        }`}
+      className={`bg-blue-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 ${
+        isMobileSidebarOpen
+          ? "overflow-y-auto fixed inset-0 z-50 w-full"
+          : "hidden md:block md:w-80"
+      }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
           <h2 className="text-xl font-bold">Filters</h2>
-          <button onClick={onCloseMobileSidebar} className="p-2" aria-label="Close filters">
+          <button
+            onClick={onCloseMobileSidebar}
+            className="p-2"
+            aria-label="Close filters"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -242,14 +283,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <div className="space-y-6 md:space-y-8">
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">Search</label>
+          <label className="block text-sm font-medium text-gray-900">
+            Search
+          </label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 w-4 h-4 text-gray-400 transform -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search companies..."
               value={searchTerm}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onSearchChange(e.target.value)
+              }
               className="py-3 pr-4 pl-10 w-full text-sm bg-gray-50 rounded-lg border border-gray-200 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300"
               aria-label="Search companies"
             />
@@ -262,8 +307,16 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div> */}
 
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">Sort by</label>
-          <MinimalisticDropdown key={`sort-${sortBy}`} value={sortBy} onChange={onSortChange} options={sortOptions} placeholder="Sort options" />
+          <label className="block text-sm font-medium text-gray-900">
+            Sort by
+          </label>
+          <MinimalisticDropdown
+            key={`sort-${sortBy}`}
+            value={sortBy}
+            onChange={onSortChange}
+            options={sortOptions}
+            placeholder="Sort options"
+          />
         </div>
 
         <button
@@ -279,20 +332,25 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         <div className="border-t border-gray-100"></div>
         <div className="flex justify-between gap-2 flex-col">
-
-        <motion.button
-          whileTap={{ scale: [0.9, 1] }}
-          className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200">
-          <Link to={'/admin/professional'} >Professionals </Link>
-
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: [0.9, 1] }}
-          className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200">
-          <Link to={'/admin/event/dashboard'} >Events </Link>
-
-        </motion.button>
-            </div>
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+          >
+            <Link to={"/admin/professional/dashboard"}>Professionals </Link>
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+          >
+            <Link to={"/admin/event/dashboard"}>Events </Link>
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+          >
+            <Link to={"/admin/plans"}>Admin Plans </Link>
+          </motion.button>
+        </div>
       </div>
     </div>
   );
@@ -318,14 +376,23 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
     if (!dateString) return "Date not available";
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
     } catch {
       return "Date not available";
     }
   };
 
   // Determine which date to show when API provides no publishedDate
-  const displayDateValue = company.publishedDate || company.lastModified || company.lastActivity || company.createdAt || "";
+  const displayDateValue =
+    company.publishedDate ||
+    company.lastModified ||
+    company.lastActivity ||
+    company.createdAt ||
+    "";
   const displayDateLabel = company.publishedDate
     ? "Published"
     : company.lastModified
@@ -337,9 +404,16 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
     : "Date";
 
   const getStatusBadge = (reviewStatus?: string) => {
-    if (reviewStatus === "active") return { bg: "bg-yellow-100", text: "text-yellow-800", label: "Needs Review" };
-    if (reviewStatus === "rejected") return { bg: "bg-red-100", text: "text-red-800", label: "Rejected" };
-    if (reviewStatus === "approved") return { bg: "bg-green-100", text: "text-green-800", label: "Approved" };
+    if (reviewStatus === "active")
+      return {
+        bg: "bg-yellow-100",
+        text: "text-yellow-800",
+        label: "Needs Review",
+      };
+    if (reviewStatus === "rejected")
+      return { bg: "bg-red-100", text: "text-red-800", label: "Rejected" };
+    if (reviewStatus === "approved")
+      return { bg: "bg-green-100", text: "text-green-800", label: "Approved" };
     return { bg: "bg-gray-50", text: "text-gray-700", label: "Unknown" };
   };
 
@@ -374,7 +448,9 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
 
               <div className="flex items-center mt-1 text-gray-600 text-xs sm:text-sm">
                 <MapPin className="mr-1 w-3 h-3 flex-shrink-0" />
-                <span className="">{company.location || "Location not specified"}</span>
+                <span className="">
+                  {company.location || "Location not specified"}
+                </span>
               </div>
             </div>
           </div>
@@ -394,7 +470,10 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
         {/* Sectors */}
         <div className="mb-4 md:mb-6">
           <div className="flex flex-wrap gap-1 sm:gap-2">
-            {(company.sectors && company.sectors.length > 0 ? company.sectors : ["General"]).map((sector: string, index: number) => (
+            {(company.sectors && company.sectors.length > 0
+              ? company.sectors
+              : ["General"]
+            ).map((sector: string, index: number) => (
               <span
                 key={index}
                 className="px-2 py-1 text-xs sm:text-sm font-medium text-blue-800 bg-blue-100 rounded-full"
@@ -409,8 +488,12 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-3 items-center">
             <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg">
-              <span className="text-xs sm:text-sm font-bold text-purple-600">{formatDate(displayDateValue)}</span>
-              <span className="hidden sm:inline text-xs text-gray-600">{displayDateLabel}</span>
+              <span className="text-xs sm:text-sm font-bold text-purple-600">
+                {formatDate(displayDateValue)}
+              </span>
+              <span className="hidden sm:inline text-xs text-gray-600">
+                {displayDateLabel}
+              </span>
             </div>
           </div>
 
@@ -497,14 +580,12 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
         {/* Footer */}
         <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs text-gray-400 gap-1 sm:gap-0">
-            <span className="">ID: {company.publishedId || "No ID"}</span>
-            <span>v{company.version}</span>
+            {/* <span className="">ID: {company.publishedId || "No ID"}</span> */}
+            {/* <span>v{company.version}</span> */}
           </div>
         </div>
       </div>
     </div>
-
-
   );
 };
 
@@ -521,7 +602,10 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
     <div className="mb-4 text-6xl">⚠</div>
     <p className="mb-2 text-xl text-red-600">Error loading companies</p>
     <p className="mb-4 text-gray-500">{error}</p>
-    <button onClick={onRetry} className="px-6 py-3 font-semibold text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600">
+    <button
+      onClick={onRetry}
+      className="px-6 py-3 font-semibold text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600"
+    >
       Try Again
     </button>
   </div>
@@ -586,7 +670,8 @@ const apiService = {
         }
       );
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -607,7 +692,8 @@ const apiService = {
         }
       );
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -616,7 +702,10 @@ const apiService = {
     }
   },
 
-  async fetchPublishedDetails(publishedId: string, userId: string): Promise<any> {
+  async fetchPublishedDetails(
+    publishedId: string,
+    userId: string
+  ): Promise<any> {
     try {
       const response = await fetch(
         `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
@@ -626,9 +715,10 @@ const apiService = {
         }
       );
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      console.log("data", data)
+      console.log("data", data);
       return data;
     } catch (error) {
       console.error("Error fetching published details:", error);
@@ -638,16 +728,20 @@ const apiService = {
 
   async deleteCompany(publishedId: string): Promise<any> {
     try {
-      const response = await fetch("https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-        },
-        body: JSON.stringify({ publishedId, action: "delete" }),
-      });
+      const response = await fetch(
+        "https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
+          body: JSON.stringify({ publishedId, action: "delete" }),
+        }
+      );
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -667,7 +761,16 @@ const RecentCompaniesSection: React.FC<{
   onDelete: (publishedId: string) => void;
   onEdit: (publishedId: string, templateSelection: string) => void;
   disabled?: boolean;
-}> = ({ recentCompanies, onCredentials, onPreview, onApprove, onReject, onDelete, onEdit, disabled }) => {
+}> = ({
+  recentCompanies,
+  onCredentials,
+  onPreview,
+  onApprove,
+  onReject,
+  onDelete,
+  onEdit,
+  disabled,
+}) => {
   if (recentCompanies.length === 0) return null;
 
   return (
@@ -726,9 +829,16 @@ const AdminDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(12);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
-  const [credentialsModal, setCredentialsModal] = useState<{ isOpen: boolean; data: any }>({ isOpen: false, data: null });
-  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; publishedId: string | null }>({
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
+    useState<boolean>(false);
+  const [credentialsModal, setCredentialsModal] = useState<{
+    isOpen: boolean;
+    data: any;
+  }>({ isOpen: false, data: null });
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    publishedId: string | null;
+  }>({
     isOpen: false,
     publishedId: null,
   });
@@ -751,7 +861,11 @@ const AdminDashboard: React.FC = () => {
 
   // Prefer publishedDate, then lastModified, lastActivity, and finally createdAt
   const getPrimaryDate = (company: Company) =>
-    company.publishedDate || company.lastModified || company.lastActivity || company.createdAt || "";
+    company.publishedDate ||
+    company.lastModified ||
+    company.lastActivity ||
+    company.createdAt ||
+    "";
 
   // Fetch Companies (with AbortController)
   const fetchCompanies = async (signal?: AbortSignal) => {
@@ -773,7 +887,9 @@ const AdminDashboard: React.FC = () => {
     } catch (err: any) {
       if (err?.name === "AbortError") return;
       console.error("Error in fetchCompanies:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch companies");
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch companies"
+      );
     } finally {
       setIsFetching(false);
     }
@@ -806,9 +922,11 @@ const AdminDashboard: React.FC = () => {
     return companies.filter((company) => {
       const matchesSearch =
         !q ||
-        (company.companyName && company.companyName.toLowerCase().includes(q)) ||
+        (company.companyName &&
+          company.companyName.toLowerCase().includes(q)) ||
         (company.location && company.location.toLowerCase().includes(q)) ||
-        (company.sectors && company.sectors.some((sector) => sector.toLowerCase().includes(q)));
+        (company.sectors &&
+          company.sectors.some((sector) => sector.toLowerCase().includes(q)));
 
       const matchesSector =
         industryFilter === "All Sectors" ||
@@ -829,7 +947,9 @@ const AdminDashboard: React.FC = () => {
     const arr = [...filteredCompanies];
     switch (sortBy) {
       case "Sort by Location":
-        return arr.sort((a, b) => (a.location || "").localeCompare(b.location || ""));
+        return arr.sort((a, b) =>
+          (a.location || "").localeCompare(b.location || "")
+        );
       case "Sort by Date":
         // primary date descending (newest first)
         return arr.sort(
@@ -838,7 +958,9 @@ const AdminDashboard: React.FC = () => {
             new Date(getPrimaryDate(a) || 0).getTime()
         );
       case "Sort by Sector":
-        return arr.sort((a, b) => (a.sectors?.[0] || "").localeCompare(b.sectors?.[0] || ""));
+        return arr.sort((a, b) =>
+          (a.sectors?.[0] || "").localeCompare(b.sectors?.[0] || "")
+        );
       case "Sort by Latest":
       default:
         return arr.sort((a, b) => getMostRecentDate(b) - getMostRecentDate(a));
@@ -852,20 +974,23 @@ const AdminDashboard: React.FC = () => {
     return sortedCompanies.slice(startIndex, endIndex);
   }, [sortedCompanies, currentPage, itemsPerPage]);
 
-  const totalPages = Math.max(1, Math.ceil(sortedCompanies.length / itemsPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedCompanies.length / itemsPerPage)
+  );
 
   // -------------------- Pagination Handlers --------------------
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setCurrentPage((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setCurrentPage((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -896,7 +1021,10 @@ const AdminDashboard: React.FC = () => {
         return;
       }
       setIsMutating(true);
-      const details = await apiService.fetchPublishedDetails(publishedId, company.userId);
+      const details = await apiService.fetchPublishedDetails(
+        publishedId,
+        company.userId
+      );
       if (details.templateSelection === "template-1") {
         navigate(`/admin/companies/preview/1/${publishedId}/${company.userId}`);
       } else if (details.templateSelection === "template-2") {
@@ -944,7 +1072,13 @@ const AdminDashboard: React.FC = () => {
     try {
       setIsMutating(true);
       // optimistic update
-      setCompanies((prev) => prev.map((c) => (c.publishedId === publishedId ? { ...c, isApproved: true, reviewStatus: "approved" } : c)));
+      setCompanies((prev) =>
+        prev.map((c) =>
+          c.publishedId === publishedId
+            ? { ...c, isApproved: true, reviewStatus: "approved" }
+            : c
+        )
+      );
       const result = await apiService.approveCompany(publishedId, "approve");
       if (result?.status === "approved" || result?.status === "success") {
         toast.success("Company approved successfully");
@@ -966,7 +1100,13 @@ const AdminDashboard: React.FC = () => {
     if (!window.confirm("Reject this company?")) return;
     try {
       setIsMutating(true);
-      setCompanies((prev) => prev.map((c) => (c.publishedId === publishedId ? { ...c, isApproved: false, reviewStatus: "rejected" } : c)));
+      setCompanies((prev) =>
+        prev.map((c) =>
+          c.publishedId === publishedId
+            ? { ...c, isApproved: false, reviewStatus: "rejected" }
+            : c
+        )
+      );
       const result = await apiService.rejectCompany(publishedId, "reject");
       if (result?.status === "rejected" || result?.status === "success") {
         toast.success("Company rejected successfully");
@@ -1042,7 +1182,9 @@ const AdminDashboard: React.FC = () => {
                   </h3>
                 </div>
                 <button
-                  onClick={() => setDeleteModal({ isOpen: false, publishedId: null })}
+                  onClick={() =>
+                    setDeleteModal({ isOpen: false, publishedId: null })
+                  }
                   className="p-1 rounded-full hover:bg-gray-100 transition-colors"
                 >
                   <X size={20} className="text-gray-500" />
@@ -1056,7 +1198,8 @@ const AdminDashboard: React.FC = () => {
                     className="text-red-600 mt-0.5 flex-shrink-0"
                   />
                   <p className="text-sm text-red-800">
-                    This action cannot be undone. All data for this company will be permanently deleted.
+                    This action cannot be undone. All data for this company will
+                    be permanently deleted.
                   </p>
                 </div>
                 <p className="text-gray-600">
@@ -1068,7 +1211,9 @@ const AdminDashboard: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ scale: 1.1 }}
-                  onClick={() => setDeleteModal({ isOpen: false, publishedId: null })}
+                  onClick={() =>
+                    setDeleteModal({ isOpen: false, publishedId: null })
+                  }
                   className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
                   disabled={isMutating}
                 >
@@ -1139,7 +1284,8 @@ const AdminDashboard: React.FC = () => {
               </h2>
             </div>
             <span className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full">
-              {sortedCompanies.length} {sortedCompanies.length === 1 ? "company" : "companies"}
+              {sortedCompanies.length}{" "}
+              {sortedCompanies.length === 1 ? "company" : "companies"}
               {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
             </span>
           </div>
@@ -1152,7 +1298,9 @@ const AdminDashboard: React.FC = () => {
             <div className="py-16 text-center">
               <div className="mb-4 text-6xl">🏢</div>
               <p className="mb-2 text-xl text-gray-600">No companies found</p>
-              <p className="text-gray-500">Try adjusting your search or filters</p>
+              <p className="text-gray-500">
+                Try adjusting your search or filters
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 md:gap-6">

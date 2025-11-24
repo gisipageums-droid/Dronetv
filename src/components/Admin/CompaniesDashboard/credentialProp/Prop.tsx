@@ -68,9 +68,9 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
       console.log("🔍 Modal Data:", data.formData.rawData);
     }
   }, [data]);
-
+ 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999999] p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">

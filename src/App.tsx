@@ -227,7 +227,7 @@ const AppContent = () => {
             element={<EditTemp_1 />}
           />
           <Route path="/user/professional" element={<UserProfessional />} />
-          <Route path="/admin/professional" element={<AdminProfessional />} />
+          <Route path="/admin/professional/dashboard" element={<AdminProfessional />} />
           <Route
             path="/user/professionals/preview/2/:professionalId/:userId"
             element={<FinaleProfessionalTemp2 />}
