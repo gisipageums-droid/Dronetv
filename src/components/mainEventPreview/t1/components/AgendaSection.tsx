@@ -72,7 +72,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData }) => {
             </span>
           </h2>
           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto text-justify">
             {agendaContent.subtitle}
           </p>
         </div>
@@ -109,7 +109,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData }) => {
                 {currentTheme.title}
               </h3>
               {currentTheme.note && (
-                <p className="text-sm text-gray-500 font-medium mb-4">{currentTheme.note}</p>
+                <p className="text-sm text-gray-500 font-medium mb-4 text-justify">{currentTheme.note}</p>
               )}
               <ul className="text-left list-disc list-inside space-y-3 text-gray-700 text-base">
                 {currentTheme.bullets.map((point, idx) => (

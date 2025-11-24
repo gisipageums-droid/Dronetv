@@ -91,7 +91,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData }) => {
             {galleryContent.title} <span className="text-[#FF0000]">{galleryContent.titleHighlight}</span>
           </h2>
           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto text-justify">
             {galleryContent.subtitle}
           </p>
         </div>

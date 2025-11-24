@@ -150,7 +150,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
   };
 
   return (
-    <section id="about" className="py-20 bg-white">
+    <section id="about" className="py-20 bg-white text-justify">
       <div className="relative container max-w-7xl mx-auto px-4">
         {/* Edit / Save / Cancel */}
         <div className="absolute top-0 right-2 z-30 flex gap-3 items-center">
@@ -233,7 +233,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
               </div>
             </div>
           ) : (
-            <p className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed">
+            <p className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed text-justify">
               {aboutContent.subText}
             </p>
           )}
@@ -326,6 +326,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                     {aboutContent.zonesTitle.length}/50
                   </div>
                 </div>
+
                 <div>
                   <input
                     type="text"
@@ -339,7 +340,8 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                   </div>
                 </div>
               </div>
-              <div className="max-w-3xl mx-auto">
+
+              <div className="max-w-3xl mx-auto text-justify">
                 <textarea
                   value={aboutContent.zonesSubtitle}
                   onChange={(e) => setAboutContent({ ...aboutContent, zonesSubtitle: e.target.value })}
@@ -347,7 +349,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                   className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
                   rows={2}
                 />
-                <div className="text-sm text-gray-500 text-right mt-1">
+                <div className="text-sm text-gray-600 mt-1">
                   {aboutContent.zonesSubtitle.length}/200
                 </div>
               </div>
@@ -357,7 +359,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
               <h3 className="text-3xl font-bold text-black mb-4">
                 <span className="text-[#FFD400]">{aboutContent.zonesTitle}</span> {aboutContent.zonesTitleHighlight}
               </h3>
-              <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+              <p className="text-gray-600 text-lg max-w-3xl mx-auto text-justify">
                 {aboutContent.zonesSubtitle}
               </p>
             </>

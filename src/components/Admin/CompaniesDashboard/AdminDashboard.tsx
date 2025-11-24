@@ -95,29 +95,6 @@ interface CompanyCardProps {
   disabled?: boolean;
 }
 
-interface MainContentProps {
-  companies: Company[];
-  recentCompanies: Company[];
-  currentPage: number;
-  totalPages: number;
-  loading: boolean;
-  error: string | null;
-  onRetry: () => void;
-  totalCount: number;
-  hasMore: boolean;
-  onOpenMobileSidebar: () => void;
-  onCredentials: (publishedId: string) => void;
-  onPreview: (publishedId: string) => void;
-  onApprove: (publishedId: string) => void;
-  onReject: (publishedId: string) => void;
-  onEdit: (publishedId: string, templateSelection: string) => void;
-  searchTerm: string;
-  industryFilter: string;
-  sortBy: string;
-  onClearFilters: () => void;
-  onDelete: (publishedId: string) => void;
-}
-
 interface ErrorMessageProps {
   error: string;
   onRetry: () => void;
@@ -130,7 +107,6 @@ const SORT_OPTIONS = [
   "Sort by Location",
   "Sort by Sector",
 ] as const;
-type SortOption = (typeof SORT_OPTIONS)[number];
 
 // -------------------- Small Hooks --------------------
 function useDebounce<T>(value: T, delay = 300) {
@@ -144,44 +120,31 @@ function useDebounce<T>(value: T, delay = 300) {
 
 // -------------------- Header --------------------
 const Header: React.FC = () => {
-  const navigate = useNavigate();
   return (
-    <div className="h-[40vh] md:h-[60vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6">
-      <div className="relative w-full max-w-3xl text-center">
-        <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full border border-blue-200 opacity-40 md:-top-20 md:-left-20 md:w-40 md:h-40"></div>
-        <div className="absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-blue-200 opacity-30 rounded-2xl"></div>
+    <div className="relative h-[40vh] md:h-[60vh] bg-amber-50 flex items-center justify-center px-4 sm:px-6 overflow-hidden">
+      {/* Geometric Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+      </div>
 
-        <div className="relative z-10 mt-[30px]">
-          <div className="flex gap-2 justify-center items-center mb-4 md:gap-4 md:mb-8">
-            <div className="w-2 h-2 bg-blue-400 rounded-full md:w-3 md:h-3"></div>
-            <div className="w-4 h-4 border-2 border-blue-400 md:w-6 md:h-6"></div>
-            <div className="w-3 h-3 bg-blue-600 rotate-45 md:w-4 md:h-4"></div>
-          </div>
-
-          <h1 className="mb-4 text-3xl font-light text-blue-900 md:text-5xl md:mb-6">
-            Admin Dashboard
-            <span className="block mt-1 text-xl font-extralight text-blue-600 md:text-3xl md:mt-2">
-              Company Management
-            </span>
-          </h1>
-
-          <p className="mx-auto mb-6 max-w-xl text-base font-light text-blue-700 md:text-lg md:mb-10">
-            Review and manage all company listings, credentials, and approvals.
-          </p>
-
-          {/* <div className="flex flex-col gap-4 justify-center items-center sm:flex-row">
-            <button
-              onClick={() => navigate("/admin/analytics")}
-              className="px-6 py-3 w-full text-sm font-semibold text-[black] bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg shadow-lg transition-all duration-300 transform md:px-8 md:py-4 hover:from-blue-500 hover:to-blue-600 hover:shadow-xl hover:-translate-y-1 sm:w-auto md:text-base"
-            >
-              Analytics
-            </button>
-            <div className="hidden w-px h-8 bg-blue-300 md:h-12 sm:block"></div>
-            <button className="mt-2 text-sm text-blue-700 transition-colors duration-300 hover:text-blue-900 md:text-base sm:mt-0">
-              Export Data
-            </button>
-          </div> */}
+      <div className="relative z-10 mt-[30px] text-center">
+        <div className="flex gap-2 justify-center items-center mb-4 md:gap-4 md:mb-8">
+          <div className="w-2 h-2 bg-amber-400 rounded-full md:w-3 md:h-3"></div>
+          <div className="w-4 h-4 border-2 border-amber-400 md:w-6 md:h-6"></div>
+          <div className="w-3 h-3 bg-amber-600 rotate-45 md:w-4 md:h-4"></div>
         </div>
+
+        <h1 className="mb-4 text-3xl font-light text-yellow-900 md:text-5xl md:mb-6">
+          Admin Dashboard
+          <span className="block mt-1 text-xl font-extralight text-amber-600 md:text-3xl md:mt-2">
+            Company Management
+          </span>
+        </h1>
+
+        <p className="mx-auto mb-6 max-w-xl text-base font-light text-yellow-800/80 md:text-lg md:mb-10">
+          Review and manage all company listings, credentials, and approvals.
+        </p>
       </div>
     </div>
   );
@@ -247,11 +210,8 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
 const Sidebar: React.FC<SidebarProps> = ({
   searchTerm,
   onSearchChange,
-  industryFilter,
-  onIndustryChange,
   sortBy,
   onSortChange,
-  industries,
   isMobileSidebarOpen,
   onCloseMobileSidebar,
 }) => {
@@ -262,18 +222,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className={`bg-blue-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 ${
+      className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
+      ${
         isMobileSidebarOpen
-          ? "overflow-y-auto fixed inset-0 z-50 w-full"
+          ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
       }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-xl font-bold">Filters</h2>
+          <h2 className="text-xl font-bold text-yellow-900">Filters</h2>
           <button
             onClick={onCloseMobileSidebar}
-            className="p-2"
+            className="p-2 text-yellow-800"
             aria-label="Close filters"
           >
             <X className="w-5 h-5" />
@@ -282,12 +243,13 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <div className="space-y-6 md:space-y-8">
+        {/* Search Section */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">
-            Search
+          <label className="text-sm font-medium text-yellow-900 block">
+            Search Companies
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 w-4 h-4 text-gray-400 transform -translate-y-1/2" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-yellow-600" />
             <input
               type="text"
               placeholder="Search companies..."
@@ -295,19 +257,15 @@ const Sidebar: React.FC<SidebarProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onSearchChange(e.target.value)
               }
-              className="py-3 pr-4 pl-10 w-full text-sm bg-gray-50 rounded-lg border border-gray-200 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300"
+              className="w-full pl-10 pr-4 py-3 text-sm border border-yellow-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white/50 transition-colors placeholder-yellow-700/50 text-yellow-900"
               aria-label="Search companies"
             />
           </div>
         </div>
 
-        {/* <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">Sector</label>
-          <MinimalisticDropdown value={industryFilter} onChange={onIndustryChange} options={industries} placeholder="Select sector" />
-        </div> */}
-
+        {/* Sort Filter */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">
+          <label className="text-sm font-medium text-yellow-900 block">
             Sort by
           </label>
           <MinimalisticDropdown
@@ -319,36 +277,48 @@ const Sidebar: React.FC<SidebarProps> = ({
           />
         </div>
 
+        {/* Clear Filters */}
         <button
           onClick={() => {
             onSearchChange("");
-            onIndustryChange("All Sectors");
             onSortChange("Sort by Date");
           }}
-          className="text-sm text-gray-500 underline transition-colors hover:text-gray-700 underline-offset-2"
+          className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
         >
           Clear all filters
         </button>
 
-        <div className="border-t border-gray-100"></div>
-        <div className="flex justify-between gap-2 flex-col">
+        {/* Divider */}
+        <div className="border-t border-yellow-200/50"></div>
+
+        {/* Navigation Links */}
+        <div className="flex gap-2 flex-col mt-6">
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
-            <Link to={"/admin/professional/dashboard"}>Professionals </Link>
+            <Link
+              to={"/admin/professional/dashboard"}
+              className="w-full text-left"
+            >
+              Professionals{" "}
+            </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
-            <Link to={"/admin/event/dashboard"}>Events </Link>
+            <Link to={"/admin/event/dashboard"} className="w-full text-left">
+              Events{" "}
+            </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
-            <Link to={"/admin/plans"}>Admin Plans </Link>
+            <Link to={"/admin/plans"} className="w-full text-left">
+              Admin Plans{" "}
+            </Link>
           </motion.button>
         </div>
       </div>
@@ -360,7 +330,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
   company,
   onCredentials,
-  onPreview,
   onApprove,
   onReject,
   onDelete,
@@ -420,17 +389,17 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
   const statusStyle = getStatusBadge(company.reviewStatus);
 
   return (
-    <div className="overflow-hidden w-full h-auto rounded-2xl border-l-4 sm:border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group">
+    <div className="overflow-hidden w-full h-auto rounded-2xl border-l-4 sm:border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group border-gradient-to-b from-amber-500 to-yellow-600 bg-white">
       <div className="p-4 sm:p-5 md:p-6 lg:p-8">
         {/* Header: stacks on small screens, row on >=sm */}
         <div className="grid grid-cols-1 sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 gap-3 sm:gap-0">
           <div className="flex gap-3 items-start sm:items-center min-w-0">
             {/* Logo */}
-            <div className="flex flex-shrink-0 overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md sm:w-14 sm:h-14 md:w-16 md:h-16">
+            <div className="flex flex-shrink-0 overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md sm:w-14 sm:h-14 md:w-16 md:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
               <img
                 src={company.previewImage || placeholderImg}
                 alt={`${company.companyName || "Company"} logo`}
-                className="object-contain w-full h-full"
+                className="object-contain w-full h-full transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
                 onError={(e) => {
                   const img = e.currentTarget as HTMLImageElement;
                   if (img.src !== placeholderImg) img.src = placeholderImg;
@@ -476,7 +445,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
             ).map((sector: string, index: number) => (
               <span
                 key={index}
-                className="px-2 py-1 text-xs sm:text-sm font-medium text-blue-800 bg-blue-100 rounded-full"
+                className="px-2 py-1 text-xs sm:text-sm font-medium text-amber-800 bg-amber-100 rounded-full"
               >
                 {sector}
               </span>
@@ -488,7 +457,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-3 items-center">
             <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg">
-              <span className="text-xs sm:text-sm font-bold text-purple-600">
+              <span className="text-xs sm:text-sm font-bold text-amber-600">
                 {formatDate(displayDateValue)}
               </span>
               <span className="hidden sm:inline text-xs text-gray-600">
@@ -521,7 +490,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onEdit(company.publishedId, company.templateSelection);
               }}
               aria-label={`Edit ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 disabled:opacity-50 disabled:pointer-events-none"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-amber-700 bg-amber-100 rounded-lg transition-colors hover:bg-amber-200 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
               aria-disabled={disabled}
             >
@@ -536,8 +505,8 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onApprove(company.publishedId);
               }}
               aria-label={`Approve ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 disabled:opacity-50 disabled:pointer-events-none"
-              disabled={disabled}
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={disabled|| company.reviewStatus === "approved"}
               aria-disabled={disabled}
             >
               <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -551,8 +520,8 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onReject(company.publishedId);
               }}
               aria-label={`Reject ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 disabled:opacity-50 disabled:pointer-events-none"
-              disabled={disabled}
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={disabled|| company.reviewStatus === "rejected"}
               aria-disabled={disabled}
             >
               <XCircle className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -567,7 +536,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onDelete(company.publishedId);
               }}
               aria-label={`Delete ${company.companyName}`}
-              className="flex col-span-1 sm:col-span-2 lg:col-span-3 gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 disabled:opacity-50 disabled:pointer-events-none"
+              className="flex col-span-1 sm:col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
               aria-disabled={disabled}
             >
@@ -777,12 +746,12 @@ const RecentCompaniesSection: React.FC<{
     <div className="mb-8">
       <div className="flex gap-3 items-center mb-6">
         <div className="flex gap-2 items-center">
-          <Clock className="w-6 h-6 text-blue-600" />
-          <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+          <Clock className="w-6 h-6 text-yellow-600" />
+          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
             Recent Companies
           </h2>
         </div>
-        <span className="px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-full">
+        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
           Last 7 days
         </span>
       </div>
@@ -804,7 +773,7 @@ const RecentCompaniesSection: React.FC<{
         ))}
       </div>
 
-      <div className="mt-6 border-t border-gray-200"></div>
+      <div className="mt-6 border-t border-yellow-200/50"></div>
     </div>
   );
 };
@@ -816,7 +785,6 @@ const AdminDashboard: React.FC = () => {
   // data state
   const [companies, setCompanies] = useState<Company[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [hasMore, setHasMore] = useState<boolean>(false);
 
   // loading states
   const [isFetching, setIsFetching] = useState<boolean>(true); // initial fetch
@@ -834,7 +802,8 @@ const AdminDashboard: React.FC = () => {
   const [credentialsModal, setCredentialsModal] = useState<{
     isOpen: boolean;
     data: any;
-  }>({ isOpen: false, data: null });
+    company: Company | null;
+  }>({ isOpen: false, data: null, company: null });
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     publishedId: string | null;
@@ -883,7 +852,6 @@ const AdminDashboard: React.FC = () => {
 
       setCompanies(cards);
       setTotalCount(data.totalCount || 0);
-      setHasMore(data.hasTemplates || false);
     } catch (err: any) {
       if (err?.name === "AbortError") return;
       console.error("Error in fetchCompanies:", err);
@@ -1004,7 +972,7 @@ const AdminDashboard: React.FC = () => {
       }
       setIsMutating(true);
       const credentials = await apiService.fetchCompanyCredentials(publishedId);
-      setCredentialsModal({ isOpen: true, data: credentials });
+      setCredentialsModal({ isOpen: true, data: credentials, company });
     } catch (err) {
       console.error("Error fetching company credentials:", err);
       toast.error("Failed to fetch company credentials");
@@ -1153,7 +1121,7 @@ const AdminDashboard: React.FC = () => {
 
   // -------------------- Render --------------------
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-orange-50">
       <Header />
 
       {/* Delete Confirmation Modal */}
@@ -1278,12 +1246,12 @@ const AdminDashboard: React.FC = () => {
           {/* All Companies Section */}
           <div className="flex gap-3 items-center mb-6">
             <div className="flex gap-2 items-center">
-              <Building2 className="w-6 h-6 text-blue-600" />
-              <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+              <Building2 className="w-6 h-6 text-yellow-600" />
+              <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
                 All Companies
               </h2>
             </div>
-            <span className="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-full">
+            <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
               {sortedCompanies.length}{" "}
               {sortedCompanies.length === 1 ? "company" : "companies"}
               {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
@@ -1326,7 +1294,7 @@ const AdminDashboard: React.FC = () => {
             <div className="flex justify-center items-center mt-8">
               <button
                 onClick={handlePrevPage}
-                className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={currentPage <= 1}
               >
                 <ArrowRight className="w-4 h-4 rotate-180" />
@@ -1337,7 +1305,7 @@ const AdminDashboard: React.FC = () => {
               </span>
               <button
                 onClick={handleNextPage}
-                className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={currentPage >= totalPages}
               >
                 Next
@@ -1352,8 +1320,15 @@ const AdminDashboard: React.FC = () => {
       {credentialsModal.isOpen && (
         <CredentialsModal
           isOpen={credentialsModal.isOpen}
-          onClose={() => setCredentialsModal({ isOpen: false, data: null })}
+          onClose={() =>
+            setCredentialsModal({ isOpen: false, data: null, company: null })
+          }
           data={credentialsModal.data}
+          loading={isMutating}
+          onPreview={handlePreview}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          company={credentialsModal.company}
         />
       )}
     </div>

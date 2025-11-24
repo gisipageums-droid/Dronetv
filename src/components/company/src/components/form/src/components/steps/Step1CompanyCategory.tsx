@@ -20,6 +20,60 @@ interface Step1CompanyCategoryProps extends StepProps {
 }
 
 // Custom Date Picker Component
+interface ScrollColumnProps {
+  items: Array<{ value: string; label: string }>;
+  selectedValue: string;
+  onSelect: (value: string) => void;
+  setIsScrolling: (isScrolling: boolean) => void; // Added prop
+}
+
+const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
+  ({ items, selectedValue, onSelect, setIsScrolling }, ref) => {
+    const handleClick = (value: string) => {
+      // Vital Fix: Tell parent we are done scrolling so it can auto-center
+      setIsScrolling(false);
+      onSelect(value);
+    };
+
+    return (
+      <div
+        ref={ref}
+        className="flex-1 h-32 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
+        style={{
+          scrollBehavior: "smooth",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        {/* Top padding */}
+        <div className="h-12"></div>
+
+        {items.map((item) => (
+          <div
+            key={item.value}
+            data-value={item.value}
+            className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
+              ${
+                selectedValue === item.value
+                  ? "text-amber-600 font-bold text-lg scale-105 rounded-lg mx-1"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            onClick={() => handleClick(item.value)}
+          >
+            {item.label}
+          </div>
+        ))}
+
+        {/* Bottom padding */}
+        <div className="h-12"></div>
+      </div>
+    );
+  }
+);
+
+ScrollColumn.displayName = "ScrollColumn";
+
+// --- Main Component ---
+
 const ScrollDatePicker: React.FC<{
   value: string;
   onChange: (date: string) => void;
@@ -31,31 +85,33 @@ const ScrollDatePicker: React.FC<{
       return {
         day: now.getDate().toString().padStart(2, "0"),
         month: (now.getMonth() + 1).toString().padStart(2, "0"),
-        year: now.getFullYear().toString()
+        year: now.getFullYear().toString(),
       };
     }
-    
+
     try {
       const [year, month, day] = dateStr.split("-");
       return {
         day: day || new Date().getDate().toString().padStart(2, "0"),
         month: month || (new Date().getMonth() + 1).toString().padStart(2, "0"),
-        year: year || new Date().getFullYear().toString()
+        year: year || new Date().getFullYear().toString(),
       };
     } catch (error) {
       const now = new Date();
       return {
         day: now.getDate().toString().padStart(2, "0"),
         month: (now.getMonth() + 1).toString().padStart(2, "0"),
-        year: now.getFullYear().toString()
+        year: now.getFullYear().toString(),
       };
     }
   };
 
   const [selectedDate, setSelectedDate] = useState(() => parseDate(value));
   const [isScrolling, setIsScrolling] = useState(false);
-  
-  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+
+  const days = Array.from({ length: 31 }, (_, i) =>
+    (i + 1).toString().padStart(2, "0")
+  );
   const months = [
     { name: "January", value: "01" },
     { name: "February", value: "02" },
@@ -68,63 +124,76 @@ const ScrollDatePicker: React.FC<{
     { name: "September", value: "09" },
     { name: "October", value: "10" },
     { name: "November", value: "11" },
-    { name: "December", value: "12" }
+    { name: "December", value: "12" },
   ];
-  
+
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 100 }, (_, i) => (currentYear - i).toString());
+  const years = Array.from({ length: 100 }, (_, i) =>
+    (currentYear - i).toString()
+  );
 
   const dayRef = useRef<HTMLDivElement>(null);
   const monthRef = useRef<HTMLDivElement>(null);
   const yearRef = useRef<HTMLDivElement>(null);
 
-  const handleDateChange = (type: 'day' | 'month' | 'year', newValue: string) => {
+  const handleDateChange = (
+    type: "day" | "month" | "year",
+    newValue: string
+  ) => {
     const newDate = {
       ...selectedDate,
-      [type]: newValue
+      [type]: newValue,
     };
-    
+
     // Validate the date (especially for February and leap years)
     const day = parseInt(newDate.day);
     const month = parseInt(newDate.month);
     const year = parseInt(newDate.year);
-    
+
     let validatedDay = newDate.day;
-    
+
     // Check if the selected day is valid for the selected month and year
-    if (type !== 'day') {
+    if (type !== "day") {
       const daysInMonth = new Date(year, month, 0).getDate();
       if (day > daysInMonth) {
         validatedDay = daysInMonth.toString().padStart(2, "0");
       }
     }
-    
+
     const finalDate = {
       ...newDate,
-      day: validatedDay
+      day: validatedDay,
     };
-    
+
     setSelectedDate(finalDate);
-    
+
     // Format date as YYYY-MM-DD
     const dateString = `${finalDate.year}-${finalDate.month}-${finalDate.day}`;
     onChange(dateString);
   };
 
-  // Scroll to selected item on mount and when selectedDate changes
+  // --- FIX 2: Dependency Array Logic ---
   useEffect(() => {
     if (isScrolling) return;
 
-    const scrollToSelected = (container: HTMLDivElement | null, selectedValue: string) => {
+    const scrollToSelected = (
+      container: HTMLDivElement | null,
+      selectedValue: string
+    ) => {
       if (!container) return;
-      
+
       setTimeout(() => {
-        const selectedElement = container.querySelector(`[data-value="${selectedValue}"]`);
+        const selectedElement = container.querySelector(
+          `[data-value="${selectedValue}"]`
+        );
         if (selectedElement) {
           const containerHeight = container.clientHeight;
           const elementTop = (selectedElement as HTMLElement).offsetTop;
           const elementHeight = (selectedElement as HTMLElement).clientHeight;
-          container.scrollTop = elementTop - (containerHeight - elementHeight) / 2;
+          container.scrollTo({
+            top: elementTop - (containerHeight - elementHeight) / 2,
+            behavior: "smooth",
+          });
         }
       }, 100);
     };
@@ -132,101 +201,59 @@ const ScrollDatePicker: React.FC<{
     scrollToSelected(dayRef.current, selectedDate.day);
     scrollToSelected(monthRef.current, selectedDate.month);
     scrollToSelected(yearRef.current, selectedDate.year);
-  }, [selectedDate.day, selectedDate.month, selectedDate.year, isScrolling]);
+    
+    // REMOVED 'isScrolling' from this dependency array
+  }, [selectedDate.day, selectedDate.month, selectedDate.year]);
 
   // Update when value prop changes from parent
   useEffect(() => {
     if (value && !isScrolling) {
       const parsed = parseDate(value);
-      setSelectedDate(parsed);
+      // Only update if actually different to prevent loops
+      if (
+        parsed.day !== selectedDate.day ||
+        parsed.month !== selectedDate.month ||
+        parsed.year !== selectedDate.year
+      ) {
+        setSelectedDate(parsed);
+      }
     }
   }, [value, isScrolling]);
 
   // Handle scroll events to prevent reset during user interaction
   useEffect(() => {
     const containers = [dayRef.current, monthRef.current, yearRef.current];
-    
+
     const handleScrollStart = () => {
       setIsScrolling(true);
     };
-    
+
     const handleScrollEnd = () => {
       setTimeout(() => {
         setIsScrolling(false);
       }, 150);
     };
 
-    containers.forEach(container => {
+    containers.forEach((container) => {
       if (container) {
-        container.addEventListener('scroll', handleScrollStart);
-        container.addEventListener('scrollend', handleScrollEnd);
-        container.addEventListener('touchmove', handleScrollStart);
-        container.addEventListener('touchend', handleScrollEnd);
+        container.addEventListener("scroll", handleScrollStart);
+        container.addEventListener("scrollend", handleScrollEnd);
+        container.addEventListener("touchmove", handleScrollStart);
+        container.addEventListener("touchend", handleScrollEnd);
       }
     });
 
     return () => {
-      containers.forEach(container => {
+      containers.forEach((container) => {
         if (container) {
-          container.removeEventListener('scroll', handleScrollStart);
-          container.removeEventListener('scrollend', handleScrollEnd);
-          container.removeEventListener('touchmove', handleScrollStart);
-          container.removeEventListener('touchend', handleScrollEnd);
+          container.removeEventListener("scroll", handleScrollStart);
+          container.removeEventListener("scrollend", handleScrollEnd);
+          container.removeEventListener("touchmove", handleScrollStart);
+          container.removeEventListener("touchend", handleScrollEnd);
         }
       });
     };
   }, []);
-
-  interface ScrollColumnProps {
-    items: Array<{ value: string; label: string }>;
-    selectedValue: string;
-    onSelect: (value: string) => void;
-  }
-
-  const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
-    ({ items, selectedValue, onSelect }, ref) => {
-      const handleClick = (value: string) => {
-        setIsScrolling(true);
-        onSelect(value);
-        // Reset scrolling state after a short delay
-        setTimeout(() => setIsScrolling(false), 100);
-      };
-
-      return (
-        <div 
-          ref={ref}
-          className="flex-1 h-32 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
-          style={{
-            scrollBehavior: 'smooth',
-            WebkitOverflowScrolling: 'touch',
-          }}
-        >
-          {/* Top padding */}
-          <div className="h-12"></div>
-          
-          {items.map((item) => (
-            <div
-              key={item.value}
-              data-value={item.value}
-              className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
-                ${selectedValue === item.value
-                  ? 'text-amber-600 font-bold text-lg scale-105 bg-amber-50 rounded-lg mx-1'
-                  : 'text-gray-500 hover:text-gray-700'
-                }`}
-              onClick={() => handleClick(item.value)}
-            >
-              {item.label}
-            </div>
-          ))}
-          
-          {/* Bottom padding */}
-          <div className="h-12"></div>
-        </div>
-      );
-    }
-  );
-
-  ScrollColumn.displayName = "ScrollColumn";
 
   return (
     <div className="bg-white border border-amber-200 rounded-xl p-4 date-picker-card animate-fade-in-up">
@@ -253,30 +280,39 @@ const ScrollDatePicker: React.FC<{
       <div className="relative">
         {/* Selection Highlight */}
         <div className="absolute left-0 right-0 top-[6rem] transform -translate-y-1/2 h-12 bg-amber-100 border-2 border-amber-300 rounded-lg pointer-events-none date-picker-highlight"></div>
-        
+
         <div className="flex items-stretch h-32 relative z-10">
           {/* Day Column */}
           <ScrollColumn
             ref={dayRef}
-            items={days.map(day => ({ value: day, label: parseInt(day).toString() }))}
+            items={days.map((day) => ({
+              value: day,
+              label: parseInt(day).toString(),
+            }))}
             selectedValue={selectedDate.day}
-            onSelect={(value) => handleDateChange('day', value)}
+            onSelect={(value) => handleDateChange("day", value)}
+            setIsScrolling={setIsScrolling}
           />
 
           {/* Month Column */}
           <ScrollColumn
             ref={monthRef}
-            items={months.map(month => ({ value: month.value, label: month.name.substring(0, 3) }))}
+            items={months.map((month) => ({
+              value: month.value,
+              label: month.name.substring(0, 3),
+            }))}
             selectedValue={selectedDate.month}
-            onSelect={(value) => handleDateChange('month', value)}
+            onSelect={(value) => handleDateChange("month", value)}
+            setIsScrolling={setIsScrolling}
           />
 
           {/* Year Column */}
           <ScrollColumn
             ref={yearRef}
-            items={years.map(year => ({ value: year, label: year }))}
+            items={years.map((year) => ({ value: year, label: year }))}
             selectedValue={selectedDate.year}
-            onSelect={(value) => handleDateChange('year', value)}
+            onSelect={(value) => handleDateChange("year", value)}
+            setIsScrolling={setIsScrolling}
           />
         </div>
       </div>
@@ -285,13 +321,14 @@ const ScrollDatePicker: React.FC<{
       <div className="text-center mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
         <p className="text-sm text-gray-600">Selected Date</p>
         <p className="font-semibold text-amber-700">
-          {parseInt(selectedDate.day)} {months.find(m => m.value === selectedDate.month)?.name} {selectedDate.year}
+          {parseInt(selectedDate.day)}{" "}
+          {months.find((m) => m.value === selectedDate.month)?.name}{" "}
+          {selectedDate.year}
         </p>
       </div>
     </div>
   );
 };
-
 const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   formData,
   updateFormData,

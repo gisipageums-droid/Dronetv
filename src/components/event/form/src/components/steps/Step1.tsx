@@ -36,7 +36,7 @@ const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
             className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
               ${
                 selectedValue === item.value
-                  ? "text-amber-600 font-bold text-lg scale-105 bg-amber-50 rounded-lg mx-1"
+                  ? "text-amber-600 font-bold text-lg scale-105 rounded-lg mx-1"
                   : "text-gray-500 hover:text-gray-700"
               }`}
             onClick={() => handleClick(item.value)}
