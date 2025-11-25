@@ -1,34 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AlertCircle, ChevronDown } from 'lucide-react';
-
-interface Country {
-  iso2: string;
-  iso3: string;
-  country: string;
-  cities: string[];
-}
-
-interface State {
-  name: string;
-  state_code: string;
-}
-
-interface CountriesApiResponse {
-  error: boolean;
-  msg: string;
-  data: Country[];
-}
-
-interface StatesApiResponse {
-  error: boolean;
-  msg: string;
-  data: {
-    name: string;
-    iso3: string;
-    iso2: string;
-    states: State[];
-  };
-}
+import React, { useState, useEffect, useRef } from "react";
+import { Country, State } from "country-state-city";
+import { AlertCircle, ChevronDown } from "lucide-react";
 
 interface CountryStateSelectProps {
   countryLabel?: string;
@@ -59,152 +31,108 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
   stateError,
   countryPlaceholder = "Select Country",
   statePlaceholder = "Select State",
-  className = '',
+  className = "",
 }) => {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [states, setStates] = useState<State[]>([]);
-  const [loadingCountries, setLoadingCountries] = useState(true);
-  const [loadingStates, setLoadingStates] = useState(false);
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
-  const [countrySearchTerm, setCountrySearchTerm] = useState('');
-  const [stateSearchTerm, setStateSearchTerm] = useState('');
-  const previousCountryRef = useRef<string>('');
+  const [countrySearchTerm, setCountrySearchTerm] = useState("");
+  const [stateSearchTerm, setStateSearchTerm] = useState("");
+  const [availableStates, setAvailableStates] = useState<any[]>([]);
 
-  // Fetch countries on component mount
+  // Refs for detecting clicks outside
+  const countryDropdownRef = useRef<HTMLDivElement>(null);
+  const stateDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Get all countries from the package
+  const allCountries = Country.getAllCountries();
+
+  // Debug: Log when props change
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        setLoadingCountries(true);
-        const response = await fetch('https://countriesnow.space/api/v0.1/countries');
-        const data: CountriesApiResponse = await response.json();
-        
-        if (!data.error && data.data) {
-          // Sort countries alphabetically
-          const sortedCountries = data.data.sort((a, b) => a.country.localeCompare(b.country));
-          setCountries(sortedCountries);
-        } else {
-          console.error('Error fetching countries:', data.msg);
-        }
-      } catch (error) {
-        console.error('Error fetching countries:', error);
-      } finally {
-        setLoadingCountries(false);
-      }
-    };
+    console.log("CountryStateSelect - Props updated:", {
+      countryValue,
+      stateValue,
+      onCountryChange: typeof onCountryChange,
+      onStateChange: typeof onStateChange
+    });
+  }, [countryValue, stateValue, onCountryChange, onStateChange]);
 
-    fetchCountries();
-  }, []);
-
-  // Fetch states when country changes
+  // Update states when country changes
   useEffect(() => {
-    const fetchStates = async () => {
-      if (!countryValue) {
-        setStates([]);
-        return;
+    if (countryValue) {
+      // Find the country by name to get its isoCode
+      const country = allCountries.find((c) => c.name === countryValue);
+      
+      if (country) {
+        const states = State.getStatesOfCountry(country.isoCode);
+        setAvailableStates(states);
+        console.log(`Loaded ${states.length} states for ${countryValue}`);
+      } else {
+        setAvailableStates([]);
       }
-
-      try {
-        setLoadingStates(true);
-        console.log('Fetching states for country:', countryValue);
-        
-        // Test with a few known variations to handle case sensitivity
-        const countryVariations = [
-          countryValue,
-          countryValue.toLowerCase(),
-          countryValue.charAt(0).toUpperCase() + countryValue.slice(1).toLowerCase()
-        ];
-        
-        let statesData = null;
-        let lastError = null;
-        
-        // Try different country name formats
-        for (const countryName of countryVariations) {
-          try {
-            console.log('Trying country name:', countryName);
-            const response = await fetch('https://countriesnow.space/api/v0.1/countries/states', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                country: countryName
-              }),
-            });
-            
-            const data: StatesApiResponse = await response.json();
-            console.log('States API response for', countryName, ':', data);
-            
-            if (!data.error && data.data && data.data.states && data.data.states.length > 0) {
-              statesData = data;
-              break;
-            } else {
-              lastError = data.msg || 'No states found';
-            }
-          } catch (err) {
-            lastError = err;
-            console.error('Error trying country name', countryName, ':', err);
-          }
-        }
-        
-        if (statesData && statesData.data && statesData.data.states) {
-          // Sort states alphabetically
-          const sortedStates = statesData.data.states.sort((a, b) => a.name.localeCompare(b.name));
-          setStates(sortedStates);
-          console.log('States loaded:', sortedStates.length);
-        } else {
-          console.error('Error fetching states after trying all variations:', lastError);
-          setStates([]);
-        }
-      } catch (error) {
-        console.error('Error fetching states:', error);
-        setStates([]);
-      } finally {
-        setLoadingStates(false);
-      }
-    };
-
-    // Only fetch states when country changes, not when state changes
-    if (previousCountryRef.current !== countryValue) {
-      fetchStates();
-      // Clear state value when country changes
-      if (stateValue && previousCountryRef.current) {
-        onStateChange('');
-      }
-      previousCountryRef.current = countryValue;
+    } else {
+      setAvailableStates([]);
     }
-  }, [countryValue, stateValue, onStateChange]);
+  }, [countryValue, allCountries]);
 
   // Filter countries based on search term
-  const filteredCountries = countries.filter(country =>
-    country.country.toLowerCase().includes(countrySearchTerm.toLowerCase())
+  const filteredCountries = allCountries.filter((country) =>
+    country.name.toLowerCase().includes(countrySearchTerm.toLowerCase())
   );
 
   // Filter states based on search term
-  const filteredStates = states.filter(state =>
+  const filteredStates = availableStates.filter((state) =>
     state.name.toLowerCase().includes(stateSearchTerm.toLowerCase())
   );
 
-  const handleCountrySelect = (country: Country) => {
-    console.log('Country selected:', country.country);
-    onCountryChange(country.country);
+  // Handle click outside to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
+        setCountryDropdownOpen(false);
+        setCountrySearchTerm("");
+      }
+      if (stateDropdownRef.current && !stateDropdownRef.current.contains(event.target as Node)) {
+        setStateDropdownOpen(false);
+        setStateSearchTerm("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleCountrySelect = (country: any) => {
+    console.log("🟢 Country selected:", country.name);
+    console.log("🟢 Calling onCountryChange with:", country.name);
+    
+    // Call the parent's onChange handler
+    onCountryChange(country.name);
+    
     setCountryDropdownOpen(false);
-    setCountrySearchTerm('');
+    setCountrySearchTerm("");
+    // Clear state when country changes
+    onStateChange("");
   };
 
-  const handleStateSelect = (state: State) => {
+  const handleStateSelect = (state: any) => {
+    console.log("🟢 State selected:", state.name);
+    console.log("🟢 Calling onStateChange with:", state.name);
+    
     onStateChange(state.name);
     setStateDropdownOpen(false);
-    setStateSearchTerm('');
+    setStateSearchTerm("");
   };
 
   const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm ${className}`;
 
-  const getSelectClasses = (error?: string) => `${selectClasses} ${
-    error
-      ? 'border-red-300 bg-red-50'
-      : 'border-amber-300 bg-white hover:border-amber-400'
-  }`;
+  const getSelectClasses = (error?: string) =>
+    `${selectClasses} ${
+      error
+        ? "border-red-300 bg-red-50"
+        : "border-amber-300 bg-white hover:border-amber-400"
+    }`;
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -214,31 +142,31 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
           {countryLabel}
           {countryRequired && <span className="text-red-500 ml-1">*</span>}
         </label>
-        
-        <div className="relative">
+
+        <div className="relative" ref={countryDropdownRef}>
           <button
             type="button"
-            onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
-            disabled={loadingCountries}
-            className={`${getSelectClasses(countryError)} flex items-center justify-between ${
-              loadingCountries ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-            }`}
+            onClick={() => {
+              console.log("🟡 Country dropdown clicked");
+              setCountryDropdownOpen(!countryDropdownOpen);
+              setStateDropdownOpen(false); // Close state dropdown
+            }}
+            className={`${getSelectClasses(
+              countryError
+            )} flex items-center justify-between text-left cursor-pointer w-full`}
           >
-            {loadingCountries ? (
-              <div className="flex items-center">
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-amber-600 rounded-full animate-spin mr-2"></div>
-                <span>Loading countries...</span>
-              </div>
-            ) : (
-              <span className={countryValue ? 'text-gray-900' : 'text-gray-500'}>
-                {countryValue || countryPlaceholder}
-              </span>
-            )}
-            <ChevronDown className="w-4 h-4" />
+            <span className={countryValue ? "text-gray-900" : "text-gray-500"}>
+              {countryValue || countryPlaceholder}
+            </span>
+            <ChevronDown 
+              className={`w-4 h-4 transition-transform ${
+                countryDropdownOpen ? "transform rotate-180" : ""
+              }`}
+            />
           </button>
 
           {/* Country Dropdown */}
-          {countryDropdownOpen && !loadingCountries && (
+          {countryDropdownOpen && (
             <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-amber-300 rounded-md shadow-lg max-h-60 overflow-hidden">
               {/* Search Input */}
               <div className="p-2 border-b border-gray-200">
@@ -248,31 +176,35 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
                   value={countrySearchTerm}
                   onChange={(e) => setCountrySearchTerm(e.target.value)}
                   className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400"
+                  autoFocus
                 />
               </div>
-              
+
               {/* Countries List */}
               <div className="overflow-y-auto max-h-48">
                 {filteredCountries.length > 0 ? (
                   filteredCountries.map((country) => (
                     <button
-                      key={country.iso2}
+                      key={country.isoCode}
                       type="button"
-                      onClick={() => handleCountrySelect(country)}
-                      className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors"
+                      onClick={() => {
+                        console.log("🔵 Country button clicked:", country.name);
+                        handleCountrySelect(country);
+                      }}
+                      className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors border-b border-gray-100 last:border-b-0"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium text-gray-900 truncate">
-                          {country.country}
+                          {country.name}
                         </div>
                       </div>
                       <div className="text-sm text-gray-500 ml-2">
-                        {country.iso2}
+                        {country.isoCode}
                       </div>
                     </button>
                   ))
                 ) : (
-                  <div className="px-3 py-2 text-sm text-gray-500">
+                  <div className="px-3 py-2 text-sm text-gray-500 text-center">
                     No countries found
                   </div>
                 )}
@@ -280,7 +212,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
             </div>
           )}
         </div>
-        
+
         {countryError && (
           <div className="flex items-center mt-1 text-red-600">
             <AlertCircle className="w-4 h-4 mr-2" />
@@ -295,33 +227,39 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
           {stateLabel}
           {stateRequired && <span className="text-red-500 ml-1">*</span>}
         </label>
-        
-        <div className="relative">
+
+        <div className="relative" ref={stateDropdownRef}>
           <button
             type="button"
-            onClick={() => setStateDropdownOpen(!stateDropdownOpen)}
-            disabled={loadingStates || !countryValue}
-            className={`${getSelectClasses(stateError)} flex items-center justify-between ${
-              loadingStates || !countryValue ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+            onClick={() => {
+              if (countryValue) {
+                setStateDropdownOpen(!stateDropdownOpen);
+                setCountryDropdownOpen(false); // Close country dropdown
+              }
+            }}
+            disabled={!countryValue}
+            className={`${getSelectClasses(
+              stateError
+            )} flex items-center justify-between text-left w-full ${
+              !countryValue ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
             }`}
           >
-            {loadingStates ? (
-              <div className="flex items-center">
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-amber-600 rounded-full animate-spin mr-2"></div>
-                <span>Loading states...</span>
-              </div>
-            ) : !countryValue ? (
+            {!countryValue ? (
               <span className="text-gray-400">Select country first</span>
             ) : (
-              <span className={stateValue ? 'text-gray-900' : 'text-gray-500'}>
+              <span className={stateValue ? "text-gray-900" : "text-gray-500"}>
                 {stateValue || statePlaceholder}
               </span>
             )}
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDown 
+              className={`w-4 h-4 transition-transform ${
+                stateDropdownOpen ? "transform rotate-180" : ""
+              }`}
+            />
           </button>
 
           {/* State Dropdown */}
-          {stateDropdownOpen && !loadingStates && countryValue && (
+          {stateDropdownOpen && countryValue && (
             <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-amber-300 rounded-md shadow-lg max-h-60 overflow-hidden">
               {/* Search Input */}
               <div className="p-2 border-b border-gray-200">
@@ -331,18 +269,19 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
                   value={stateSearchTerm}
                   onChange={(e) => setStateSearchTerm(e.target.value)}
                   className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400"
+                  autoFocus
                 />
               </div>
-              
+
               {/* States List */}
               <div className="overflow-y-auto max-h-48">
                 {filteredStates.length > 0 ? (
                   filteredStates.map((state) => (
                     <button
-                      key={state.state_code}
+                      key={state.isoCode}
                       type="button"
                       onClick={() => handleStateSelect(state)}
-                      className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors"
+                      className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors border-b border-gray-100 last:border-b-0"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium text-gray-900 truncate">
@@ -350,20 +289,22 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
                         </div>
                       </div>
                       <div className="text-sm text-gray-500 ml-2">
-                        {state.state_code}
+                        {state.isoCode}
                       </div>
                     </button>
                   ))
                 ) : (
-                  <div className="px-3 py-2 text-sm text-gray-500">
-                    No states found
+                  <div className="px-3 py-2 text-sm text-gray-500 text-center">
+                    {availableStates.length === 0
+                      ? "No states available for this country"
+                      : "No states found"}
                   </div>
                 )}
               </div>
             </div>
           )}
         </div>
-        
+
         {stateError && (
           <div className="flex items-center mt-1 text-red-600">
             <AlertCircle className="w-4 h-4 mr-2" />
@@ -371,17 +312,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
           </div>
         )}
       </div>
-
-      {/* Click outside to close dropdowns */}
-      {(countryDropdownOpen || stateDropdownOpen) && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => {
-            setCountryDropdownOpen(false);
-            setStateDropdownOpen(false);
-          }}
-        />
-      )}
     </div>
   );
 };
