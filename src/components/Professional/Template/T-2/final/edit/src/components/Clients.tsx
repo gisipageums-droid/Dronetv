@@ -629,7 +629,7 @@ const TEXT_LIMITS = {
   STAT_LABEL: 20, // characters
   CTA_TITLE: 60, // characters
   CTA_DESCRIPTION: 200, // characters
-  CTA_BUTTON_TEXT: 30, // characters,
+  CTA_BUTTON_TEXT: 30, // characters
 };
 
 // Custom Button component
@@ -733,67 +733,16 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const clientsRef = useRef<HTMLDivElement>(null);
 
-  // Auto-save states
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
-  const lastSavedDataRef = useRef<ClientsData | null>(null);
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [data, setData] = useState<ClientsData>(defaultData);
   const [tempData, setTempData] = useState<ClientsData>(defaultData);
-
-  // Auto-save functionality
-  const performAutoSave = useCallback(async (dataToSave: ClientsData) => {
-    try {
-      setIsAutoSaving(true);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      if (onStateChange) {
-        onStateChange(dataToSave);
-      }
-      
-      lastSavedDataRef.current = dataToSave;
-      setLastSaved(new Date());
-      setHasUnsavedChanges(false);
-      
-      console.log("Auto-save completed:", dataToSave);
-    } catch (error) {
-      console.error("Auto-save failed:", error);
-      toast.error("Failed to auto-save changes");
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [onStateChange]);
-
-  const scheduleAutoSave = useCallback((updatedData: ClientsData) => {
-    setHasUnsavedChanges(true);
-    
-    // Clear existing timeout
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-    
-    // Schedule new auto-save
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      performAutoSave(updatedData);
-    }, 2000); // 2 second delay
-  }, [performAutoSave]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, []);
 
   // Initialize data from props when component mounts or props change
   useEffect(() => {
@@ -802,7 +751,6 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
       const transformedData = transformBackendData(clientsData);
       setData(transformedData);
       setTempData(transformedData);
-      lastSavedDataRef.current = transformedData;
       setDataLoaded(true);
       
       // Notify parent of initial state
@@ -810,14 +758,14 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
         onStateChange(transformedData);
       }
     }
-  }, [clientsData, dataLoaded, onStateChange]);
+  }, [clientsData, dataLoaded]);
 
   // Notify parent of state changes
   useEffect(() => {
     if (onStateChange && dataLoaded) {
       onStateChange(data);
     }
-  }, [data, dataLoaded, onStateChange]);
+  }, [data, dataLoaded]);
 
   // Intersection observer for lazy loading if no data from props
   useEffect(() => {
@@ -866,7 +814,6 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
           // Use empty default data
           setData(defaultData);
           setTempData(defaultData);
-          lastSavedDataRef.current = defaultData;
           setDataLoaded(true);
           
           if (onStateChange) {
@@ -879,30 +826,61 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
     };
 
     loadDataIfNeeded();
-  }, [isVisible, dataLoaded, clientsData, isLoading, onStateChange]);
+  }, [isVisible, dataLoaded, clientsData, isLoading]);
+
+  // Auto-save function
+  const autoSaveChanges = useCallback(async () => {
+    if (!isEditing) return;
+
+    setIsAutoSaving(true);
+    try {
+      // Simulate API call or state persistence
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      
+      setData(tempData);
+      toast.success('Changes saved automatically');
+    } catch (error) {
+      console.error('Error auto-saving clients section:', error);
+      toast.error('Auto-save failed. Changes not saved.');
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, [isEditing, tempData]);
+
+  // Effect to trigger auto-save when tempData changes
+  useEffect(() => {
+    if (isEditing) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+      
+      // Set new timeout for auto-save (1.5 second delay after last change)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSaveChanges();
+      }, 1500);
+    }
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [tempData, isEditing, autoSaveChanges]);
 
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    setHasUnsavedChanges(false);
   };
 
-  // Manual save function
+  // Manual save function (kept for consistency)
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      
-      // Clear any pending auto-save
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      await new Promise((resolve) => setTimeout(resolve, 800));
       
       setData(tempData);
-      lastSavedDataRef.current = tempData;
       setIsEditing(false);
-      setHasUnsavedChanges(false);
       toast.success('Clients section saved successfully');
     } catch (error) {
       console.error('Error saving clients section:', error);
@@ -917,82 +895,60 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
-    
-    setTempData(lastSavedDataRef.current || data);
-    setHasUnsavedChanges(false);
+    setTempData({ ...data });
     setIsEditing(false);
-    toast.info('Changes discarded');
+    toast.info('Changes cancelled');
   };
 
-  // Stable update functions with useCallback
+  // Stable update functions with useCallback - UPDATED TO TRIGGER AUTO-SAVE
   const updateClient = useCallback((index: number, field: string, value: string) => {
     setTempData(prev => {
       const updatedClients = [...prev.clients];
       updatedClients[index] = { ...updatedClients[index], [field]: value };
-      const updated = { ...prev, clients: updatedClients };
-      scheduleAutoSave(updated);
-      return updated;
+      return { ...prev, clients: updatedClients };
     });
-  }, [scheduleAutoSave]);
+  }, []);
 
   const updateStat = useCallback((field: keyof Stats, value: string) => {
-    setTempData(prev => {
-      const updated = {
-        ...prev,
-        stats: { ...prev.stats, [field]: value }
-      };
-      scheduleAutoSave(updated);
-      return updated;
-    });
-  }, [scheduleAutoSave]);
+    setTempData(prev => ({
+      ...prev,
+      stats: { ...prev.stats, [field]: value }
+    }));
+  }, []);
 
   const updateCta = useCallback((field: keyof ClientsData['cta'], value: string) => {
-    setTempData(prev => {
-      const updated = {
-        ...prev,
-        cta: { ...prev.cta, [field]: value }
-      };
-      scheduleAutoSave(updated);
-      return updated;
-    });
-  }, [scheduleAutoSave]);
+    setTempData(prev => ({
+      ...prev,
+      cta: { ...prev.cta, [field]: value }
+    }));
+  }, []);
 
   const updateHeading = useCallback((field: 'subtitle' | 'heading' | 'description', value: string) => {
-    setTempData(prev => {
-      const updated = {
-        ...prev,
-        [field]: value
-      };
-      scheduleAutoSave(updated);
-      return updated;
-    });
-  }, [scheduleAutoSave]);
+    setTempData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
 
-  // Memoized functions
+  // Memoized functions - UPDATED TO USE FUNCTIONAL UPDATES
   const addClient = useCallback(() => {
     const newClient: Client = {
       id: Date.now().toString(),
       name: 'New Client',
       industry: 'Industry'
     };
-    setTempData(prev => {
-      const updated = {
-        ...prev,
-        clients: [...prev.clients, newClient]
-      };
-      scheduleAutoSave(updated);
-      return updated;
-    });
-  }, [scheduleAutoSave]);
+    setTempData(prev => ({
+      ...prev,
+      clients: [...prev.clients, newClient]
+    }));
+  }, []);
 
   const removeClient = useCallback((index: number) => {
     setTempData(prev => {
       const updatedClients = prev.clients.filter((_, i) => i !== index);
-      const updated = { ...prev, clients: updatedClients };
-      scheduleAutoSave(updated);
-      return updated;
+      return { ...prev, clients: updatedClients };
     });
-  }, [scheduleAutoSave]);
+  }, []);
 
   const displayData = isEditing ? tempData : data;
 
@@ -1052,8 +1008,18 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   }
 
   return (
-    <section ref={clientsRef} className="py-20  bg-background">
+    <section ref={clientsRef} className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Auto-save indicator */}
+        {isAutoSaving && (
+          <div className="fixed top-4 right-4 z-50">
+            <div className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg shadow-lg text-sm">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Auto-saving...
+            </div>
+          </div>
+        )}
+
         {/* Edit Controls */}
         <div className='text-right mb-8'>
           {!isEditing ? (
@@ -1066,32 +1032,12 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
               Edit
             </Button>
           ) : (
-            <div className='flex gap-2 justify-end items-center'>
-              {/* Auto-save indicator */}
-              <div className="flex items-center gap-2 mr-4 text-sm">
-                {isAutoSaving && (
-                  <div className="flex items-center gap-1 text-blue-500">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Auto-saving...</span>
-                  </div>
-                )}
-                {hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-yellow-500">
-                    ● Unsaved changes
-                  </div>
-                )}
-                {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-green-500">
-                    ✓ Auto-saved {lastSaved.toLocaleTimeString()}
-                  </div>
-                )}
-              </div>
-
+            <div className='flex gap-2 justify-end'>
               <Button
                 onClick={handleSave}
                 size='sm'
                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
-                disabled={isSaving}
+                disabled={isSaving || isAutoSaving}
               >
                 {isSaving ? (
                   <Loader2 className='w-4 h-4 mr-2 animate-spin' />
@@ -1104,7 +1050,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                 onClick={handleCancel}
                 size='sm'
                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
-                disabled={isSaving}
+                disabled={isSaving || isAutoSaving}
               >
                 <X className='w-4 h-4 mr-2' />
                 Cancel
@@ -1114,6 +1060,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                 variant='outline'
                 size='sm'
                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+                disabled={isAutoSaving}
               >
                 <Plus className='w-4 h-4 mr-2' />
                 Add Client
@@ -1254,6 +1201,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                     size='sm'
                     variant='outline'
                     className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
+                    disabled={isAutoSaving}
                   >
                     <Trash2 className='w-3 h-3' />
                   </Button>
@@ -1307,6 +1255,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                   variant='outline'
                   size='lg'
                   className='bg-blue-50 hover:bg-blue-100 text-blue-700'
+                  disabled={isAutoSaving}
                 >
                   <Plus className='w-5 h-5 mr-2' />
                   Add Your First Client
@@ -1340,8 +1289,6 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
             </div>
           )
         )}
-
-       
       </div>
     </section>
   );

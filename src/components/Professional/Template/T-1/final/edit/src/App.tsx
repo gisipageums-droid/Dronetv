@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { Toaster } from "sonner";
 import { useTemplate } from "../../../../../../../components/context/context";
 import Publish from "./components/Publish";
+import Back from "./components/Back";
 
 interface AIResponse {
   professionalId?: string;
@@ -212,7 +213,7 @@ const App: React.FC = () => {
             handleUpdateSection("footerContent", updatedFooter)
           }
         />
-
+        <Back />
         <Publish />
         <Toaster position="top-right" richColors />
       </div>

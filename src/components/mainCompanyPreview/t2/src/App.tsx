@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import Profile from "./components/Profile";
 import Gallery from "./components/Gallery";
-
+import Back from "./components/Back";
 export default function App() {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
   const { urlSlug } = useParams(); // Get both parameters from URL
@@ -127,6 +127,7 @@ export default function App() {
             publishedId={finaleDataReview.publishedId}
           />
         </main>
+        <Back />
         <Footer
           footerData={finaleDataReview.content.footer}
         />

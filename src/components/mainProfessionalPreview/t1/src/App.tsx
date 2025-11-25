@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import Service from "./components/Service";
 import { useParams } from "react-router-dom";
 import { useTemplate } from "../../../context/context";
+import Back from "./components/Back";
 
 const FinalT1: React.FC = () => {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
@@ -114,7 +115,9 @@ const FinalT1: React.FC = () => {
         <Testimonials
           content={finaleDataReview[0].content.testimonialContent}
         />
-        <Contact content={finaleDataReview[0].content.contactContent} />
+        <Contact content={finaleDataReview[0].content.contactContent}
+        professionalId={finaleDataReview[0].professionalId} />
+        <Back />
         <Footer content={finaleDataReview[0].content.footerContent} />
       </div>
     </DarkModeProvider>
