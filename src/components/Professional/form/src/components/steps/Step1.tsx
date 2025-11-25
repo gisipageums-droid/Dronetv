@@ -186,7 +186,7 @@ const ScrollDatePicker: React.FC<{
     scrollToSelected(dayRef.current, selectedDate.day);
     scrollToSelected(monthRef.current, selectedDate.month);
     scrollToSelected(yearRef.current, selectedDate.year);
-    
+
     // Removed 'isScrolling' from here so it doesn't snap back when you stop scrolling
   }, [selectedDate.day, selectedDate.month, selectedDate.year]);
 
