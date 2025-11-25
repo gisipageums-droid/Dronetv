@@ -16,7 +16,6 @@ import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
 import Publish from './components/Publish';
 import Back from './components/Back';
-
 // Define types for the component states
 interface ComponentStates {
   heroContent?: any;
@@ -249,8 +248,8 @@ export default function FinalEditTemp_2() {
           
         />
       </main>
-      <Publish />
       <Back />
+      <Publish />
       {/* Footer */}
       <Footer 
         footerData={componentStates.footerContent}
