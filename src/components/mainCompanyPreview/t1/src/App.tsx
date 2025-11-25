@@ -13,6 +13,7 @@ import { useTemplate } from "../../../context/context";
 import { useLocation, useParams } from "react-router-dom";
 import GallerySection from "./components/Gallery";
 import CompanyProfile from "./components/Profile"
+import Back from "./components/Back"
 // import { useEffect } from "react";
 
 export default function App() {
@@ -131,6 +132,7 @@ export default function App() {
         content={finaleDataReview.content.contact}
         publishedId={finaleDataReview.publishedId}
       />
+      <Back />
       <Footer
         content={finaleDataReview.content.footer}
       />

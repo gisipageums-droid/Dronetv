@@ -15,6 +15,7 @@ import { Testimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
 import Publish from './components/Publish';
+import Back from './components/Back';
 
 // Define types for the component states
 interface ComponentStates {
@@ -249,6 +250,7 @@ export default function FinalEditTemp_2() {
         />
       </main>
       <Publish />
+      <Back />
       {/* Footer */}
       <Footer 
         footerData={componentStates.footerContent}

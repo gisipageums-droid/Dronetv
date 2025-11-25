@@ -12,7 +12,7 @@ import { Projects } from './components/Projects';
 import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Services } from './components/services';
-
+import  Back  from './components/Back';
 export default function MainProTemp2() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
@@ -141,7 +141,9 @@ export default function MainProTemp2() {
         </section>
         <Contact 
           contactData={finaleDataReview.content.contactContent}
+          professionalId={finaleDataReview.professionalId}
         />
+        <Back />
       </main>
       <Footer
         footerData={finaleDataReview.content.footerContent}
