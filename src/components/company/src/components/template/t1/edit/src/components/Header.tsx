@@ -1,4 +1,5 @@
-// import { Edit2, Upload, X, Loader2 } from "lucide-react";
+
+// import { Edit2, Upload, X, Loader2, Save } from "lucide-react";
 // import { motion } from "motion/react";
 // import { useEffect, useRef, useState, useCallback } from "react";
 // import { toast } from "react-toastify";
@@ -19,7 +20,6 @@
 //   };
 
 //   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-//   const [pendingLogoFile, setPendingLogoFile] = useState(null);
 //   const [isUploading, setIsUploading] = useState(false);
 //   const fileInputRef = useRef<HTMLInputElement | null>(null);
 //   const logoImgRef = useRef<HTMLImageElement | null>(null);
@@ -42,6 +42,11 @@
 //   const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
 //   const PAN_STEP = 10;
 
+//   // Edit mode state
+//   const [isEditMode, setIsEditMode] = useState(false);
+//   const [tempLogoSrc, setTempLogoSrc] = useState(null);
+//   const [isSaving, setIsSaving] = useState(false);
+
 //   // Combined state - static version (no edit mode for text)
 //   const [headerState, setHeaderState] = useState({
 //     logoSrc: headerData?.logo || logo,
@@ -58,13 +63,18 @@
 //     ],
 //   });
 
+//   // Auto-save timeout reference
+//   const autoSaveTimeoutRef = useRef(null);
+
 //   // Load logo dimensions when logo URL changes
 //   useEffect(() => {
-//     if (headerState.logoSrc && (headerState.logoSrc.startsWith("data:") || headerState.logoSrc.startsWith("http"))) {
+//     const logoSrcToUse = isEditMode && tempLogoSrc ? tempLogoSrc : headerState.logoSrc;
+
+//     if (logoSrcToUse && (logoSrcToUse.startsWith("data:") || logoSrcToUse.startsWith("http"))) {
 //       const img = new Image();
 //       img.onload = () => {
 //         // Calculate dimensions while maintaining aspect ratio
-//         const maxSize = 60;
+//         const maxSize = 77;
 //         let width = img.naturalWidth;
 //         let height = img.naturalHeight;
 
@@ -100,11 +110,11 @@
 //           height: Math.round(height)
 //         });
 //       };
-//       img.src = headerState.logoSrc;
+//       img.src = logoSrcToUse;
 //     } else {
 //       setLogoDimensions({ width: 50, height: 50 });
 //     }
-//   }, [headerState.logoSrc]);
+//   }, [headerState.logoSrc, tempLogoSrc, isEditMode]);
 
 //   // Allow more zoom-out; do not enforce cover when media/crop sizes change
 //   useEffect(() => {
@@ -136,6 +146,54 @@
 //       onStateChange(headerState);
 //     }
 //   }, [headerState, onStateChange]);
+
+//   // Auto-save function
+//   const autoSaveChanges = useCallback(async () => {
+//     if (!isEditMode) return;
+
+//     setIsSaving(true);
+
+//     try {
+//       // Simulate API call or state persistence
+//       await new Promise(resolve => setTimeout(resolve, 500));
+
+//       // Update the main state with temp changes
+//       if (tempLogoSrc) {
+//         setHeaderState(prev => ({
+//           ...prev,
+//           logoSrc: tempLogoSrc
+//         }));
+//       }
+
+//       toast.success("Changes saved automatically!");
+//     } catch (error) {
+//       console.error("Auto-save failed:", error);
+//       toast.error("Auto-save failed. Please try again.");
+//     } finally {
+//       setIsSaving(false);
+//     }
+//   }, [isEditMode, tempLogoSrc]);
+
+//   // Effect to trigger auto-save when changes are made
+//   useEffect(() => {
+//     if (isEditMode && tempLogoSrc && tempLogoSrc !== headerState.logoSrc) {
+//       // Clear existing timeout
+//       if (autoSaveTimeoutRef.current) {
+//         clearTimeout(autoSaveTimeoutRef.current);
+//       }
+
+//       // Set new timeout for auto-save (1 second delay)
+//       autoSaveTimeoutRef.current = setTimeout(() => {
+//         autoSaveChanges();
+//       }, 1000);
+//     }
+
+//     return () => {
+//       if (autoSaveTimeoutRef.current) {
+//         clearTimeout(autoSaveTimeoutRef.current);
+//       }
+//     };
+//   }, [tempLogoSrc, isEditMode, headerState.logoSrc, autoSaveChanges]);
 
 //   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 //   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -368,27 +426,19 @@
 //       // Update logo dimensions with display dimensions
 //       setLogoDimensions(dimensions);
 
-//       // Show immediate local preview of cropped image
-//       setHeaderState((prev) => ({
-//         ...prev,
-//         logoSrc: previewUrl,
-//       }));
+//       // Set temp logo for edit mode - this will trigger auto-save
+//       setTempLogoSrc(previewUrl);
 
-//       // UPLOAD TO AWS IMMEDIATELY
+//       // AUTO UPLOAD TO AWS IMMEDIATELY AFTER CROPPING
 //       const awsImageUrl = await uploadImageToAWS(file, "logoSrc");
 
 //       if (awsImageUrl) {
-//         // Update with actual S3 URL
-//         setHeaderState((prev) => ({
-//           ...prev,
-//           logoSrc: awsImageUrl,
-//         }));
-//         setPendingLogoFile(null);
+//         // Update temp logo with actual S3 URL - this will trigger auto-save again
+//         setTempLogoSrc(awsImageUrl);
 //         toast.success("Logo cropped and uploaded to AWS successfully!");
 //       } else {
-//         // If upload fails, keep the preview URL and set as pending
-//         setPendingLogoFile(file);
-//         toast.warning("Logo cropped but upload failed. It will be saved locally.");
+//         // If upload fails, keep the preview URL
+//         toast.warning("Logo cropped but AWS upload failed. Using local version.");
 //       }
 
 //       setCropModalOpen(false);
@@ -419,7 +469,35 @@
 
 //   // Function to trigger file input for logo upload
 //   const handleEditLogo = () => {
-//     fileInputRef.current?.click();
+//     setIsEditMode(true);
+//     setTempLogoSrc(headerState.logoSrc);
+//   };
+
+//   // Function to handle logo click in edit mode
+//   const handleLogoClick = () => {
+//     if (isEditMode) {
+//       fileInputRef.current?.click();
+//     }
+//   };
+
+//   // Function to manually save changes (kept for consistency)
+//   const handleSave = () => {
+//     if (tempLogoSrc) {
+//       setHeaderState(prev => ({
+//         ...prev,
+//         logoSrc: tempLogoSrc
+//       }));
+//     }
+//     setIsEditMode(false);
+//     setTempLogoSrc(null);
+//     toast.success("Changes saved!");
+//   };
+
+//   // Function to cancel editing
+//   const handleCancel = () => {
+//     setIsEditMode(false);
+//     setTempLogoSrc(null);
+//     toast.info("Changes cancelled");
 //   };
 
 //   const headerStyles: React.CSSProperties = {
@@ -460,19 +538,48 @@
 //       >
 //         <div className="relative w-full px-4 sm:px-6 lg:px-8">
 
-//           <div className="absolute right-[40px] md:right-0  top-[50%] translate-y-[-50%] z-[999999999]">
-//             <button
-//               onClick={handleEditLogo}
-//               className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
-//             >
-//               <Edit2 size={16} />
-//               <span className="hidden xs:inline">Edit Logo</span>
-//             </button>
+//           {/* Edit/Save/Cancel Buttons */}
+//           <div className="absolute right-[40px] md:right-0 top-[25%]  z-[999999999]">
+//             {!isEditMode ? (
+//               <button
+//                 onClick={handleEditLogo}
+//                 className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
+//               >
+//                 <Edit2 size={16} />
+//                 <span className="hidden xs:inline">Edit Logo</span>
+//               </button>
+//             ) : (
+//               <div className="flex gap-2">
+//                 <button
+//                   onClick={handleSave}
+//                   disabled={isSaving}
+//                   className={`flex items-center gap-1 px-3 py-2 ${isSaving ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'} text-white rounded-lg shadow text-sm transition-all duration-200`}
+//                 >
+//                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+//                   <span className="hidden xs:inline">{isSaving ? "Saving..." : "Save"}</span>
+//                 </button>
+//                 <button
+//                   onClick={handleCancel}
+//                   className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 text-sm transition-all duration-200"
+//                 >
+//                   <X size={16} />
+//                   <span className="hidden xs:inline">Cancel</span>
+//                 </button>
+//               </div>
+//             )}
 //           </div>
-//           <div className="flex items-center justify-between  py-[8px] mx-auto max-w-7xl ">
-//             {/* Logo Edit Button */}
 
+//           {/* Auto-save indicator */}
+//           {isSaving && (
+//             <div className="absolute right-2 top-2 z-[999999999]">
+//               <div className="flex items-center gap-1 px-2 py-1 bg-blue-500 text-white rounded text-xs">
+//                 <Loader2 size={12} className="animate-spin" />
+//                 Auto-saving...
+//               </div>
+//             </div>
+//           )}
 
+//           <div className="flex items-center justify-between py-[8px] mx-auto max-w-7xl ">
 //             {/* Logo + Company Name */}
 //             <motion.div
 //               className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
@@ -496,32 +603,44 @@
 //                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
 //                 >
 //                   <div className="relative">
+//                     <div
+//                       className={`relative ${isEditMode ? 'cursor-pointer ring-2 ring-blue-500 rounded-lg' : ''}`}
+//                       onClick={handleLogoClick}
+//                     >
+//                       <motion.img
+//                         ref={logoImgRef}
+//                         src={isEditMode && tempLogoSrc ? tempLogoSrc : headerState.logoSrc}
+//                         alt="Logo"
+//                         style={{
+//                           width: `${logoDimensions.width}px`,
+//                           height: `${logoDimensions.height}px`,
+//                           maxHeight: '45px',
+//                         }}
+//                         className="rounded-xl transition-all duration-300 object-contain"
+//                         animate={{
+//                           y: [0, -5, 0],
+//                           transition: {
+//                             duration: 3,
+//                             repeat: Infinity,
+//                             repeatType: "reverse",
+//                             ease: "easeInOut",
+//                           },
+//                         }}
+//                       />
 
-
-//                     <motion.img
-//                       ref={logoImgRef}
-//                       src={headerState.logoSrc || logo}
-//                       alt="Logo"
-//                       style={{
-//                         width: `${logoDimensions.width}px`,
-//                         height: `${logoDimensions.height}px`,
-//                         maxHeight: '45px',
-//                       }}
-//                       className="rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
-//                       animate={{
-//                         y: [0, -5, 0],
-//                         transition: {
-//                           duration: 3,
-//                           repeat: Infinity,
-//                           repeatType: "reverse",
-//                           ease: "easeInOut",
-//                         },
-//                       }}
-//                       onClick={handleEditLogo}
-//                     />
-
+//                       {/* Upload Icon Overlay - Show only in edit mode */}
+//                       {isEditMode && (
+//                         <div className="absolute inset-0 bg-black bg-opacity-30 rounded-xl flex items-center justify-center transition-opacity duration-300">
+//                           <div className="bg-white p-1.5 rounded-full shadow-lg">
+//                             <Upload size={14} className="text-gray-700" />
+//                           </div>
+//                           <span className="absolute bottom-1 text-xs text-white bg-black bg-opacity-50 px-1 rounded">
+//                             Click to upload
+//                           </span>
+//                         </div>
+//                       )}
+//                     </div>
 //                   </div>
-
 //                 </motion.div>
 
 //                 <input
@@ -797,7 +916,10 @@ export default function Header({
   const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedAspectRatio, setSelectedAspectRatio] = useState("original");
-  const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
+
+  // Fixed logo dimensions - 77px width, 45px height
+  const [logoDimensions, setLogoDimensions] = useState({ width: 77, height: 45 });
+
   const PAN_STEP = 10;
 
   // Edit mode state
@@ -824,54 +946,9 @@ export default function Header({
   // Auto-save timeout reference
   const autoSaveTimeoutRef = useRef(null);
 
-  // Load logo dimensions when logo URL changes
+  // Fixed logo dimensions - always 77x45
   useEffect(() => {
-    const logoSrcToUse = isEditMode && tempLogoSrc ? tempLogoSrc : headerState.logoSrc;
-
-    if (logoSrcToUse && (logoSrcToUse.startsWith("data:") || logoSrcToUse.startsWith("http"))) {
-      const img = new Image();
-      img.onload = () => {
-        // Calculate dimensions while maintaining aspect ratio
-        const maxSize = 77;
-        let width = img.naturalWidth;
-        let height = img.naturalHeight;
-
-        // Maintain aspect ratio while fitting within maxSize
-        if (width > height) {
-          height = (height / width) * maxSize;
-          width = maxSize;
-        } else {
-          width = (width / height) * maxSize;
-          height = maxSize;
-        }
-
-        // Ensure minimum size
-        const minSize = 25;
-        if (width < minSize) {
-          height = (height / width) * minSize;
-          width = minSize;
-        }
-        if (height < minSize) {
-          width = (width / height) * minSize;
-          height = minSize;
-        }
-
-        // Additional constraint: Ensure height doesn't exceed header height
-        const maxHeaderHeight = 45;
-        if (height > maxHeaderHeight) {
-          width = (width / height) * maxHeaderHeight;
-          height = maxHeaderHeight;
-        }
-
-        setLogoDimensions({
-          width: Math.round(width),
-          height: Math.round(height)
-        });
-      };
-      img.src = logoSrcToUse;
-    } else {
-      setLogoDimensions({ width: 50, height: 50 });
-    }
+    setLogoDimensions({ width: 77, height: 45 });
   }, [headerState.logoSrc, tempLogoSrc, isEditMode]);
 
   // Allow more zoom-out; do not enforce cover when media/crop sizes change
@@ -910,11 +987,11 @@ export default function Header({
     if (!isEditMode) return;
 
     setIsSaving(true);
-    
+
     try {
       // Simulate API call or state persistence
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       // Update the main state with temp changes
       if (tempLogoSrc) {
         setHeaderState(prev => ({
@@ -922,7 +999,7 @@ export default function Header({
           logoSrc: tempLogoSrc
         }));
       }
-      
+
       toast.success("Changes saved automatically!");
     } catch (error) {
       console.error("Auto-save failed:", error);
@@ -939,7 +1016,7 @@ export default function Header({
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
-      
+
       // Set new timeout for auto-save (1 second delay)
       autoSaveTimeoutRef.current = setTimeout(() => {
         autoSaveChanges();
@@ -965,7 +1042,7 @@ export default function Header({
         return 16 / 9;
       case "original":
       default:
-        return logoDimensions.width / logoDimensions.height;
+        return 77 / 45; // Fixed aspect ratio based on 77x45
     }
   };
 
@@ -978,7 +1055,7 @@ export default function Header({
         return "16:9";
       case "original":
       default:
-        return `${logoDimensions.width}:${logoDimensions.height}`;
+        return "77:45"; // Fixed aspect ratio text
     }
   };
 
@@ -1027,49 +1104,15 @@ export default function Header({
       image.src = url;
     });
 
-  // Updated getCroppedImg function with dynamic sizing
+  // Updated getCroppedImg function with fixed dimensions
   const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Calculate output dimensions based on selected aspect ratio
-    let outputWidth, outputHeight;
-    let displayWidth, displayHeight;
-
-    switch (selectedAspectRatio) {
-      case "1:1":
-        outputWidth = 200;
-        outputHeight = 200;
-        displayWidth = 45;
-        displayHeight = 45;
-        break;
-      case "16:9":
-        outputWidth = 320;
-        outputHeight = 180;
-        displayWidth = 55;
-        displayHeight = 31;
-        break;
-      case "original":
-      default:
-        const maxHeaderSize = 45;
-        outputWidth = logoDimensions.width > 200 ? 200 : logoDimensions.width;
-        outputHeight = logoDimensions.height > 200 ? 200 : logoDimensions.height;
-
-        if (logoDimensions.width > maxHeaderSize || logoDimensions.height > maxHeaderSize) {
-          if (logoDimensions.width > logoDimensions.height) {
-            displayWidth = maxHeaderSize;
-            displayHeight = (logoDimensions.height / logoDimensions.width) * maxHeaderSize;
-          } else {
-            displayHeight = maxHeaderSize;
-            displayWidth = (logoDimensions.width / logoDimensions.height) * maxHeaderSize;
-          }
-        } else {
-          displayWidth = logoDimensions.width;
-          displayHeight = logoDimensions.height;
-        }
-        break;
-    }
+    // Fixed output dimensions - 77x45
+    const outputWidth = 77;
+    const outputHeight = 45;
 
     canvas.width = outputWidth;
     canvas.height = outputHeight;
@@ -1108,8 +1151,8 @@ export default function Header({
             file,
             previewUrl,
             dimensions: {
-              width: Math.round(displayWidth),
-              height: Math.round(displayHeight)
+              width: 77,
+              height: 45
             }
           });
         },
@@ -1181,8 +1224,8 @@ export default function Header({
         rotation
       );
 
-      // Update logo dimensions with display dimensions
-      setLogoDimensions(dimensions);
+      // Set fixed logo dimensions
+      setLogoDimensions({ width: 77, height: 45 });
 
       // Set temp logo for edit mode - this will trigger auto-save
       setTempLogoSrc(previewUrl);
@@ -1370,11 +1413,10 @@ export default function Header({
                         src={isEditMode && tempLogoSrc ? tempLogoSrc : headerState.logoSrc}
                         alt="Logo"
                         style={{
-                          width: `${logoDimensions.width}px`,
-                          height: `${logoDimensions.height}px`,
-                          maxHeight: '45px',
+                          width: '77px',
+                          height: '45px',
                         }}
-                        className="rounded-xl transition-all duration-300 object-contain"
+                        className="rounded-xl transition-all duration-300 object-cover h-[45px] w-[77px]"
                         animate={{
                           y: [0, -5, 0],
                           transition: {
@@ -1524,7 +1566,7 @@ export default function Header({
                     : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                     }`}
                 >
-                  Original
+                  77:45 (Fixed)
                 </button>
                 <button
                   onClick={() => setSelectedAspectRatio("1:1")}
