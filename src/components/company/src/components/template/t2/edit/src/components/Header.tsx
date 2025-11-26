@@ -1,3 +1,4 @@
+
 // import { Button } from "./ui/button";
 // import {
 //   Menu,
@@ -8,6 +9,7 @@
 //   X as XIcon,
 //   RotateCw,
 //   ZoomIn,
+//   Loader2,
 // } from "lucide-react";
 // import { useState, useEffect, useRef, useCallback } from "react";
 // import { motion, AnimatePresence } from "motion/react";
@@ -35,7 +37,7 @@
 //       : "bg-yellow-400 border border-gray-200 text-black hover:bg-white/10";
 //   const [isEditing, setIsEditing] = useState(false);
 //   const [isUploading, setIsUploading] = useState(false);
-//   const [pendingLogoFile, setPendingLogoFile] = useState(null);
+//   const [isSaving, setIsSaving] = useState(false);
 //   const fileInputRef = useRef<HTMLInputElement | null>(null);
 //   const logoImgRef = useRef<HTMLImageElement | null>(null);
 
@@ -69,6 +71,9 @@
 //     return initialState;
 //   });
 
+//   // Auto-save timeout reference
+//   const autoSaveTimeoutRef = useRef(null);
+
 //   // choose container width based on companyName length (adjust threshold as needed)
 //   const containerMaxClass =
 //     (content?.companyName || "").trim().length > 30 /* threshold */
@@ -94,7 +99,7 @@
 //       const img = new Image();
 //       img.onload = () => {
 //         // Calculate dimensions while maintaining aspect ratio - REDUCED MAX SIZE
-//         const maxSize = 60; // Reduced from 80 to 60 to prevent overflow
+//         const maxSize = 77; // Reduced from 80 to 60 to prevent overflow
 //         let width = img.naturalWidth;
 //         let height = img.naturalHeight;
 
@@ -172,6 +177,48 @@
 //     setContent((prev) => ({ ...prev, [field]: value }));
 //   };
 
+//   // Auto-save function for text changes
+//   const autoSaveChanges = useCallback(async () => {
+//     if (!isEditing) return;
+
+//     setIsSaving(true);
+//     try {
+//       // Simulate API call or state persistence
+//       await new Promise(resolve => setTimeout(resolve, 500));
+
+//       // Update initial state reference to current state
+//       initialHeaderState.current = content;
+
+//       toast.success("Changes saved automatically!");
+//     } catch (error) {
+//       console.error("Auto-save failed:", error);
+//       toast.error("Auto-save failed. Please try again.");
+//     } finally {
+//       setIsSaving(false);
+//     }
+//   }, [isEditing, content]);
+
+//   // Effect to trigger auto-save when text content changes
+//   useEffect(() => {
+//     if (isEditing) {
+//       // Clear existing timeout
+//       if (autoSaveTimeoutRef.current) {
+//         clearTimeout(autoSaveTimeoutRef.current);
+//       }
+
+//       // Set new timeout for auto-save (1 second delay)
+//       autoSaveTimeoutRef.current = setTimeout(() => {
+//         autoSaveChanges();
+//       }, 1000);
+//     }
+
+//     return () => {
+//       if (autoSaveTimeoutRef.current) {
+//         clearTimeout(autoSaveTimeoutRef.current);
+//       }
+//     };
+//   }, [content.ctaText, content.companyName, isEditing, autoSaveChanges]);
+
 //   // NEW: Function to upload image to AWS
 //   const uploadImageToAWS = async (file, imageField) => {
 //     if (!userId || !publishedId || !templateSelection) {
@@ -224,7 +271,6 @@
 //   const handleCancel = () => {
 //     // Reset to initial state
 //     setContent(initialHeaderState.current);
-//     setPendingLogoFile(null);
 //     setIsEditing(false);
 //   };
 
@@ -390,7 +436,7 @@
 //     });
 //   };
 
-//   // Apply crop and UPLOAD IMMEDIATELY to AWS - UPDATED
+//   // Apply crop and UPLOAD IMMEDIATELY to AWS - UPDATED WITH AUTO-SAVE
 //   const applyCrop = async () => {
 //     try {
 //       if (!imageToCrop || !croppedAreaPixels) {
@@ -411,18 +457,46 @@
 //       // Show preview immediately with blob URL (temporary)
 //       setContent((prev) => ({ ...prev, logoUrl: previewUrl }));
 
-//       // UPLOAD TO AWS IMMEDIATELY
+//       // AUTO UPLOAD TO AWS IMMEDIATELY
 //       const awsImageUrl = await uploadImageToAWS(file, "logoUrl");
 
 //       if (awsImageUrl) {
-//         // Update with actual S3 URL
+//         // Update with actual S3 URL and trigger auto-save
 //         setContent((prev) => ({ ...prev, logoUrl: awsImageUrl }));
-//         setPendingLogoFile(null);
 //         toast.success("Logo cropped and uploaded to AWS successfully!");
+
+//         // Auto-save the changes
+//         if (isEditing) {
+//           setIsSaving(true);
+//           try {
+//             await new Promise(resolve => setTimeout(resolve, 500));
+//             initialHeaderState.current = { ...content, logoUrl: awsImageUrl };
+//             toast.success("Logo updated automatically!");
+//           } catch (error) {
+//             console.error("Auto-save failed:", error);
+//             toast.error("Auto-save failed. Please try again.");
+//           } finally {
+//             setIsSaving(false);
+//           }
+//         }
 //       } else {
-//         // If upload fails, keep the preview URL and set as pending
-//         setPendingLogoFile(file);
-//         toast.warning("Logo cropped but upload failed. It will be saved locally.");
+//         // If upload fails, keep the preview URL
+//         toast.warning("Logo cropped but AWS upload failed. Using local version.");
+
+//         // Still auto-save with local URL
+//         if (isEditing) {
+//           setIsSaving(true);
+//           try {
+//             await new Promise(resolve => setTimeout(resolve, 500));
+//             initialHeaderState.current = { ...content, logoUrl: previewUrl };
+//             toast.success("Logo updated with local version!");
+//           } catch (error) {
+//             console.error("Auto-save failed:", error);
+//             toast.error("Auto-save failed. Please try again.");
+//           } finally {
+//             setIsSaving(false);
+//           }
+//         }
 //       }
 
 //       setShowCropper(false);
@@ -451,22 +525,10 @@
 //     setCrop({ x: 0, y: 0 });
 //   };
 
-//   // Save button handler - only handles text changes and failed uploads now
+//   // Save button handler - now only for manual saving if needed
 //   const handleSave = async () => {
 //     try {
 //       setIsUploading(true);
-
-//       // Upload any pending logo that failed during automatic upload
-//       if (pendingLogoFile) {
-//         const awsImageUrl = await uploadImageToAWS(pendingLogoFile, "logoUrl");
-//         if (awsImageUrl) {
-//           setContent((prev) => ({ ...prev, logoUrl: awsImageUrl }));
-//           setPendingLogoFile(null);
-//         } else {
-//           toast.error("Failed to upload logo");
-//           return;
-//         }
-//       }
 
 //       // Update initial state reference to current state
 //       initialHeaderState.current = content;
@@ -640,6 +702,16 @@
 //         </motion.div>
 //       )}
 
+//       {/* Auto-save indicator */}
+//       {isSaving && (
+//         <div className="fixed top-20 right-4 z-[99999999]">
+//           <div className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg shadow-lg text-sm">
+//             <Loader2 size={16} className="animate-spin" />
+//             Auto-saving...
+//           </div>
+//         </div>
+//       )}
+
 //       {/* === Updated header with proper spacing === */}
 //       <motion.header
 //         className={`fixed top-[4rem] left-0 right-0 border-b z-50  ${theme === "dark"
@@ -806,14 +878,14 @@
 //                       whileTap={{ scale: 0.9 }}
 //                       whileHover={{ y: -1, scaleX: 1.1 }}
 //                       onClick={handleSave}
-//                       disabled={isUploading}
-//                       className={`${isUploading
+//                       disabled={isUploading || isSaving}
+//                       className={`${isUploading || isSaving
 //                         ? "bg-gray-400 cursor-not-allowed"
 //                         : "bg-green-600 hover:font-semibold"
 //                         } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl whitespace-nowrap`}
 //                     >
-//                       {isUploading ? (
-//                         "Uploading..."
+//                       {isUploading || isSaving ? (
+//                         "Saving..."
 //                       ) : (
 //                         <>
 //                           <Save size={16} className="inline mr-1" /> Save
@@ -896,7 +968,6 @@
 //   );
 // }
 
-
 import { Button } from "./ui/button";
 import {
   Menu,
@@ -942,8 +1013,8 @@ export default function Header({
   // Track initial state to detect changes
   const initialHeaderState = useRef(null);
 
-  // Logo dimensions state - FIXED: Smaller default size
-  const [logoDimensions, setLogoDimensions] = useState({ width: 50, height: 50 });
+  // Logo dimensions state - FIXED: 77px width, 45px height
+  const [logoDimensions, setLogoDimensions] = useState({ width: 77, height: 45 });
 
   // Aspect ratio selection state
   const [selectedAspectRatio, setSelectedAspectRatio] = useState("original"); // "original", "1:1", "16:9"
@@ -991,53 +1062,9 @@ export default function Header({
   const [isDragging, setIsDragging] = useState(false);
   const PAN_STEP = 10;
 
-  // Load logo dimensions when logo URL changes - FIXED: Smaller max size
+  // Fixed logo dimensions - always 77x45
   useEffect(() => {
-    if (content.logoUrl && (content.logoUrl.startsWith("data:") || content.logoUrl.startsWith("http"))) {
-      const img = new Image();
-      img.onload = () => {
-        // Calculate dimensions while maintaining aspect ratio - REDUCED MAX SIZE
-        const maxSize = 77; // Reduced from 80 to 60 to prevent overflow
-        let width = img.naturalWidth;
-        let height = img.naturalHeight;
-
-        // Maintain aspect ratio while fitting within maxSize
-        if (width > height) {
-          height = (height / width) * maxSize;
-          width = maxSize;
-        } else {
-          width = (width / height) * maxSize;
-          height = maxSize;
-        }
-
-        // Ensure minimum size
-        const minSize = 25; // Reduced from 30 to 25
-        if (width < minSize) {
-          height = (height / width) * minSize;
-          width = minSize;
-        }
-        if (height < minSize) {
-          width = (width / height) * minSize;
-          height = minSize;
-        }
-
-        // Additional constraint: Ensure height doesn't exceed header height
-        const maxHeaderHeight = 45; // Header height is 64px (h-16), so 45px is safe
-        if (height > maxHeaderHeight) {
-          width = (width / height) * maxHeaderHeight;
-          height = maxHeaderHeight;
-        }
-
-        setLogoDimensions({
-          width: Math.round(width),
-          height: Math.round(height)
-        });
-      };
-      img.src = content.logoUrl;
-    } else {
-      // Reset to default size for text logos
-      setLogoDimensions({ width: 50, height: 50 });
-    }
+    setLogoDimensions({ width: 77, height: 45 });
   }, [content.logoUrl]);
 
   // Allow more zoom-out; do not enforce cover when media/crop sizes change
@@ -1083,10 +1110,10 @@ export default function Header({
     try {
       // Simulate API call or state persistence
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       // Update initial state reference to current state
       initialHeaderState.current = content;
-      
+
       toast.success("Changes saved automatically!");
     } catch (error) {
       console.error("Auto-save failed:", error);
@@ -1103,7 +1130,7 @@ export default function Header({
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
-      
+
       // Set new timeout for auto-save (1 second delay)
       autoSaveTimeoutRef.current = setTimeout(() => {
         autoSaveChanges();
@@ -1211,7 +1238,7 @@ export default function Header({
         return 16 / 9;
       case "original":
       default:
-        return logoDimensions.width / logoDimensions.height;
+        return 77 / 45; // Fixed aspect ratio based on 77x45
     }
   };
 
@@ -1224,7 +1251,7 @@ export default function Header({
         return "16:9";
       case "original":
       default:
-        return `${logoDimensions.width}:${logoDimensions.height}`;
+        return "77:45";
     }
   };
 
@@ -1243,53 +1270,15 @@ export default function Header({
       image.src = url;
     });
 
-  // Function to get cropped image - UPDATED WITH PROPER DIMENSIONS TO PREVENT OVERFLOW
+  // Function to get cropped image - UPDATED WITH FIXED DIMENSIONS
   const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Calculate output dimensions based on selected aspect ratio
-    let outputWidth, outputHeight;
-    let displayWidth, displayHeight; // For header display
-
-    switch (selectedAspectRatio) {
-      case "1:1":
-        // Square - use smaller dimensions for header display
-        outputWidth = 200;
-        outputHeight = 200;
-        displayWidth = 45;  // Reduced from 50 to 45 to prevent overflow
-        displayHeight = 45; // Reduced from 50 to 45 to prevent overflow
-        break;
-      case "16:9":
-        // Landscape - 16:9 ratio with reduced height
-        outputWidth = 320;
-        outputHeight = 180;
-        displayWidth = 55;  // Reduced from 60 to 55
-        displayHeight = 31; // Reduced from 34 to 31 (55 * 9/16)
-        break;
-      case "original":
-      default:
-        // Use original logo dimensions with header constraints
-        const maxHeaderSize = 45; // Maximum size to fit in header
-        outputWidth = logoDimensions.width > 200 ? 200 : logoDimensions.width;
-        outputHeight = logoDimensions.height > 200 ? 200 : logoDimensions.height;
-
-        // Ensure display dimensions don't overflow header
-        if (logoDimensions.width > maxHeaderSize || logoDimensions.height > maxHeaderSize) {
-          if (logoDimensions.width > logoDimensions.height) {
-            displayWidth = maxHeaderSize;
-            displayHeight = (logoDimensions.height / logoDimensions.width) * maxHeaderSize;
-          } else {
-            displayHeight = maxHeaderSize;
-            displayWidth = (logoDimensions.width / logoDimensions.height) * maxHeaderSize;
-          }
-        } else {
-          displayWidth = logoDimensions.width;
-          displayHeight = logoDimensions.height;
-        }
-        break;
-    }
+    // Fixed output dimensions - 77x45
+    const outputWidth = 77;
+    const outputHeight = 45;
 
     canvas.width = outputWidth;
     canvas.height = outputHeight;
@@ -1324,8 +1313,8 @@ export default function Header({
             file,
             previewUrl,
             dimensions: {
-              width: Math.round(displayWidth),  // Use display dimensions for header
-              height: Math.round(displayHeight) // Use display dimensions for header
+              width: 77,
+              height: 45
             }
           });
         },
@@ -1349,8 +1338,8 @@ export default function Header({
         croppedAreaPixels
       );
 
-      // Update logo dimensions with display dimensions
-      setLogoDimensions(dimensions);
+      // Set fixed logo dimensions
+      setLogoDimensions({ width: 77, height: 45 });
 
       // Show preview immediately with blob URL (temporary)
       setContent((prev) => ({ ...prev, logoUrl: previewUrl }));
@@ -1362,7 +1351,7 @@ export default function Header({
         // Update with actual S3 URL and trigger auto-save
         setContent((prev) => ({ ...prev, logoUrl: awsImageUrl }));
         toast.success("Logo cropped and uploaded to AWS successfully!");
-        
+
         // Auto-save the changes
         if (isEditing) {
           setIsSaving(true);
@@ -1380,7 +1369,7 @@ export default function Header({
       } else {
         // If upload fails, keep the preview URL
         toast.warning("Logo cropped but AWS upload failed. Using local version.");
-        
+
         // Still auto-save with local URL
         if (isEditing) {
           setIsSaving(true);
@@ -1494,7 +1483,7 @@ export default function Header({
                     : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                     }`}
                 >
-                  Original
+                  77:45 (Fixed)
                 </button>
                 <button
                   onClick={() => setSelectedAspectRatio("1:1")}
@@ -1638,22 +1627,17 @@ export default function Header({
                         src={content.logoUrl || logo}
                         alt="Logo"
                         style={{
-                          width: `${logoDimensions.width}px`,
-                          height: `${logoDimensions.height}px`,
-                          maxHeight: '45px', // Added max height constraint
+                          width: '77px',
+                          height: '45px',
                         }}
-                        className="bg-transparent cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
+                        className="bg-transparent cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-cover"
                       />
                     ) : (
                       <span
-                        className="text-lg font-bold text-black"
+                        className="text-lg font-bold text-black flex items-center justify-center"
                         style={{
-                          width: `${logoDimensions.width}px`,
-                          height: `${logoDimensions.height}px`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          maxHeight: '45px', // Added max height constraint
+                          width: '77px',
+                          height: '45px',
                         }}
                       >
                         {content.logoUrl}
@@ -1678,22 +1662,17 @@ export default function Header({
                         src={content.logoUrl || logo}
                         alt="Logo"
                         style={{
-                          width: `${logoDimensions.width}px`,
-                          height: `${logoDimensions.height}px`,
-                          maxHeight: '45px', // Added max height constraint
+                          width: '77px',
+                          height: '45px',
                         }}
-                        className="cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain"
+                        className="cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-cover"
                       />
                     ) : (
                       <span
-                        className="text-lg font-bold text-black"
+                        className="text-lg font-bold text-black flex items-center justify-center"
                         style={{
-                          width: `${logoDimensions.width}px`,
-                          height: `${logoDimensions.height}px`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          maxHeight: '45px', // Added max height constraint
+                          width: '77px',
+                          height: '45px',
                         }}
                       >
                         {content.logoUrl}

@@ -91,7 +91,7 @@ export default function Header({ headerData }) {
         <div className="flex justify-between items-center h-16">
           {/* Logo - Only show logo image, removed company name */}
           <div className="flex rounded-lg items-center group">
-            <div className="rounded-lg flex items-center justify-center flex-shrink-0 mr-2  bg-red-800">
+            <div className="rounded-lg flex items-center justify-center flex-shrink-0 mr-2  ">
               <img
                 src={headerData?.logoUrl || logo}
                 alt="Logo"
