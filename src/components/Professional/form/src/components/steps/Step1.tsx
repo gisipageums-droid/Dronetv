@@ -261,7 +261,7 @@ const ScrollDatePicker: React.FC<{
 
       <div className="relative">
         {/* Selection Highlight */}
-        <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-12 bg-amber-100 border-2 border-amber-300 rounded-lg pointer-events-none date-picker-highlight"></div>
+        <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-8 bg-amber-100 border-2 border-amber-300 rounded-lg pointer-events-none date-picker-highlight"></div>
 
         <div className="flex items-stretch h-32 relative z-10">
           {/* Day Column */}
