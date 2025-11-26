@@ -87,7 +87,6 @@ interface SidebarProps {
 interface CompanyCardProps {
   company: Company;
   onCredentials: (publishedId: string) => void;
-  onPreview: (publishedId: string) => void;
   onApprove: (publishedId: string) => void;
   onReject: (publishedId: string) => void;
   onDelete: (publishedId: string) => void;
@@ -326,6 +325,93 @@ const Sidebar: React.FC<SidebarProps> = ({
   );
 };
 
+// -------------------- Confirmation Modal Component --------------------
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText: string;
+  confirmColor: string;
+  icon: React.ReactNode;
+  isLoading?: boolean;
+}
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText,
+  confirmColor,
+  icon,
+  isLoading = false,
+}) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                {icon}
+                <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                disabled={isLoading}
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="mb-6">
+              <p className="text-gray-600">{message}</p>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex gap-3 justify-end">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onClose}
+                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                disabled={isLoading}
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onConfirm}
+                className={`px-4 py-2 text-white font-medium rounded-lg hover:opacity-90 transition-colors shadow-md ${confirmColor}`}
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : confirmText}
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 // -------------------- CompanyCard --------------------
 const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
   company,
@@ -399,7 +485,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               <img
                 src={company.previewImage || placeholderImg}
                 alt={`${company.companyName || "Company"} logo`}
-                className="object-contain w-full h-full transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
+                className="object-cover rounded-lg w-full h-full transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
                 onError={(e) => {
                   const img = e.currentTarget as HTMLImageElement;
                   if (img.src !== placeholderImg) img.src = placeholderImg;
@@ -425,7 +511,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
           </div>
 
           {/* Status badge: visible on all sizes, compact on small screens */}
-          <div className="mt-2 sm:mt-0 flex-shrink-0">
+          <div className="mt-2 flex-shrink-0">
             <div
               className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs sm:text-sm font-medium`}
               aria-hidden={false}
@@ -495,7 +581,10 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               aria-disabled={disabled}
             >
               <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="">Edit / Preview</span>
+              <span className="">Edit</span>
+              /
+              <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="">Preview</span>
             </button>
 
             <button
@@ -506,7 +595,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               }}
               aria-label={`Approve ${company.companyName}`}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={disabled|| company.reviewStatus === "approved"}
+              disabled={disabled || company.reviewStatus === "approved"}
               aria-disabled={disabled}
             >
               <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -521,7 +610,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               }}
               aria-label={`Reject ${company.companyName}`}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={disabled|| company.reviewStatus === "rejected"}
+              disabled={disabled || company.reviewStatus === "rejected"}
               aria-disabled={disabled}
             >
               <XCircle className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -543,14 +632,6 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="">Delete</span>
             </button>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs text-gray-400 gap-1 sm:gap-0">
-            {/* <span className="">ID: {company.publishedId || "No ID"}</span> */}
-            {/* <span>v{company.version}</span> */}
           </div>
         </div>
       </div>
@@ -804,13 +885,14 @@ const AdminDashboard: React.FC = () => {
     data: any;
     company: Company | null;
   }>({ isOpen: false, data: null, company: null });
-  const [deleteModal, setDeleteModal] = useState<{
+
+  // Confirmation modals state
+  const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
+    type: "edit" | "approve" | "reject" | "delete" | null;
     publishedId: string | null;
-  }>({
-    isOpen: false,
-    publishedId: null,
-  });
+    company: Company | null;
+  }>({ isOpen: false, type: null, publishedId: null, company: null });
 
   const [error, setError] = useState<string | null>(null);
 
@@ -962,7 +1044,117 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // -------------------- Handlers (mutations with isMutating) --------------------
+  // -------------------- Confirmation Modal Handlers --------------------
+  const openConfirmationModal = (
+    type: "edit" | "approve" | "reject" | "delete",
+    publishedId: string
+  ) => {
+    const company = companies.find((c) => c.publishedId === publishedId);
+    setConfirmationModal({ isOpen: true, type, publishedId, company });
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModal({
+      isOpen: false,
+      type: null,
+      publishedId: null,
+      company: null,
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    const { type, publishedId, company } = confirmationModal;
+    if (!publishedId) return;
+
+    try {
+      setIsMutating(true);
+
+      switch (type) {
+        case "edit":
+          if (company) {
+            if (company.templateSelection === "template-1") {
+              navigate(
+                `/admin/companies/edit/1/${publishedId}/${company.userId}`
+              );
+            } else if (company.templateSelection === "template-2") {
+              navigate(
+                `/admin/companies/edit/2/${publishedId}/${company.userId}`
+              );
+            } else {
+              toast.info("Unknown template selection");
+            }
+          }
+          break;
+
+        case "approve":
+          // optimistic update
+          setCompanies((prev) =>
+            prev.map((c) =>
+              c.publishedId === publishedId
+                ? { ...c, isApproved: true, reviewStatus: "approved" }
+                : c
+            )
+          );
+          const approveResult = await apiService.approveCompany(
+            publishedId,
+            "approve"
+          );
+          if (
+            approveResult?.status === "approved" ||
+            approveResult?.status === "success"
+          ) {
+            toast.success("Company approved successfully");
+            await fetchCompanies();
+          } else {
+            toast.error("Failed to approve company");
+            await fetchCompanies();
+          }
+          break;
+
+        case "reject":
+          setCompanies((prev) =>
+            prev.map((c) =>
+              c.publishedId === publishedId
+                ? { ...c, isApproved: false, reviewStatus: "rejected" }
+                : c
+            )
+          );
+          const rejectResult = await apiService.rejectCompany(
+            publishedId,
+            "reject"
+          );
+          if (
+            rejectResult?.status === "rejected" ||
+            rejectResult?.status === "success"
+          ) {
+            toast.success("Company rejected successfully");
+            await fetchCompanies();
+          } else {
+            toast.error("Failed to reject company");
+            await fetchCompanies();
+          }
+          break;
+
+        case "delete":
+          const deleteResult = await apiService.deleteCompany(publishedId);
+          toast(deleteResult.message);
+          await fetchCompanies();
+          break;
+
+        default:
+          return;
+      }
+    } catch (err) {
+      console.error(`Error performing ${type} action:`, err);
+      toast.error(`Failed to ${type} company`);
+      await fetchCompanies();
+    } finally {
+      setIsMutating(false);
+      closeConfirmationModal();
+    }
+  };
+
+  // -------------------- Action Handlers --------------------
   const handleCredentials = async (publishedId: string) => {
     try {
       const company = companies.find((c) => c.publishedId === publishedId);
@@ -1008,199 +1200,94 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Add handleEdit function
-  const handleEdit = async (publishedId: string, templateSelection: string) => {
-    try {
-      const company = companies.find((c) => c.publishedId === publishedId);
-      if (!company) {
-        toast.error("Company not found");
-        return;
-      }
-
-      setIsMutating(true);
-
-      // Navigate to admin edit page with company's userId
-      if (templateSelection === "template-1") {
-        navigate(`/admin/companies/edit/1/${publishedId}/${company.userId}`);
-      } else if (templateSelection === "template-2") {
-        navigate(`/admin/companies/edit/2/${publishedId}/${company.userId}`);
-      } else {
-        toast.info("Unknown template selection");
-      }
-    } catch (err) {
-      console.error("Error loading template for editing:", err);
-      toast.error("Failed to load template for editing");
-    } finally {
-      setIsMutating(false);
-    }
+  const handleEdit = (publishedId: string, templateSelection: string) => {
+    openConfirmationModal("edit", publishedId);
   };
 
-  const handleApprove = async (publishedId: string) => {
-    if (!window.confirm("Approve this company?")) return;
-    try {
-      setIsMutating(true);
-      // optimistic update
-      setCompanies((prev) =>
-        prev.map((c) =>
-          c.publishedId === publishedId
-            ? { ...c, isApproved: true, reviewStatus: "approved" }
-            : c
-        )
-      );
-      const result = await apiService.approveCompany(publishedId, "approve");
-      if (result?.status === "approved" || result?.status === "success") {
-        toast.success("Company approved successfully");
-        await fetchCompanies();
-      } else {
-        toast.error("Failed to approve company");
-        await fetchCompanies();
-      }
-    } catch (err) {
-      console.error("Error approving company:", err);
-      toast.error("Failed to approve company");
-      await fetchCompanies();
-    } finally {
-      setIsMutating(false);
-    }
+  const handleApprove = (publishedId: string) => {
+    openConfirmationModal("approve", publishedId);
   };
 
-  const handleReject = async (publishedId: string) => {
-    if (!window.confirm("Reject this company?")) return;
-    try {
-      setIsMutating(true);
-      setCompanies((prev) =>
-        prev.map((c) =>
-          c.publishedId === publishedId
-            ? { ...c, isApproved: false, reviewStatus: "rejected" }
-            : c
-        )
-      );
-      const result = await apiService.rejectCompany(publishedId, "reject");
-      if (result?.status === "rejected" || result?.status === "success") {
-        toast.success("Company rejected successfully");
-        await fetchCompanies();
-      } else {
-        toast.error("Failed to reject company");
-        await fetchCompanies();
-      }
-    } catch (err) {
-      console.error("Error rejecting company:", err);
-      toast.error("Failed to reject company");
-      await fetchCompanies();
-    } finally {
-      setIsMutating(false);
-    }
+  const handleReject = (publishedId: string) => {
+    openConfirmationModal("reject", publishedId);
   };
 
-  // Replace handleDelete with modal logic
-  const handleDelete = async (publishedId: string) => {
-    setDeleteModal({ isOpen: true, publishedId });
-  };
-
-  // Confirm delete action
-  const confirmDelete = async () => {
-    if (!deleteModal.publishedId) return;
-    try {
-      setIsMutating(true);
-      const result = await apiService.deleteCompany(deleteModal.publishedId);
-      toast(result.message);
-      await fetchCompanies();
-    } catch (err) {
-      console.error("Error deleting company:", err);
-      toast.error("Failed to delete company");
-      await fetchCompanies();
-    } finally {
-      setIsMutating(false);
-      setDeleteModal({ isOpen: false, publishedId: null });
-    }
+  const handleDelete = (publishedId: string) => {
+    openConfirmationModal("delete", publishedId);
   };
 
   const handleRetry = () => {
     fetchCompanies();
   };
 
+  // -------------------- Modal Configuration --------------------
+  const getModalConfig = () => {
+    const { type, company } = confirmationModal;
+    const companyName = company?.companyName || "this company";
+
+    switch (type) {
+      case "edit":
+        return {
+          title: "Confirm Edit",
+          message: `Are you sure you want to edit "${companyName}"? You will be redirected to the edit page.`,
+          confirmText: "Edit Company",
+          confirmColor: "bg-amber-600 hover:bg-amber-700",
+          icon: <Edit className="text-amber-600" size={24} />,
+        };
+      case "approve":
+        return {
+          title: "Confirm Approval",
+          message: `Are you sure you want to approve "${companyName}"? This will make the company visible to users.`,
+          confirmText: "Approve Company",
+          confirmColor: "bg-green-600 hover:bg-green-700",
+          icon: <CheckCircle className="text-green-600" size={24} />,
+        };
+      case "reject":
+        return {
+          title: "Confirm Rejection",
+          message: `Are you sure you want to reject "${companyName}"? This will mark the company as rejected.`,
+          confirmText: "Reject Company",
+          confirmColor: "bg-red-600 hover:bg-red-700",
+          icon: <XCircle className="text-red-600" size={24} />,
+        };
+      case "delete":
+        return {
+          title: "Confirm Deletion",
+          message: `Are you sure you want to delete "${companyName}"? This action cannot be undone and all company data will be permanently removed.`,
+          confirmText: "Delete Company",
+          confirmColor: "bg-red-600 hover:bg-red-700",
+          icon: <Trash2 className="text-red-600" size={24} />,
+        };
+      default:
+        return {
+          title: "Confirm Action",
+          message: "Are you sure you want to perform this action?",
+          confirmText: "Confirm",
+          confirmColor: "bg-blue-600 hover:bg-blue-700",
+          icon: <AlertCircle className="text-blue-600" size={24} />,
+        };
+    }
+  };
+
+  const modalConfig = getModalConfig();
+
   // -------------------- Render --------------------
   return (
     <div className="min-h-screen bg-orange-50">
       <Header />
 
-      {/* Delete Confirmation Modal */}
-      <AnimatePresence>
-        {deleteModal.isOpen && (
-          <motion.div
-            className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setDeleteModal({ isOpen: false, publishedId: null })}
-          >
-            <motion.div
-              className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Trash2 className="text-red-600" size={24} />
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    Confirm Deletion
-                  </h3>
-                </div>
-                <button
-                  onClick={() =>
-                    setDeleteModal({ isOpen: false, publishedId: null })
-                  }
-                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  <X size={20} className="text-gray-500" />
-                </button>
-              </div>
-              {/* Modal Body */}
-              <div className="mb-6">
-                <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg mb-4">
-                  <AlertCircle
-                    size={18}
-                    className="text-red-600 mt-0.5 flex-shrink-0"
-                  />
-                  <p className="text-sm text-red-800">
-                    This action cannot be undone. All data for this company will
-                    be permanently deleted.
-                  </p>
-                </div>
-                <p className="text-gray-600">
-                  Are you sure you want to delete this company?
-                </p>
-              </div>
-              {/* Modal Footer */}
-              <div className="flex gap-3 justify-end">
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.1 }}
-                  onClick={() =>
-                    setDeleteModal({ isOpen: false, publishedId: null })
-                  }
-                  className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
-                  disabled={isMutating}
-                >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.1 }}
-                  onClick={confirmDelete}
-                  className="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-md"
-                  disabled={isMutating}
-                >
-                  Confirm & Delete
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Universal Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        onClose={closeConfirmationModal}
+        onConfirm={handleConfirmAction}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+        confirmColor={modalConfig.confirmColor}
+        icon={modalConfig.icon}
+        isLoading={isMutating}
+      />
 
       {/* Mobile sidebar toggle */}
       <div className="flex sticky top-0 z-40 justify-between items-center p-4 bg-white border-b border-gray-200 md:hidden">
@@ -1277,7 +1364,6 @@ const AdminDashboard: React.FC = () => {
                   <CompanyCard
                     company={company}
                     onCredentials={handleCredentials}
-                    onPreview={handlePreview}
                     onApprove={handleApprove}
                     onReject={handleReject}
                     onDelete={handleDelete}
