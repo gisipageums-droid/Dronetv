@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Search,
   MapPin,
@@ -14,6 +14,7 @@ import {
   Trash2,
   Clock,
   Pen,
+  Edit,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -150,7 +151,95 @@ interface EventCardProps {
   onApprove: (eventId: string, userId: string) => void;
   onReject: (eventId: string, userId: string) => void;
   onDelete: (eventId: string) => void;
+  disabled?: boolean;
 }
+
+// -------------------- Confirmation Modal Component --------------------
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText: string;
+  confirmColor: string;
+  icon: React.ReactNode;
+  isLoading?: boolean;
+}
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText,
+  confirmColor,
+  icon,
+  isLoading = false,
+}) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                {icon}
+                <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                disabled={isLoading}
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="mb-6">
+              <p className="text-gray-600">{message}</p>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex gap-3 justify-end">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onClose}
+                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                disabled={isLoading}
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onConfirm}
+                className={`px-4 py-2 text-white font-medium rounded-lg hover:opacity-90 transition-colors shadow-md ${confirmColor}`}
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : confirmText}
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 // -------------------- Credentials Modal --------------------
 interface EventCredentialsModalProps {
@@ -701,13 +790,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 };
 
 // -------------------- EventCard --------------------
-const EventCard: React.FC<EventCardProps> = ({
+const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   event,
   onCredentials,
   onPreview,
   onApprove,
   onReject,
   onDelete,
+  disabled = false,
 }) => {
   const placeholderImg = event.previewImage || event.eventName[0];
 
@@ -809,8 +899,9 @@ const EventCard: React.FC<EventCardProps> = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => onPreview(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-amber-700 bg-amber-100 rounded-lg transition-colors hover:bg-amber-200 md:text-sm"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-amber-700 bg-amber-100 rounded-lg transition-colors hover:bg-amber-200 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
               aria-label={`Preview ${event.eventName}`}
+              disabled={disabled}
             >
               <Pen className="w-3 h-3 md:w-4 md:h-4" /> Edit /{" "}
               <Eye className="w-3 h-3 md:w-4 md:h-4" /> Preview
@@ -818,8 +909,9 @@ const EventCard: React.FC<EventCardProps> = ({
 
             <button
               onClick={() => onCredentials(event.eventId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg transition-colors hover:bg-purple-200 md:text-sm"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg transition-colors hover:bg-purple-200 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
               aria-label={`Credentials ${event.eventName}`}
+              disabled={disabled}
             >
               <Key className="w-3 h-3 md:w-4 md:h-4" />
               Credentials
@@ -829,7 +921,7 @@ const EventCard: React.FC<EventCardProps> = ({
               onClick={() => onApprove(event.eventId, event.userId)}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label={`Approve ${event.eventName}`}
-              disabled={event.reviewStatus === "approved"}
+              disabled={disabled || event.reviewStatus === "approved"}
             >
               <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
               Approve
@@ -839,7 +931,7 @@ const EventCard: React.FC<EventCardProps> = ({
               onClick={() => onReject(event.eventId, event.userId)}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label={`Reject ${event.eventName}`}
-              disabled={event.reviewStatus === "rejected"}
+              disabled={disabled || event.reviewStatus === "rejected"}
             >
               <XCircle className="w-3 h-3 md:w-4 md:h-4" />
               Reject
@@ -847,8 +939,9 @@ const EventCard: React.FC<EventCardProps> = ({
 
             <button
               onClick={() => onDelete(event.eventId)}
-              className="flex col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 md:text-sm"
+              className="flex col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
               aria-label={`Delete ${event.eventName}`}
+              disabled={disabled}
             >
               <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
               Delete
@@ -876,6 +969,7 @@ const RecentEventsSection: React.FC<{
   onApprove: (publishedId: string, userId: string) => void;
   onReject: (publishedId: string, userId: string) => void;
   onDelete: (publishedId: string) => void;
+  disabled?: boolean;
 }> = ({
   recentEvents,
   onCredentials,
@@ -883,6 +977,7 @@ const RecentEventsSection: React.FC<{
   onApprove,
   onReject,
   onDelete,
+  disabled,
 }) => {
   if (recentEvents.length === 0) return null;
 
@@ -910,6 +1005,7 @@ const RecentEventsSection: React.FC<{
               onApprove={onApprove}
               onReject={onReject}
               onDelete={onDelete}
+              disabled={disabled}
             />
           </div>
         ))}
@@ -961,7 +1057,17 @@ const EventAdminDashboard: React.FC = () => {
     isOpen: false,
     data: null,
   });
+  const [isMutating, setIsMutating] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  // Confirmation modal state
+  const [confirmationModal, setConfirmationModal] = useState<{
+    isOpen: boolean;
+    type: "approve" | "reject" | "delete" | "edit" | null;
+    eventId: string | null;
+    userId: string | null;
+    event: Event | null;
+  }>({ isOpen: false, type: null, eventId: null, userId: null, event: null });
 
   const categories = [
     "All Categories",
@@ -979,6 +1085,69 @@ const EventAdminDashboard: React.FC = () => {
     "Culinary",
   ];
 
+  // -------------------- Confirmation Modal Handlers --------------------
+  const openConfirmationModal = (
+    type: "approve" | "reject" | "delete" | "edit",
+    eventId: string,
+    userId?: string
+  ) => {
+    const event = events.find((e) => e.eventId === eventId);
+    setConfirmationModal({
+      isOpen: true,
+      type,
+      eventId,
+      userId: userId || null,
+      event,
+    });
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModal({
+      isOpen: false,
+      type: null,
+      eventId: null,
+      userId: null,
+      event: null,
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    const { type, eventId, userId } = confirmationModal;
+    if (!eventId) return;
+
+    try {
+      setIsMutating(true);
+
+      switch (type) {
+        case "edit":
+          await handlePreviewAction(eventId, userId || "");
+          break;
+
+        case "approve":
+          await handleApproveAction(eventId, userId || "");
+          break;
+
+        case "reject":
+          await handleRejectAction(eventId, userId || "");
+          break;
+
+        case "delete":
+          await handleDeleteAction(eventId);
+          break;
+
+        default:
+          return;
+      }
+    } catch (err) {
+      console.error(`Error performing ${type} action:`, err);
+      toast.error(`Failed to ${type} event`);
+    } finally {
+      setIsMutating(false);
+      closeConfirmationModal();
+    }
+  };
+
+  // -------------------- Action Handlers --------------------
   const handleCredentials = async (eventId: string) => {
     try {
       setLoading(true);
@@ -992,7 +1161,7 @@ const EventAdminDashboard: React.FC = () => {
     }
   };
 
-  const handlePreview = (eventId: string, userId: string) => {
+  const handlePreviewAction = (eventId: string, userId: string) => {
     // Find the event to get its templateSelection
     const event = events.find((e) => e.eventId === eventId);
     if (!event) {
@@ -1019,23 +1188,24 @@ const EventAdminDashboard: React.FC = () => {
       navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
     }
   };
-  const fetchEvents = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
-        );
-        const data = await response.json();
-        setEvents(data?.cards || []);
-        setRecentEvents(data?.cards?.slice(0, 3) || []);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-  const handleApprove = async (eventId: string, userId: string) => {
+  const fetchEvents = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
+      );
+      const data = await response.json();
+      setEvents(data?.cards || []);
+      setRecentEvents(data?.cards?.slice(0, 3) || []);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApproveAction = async (eventId: string, userId: string) => {
     try {
       await fetch(
         `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
@@ -1058,10 +1228,11 @@ const EventAdminDashboard: React.FC = () => {
     } catch (error) {
       console.error("Error approving event:", error);
       toast.error("Failed to approve event");
+      throw error;
     }
   };
 
-  const handleReject = async (eventId: string, userId: string) => {
+  const handleRejectAction = async (eventId: string, userId: string) => {
     try {
       await fetch(
         `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
@@ -1083,11 +1254,12 @@ const EventAdminDashboard: React.FC = () => {
       fetchEvents();
     } catch (error) {
       console.error("Error rejecting event:", error);
-      toast.error("Failed to rejecte event");
+      toast.error("Failed to reject event");
+      throw error;
     }
   };
 
-  const handleDelete = async (eventId: string) => {
+  const handleDeleteAction = async (eventId: string) => {
     try {
       await fetch(
         "https://pjqm3sgpzf.execute-api.ap-south-1.amazonaws.com/dev/delete-event",
@@ -1108,7 +1280,25 @@ const EventAdminDashboard: React.FC = () => {
     } catch (error) {
       console.error("Error deleting event:", error);
       toast.error("Failed to delete event");
+      throw error;
     }
+  };
+
+  // Wrapper functions for button clicks
+  const handlePreview = (eventId: string, userId: string) => {
+    openConfirmationModal("edit", eventId, userId);
+  };
+
+  const handleApprove = (eventId: string, userId: string) => {
+    openConfirmationModal("approve", eventId, userId);
+  };
+
+  const handleReject = (eventId: string, userId: string) => {
+    openConfirmationModal("reject", eventId, userId);
+  };
+
+  const handleDelete = (eventId: string) => {
+    openConfirmationModal("delete", eventId);
   };
 
   useEffect(() => {
@@ -1183,9 +1373,73 @@ const EventAdminDashboard: React.FC = () => {
     }
   };
 
+  // -------------------- Modal Configuration --------------------
+  const getModalConfig = () => {
+    const { type, event } = confirmationModal;
+    const eventName = event?.eventName || "this event";
+
+    switch (type) {
+      case "edit":
+        return {
+          title: "Confirm Edit",
+          message: `Are you sure you want to edit "${eventName}"? You will be redirected to the edit page.`,
+          confirmText: "Edit Event",
+          confirmColor: "bg-amber-600 hover:bg-amber-700",
+          icon: <Edit className="text-amber-600" size={24} />,
+        };
+      case "approve":
+        return {
+          title: "Confirm Approval",
+          message: `Are you sure you want to approve "${eventName}"? This will make the event visible to users.`,
+          confirmText: "Approve Event",
+          confirmColor: "bg-green-600 hover:bg-green-700",
+          icon: <CheckCircle className="text-green-600" size={24} />,
+        };
+      case "reject":
+        return {
+          title: "Confirm Rejection",
+          message: `Are you sure you want to reject "${eventName}"? This will mark the event as rejected.`,
+          confirmText: "Reject Event",
+          confirmColor: "bg-red-600 hover:bg-red-700",
+          icon: <XCircle className="text-red-600" size={24} />,
+        };
+      case "delete":
+        return {
+          title: "Confirm Deletion",
+          message: `Are you sure you want to delete "${eventName}"? This action cannot be undone and all event data will be permanently removed.`,
+          confirmText: "Delete Event",
+          confirmColor: "bg-red-600 hover:bg-red-700",
+          icon: <Trash2 className="text-red-600" size={24} />,
+        };
+      default:
+        return {
+          title: "Confirm Action",
+          message: "Are you sure you want to perform this action?",
+          confirmText: "Confirm",
+          confirmColor: "bg-blue-600 hover:bg-blue-700",
+          icon: <CheckCircle className="text-blue-600" size={24} />,
+        };
+    }
+  };
+
+  const modalConfig = getModalConfig();
+
   return (
     <div className="w-full min-h-screen h-full bg-orange-50">
       <Header />
+
+      {/* Universal Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        onClose={closeConfirmationModal}
+        onConfirm={handleConfirmAction}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+        confirmColor={modalConfig.confirmColor}
+        icon={modalConfig.icon}
+        isLoading={isMutating}
+      />
 
       {/* Credentials Modal */}
       <EventCredentialsModal
@@ -1230,6 +1484,7 @@ const EventAdminDashboard: React.FC = () => {
                 onApprove={handleApprove}
                 onReject={handleReject}
                 onDelete={handleDelete}
+                disabled={isMutating}
               />
 
               {/* All Events Section */}
@@ -1256,6 +1511,7 @@ const EventAdminDashboard: React.FC = () => {
                       onApprove={handleApprove}
                       onReject={handleReject}
                       onDelete={handleDelete}
+                      disabled={isMutating}
                     />
                   </div>
                 ))}

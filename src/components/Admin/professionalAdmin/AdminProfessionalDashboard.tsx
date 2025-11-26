@@ -13,6 +13,7 @@ import {
   Clock,
   AlertCircle,
   ArrowRight,
+  Edit,
 } from "lucide-react";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -90,6 +91,7 @@ interface ProfessionalCardProps {
   onApprove: (professionalId: string) => void;
   onReject: (professionalId: string) => void;
   onDelete: (professionalId: string) => void;
+  onEdit: (professionalId: string, templateSelection: string) => void;
   disabled?: boolean;
 }
 
@@ -113,6 +115,7 @@ interface MainContentProps {
   sortBy: string;
   onClearFilters: () => void;
   onDelete: (professionalId: string) => void;
+  onEdit: (professionalId: string, templateSelection: string) => void;
   isMutating?: boolean;
   onNextPage: () => void;
   onPrevPage: () => void;
@@ -122,6 +125,93 @@ interface ErrorMessageProps {
   error: string;
   onRetry: () => void;
 }
+
+// -------------------- Confirmation Modal Component --------------------
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText: string;
+  confirmColor: string;
+  icon: React.ReactNode;
+  isLoading?: boolean;
+}
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText,
+  confirmColor,
+  icon,
+  isLoading = false,
+}) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                {icon}
+                <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                disabled={isLoading}
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="mb-6">
+              <p className="text-gray-600">{message}</p>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex gap-3 justify-end">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onClose}
+                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                disabled={isLoading}
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onConfirm}
+                className={`px-4 py-2 text-white font-medium rounded-lg hover:opacity-90 transition-colors shadow-md ${confirmColor}`}
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : confirmText}
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 // Header Component
 const Header: React.FC = () => {
@@ -205,7 +295,6 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
   );
 };
 
-/* Sidebar Filters Component */
 /* Sidebar Filters Component */
 const Sidebar: React.FC<SidebarProps> = ({
   searchTerm,
@@ -345,14 +434,13 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   onApprove,
   onReject,
   onDelete,
+  onEdit,
   disabled = false,
 }) => {
   // Create a placeholder image using professional name
   const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
     professional.professionalName?.charAt(0) || "P"
   }%3C/text%3E%3C/svg%3E`;
-
-  let navigate = useNavigate();
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -407,7 +495,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
               <img
                 src={professional.previewImage || placeholderImg}
                 alt={`${professional.professionalName} profile`}
-                className="w-full h-full object-cover transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
+                className="w-full h-full object-cover rounded-lg transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
                 onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                   const target = e.target as HTMLImageElement;
                   target.src = placeholderImg;
@@ -473,22 +561,18 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                // onPreview(professional.professionalId);
-                if (professional.templateSelection === "template-1") {
-                  navigate(
-                    `/user/professionals/edit/1/${professional.professionalId}/${professional.userId}`
-                  );
-                } else if (professional.templateSelection === "template-2") {
-                  navigate(
-                    `/user/professionals/edit/2/${professional.professionalId}/${professional.userId}`
-                  );
-                }
+                onEdit(
+                  professional.professionalId,
+                  professional.templateSelection
+                );
               }}
               disabled={disabled}
               className="px-3 py-2 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
+              <Edit className="w-3 h-3 md:w-4 md:h-4" />
+              Edit /
               <Eye className="w-3 h-3 md:w-4 md:h-4" />
-              Edit/ Preview
+              Preview
             </button>
 
             <button
@@ -540,16 +624,6 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             </button>
           </div>
         </div>
-
-        {/* Additional Info */}
-        {/* <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
-            <div className="flex justify-between items-center text-xs text-gray-400">
-              <span className="truncate mr-2">
-                ID: {professional.professionalId || "No ID"}
-              </span>
-              <span>v{professional.version}</span>
-            </div>
-          </div> */}
       </div>
     </div>
   );
@@ -586,6 +660,7 @@ const RecentProfessionalsSection: React.FC<{
   onApprove: (professionalId: string) => void;
   onReject: (professionalId: string) => void;
   onDelete: (professionalId: string) => void;
+  onEdit: (professionalId: string, templateSelection: string) => void;
   disabled?: boolean;
 }> = ({
   recentProfessionals,
@@ -594,6 +669,7 @@ const RecentProfessionalsSection: React.FC<{
   onApprove,
   onReject,
   onDelete,
+  onEdit,
   disabled,
 }) => {
   if (recentProfessionals.length === 0) return null;
@@ -622,6 +698,7 @@ const RecentProfessionalsSection: React.FC<{
               onApprove={onApprove}
               onReject={onReject}
               onDelete={onDelete}
+              onEdit={onEdit}
               disabled={disabled}
             />
           </div>
@@ -654,6 +731,7 @@ const MainContent: React.FC<MainContentProps> = ({
   sortBy,
   onClearFilters,
   onDelete,
+  onEdit,
   isMutating = false,
   onNextPage,
   onPrevPage,
@@ -690,6 +768,7 @@ const MainContent: React.FC<MainContentProps> = ({
         onApprove={onApprove}
         onReject={onReject}
         onDelete={onDelete}
+        onEdit={onEdit}
         disabled={isMutating}
       />
 
@@ -728,6 +807,7 @@ const MainContent: React.FC<MainContentProps> = ({
                 onApprove={onApprove}
                 onReject={onReject}
                 onDelete={onDelete}
+                onEdit={onEdit}
                 disabled={isMutating}
               />
             </div>
@@ -849,7 +929,6 @@ const apiService = {
 
   async approveProfessional(publishedId: string, userId: string): Promise<any> {
     try {
-      //  const professional = professionals.find(p => p.professionalId === professionalId);
       console.log(publishedId, userId);
 
       const response = await fetch(
@@ -955,13 +1034,14 @@ const AdminProfessionalDashboard: React.FC = () => {
     isOpen: false,
     data: null,
   });
-  const [deleteModal, setDeleteModal] = useState<{
+
+  // Confirmation modals state
+  const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
+    type: "edit" | "approve" | "reject" | "delete" | null;
     professionalId: string | null;
-  }>({
-    isOpen: false,
-    professionalId: null,
-  });
+    professional: Professional | null;
+  }>({ isOpen: false, type: null, professionalId: null, professional: null });
 
   // Calculate recent professionals (last 7 days)
   const recentProfessionals = useMemo(() => {
@@ -977,7 +1057,104 @@ const AdminProfessionalDashboard: React.FC = () => {
       .slice(0, 6); // Show max 6 recent professionals
   }, [professionals]);
 
-  // Handle credentials button click
+  // -------------------- Confirmation Modal Handlers --------------------
+  const openConfirmationModal = (
+    type: "edit" | "approve" | "reject" | "delete",
+    professionalId: string
+  ) => {
+    const professional = professionals.find(
+      (p) => p.professionalId === professionalId
+    );
+    setConfirmationModal({ isOpen: true, type, professionalId, professional });
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModal({
+      isOpen: false,
+      type: null,
+      professionalId: null,
+      professional: null,
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    const { type, professionalId, professional } = confirmationModal;
+    if (!professionalId) return;
+
+    try {
+      setIsMutating(true);
+
+      switch (type) {
+        case "edit":
+          if (professional) {
+            if (professional.templateSelection === "template-1") {
+              navigate(
+                `/user/professionals/edit/1/${professionalId}/${professional.userId}`
+              );
+            } else if (professional.templateSelection === "template-2") {
+              navigate(
+                `/user/professionals/edit/2/${professionalId}/${professional.userId}`
+              );
+            }
+          }
+          break;
+
+        case "approve":
+          if (professional) {
+            const result = await apiService.approveProfessional(
+              professionalId,
+              professional.userId
+            );
+
+            if (result.status == "approved") {
+              toast.success("Professional approved successfully");
+              await fetchProfessionals();
+            } else {
+              toast.error("Failed to approve professional");
+            }
+          }
+          break;
+
+        case "reject":
+          if (professional) {
+            const result = await apiService.rejectProfessional(
+              professionalId,
+              professional.userId
+            );
+
+            if (result.status == "rejected") {
+              toast.success("Professional rejected successfully");
+              await fetchProfessionals();
+            } else {
+              toast.error("Failed to reject professional");
+            }
+          }
+          break;
+
+        case "delete":
+          const result = await apiService.deleteProfessional(professionalId);
+          if (result.message === "Professional template deleted successfully") {
+            toast.success("Professional deleted successfully");
+            await fetchProfessionals();
+          } else {
+            toast.error("Failed to delete professional");
+          }
+          break;
+
+        default:
+          return;
+      }
+    } catch (err) {
+      console.error(`Error performing ${type} action:`, err);
+      toast.error(`Failed to ${type} professional`);
+      await fetchProfessionals();
+    } finally {
+      setIsMutating(false);
+      closeConfirmationModal();
+    }
+  };
+
+  // -------------------- Action Handlers --------------------
   const handleCredentials = async (professionalId: string): Promise<void> => {
     try {
       setIsMutating(true);
@@ -996,7 +1173,6 @@ const AdminProfessionalDashboard: React.FC = () => {
     }
   };
 
-  // Handle preview button click
   const handlePreview = async (professionalId: string): Promise<void> => {
     try {
       const professional = professionals.find(
@@ -1023,99 +1199,20 @@ const AdminProfessionalDashboard: React.FC = () => {
     }
   };
 
-  // Handle approve button click
-  const handleApprove = async (professionalId: string): Promise<void> => {
-    try {
-      setIsMutating(true);
-      const professional = professionals.find(
-        (p) => p.professionalId === professionalId
-      );
-
-      if (!professional) {
-        toast.error("Professional not found");
-        return;
-      }
-
-      const result = await apiService.approveProfessional(
-        professionalId,
-        professional.userId
-      );
-
-      if (result.status == "approved") {
-        toast.success("Professional approved successfully");
-        // Refresh the professionals list
-        fetchProfessionals();
-      } else {
-        toast.error("Failed to approve professional");
-      }
-    } catch (error) {
-      console.error("Error approving professional:", error);
-      toast.error("Failed to approve professional");
-    } finally {
-      setIsMutating(false);
-    }
+  const handleEdit = (professionalId: string, templateSelection: string) => {
+    openConfirmationModal("edit", professionalId);
   };
 
-  // Handle reject button click
-  const handleReject = async (professionalId: string): Promise<void> => {
-    try {
-      setIsMutating(true);
-      const professional = professionals.find(
-        (p) => p.professionalId === professionalId
-      );
-
-      if (!professional) {
-        toast.error("Professional not found");
-        return;
-      }
-
-      const result = await apiService.rejectProfessional(
-        professionalId,
-        professional.userId
-      );
-
-      if (result.status == "rejected") {
-        toast.success("Professional rejected successfully");
-        // Refresh the professionals list
-        fetchProfessionals();
-      } else {
-        toast.error("Failed to reject professional");
-      }
-    } catch (error) {
-      console.error("Error rejecting professional:", error);
-      toast.error("Failed to reject professional");
-    } finally {
-      setIsMutating(false);
-    }
+  const handleApprove = (professionalId: string) => {
+    openConfirmationModal("approve", professionalId);
   };
 
-  // Handle delete button click
-  const handleDelete = async (professionalId: string): Promise<void> => {
-    setDeleteModal({ isOpen: true, professionalId });
+  const handleReject = (professionalId: string) => {
+    openConfirmationModal("reject", professionalId);
   };
 
-  // Confirm delete action
-  const confirmDelete = async () => {
-    if (!deleteModal.professionalId) return;
-    try {
-      setIsMutating(true);
-      const result = await apiService.deleteProfessional(
-        deleteModal.professionalId
-      );
-
-      if (result.message === "Professional template deleted successfully") {
-        toast.success("Professional deleted successfully");
-        await fetchProfessionals();
-      } else {
-        toast.error("Failed to delete professional");
-      }
-    } catch (error) {
-      console.error("Error deleting professional:", error);
-      toast.error("Failed to delete professional");
-    } finally {
-      setIsMutating(false);
-      setDeleteModal({ isOpen: false, professionalId: null });
-    }
+  const handleDelete = (professionalId: string) => {
+    openConfirmationModal("delete", professionalId);
   };
 
   // Clear filters function
@@ -1247,89 +1344,74 @@ const AdminProfessionalDashboard: React.FC = () => {
     }
   };
 
+  // -------------------- Modal Configuration --------------------
+  const getModalConfig = () => {
+    const { type, professional } = confirmationModal;
+    const professionalName =
+      professional?.professionalName || "this professional";
+
+    switch (type) {
+      case "edit":
+        return {
+          title: "Confirm Edit",
+          message: `Are you sure you want to edit "${professionalName}"? You will be redirected to the edit page.`,
+          confirmText: "Edit Professional",
+          confirmColor: "bg-amber-600 hover:bg-amber-700",
+          icon: <Edit className="text-amber-600" size={24} />,
+        };
+      case "approve":
+        return {
+          title: "Confirm Approval",
+          message: `Are you sure you want to approve "${professionalName}"? This will make the professional visible to users.`,
+          confirmText: "Approve Professional",
+          confirmColor: "bg-green-600 hover:bg-green-700",
+          icon: <CheckCircle className="text-green-600" size={24} />,
+        };
+      case "reject":
+        return {
+          title: "Confirm Rejection",
+          message: `Are you sure you want to reject "${professionalName}"? This will mark the professional as rejected.`,
+          confirmText: "Reject Professional",
+          confirmColor: "bg-red-600 hover:bg-red-700",
+          icon: <XCircle className="text-red-600" size={24} />,
+        };
+      case "delete":
+        return {
+          title: "Confirm Deletion",
+          message: `Are you sure you want to delete "${professionalName}"? This action cannot be undone and all professional data will be permanently removed.`,
+          confirmText: "Delete Professional",
+          confirmColor: "bg-red-600 hover:bg-red-700",
+          icon: <Trash2 className="text-red-600" size={24} />,
+        };
+      default:
+        return {
+          title: "Confirm Action",
+          message: "Are you sure you want to perform this action?",
+          confirmText: "Confirm",
+          confirmColor: "bg-blue-600 hover:bg-blue-700",
+          icon: <AlertCircle className="text-blue-600" size={24} />,
+        };
+    }
+  };
+
+  const modalConfig = getModalConfig();
+
   return (
     <div className="min-h-screen bg-blue-100">
       <Header />
 
-      {/* Delete Confirmation Modal */}
-      <AnimatePresence>
-        {deleteModal.isOpen && (
-          <motion.div
-            className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() =>
-              setDeleteModal({ isOpen: false, professionalId: null })
-            }
-          >
-            <motion.div
-              className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Trash2 className="text-red-600" size={24} />
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    Confirm Deletion
-                  </h3>
-                </div>
-                <button
-                  onClick={() =>
-                    setDeleteModal({ isOpen: false, professionalId: null })
-                  }
-                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  <X size={20} className="text-gray-500" />
-                </button>
-              </div>
-              {/* Modal Body */}
-              <div className="mb-6">
-                <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg mb-4">
-                  <AlertCircle
-                    size={18}
-                    className="text-red-600 mt-0.5 flex-shrink-0"
-                  />
-                  <p className="text-sm text-red-800">
-                    This action cannot be undone. All data for this professional
-                    will be permanently deleted.
-                  </p>
-                </div>
-                <p className="text-gray-600">
-                  Are you sure you want to delete this professional?
-                </p>
-              </div>
-              {/* Modal Footer */}
-              <div className="flex gap-3 justify-end">
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.1 }}
-                  onClick={() =>
-                    setDeleteModal({ isOpen: false, professionalId: null })
-                  }
-                  className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
-                  disabled={isMutating}
-                >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.1 }}
-                  onClick={confirmDelete}
-                  className="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-md"
-                  disabled={isMutating}
-                >
-                  Confirm & Delete
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Universal Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        onClose={closeConfirmationModal}
+        onConfirm={handleConfirmAction}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+        confirmColor={modalConfig.confirmColor}
+        icon={modalConfig.icon}
+        isLoading={isMutating}
+      />
 
       {/* Credentials Modal */}
       <ProfessionalCredentialsModal
@@ -1397,6 +1479,7 @@ const AdminProfessionalDashboard: React.FC = () => {
           sortBy={sortBy}
           onClearFilters={handleClearFilters}
           onDelete={handleDelete}
+          onEdit={handleEdit}
           isMutating={isMutating}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
