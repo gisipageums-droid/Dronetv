@@ -37,10 +37,9 @@ const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
             key={item.value}
             data-value={item.value}
             className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
-              ${
-                selectedValue === item.value
-                  ? "text-amber-600 font-bold text-lg scale-105 rounded-lg mx-1"
-                  : "text-gray-500 hover:text-gray-700"
+              ${selectedValue === item.value
+                ? "text-amber-600 font-bold text-lg scale-105 rounded-lg mx-1"
+                : "text-gray-500 hover:text-gray-700"
               }`}
             onClick={() => handleClick(item.value)}
           >
@@ -495,11 +494,10 @@ export const Step1 = ({
           type={f.type}
           required={f.required}
           placeholder={f.placeholder || ""}
-          className={`${baseClasses} ${
-            usernameAvailable === false
-              ? "border-red-500 focus:ring-red-300"
-              : ""
-          }`}
+          className={`${baseClasses} ${usernameAvailable === false
+            ? "border-red-500 focus:ring-red-300"
+            : ""
+            }`}
           value={data[section.id]?.[f.id] || ""}
           onChange={(e) => {
             // Remove spaces from the input value
@@ -531,14 +529,18 @@ export const Step1 = ({
   };
 
   // Render a section
+  // Render a section
   const renderSection = (section: any) => {
-    // Check if this section should use 2-column layout
+    // 1. Safe Data Access
+    const sectionId = section.id;
+    const currentSectionData = data[sectionId] || {};
+
     const useTwoColumns =
-      section.id === "socialMediaLinks" || section.id === "alternateContact";
+      sectionId === "socialMediaLinks" || sectionId === "alternateContact";
 
     return (
       <div
-        key={section.id}
+        key={sectionId}
         className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6"
       >
         <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
@@ -546,13 +548,13 @@ export const Step1 = ({
         </h3>
 
         {useTwoColumns ? (
-          // 2-column grid layout
+          // --- 2-COLUMN LAYOUT ---
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {section.fields.map((f: any) => {
-              // Skip country and state fields as they will be rendered together
+              // Skip country/state here (rendered separately below)
               if (f.id === "country" || f.id === "state") return null;
 
-              // Check if this is a date field (ScrollDatePicker handles its own UI)
+              // Date Field Logic
               const isDateField =
                 f.type === "date" ||
                 f.id.toLowerCase().includes("date") ||
@@ -576,26 +578,26 @@ export const Step1 = ({
               );
             })}
 
-            {/* Render CountryStateSelect if this section has country/state fields */}
+            {/* Country/State Selection */}
             {section.fields.some(
               (f: any) => f.id === "country" || f.id === "state"
             ) && (
               <div className="md:col-span-2">
                 <CountryStateSelect
-                  countryValue={data[section.id]?.country || ""}
-                  stateValue={data[section.id]?.state || ""}
-                  onCountryChange={(value) =>
-                    updateField(section.id, {
-                      ...data[section.id],
+                  countryValue={currentSectionData.country || ""}
+                  stateValue={currentSectionData.state || ""}
+                  onCountryChange={(value) => {
+                    updateField(sectionId, {
                       country: value,
-                    })
-                  }
-                  onStateChange={(value) =>
-                    updateField(section.id, {
-                      ...data[section.id],
+                      state: "", // Reset state when country changes
+                    });
+                  }}
+                  onStateChange={(value) => {
+                    // FIX: Send ONLY the changes.
+                    updateField(sectionId, {
                       state: value,
-                    })
-                  }
+                    });
+                  }}
                   countryRequired={
                     section.fields.find((f: any) => f.id === "country")
                       ?.required
@@ -608,13 +610,12 @@ export const Step1 = ({
             )}
           </div>
         ) : (
-          // Single column layout for basicInfo and addressInformation
+          // --- 1-COLUMN LAYOUT ---
           <div className="space-y-4">
             {section.fields.map((f: any) => {
-              // Skip country and state fields as they will be rendered together
+              // Skip country/state here
               if (f.id === "country" || f.id === "state") return null;
 
-              // Check if this is a date field (ScrollDatePicker handles its own UI)
               const isDateField =
                 f.type === "date" ||
                 f.id.toLowerCase().includes("date") ||
@@ -634,6 +635,8 @@ export const Step1 = ({
                     </label>
                   )}
                   {renderInputField(f, section)}
+                  
+                  {/* Username Availability Message (Specific to Basic Info) */}
                   {section.id === "basicInfo" &&
                     f.id === "user_name" &&
                     data.basicInfo?.user_name && (
@@ -663,25 +666,25 @@ export const Step1 = ({
               );
             })}
 
-            {/* Render CountryStateSelect if this section has country/state fields */}
+            {/* Country/State Selection */}
             {section.fields.some(
               (f: any) => f.id === "country" || f.id === "state"
             ) && (
               <CountryStateSelect
-                countryValue={data[section.id]?.country || ""}
-                stateValue={data[section.id]?.state || ""}
-                onCountryChange={(value) =>
-                  updateField(section.id, {
-                    ...data[section.id],
+                countryValue={currentSectionData.country || ""}
+                stateValue={currentSectionData.state || ""}
+                onCountryChange={(value) => {
+                  updateField(sectionId, {
                     country: value,
-                  })
-                }
-                onStateChange={(value) =>
-                  updateField(section.id, {
-                    ...data[section.id],
+                    state: "", // Reset state when country changes
+                  });
+                }}
+                onStateChange={(value) => {
+                  // FIX: Send ONLY the changes.
+                  updateField(sectionId, {
                     state: value,
-                  })
-                }
+                  });
+                }}
                 countryRequired={
                   section.fields.find((f: any) => f.id === "country")?.required
                 }
@@ -785,10 +788,9 @@ export const Step1 = ({
                     required={f.required}
                     placeholder={f.placeholder || ""}
                     className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm
-                      ${
-                        f.id === "user_name" && usernameAvailable === false
-                          ? "border-red-500 focus:ring-red-300"
-                          : ""
+                      ${f.id === "user_name" && usernameAvailable === false
+                        ? "border-red-500 focus:ring-red-300"
+                        : ""
                       }`}
                     value={data.basicInfo?.[f.id] || ""}
                     onChange={(e) => {
@@ -806,27 +808,26 @@ export const Step1 = ({
                 )}
                 {f.id === "user_name" && data.basicInfo?.user_name && (
                   <span
-                    className={`text-xs mt-1 ${
-                      usernameAvailable === false
-                        ? "text-red-600"
-                        : usernameAvailable === true &&
-                          originalUsername &&
-                          data.basicInfo.user_name === originalUsername
+                    className={`text-xs mt-1 ${usernameAvailable === false
+                      ? "text-red-600"
+                      : usernameAvailable === true &&
+                        originalUsername &&
+                        data.basicInfo.user_name === originalUsername
                         ? "text-green-600"
                         : "text-gray-600"
-                    }`}
+                      }`}
                   >
                     {checking
                       ? "Checking availability..."
                       : usernameAvailable === false
-                      ? "Username is taken"
-                      : usernameAvailable === true &&
-                        originalUsername &&
-                        data.basicInfo.user_name === originalUsername
-                      ? "Your username"
-                      : usernameAvailable === true
-                      ? "Username is available"
-                      : ""}
+                        ? "Username is taken"
+                        : usernameAvailable === true &&
+                          originalUsername &&
+                          data.basicInfo.user_name === originalUsername
+                          ? "Your username"
+                          : usernameAvailable === true
+                            ? "Username is available"
+                            : ""}
                   </span>
                 )}
               </div>
