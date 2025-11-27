@@ -61,6 +61,7 @@ const AdminDashboard: React.FC = () => {
   const [eventError, setEventError] = useState<string | null>(null);
   const [companyCount, setCompanyCount] = useState(0);
   const [professionalCount, setProfessionalCount] = useState(0);
+  const [eventCount, setEventCount] = useState(0);
 
   // Mock data (keeping other static data as is for now)
   const stats = [
@@ -78,7 +79,7 @@ const AdminDashboard: React.FC = () => {
     },
     {
       label: "Events",
-      value: 52,
+      value: eventCount,
       icon: Calendar,
       color: "bg-green-500",
     },
@@ -126,10 +127,24 @@ const AdminDashboard: React.FC = () => {
       });
   }, [userDetails.email]);
 
+  const getEventCount = useCallback(() => {
+    axios
+      .get(
+        `https://zd3q4ewnxe.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+      )
+      .then((res) => {
+        setEventCount(res.data.count);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [userDetails.email]);
+
   useEffect(() => {
     getCategory();
     getProfessionalCount();
-  }, [getCategory, getProfessionalCount]);
+    getEventCount();
+  }, [getCategory, getProfessionalCount, getEventCount]);
 
   // fetch for company recent leads
   const fetchRecentCompaniesLeads = useCallback(async () => {
