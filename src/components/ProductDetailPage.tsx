@@ -1,187 +1,148 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { Star, Plane } from 'lucide-react';
-import LoadingScreen from './loadingscreen';
-interface ProductFeature {
-  icon: React.ReactNode;
-  text: string;
-}
 
-interface Product {
+
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { Star, Plane, Truck, ShieldCheck } from "lucide-react";
+import LoadingScreen from "./loadingscreen";
+
+type ProductFeature = {
+  icon?: React.ReactNode;
+  text: string;
+};
+
+type ProductAPIItem = {
+  image?: string;
+  features?: string[];
+  detailedDescription?: string;
+  description?: string;
+  isPopular?: boolean;
+  timeline?: string;
+  title?: string;
+  category?: string;
+  pricing?: string;
+};
+
+type Product = {
   id: string;
   name: string;
   shortDescription: string;
-  price: number;
-  originalPrice: number;
-  discount: number;
-  rating: number;
-  reviewCount: number;
-  inStock: boolean;
+  price: number | null;
+  originalPrice: number | null;
+  discount?: number | null;
+  rating?: number;
+  reviewCount?: number;
+  inStock?: boolean;
   images: string[];
   features: ProductFeature[];
   specifications: Record<string, string>;
   description: string;
-  shipping: {
-    standard: string;
-    express: string;
-    free: string;
-  };
+  shipping: { standard: string; express: string; free: string };
   warranty: string;
   category: string;
-}
+};
 
-const ProductDetailPage = () => {
+export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [selectedImage, setSelectedImage] = useState(0);
-
-  const [showZoom, setShowZoom] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
-  const [activeTab, setActiveTab] = useState('description');
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [showZoom, setShowZoom] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const [activeTab, setActiveTab] = useState<"features" | "specifications">("features");
 
-  // Fetch product data from API
   useEffect(() => {
-    const fetchProductDetails = () => {
-      setLoading(true);
-      setError(null);
+    if (!id) return;
+    setLoading(true);
+    setError(null);
 
-      const API_URL = `https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/details/${id}`;
+    const API_URL = `https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/details/${id}`;
 
-      axios
-        .get(API_URL)
-        .then((response) => {
-          const responseData = response.data;
+    axios
+      .get(API_URL)
+      .then((res) => {
+        const responseData = res.data;
+        if (!responseData?.status || !responseData?.data) {
+          setError("Invalid response format from API");
+          return;
+        }
 
-          if (responseData.status && responseData.data) {
-            const apiData = responseData.data;
+        const apiData = responseData.data;
+        // Prefer products -> products array, fallback to services
+        const productArray: ProductAPIItem[] =
+          apiData?.products?.products && apiData.products.products.length > 0
+            ? apiData.products.products
+            : apiData?.services?.services && apiData.services.services.length > 0
+              ? apiData.services.services
+              : [];
 
-            // Check if it's a single product or services array
-            if (apiData.products && apiData.products.products && apiData.products.products.length > 0) {
-              // Handle products data
-              const productData = apiData.products.products[0];
-              const mappedProduct: Product = {
-                id: id || "unknown",
-                name: productData.title || "Product",
-                shortDescription: productData.description || "",
-                price: parseFloat(productData.pricing?.replace(/[^0-9.]/g, "") || "0"),
-                originalPrice: parseFloat(productData.pricing?.replace(/[^0-9.]/g, "") || "0") * 1.2,
-                discount: 20,
-                rating: 4.5,
-                reviewCount: 150,
-                inStock: true,
-                images: [productData.image || "/images/product1.png"],
-                features: (productData.features || []).map((feature: string) => ({
-                  icon: <Plane className="w-5 h-5 text-yellow-700" />,
-                  text: feature
-                })),
-                specifications: {
-                  "Category": productData.category || "General",
-                  "Timeline": productData.timeline || "N/A",
-                  "Pricing": productData.pricing || "Contact for pricing"
-                },
-                description: productData.detailedDescription || productData.description || "",
-                shipping: {
-                  standard: "5-7 business days",
-                  express: "2-3 business days",
-                  free: "Free shipping"
-                },
-                warranty: "1 Year Manufacturer Warranty",
-                category: productData.category || "Products"
-              };
-              setProduct(mappedProduct);
-            } else if (apiData.services && apiData.services.services && apiData.services.services.length > 0) {
-              // Handle services data
-              const serviceData = apiData.services.services[0];
-              const mappedProduct: Product = {
-                id: id || "unknown",
-                name: serviceData.title || "Service",
-                shortDescription: serviceData.description || "",
-                price: parseFloat(serviceData.pricing?.replace(/[^0-9.]/g, "") || "0"),
-                originalPrice: parseFloat(serviceData.pricing?.replace(/[^0-9.]/g, "") || "0") * 1.2,
-                discount: 20,
-                rating: 4.5,
-                reviewCount: 150,
-                inStock: true,
-                images: [serviceData.image || "/images/service1.jpg"],
-                features: (serviceData.features || []).map((feature: string) => ({
-                  icon: <Plane className="w-5 h-5 text-yellow-700" />,
-                  text: feature
-                })),
-                specifications: {
-                  "Category": serviceData.category || "Services",
-                  "Timeline": serviceData.timeline || "N/A",
-                  "Pricing": serviceData.pricing || "Contact for pricing",
-                  "Benefits": serviceData.benefits ? serviceData.benefits.join(", ") : "N/A",
-                  "Process": serviceData.process ? serviceData.process.join(", ") : "N/A"
-                },
-                description: serviceData.detailedDescription || serviceData.description || "",
-                shipping: {
-                  standard: "5-7 business days",
-                  express: "2-3 business days",
-                  free: "Free shipping"
-                },
-                warranty: "1 Year Service Warranty",
-                category: serviceData.category || "Services"
-              };
-              setProduct(mappedProduct);
-            } else {
-              setError("No product or service data found");
-            }
-          } else {
-            setError("Invalid response format");
-          }
-        })
-        .catch((error) => {
-          console.error("API Error:", error);
-          setError("Failed to fetch product details");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
+        if (!productArray.length) {
+          setError("No product or service found in API response");
+          return;
+        }
 
-    if (id) {
-      fetchProductDetails();
-    }
+        const p = productArray[0];
+
+        const parsedPrice = (() => {
+          const priceStr = p.pricing ?? "";
+          const num = parseFloat((priceStr || "").replace(/[^0-9.]/g, ""));
+          return Number.isFinite(num) && num > 0 ? num : null;
+        })();
+
+        const mapped: Product = {
+          id: id ?? "unknown",
+          name: p.title ?? "Untitled Product",
+          shortDescription: p.description ?? p.detailedDescription ?? "No description available",
+          price: parsedPrice,
+          originalPrice: parsedPrice ? Math.round((parsedPrice || 0) * 1.2) : null,
+          discount: parsedPrice ? 20 : null,
+          rating: 4.5,
+          reviewCount: 120,
+          inStock: true,
+          images: p.image ? [p.image] : ["/images/product1.png"],
+          features: (p.features || []).map((f) => ({ icon: <Plane className="w-4 h-4" />, text: f })),
+          specifications: {
+            Category: p.category ?? "General",
+            Timeline: p.timeline?.trim() ? p.timeline! : "N/A",
+            Pricing: p.pricing?.trim() ? p.pricing! : "Contact for pricing",
+          },
+          description: p.detailedDescription ?? p.description ?? "",
+          shipping: { standard: "5-7 business days", express: "2-3 business days", free: "Free shipping" },
+          warranty: "1 Year Manufacturer Warranty",
+          category: p.category ?? "Products",
+        };
+
+        setProduct(mapped);
+      })
+      .catch((err) => {
+        console.error("API Error", err);
+        setError("Failed to fetch product details");
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) {
-    return (
-      <LoadingScreen
-        logoSrc="images/logo.png"
-        loadingText="Loading Companies..."
-      />
-    );
-  }
+  if (loading) return <LoadingScreen logoSrc="images/logo.png" loadingText="Loading product..." />;
 
-  if (error) {
+  if (error)
     return (
-      <div className="flex justify-center items-center pt-16 min-h-screen bg-yellow-400">
-        <div className="text-center">
-          <p className="mb-4 text-xl font-semibold text-red-600">Error: {error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-3 text-yellow-400 bg-black rounded-lg transition-colors hover:bg-gray-800"
-          >
-            Try Again
+      <div className="min-h-screen flex items-center justify-center bg-yellow-50 p-6">
+        <div className="bg-white rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="mb-6 text-gray-700">{error}</p>
+          <button onClick={() => window.location.reload()} className="px-5 py-3 bg-black text-white rounded-lg font-semibold">
+            Try again
           </button>
         </div>
       </div>
     );
-  }
 
-  if (!product) {
+  if (!product)
     return (
-      <div className="flex justify-center items-center pt-16 min-h-screen bg-yellow-400">
-        <div className="text-center">
-          <p className="text-xl font-semibold text-black">Product not found.</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-yellow-50">
+        <p className="text-lg font-semibold">Product not found.</p>
       </div>
     );
-  }
 
   const handleImageHover = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!showZoom) return;
@@ -191,167 +152,192 @@ const ProductDetailPage = () => {
     setZoomPosition({ x, y });
   };
 
+  const formatPrice = (p: number | null) => (p === null ? "—" : `₹ ${p.toLocaleString("en-IN")}`);
 
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`h-4 w-4 ${i < Math.floor(rating) ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
-      />
+  const renderStars = (rating = 0) =>
+    Array.from({ length: 5 }).map((_, i) => (
+      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-yellow-500" : "text-gray-300"}`} />
     ));
-  };
 
   return (
-    <div className="pt-16 min-h-screen bg-yellow-400">
+    <div className="pt-16 min-h-screen bg-yellow-50">
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 mb-16 lg:grid-cols-2">
-          <div className="space-y-4">
-            <div className="overflow-hidden relative bg-white rounded-3xl shadow-lg">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+          {/* LEFT: Images + Thumbnails */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl shadow overflow-hidden">
               <div
-                className="relative w-full h-[500px] cursor-zoom-in bg-white rounded-xl"
+                className="relative w-full h-[520px] cursor-zoom-in bg-white"
                 onMouseEnter={() => setShowZoom(true)}
                 onMouseLeave={() => setShowZoom(false)}
                 onMouseMove={handleImageHover}
               >
-                <img
-                  src={product.images[selectedImage]}
-                  alt={product.name}
-                  className="w-full h-full transition-transform duration-300"
-                />
+                <img src={product.images[selectedImage]} alt={product.name} className="object-contain w-full h-full transition-transform duration-300" />
 
                 {showZoom && (
                   <div
-                    className="absolute inset-0 bg-no-repeat rounded-xl opacity-0 transition-opacity duration-300 pointer-events-none hover:opacity-100"
+                    aria-hidden
+                    className="absolute inset-0 rounded-2xl pointer-events-none transition-opacity"
                     style={{
                       backgroundImage: `url(${product.images[selectedImage]})`,
-                      backgroundSize: '200%',
-                      backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`
+                      backgroundSize: "200%",
+                      backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                      opacity: 1,
                     }}
                   />
                 )}
               </div>
-
             </div>
-            <div className="flex overflow-x-auto space-x-2">
-              {product.images.map((image, index) => (
+
+            <div className="flex gap-3 overflow-x-auto">
+              {product.images.map((img, idx) => (
                 <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 ${selectedImage === index ? 'border-black shadow-lg' : 'border-gray-300 hover:border-gray-400'}`}
+                  key={idx}
+                  onClick={() => setSelectedImage(idx)}
+                  className={`flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === idx ? "border-black shadow-lg" : "border-gray-200 hover:border-gray-300"
+                    }`}
                 >
-                  <img src={image} alt={`${product.name} view ${index + 1}`} className="object-cover w-full h-full" />
+                  <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
-          </div>
 
-          {/* <div className="space-y-6">
-            <div>
-              <h1 className="mb-4 text-3xl font-black text-black md:text-4xl">{product.name}</h1>
-              <div className="flex gap-4 items-center mb-4">
-                <div className="flex gap-1 items-center">
-                  {renderStars(product.rating)}
-                  <span className="ml-2 font-semibold text-black">{product.rating}</span>
-                </div>
-                <span className="text-black/70">({product.reviewCount} reviews)</span>
-              </div>
-              <p className="text-lg text-black/80">{product.shortDescription}</p>
-            </div>
-
-
-          </div> */}
-        </div>
-
-        {/* Product Information Tabs */}
-        <div className="overflow-hidden mb-16 bg-white rounded-3xl shadow-lg">
-          <div className="border-b border-gray-200">
-            <nav className="flex">
-              {['description', 'specifications'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-4 font-semibold capitalize transition-all ${activeTab === tab ? 'text-black border-b-2 border-black bg-yellow-50' : 'text-gray-600 hover:text-black hover:bg-gray-50'}`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          <div className="p-8">
-            {activeTab === 'description' && (
-              <div className="max-w-none prose">
-                <h3 className="mb-4 text-2xl font-bold text-black">Product Description</h3>
-                <div className="space-y-4 leading-relaxed text-gray-700">
-                  {product.description.split('\n\n').map((paragraph: string, index: number) => (
-                    <p key={index}>{paragraph}</p>
+            {/* Left-side Key Features (compact) */}
+            {product.features.length > 0 && (
+              <div className="bg-white p-4 rounded-2xl shadow">
+                <h4 className="font-semibold mb-3">Key Features</h4>
+                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {product.features.map((f, i) => (
+                    <li key={i} className="flex gap-3 items-start">
+                      <div className="mt-1 text-black/80">{f.icon ?? <Plane className="w-4 h-4" />}</div>
+                      <div className="text-gray-700">{f.text}</div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             )}
+          </div>
 
-            {activeTab === 'specifications' && (
-              <div>
-                <h3 className="mb-6 text-2xl font-bold text-black">Technical Specifications</h3>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {Object.entries(product.specifications).map(([key, value]) => (
-                    <div key={key} className="flex justify-between items-center p-4 bg-yellow-50 rounded-xl">
-                      <span className="font-semibold text-black">{key}:</span>
-                      <span className="text-gray-700">{String(value)}</span>
+          {/* RIGHT: Info */}
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-2xl shadow">
+              <div className="flex items-start justify-between gap-6">
+                <div className="flex-1">
+                  <h1 className="text-3xl font-extrabold text-black">{product.name}</h1>
+                  <p className="mt-2 text-gray-600">{product.shortDescription}</p>
+
+                  <div className="mt-4 flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      {renderStars(product.rating)}
+                      <span className="text-sm text-gray-600">{product.rating}</span>
                     </div>
-                  ))}
+                    <div className="text-sm text-gray-500">({product.reviewCount} reviews)</div>
+                  </div>
+
+                  <div className="mt-6 flex items-end gap-4">
+                    <div>
+                      <div className="text-2xl font-bold">{formatPrice(product.price)}</div>
+                      {product.originalPrice && <div className="text-sm line-through text-gray-500">{formatPrice(product.originalPrice)}</div>}
+                    </div>
+
+                    <div className="ml-auto flex gap-3">
+                      <button className="px-5 py-3 rounded-xl bg-black text-white font-semibold">Contact</button>
+                      <button className="px-5 py-3 rounded-xl border font-semibold">Request Quote</button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            )}
 
-            {/* {activeTab === 'reviews' && (
-              <div>
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold text-black">Customer Reviews</h3>
-                  <button className="flex gap-2 items-center px-6 py-3 font-semibold text-white bg-black rounded-xl transition-all hover:bg-gray-800">
-                    <MessageCircle className="w-4 h-4" />
-                    Write a Review
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="flex items-center gap-3">
+                  <Truck className="w-5 h-5" />
+                  <div>
+                    <div className="text-sm font-semibold">Shipping</div>
+                    <div className="text-xs text-gray-500">{product.shipping.standard}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5" />
+                  <div>
+                    <div className="text-sm font-semibold">Warranty</div>
+                    <div className="text-xs text-gray-500">{product.warranty}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="text-sm font-semibold">Category</div>
+                  <div className="text-xs text-gray-500">{product.category}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="bg-white rounded-2xl shadow overflow-hidden">
+              <div className="border-b">
+                <nav className="flex" aria-label="Product tabs">
+                  <button
+                    onClick={() => setActiveTab("features")}
+                    className={`px-6 py-4 font-semibold w-full text-left ${activeTab === "features" ? "text-black bg-yellow-50 border-b-2 border-black" : "text-gray-600 hover:bg-gray-50"}`}
+                  >
+                    Key Features
                   </button>
-                </div>
-
-                <div className="space-y-6">
-                  {reviews.map((review) => (
-                    <div key={review.id} className="pb-6 border-b border-gray-200 last:border-b-0">
-                      <div className="flex justify-between items-center mb-3">
-                        <div className="flex gap-3 items-center">
-                          <div className="flex justify-center items-center w-10 h-10 bg-gray-300 rounded-full">
-                            <span className="font-bold text-gray-600">{review.author[0]}</span>
-                          </div>
-                          <div>
-                            <div className="font-semibold text-black">{review.author}</div>
-                            <div className="text-sm text-gray-500">{review.date}</div>
-                          </div>
-                        </div>
-                        <div className="flex gap-1 items-center">
-                          {renderStars(review.rating)}
-                        </div>
-                      </div>
-                      <h4 className="mb-2 font-semibold text-black">{review.title}</h4>
-                      <p className="mb-3 text-gray-700">{review.text}</p>
-                      <div className="flex gap-4 items-center text-sm text-gray-500">
-                        <button className="transition-colors hover:text-black">
-                          Helpful ({review.helpful})
-                        </button>
-                        <button className="transition-colors hover:text-black">
-                          Reply
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                  <button
+                    onClick={() => setActiveTab("specifications")}
+                    className={`px-6 py-4 font-semibold w-full text-left ${activeTab === "specifications" ? "text-black bg-yellow-50 border-b-2 border-black" : "text-gray-600 hover:bg-gray-50"}`}
+                  >
+                    Specifications
+                  </button>
+                </nav>
               </div>
-            )} */}
+
+              <div className="p-6">
+                {activeTab === "features" && (
+                  <div className="prose max-w-none text-gray-700">
+                    <h3 className="text-2xl font-bold text-black mb-4">Key Features</h3>
+
+                    {/* Show features as a clean list with icons */}
+                    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {product.features.map((f, i) => (
+                        <li key={i} className="flex gap-3 items-start p-3 bg-yellow-50 rounded-xl">
+                          <div className="mt-1 text-black/80">{f.icon ?? <Plane className="w-5 h-5" />}</div>
+                          <div className="text-gray-700">{f.text}</div>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* If there's a longer description (optional), show it below */}
+                    {product.description && (
+                      <div className="mt-6">
+                        <h4 className="text-lg font-semibold text-black mb-2">About this product</h4>
+                        {product.description.split("\n\n").map((p, i) => (
+                          <p key={i}>{p}</p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "specifications" && (
+                  <div>
+                    <h3 className="text-2xl font-bold text-black mb-4">Technical Specifications</h3>
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                      {Object.entries(product.specifications).map(([k, v]) => (
+                        <div key={k} className="p-4 bg-yellow-50 rounded-xl flex justify-between items-center">
+                          <div className="font-semibold text-black">{k}</div>
+                          <div className="text-gray-700">{v}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default ProductDetailPage;
+

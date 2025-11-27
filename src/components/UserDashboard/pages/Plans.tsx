@@ -85,7 +85,7 @@ const RechargePlans: React.FC = () => {
                 key: key,
                 amount: order.amount,
                 currency: order.currency,
-                name: "DRONTV",
+                name: "DRONE TV",
                 description: `Purchase ${plan.name} - ${plan.tokens} Tokens`,
                 image: "https://www.dronetv.in/images/Drone%20tv%20.in.png",
                 order_id: razorpayOrderId,
@@ -174,14 +174,14 @@ const RechargePlans: React.FC = () => {
 
                 {/* 🔷 Buy Token Button (Top-Right, Responsive) */}
                 <div className="absolute top-6 right-6 z-20 md:top-8 md:right-8">
-                    <button
+                    {/* <button
                         className="flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50"
                         onClick={() => (navigate('/user-buy'))}
                         aria-label="Buy recharge tokens"
                     >
                         <span className="hidden sm:inline">Buy Token</span>
                         <span className="sm:hidden">Token</span>
-                    </button>
+                    </button> */}
                 </div>
 
                 <div className="max-w-6xl mx-auto">
@@ -228,7 +228,7 @@ const RechargePlans: React.FC = () => {
                                     )}
 
                                     <div className="p-5 flex flex-col h-full">
-                                        
+
                                         {/* Plan Info */}
                                         <div className="text-center mb-5 mt-4">
                                             <h2 className="text-xl font-bold text-amber-900 mb-2">
