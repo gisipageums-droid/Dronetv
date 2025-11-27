@@ -101,6 +101,7 @@ import BuyTokenPage from "./components/UserDashboard/pages/Buy";
 import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
+import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 
 
 const HomePage = () => (
@@ -181,7 +182,7 @@ const AppContent = () => {
           <Route path="/logout" element={<Logout />} />
           <Route path="reset-password/:id" element={<ResetPassword />} />
           {/* admin dashboard */}
-
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/plans" element={<AdminTokenPlan/>}/>
           <Route path="/admin/company/dashboard" element={<AdminDashboard />} />
           <Route

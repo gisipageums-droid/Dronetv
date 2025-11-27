@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { CheckCircle } from "lucide-react";
+
 // User Authentication Types and Context
 interface User {
   email: string;
@@ -25,11 +26,27 @@ interface User {
   // Add other user properties as needed
 }
 
+interface Admin {
+  email: string;
+  name?: string;
+  token?: string;
+  adminData?: {
+    email?: string;
+    role?: string;
+    permissions?: string[];
+    [key: string]: any;
+  };
+}
+
 interface UserAuthContextType {
   user: User | null;
+  admin: Admin | null;
   isLogin: boolean;
+  isAdminLogin: boolean;
   login: (userData: User) => void;
+  adminLogin: (adminData: Admin) => void;
   logout: () => void;
+  adminLogout: () => void;
   haveAccount: boolean;
   setHaveAccount: React.Dispatch<React.SetStateAction<boolean>>;
   accountEmail: string | null;
@@ -51,9 +68,16 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  
+  const [admin, setAdmin] = useState<Admin | null>(() => {
+    const storedAdmin = localStorage.getItem("admin");
+    return storedAdmin ? JSON.parse(storedAdmin) : null;
+  });
+  
   const [haveAccount, setHaveAccount] = useState<boolean>(true);
   const [accountEmail, setAccountEmail] = useState<string | null>(null);
   const isLogin = !!user;
+  const isAdminLogin = !!admin;
 
   const login = (userData: User) => {
     localStorage.setItem("user", JSON.stringify(userData));
@@ -63,19 +87,37 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     setUser(userData);
   };
 
+  const adminLogin = (adminData: Admin) => {
+    localStorage.setItem("admin", JSON.stringify(adminData));
+    if (adminData.token) {
+      localStorage.setItem("adminToken", adminData.token);
+    }
+    setAdmin(adminData);
+  };
+
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setUser(null);
   };
 
+  const adminLogout = () => {
+    localStorage.removeItem("admin");
+    localStorage.removeItem("adminToken");
+    setAdmin(null);
+  };
+
   return (
     <UserAuthContext.Provider
       value={{
         user,
+        admin,
         isLogin,
+        isAdminLogin,
         login,
+        adminLogin,
         logout,
+        adminLogout,
         haveAccount,
         setHaveAccount,
         accountEmail,
