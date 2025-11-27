@@ -46,6 +46,7 @@ type Product = {
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
+  const [companyName, setCompanyName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -70,6 +71,10 @@ export default function ProductDetailPage() {
         }
 
         const apiData = responseData.data;
+
+        // Extract company name
+        setCompanyName(apiData?.companyName || "");
+
         // Prefer products -> products array, fallback to services
         const productArray: ProductAPIItem[] =
           apiData?.products?.products && apiData.products.products.length > 0
@@ -215,11 +220,12 @@ export default function ProductDetailPage() {
               <div className="flex items-start justify-between gap-6">
                 <div className="flex-1">
                   <h1 className="text-3xl font-extrabold text-black">{product.name}</h1>
+                  {companyName && (
+                    <p className="mt-2 text-lg font-semibold text-gray-800">
+                      <span className="text-black">{companyName}</span>
+                    </p>
+                  )}
                   <p className="mt-2 text-gray-600">{product.shortDescription}</p>
-
-
-
-
                 </div>
               </div>
 
