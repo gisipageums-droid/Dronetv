@@ -8,7 +8,7 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const { isLogin, setHaveAccount } = useUserAuth();
+  const { isLogin,isAdminLogin, setHaveAccount } = useUserAuth();
 
   const languageRef = useRef<HTMLDivElement>(null);
   const authRef = useRef<HTMLDivElement>(null);
@@ -65,8 +65,8 @@ const Navigation = () => {
     { name: "Gallery", path: "/gallery" },
     { name: "Contact", path: "/contact" },
     {
-      name: isLogin ? "Logout" : "Login",
-      path: isLogin ? "/logout" : "/login",
+      name: (isLogin || isAdminLogin)? "Logout" : "Login",
+      path: (isLogin || isAdminLogin)? "/logout" : "/login",
     },
   ];
 

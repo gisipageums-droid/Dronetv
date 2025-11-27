@@ -9,6 +9,9 @@ interface LoginData {
   password: string;
 }
 
+// API endpoint
+const ADMIN_LOGIN_API = "https://mwbeqdpn09.execute-api.ap-south-1.amazonaws.com/prod/dev";
+
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -17,7 +20,7 @@ export default function AdminLogin() {
     password: "",
   });
 
-  const { adminLogin } = useUserAuth(); // Changed from login to adminLogin
+  const { adminLogin } = useUserAuth();
   const navigate = useNavigate();
 
   const onLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,34 +35,44 @@ export default function AdminLogin() {
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Basic validation
+    if (!loginData.email || !loginData.password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "https://your-admin-login-api-endpoint.com/admin_login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(loginData),
-        }
-      );
+      const response = await fetch(ADMIN_LOGIN_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password
+        }),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
         toast.success(data.message || "Admin login successful!");
-        
+        // navigate("/admin/plans");
         // Store admin data in context and localStorage using adminLogin
         adminLogin({
-          email: data.email || loginData.email,
-          name: data.name || "Admin User",
-          token: data.token,
+          email: data.adminData?.email || loginData.email,
+          name: data.adminData?.userName || "Admin User",
+          // token: data.token, // Add if API returns token
           adminData: {
-            role: data.role || "admin",
-            permissions: data.permissions || ["read", "write", "delete"],
-            ...data.adminData
+            ...data.adminData,
+            // Include all adminData fields
+            city: data.adminData?.city,
+            role: data.adminData?.role,
+            isAdmin: data.adminData?.isAdmin,
+            state: data.adminData?.state,
+            userName: data.adminData?.userName
           }
         });
 
@@ -68,7 +81,7 @@ export default function AdminLogin() {
           password: "",
         });
 
-        navigate("/admin-dashboard"); // Navigate to admin dashboard
+        navigate("/admin/plans");
       } else {
         toast.error(
           data.message || "Login failed. Please check your credentials."
@@ -152,7 +165,7 @@ export default function AdminLogin() {
 
           <button
             type="submit"
-            className="w-full py-3 text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-200 font-medium transition duration-200"
+            className="w-full py-3 text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-200 font-medium transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? (

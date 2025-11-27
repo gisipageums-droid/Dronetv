@@ -23,14 +23,14 @@ const FinalT1: React.FC = () => {
     async (urlSlug: string) => {
       try {
         setIsLoading(true);
-        const response = await fetch(`https://t6nbbkwszi.execute-api.ap-south-1.amazonaws.com/prod2/${urlSlug}`, {
-
-
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        const response = await fetch(
+          `https://t6nbbkwszi.execute-api.ap-south-1.amazonaws.com/prod2/${urlSlug}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
 
         if (!response.ok) {
@@ -97,12 +97,6 @@ const FinalT1: React.FC = () => {
     );
   }
 
-  // const transformedFooterContent = {
-  //   ...finaleDataReview[0].content.footerContent,
-  //   socialLinks:
-  //     finaleDataReview[0].content.footerContent.socialLinks?.socialLinks || [],
-  // };
-
   return (
     <DarkModeProvider>
       <div className="relative min-h-screen transition-colors duration-300 bg-white dark:bg-gray-900">
@@ -115,10 +109,12 @@ const FinalT1: React.FC = () => {
         <Testimonials
           content={finaleDataReview[0].content.testimonialContent}
         />
-        <Contact content={finaleDataReview[0].content.contactContent}
-        professionalId={finaleDataReview[0].professionalId} />
-        <Back />
+        <Contact
+          content={finaleDataReview[0].content.contactContent}
+          professionalId={finaleDataReview[0].professionalId}
+        />
         <Footer content={finaleDataReview[0].content.footerContent} />
+        <Back />
       </div>
     </DarkModeProvider>
   );

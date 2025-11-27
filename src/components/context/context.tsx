@@ -15,6 +15,7 @@ interface User {
   email: string;
   fullName: string;
   token?: string;
+  timestamp?: string;
   userData?: {
     email?: string;
     fullName?: string;
@@ -23,17 +24,20 @@ interface User {
     phone?: string;
     [key: string]: any;
   };
-  // Add other user properties as needed
 }
 
 interface Admin {
   email: string;
   name?: string;
   token?: string;
+  timestamp?: string;
   adminData?: {
     email?: string;
+    userName?: string;
+    city?: string;
     role?: string;
-    permissions?: string[];
+    isAdmin?: boolean;
+    state?: string;
     [key: string]: any;
   };
 }
@@ -68,44 +72,78 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-  
+
   const [admin, setAdmin] = useState<Admin | null>(() => {
     const storedAdmin = localStorage.getItem("admin");
     return storedAdmin ? JSON.parse(storedAdmin) : null;
   });
-  
+
   const [haveAccount, setHaveAccount] = useState<boolean>(true);
   const [accountEmail, setAccountEmail] = useState<string | null>(null);
   const isLogin = !!user;
   const isAdminLogin = !!admin;
 
   const login = (userData: User) => {
-    localStorage.setItem("user", JSON.stringify(userData));
+    const userToStore = {
+      ...userData,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem("user", JSON.stringify(userToStore));
     if (userData.token) {
       localStorage.setItem("token", userData.token);
     }
-    setUser(userData);
+    setUser(userToStore);
   };
 
   const adminLogin = (adminData: Admin) => {
-    localStorage.setItem("admin", JSON.stringify(adminData));
+    const adminToStore = {
+      ...adminData,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem("admin", JSON.stringify(adminToStore));
     if (adminData.token) {
       localStorage.setItem("adminToken", adminData.token);
     }
-    setAdmin(adminData);
+
+    // Also store adminData separately for easy access
+    if (adminData.adminData) {
+      localStorage.setItem("adminData", JSON.stringify(adminData.adminData));
+    }
+
+    setAdmin(adminToStore);
   };
 
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("adminData");
+    localStorage.removeItem("admin");
+    localStorage.removeItem("adminToken");
     setUser(null);
+    setAdmin(null);
   };
 
   const adminLogout = () => {
     localStorage.removeItem("admin");
     localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminData");
     setAdmin(null);
   };
+
+  // Load admin data from localStorage on component mount
+  useEffect(() => {
+    const storedAdmin = localStorage.getItem("admin");
+    if (storedAdmin) {
+      try {
+        setAdmin(JSON.parse(storedAdmin));
+      } catch (error) {
+        console.error("Error parsing stored admin data:", error);
+        localStorage.removeItem("admin");
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminData");
+      }
+    }
+  }, []);
 
   return (
     <UserAuthContext.Provider
@@ -155,7 +193,11 @@ interface TemplateContextType {
   publishEventsTemplate: () => void;
   navModel: boolean;
   navigatemodel: () => JSX.Element;
-  getAIgenData: (userId: string, draftId: string, templateSelection: string) => Promise<void>;
+  getAIgenData: (
+    userId: string,
+    draftId: string,
+    templateSelection: string
+  ) => Promise<void>;
 }
 
 const TemplateContext = createContext<TemplateContextType | undefined>(
@@ -170,7 +212,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
   children,
 }) => {
   const [draftDetails, setDraftDetails] = useState<any | []>({});
-  const [isPublishedTriggered, setIsPublishedTriggered] = useState<boolean>(false);
+  const [isPublishedTriggered, setIsPublishedTriggered] =
+    useState<boolean>(false);
   const [finalTemplate, setFinalTemplate] = useState<any | []>({});
   const [AIGenData, setAIGenData] = useState<any>({});
   const [finaleDataReview, setFinaleDataReview] = useState<any | []>({});
@@ -179,7 +222,6 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
   const { isLogin } = useUserAuth();
 
   function navigatemodel() {
-
     return (
       <motion.div
         className="fixed top-0 left-0 w-full h-full backdrop-blur-md bg-black/70 flex items-center justify-center z-[999999]"
@@ -227,12 +269,16 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         </motion.div>
       </motion.div>
     );
-
   }
 
-  const API = 'https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft';
+  const API =
+    "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft";
   //get API AI gen data :
-  const getAIgenData = async (userId: string, draftId: string, templateSelection: string) => {
+  const getAIgenData = async (
+    userId: string,
+    draftId: string,
+    templateSelection: string
+  ) => {
     if (!userId || !draftId) {
       console.error("Missing userId or draftId");
       toast.error("Missing required parameters");
@@ -240,7 +286,9 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
-      const response = await fetch(`${API}/${userId}/${draftId}?template=${templateSelection}`);
+      const response = await fetch(
+        `${API}/${userId}/${draftId}?template=${templateSelection}`
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -250,7 +298,9 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
       // Add validation for the response data
       if (data && (data.content || data.publishedId)) {
-        toast.success(`AI generated the data successfully`, { toastId: "ai-success2" });
+        toast.success(`AI generated the data successfully`, {
+          toastId: "ai-success2",
+        });
         setAIGenData(data);
         console.log("AI Data loaded successfully:", data);
       } else {
@@ -412,8 +462,9 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const data = {
-        content: finalTemplate, submissionId: AIGenData.eventId
-      }
+        content: finalTemplate,
+        submissionId: AIGenData.eventId,
+      };
       const response = await fetch(
         `https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/prod/events-publish/${AIGenData.userId}/${AIGenData.eventId}`,
         {
@@ -421,9 +472,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           headers: {
             "Content-Type": "application/json",
           },
-          body:
-            JSON.stringify(data),
-
+          body: JSON.stringify(data),
         }
       );
 
@@ -463,7 +512,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         navModel,
         navigatemodel,
         getAIgenData,
-        publishEventsTemplate
+        publishEventsTemplate,
       }}
     >
       {children}
