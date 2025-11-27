@@ -37,6 +37,7 @@ type Product = {
   features: ProductFeature[];
   specifications: Record<string, string>;
   description: string;
+  detailedDescription?: string;
   shipping: { standard: string; express: string; free: string };
   warranty: string;
   category: string;
@@ -108,6 +109,7 @@ export default function ProductDetailPage() {
             Pricing: p.pricing?.trim() ? p.pricing! : "Contact for pricing",
           },
           description: p.detailedDescription ?? p.description ?? "",
+          detailedDescription: p.detailedDescription,
           shipping: { standard: "5-7 business days", express: "2-3 business days", free: "Free shipping" },
           warranty: "1 Year Manufacturer Warranty",
           category: p.category ?? "Products",
@@ -167,7 +169,7 @@ export default function ProductDetailPage() {
           <div className="space-y-6">
             <div className="bg-white rounded-2xl shadow overflow-hidden">
               <div
-                className="relative w-full h-[520px] cursor-zoom-in bg-white"
+                className="relative w-full  cursor-zoom-in bg-white"
                 onMouseEnter={() => setShowZoom(true)}
                 onMouseLeave={() => setShowZoom(false)}
                 onMouseMove={handleImageHover}
@@ -203,19 +205,8 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Left-side Key Features (compact) */}
-            {product.features.length > 0 && (
-              <div className="bg-white p-4 rounded-2xl shadow">
-                <h4 className="font-semibold mb-3">Key Features</h4>
-                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {product.features.map((f, i) => (
-                    <li key={i} className="flex gap-3 items-start">
-                      <div className="mt-1 text-black/80">{f.icon ?? <Plane className="w-4 h-4" />}</div>
-                      <div className="text-gray-700">{f.text}</div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+
+
           </div>
 
           {/* RIGHT: Info */}
@@ -226,50 +217,13 @@ export default function ProductDetailPage() {
                   <h1 className="text-3xl font-extrabold text-black">{product.name}</h1>
                   <p className="mt-2 text-gray-600">{product.shortDescription}</p>
 
-                  <div className="mt-4 flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      {renderStars(product.rating)}
-                      <span className="text-sm text-gray-600">{product.rating}</span>
-                    </div>
-                    <div className="text-sm text-gray-500">({product.reviewCount} reviews)</div>
-                  </div>
 
-                  <div className="mt-6 flex items-end gap-4">
-                    <div>
-                      <div className="text-2xl font-bold">{formatPrice(product.price)}</div>
-                      {product.originalPrice && <div className="text-sm line-through text-gray-500">{formatPrice(product.originalPrice)}</div>}
-                    </div>
 
-                    <div className="ml-auto flex gap-3">
-                      <button className="px-5 py-3 rounded-xl bg-black text-white font-semibold">Contact</button>
-                      <button className="px-5 py-3 rounded-xl border font-semibold">Request Quote</button>
-                    </div>
-                  </div>
+
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="flex items-center gap-3">
-                  <Truck className="w-5 h-5" />
-                  <div>
-                    <div className="text-sm font-semibold">Shipping</div>
-                    <div className="text-xs text-gray-500">{product.shipping.standard}</div>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-3">
-                  <ShieldCheck className="w-5 h-5" />
-                  <div>
-                    <div className="text-sm font-semibold">Warranty</div>
-                    <div className="text-xs text-gray-500">{product.warranty}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="text-sm font-semibold">Category</div>
-                  <div className="text-xs text-gray-500">{product.category}</div>
-                </div>
-              </div>
             </div>
 
             {/* Tabs */}
@@ -307,23 +261,16 @@ export default function ProductDetailPage() {
                     </ul>
 
                     {/* If there's a longer description (optional), show it below */}
-                    {product.description && (
-                      <div className="mt-6">
-                        <h4 className="text-lg font-semibold text-black mb-2">About this product</h4>
-                        {product.description.split("\n\n").map((p, i) => (
-                          <p key={i}>{p}</p>
-                        ))}
-                      </div>
-                    )}
+
                   </div>
                 )}
 
                 {activeTab === "specifications" && (
                   <div>
                     <h3 className="text-2xl font-bold text-black mb-4">Technical Specifications</h3>
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 ">
                       {Object.entries(product.specifications).map(([k, v]) => (
-                        <div key={k} className="p-4 bg-yellow-50 rounded-xl flex justify-between items-center">
+                        <div key={k} className="p-4 bg-yellow-50 rounded-xl flex justify-between items-start text-[12px] gap-3">
                           <div className="font-semibold text-black">{k}</div>
                           <div className="text-gray-700">{v}</div>
                         </div>
@@ -331,9 +278,18 @@ export default function ProductDetailPage() {
                     </div>
                   </div>
                 )}
+
               </div>
+
             </div>
+
           </div>
+        </div>
+        <div className=" p-4 rounded-2xl shadow shadow-black mt-[5px] ">
+          <h4 className="font-semibold mb-3">Description</h4>
+          <ul className="grid grid-cols-1 text-justify">
+            <li>{product.detailedDescription}</li>
+          </ul>
         </div>
       </div>
     </div>
