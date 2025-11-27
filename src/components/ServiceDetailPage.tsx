@@ -41,6 +41,7 @@ type Service = {
 export default function ServiceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [service, setService] = useState<Service | null>(null);
+  const [companyName, setCompanyName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -67,6 +68,9 @@ export default function ServiceDetailPage() {
         }
 
         const apiData = responseData.data;
+
+        // Extract company name
+        setCompanyName(apiData?.companyName || "");
 
         // Access nested services array
         const serviceArray: ServiceAPIItem[] =
@@ -194,11 +198,12 @@ export default function ServiceDetailPage() {
               <div className="flex items-start justify-between gap-6">
                 <div className="flex-1">
                   <h1 className="text-3xl font-extrabold text-black">{service.name}</h1>
+                  {companyName && (
+                    <p className="mt-2 text-lg font-semibold text-gray-800">
+                      <span className="text-black">{companyName}</span>
+                    </p>
+                  )}
                   <p className="mt-2 text-gray-600">{service.shortDescription}</p>
-
-
-
-
                 </div>
               </div>
 
