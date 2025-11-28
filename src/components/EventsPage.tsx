@@ -3,7 +3,7 @@ import { Search, Filter, ChevronDown, Calendar, MapPin, Clock, Users, ArrowRight
 import { useNavigate } from 'react-router-dom';
 
 // Countdown component for event cards
-const EventCountdown = ({ eventDate, eventTime }) => {
+const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime: string }) => {
   const [countdown, setCountdown] = useState({
     days: 0,
     hours: 0,
@@ -16,70 +16,86 @@ const EventCountdown = ({ eventDate, eventTime }) => {
   useEffect(() => {
     const updateCountdown = () => {
       if (!eventDate || !eventTime) return;
-      
-      // Parse event date and time from the API data
-      const eventDateParts = eventDate.split(' to ');
-      const eventTimeParts = eventTime.split(' - ');
-      
-      const startDate = eventDateParts[0] || eventDate;
-      const startTime = eventTimeParts[0] || eventTime;
-      
-      // Convert 12-hour time to 24-hour for Date parsing
-      const convertTo24Hour = (time12h) => {
-        const [time, modifier] = time12h.trim().split(' ');
-        let [hours, minutes] = time.split(':');
-        
-        if (hours === '12') {
-          hours = '00';
+
+      try {
+        // Parse dates
+        const eventDateParts = eventDate.split(' to ');
+        const startDateStr = eventDateParts[0].trim();
+        const endDateStr = eventDateParts[1] ? eventDateParts[1].trim() : startDateStr;
+
+        // Parse times
+        const eventTimeParts = eventTime.split(' - ');
+        const startTimeStr = eventTimeParts[0].trim();
+        const endTimeStr = eventTimeParts[1] ? eventTimeParts[1].trim() : startTimeStr;
+
+        // Helper to convert time string to 24h format HH:mm
+        const convertTo24Hour = (timeStr: string) => {
+          if (!timeStr) return "00:00";
+          const cleanStr = timeStr.trim().toUpperCase();
+
+          const isPM = cleanStr.includes('PM');
+          const isAM = cleanStr.includes('AM');
+
+          let timeOnly = cleanStr.replace('AM', '').replace('PM', '').trim();
+          let [hours, minutes] = timeOnly.split(':');
+
+          if (!hours) return "00:00";
+          if (!minutes) minutes = "00";
+
+          let hoursInt = parseInt(hours, 10);
+
+          if (isPM && hoursInt < 12) hoursInt += 12;
+          if (isAM && hoursInt === 12) hoursInt = 0;
+
+          return `${hoursInt.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        };
+
+        const startTime24 = convertTo24Hour(startTimeStr);
+        const endTime24 = convertTo24Hour(endTimeStr);
+
+        const startDateTime = new Date(`${startDateStr}T${startTime24}:00`).getTime();
+        let endDateTime = new Date(`${endDateStr}T${endTime24}:00`).getTime();
+
+        // If endDateTime < startDateTime, it might be next day (e.g. 10 PM to 2 AM)
+        if (endDateTime < startDateTime) {
+          endDateTime += 24 * 60 * 60 * 1000;
         }
-        
-        if (modifier === 'PM') {
-          hours = parseInt(hours, 10) + 12;
+
+        // If start and end are same (single date, single time provided), assume 1 hour duration
+        if (startDateTime === endDateTime) {
+          endDateTime += 60 * 60 * 1000;
         }
-        
-        return `${hours}:${minutes}`;
-      };
 
-      const startTime24 = convertTo24Hour(startTime);
-      const eventDateTime = new Date(`${startDate}T${startTime24}:00`).getTime();
-      const now = new Date().getTime();
-      const distance = eventDateTime - now;
+        const now = new Date().getTime();
 
-      if (distance < 0) {
-        setCountdown({
-          days: 0,
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-          isEventStarted: false,
-          isEventExpired: true
-        });
-      } else {
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        setCountdown({
-          days,
-          hours,
-          minutes,
-          seconds,
-          isEventStarted: false,
-          isEventExpired: false
-        });
+        if (now > endDateTime) {
+          setCountdown(prev => ({ ...prev, isEventExpired: true, isEventStarted: false }));
+        } else if (now >= startDateTime && now <= endDateTime) {
+          setCountdown(prev => ({ ...prev, isEventStarted: true, isEventExpired: false }));
+        } else {
+          const distance = startDateTime - now;
+          setCountdown({
+            days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+            seconds: Math.floor((distance % (1000 * 60)) / 1000),
+            isEventStarted: false,
+            isEventExpired: false
+          });
+        }
+      } catch (e) {
+        console.error("Error parsing date/time", e);
       }
     };
 
     updateCountdown();
     const timer = setInterval(updateCountdown, 1000);
-
     return () => clearInterval(timer);
   }, [eventDate, eventTime]);
 
   if (countdown.isEventExpired) {
     return (
-      <div className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded">
+      <div className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded flex items-center gap-1">
         Event Ended
       </div>
     );
@@ -87,14 +103,16 @@ const EventCountdown = ({ eventDate, eventTime }) => {
 
   if (countdown.isEventStarted) {
     return (
-      <div className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded">
+      <div className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded flex items-center gap-1 animate-pulse">
+        <div className="w-2 h-2 bg-green-600 rounded-full animate-ping" />
         Live Now
       </div>
     );
   }
 
   return (
-    <div className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded">
+    <div className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded flex items-center gap-1">
+      <Clock className="h-3 w-3" />
       {countdown.days > 0 ? `${countdown.days}d ` : ''}
       {countdown.hours}h {countdown.minutes}m {countdown.seconds}s
     </div>
@@ -119,13 +137,13 @@ const EventsPage = () => {
       try {
         setLoading(true);
         const response = await fetch('https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main');
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch events');
         }
-        
+
         const data = await response.json();
-        
+
         if (data.success && data.cards) {
           // Transform API data to match our event structure
           const transformedEvents = data.cards.map(card => ({
@@ -146,7 +164,7 @@ const EventsPage = () => {
             eventDate: card.eventDate, // Keep original for countdown
             eventTime: card.eventTime, // Keep original for countdown
           }));
-          
+
           setAllEvents(transformedEvents);
         } else {
           setAllEvents([]);
@@ -253,7 +271,7 @@ const EventsPage = () => {
   const handleViewDetailsClick = (event) => {
     console.log(event);
     if (event.templateSelection === '1') {
-     navigate(`/event/${event.name}`);
+      navigate(`/event/${event.name}`);
     } else {
       navigate(`/events/${event.name}`);
     }
@@ -431,9 +449,9 @@ const EventsPage = () => {
                     </div>
 
                     {/* Countdown Timer - Bottom Right */}
-                     <div className="absolute bottom-4 right-4">
+                    <div className="absolute bottom-4 right-4">
                       <EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} />
-                    </div> 
+                    </div>
 
                     <div className="absolute top-4 left-4 bg-yellow-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
                       <Star className="h-3 w-3 fill-current" />
@@ -558,7 +576,6 @@ const EventsPage = () => {
                       <div className="absolute bottom-3 right-3">
                         <EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} />
                       </div>
-
                     </div>
                   </div>
                 </div>

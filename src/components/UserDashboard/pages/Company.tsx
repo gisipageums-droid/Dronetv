@@ -12,6 +12,7 @@ interface Company {
   location: string;
   sectors: string[];
   publishedDate?: string;
+  createdAt?: string;
   previewImage?: string;
   reviewStatus?: string;
 }
@@ -235,8 +236,8 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
             <span className="font-semibold text-yellow-700 text-sm">
-              {company?.publishedDate
-                ? formatDate(company?.publishedDate)
+              {company?.createdAt
+                ? formatDate(company?.createdAt)
                 : "Date not available"}
             </span>
             <span className="text-xs text-yellow-600">Published</span>
@@ -337,7 +338,8 @@ const CompanyPage: React.FC = () => {
             : c.sectors
               ? [c.sectors]
               : ["General"],
-          publishedDate: c.publishedDate || new Date().toISOString(),
+          publishedDate: c.publishedDate || "",
+          createdAt: c.createdAt || "",
           reviewStatus: c.reviewStatus || "active",
           previewImage: c.previewImage || "",
         }))
@@ -442,7 +444,7 @@ const CompanyPage: React.FC = () => {
 
   useEffect(() => {
     if (user?.email || user?.userData?.email) {
-      fetchCompanies(user?.email || user?.userData?.email);
+      fetchCompanies(user?.email || user?.userData?.email || "");
     }
   }, [user]);
 
