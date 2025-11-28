@@ -31,10 +31,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="p-2 hover:bg-yellow-300/20 rounded-lg transition-colors text-yellow-800 hover:text-yellow-900 relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-yellow-500 rounded-full"></span>
-            </button>
+            
             
             {/* Admin data button */}
             <button 

@@ -158,14 +158,6 @@ export function Sidebar({
               })}
             </div>
           </nav>
-
-          {/* Footer */}
-          <div className="p-6 border-t border-yellow-200/50">
-            <div className="bg-gradient-to-br from-yellow-400/20 to-amber-400/20 rounded-xl p-4 backdrop-blur-sm border border-yellow-300/30">
-              <p className="text-xs text-yellow-900/70 mb-1">Admin Panel</p>
-              <p className="text-yellow-900">Version 1.0.0</p>
-            </div>
-          </div>
         </div>
       </aside>
     </>

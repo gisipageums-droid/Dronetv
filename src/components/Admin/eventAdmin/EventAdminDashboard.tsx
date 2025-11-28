@@ -712,19 +712,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Category Filter */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-yellow-900 block">
-            Category
-          </label>
-          <MinimalisticDropdown
-            value={categoryFilter}
-            onChange={onCategoryChange}
-            options={categories}
-            placeholder="Select category"
-          />
-        </div>
-
         {/* Sort Filter */}
         <div className="space-y-3">
           <label className="text-sm font-medium text-yellow-900 block">

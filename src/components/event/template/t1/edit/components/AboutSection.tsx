@@ -85,7 +85,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
       // Set new timeout for auto-save (1 second debounce)
       autoSaveTimeoutRef.current = setTimeout(() => {
         autoSave();
-      }, 1000);
+      }, 100);
 
       // Cleanup timeout on unmount or when dependencies change
       return () => {

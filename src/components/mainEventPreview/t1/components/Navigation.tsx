@@ -71,7 +71,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:mx-20 items-center space-x-4 xl:space-x-8">
-            {navContent.navItems.map((item, index) => (
+            {defaultHeaderContent.navItems.map((item, index) => (
               <div key={index} className="flex flex-col">
                 <button
                   onClick={() => scrollToSection(item.href)}
@@ -112,7 +112,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden mt-4 py-4 bg-white/95 backdrop-blur-md rounded-lg shadow-lg">
-            {navContent.navItems.map((item, index) => (
+            {defaultHeaderContent.navItems.map((item, index) => (
               <button
                 key={index}
                 onClick={() => scrollToSection(item.href)}
