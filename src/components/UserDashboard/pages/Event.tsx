@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 
 interface EventCard {
+  heroBannerImage: string | undefined;
   eventId: string;
   userId: string;
   submissionId: string;
@@ -151,7 +152,7 @@ const EventCard: React.FC<EventCardProps> = ({
               <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-600">
                 {event.previewImage ? (
                   <img
-                    src={placeholderImg}
+                    src={event.heroBannerImage} 
                     alt={event.eventName}
                     className="w-full h-full object-cover rounded-md"
                   />
