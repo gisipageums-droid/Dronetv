@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from "motion/react";
 
 // -------------------- Types --------------------
 interface Event {
+  heroBannerImage: string | undefined;
   eventId: string;
   userId: string;
   submissionId: string;
@@ -135,11 +136,8 @@ interface DropdownProps {
 interface SidebarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  categoryFilter: string;
-  onCategoryChange: (value: string) => void;
   sortBy: string;
   onSortChange: (value: string) => void;
-  categories: string[];
   isMobileSidebarOpen: boolean;
   onCloseMobileSidebar: () => void;
 }
@@ -270,7 +268,6 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
   };
 
   const publishedData = data.debug.publishedRecordRaw;
-  // const draftData = data.debug.draftRecordRaw;
 
   return (
     <AnimatePresence>
@@ -656,11 +653,8 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
 const Sidebar: React.FC<SidebarProps> = ({
   searchTerm,
   onSearchChange,
-  categoryFilter,
-  onCategoryChange,
   sortBy,
   onSortChange,
-  categories,
   isMobileSidebarOpen,
   onCloseMobileSidebar,
 }) => {
@@ -730,7 +724,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={() => {
             onSearchChange("");
-            onCategoryChange("All Categories");
             onSortChange("Sort by Date");
           }}
           className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
@@ -828,7 +821,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
             <div className="flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
               {event.previewImage ? (
                 <img
-                  src={event.previewImage}
+                  src={event.heroBannerImage} 
                   alt={`${event.eventName} logo`}
                   className="w-full h-full object-cover rounded-lg transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
                   loading="lazy"
@@ -847,7 +840,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
               <div className="flex items-center mt-1 text-gray-600">
                 <MapPin className="mr-1 w-3 h-3" />
                 <span className="text-xs md:text-sm">
-                  {event.location || "Location not specified"}
+                  {event.location.slice(0, 25) + `${event.location.length > 25 ? "..." : ""}` || "Location not specified"}
                 </span>
               </div>
             </div>
@@ -860,14 +853,6 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
               <Calendar className="w-3 h-3" />
               {statusStyle.label}
             </div>
-          </div>
-        </div>
-
-        <div className="mb-4 md:mb-6">
-          <div className="flex flex-wrap gap-1 md:gap-2">
-            <span className="px-2 py-1 md:px-3 md:py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">
-              {event.category || "Category not specified"}
-            </span>
           </div>
         </div>
 
@@ -1027,8 +1012,6 @@ const eventApiService = {
 // -------------------- Main Component --------------------
 const EventAdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [categoryFilter, setCategoryFilter] =
-    useState<string>("All Categories");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
     useState<boolean>(false);
@@ -1055,22 +1038,6 @@ const EventAdminDashboard: React.FC = () => {
     userId: string | null;
     event: Event | null;
   }>({ isOpen: false, type: null, eventId: null, userId: null, event: null });
-
-  const categories = [
-    "All Categories",
-    "Technology",
-    "Conference",
-    "Music",
-    "Entertainment",
-    "Business",
-    "Networking",
-    "Art",
-    "Culture",
-    "Sports",
-    "Competition",
-    "Food",
-    "Culinary",
-  ];
 
   // -------------------- Confirmation Modal Handlers --------------------
   const openConfirmationModal = (
@@ -1295,7 +1262,7 @@ const EventAdminDashboard: React.FC = () => {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, categoryFilter, sortBy]);
+  }, [searchTerm, sortBy]);
 
   // Filter and Sort Logic
   const filteredEvents = useMemo(() => {
@@ -1309,13 +1276,9 @@ const EventAdminDashboard: React.FC = () => {
         (event.category &&
           event.category.toLowerCase().includes(searchTerm.toLowerCase()));
 
-      const matchesCategory =
-        categoryFilter === "All Categories" ||
-        (event.category && event.category === categoryFilter);
-
-      return matchesSearch && matchesCategory;
+      return matchesSearch;
     });
-  }, [events, searchTerm, categoryFilter]);
+  }, [events, searchTerm]);
 
   const sortedEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {
@@ -1449,11 +1412,8 @@ const EventAdminDashboard: React.FC = () => {
         <Sidebar
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          categoryFilter={categoryFilter}
-          onCategoryChange={setCategoryFilter}
           sortBy={sortBy}
           onSortChange={setSortBy}
-          categories={categories}
           isMobileSidebarOpen={isMobileSidebarOpen}
           onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
         />
