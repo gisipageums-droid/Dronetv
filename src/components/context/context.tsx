@@ -219,7 +219,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
   const [finaleDataReview, setFinaleDataReview] = useState<any | []>({});
   const [navModel, setNavModel] = useState(false);
   const navigate = useNavigate();
-  const { isLogin } = useUserAuth();
+  const { isLogin, isAdminLogin } = useUserAuth();
 
   function navigatemodel() {
     return (
@@ -342,12 +342,18 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         "Your site is successfully published and now it is under review"
       );
 
-      if (isLogin === false) {
+      if (isLogin&&isAdminLogin === false) {
         setNavModel(true);
         // navigatemodel();
       } else {
-        navigate("/user-companies");
-        setNavModel(false);
+        if(isAdminLogin){
+          navigate("/admin/company/dashboard");
+           setNavModel(false);
+        }else{
+
+          navigate("/user-companies");
+          setNavModel(false);
+        }
       }
 
       setAIGenData({});
@@ -387,7 +393,11 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your site is successfully published and now it is under review"
       );
-      navigate("/user-companies");
+      if(isAdminLogin){
+        navigate("/admin/company/dashboard");
+      }else{
+        navigate("/user-companies");
+      }
       setFinaleDataReview({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -445,7 +455,11 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your template is successfully published and now it is under review"
       );
-      navigate("/user-professionals");
+      if(isAdminLogin){
+        navigate("/admin/professional/dashboard");
+      }else{
+        navigate("/user-professionals");
+      }
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -485,7 +499,11 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your template is successfully published and now it is under review"
       );
-      navigate("/user-events");
+      if(isAdminLogin){
+        navigate("/admin/event/dashboard");
+      }else{
+        navigate("/user-events");
+      }
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);

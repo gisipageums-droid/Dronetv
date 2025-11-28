@@ -93,7 +93,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                   <p className="text-yellow-900">{admin?.adminData?.state}</p>
                 </div>
                 <div className="col-span-2">
-                  <label className="text-yellow-700/70">Joined:</label>
+                  <label className="text-yellow-700/70">login time:</label>
                   <p className="text-yellow-900">
                     {admin?.timestamp ? new Date(admin.timestamp).toLocaleDateString('en-US', {
                       year: 'numeric',
