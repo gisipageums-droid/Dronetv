@@ -21,6 +21,8 @@ import AboutPage from "./components/AboutPage";
 import PartnerPage from "./components/PartnerPage";
 import ContactPage from "./components/ContactPage";
 import SearchPage from "./components/SearchPage";
+import TermsAndConditionsPage from "./components/TermsAndConditionsPage";
+import PrivacyPolicyPage from "./components/PrivacyPolicyPage";
 import ProductDetailPage from "./components/ProductDetailPage";
 import ProfessionalsPage from "./components/ProfessionalsPage";
 import ServicesPage from "./components/ServicesPage";
@@ -140,6 +142,8 @@ const AppContent = () => {
           <Route path="/partner" element={<PartnerPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/service/:id" element={<ServiceDetailPage />} />
@@ -186,12 +190,12 @@ const AppContent = () => {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/plans" element={
             <AdminProtectedRoute>
-              <AdminTokenPlan/>
-            </AdminProtectedRoute>}/>
+              <AdminTokenPlan />
+            </AdminProtectedRoute>} />
           <Route path="/admin/company/dashboard" element={
             <AdminProtectedRoute>
               <AdminDashboard />
-            </AdminProtectedRoute>}/>
+            </AdminProtectedRoute>} />
           <Route
             path="/admin/companies/preview/1/:publishedId/:userId"
             element={<DashboardPreview1 />}
@@ -260,9 +264,9 @@ const AppContent = () => {
           <Route
             path="/admin/event/dashboard"
             element={
-            <AdminProtectedRoute>
-              <EventAdminDashboard />
-            </AdminProtectedRoute>}
+              <AdminProtectedRoute>
+                <EventAdminDashboard />
+              </AdminProtectedRoute>}
           />
           <Route path="/user/event" element={<UserEvent />} />
 
