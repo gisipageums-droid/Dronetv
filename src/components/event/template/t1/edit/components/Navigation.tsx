@@ -817,6 +817,15 @@ interface NavigationProps {
   };
   onStateChange?: (data: any) => void;
 }
+const staticNavItems =  [
+      { name: "Home", href: "#home" },
+      { name: "About", href: "#about" },
+      { name: "Speakers", href: "#speakers" },
+      { name: "Agenda", href: "#agenda" },
+      { name: "Partners", href: "#sponsors" },
+      { name: "Videos", href: "#gallery" },
+      { name: "Contact", href: "#contact" },
+    ]
 
 const staticNavItems = [
   { name: "Home", href: "#home" },
