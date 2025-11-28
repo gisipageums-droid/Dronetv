@@ -131,74 +131,74 @@ export default function App() {
         <Header
           headerData={AIGenData?.content?.company}
           onStateChange={handleHeaderChange}
-          publishedId={AIGenData.publishedId}
-          userId={AIGenData.userId}
-          templateSelection={AIGenData.templateSelection}
+          publishedId={AIGenData?.publishedId}
+          userId={AIGenData?.userId}
+          templateSelection={AIGenData?.templateSelection}
         />
         <main>
           <Hero
             heroData={AIGenData?.content?.hero}
             headerData={AIGenData?.content?.company}
             onStateChange={handleHeroChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <About
             aboutData={AIGenData?.content?.about}
             onStateChange={handleAboutChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <Profile
             profileData={AIGenData?.content?.profile}
             onStateChange={handleProfileChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <Product
             productData={AIGenData?.content?.products}
             onStateChange={handleProductsChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <Services
             serviceData={AIGenData?.content?.services}
             onStateChange={handleServicesChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <Gallery
             galleryData={AIGenData?.content?.gallery}
             onStateChange={handleGalleryChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <Blog
             blogData={AIGenData?.content?.blog}
             onStateChange={handleBlogChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <Testimonials
             testimonialsData={AIGenData?.content?.testimonials}
             onStateChange={handleTestimonialsChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <Clients
             clientData={AIGenData?.content?.clients}
             onStateChange={handleClientsChange}
-            publishedId={AIGenData.publishedId}
-            userId={AIGenData.userId}
-            templateSelection={AIGenData.templateSelection}
+            publishedId={AIGenData?.publishedId}
+            userId={AIGenData?.userId}
+            templateSelection={AIGenData?.templateSelection}
           />
           <Contact onStateChange={handleContactChange} />
           <Publish />
@@ -207,9 +207,9 @@ export default function App() {
           footerData={AIGenData?.content?.services}
           footerLogo={AIGenData?.content?.company}
           onStateChange={handleFooterChange}
-          publishedId={AIGenData.publishedId}
-          userId={AIGenData.userId}
-          templateSelection={AIGenData.templateSelection}
+          publishedId={AIGenData?.publishedId}
+          userId={AIGenData?.userId}
+          templateSelection={AIGenData?.templateSelection}
         />
       </div>
     </ThemeProvider>

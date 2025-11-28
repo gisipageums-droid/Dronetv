@@ -253,7 +253,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                     Thank You for completing your listing! Your listing will be reviewed and will go live as soon as possible if your information aligns with our{" "}
                     <button 
                       onClick={() => setTermsModel(true)}
-                      className="text-blue-800 underline font-medium hover:text-blue-900 transition-colors"
+                      className="text-red-800 underline font-medium hover:text-red-900 transition-colors"
                     >
                       terms and conditions
                     </button>

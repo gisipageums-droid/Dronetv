@@ -21,6 +21,8 @@ import AboutPage from "./components/AboutPage";
 import PartnerPage from "./components/PartnerPage";
 import ContactPage from "./components/ContactPage";
 import SearchPage from "./components/SearchPage";
+import TermsAndConditionsPage from "./components/TermsAndConditionsPage";
+import PrivacyPolicyPage from "./components/PrivacyPolicyPage";
 import ProductDetailPage from "./components/ProductDetailPage";
 import ProfessionalsPage from "./components/ProfessionalsPage";
 import ServicesPage from "./components/ServicesPage";
@@ -47,6 +49,7 @@ import ForgotPassword from "./components/ForgotPassword";
 import Logout from "./components/Logout";
 import ResetPassword from "./components/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminProtectedRoute from "./components/adminProtectedRoute";
 import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
@@ -139,6 +142,8 @@ const AppContent = () => {
           <Route path="/partner" element={<PartnerPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/service/:id" element={<ServiceDetailPage />} />
@@ -183,8 +188,14 @@ const AppContent = () => {
           <Route path="reset-password/:id" element={<ResetPassword />} />
           {/* admin dashboard */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/plans" element={<AdminTokenPlan />} />
-          <Route path="/admin/company/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/plans" element={
+            <AdminProtectedRoute>
+              <AdminTokenPlan />
+            </AdminProtectedRoute>} />
+          <Route path="/admin/company/dashboard" element={
+            <AdminProtectedRoute>
+              <AdminDashboard />
+            </AdminProtectedRoute>} />
           <Route
             path="/admin/companies/preview/1/:publishedId/:userId"
             element={<DashboardPreview1 />}
@@ -228,7 +239,7 @@ const AppContent = () => {
             element={<EditTemp_1 />}
           />
           <Route path="/user/professional" element={<UserProfessional />} />
-          <Route path="/admin/professional/dashboard" element={<AdminProfessional />} />
+          <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminProfessional /></AdminProtectedRoute>} />
           <Route
             path="/user/professionals/preview/2/:professionalId/:userId"
             element={<FinaleProfessionalTemp2 />}
@@ -252,7 +263,10 @@ const AppContent = () => {
           {/* event routes */}
           <Route
             path="/admin/event/dashboard"
-            element={<EventAdminDashboard />}
+            element={
+              <AdminProtectedRoute>
+                <EventAdminDashboard />
+              </AdminProtectedRoute>}
           />
           <Route path="/user/event" element={<UserEvent />} />
 

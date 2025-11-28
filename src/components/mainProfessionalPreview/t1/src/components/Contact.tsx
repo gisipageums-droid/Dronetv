@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
+import axios from "axios";
 
 export interface ContactContent {
   subtitle: string;
@@ -10,9 +11,10 @@ export interface ContactContent {
 
 interface ContactProps {
   content: ContactContent;
+  professionalId: string;
 }
 
-const Contact: React.FC<ContactProps> = ({ content }) => {
+const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
   const [contactContent, setContactContent] = useState<ContactContent | null>(
     null
   );
@@ -30,7 +32,9 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
   >("idle");
 
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -58,7 +62,11 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await axios.post(
+        "https://l7p8i65gl5.execute-api.ap-south-1.amazonaws.com/prod/",
+        { professionalId, ...formData },
+        { headers: { "Content-Type": "application/json" } }
+      );
       setSubmitStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "", phone: "" });
     } catch (error) {

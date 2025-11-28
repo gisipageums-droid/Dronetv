@@ -78,20 +78,10 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
     return initialFormData;
   });
 
-const updateField = (section: string, value: any) => {
-  setData((prevData) => {
-    // Create a copy of the previous data
-    const newData = { ...prevData };
 
-    // MERGE logic: Keep existing fields in that section, add the new ones
-    newData[section] = {
-      ...(newData[section] || {}), // Keep name, email, etc.
-      ...value,                    // Overwrite ONLY country/state
-    };
-
-    return newData;
-  });
-};
+  const updateField = (key: keyof FormStore, value: any) => {
+    setData(prev => ({ ...prev, [key]: value }));
+  };
 
   const addArrayItem = (key: 'projects' | 'services', item: any) => {
     setData(prev => ({ ...prev, [key]: [...prev[key], item] }));
@@ -111,6 +101,9 @@ const updateField = (section: string, value: any) => {
     }
   }, [data]);
 
+  // const resetForm = () => setData(initialFormData); // 👈 resets all fields
+
+  console.log("Form Data:", data);
  
 
   return (

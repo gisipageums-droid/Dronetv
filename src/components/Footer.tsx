@@ -10,11 +10,9 @@ const Footer = () => {
   ];
 
   const footerLinks = [
-    { name: 'Privacy Policy', href: '#' },
-    { name: 'Terms of Service', href: '#' },
-    { name: 'Contact', href: '#' },
-    { name: 'Careers', href: '#' },
-    { name: 'Press', href: '#' }
+    { name: 'Privacy Policy', href: '/privacy-policy' },
+    { name: 'Terms of Service', href: '/terms-and-conditions' },
+    { name: 'Contact', href: '/contact' }
   ];
 
   const scrollToTop = () => {

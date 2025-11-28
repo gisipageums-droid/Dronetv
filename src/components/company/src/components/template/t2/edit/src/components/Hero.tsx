@@ -40,7 +40,7 @@ export default function Hero({
   const [prevZoom, setPrevZoom] = useState(1);
 
   // Consolidated state
-  console.log("heroState", headerData.name)
+  // console.log("heroState", headerData?.name)
   const [heroState, setHeroState] = useState({
     badgeText: headerData?.name || "Company",
     heading: heroData?.title || "Transform Your Business with Innovation",
