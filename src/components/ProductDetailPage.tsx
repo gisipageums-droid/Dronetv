@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { Star, Plane, Truck, ShieldCheck } from "lucide-react";
 import LoadingScreen from "./loadingscreen";
@@ -133,7 +133,7 @@ export default function ProductDetailPage() {
 
   if (error)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-50 p-6">
+      <div className="min-h-screen flex items-center justify-center  p-6">
         <div className="bg-white rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
           <p className="mb-6 text-gray-700">{error}</p>
@@ -167,7 +167,7 @@ export default function ProductDetailPage() {
     ));
 
   return (
-    <div className="pt-16 min-h-screen bg-yellow-50">
+    <div className="pt-16 min-h-screen bg-yellow-400">
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* LEFT: Images + Thumbnails */}
@@ -291,11 +291,18 @@ export default function ProductDetailPage() {
 
           </div>
         </div>
-        <div className=" p-4 rounded-2xl shadow shadow-black mt-[5px] ">
+        <div className=" p-4 rounded-2xl shadow shadow-black mt-[5px] bg-white ">
           <h4 className="font-semibold mb-3">Description</h4>
           <ul className="grid grid-cols-1 text-justify">
             <li>{product.detailedDescription}</li>
           </ul>
+        </div>
+        <div className="mt-8 flex justify-center">
+          <Link to={`/companies/${companyName}`}>
+            <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
+              Contact us
+            </button>
+          </Link>
         </div>
       </div>
     </div>

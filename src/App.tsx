@@ -183,7 +183,7 @@ const AppContent = () => {
           <Route path="reset-password/:id" element={<ResetPassword />} />
           {/* admin dashboard */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/plans" element={<AdminTokenPlan/>}/>
+          <Route path="/admin/plans" element={<AdminTokenPlan />} />
           <Route path="/admin/company/dashboard" element={<AdminDashboard />} />
           <Route
             path="/admin/companies/preview/1/:publishedId/:userId"
