@@ -12,6 +12,15 @@ interface NavigationProps {
   };
   onStateChange?: (data: any) => void;
 }
+const staticNavItems =  [
+      { name: "Home", href: "#home" },
+      { name: "About", href: "#about" },
+      { name: "Speakers", href: "#speakers" },
+      { name: "Agenda", href: "#agenda" },
+      { name: "Partners", href: "#sponsors" },
+      { name: "Videos", href: "#gallery" },
+      { name: "Contact", href: "#contact" },
+    ]
 
 const Navigation: React.FC<NavigationProps> = ({
   headerData,
@@ -219,7 +228,7 @@ const Navigation: React.FC<NavigationProps> = ({
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:mx-20 items-center space-x-4 xl:space-x-8">
-            {navContent.navItems.map((item, index) => (
+            {staticNavItems.map((item, index) => (
               <div key={index} className="flex flex-col">
                 
                   <button
@@ -346,7 +355,7 @@ const Navigation: React.FC<NavigationProps> = ({
               </div>
             ) : (
               <>
-                {navContent.navItems.map((item, index) => (
+                {staticNavItems.map((item, index) => (
                   <button
                     key={index}
                     onClick={() => scrollToSection(item.href)}
