@@ -137,7 +137,7 @@ const TokenValidationModal: React.FC<{
 };
 
 function AppInner() {
-  const { isLogin, user } = useUserAuth();
+  const { isLogin, user, isAdminLogin } = useUserAuth();
   const { current, next, prev, goTo } = useFormSteps(7); // 6 steps + summary
   const [steps, setSteps] = useState<any[]>([]);
   const [resumeData, setResumeData] = useState(null);
@@ -160,7 +160,6 @@ function AppInner() {
 
   // --- admin state ---
   const [adminOpen, setAdminOpen] = useState(false);
-  const admin = true; // toggle this to show/hide admin panel
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -437,7 +436,7 @@ function AppInner() {
 
       <div className="max-w-4xl mx-auto p-6 space-y-6 relative">
         {/* --- Admin Button --- */}
-        {admin && current < 5 && (
+        {isAdminLogin && current < 5 && (
           <div className="flex justify-end -mt-2">
             <button
               onClick={() => setAdminOpen(true)}

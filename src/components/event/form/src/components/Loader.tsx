@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 
 interface LoaderProps {
   onComplete?: () => void; // callback after loader completes
-  duration?: number; // total duration in ms, default 70s
+  duration?: number; // total duration in ms, default 100s
 }
 
 export const Loader: React.FC<LoaderProps> = ({
   onComplete,
-  duration = 90000, // <-- increased from 30000 to 70000 (70 seconds)
+  duration = 100000, // <-- increased to 100000 (100 seconds)
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -163,7 +163,7 @@ export const Loader: React.FC<LoaderProps> = ({
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-slate-400 text-sm">
-            This usually takes ~70 seconds
+            This usually takes ~100 seconds
           </p>
         </div>
       </div>
