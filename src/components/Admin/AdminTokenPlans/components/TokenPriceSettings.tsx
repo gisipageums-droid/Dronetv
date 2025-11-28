@@ -38,7 +38,7 @@ export function TokenPriceSettings({ tokenPriceINR, setTokenPriceINR }: TokenPri
         <div className="bg-white/40 backdrop-blur-xl border border-yellow-200/50 rounded-2xl p-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 rounded-xl bg-yellow-400/20  flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-yellow-900" />
+              ₹
             </div>
             <div>
               <h3 className="text-yellow-900">Base Token Price</h3>

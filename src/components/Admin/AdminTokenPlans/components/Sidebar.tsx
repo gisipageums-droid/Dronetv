@@ -1,6 +1,5 @@
 import {
   LayoutDashboard,
-  DollarSign,
   ShoppingBag,
   Calendar,
   CalendarRange,
@@ -9,6 +8,7 @@ import {
   Building2,
   User,
   LucideIcon,
+  IndianRupeeIcon,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -27,7 +27,7 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "token-price", label: "Token Price", icon: DollarSign },
+  { id: "token-price", label: "Token Price", icon: IndianRupeeIcon },
   { id: "one-time", label: "One-Time Plans", icon: ShoppingBag },
   { id: "monthly", label: "Monthly Plans", icon: Calendar },
   { id: "Quarterly", label: "Quarterly Plans", icon: CalendarRange },
@@ -85,8 +85,8 @@ export function Sidebar({
           <div className="p-6 border-b border-yellow-200/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg">
-                  <DollarSign className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg font-bold text-white">
+                  ₹
                 </div>
                 <div>
                   <h1 className="text-yellow-900">Token Admin</h1>
