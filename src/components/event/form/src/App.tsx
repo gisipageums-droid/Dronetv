@@ -470,7 +470,7 @@
 //       console.log("Template from prefill:", data.templateSelection);
 //       console.log("Template from state:", templateIdFromState);
 //       console.log("Final template id:", templateId);
-      
+
 //       navigate(
 //         `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
 //       );
@@ -481,7 +481,6 @@
 //     alert("Submission failed");
 //   }
 // };
-
 
 //   if (formLoader)
 //     return (
@@ -664,10 +663,6 @@
 //     </FormProvider>
 //   );
 // }
-
-
-
-
 
 // import { useEffect, useState } from "react";
 // import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -852,7 +847,7 @@
 //           );
 //           const eventData = await res.json();
 //           setFormLoader(false);
-          
+
 //           // Store submission ID for updates
 //           if (eventData.submissionId || eventData.draftId) {
 //             localStorage.setItem(
@@ -1176,7 +1171,6 @@
 //   );
 // }
 
-
 // import { useEffect, useState } from "react";
 // import { useLocation, useNavigate, useParams } from "react-router-dom";
 // import { fetchFormStructure, submitForm } from "./api/formApi";
@@ -1360,7 +1354,7 @@
 //           );
 //           const eventData = await res.json();
 //           setFormLoader(false);
-          
+
 //           // Store submission ID for updates
 //           if (eventData.submissionId || eventData.draftId) {
 //             localStorage.setItem(
@@ -1664,9 +1658,6 @@
 //   );
 // }
 
-
-
-
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchFormStructure, submitForm } from "./api/formApi";
@@ -1806,7 +1797,7 @@ const TokenValidationModal: React.FC<{
 };
 
 function EventsForm() {
-  const { isLogin, user } = useUserAuth();
+  const { isLogin, user, isAdminLogin } = useUserAuth();
   const { current, next, prev, goTo } = useFormSteps(7); // 6 steps + summary
   const [steps, setSteps] = useState<any[]>([]);
   const { data, setData, updateField } = useForm();
@@ -1827,10 +1818,10 @@ function EventsForm() {
 
   // Admin state
   const [adminOpen, setAdminOpen] = useState(false);
-  const admin = true;
+  
 
   const location = useLocation();
-  
+
   const navigate = useNavigate();
   const [formLoader, setFormLoader] = useState(true);
 
@@ -1851,7 +1842,7 @@ function EventsForm() {
           );
           const eventData = await res.json();
           setFormLoader(false);
-          
+
           // Store submission ID for updates
           if (eventData.submissionId || eventData.draftId) {
             localStorage.setItem(
@@ -1894,7 +1885,9 @@ function EventsForm() {
     if (!isLogin && !data.contactInfo?.email) {
       // For non-logged in users without email, we can proceed without token validation
       // or you might want to show a different message
-      console.log("User not logged in and no email provided, skipping token validation");
+      console.log(
+        "User not logged in and no email provided, skipping token validation"
+      );
       return true;
     }
 
@@ -1941,13 +1934,15 @@ function EventsForm() {
 
     setLoading(true);
     setSuccess(false);
-    
+
     // Get email for submission - same logic as validation
     const email = isLogin ? user?.userData?.email : data.contactInfo?.email;
 
     // If not logged in and no email in form, we cannot proceed with submission
     if (!isLogin && !data.contactInfo?.email) {
-      toast.error("Please provide your email in the contact information before submitting.");
+      toast.error(
+        "Please provide your email in the contact information before submitting."
+      );
       setLoading(false);
       return;
     }
@@ -1974,31 +1969,35 @@ function EventsForm() {
     //   };
 
     try {
-  // Use existing submissionId (if editing) or generate a new one
-  const finalSubmissionId = submissionId || Date.now();
-  
-  // Generate unique eventId starting with "event-"
-  const eventId = `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  
-  // Generate unique draftId starting with "draft-"
-  const draftId = `draft-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // Use existing submissionId (if editing) or generate a new one
+      const finalSubmissionId = submissionId || Date.now();
 
-  const payload = {
-    userId: email,
-    eventId: eventId,
-    submissionId: finalSubmissionId,
-    draftId: draftId,
-    aiTriggeredAt: Date.now(),
-    formData: data,
-    mediaLinks: {},
-    uploadedFiles: {},
-    processingMethod: "separate_upload",
-    status: "ai_processing",
-    updatedAt: Date.now(),
-    templateSelection: location.state?.templateId,
-    version: "1.0",
-    eventType: "conference",
-  };
+      // Generate unique eventId starting with "event-"
+      const eventId = `event-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+
+      // Generate unique draftId starting with "draft-"
+      const draftId = `draft-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+
+      const payload = {
+        userId: email,
+        eventId: eventId,
+        submissionId: finalSubmissionId,
+        draftId: draftId,
+        aiTriggeredAt: Date.now(),
+        formData: data,
+        mediaLinks: {},
+        uploadedFiles: {},
+        processingMethod: "separate_upload",
+        status: "ai_processing",
+        updatedAt: Date.now(),
+        templateSelection: location.state?.templateId,
+        version: "1.0",
+        eventType: "conference",
+      };
 
       console.log("Event submission payload:", payload);
 
@@ -2027,12 +2026,16 @@ function EventsForm() {
         console.error("Failed to clear local draft after submit", e);
       }
 
-      setTimeout(() => setLoading(false), 30000);
+      setTimeout(() => setLoading(false), 90000);
 
       // Navigate to event preview/edit page
       setTimeout(() => {
         // navigate(`/event/edit/${finalSubmissionId}/${emil}`);
-        navigate(`/edit/event/${response.details.templateSelection==1?"t1":"t2"}/AIgen/${response.draftId}/${response.userId}`);
+        navigate(
+          `/edit/event/${
+            response.details.templateSelection == 1 ? "t1" : "t2"
+          }/AIgen/${response.draftId}/${response.userId}`
+        );
       }, 30000);
     } catch (err) {
       console.error(err);
@@ -2056,7 +2059,9 @@ function EventsForm() {
   if (!steps.length) return <div>Loading event form...</div>;
 
   // Step components - including Step6
-  const StepComponent = [Step1, Step2, Step3, Step4, Step5, Step6, Summary][current];
+  const StepComponent = [Step1, Step2, Step3, Step4, Step5, Step6, Summary][
+    current
+  ];
   const stepData = steps[current] || {};
 
   // Progress percentage for first 6 steps
@@ -2074,8 +2079,12 @@ function EventsForm() {
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-gray-700">Conferences • Seminars • Exhibitions</p>
-            <p className="text-xs text-gray-600">Create stunning event websites instantly</p>
+            <p className="text-xs text-gray-700">
+              Conferences • Seminars • Exhibitions
+            </p>
+            <p className="text-xs text-gray-600">
+              Create stunning event websites instantly
+            </p>
           </div>
         </div>
       </div>
@@ -2141,7 +2150,7 @@ function EventsForm() {
 
       <div className="max-w-4xl mx-auto p-6 space-y-6 relative">
         {/* Admin Button */}
-        {admin && current < 6 && (
+        {isAdminLogin && current < 6 && (
           <div className="flex justify-end -mt-2">
             <button
               onClick={() => setAdminOpen(true)}

@@ -69,7 +69,7 @@ const ProfessionalLeads: React.FC = () => {
     if (!userId) return;
     try {
       const res = await fetch(
-        `https://r5mcwn6b10.execute-api.ap-south-1.amazonaws.com/prod/get-leads?userId=${userId}&professionalId=${professionalId}&mode=all`
+        `https://r5mcwn6b10.execute-api.ap-south-1.amazonaws.com/prod/get-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${professionalId}`
       );
       const data = await res.json();
       if (data.success && Array.isArray(data.leads)) {
