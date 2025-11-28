@@ -37,6 +37,7 @@ const EventLeads: React.FC = () => {
   const { user } = useUserAuth();
   const userId = user?.email || user?.userData?.email;
   const eventName = useParams().eventName || "";
+  const eventId = useParams().eventId || "";
 
   const [leads, setLeads] = useState<Lead[]>([]);
   const [totalTokens, setTotalTokens] = useState(0);
@@ -74,7 +75,7 @@ const EventLeads: React.FC = () => {
 
     try {
       const res = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/event-leads?userId=${userId}`
+        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/event-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${eventId}`
       );
       const data = await res.json();
 

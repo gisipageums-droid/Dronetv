@@ -8,7 +8,7 @@ interface LoaderProps {
 
 export const Loader: React.FC<LoaderProps> = ({
   onComplete,
-  duration = 70000, // <-- increased from 30000 to 70000 (70 seconds)
+  duration = 90000, // <-- increased from 30000 to 70000 (70 seconds)
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);

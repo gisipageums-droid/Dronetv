@@ -105,6 +105,8 @@ import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
+import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
+import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
 
 
 const HomePage = () => (
@@ -394,7 +396,10 @@ const AppContent = () => {
               </UserDashboardLayout>
             }
           />
+        <Route path="/eventsexcel" element={<EventsExcelDataProcessor />} />
+        <Route path="/professionalsexcel" element={<ProfessionalsDocumentTextExtractor />} />
         </Routes>
+
         {!hideFooter && <Footer />}
         <ScrollingFooter />
       </CombinedProviders>
