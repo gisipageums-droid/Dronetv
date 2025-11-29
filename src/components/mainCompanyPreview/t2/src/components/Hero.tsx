@@ -100,8 +100,8 @@ export default function Hero({ heroData }) {
               </motion.div>
 
               {/* Description */}
-              <motion.div variants={itemVariants}>
-                <p className="text-xl text-red-500 max-w-lg inline text-justify">
+              <motion.div variants={itemVariants} className="max-w-lg text-justify">
+                <p className="text-xl text-red-500">
                   {heroState.description}
                 </p>
               </motion.div>

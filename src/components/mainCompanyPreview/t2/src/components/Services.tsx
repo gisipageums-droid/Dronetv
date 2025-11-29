@@ -136,14 +136,14 @@ export default function Services({ serviceData }) {
           <AnimatePresence>
             {isModalOpen && selectedServiceIndex !== null && (
               <motion.div
-                className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+                className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[99999999999999]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={closeModal}
               >
                 <motion.div
-                  className="bg-card rounded-xl w-full max-w-2xl p-6 relative max-h-[85vh] overflow-y-auto"
+                  className="bg-card rounded-xl w-full max-w-2xl p-6 relative max-h-[70vh] overflow-y-auto"
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.9, opacity: 0 }}

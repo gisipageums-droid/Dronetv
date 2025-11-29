@@ -625,14 +625,14 @@ export default function Hero({
                           onChange={(e) =>
                             updateField("badgeText", e.target.value)
                           }
-                          maxLength={25}
-                          className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
+                          maxLength={75}
+                          className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 75
                             ? "border-red-500"
                             : ""
                             }`}
                         />
                         <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
-                          {heroState.badgeText.length >= 25 && "Limit reached!"}
+                          {heroState.badgeText.length >= 75 && "Limit reached!"}
                         </div>
                       </div>
                     ) : (
@@ -903,11 +903,6 @@ export default function Hero({
                   <div className="relative flex justify-center">
                     {/* Main Hero Image - FIXED */}
                     <div className="relative w-full max-w-2xl mx-auto">
-                      {isEditing && (
-                        <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-                          Recommended: 600×450px (4:3 ratio)
-                        </div>
-                      )}
                       {heroState.heroImage ? (
                         <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden">
                           <img
@@ -959,11 +954,6 @@ export default function Hero({
                       transition={{ delay: 0.3 }}
                     >
                       <div className="relative">
-                        {isEditing && (
-                          <div className="absolute -top-6 left-0 right-0 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-                            Recommended: 600×450px (4:3 ratio)
-                          </div>
-                        )}
                         {heroState.hero3Image ? (
                           <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden">
                             <img

@@ -35,7 +35,10 @@ export default function Hero({
     naturalWidth: number;
     naturalHeight: number;
   } | null>(null);
-  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
   const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
   const [prevZoom, setPrevZoom] = useState(1);
 
@@ -472,12 +475,12 @@ export default function Hero({
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Crop {croppingFor === "heroImage" ? "Hero" : "Small"} Image (4:3 Ratio)
+                  Crop {croppingFor === "heroImage" ? "Hero" : "Small"} Image
+                  (4:3 Ratio)
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Required Size: {croppingFor === "heroImage"
-                    ? "1080×720px"
-                    : "400×267px"}
+                  Required Size:{" "}
+                  {croppingFor === "heroImage" ? "1080×720px" : "400×267px"}
                 </p>
               </div>
               <button
@@ -524,10 +527,16 @@ export default function Hero({
               {/* Fixed Aspect Ratio Info */}
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">
-                  Aspect Ratio: <strong>{croppingFor === "heroImage" ? "1080:720 (3:2)" : "400:267 (3:2)"}</strong>
+                  Aspect Ratio:{" "}
+                  <strong>
+                    {croppingFor === "heroImage"
+                      ? "1080:720 (3:2)"
+                      : "400:267 (3:2)"}
+                  </strong>
                 </p>
                 <p className="text-xs text-gray-600">
-                  Output will be exactly {croppingFor === "heroImage" ? "1080×720px" : "400×267px"}
+                  Output will be exactly{" "}
+                  {croppingFor === "heroImage" ? "1080×720px" : "400×267px"}
                 </p>
               </div>
 
@@ -613,7 +622,6 @@ export default function Hero({
                   className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
                   variants={itemVariants}
                 >
-
                   {isEditing ? (
                     <div className="relative">
                       <input
@@ -621,14 +629,15 @@ export default function Hero({
                         onChange={(e) =>
                           updateField("badgeText", e.target.value)
                         }
-                        maxLength={25}
-                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 25
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        maxLength={75}
+                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${
+                          heroState.badgeText.length >= 75
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
-                        {heroState.badgeText.length >= 25 && "Limit reached!"}
+                        {heroState.badgeText.length >= 75 && "Limit reached!"}
                       </div>
                     </div>
                   ) : (
@@ -644,14 +653,11 @@ export default function Hero({
                     <div className="relative">
                       <textarea
                         value={heroState.heading}
-                        onChange={(e) =>
-                          updateField("heading", e.target.value)
-                        }
+                        onChange={(e) => updateField("heading", e.target.value)}
                         maxLength={80}
-                        className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${
+                          heroState.heading.length >= 80 ? "border-red-500" : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.heading.length}/80
@@ -679,16 +685,18 @@ export default function Hero({
                           updateField("description", e.target.value)
                         }
                         maxLength={500}
-                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
-                          ? "border-red-500"
-                          : "border-muted-foreground"
-                          }`}
+                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${
+                          heroState.description.length >= 500
+                            ? "border-red-500"
+                            : "border-muted-foreground"
+                        }`}
                       />
                       <div
-                        className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
-                          ? "text-red-500"
-                          : "text-gray-500"
-                          }`}
+                        className={`absolute right-0 top-full mt-1 text-xs ${
+                          heroState.description.length >= 500
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}
                       >
                         {heroState.description.length}/500
                         {heroState.description.length >= 500 && (
@@ -719,10 +727,11 @@ export default function Hero({
                         updateField("primaryBtn", e.target.value)
                       }
                       maxLength={30}
-                      className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
-                        ? "border-red-500"
-                        : ""
-                        }`}
+                      className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
+                        heroState.primaryBtn.length >= 30
+                          ? "border-red-500"
+                          : ""
+                      }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {heroState.primaryBtn.length}/30
@@ -763,10 +772,11 @@ export default function Hero({
                           updateField("trustText", e.target.value)
                         }
                         maxLength={60}
-                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
+                          heroState.trustText.length >= 60
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.trustText.length}/60
@@ -801,8 +811,9 @@ export default function Hero({
                               updateStat(s.id, "value", e.target.value)
                             }
                             maxLength={15}
-                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
-                              }`}
+                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${
+                              s.value.length >= 15 ? "border-red-500" : ""
+                            }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.value.length}/15
@@ -821,8 +832,9 @@ export default function Hero({
                               updateStat(s.id, "label", e.target.value)
                             }
                             maxLength={25}
-                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
-                              }`}
+                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
+                              s.label.length >= 25 ? "border-red-500" : ""
+                            }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.label.length}/25
@@ -878,68 +890,20 @@ export default function Hero({
               animate="visible"
               variants={itemVariants}
             >
-              {isEditing && (
-                <div className="mb-4 space-y-4 p-2 bg-white/80 rounded shadow">
-                  <div>
-                    {/* Required Size Above Image */}
-                    <div className="mb-2 bg-black/70 text-white text-xs p-1 rounded text-center">
-                      Required: 1080×720px
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleHeroImageSelect}
-                      className="text-sm font-bold border-2 border-dashed border-muted-foreground p-2 rounded w-full"
-                    />
-                    {pendingImageFile && (
-                      <p className="text-xs text-green-600 mt-1 text-center">
-                        ✓ Image cropped and ready to upload
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    {/* Required Size Above Image */}
-                    <div className="mb-2 bg-black/70 text-white text-xs p-1 rounded text-center">
-                      Required: 400×267px
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleSmallImageSelect}
-                      className="text-sm border-2 border-dashed border-muted-foreground p-2 rounded w-full"
-                    />
-                    {pendingSmallImageFile && (
-                      <p className="text-xs text-green-600 mt-1 text-center">
-                        ✓ Small image cropped and ready to upload
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
               {/* Main image container */}
               <div className="relative w-full">
-                <motion.div
-                  className="relative"
-                  variants={imageVariants}
-                >
+                <motion.div className="relative" variants={imageVariants}>
                   <div className="relative flex justify-center">
                     {/* Main Hero Image */}
                     <div className="relative">
-                      {/* Required Size Above Image */}
-                      {isEditing && (
-                        <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-                          Required: 1080×720px
-                        </div>
-                      )}
                       <img
                         src={heroState.heroImage}
                         alt="Modern business team collaborating"
                         className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl scale-110"
                         style={{
-                          maxHeight: '500px',
-                          width: 'auto',
-                          margin: '0 auto'
+                          maxHeight: "500px",
+                          width: "auto",
+                          margin: "0 auto",
                         }}
                       />
                       {isEditing && (
@@ -980,12 +944,6 @@ export default function Hero({
                       transition={{ delay: 0.3 }}
                     >
                       <div className="relative">
-                        {/* Required Size Above Image */}
-                        {isEditing && (
-                          <div className="absolute -top-6 left-0 right-0 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
-                            Required: 400×267px
-                          </div>
-                        )}
                         <img
                           src={heroState.hero3Image}
                           alt="Additional business context"
@@ -1028,7 +986,11 @@ export default function Hero({
                       className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
+                      transition={{
+                        delay: 0.6,
+                        type: "spring",
+                        stiffness: 300,
+                      }}
                     />
                   </div>
                 </motion.div>
@@ -1044,10 +1006,11 @@ export default function Hero({
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:shadow-2xl"
-                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${
+                  isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:shadow-2xl"
+                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
