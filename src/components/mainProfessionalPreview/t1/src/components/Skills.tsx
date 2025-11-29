@@ -15,11 +15,11 @@ import {
 import { motion } from "framer-motion";
 
 // Import your static skill images
-import skill1 from '../.../../../../../Professional/Images/skill1.png';
-import skill2 from '../.../../../../../Professional/Images/skill2.png';
-import skill3 from '../.../../../../../Professional/Images/skill3.jpeg';
-import skill4 from '../.../../../../../Professional/Images/skill4.png';
-import skill5 from '../.../../../../../Professional/Images/skill5.jpeg';
+import skill1 from '../../../../Professional/Images/skill1.png';
+import skill2 from '../../../../Professional/Images/skill2.png';
+import skill3 from '../../../../Professional/Images/skill3.jpeg';
+import skill4 from '../../../../Professional/Images/skill4.png';
+import skill5 from '../../../../Professional/Images/skill5.jpeg';
 
 interface Skill {
   name: string;
@@ -164,7 +164,7 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
               </span>
             </h2>
 
-            <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto text-justify">
               {skillContent.subtitle}
             </p>
           </div>
@@ -181,13 +181,13 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
                   <div className="flex items-center flex-1">
                     {/* Replaced first letter icon with image */}
                     <div className="w-12 h-12 flex items-center justify-center overflow-hidden rounded-full mr-3 border-2">
-                      <img 
-                        src={getCategoryImage(categoryIndex)} 
+                      <img
+                        src={getCategoryImage(categoryIndex)}
                         alt={category.title}
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    
+
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                       {category.title}
                     </h3>
@@ -242,7 +242,7 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
 
             <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
               {skillContent.technologies &&
-              skillContent.technologies.length > 0 ? (
+                skillContent.technologies.length > 0 ? (
                 skillContent.technologies.map((tech, index) => (
                   <motion.div
                     key={index}

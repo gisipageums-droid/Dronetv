@@ -95,7 +95,7 @@ export function Certifications({ certificationsData }: CertificationsProps) {
   // Process stats data
   const processStatsData = () => {
     if (!certificationsData.stats) return [];
-    
+
     return Object.entries(certificationsData.stats).map(([key, value]) => ({
       number: value,
       label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
@@ -108,7 +108,7 @@ export function Certifications({ certificationsData }: CertificationsProps) {
     <section id="certifications" className="py-20 text-justify bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -124,12 +124,12 @@ export function Certifications({ certificationsData }: CertificationsProps) {
             </div>
           )}
           {certificationsData.description && (
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-4">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-4 text-justify">
               {certificationsData.description}
             </p>
           )}
           {certificationsData.subtitle && (
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-justify">
               {certificationsData.subtitle}
             </p>
           )}
@@ -178,12 +178,12 @@ export function Certifications({ certificationsData }: CertificationsProps) {
                       </div>
                     </div>
 
-                    <p className="text-muted-foreground mb-6 leading-relaxed">
+                    <p className="text-muted-foreground mb-6 leading-relaxed text-justify">
                       {certificates[currentIndex].description}
                     </p>
 
                     {certificates[currentIndex].credentialUrl && certificates[currentIndex].credentialUrl !== '#' && (
-                      <a 
+                      <a
                         href={certificates[currentIndex].credentialUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -225,11 +225,10 @@ export function Certifications({ certificationsData }: CertificationsProps) {
                   <button
                     key={index}
                     onClick={() => goToSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentIndex 
-                        ? 'bg-yellow-500 scale-125' 
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
+                        ? 'bg-yellow-500 scale-125'
                         : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
+                      }`}
                     aria-label={`Go to certificate ${index + 1}`}
                   />
                 ))}
@@ -247,7 +246,7 @@ export function Certifications({ certificationsData }: CertificationsProps) {
 
         {/* Certificate Stats */}
         {stats.length > 0 && (
-          <motion.div 
+          <motion.div
             className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-4xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -255,8 +254,8 @@ export function Certifications({ certificationsData }: CertificationsProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             {stats.map((stat, index) => (
-              <motion.div 
-                key={stat.label} 
+              <motion.div
+                key={stat.label}
                 className="text-center"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}

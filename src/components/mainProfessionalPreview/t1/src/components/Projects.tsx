@@ -79,7 +79,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
                 {projectContent.heading.split(" ").slice(1).join(" ")}
               </span>
             </h2>
-            <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-400">
+            <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-400 text-justify">
               {projectContent.description}
             </p>
           </motion.div>
@@ -126,7 +126,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
                       {project.title}
                     </h3>
 
-                    <p className="mb-4 leading-relaxed text-gray-600 dark:text-gray-300">
+                    <p className="mb-4 leading-relaxed text-gray-600 dark:text-gray-300 text-justify">
                       {project.description}
                     </p>
 
