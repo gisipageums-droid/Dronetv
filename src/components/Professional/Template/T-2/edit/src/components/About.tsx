@@ -1031,10 +1031,11 @@ export function About({
   const aboutImageContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-save states
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
+  const lastSavedDataRef = useRef<AboutData | null>(null);
 
   // Pending image file for S3 upload
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
@@ -1047,10 +1048,6 @@ export function About({
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio] = useState(4 / 3); // Fixed 4:3 aspect ratio
-
-  // Auto-upload states
-  const [isAutoUploading, setIsAutoUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Initialize with props data or empty structure
   const [data, setData] = useState<AboutData>(aboutData || {
@@ -1072,146 +1069,6 @@ export function About({
     buttonText: ""
   });
 
-  // Auto-save effect
-  useEffect(() => {
-    return () => {
-      // Cleanup timeout on unmount
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Auto-save function
-  const performAutoSave = useCallback(async () => {
-    if (!hasUnsavedChanges || !isEditing) return;
-
-    setIsAutoSaving(true);
-    try {
-      // Upload any pending images first
-      await uploadPendingImages();
-
-      // Update data state
-      setData(tempData);
-      setHasUnsavedChanges(false);
-      setLastSavedTime(new Date());
-      
-      toast.success('Changes auto-saved successfully');
-    } catch (error) {
-      console.error('Auto-save failed:', error);
-      toast.error('Auto-save failed. Please save manually.');
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [hasUnsavedChanges, isEditing, tempData]);
-
-  // Schedule auto-save
-  const scheduleAutoSave = useCallback(() => {
-    if (!isEditing) return;
-
-    setHasUnsavedChanges(true);
-    
-    // Clear existing timeout
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
-    // Set new timeout
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      performAutoSave();
-    }, 2000);
-  }, [isEditing, performAutoSave]);
-
-  // Upload pending images function
-  const uploadPendingImages = async (): Promise<boolean> => {
-    if (!pendingImageFile) return true;
-
-    try {
-      setIsAutoUploading(true);
-      setUploadProgress(0);
-
-      if (!userId || !professionalId || !templateSelection) {
-        toast.error('Missing user information. Please refresh and try again.');
-        return false;
-      }
-
-      const formData = new FormData();
-      formData.append('file', pendingImageFile);
-      formData.append('userId', userId);
-      formData.append('fieldName', 'about_image');
-
-      const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        
-        // Update tempData with the new S3 URL
-        setTempData(prev => ({
-          ...prev,
-          imageSrc: uploadData.s3Url
-        }));
-
-        // Remove pending file
-        setPendingImageFile(null);
-        setUploadProgress(100);
-        return true;
-      } else {
-        const errorData = await uploadResponse.json();
-        throw new Error(errorData.message || 'Upload failed');
-      }
-    } catch (error) {
-      console.error('Image upload failed:', error);
-      toast.error(`Image upload failed: ${error.message}`);
-      return false;
-    } finally {
-      setIsAutoUploading(false);
-      setUploadProgress(0);
-    }
-  };
-
-  // Auto-upload image after cropping
-  const autoUploadImage = async (file: File): Promise<string | null> => {
-    if (!userId || !professionalId || !templateSelection) {
-      toast.error('Missing user information for upload.');
-      return null;
-    }
-
-    try {
-      setIsAutoUploading(true);
-      setUploadProgress(50);
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('userId', userId);
-      formData.append('fieldName', 'about_image');
-
-      const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        setUploadProgress(100);
-        toast.success('Image uploaded successfully!');
-        return uploadData.s3Url;
-      } else {
-        const errorData = await uploadResponse.json();
-        throw new Error(errorData.message || 'Upload failed');
-      }
-    } catch (error) {
-      console.error('Auto-upload failed:', error);
-      toast.error(`Image upload failed: ${error.message}`);
-      return null;
-    } finally {
-      setIsAutoUploading(false);
-      setUploadProgress(0);
-    }
-  };
-
   // FIX: Use ref for onStateChange to prevent infinite loops
   const onStateChangeRef = useRef(onStateChange);
   useEffect(() => {
@@ -1227,11 +1084,60 @@ export function About({
     }
   }, [data]);
 
+  // Auto-save functionality
+  const performAutoSave = useCallback(async (dataToSave: AboutData) => {
+    try {
+      setIsAutoSaving(true);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (onStateChangeRef.current) {
+        onStateChangeRef.current(dataToSave);
+      }
+      
+      lastSavedDataRef.current = dataToSave;
+      setLastSaved(new Date());
+      setHasUnsavedChanges(false);
+      
+      console.log("Auto-save completed:", dataToSave);
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+      toast.error("Failed to auto-save changes");
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, []);
+
+  const scheduleAutoSave = useCallback((updatedData: AboutData) => {
+    setHasUnsavedChanges(true);
+    
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    // Schedule new auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      performAutoSave(updatedData);
+    }, 2000); // 2 second delay
+  }, [performAutoSave]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
+
   // Sync with props data when it changes
   useEffect(() => {
     if (aboutData) {
       setData(aboutData);
       setTempData(aboutData);
+      lastSavedDataRef.current = aboutData;
     }
   }, [aboutData]);
 
@@ -1314,6 +1220,31 @@ export function About({
     });
   };
 
+  // Upload image to S3
+  const uploadImageToS3 = async (file: File): Promise<string> => {
+    if (!userId || !professionalId) {
+      throw new Error('Missing user information');
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('userId', userId);
+    formData.append('fieldName', 'about_image');
+
+    const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!uploadResponse.ok) {
+      const errorData = await uploadResponse.json();
+      throw new Error(errorData.message || 'Upload failed');
+    }
+
+    const uploadData = await uploadResponse.json();
+    return uploadData.s3Url;
+  };
+
   // Handle image selection - opens cropper
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -1343,53 +1274,52 @@ export function About({
     event.target.value = '';
   };
 
-  // Apply crop and auto-upload
+  // Apply crop and automatically upload to S3
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels) return;
 
-      setIsAutoUploading(true);
-      setUploadProgress(0);
-
+      setIsUploading(true);
+      
       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      
+      // Update preview immediately with blob URL (temporary)
+      const updatedData = {
+        ...tempData,
+        imageSrc: previewUrl
+      };
+      setTempData(updatedData);
+      scheduleAutoSave(updatedData);
 
-      // Auto-upload the cropped image
-      setUploadProgress(30);
-      const s3Url = await autoUploadImage(file);
-
-      if (s3Url) {
-        // Update with S3 URL directly
-        setTempData(prev => ({
-          ...prev,
-          imageSrc: s3Url
-        }));
-
-        // Schedule auto-save for the content change
-        scheduleAutoSave();
+      // Upload to S3 immediately
+      try {
+        const s3Url = await uploadImageToS3(file);
         
-        toast.success('Image cropped and uploaded successfully!');
-      } else {
-        // Fallback: use preview URL and store file for manual save
-        setTempData(prev => ({
-          ...prev,
-          imageSrc: previewUrl
-        }));
-
-        // Store the file for manual upload
-        setPendingImageFile(file);
-        scheduleAutoSave();
-        toast.warning('Image cropped but upload failed. Changes will be auto-saved.');
+        // Update with S3 URL
+        const finalUpdatedData = {
+          ...tempData,
+          imageSrc: s3Url
+        };
+        setTempData(finalUpdatedData);
+        performAutoSave(finalUpdatedData); // Immediate save with S3 URL
+        
+        toast.success('Image uploaded and saved successfully!');
+      } catch (uploadError) {
+        console.error('Upload failed:', uploadError);
+        toast.error('Image upload failed, but local copy is saved');
+        // Content with blob URL is already saved via auto-save
       }
 
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
+      setIsUploading(false);
+
     } catch (error) {
       console.error('Error cropping image:', error);
-      toast.error('Error cropping image. Please try again.');
-    } finally {
-      setIsAutoUploading(false);
-      setUploadProgress(0);
+      toast.error('Failed to crop image');
+      setShowCropper(false);
+      setIsUploading(false);
     }
   };
 
@@ -1408,25 +1338,46 @@ export function About({
     setCrop({ x: 0, y: 0 });
   };
 
-  // Save function with S3 upload (preserved for manual save)
+  // Manual save function
   const handleSave = async () => {
     try {
-      setIsUploading(true);
       setIsSaving(true);
-
-      // Upload any remaining pending images
-      const uploadSuccess = await uploadPendingImages();
-      if (!uploadSuccess) {
-        return;
+      
+      // Clear any pending auto-save
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
       }
 
-      // Update data state
-      setData(tempData);
-      setHasUnsavedChanges(false);
-      setLastSavedTime(new Date());
+      // Upload image if there's a pending file
+      if (pendingImageFile) {
+        setIsUploading(true);
+        try {
+          const s3Url = await uploadImageToS3(pendingImageFile);
+          tempData.imageSrc = s3Url;
+          setPendingImageFile(null);
+        } catch (uploadError) {
+          console.error('Upload failed:', uploadError);
+          toast.error('Image upload failed');
+          setIsUploading(false);
+          setIsSaving(false);
+          return;
+        }
+      }
 
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      setData(tempData);
+      lastSavedDataRef.current = tempData;
+      setPendingImageFile(null);
       setIsEditing(false);
-      toast.success('About section saved successfully');
+      setHasUnsavedChanges(false);
+      
+      if (onStateChangeRef.current) {
+        onStateChangeRef.current(tempData);
+      }
+      
+      toast.success('About section saved successfully!');
 
     } catch (error) {
       console.error('Error saving about section:', error);
@@ -1438,38 +1389,52 @@ export function About({
   };
 
   const handleCancel = () => {
-    setTempData({ ...data });
-    setPendingImageFile(null);
-    setHasUnsavedChanges(false);
-    setIsEditing(false);
-    
     // Clear any pending auto-save
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
+    
+    setTempData(lastSavedDataRef.current || data);
+    setPendingImageFile(null);
+    setHasUnsavedChanges(false);
+    setIsEditing(false);
+    toast.info('Changes discarded');
   };
 
-  // Stable update functions with useCallback and auto-save scheduling
+  // Stable update functions with useCallback
   const updateTempContent = useCallback((field: keyof AboutData, value: string) => {
-    setTempData(prev => ({ ...prev, [field]: value }));
-    scheduleAutoSave();
+    setTempData(prev => { 
+      const updated = { 
+        ...prev, 
+        [field]: value 
+      };
+      scheduleAutoSave(updated);
+      return updated;
+    });
   }, [scheduleAutoSave]);
 
   const updateSkill = useCallback((index: number, value: string) => {
     setTempData(prevData => {
       const updatedSkills = [...prevData.skills];
       updatedSkills[index] = value;
-      return { ...prevData, skills: updatedSkills };
+      const updated = { 
+        ...prevData, 
+        skills: updatedSkills 
+      };
+      scheduleAutoSave(updated);
+      return updated;
     });
-    scheduleAutoSave();
   }, [scheduleAutoSave]);
 
   const addSkill = useCallback(() => {
-    setTempData(prevData => ({
-      ...prevData,
-      skills: [...prevData.skills, "New skill"]
-    }));
-    scheduleAutoSave();
+    setTempData(prevData => {
+      const updated = {
+        ...prevData,
+        skills: [...prevData.skills, "New skill"]
+      };
+      scheduleAutoSave(updated);
+      return updated;
+    });
   }, [scheduleAutoSave]);
 
   const removeSkill = useCallback((index: number) => {
@@ -1478,12 +1443,13 @@ export function About({
         toast.error("You must have at least one skill");
         return prevData;
       }
-      return {
+      const updated = {
         ...prevData,
         skills: prevData.skills.filter((_, i) => i !== index)
       };
+      scheduleAutoSave(updated);
+      return updated;
     });
-    scheduleAutoSave();
   }, [scheduleAutoSave]);
 
   // Memoized EditableText component
@@ -1624,7 +1590,7 @@ export function About({
 
   return (
     <section ref={aboutRef} id="about" className="relative text-justify py-20 bg-background">
-      {/* Image Cropper Modal with Auto-upload Progress */}
+      {/* Image Cropper Modal */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -1640,14 +1606,17 @@ export function About({
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
                 Crop About Image (4:3 Aspect Ratio)
-                {isAutoUploading && (
-                  <span className="ml-2 text-blue-600 text-sm">Uploading... {uploadProgress}%</span>
+                {isUploading && (
+                  <span className="ml-2 text-blue-600 text-sm flex items-center gap-1">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading...
+                  </span>
                 )}
               </h3>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                disabled={isAutoUploading}
+                disabled={isUploading}
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
@@ -1684,18 +1653,6 @@ export function About({
               />
             </div>
 
-            {/* Upload Progress Bar */}
-            {isAutoUploading && (
-              <div className="px-4 pt-2">
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${uploadProgress}%` }}
-                  ></div>
-                </div>
-              </div>
-            )}
-
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Info */}
@@ -1719,7 +1676,7 @@ export function About({
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
-                    disabled={isAutoUploading}
+                    disabled={isUploading}
                   >
                     <ZoomOut className="w-4 h-4" />
                   </button>
@@ -1731,44 +1688,48 @@ export function About({
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                    disabled={isAutoUploading}
+                    disabled={isUploading}
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
-                    disabled={isAutoUploading}
+                    disabled={isUploading}
                   >
                     <ZoomIn className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              {/* Action Buttons - Moved to bottom and centered */}
+              {/* Action Buttons */}
               <div className="flex justify-center gap-3 pt-4">
                 <button
                   onClick={resetCropSettings}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
-                  disabled={isAutoUploading}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                  disabled={isUploading}
                 >
                   Reset Zoom
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
-                  disabled={isAutoUploading}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                  disabled={isUploading}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-2"
-                  disabled={isAutoUploading}
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
+                  disabled={isUploading}
                 >
-                  {isAutoUploading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : null}
-                  {isAutoUploading ? 'Uploading...' : 'Apply & Upload'}
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    'Apply & Upload'
+                  )}
                 </button>
               </div>
             </div>
@@ -1777,31 +1738,8 @@ export function About({
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Edit Controls with Auto-save Status */}
+        {/* Edit Controls */}
         <div className='text-right z-50 mb-20'>
-          {/* Auto-save Status */}
-          {isEditing && (
-            <div className="flex items-center justify-end gap-4 mb-4 text-sm">
-              {hasUnsavedChanges && (
-                <div className="flex items-center gap-2 text-orange-600">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
-                  Unsaved changes
-                </div>
-              )}
-              {isAutoSaving && (
-                <div className="flex items-center gap-2 text-blue-600">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  Auto-saving...
-                </div>
-              )}
-              {lastSavedTime && !hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-green-600">
-                  Saved {lastSavedTime.toLocaleTimeString()}
-                </div>
-              )}
-            </div>
-          )}
-
           {!isEditing ? (
             <Button
               onClick={handleEdit}
@@ -1812,7 +1750,27 @@ export function About({
               Edit
             </Button>
           ) : (
-            <div className='flex gap-2 justify-end'>
+            <div className='flex gap-2 justify-end items-center'>
+              {/* Auto-save indicator */}
+              <div className="flex items-center gap-2 mr-4 text-sm">
+                {isAutoSaving && (
+                  <div className="flex items-center gap-1 text-blue-500">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Auto-saving...</span>
+                  </div>
+                )}
+                {hasUnsavedChanges && !isAutoSaving && (
+                  <div className="text-yellow-500">
+                    ● Unsaved changes
+                  </div>
+                )}
+                {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
+                  <div className="text-green-500">
+                    ✓ Auto-saved {lastSaved.toLocaleTimeString()}
+                  </div>
+                )}
+              </div>
+
               <Button
                 onClick={handleSave}
                 size='sm'

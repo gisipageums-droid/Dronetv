@@ -342,8 +342,14 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         "Your site is successfully published and now it is under review"
       );
 
-      if (isLogin&&isAdminLogin === false) {
-        setNavModel(true);
+      if (isLogin === false ) {
+        if(isAdminLogin){
+           navigate("/admin/company/dashboard");
+           setNavModel(false);
+        }else{
+
+          setNavModel(true);
+        }
         // navigatemodel();
       } else {
         if(isAdminLogin){
