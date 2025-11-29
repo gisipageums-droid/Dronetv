@@ -1,4 +1,4 @@
-import { Edit2, Loader2, Menu, Save, Upload, X } from 'lucide-react';
+import { Edit2, Loader2, Menu, Save, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { DarkModeToggle } from './DarkModeToggle';
@@ -54,6 +54,18 @@ interface HeaderData {
   logoText: string;
   navLinks: NavLink[];
 }
+const staticnavLinks =  [
+    { href: '#home', label: 'Home' },
+    { href: '#about', label: 'About' },
+    { href: '#skills', label: 'Skills' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#services', label: 'Services' },
+    { href: '#certification', label: 'Certification' },
+    { href: '#clients', label: 'clients' },
+    { href: '#testimonials', label: 'Testimonials' },
+    { href: '#contact', label: 'Contact' },
+  ]
+
 
 const defaultHeaderData: HeaderData = {
   logoText: "arijit",
@@ -61,8 +73,8 @@ const defaultHeaderData: HeaderData = {
     { href: '#home', label: 'Home' },
     { href: '#about', label: 'About' },
     { href: '#skills', label: 'Skills' },
-    { href: '#services', label: 'Services' },
     { href: '#projects', label: 'Projects' },
+    { href: '#services', label: 'Services' },
     { href: '#certification', label: 'Certification' },
     { href: '#clients', label: 'clients' },
     { href: '#testimonials', label: 'Testimonials' },
@@ -224,7 +236,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
           <div className="flex items-center space-x-6">
             {/* Desktop Navigation - Static (Non-editable) */}
             <nav className="hidden space-x-8 md:flex">
-              {data.navLinks.map((link, index) => (
+              {staticnavLinks.map((link, index) => (
                 <a
                   key={index}
                   href={link.href}
@@ -290,7 +302,7 @@ export function Header({ headerData, onStateChange, onDarkModeToggle}: HeaderPro
         {/* Mobile Navigation - Static (Non-editable) */}
         {isMenuOpen && (
           <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
-            {defaultHeaderData.navLinks.map((link, index) => (
+            {staticnavLinks.map((link, index) => (
               <a
                 key={index}
                 href={link.href}

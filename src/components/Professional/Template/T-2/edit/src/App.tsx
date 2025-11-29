@@ -193,13 +193,14 @@ console.log("user name", AIGenData.user_name);
         />
 
         {/* Certifications Section */}
+        <section id="certification">
         <Certifications
           certData={componentStates.certificationsContent}
           onStateChange={createStateChangeHandler('certificationsContent')}
           userId={AIGenData.userId}
           professionalId={AIGenData.professionalId}
           templateSelection={AIGenData.templateSelection}
-        />
+        /></section>
 
         {/* Clients Section */}
         <section id="clients">
