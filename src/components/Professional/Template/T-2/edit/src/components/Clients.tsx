@@ -73,12 +73,21 @@ interface Stats {
   successRate: string;
 }
 
+// Add interface for stat labels
+interface StatLabels {
+  happyClients: string;
+  projectsDelivered: string;
+  industriesServed: string;
+  successRate: string;
+}
+
 interface ClientsData {
   subtitle: string;
   heading: string;
   description: string;
   clients: Client[];
   stats: Stats;
+  statLabels: StatLabels; // Add statLabels to store editable labels
   cta: {
     title: string;
     description: string;
@@ -86,7 +95,7 @@ interface ClientsData {
   };
 }
 
-// Empty default data
+// Empty default data with default stat labels
 const defaultData: ClientsData = {
   subtitle: "",
   heading: "",
@@ -97,6 +106,12 @@ const defaultData: ClientsData = {
     projectsDelivered: "",
     industriesServed: "",
     successRate: ""
+  },
+  statLabels: {
+    happyClients: "Happy Clients",
+    projectsDelivered: "Projects Delivered",
+    industriesServed: "Industries Served",
+    successRate: "Success Rate"
   },
   cta: {
     title: "",
@@ -117,9 +132,13 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const clientsRef = useRef<HTMLDivElement>(null);
+
+  // Auto-save timeout reference
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [data, setData] = useState<ClientsData>(defaultData);
   const [tempData, setTempData] = useState<ClientsData>(defaultData);
@@ -176,6 +195,12 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
         industriesServed: "",
         successRate: ""
       },
+      statLabels: backendData.statLabels || {
+        happyClients: "Happy Clients",
+        projectsDelivered: "Projects Delivered",
+        industriesServed: "Industries Served",
+        successRate: "Success Rate"
+      },
       cta: backendData.cta || {
         title: "",
         description: "",
@@ -208,16 +233,56 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
     loadDataIfNeeded();
   }, [isVisible, dataLoaded, clientsData, isLoading]);
 
+  // Auto-save function
+  const autoSaveChanges = useCallback(async () => {
+    if (!isEditing) return;
+
+    setIsAutoSaving(true);
+    try {
+      // Simulate API call or state persistence
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      
+      setData(tempData);
+      toast.success('Changes saved automatically');
+    } catch (error) {
+      console.error('Error auto-saving clients section:', error);
+      toast.error('Auto-save failed. Changes not saved.');
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, [isEditing, tempData]);
+
+  // Effect to trigger auto-save when tempData changes
+  useEffect(() => {
+    if (isEditing) {
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+      
+      // Set new timeout for auto-save (1.5 second delay after last change)
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSaveChanges();
+      }, 1500);
+    }
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [tempData, isEditing, autoSaveChanges]);
+
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
   };
 
-  // Save function
+  // Manual save function (kept for consistency)
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
+      await new Promise((resolve) => setTimeout(resolve, 800));
       
       setData(tempData);
       setIsEditing(false);
@@ -231,21 +296,36 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   };
 
   const handleCancel = () => {
+    // Clear any pending auto-save
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
     setTempData({ ...data });
     setIsEditing(false);
+    toast.info('Changes cancelled');
   };
 
-  // Stable update functions with useCallback
+  // Stable update functions with useCallback - UPDATED TO TRIGGER AUTO-SAVE
   const updateClient = useCallback((index: number, field: string, value: string) => {
-    const updatedClients = [...tempData.clients];
-    updatedClients[index] = { ...updatedClients[index], [field]: value };
-    setTempData({ ...tempData, clients: updatedClients });
-  }, [tempData]);
+    setTempData(prev => {
+      const updatedClients = [...prev.clients];
+      updatedClients[index] = { ...updatedClients[index], [field]: value };
+      return { ...prev, clients: updatedClients };
+    });
+  }, []);
 
   const updateStat = useCallback((field: keyof Stats, value: string) => {
     setTempData(prev => ({
       ...prev,
       stats: { ...prev.stats, [field]: value }
+    }));
+  }, []);
+
+  // NEW: Function to update stat labels
+  const updateStatLabel = useCallback((field: keyof StatLabels, value: string) => {
+    setTempData(prev => ({
+      ...prev,
+      statLabels: { ...prev.statLabels, [field]: value }
     }));
   }, []);
 
@@ -263,23 +343,25 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
     }));
   }, []);
 
-  // Memoized functions
+  // Memoized functions - UPDATED TO USE FUNCTIONAL UPDATES
   const addClient = useCallback(() => {
     const newClient: Client = {
       id: Date.now().toString(),
       name: 'New Client',
       industry: 'Industry'
     };
-    setTempData({
-      ...tempData,
-      clients: [...tempData.clients, newClient]
-    });
-  }, [tempData]);
+    setTempData(prev => ({
+      ...prev,
+      clients: [...prev.clients, newClient]
+    }));
+  }, []);
 
   const removeClient = useCallback((index: number) => {
-    const updatedClients = tempData.clients.filter((_, i) => i !== index);
-    setTempData({ ...tempData, clients: updatedClients });
-  }, [tempData]);
+    setTempData(prev => {
+      const updatedClients = prev.clients.filter((_, i) => i !== index);
+      return { ...prev, clients: updatedClients };
+    });
+  }, []);
 
   const displayData = isEditing ? tempData : data;
 
@@ -341,6 +423,16 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
   return (
     <section ref={clientsRef} className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Auto-save indicator */}
+        {isAutoSaving && (
+          <div className="fixed top-4 right-4 z-50">
+            <div className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg shadow-lg text-sm">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Auto-saving...
+            </div>
+          </div>
+        )}
+
         {/* Edit Controls */}
         <div className='text-right mb-8'>
           {!isEditing ? (
@@ -358,7 +450,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                 onClick={handleSave}
                 size='sm'
                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
-                disabled={isSaving}
+                disabled={isSaving || isAutoSaving}
               >
                 {isSaving ? (
                   <Loader2 className='w-4 h-4 mr-2 animate-spin' />
@@ -371,7 +463,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                 onClick={handleCancel}
                 size='sm'
                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
-                disabled={isSaving}
+                disabled={isSaving || isAutoSaving}
               >
                 <X className='w-4 h-4 mr-2' />
                 Cancel
@@ -381,6 +473,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                 variant='outline'
                 size='sm'
                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+                disabled={isAutoSaving}
               >
                 <Plus className='w-4 h-4 mr-2' />
                 Add Client
@@ -458,14 +551,14 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
         {(isEditing || Object.values(displayData.stats).some(value => value && value.trim() !== '')) && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
             {[
-              { key: 'happyClients' as const, label: 'Happy Clients' },
-              { key: 'projectsDelivered' as const, label: 'Projects Delivered' },
-              { key: 'industriesServed' as const, label: 'Industries Served' },
-              { key: 'successRate' as const, label: 'Success Rate' }
+              { key: 'happyClients' as const, defaultLabel: 'Happy Clients' },
+              { key: 'projectsDelivered' as const, defaultLabel: 'Projects Delivered' },
+              { key: 'industriesServed' as const, defaultLabel: 'Industries Served' },
+              { key: 'successRate' as const, defaultLabel: 'Success Rate' }
             ].map((stat) => (
               <div key={stat.key} className="text-center hover:scale-105 transition-transform duration-300">
                 {isEditing ? (
-                  <div className="relative">
+                  <div className="relative mb-2">
                     <input
                       type="text"
                       value={displayData.stats[stat.key]}
@@ -487,19 +580,19 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                   <div className="relative">
                     <input
                       type="text"
-                      value={stat.label}
-                      onChange={() => {}}
+                      value={displayData.statLabels[stat.key]}
+                      onChange={(e) => updateStatLabel(stat.key, e.target.value)}
                       className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
-                      disabled
+                      placeholder={stat.defaultLabel}
                       maxLength={TEXT_LIMITS.STAT_LABEL}
                     />
                     <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
-                      {stat.label.length}/{TEXT_LIMITS.STAT_LABEL}
+                      {displayData.statLabels[stat.key]?.length || 0}/{TEXT_LIMITS.STAT_LABEL}
                     </div>
                   </div>
                 ) : (
                   displayData.stats[stat.key] && (
-                    <p className="text-muted-foreground">{stat.label}</p>
+                    <p className="text-muted-foreground">{displayData.statLabels[stat.key]}</p>
                   )
                 )}
               </div>
@@ -521,6 +614,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                     size='sm'
                     variant='outline'
                     className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
+                    disabled={isAutoSaving}
                   >
                     <Trash2 className='w-3 h-3' />
                   </Button>
@@ -574,6 +668,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
                   variant='outline'
                   size='lg'
                   className='bg-blue-50 hover:bg-blue-100 text-blue-700'
+                  disabled={isAutoSaving}
                 >
                   <Plus className='w-5 h-5 mr-2' />
                   Add Your First Client
@@ -607,10 +702,7 @@ export function Clients({ clientsData, onStateChange, userId, professionalId, te
             </div>
           )
         )}
-
-       
       </div>
     </section>
   );
 }
- 

@@ -729,13 +729,13 @@ export default function Blog({
                                 ),
                               }))
                             }
-                            maxLength={20}
-                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b ${post.category.length >= 20 ? "border-red-500" : ""
+                            maxLength={40}
+                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b ${post.category.length >= 40 ? "border-red-500" : ""
                               }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
-                            {post.category.length}/20
-                            {post.category.length >= 20 && (
+                            {post.category.length}/40
+                            {post.category.length >= 40 && (
                               <span className="ml-2 text-red-500 font-bold">
                                 Limit reached!
                               </span>
