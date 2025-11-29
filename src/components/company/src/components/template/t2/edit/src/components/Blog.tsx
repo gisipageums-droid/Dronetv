@@ -896,14 +896,14 @@ export default function Blog({
         <AnimatePresence>
           {isModalOpen && selectedPost && (
             <motion.div
-              className="fixed inset-0 backdrop-blur-xl flex items-center justify-center p-4 z-50"
+              className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-[999999999999999]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeModal}
             >
               <motion.div
-                className="bg-card relative top-[3.5rem] shadow-2xl rounded-xl max-w-4xl  w-full max-h-[75vh] overflow-y-auto"
+                className="bg-card relative top-[3.5rem] shadow-2xl rounded-xl max-w-4xl  w-full max-h-[70vh] overflow-y-auto"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}

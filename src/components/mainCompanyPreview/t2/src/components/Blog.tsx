@@ -15,6 +15,7 @@ export default function Blog({ blogData }) {
   const displayedPosts = showAllPosts ? blogData.posts : blogData.posts.slice(0, 4);
   const hasBlog = blogData.posts && blogData.posts.length > 0;
   const hasHeading = blogData.header.title && blogData.header.title.length > 0;
+  
   const openModal = (post: any) => {
     setSelectedPost(post);
     // Split HTML content into slide-sized chunks by paragraphs/headings
@@ -141,6 +142,7 @@ export default function Blog({ blogData }) {
                 ))}
               </div>
             )}
+
             {/* Show More Button */}
             <div className="flex justify-center mt-6">
               {!showAllPosts && blogData.posts.length > 4 && (
@@ -164,14 +166,14 @@ export default function Blog({ blogData }) {
           <AnimatePresence>
             {isModalOpen && selectedPost && (
               <motion.div
-                className="fixed inset-0 backdrop-blur-xl flex items-center justify-center p-4 z-50"
+                className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-[999999999999999]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={closeModal}
               >
                 <motion.div
-                  className="bg-card relative top-[3.5rem] shadow-2xl rounded-xl max-w-4xl w-full max-h-[75vh] overflow-y-auto"
+                  className="bg-card relative top-[3.5rem] shadow-2xl rounded-xl max-w-4xl w-full max-h-[70vh] overflow-y-auto"
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.9, opacity: 0 }}
@@ -219,33 +221,12 @@ export default function Blog({ blogData }) {
                     {selectedPost.title && selectedPost.title.length > 0 && (
                       <h2 className="text-2xl font-bold text-card-foreground mb-6">{selectedPost.title}</h2>
                     )}
-                    {slides.length > 0 && (
-                      <div
-                        className="prose prose-gray max-w-none text-card-foreground text-justify"
-                        dangerouslySetInnerHTML={{ __html: slides[slideIndex] || '' }}
-                      />
-                    )}
 
-                    {slides.length > 1 && (
-                      <div className="mt-6 flex items-center justify-between">
-                        <Button
-                          variant="secondary"
-                          onClick={() => setSlideIndex((i) => Math.max(0, i - 1))}
-                          disabled={slideIndex === 0}
-                        >
-                          Previous
-                        </Button>
-                        <div className="text-sm text-muted-foreground">
-                          {slideIndex + 1} / {slides.length}
-                        </div>
-                        <Button
-                          onClick={() => setSlideIndex((i) => Math.min(slides.length - 1, i + 1))}
-                          disabled={slideIndex === slides.length - 1}
-                        >
-                          Next
-                        </Button>
-                      </div>
-                    )}
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: selectedPost.content,
+                      }}
+                    />
                   </div>
 
                   {/* Modal Footer */}

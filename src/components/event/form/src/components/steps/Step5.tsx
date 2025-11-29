@@ -1468,106 +1468,210 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
   };
 
   // Contact Information Section - UPDATED: Using PhoneInput component
-  const renderContactInfo = () => {
-    // FIXED: Ensure phone array always exists and has at least one entry
-    const phoneNumbers = contactInfo.phone || [{ phoneNumber: "" }];
+  // const renderContactInfo = () => {
+  //   // FIXED: Ensure phone array always exists and has at least one entry
+  //   const phoneNumbers = contactInfo.phone || [{ phoneNumber: "" }];
 
-    return (
-      <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
-        <div>
-          <h3 className="text-lg font-semibold text-slate-900">Contact Information</h3>
-          <p className="text-sm text-slate-600 mt-1">
-            Primary contact details for the event
-          </p>
-        </div>
+  //   return (
+  //     <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+  //       <div>
+  //         <h3 className="text-lg font-semibold text-slate-900">Contact Information</h3>
+  //         <p className="text-sm text-slate-600 mt-1">
+  //           Primary contact details for the event
+  //         </p>
+  //       </div>
 
-        {/* Phone Numbers - UPDATED: Using PhoneInput component */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h4 className="font-medium text-slate-800 flex items-center gap-2">
-              <Phone className="w-4 h-4" />
-              Phone Numbers
-            </h4>
-            <button
-              type="button"
-              onClick={() => {
-                // FIXED: Properly add new phone number to array
-                const newPhones = [...phoneNumbers, { phoneNumber: "" }];
-                updateField("contactInfo", { ...contactInfo, phone: newPhones });
-              }}
-              className="text-amber-600 hover:text-amber-700 text-sm font-medium transition flex items-center gap-1"
-            >
-              <Plus className="w-4 h-4" />
-              Add Phone
-            </button>
-          </div>
+  //       {/* Phone Numbers - UPDATED: Using PhoneInput component */}
+  //       <div className="space-y-4">
+  //         <div className="flex justify-between items-center">
+  //           <h4 className="font-medium text-slate-800 flex items-center gap-2">
+  //             <Phone className="w-4 h-4" />
+  //             Phone Numbers
+  //           </h4>
+  //           <button
+  //             type="button"
+  //             onClick={() => {
+  //               // FIXED: Properly add new phone number to array
+  //               const newPhones = [...phoneNumbers, { phoneNumber: "" }];
+  //               updateField("contactInfo", { ...contactInfo, phone: newPhones });
+  //             }}
+  //             className="text-amber-600 hover:text-amber-700 text-sm font-medium transition flex items-center gap-1"
+  //           >
+  //             <Plus className="w-4 h-4" />
+  //             Add Phone
+  //           </button>
+  //         </div>
 
-          {phoneNumbers.map((phone: { phoneNumber: string }, index: number) => (
-            <div key={index} className="flex gap-2 items-start">
-              {/* UPDATED: Using PhoneInput instead of regular input */}
-              <div className="flex-1">
-                <PhoneInput
-                  value={phone.phoneNumber}
-                  onChange={(value) => {
-                    // FIXED: Properly update specific phone number
-                    const newPhones = [...phoneNumbers];
-                    newPhones[index] = { phoneNumber: value || "" };
-                    updateField("contactInfo", { ...contactInfo, phone: newPhones });
-                  }}
-                  placeholder="Enter phone number"
-                  className="w-full"
-                  // Add any additional props you need for the PhoneInput
-                />
-              </div>
-              {phoneNumbers.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    // FIXED: Properly remove phone number from array
-                    const newPhones = phoneNumbers.filter((_, i) => i !== index);
-                    updateField("contactInfo", { ...contactInfo, phone: newPhones });
-                  }}
-                  className="p-2 text-red-500 hover:text-red-700 transition"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
+  //         {phoneNumbers.map((phone: { phoneNumber: string }, index: number) => (
+  //           <div key={index} className="flex gap-2 items-start">
+  //             {/* UPDATED: Using PhoneInput instead of regular input */}
+  //             <div className="flex-1">
+  //               <PhoneInput
+  //                 value={phone.phoneNumber}
+  //                 onChange={(value) => {
+  //                   // FIXED: Properly update specific phone number
+  //                   const newPhones = [...phoneNumbers];
+  //                   newPhones[index] = { phoneNumber: value || "" };
+  //                   updateField("contactInfo", { ...contactInfo, phone: newPhones });
+  //                 }}
+  //                 placeholder="Enter phone number"
+  //                 className="w-full"
+  //                 // Add any additional props you need for the PhoneInput
+  //               />
+  //             </div>
+  //             {phoneNumbers.length > 1 && (
+  //               <button
+  //                 type="button"
+  //                 onClick={() => {
+  //                   // FIXED: Properly remove phone number from array
+  //                   const newPhones = phoneNumbers.filter((_, i) => i !== index);
+  //                   updateField("contactInfo", { ...contactInfo, phone: newPhones });
+  //                 }}
+  //                 className="p-2 text-red-500 hover:text-red-700 transition"
+  //               >
+  //                 <Minus className="w-4 h-4" />
+  //               </button>
+  //             )}
+  //           </div>
+  //         ))}
+  //       </div>
 
-        {/* Email */}
-        <div>
-          <label className="block mb-2 font-medium text-slate-700 text-sm flex items-center gap-2">
-            <Mail className="w-4 h-4" />
-            Email Address
-          </label>
-          <input
-            type="email"
-            value={contactInfo.email || ""}
-            onChange={(e) => updateField("contactInfo", { ...contactInfo, email: e.target.value })}
-            className={baseInputClasses}
-            placeholder="contact@event.com"
-          />
-        </div>
+  //       {/* Email */}
+  //       <div>
+  //         <label className="block mb-2 font-medium text-slate-700 text-sm flex items-center gap-2">
+  //           <Mail className="w-4 h-4" />
+  //           Email Address
+  //         </label>
+  //         <input
+  //           type="email"
+  //           value={contactInfo.email || ""}
+  //           onChange={(e) => updateField("contactInfo", { ...contactInfo, email: e.target.value })}
+  //           className={baseInputClasses}
+  //           placeholder="contact@event.com"
+  //         />
+  //       </div>
 
-        {/* Address */}
-        <div>
-          <label className="block mb-2 font-medium text-slate-700 text-sm flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
-            Address
-          </label>
-          <textarea
-            value={contactInfo.address || ""}
-            onChange={(e) => updateField("contactInfo", { ...contactInfo, address: e.target.value })}
-            className={baseTextareaClasses}
-            placeholder="Enter full address"
-            rows={3}
-          />
-        </div>
+  //       {/* Address */}
+  //       <div>
+  //         <label className="block mb-2 font-medium text-slate-700 text-sm flex items-center gap-2">
+  //           <MapPin className="w-4 h-4" />
+  //           Address
+  //         </label>
+  //         <textarea
+  //           value={contactInfo.address || ""}
+  //           onChange={(e) => updateField("contactInfo", { ...contactInfo, address: e.target.value })}
+  //           className={baseTextareaClasses}
+  //           placeholder="Enter full address"
+  //           rows={3}
+  //         />
+  //       </div>
+  //     </div>
+  //   );
+  // };
+
+
+  // Contact Information Section - UPDATED: Using PhoneInput component with default phone field
+const renderContactInfo = () => {
+  // FIXED: Ensure phone array always exists and has at least one entry
+  const phoneNumbers = contactInfo.phone || [{ phoneNumber: "" }];
+
+  return (
+    <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+      <div>
+        <h3 className="text-lg font-semibold text-slate-900">Contact Information</h3>
+        <p className="text-sm text-slate-600 mt-1">
+          Primary contact details for the event
+        </p>
       </div>
-    );
-  };
+
+      {/* Phone Numbers - UPDATED: One phone number shown by default */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h4 className="font-medium text-slate-800 flex items-center gap-2">
+            <Phone className="w-4 h-4" />
+            Phone Numbers
+          </h4>
+          <button
+            type="button"
+            onClick={() => {
+              // FIXED: Properly add new phone number to array
+              const newPhones = [...phoneNumbers, { phoneNumber: "" }];
+              updateField("contactInfo", { ...contactInfo, phone: newPhones });
+            }}
+            className="text-amber-600 hover:text-amber-700 text-sm font-medium transition flex items-center gap-1"
+          >
+            <Plus className="w-4 h-4" />
+            Add Phone
+          </button>
+        </div>
+
+        {phoneNumbers.map((phone: { phoneNumber: string }, index: number) => (
+          <div key={index} className="flex gap-2 items-start">
+            {/* UPDATED: Using PhoneInput instead of regular input */}
+            <div className="flex-1">
+              <PhoneInput
+                value={phone.phoneNumber}
+                onChange={(value) => {
+                  // FIXED: Properly update specific phone number
+                  const newPhones = [...phoneNumbers];
+                  newPhones[index] = { phoneNumber: value || "" };
+                  updateField("contactInfo", { ...contactInfo, phone: newPhones });
+                }}
+                placeholder="Enter phone number"
+                className="w-full"
+                // Add any additional props you need for the PhoneInput
+              />
+            </div>
+            {phoneNumbers.length > 1 && (
+              <button
+                type="button"
+                onClick={() => {
+                  // FIXED: Properly remove phone number from array
+                  const newPhones = phoneNumbers.filter((_, i) => i !== index);
+                  updateField("contactInfo", { ...contactInfo, phone: newPhones });
+                }}
+                className="p-2 text-red-500 hover:text-red-700 transition"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Email */}
+      <div>
+        <label className="block mb-2 font-medium text-slate-700 text-sm flex items-center gap-2">
+          <Mail className="w-4 h-4" />
+          Email Address
+        </label>
+        <input
+          type="email"
+          value={contactInfo.email || ""}
+          onChange={(e) => updateField("contactInfo", { ...contactInfo, email: e.target.value })}
+          className={baseInputClasses}
+          placeholder="contact@event.com"
+        />
+      </div>
+
+      {/* Address */}
+      <div>
+        <label className="block mb-2 font-medium text-slate-700 text-sm flex items-center gap-2">
+          <MapPin className="w-4 h-4" />
+          Address
+        </label>
+        <textarea
+          value={contactInfo.address || ""}
+          onChange={(e) => updateField("contactInfo", { ...contactInfo, address: e.target.value })}
+          className={baseTextareaClasses}
+          placeholder="Enter full address"
+          rows={3}
+        />
+      </div>
+    </div>
+  );
+};
+
 
   // International Contacts Section
   const renderInternationalContacts = () => {

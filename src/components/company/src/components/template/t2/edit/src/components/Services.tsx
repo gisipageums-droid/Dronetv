@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -926,14 +925,14 @@ export default function Services({
         <AnimatePresence>
           {isModalOpen && selectedServiceIndex !== null && (
             <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+              className="fixed inset-0 z-[99999999999999] flex items-center justify-center p-4 bg-black/50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeModal}
             >
               <div
-                className="bg-card rounded-xl w-full max-w-2xl p-4 relative overflow-y-auto max-h-[85vh]"
+                className="bg-card rounded-xl w-full max-w-2xl p-4 relative overflow-y-auto max-h-[70vh]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
