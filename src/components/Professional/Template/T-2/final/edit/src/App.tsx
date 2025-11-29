@@ -196,13 +196,6 @@ export default function FinalEditTemp_2() {
           templateSelection={AIGenData.templateSelection}
         />
 
-        <Services
-          servicesData={componentStates.serviceContent}
-          onStateChange={createStateChangeHandler('serviceContent')}
-          userId={AIGenData.userId}
-          professionalId={AIGenData.professionalId}
-          templateSelection={AIGenData.templateSelection}
-        />
 
         <Projects 
           projectsData={componentStates.projectContent}
@@ -212,6 +205,13 @@ export default function FinalEditTemp_2() {
           templateSelection={AIGenData.templateSelection}
         />
 
+        <Services
+          servicesData={componentStates.serviceContent}
+          onStateChange={createStateChangeHandler('serviceContent')}
+          userId={AIGenData.userId}
+          professionalId={AIGenData.professionalId}
+          templateSelection={AIGenData.templateSelection}
+        />
         {/* Certifications Section */}
         <Certifications
           certData={componentStates.certificationsContent}
