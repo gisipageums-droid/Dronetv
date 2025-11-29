@@ -834,7 +834,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
                   <EditableText
                     value={safeButtons.work}
                     buttonField='work'
-                    className="px-6 py-3 rounded-lg text-yellow-500 text-center"
+                    className="px-6 py-3 rounded-lg text-yellow-500 text-center text-black"
                     placeholder="Work button text"
                     charLimit={TEXT_LIMITS.SUBTITLE}
                   />
