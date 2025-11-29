@@ -36,7 +36,7 @@ export function Skills({ skillsData }: SkillsProps) {
   const skillsRef = useRef<HTMLDivElement>(null);
 
   // Initialize with skillsData or empty structure
-  const [data, setData] = useState<SkillsData>(() => 
+  const [data, setData] = useState<SkillsData>(() =>
     skillsData || { skills: [], header: { title: 'My Skills', subtitle: 'A showcase of my technical skills and expertise.' } }
   );
 
@@ -122,7 +122,7 @@ export function Skills({ skillsData }: SkillsProps) {
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             {data.header.title}
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-justify">
             {data.header.subtitle}
           </p>
         </motion.div>
@@ -135,7 +135,7 @@ export function Skills({ skillsData }: SkillsProps) {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              whileHover={{ 
+              whileHover={{
                 y: -10,
                 scale: 1.02,
                 transition: { duration: 0.3 }
@@ -152,7 +152,7 @@ export function Skills({ skillsData }: SkillsProps) {
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 {skill.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-justify">
                 {skill.description}
               </p>
 

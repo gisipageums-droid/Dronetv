@@ -210,7 +210,7 @@ export default function ServiceDetailPage() {
                       <span className="text-black">{companyName}</span>
                     </p>
                   )}
-                  <p className="mt-2 text-gray-600">{service.shortDescription}</p>
+                  <p className="mt-2 text-gray-600 text-justify">{service.shortDescription}</p>
                 </div>
               </div>
 

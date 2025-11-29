@@ -115,7 +115,7 @@ export default function About({ aboutData }) {
                 {aboutData.certifications.map((cert, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm"
+                    className="flex items-start gap-3 text-gray-700 text-sm text-justify"
                   >
                     <span className="text-green-600 mt-0.5">•</span>
                     <span>{cert}</span>
@@ -133,7 +133,7 @@ export default function About({ aboutData }) {
                 {aboutData.achievements.map((achievement, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm"
+                    className="flex items-start gap-3 text-gray-700 text-sm text-justify"
                   >
                     <span className="text-yellow-600 mt-0.5">•</span>
                     <span>{achievement}</span>
@@ -167,7 +167,7 @@ export default function About({ aboutData }) {
                 {aboutData.certifications.map((cert, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm"
+                    className="flex items-start gap-3 text-gray-700 text-sm text-justify"
                   >
                     <span className="text-green-600 mt-0.5">•</span>
                     <span>{cert}</span>
@@ -185,7 +185,7 @@ export default function About({ aboutData }) {
                 {aboutData.achievements.map((achievement, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm"
+                    className="flex items-start gap-3 text-gray-700 text-sm text-justify"
                   >
                     <span className="text-yellow-600 mt-0.5">•</span>
                     <span>{achievement}</span>

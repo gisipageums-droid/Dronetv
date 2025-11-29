@@ -48,7 +48,7 @@ const About: React.FC<AboutProps> = ({ content }) => {
                 {content.heading.split(" ").slice(1).join(" ")}
               </span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto text-justify">
               {content.subtitle}
             </p>
           </motion.div>
@@ -72,7 +72,7 @@ const About: React.FC<AboutProps> = ({ content }) => {
                 {content.heading}
               </h3> */}
 
-              <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+              <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed text-justify">
                 <p>{content.description1}</p>
                 <p>{content.description2}</p>
                 <p>{content.description3}</p>

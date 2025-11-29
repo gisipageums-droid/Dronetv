@@ -56,7 +56,7 @@ export function Clients({ clientData }: ClientsProps) {
   // Process stats data
   const processStatsData = () => {
     if (!clientData.stats) return [];
-    
+
     return Object.entries(clientData.stats).map(([key, value]) => ({
       number: value,
       label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
@@ -83,12 +83,12 @@ export function Clients({ clientData }: ClientsProps) {
             </h2>
           )}
           {clientData.description && (
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4 text-justify">
               {clientData.description}
             </p>
           )}
           {clientData.subtitle && (
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-justify">
               {clientData.subtitle}
             </p>
           )}
@@ -96,7 +96,7 @@ export function Clients({ clientData }: ClientsProps) {
 
         {/* Stats - Dynamic */}
         {stats.length > 0 && (
-          <motion.div 
+          <motion.div
             className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -122,7 +122,7 @@ export function Clients({ clientData }: ClientsProps) {
 
         {/* Client Grid - Dynamic */}
         {clients.length > 0 ? (
-          <motion.div 
+          <motion.div
             className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -173,12 +173,12 @@ export function Clients({ clientData }: ClientsProps) {
               </h3>
             )}
             {clientData.cta.description && (
-              <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+              <p className="text-muted-foreground mb-6 max-w-xl mx-auto text-justify">
                 {clientData.cta.description}
               </p>
             )}
             {clientData.cta.buttonText && (
-              <AnimatedButton 
+              <AnimatedButton
                 href={clientData.cta.buttonLink || "#contact"}
                 size="lg"
               >

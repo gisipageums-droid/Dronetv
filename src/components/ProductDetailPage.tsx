@@ -225,7 +225,7 @@ export default function ProductDetailPage() {
                       <span className="text-black">{companyName}</span>
                     </p>
                   )}
-                  <p className="mt-2 text-gray-600">{product.shortDescription}</p>
+                  <p className="mt-2 text-gray-600 text-justify">{product.shortDescription}</p>
                 </div>
               </div>
 
