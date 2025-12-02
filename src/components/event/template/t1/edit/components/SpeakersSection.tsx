@@ -627,7 +627,7 @@ const defaultSpeakersData: SpeakersDataContent = {
           "name": "Speaker Name",
           "company": "Organization",
           "id": 1,
-          "avatar": "Initials",
+          "avatar": "NA",
           "title": "Designation"
         }
       ]
@@ -758,7 +758,7 @@ const SpeakerCard = memo(
         )}
 
         <div className={`w-12 h-12 md:w-16 md:h-16 mx-auto rounded-lg md:rounded-xl ${getColorForAvatar(speaker.name)} text-white flex items-center justify-center text-lg md:text-xl font-bold`}>
-          {speaker.avatar || getInitials(speaker.name)}
+          { getInitials(speaker.name)}
         </div>
 
         <h4 className="text-center font-bold mt-3 md:mt-4 text-sm md:text-base line-clamp-1">

@@ -249,7 +249,7 @@ export default function Login() {
     e.preventDefault();
 
     setIsLoading(true);
-
+               
     try {
       const response = await fetch(
         "https://yxzlfcqwf7.execute-api.ap-south-1.amazonaws.com/prod/login_post",
@@ -275,7 +275,7 @@ export default function Login() {
           password: "",
         });
 
-        navigate("/user-companies"); // Navigate to dashboard
+        navigate("/user-dashboard"); // Navigate to dashboard
       } else {
         toast.error(
           data.message || "Login failed. Please check your credentials."
