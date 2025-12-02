@@ -129,7 +129,11 @@ const initialFormData: FormData = {
 };
 
 function App() {
-  const [companyNameStatus, setCompanyNameStatus] = useState<null | { available: boolean; suggestions?: string[]; message: string }>(null);
+  const [companyNameStatus, setCompanyNameStatus] = useState<null | {
+    available: boolean;
+    suggestions?: string[];
+    message: string;
+  }>(null);
   const [isCheckingName, setIsCheckingName] = useState(false);
 
   // Initialize from localStorage synchronously so values are present on first render
@@ -165,10 +169,13 @@ function App() {
   const { draftDetails, setAIGenData, AIGenData } = useTemplate();
   const navigate = useNavigate();
   const location = useLocation();
-  
 
   // ✅ extract params for prefill
-  const params = useParams<{ publicId?: string; userId?: string; draftId?: string }>();
+  const params = useParams<{
+    publicId?: string;
+    userId?: string;
+    draftId?: string;
+  }>();
   const { publicId, userId: urlUserId, draftId: urlDraftId } = params;
 
   // ✅ loading state for prefill
@@ -238,34 +245,37 @@ function App() {
     setIsCheckingName(true);
     try {
       const res = await fetch(
-        `https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(name)}`
+        `https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(
+          name
+        )}`
       );
       const data = await res.json();
       setCompanyNameStatus(data);
     } catch (err) {
-      setCompanyNameStatus({ available: false, message: "Error checking name" });
+      setCompanyNameStatus({
+        available: false,
+        message: "Error checking name",
+      });
     } finally {
       setIsCheckingName(false);
     }
   };
 
-  
-
-   function handleClick() {
-
-    
-      console.log("draft Details:",draftDetails);
-      navigate(`/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}/${draftDetails.draftId}/${draftDetails.userId}`);
-      
-     
-  
+  function handleClick() {
+    console.log("draft Details:", draftDetails);
+    navigate(
+      `/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}/${
+        draftDetails.draftId
+      }/${draftDetails.userId}`
+    );
   }
 
   const templateId = location.state?.templateId;
   initialFormData.templateSelection = templateId || "";
 
   const [draftId, setDraftId] = useState<string | undefined>(undefined);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(templateId);
+  const [selectedTemplateId, setSelectedTemplateId] =
+    useState<string>(templateId);
   const [userId] = useState<string>("user-123");
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -357,7 +367,9 @@ function App() {
         formData.sectorsServed[cat].length > 0
     );
     if (!hasAny) {
-      toast.error("Please select at least one sector for your company category.");
+      toast.error(
+        "Please select at least one sector for your company category."
+      );
       return false;
     }
     return true;
@@ -369,7 +381,10 @@ function App() {
       toast.error("Please select at least one Main Business Category.");
       return false;
     }
-    if (!formData.geographyOfOperations || formData.geographyOfOperations.length === 0) {
+    if (
+      !formData.geographyOfOperations ||
+      formData.geographyOfOperations.length === 0
+    ) {
       toast.error("Please select at least one Geography of Operations.");
       return false;
     }
@@ -388,7 +403,9 @@ function App() {
       return false;
     }
     if (!formData.acceptTerms || !formData.acceptPrivacy) {
-      toast.error("Please accept Terms & Conditions and Privacy Policy to continue.");
+      toast.error(
+        "Please accept Terms & Conditions and Privacy Policy to continue."
+      );
       return false;
     }
     return true;
@@ -396,34 +413,33 @@ function App() {
 
   // Step 8 validation logic
   const validateStep8 = () => {
-    
     return true;
   };
 
   const nextStep = () => {
     // Only validate on step 1, 3, 4, 7, and 8
     if (currentStep === 1) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       if (!validateStep1()) return;
     }
     if (currentStep === 2) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       if (!validateStep3()) return;
     }
     if (currentStep === 3) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       if (!validateStep4()) return;
     }
     if (currentStep === 4) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       if (!validateStep5()) return;
     }
     if (currentStep === 5) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       if (!validateStep7()) return;
     }
     if (currentStep === 6) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       if (!validateStep8()) return;
     }
     if (currentStep < 6) {
@@ -435,7 +451,7 @@ function App() {
 
   const prevStep = () => {
     if (currentStep > 1) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       setCurrentStep(currentStep - 1);
     }
   };
@@ -445,10 +461,9 @@ function App() {
     setIsComplete(true);
   };
 
-
   // Add skip step function
   const skipStep = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     if (currentStep < 6) {
       setCurrentStep(currentStep + 1);
     }
@@ -508,8 +523,12 @@ function App() {
     return (
       <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-white mb-2">Loading form data...</h1>
-          <p className="text-blue-200 text-lg">Please wait while we prefill your form</p>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Loading form data...
+          </h1>
+          <p className="text-blue-200 text-lg">
+            Please wait while we prefill your form
+          </p>
         </div>
       </div>
     );
@@ -520,8 +539,6 @@ function App() {
   }
 
   if (isComplete) {
-   
-
     handleClick();
     return null;
   }
