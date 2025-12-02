@@ -707,7 +707,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
             )}
 
             {/* Social Links */}
-            <div className="flex space-x-4">
+            {/* <div className="flex space-x-4">
               {editedContent.socialLinks.map((link, index) => (
                 <div key={index}>
                   {isEditing ? (
@@ -765,7 +765,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                   )}
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Links */}
@@ -937,7 +937,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-12 pt-6 border-t border-gray-700">
+        {/* <div className="mt-12 pt-6 border-t border-gray-700">
           {isEditing ? (
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1047,7 +1047,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               </div>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </footer>
   );

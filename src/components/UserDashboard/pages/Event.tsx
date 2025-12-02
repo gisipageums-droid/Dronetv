@@ -237,7 +237,7 @@ const EventCard: React.FC<EventCardProps> = ({
             </button>
           </div>
 
-          <button
+          {/* <button
             onClick={() =>
               navigate(
                 `/event/form/${event.userId}/${event.eventId}`
@@ -247,7 +247,7 @@ const EventCard: React.FC<EventCardProps> = ({
           >
             <Edit className="w-4 h-4" />
             Edit form
-          </button>
+          </button> */}
 
           <button
             onClick={() =>
@@ -263,11 +263,11 @@ const EventCard: React.FC<EventCardProps> = ({
         </div>
 
         {/* Event ID */}
-        <div className="mt-4 pt-4 border-t border-yellow-200">
+        {/* <div className="mt-4 pt-4 border-t border-yellow-200">
           <div className="text-xs text-gray-500">
             ID: {event?.eventId || "No ID"}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

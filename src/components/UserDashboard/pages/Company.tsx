@@ -278,7 +278,9 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
               className="flex-1 px-3 py-2 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-500"
             >
               <Edit className="w-4 h-4" />
-              Edit/Preview
+              Edit |
+              <Eye className="w-4 h-4" />
+              Preview
             </button>
           </div>
 
@@ -296,11 +298,11 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview }) => {
         </div>
 
         {/* Published ID */}
-        <div className="mt-4 pt-4 border-t border-yellow-200">
+        {/* <div className="mt-4 pt-4 border-t border-yellow-200">
           <div className="text-xs text-gray-500">
             ID: {company?.publishedId || "No ID"}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -336,8 +338,8 @@ const CompanyPage: React.FC = () => {
           sectors: Array.isArray(c.sectors)
             ? c.sectors
             : c.sectors
-              ? [c.sectors]
-              : ["General"],
+            ? [c.sectors]
+            : ["General"],
           publishedDate: c.publishedDate || "",
           createdAt: c.createdAt || "",
           reviewStatus: c.reviewStatus || "active",
@@ -403,9 +405,13 @@ const CompanyPage: React.FC = () => {
 
       // Navigate to edit page
       if (details.templateSelection === "template-1") {
-        navigate(`/user/companies/edit/1/${publishedId}/${user.userData.email}`);
+        navigate(
+          `/user/companies/edit/1/${publishedId}/${user.userData.email}`
+        );
       } else if (details.templateSelection === "template-2") {
-        navigate(`/user/companies/edit/2/${publishedId}/${user.userData.email}`);
+        navigate(
+          `/user/companies/edit/2/${publishedId}/${user.userData.email}`
+        );
       }
     } catch (error) {
       console.error("Error loading template for editing:", error);

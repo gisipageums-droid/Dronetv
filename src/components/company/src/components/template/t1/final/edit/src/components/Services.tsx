@@ -1161,6 +1161,7 @@ import {
   Trash2,
   RotateCw,
   ZoomIn,
+  Check,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
@@ -1177,16 +1178,9 @@ export default function Services({
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedServiceIndex, setSelectedServiceIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
   const [isUploading, setIsUploading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [addingCategoryFor, setAddingCategoryFor] = useState<number | null>(null);
   const [newCategoryName, setNewCategoryName] = useState("");
-
-  // Auto-save state
-  const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Enhanced crop modal state
   const [cropModalOpen, setCropModalOpen] = useState(false);
@@ -1200,12 +1194,21 @@ export default function Services({
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
-  // Create a temporary state for editing
+  // Auto-save state
   const [servicesSection, setServicesSection] = useState(serviceData);
   const [tempServicesSection, setTempServicesSection] = useState(serviceData);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  
+  // Refs for auto-save
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const changesCountRef = useRef(0);
+  const hasChangesRef = useRef(false);
 
   // Auto-save configuration
-  const AUTO_SAVE_DELAY = 2000; // 2 seconds
+  const AUTO_SAVE_DELAY = 2000; // 2 seconds delay for auto-save
+  const MIN_CHANGES_FOR_AUTO_SAVE = 1;
 
   // Update content when serviceData changes
   useEffect(() => {
@@ -1215,7 +1218,7 @@ export default function Services({
     }
   }, [serviceData]);
 
-  // Add this useEffect to notify parent of state changes
+  // Notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(servicesSection);
@@ -1224,24 +1227,26 @@ export default function Services({
 
   // Auto-save effect
   useEffect(() => {
-    if (hasUnsavedChanges && isEditing) {
-      if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout);
-      }
-
-      const timeout = setTimeout(() => {
-        handleAutoSave();
-      }, AUTO_SAVE_DELAY);
-
-      setAutoSaveTimeout(timeout);
-
-      return () => {
-        if (autoSaveTimeout) {
-          clearTimeout(autoSaveTimeout);
-        }
-      };
+    if (!isEditing || !hasUnsavedChanges || changesCountRef.current < MIN_CHANGES_FOR_AUTO_SAVE) {
+      return;
     }
-  }, [tempServicesSection, hasUnsavedChanges, isEditing]);
+
+    // Clear any existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Set new timeout for auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      performAutoSave();
+    }, AUTO_SAVE_DELAY);
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [tempServicesSection, isEditing, hasUnsavedChanges]);
 
   // Get categories from services
   const filteredServices =
@@ -1254,7 +1259,14 @@ export default function Services({
         : servicesSection.services
       ).filter((s) => s.category === activeCategory);
 
-  // Enhanced image upload handler with direct AWS upload
+  // Mark changes when content is updated
+  const markChanges = () => {
+    setHasUnsavedChanges(true);
+    changesCountRef.current += 1;
+    hasChangesRef.current = true;
+  };
+
+  // Enhanced image upload handler
   const handleServiceImageSelect = (index, e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1350,23 +1362,19 @@ export default function Services({
     });
   };
 
-  // Upload cropped image directly to AWS
+  // Upload image directly to AWS
   const uploadImageToAWS = async (file, index) => {
     if (!userId || !publishedId || !templateSelection) {
-      console.error("Missing required props:", {
-        userId,
-        publishedId,
-        templateSelection,
-      });
       toast.error("Missing user information. Please refresh and try again.");
       return null;
     }
 
     try {
+      setIsUploading(true);
       const formData = new FormData();
       formData.append("file", file);
       formData.append("sectionName", "services");
-      formData.append("imageField", `services[${index}].image-${Date.now()}`);
+      formData.append("imageField", `service-${index}-${Date.now()}`);
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
@@ -1379,18 +1387,19 @@ export default function Services({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log("Image uploaded to S3:", uploadData.imageUrl);
+        toast.success("Service image uploaded to AWS!");
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
-        console.error("Image upload failed:", errorData);
         toast.error(`Image upload failed: ${errorData.message || "Unknown error"}`);
         return null;
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("Error uploading image to AWS:", error);
       toast.error("Error uploading image. Please try again.");
       return null;
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -1407,23 +1416,31 @@ export default function Services({
         rotation
       );
 
-      // Upload cropped image directly to AWS
-      setIsUploading(true);
-      const awsImageUrl = await uploadImageToAWS(file, cropIndex);
+      // For service images
+      if (cropField === "serviceImage") {
+        // Upload image directly to AWS
+        const awsImageUrl = await uploadImageToAWS(file, cropIndex);
 
-      if (awsImageUrl) {
-        // Update service with AWS URL directly
-        setTempServicesSection((prev) => ({
-          ...prev,
-          services: prev.services.map((service, i) =>
-            i === cropIndex ? { ...service, image: awsImageUrl } : service
-          ),
-        }));
+        if (awsImageUrl) {
+          // Update state with AWS URL
+          setTempServicesSection((prev) => ({
+            ...prev,
+            services: prev.services.map((service, i) =>
+              i === cropIndex ? { ...service, image: awsImageUrl } : service
+            ),
+          }));
 
-        // Mark changes for auto-save
-        setHasUnsavedChanges(true);
-        
-        toast.success("Image cropped and uploaded successfully");
+          markChanges(); // Mark changes for auto-save
+        } else {
+          // Fallback to local preview if AWS upload fails
+          setTempServicesSection((prev) => ({
+            ...prev,
+            services: prev.services.map((service, i) =>
+              i === cropIndex ? { ...service, image: previewUrl } : service
+            ),
+          }));
+          toast.info("Using local preview. AWS upload failed.");
+        }
       }
 
       setCropModalOpen(false);
@@ -1432,8 +1449,6 @@ export default function Services({
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -1453,71 +1468,63 @@ export default function Services({
   };
 
   // Auto-save function
-  const handleAutoSave = async () => {
-    if (!hasUnsavedChanges) return;
+  const performAutoSave = async () => {
+    if (!hasUnsavedChanges || changesCountRef.current < MIN_CHANGES_FOR_AUTO_SAVE) {
+      return;
+    }
 
     try {
-      setIsSaving(true);
+      setIsAutoSaving(true);
       
-      // Upload any remaining pending images (non-cropped ones)
-      const uploadPromises = Object.entries(pendingImages).map(async ([indexStr, file]) => {
-        const index = parseInt(indexStr);
-        const awsImageUrl = await uploadImageToAWS(file, index);
-        
-        if (awsImageUrl) {
-          setTempServicesSection((prev) => ({
-            ...prev,
-            services: prev.services.map((service, i) =>
-              i === index ? { ...service, image: awsImageUrl } : service
-            ),
-          }));
-        }
-        
-        return awsImageUrl;
-      });
-
-      await Promise.all(uploadPromises);
-
-      // Clear pending images after upload
-      setPendingImages({});
-
-      // Update main state
+      // Update services state with temp state
       setServicesSection(tempServicesSection);
       setHasUnsavedChanges(false);
+      changesCountRef.current = 0;
+      hasChangesRef.current = false;
       setLastSaved(new Date());
-      
-      console.log("Auto-save completed at:", new Date().toLocaleTimeString());
+
+      // Notify parent
+      if (onStateChange) {
+        onStateChange(tempServicesSection);
+      }
+
+      toast.success("Services saved automatically!", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      });
     } catch (error) {
-      console.error("Error during auto-save:", error);
-      toast.error("Auto-save failed. Changes not saved.");
+      console.error("Error auto-saving services:", error);
+      toast.error("Auto-save failed. Please save manually.");
     } finally {
-      setIsSaving(false);
+      setIsAutoSaving(false);
     }
   };
 
-  // Manual save function (kept for compatibility)
+  // Manual save function (kept for backward compatibility)
   const handleSave = async () => {
-    await handleAutoSave();
+    await performAutoSave();
     setIsEditing(false);
-    toast.success("Services section saved successfully");
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setTempServicesSection(servicesSection);
+    setHasUnsavedChanges(false);
+    changesCountRef.current = 0;
+    hasChangesRef.current = false;
   };
 
   const handleCancel = () => {
     setTempServicesSection(servicesSection);
-    setPendingImages({});
     setHasUnsavedChanges(false);
+    changesCountRef.current = 0;
+    hasChangesRef.current = false;
     setIsEditing(false);
   };
 
-  // Mark changes for auto-save
-  const markChanges = () => {
-    if (isEditing) {
-      setHasUnsavedChanges(true);
-    }
-  };
-
-  // Handlers - updated to trigger auto-save
   const updateServiceField = (index, field, value) => {
+    // Apply character limits based on field type
     let processedValue = value;
 
     if (field === "title" && value.length > 100) {
@@ -1534,12 +1541,16 @@ export default function Services({
       processedValue = value.slice(0, 100);
     }
 
-    setTempServicesSection((prev) => ({
-      ...prev,
-      services: prev.services.map((s, i) =>
-        i === index ? { ...s, [field]: processedValue } : s
-      ),
-    }));
+    setTempServicesSection((prev) => {
+      if (prev.services[index][field] === processedValue) return prev;
+      markChanges();
+      return {
+        ...prev,
+        services: prev.services.map((s, i) =>
+          i === index ? { ...s, [field]: processedValue } : s
+        ),
+      };
+    });
 
     // Update categories if needed
     if (
@@ -1551,58 +1562,61 @@ export default function Services({
         categories: [...prev.categories, processedValue],
       }));
     }
-
-    markChanges();
   };
 
   const updateServiceList = (index, field, listIndex, value) => {
+    // Apply character limit for list items (benefits, process steps)
     let processedValue = value;
     if (value.length > 200) {
       processedValue = value.slice(0, 200);
     }
 
-    setTempServicesSection((prev) => ({
-      ...prev,
-      services: prev.services.map((s, i) =>
-        i === index
-          ? {
-            ...s,
-            [field]: s[field].map((item, li) =>
-              li === listIndex ? processedValue : item
-            ),
-          }
-          : s
-      ),
-    }));
-
-    markChanges();
+    setTempServicesSection((prev) => {
+      if (prev.services[index][field][listIndex] === processedValue) return prev;
+      markChanges();
+      return {
+        ...prev,
+        services: prev.services.map((s, i) =>
+          i === index
+            ? {
+              ...s,
+              [field]: s[field].map((item, li) =>
+                li === listIndex ? processedValue : item
+              ),
+            }
+            : s
+        ),
+      };
+    });
   };
 
   const addToList = (index, field) => {
-    setTempServicesSection((prev) => ({
-      ...prev,
-      services: prev.services.map((s, i) =>
-        i === index ? { ...s, [field]: [...s[field], "New Item"] } : s
-      ),
-    }));
-
-    markChanges();
+    setTempServicesSection((prev) => {
+      markChanges();
+      return {
+        ...prev,
+        services: prev.services.map((s, i) =>
+          i === index ? { ...s, [field]: [...s[field], "New Item"] } : s
+        ),
+      };
+    });
   };
 
   const removeFromList = (index, field, listIndex) => {
-    setTempServicesSection((prev) => ({
-      ...prev,
-      services: prev.services.map((s, i) =>
-        i === index
-          ? {
-            ...s,
-            [field]: s[field].filter((_, li) => li !== listIndex),
-          }
-          : s
-      ),
-    }));
-
-    markChanges();
+    setTempServicesSection((prev) => {
+      markChanges();
+      return {
+        ...prev,
+        services: prev.services.map((s, i) =>
+          i === index
+            ? {
+              ...s,
+              [field]: s[field].filter((_, li) => li !== listIndex),
+            }
+            : s
+        ),
+      };
+    });
   };
 
   const addService = () => {
@@ -1619,10 +1633,13 @@ export default function Services({
       timeline: "TBD",
     };
 
-    setTempServicesSection((prev) => ({
-      ...prev,
-      services: [...prev.services, newService],
-    }));
+    setTempServicesSection((prev) => {
+      markChanges();
+      return {
+        ...prev,
+        services: [...prev.services, newService],
+      };
+    });
 
     if (!tempServicesSection.categories.includes("New Category")) {
       setTempServicesSection((prev) => ({
@@ -1630,43 +1647,44 @@ export default function Services({
         categories: [...prev.categories, "New Category"],
       }));
     }
-
-    markChanges();
   };
 
   const removeService = (index) => {
-    setTempServicesSection((prev) => ({
-      ...prev,
-      services: prev.services.filter((_, i) => i !== index),
-    }));
-
-    markChanges();
+    setTempServicesSection((prev) => {
+      markChanges();
+      return {
+        ...prev,
+        services: prev.services.filter((_, i) => i !== index),
+      };
+    });
   };
 
   const addCategory = () => {
     const newCategory = `New Category ${tempServicesSection.categories.length}`;
     if (!tempServicesSection.categories.includes(newCategory)) {
-      setTempServicesSection((prev) => ({
-        ...prev,
-        categories: [...prev.categories, newCategory],
-      }));
+      setTempServicesSection((prev) => {
+        markChanges();
+        return {
+          ...prev,
+          categories: [...prev.categories, newCategory],
+        };
+      });
     }
-
-    markChanges();
   };
 
   const removeCategory = (cat) => {
     if (cat !== "All") {
-      setTempServicesSection((prev) => ({
-        ...prev,
-        categories: prev.categories.filter((c) => c !== cat),
-        services: prev.services.map((s) =>
-          s.category === cat ? { ...s, category: "Uncategorized" } : s
-        ),
-      }));
+      setTempServicesSection((prev) => {
+        markChanges();
+        return {
+          ...prev,
+          categories: prev.categories.filter((c) => c !== cat),
+          services: prev.services.map((s) =>
+            s.category === cat ? { ...s, category: "Uncategorized" } : s
+          ),
+        };
+      });
     }
-
-    markChanges();
   };
 
   const openModal = (service, index) => {
@@ -1679,7 +1697,7 @@ export default function Services({
     setSelectedServiceIndex(null);
   };
 
-  // Update heading fields with character limits
+  // Update heading fields with character limits and change tracking
   const updateHeading = (field, value) => {
     let processedValue = value;
 
@@ -1689,15 +1707,33 @@ export default function Services({
       processedValue = value.slice(0, 200);
     }
 
-    setTempServicesSection((prev) => ({
-      ...prev,
-      heading: {
-        ...prev.heading,
-        [field]: processedValue,
-      },
-    }));
+    setTempServicesSection((prev) => {
+      if (prev.heading[field] === processedValue) return prev;
+      markChanges();
+      return {
+        ...prev,
+        heading: {
+          ...prev.heading,
+          [field]: processedValue,
+        },
+      };
+    });
+  };
 
-    markChanges();
+  // Update category with change tracking
+  const updateCategory = (index, value) => {
+    if (value.length > 50) return;
+    
+    setTempServicesSection((prev) => {
+      if (prev.categories[index] === value) return prev;
+      markChanges();
+      return {
+        ...prev,
+        categories: prev.categories.map((c, idx) =>
+          idx === index ? value : c
+        ),
+      };
+    });
   };
 
   // EditableText component for consistent styling
@@ -1714,6 +1750,7 @@ export default function Services({
         const baseClasses =
           "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
 
+        // Show character count if maxLength is provided
         const charCount = maxLength ? (
           <div className="text-xs text-gray-500 text-right mt-1">
             {value.length}/{maxLength}
@@ -1771,11 +1808,37 @@ export default function Services({
         "py-20 "
         }  theme-transition relative`}
     >
+      {/* Auto-save indicator */}
+      {isEditing && (
+        <div className="absolute top-4 left-4 z-10">
+          <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
+            {isAutoSaving ? (
+              <>
+                <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
+                <span className="text-xs text-gray-700">Saving...</span>
+              </>
+            ) : hasUnsavedChanges ? (
+              <>
+                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                <span className="text-xs text-gray-700">Unsaved changes</span>
+              </>
+            ) : (
+              <>
+                <Check className="w-3 h-3 text-green-600" />
+                <span className="text-xs text-gray-700">
+                  Saved {lastSaved && lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
         {!isEditing ? (
           <Button
-            onClick={() => setIsEditing(true)}
+            onClick={handleEdit}
             variant="outline"
             size="sm"
             className="bg-white hover:bg-gray-50 shadow-md"
@@ -1785,38 +1848,25 @@ export default function Services({
           </Button>
         ) : (
           <div className="flex gap-2">
-            {/* Auto-save status indicator */}
-            {hasUnsavedChanges && (
-              <div className="flex items-center text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded">
-                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                Saving...
-              </div>
-            )}
-            {lastSaved && !hasUnsavedChanges && (
-              <div className="flex items-center text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                <CheckCircle className="w-3 h-3 mr-1" />
-                Saved
-              </div>
-            )}
             <Button
               onClick={handleSave}
               size="sm"
               className="bg-green-600 hover:bg-green-700 text-white shadow-md"
-              disabled={isSaving || isUploading}
+              disabled={isAutoSaving || isUploading}
             >
-              {isSaving ? (
+              {isAutoSaving ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <Save className="w-4 h-4 mr-2" />
               )}
-              {isSaving ? "Saving..." : "Save"}
+              {isAutoSaving ? "Saving..." : "Save Now"}
             </Button>
             <Button
               onClick={handleCancel}
               variant="outline"
               size="sm"
               className="bg-white hover:bg-gray-50 shadow-md"
-              disabled={isSaving || isUploading}
+              disabled={isAutoSaving || isUploading}
             >
               <X className="w-4 h-4 mr-2" />
               Cancel
@@ -1825,7 +1875,6 @@ export default function Services({
         )}
       </div>
 
-      {/* Rest of the component remains exactly the same */}
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-6">
@@ -1864,226 +1913,231 @@ export default function Services({
             </>
           )}
         </div>
-      </div>
 
-      {/* Filter */}
-      <div className="flex flex-wrap justify-center gap-2 mb-3">
-        {displayContent.categories.map((cat, i) => (
-          <div key={i} className="flex items-center gap-2">
-            {isEditing ? (
-              <input
-                value={cat}
-                onChange={(e) => {
-                  if (e.target.value.length <= 50) {
-                    setTempServicesSection((prev) => ({
-                      ...prev,
-                      categories: prev.categories.map((c, idx) =>
-                        idx === i ? e.target.value : c
-                      ),
-                    }));
-                    markChanges();
-                  }
-                }}
-                className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                maxLength={50}
-              />
-            ) : (
-              <Button
-                key={i}
-                onClick={() => {
-                  setActiveCategory(cat);
-                }}
-                className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${activeCategory === cat
-                  ? "bg-orange-400 text-white shadow-lg scale-105"
-                  : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-                  }`}
-              >
-                {cat}
-              </Button>
-            )}
-            {isEditing && cat !== "All" && (
-              <button
-                onClick={() => removeCategory(cat)}
-                className="text-red-500 text-xs"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        ))}
-        {isEditing && (
-          <Button
-            onClick={addCategory}
-            size="sm"
-            variant="outline"
-            className="bg-green-50 hover:bg-green-100 text-green-700"
-          >
-            <Plus className="w-3 h-3 mr-1" />
-            Add Category
-          </Button>
-        )}
-      </div>
-
-      {/* Services Grid */}
-      <div className="flex flex-wrap justify-center gap-2 md:gap-3">
-        {filteredServices.map((service, index) => (
-          <Card key={index} className="relative overflow-hidden w-[220px] min-h-[360px] rounded-2xl shadow-md border border-gray-100 bg-white flex flex-col">
-            <div className="h-32 overflow-hidden relative rounded-t-2xl">
-              <img
-                src={service.image}
-                alt={service.title}
-                className="w-full h-full object-cover object-center scale-110"
-              />
-              <div className="absolute top-3 right-3">
-                <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full shadow">
-                  {service.category}
-                </span>
-              </div>
-              {isEditing && (
-                <div className="absolute bottom-2 left-2 bg-white/80 p-1 rounded">
-                  <Button
-                    onClick={() =>
-                      document.getElementById(`image-upload-${index}`)?.click()
-                    }
-                    size="sm"
-                    variant="outline"
-                    className="text-xs"
-                  >
-                    <Upload className="w-3 h-3 mr-1" />
-                    Change
-                  </Button>
-                  <input
-                    id={`image-upload-${index}`}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleServiceImageSelect(index, e)}
-                  />
-                </div>
-              )}
-            </div>
-            <CardHeader className="px-4 pt-4 pb-2">
+        {/* Filter */}
+        <div className="flex flex-wrap justify-center gap-2 mb-3">
+          {displayContent.categories.map((cat, i) => (
+            <div key={i} className="flex items-center gap-2">
               {isEditing ? (
-                <EditableText
-                  value={service.title}
-                  onChange={(val) => updateServiceField(index, "title", val)}
-                  className="font-bold text-base"
-                  placeholder="Service title"
+                <input
+                  value={cat}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 50) {
+                      updateCategory(i, e.target.value);
+                    }
+                  }}
+                  className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                   maxLength={50}
                 />
               ) : (
-                <CardTitle className="text-base leading-snug">{service.title}</CardTitle>
-              )}
-            </CardHeader>
-            <CardContent className="px-4 pb-4 flex flex-col flex-1">
-              {isEditing ? (
-                <>
-                  <EditableText
-                    value={service.description}
-                    onChange={(val) => updateServiceField(index, "description", val)}
-                    multiline={true}
-                    className="text-sm"
-                    placeholder="Service description"
-                    maxLength={1000}
-                  />
-                  <div className="mt-2 space-y-2">
-                    <label className="block text-xs font-medium text-gray-700">Category</label>
-                    <select
-                      value={service.category}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        if (val === "__add_new__") {
-                          setAddingCategoryFor(index);
-                          setNewCategoryName("");
-                        } else {
-                          updateServiceField(index, "category", val);
-                          setAddingCategoryFor(null);
-                        }
-                      }}
-                      className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-sm"
-                    >
-                      {displayContent.categories.map((c, i) => (
-                        <option key={i} value={c}>{c}</option>
-                      ))}
-                      <option value="__add_new__">+ Add new category</option>
-                    </select>
-                    {addingCategoryFor === index && (
-                      <div className="flex items-center gap-2">
-                        <input
-                          value={newCategoryName}
-                          onChange={(e) => {
-                            if (e.target.value.length <= 50) setNewCategoryName(e.target.value);
-                          }}
-                          placeholder="New category name"
-                          className="flex-1 bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-sm"
-                          maxLength={50}
-                        />
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-xs"
-                          onClick={() => {
-                            const name = newCategoryName.trim();
-                            if (!name) return;
-                            setTempServicesSection((prev) => ({
-                              ...prev,
-                              categories: prev.categories.includes(name)
-                                ? prev.categories
-                                : [...prev.categories, name],
-                              services: prev.services.map((s, i) =>
-                                i === index ? { ...s, category: name } : s
-                              ),
-                            }));
-                            setAddingCategoryFor(null);
-                            setNewCategoryName("");
-                            markChanges();
-                          }}
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className="text-sm text-gray-600 mb-3 flex-1 h-[64px] overflow-auto">
-                    {service.description}
-                  </p>
-                </>
-              )}
-
-              <div className="mt-auto flex gap-2 ">
                 <Button
-                  className={` ${isEditing ? "" : "w-full"} bg-orange-400 hover:bg-orange-500 text-white rounded-md`}
-                  size="sm"
-                  onClick={() => openModal(service, index)}
+                  key={i}
+                  onClick={() => {
+                    setActiveCategory(cat);
+                  }}
+                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${activeCategory === cat
+                    ? "bg-orange-400 text-white shadow-lg scale-105"
+                    : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                    }`}
                 >
-                  View Details →
+                  {cat}
                 </Button>
+              )}
+              {isEditing && cat !== "All" && (
+                <button
+                  onClick={() => removeCategory(cat)}
+                  className="text-red-500 text-xs"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          ))}
+          {isEditing && (
+            <Button
+              onClick={addCategory}
+              size="sm"
+              variant="outline"
+              className="bg-green-50 hover:bg-green-100 text-green-700"
+            >
+              <Plus className="w-3 h-3 mr-1" />
+              Add Category
+            </Button>
+          )}
+        </div>
+
+        {/* Services Grid */}
+        <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+          {filteredServices.map((service, index) => (
+            <Card key={index} className="relative overflow-hidden w-[220px] min-h-[360px] rounded-2xl shadow-md border border-gray-100 bg-white flex flex-col">
+              <div className="h-32 overflow-hidden relative rounded-t-2xl">
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-full h-full object-cover object-center scale-110"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full shadow">
+                    {service.category}
+                  </span>
+                </div>
                 {isEditing && (
-                  <Button
-                    className="cursor-pointer hover:scale-105"
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => removeService(index)}
-                  >
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    Remove
-                  </Button>
+                  <div className="absolute bottom-2 left-2 bg-white/80 p-1 rounded">
+                    <Button
+                      onClick={() =>
+                        document
+                          .getElementById(`image-upload-${index}`)
+                          ?.click()
+                      }
+                      size="sm"
+                      variant="outline"
+                      className="text-xs"
+                    >
+                      <Upload className="w-3 h-3 mr-1" />
+                      Change
+                    </Button>
+                    <input
+                      id={`image-upload-${index}`}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleServiceImageSelect(index, e)}
+                    />
+                  </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-        {isEditing && (
-          <Card className="flex items-center justify-center border-dashed">
-            <Button onClick={addService} className="text-green-600 cursor-pointer">
-              <Plus className="w-4 h-4 mr-1" />
-              Add Service
-            </Button>
-          </Card>
-        )}
+              <CardHeader className="px-4 pt-4 pb-2">
+                {isEditing ? (
+                  <EditableText
+                    value={service.title}
+                    onChange={(val) => updateServiceField(index, "title", val)}
+                    className="font-bold text-base"
+                    placeholder="Service title"
+                    maxLength={50}
+                  />
+                ) : (
+                  <CardTitle className="text-base leading-snug">{service.title}</CardTitle>
+                )}
+              </CardHeader>
+              <CardContent className="px-4 pb-4 flex flex-col flex-1">
+                {isEditing ? (
+                  <>
+                    <EditableText
+                      value={service.description}
+                      onChange={(val) => updateServiceField(index, "description", val)}
+                      multiline={true}
+                      className="text-sm"
+                      placeholder="Service description"
+                      maxLength={1000}
+                    />
+                    <div className="mt-2 space-y-2">
+                      <label className="block text-xs font-medium text-gray-700">
+                        Category
+                      </label>
+                      <select
+                        value={service.category}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "__add_new__") {
+                            setAddingCategoryFor(index);
+                            setNewCategoryName("");
+                          } else {
+                            updateServiceField(index, "category", val);
+                            setAddingCategoryFor(null);
+                          }
+                        }}
+                        className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-sm"
+                      >
+                        {displayContent.categories.map((c, i) => (
+                          <option key={i} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                        <option value="__add_new__">+ Add new category</option>
+                      </select>
+                      {addingCategoryFor === index && (
+                        <div className="flex items-center gap-2">
+                          <input
+                            value={newCategoryName}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 50) setNewCategoryName(e.target.value);
+                            }}
+                            placeholder="New category name"
+                            className="flex-1 bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-sm"
+                            maxLength={50}
+                          />
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs"
+                            onClick={() => {
+                              const name = newCategoryName.trim();
+                              if (!name) return;
+                              setTempServicesSection((prev) => {
+                                markChanges();
+                                return {
+                                  ...prev,
+                                  categories: prev.categories.includes(name)
+                                    ? prev.categories
+                                    : [...prev.categories, name],
+                                  services: prev.services.map((s, i) =>
+                                    i === index ? { ...s, category: name } : s
+                                  ),
+                                };
+                              });
+                              setAddingCategoryFor(null);
+                              setNewCategoryName("");
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-600 mb-3 flex-1 h-[64px] overflow-auto">
+                      {service.description}
+                    </p>
+                  </>
+                )}
+
+                <div className="mt-auto flex gap-2 ">
+                  <Button
+                    className={` ${isEditing ? "" : "w-full"} bg-orange-400 hover:bg-orange-500 text-white rounded-md`}
+                    size="sm"
+                    onClick={() => openModal(service, index)}
+                  >
+                    View Details →
+                  </Button>
+                  {isEditing && (
+                    <Button
+                      className="cursor-pointer hover:scale-105"
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => removeService(index)}
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          {isEditing && (
+            <Card className="flex items-center justify-center border-dashed">
+              <Button
+                onClick={addService}
+                className="text-green-600 cursor-pointer"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Add Service
+              </Button>
+            </Card>
+          )}
+        </div>
       </div>
 
       {/* Service Details Modal */}
@@ -2100,7 +2154,10 @@ export default function Services({
               className="bg-card rounded-xl w-full max-w-3xl p-6 relative top-11 h-[42rem] z-100 overflow-y-auto max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             >
-              <button onClick={closeModal} className="absolute top-4 right-4 bg-gray-500 rounded-full p-2">
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 bg-gray-500 rounded-full p-2"
+              >
                 <X className="w-5 h-5" />
               </button>
 
@@ -2279,8 +2336,8 @@ export default function Services({
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     1:1 (Square)
@@ -2288,8 +2345,8 @@ export default function Services({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     4:3 (Standard)
@@ -2297,8 +2354,8 @@ export default function Services({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     16:9 (Widescreen)
@@ -2363,12 +2420,15 @@ export default function Services({
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
-                    <Loader2 className="w-4 h-4 mx-auto animate-spin" />
+                    <>
+                      <Loader2 className="w-4 h-4 inline mr-2 animate-spin" />
+                      Uploading...
+                    </>
                   ) : (
-                    "Apply Crop"
+                    "Apply & Upload"
                   )}
                 </button>
               </div>
