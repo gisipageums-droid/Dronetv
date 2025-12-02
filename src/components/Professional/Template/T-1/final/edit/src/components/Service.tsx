@@ -988,10 +988,10 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  
+
   // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Track if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
 
@@ -1064,20 +1064,20 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
 
     try {
       setIsAutoSaving(true);
-      
+
       // Call the save function
       onSave(serviceContent);
-      
+
       // Update state
       setHasUnsavedChanges(false);
       setLastSavedTime(new Date());
-      
+
       // Show subtle notification
       toast.success("Services changes auto-saved", {
         duration: 1000,
         position: "bottom-right",
       });
-      
+
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -1130,10 +1130,10 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     const updatedServices = serviceContent.services.map((s) =>
       s.id === editingId
         ? {
-            ...s,
-            ...payload,
-            features: payload.features.filter((f) => f.trim() !== ""),
-          }
+          ...s,
+          ...payload,
+          features: payload.features.filter((f) => f.trim() !== ""),
+        }
         : s
     );
 
@@ -1191,10 +1191,10 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
   // Format last saved time for display
   const formatLastSavedTime = () => {
     if (!lastSavedTime) return "Never";
-    
+
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) return "Just now";
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
@@ -1314,7 +1314,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                   {serviceContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
-              <p className=" max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+              <p className=" max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400  text-justify">
                 {serviceContent.description}
               </p>
             </>
@@ -1446,11 +1446,9 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                     ) : (
                       <>
                         <div
-                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${
-                            service.color
-                          } mb-6 ${
-                            isEditMode ? "" : "group-hover:scale-110"
-                          } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
+                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${service.color
+                            } mb-6 ${isEditMode ? "" : "group-hover:scale-110"
+                            } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
                         >
                           <span className="uppercase text-white">
                             {service.title[0]}
@@ -1498,11 +1496,9 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                           href="#contact"
                           whileHover={isEditMode ? undefined : { scale: 1.05 }}
                           whileTap={isEditMode ? undefined : { scale: 0.95 }}
-                          className={`w-full bg-orange-400 ${
-                            service.color
-                          } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                            isEditMode ? "" : "group-hover:shadow-lg"
-                          }`}
+                          className={`w-full bg-orange-400 ${service.color
+                            } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${isEditMode ? "" : "group-hover:shadow-lg"
+                            }`}
                         >
                           <span>Get Started</span>
                           <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

@@ -678,13 +678,27 @@ export default function About({
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
                 {isEditing ? (
-                  <input
-                    value={aboutState.aboutTitle}
-                    onChange={(e) => updateField("aboutTitle", e.target.value)}
-                    className="bg-transparent border-b border-primary text-3xl md:text-4xl text-foreground outline-none w-full"
-                  />
+                  <div className="relative">
+                    <input
+                      value={aboutState.aboutTitle}
+                      onChange={(e) => updateField("aboutTitle", e.target.value)}
+                      maxLength={50}
+                      className={`bg-transparent border-b text-3xl md:text-4xl text-foreground outline-none w-full ${aboutState.aboutTitle.length >= 50
+                          ? "border-red-500"
+                          : "border-primary"
+                        }`}
+                    />
+                    <div className="text-right text-xs text-gray-500 mt-1">
+                      {aboutState.aboutTitle.length}/50
+                      {aboutState.aboutTitle.length >= 50 && (
+                        <span className="ml-2 text-red-500 font-bold">
+                          Limit reached!
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 ) : (
-                  <h2 className="text-3xl md:text-4xl text-foreground">
+                  <h2 className="text-3xl md:text-4xl text-foreground text-justify">
                     {aboutState.aboutTitle}
                   </h2>
                 )}
@@ -739,11 +753,25 @@ export default function About({
                   <div key={index} className="flex items-start space-x-3">
                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                     {isEditing ? (
-                      <input
-                        value={feature}
-                        onChange={(e) => updateFeature(index, e.target.value)}
-                        className="bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full"
-                      />
+                      <div className="w-full">
+                        <input
+                          value={feature}
+                          onChange={(e) => updateFeature(index, e.target.value)}
+                          maxLength={50}
+                          className={`bg-transparent border-b text-muted-foreground outline-none w-full ${feature.length >= 50
+                            ? "border-red-500"
+                            : "border-muted-foreground"
+                            }`}
+                        />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                          {feature.length}/50
+                          {feature.length >= 50 && (
+                            <span className="ml-2 text-red-500 font-bold">
+                              Limit reached!
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <span className="text-muted-foreground">{feature}</span>
                     )}

@@ -1,6 +1,5 @@
-
-
-import React, { useState, useEffect, useCallback, useRef } from "react";
+// components/Gallery.tsx
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   X,
@@ -25,8 +24,8 @@ const Gallery = ({
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
+  const { theme } = useTheme();
 
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
@@ -36,41 +35,31 @@ const Gallery = ({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+
+  // Dynamic zoom calculation states
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
-  const [isDragging, setIsDragging] = useState(false);
-  const PAN_STEP = 10;
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [prevZoom, setPrevZoom] = useState(1);
 
-  // Track initial state to detect changes
-  const initialGalleryState = useRef(null);
-
-  useEffect(() => {
-    if (mediaSize && cropAreaSize) {
-      setMinZoomDynamic(0.1);
-    }
-  }, [mediaSize, cropAreaSize]);
-
-  // Arrow keys to pan image inside crop area when cropper is open
-  const nudge = useCallback((dx: number, dy: number) => {
-    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
-  }, []);
-
-  useEffect(() => {
-    if (!showCropper) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
-      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
-      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
-      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [showCropper, nudge]);
+  // Text field limits
+  const TEXT_LIMITS = {
+    headingTitle: 60,
+    headingDescription: 120,
+    imageTitle: 80,
+    imageCategory: 30,
+    imageDescription: 100,
+  };
 
   // Consolidated state with new structure
-  const [contentState, setContentState] = useState(() => {
-    const initialState = galleryData || {
+  const [contentState, setContentState] = useState(
+    galleryData || {
       heading: {
         title: "Our Work Gallery",
         description:
@@ -138,23 +127,33 @@ const Gallery = ({
           isPopular: false,
         },
       ],
-    };
-    initialGalleryState.current = initialState;
-    return initialState;
-  });
+    }
+  );
 
-  // Add this useEffect to notify parent of state changes immediately
+  // Add this useEffect to notify parent of state changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(contentState);
     }
-
-    // Check if there are any changes from initial state
-    const hasChanges = JSON.stringify(contentState) !== JSON.stringify(initialGalleryState.current);
-    setHasUnsavedChanges(hasChanges);
   }, [contentState, onStateChange]);
 
-  // Update function for gallery images - now updates immediately
+  // Compute dynamic min zoom (free pan/zoom)
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      const coverW = cropAreaSize.width / mediaSize.width;
+      const coverH = cropAreaSize.height / mediaSize.height;
+      const computedMin = Math.max(coverW, coverH, 0.1);
+      setMinZoomDynamic(computedMin);
+      setZoom((z) => (z < computedMin ? computedMin : z));
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Track previous zoom only (no auto recentre to allow free panning)
+  useEffect(() => {
+    setPrevZoom(zoom);
+  }, [zoom]);
+
+  // Update function for gallery images
   const updateImageField = (index, field, value) => {
     setContentState((prev) => ({
       ...prev,
@@ -164,7 +163,7 @@ const Gallery = ({
     }));
   };
 
-  // Add a new image - with maximum 6 images limit - now updates immediately
+  // Add a new image - with maximum 6 images limit
   const addImage = () => {
     if (contentState.images.length >= 6) {
       toast.error("Maximum 6 images allowed in gallery");
@@ -187,7 +186,7 @@ const Gallery = ({
     }));
   };
 
-  // Remove an image - now updates immediately
+  // Remove an image
   const removeImage = (index) => {
     setContentState((prev) => ({
       ...prev,
@@ -195,7 +194,7 @@ const Gallery = ({
     }));
   };
 
-  // Update function for header - now updates immediately
+  // Update function for header
   const updateHeaderField = (field, value) => {
     setContentState((prev) => ({
       ...prev,
@@ -204,63 +203,6 @@ const Gallery = ({
         [field]: value,
       },
     }));
-  };
-
-  // NEW: Function to upload image to AWS
-  const uploadImageToAWS = async (file, imageField) => {
-    if (!userId || !publishedId || !templateSelection) {
-      console.error("Missing required props:", {
-        userId,
-        publishedId,
-        templateSelection,
-      });
-      toast.error("Missing user information. Please refresh and try again.");
-      return null;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("sectionName", "gallery");
-    formData.append("imageField", `${imageField}_${Date.now()}`);
-    formData.append("templateSelection", templateSelection);
-
-    console.log(`Uploading ${imageField} to S3:`, file);
-
-    try {
-      const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
-        return uploadData.imageUrl;
-      } else {
-        const errorData = await uploadResponse.json();
-        console.error(`${imageField} upload failed:`, errorData);
-        toast.error(
-          `${imageField} upload failed: ${errorData.message || "Unknown error"}`
-        );
-        return null;
-      }
-    } catch (error) {
-      console.error(`Error uploading ${imageField}:`, error);
-      toast.error(`Error uploading image. Please try again.`);
-      return null;
-    }
-  };
-
-  // Handle cancel editing
-  const handleCancel = () => {
-    // Reset to initial state
-    setContentState(initialGalleryState.current);
-    setPendingImages({});
-    setHasUnsavedChanges(false);
-    setIsEditing(false);
   };
 
   // Image selection handler - now opens cropper
@@ -284,6 +226,7 @@ const Gallery = ({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
+      setAspectRatio(4 / 3);
       setZoom(1);
       setCrop({ x: 0, y: 0 });
     };
@@ -308,18 +251,14 @@ const Gallery = ({
       image.src = url;
     });
 
-  // Function to get cropped image - FIXED FOR 4:3 RATIO
+  // Function to get cropped image
   const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Fixed output size for 4:3 ratio
-    const outputWidth = 600;
-    const outputHeight = 450;
-
-    canvas.width = outputWidth;
-    canvas.height = outputHeight;
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
 
     ctx.drawImage(
       image,
@@ -329,71 +268,53 @@ const Gallery = ({
       pixelCrop.height,
       0,
       0,
-      outputWidth,
-      outputHeight
+      pixelCrop.width,
+      pixelCrop.height
     );
 
     return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          const pngName = originalFile
-            ? `cropped-gallery-${croppingIndex}-${originalFile.name.replace(/\.[^.]+$/, "")}.png`
-            : `cropped-gallery-${croppingIndex}-${Date.now()}.png`;
+          const fileName = originalFile
+            ? `cropped-gallery-${croppingIndex}-${originalFile.name}`
+            : `cropped-gallery-${croppingIndex}-${Date.now()}.jpg`;
 
-          const file = new File([blob as BlobPart], pngName, {
-            type: "image/png",
+          const file = new File([blob], fileName, {
+            type: "image/jpeg",
             lastModified: Date.now(),
           });
 
-          const previewUrl = URL.createObjectURL(blob as Blob);
+          const previewUrl = URL.createObjectURL(blob);
 
           resolve({
             file,
             previewUrl,
           });
         },
-        "image/png"
+        "image/jpeg",
+        0.95
       );
     });
   };
 
-  // Apply crop and UPLOAD IMMEDIATELY to AWS - UPDATED
+  // Apply crop and set pending file
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
-
-      setIsUploading(true);
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
 
-      // Show preview immediately with blob URL (temporary)
+      // Update preview immediately with blob URL (temporary)
       updateImageField(croppingIndex, "url", previewUrl);
 
-      // UPLOAD TO AWS IMMEDIATELY
-      const imageField = `images[${croppingIndex}].url`;
-      const awsImageUrl = await uploadImageToAWS(file, imageField);
+      // Set the actual file for upload on save
+      setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
+      console.log("Gallery image cropped, file ready for upload:", file);
 
-      if (awsImageUrl) {
-        // Update with actual S3 URL
-        updateImageField(croppingIndex, "url", awsImageUrl);
-
-        // Remove from pending images since it's uploaded
-        setPendingImages((prev) => {
-          const newPending = { ...prev };
-          delete newPending[croppingIndex];
-          return newPending;
-        });
-
-        toast.success("Image cropped and uploaded to AWS successfully!");
-      } else {
-        // If upload fails, keep the preview URL and set as pending
-        setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
-        toast.warning("Image cropped but upload failed. It will be saved locally.");
-      }
-
+      toast.success("Image cropped successfully! Click Save to upload to S3.");
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
@@ -401,8 +322,6 @@ const Gallery = ({
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -422,36 +341,63 @@ const Gallery = ({
     setCrop({ x: 0, y: 0 });
   };
 
-  // Save button handler - only handles text changes and failed uploads now
+  // Save button handler - uploads images and stores S3 URLs
   const handleSave = async () => {
     try {
       setIsUploading(true);
 
-      // Upload any pending images that failed during automatic upload
+      // Upload all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
 
-        const imageField = `images[${index}].url`;
-        const awsImageUrl = await uploadImageToAWS(file, imageField);
+        if (!userId || !publishedId || !templateSelection) {
+          console.error("Missing required props:", {
+            userId,
+            publishedId,
+            templateSelection,
+          });
+          toast.error(
+            "Missing user information. Please refresh and try again."
+          );
+          return;
+        }
 
-        if (awsImageUrl) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("sectionName", "gallery");
+        formData.append("imageField", `images[${index}].url` + Date.now());
+        formData.append("templateSelection", templateSelection);
+
+        console.log("Uploading gallery image to S3:", file);
+
+        const uploadResponse = await fetch(
+          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
           // Replace local preview with S3 URL
-          updateImageField(index, "url", awsImageUrl);
+          updateImageField(index, "url", uploadData.imageUrl);
+          console.log("Image uploaded to S3:", uploadData.imageUrl);
         } else {
-          toast.error(`Failed to upload image for gallery item ${index}`);
+          const errorData = await uploadResponse.json();
+          console.error("Image upload failed:", errorData);
+          toast.error(
+            `Image upload failed: ${errorData.message || "Unknown error"}`
+          );
           return;
         }
       }
-
-      // Update initial state reference to current state
-      initialGalleryState.current = contentState;
-      setHasUnsavedChanges(false);
 
       // Clear pending images
       setPendingImages({});
       // Exit edit mode
       setIsEditing(false);
-      toast.success("Gallery section saved!");
+      toast.success("Gallery section saved with S3 URLs!");
     } catch (error) {
       console.error("Error saving gallery section:", error);
       toast.error("Error saving changes. Please try again.");
@@ -486,11 +432,9 @@ const Gallery = ({
     }
   };
 
-  const { theme } = useTheme();
-
   return (
     <>
-      {/* Image Cropper Modal - FIXED ASPECT RATIO */}
+      {/* Image Cropper Modal - Standardized like Clients */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -516,25 +460,23 @@ const Gallery = ({
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className="flex-1 relative bg-gray-900 min-h-0">
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                aspect={4 / 3} // ✅ FIXED ASPECT RATIO
+                aspect={aspectRatio}
                 minZoom={minZoomDynamic}
                 maxZoom={5}
                 restrictPosition={false}
                 zoomWithScroll={true}
                 zoomSpeed={0.2}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                onMediaLoaded={(ms) => setMediaSize(ms)}
-                onCropAreaChange={(area, areaPixels) => setCropAreaSize(area)}
-                onInteractionStart={() => setIsDragging(true)}
-                onInteractionEnd={() => setIsDragging(false)}
-                showGrid={true} // ✅ Better alignment
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -552,6 +494,24 @@ const Gallery = ({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Button - Only 4:3 */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
+                  >
+                    4:3 (Standard)
+                  </button>
+                </div>
+              </div>
+
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
@@ -587,10 +547,9 @@ const Gallery = ({
                 </button>
                 <button
                   onClick={applyCrop}
-                  disabled={isUploading}
-                  className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm font-medium`}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
                 >
-                  {isUploading ? "Uploading..." : "Apply Crop"}
+                  Apply Crop
                 </button>
               </div>
             </div>
@@ -601,40 +560,28 @@ const Gallery = ({
       {/* Main Gallery Section */}
       <section
         id="gallery"
-        className={`theme-transition ${theme === "dark"
+        className={` theme-transition ${theme === "dark"
           ? "bg-[#1f1f1f] text-gray-100"
           : "bg-gray-50 text-gray-900"
           }`}
       >
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
-          <div className="flex justify-end mb-6 gap-2">
+          <div className="flex justify-end mb-6">
             {isEditing ? (
-              <>
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ y: -1, scaleX: 1.05 }}
-                  onClick={handleCancel}
-                  className="flex items-center gap-2 px-4 py-2 text-white bg-gray-500 rounded shadow-xl hover:bg-gray-600 hover:font-semibold"
-                >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ y: -1, scaleX: 1.1 }}
-                  onClick={handleSave}
-                  disabled={isUploading}
-                  className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : hasUnsavedChanges || Object.keys(pendingImages).length > 0
-                      ? "bg-green-600 hover:shadow-2xl"
-                      : "bg-gray-400 cursor-not-allowed"
-                    } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
-                >
-                  <Save size={16} />
-                  {isUploading ? "Uploading..." : "Save"}
-                </motion.button>
-              </>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ y: -1, scaleX: 1.1 }}
+                onClick={handleSave}
+                disabled={isUploading}
+                className={`${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
+              >
+                <Save size={16} />
+                {isUploading ? "Uploading..." : "Save"}
+              </motion.button>
             ) : (
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -656,41 +603,54 @@ const Gallery = ({
                     type="text"
                     value={contentState.heading.title}
                     onChange={(e) => updateHeaderField("title", e.target.value)}
-                    maxLength={80}
-                    className={`mb-4 text-3xl font-bold text-center bg-transparent border-b w-full ${contentState.heading.title.length >= 80
+                    maxLength={TEXT_LIMITS.headingTitle}
+                    className={`mb-4 text-3xl font-bold text-center bg-transparent border-b w-full max-w-2xl mx-auto ${contentState.heading.title.length >=
+                      TEXT_LIMITS.headingTitle
                       ? "border-red-500"
                       : ""
                       }`}
                   />
-                  <div className="text-right text-xs text-gray-500 mt-1">
-                    {contentState.heading.title.length}/80
-                    {contentState.heading.title.length >= 80 && (
-                      <span className="ml-2 text-red-500 font-bold">
-                        Character limit reached!
-                      </span>
-                    )}
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <div>
+                      {contentState.heading.title.length >=
+                        TEXT_LIMITS.headingTitle && (
+                          <span className="text-red-500 font-bold">
+                            ⚠️ Character limit reached!
+                          </span>
+                        )}
+                    </div>
+                    <div>
+                      {contentState.heading.title.length}/
+                      {TEXT_LIMITS.headingTitle}
+                    </div>
                   </div>
                 </div>
-
                 <div className="relative">
                   <textarea
                     value={contentState.heading.description}
                     onChange={(e) =>
                       updateHeaderField("description", e.target.value)
                     }
-                    maxLength={250}
-                    className={`w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b ${contentState.heading.description.length >= 250
+                    maxLength={TEXT_LIMITS.headingDescription}
+                    className={`w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b ${contentState.heading.description.length >=
+                      TEXT_LIMITS.headingDescription
                       ? "border-red-500"
                       : ""
                       }`}
                   />
-                  <div className="text-right text-xs text-gray-500 mt-1">
-                    {contentState.heading.description.length}/250
-                    {contentState.heading.description.length >= 250 && (
-                      <span className="ml-2 text-red-500 font-bold">
-                        Character limit reached!
-                      </span>
-                    )}
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <div>
+                      {contentState.heading.description.length >=
+                        TEXT_LIMITS.headingDescription && (
+                          <span className="text-red-500 font-bold">
+                            ⚠️ Character limit reached!
+                          </span>
+                        )}
+                    </div>
+                    <div>
+                      {contentState.heading.description.length}/
+                      {TEXT_LIMITS.headingDescription}
+                    </div>
                   </div>
                 </div>
               </>
@@ -699,7 +659,7 @@ const Gallery = ({
                 <h2 className="mb-4 text-3xl font-bold">
                   {contentState.heading.title}
                 </h2>
-                <p className="max-w-3xl mx-auto text-lg">
+                <p className="max-w-3xl mx-auto text-lg text-justify">
                   {contentState.heading.description}
                 </p>
               </>
@@ -708,6 +668,7 @@ const Gallery = ({
 
           {/* Gallery Grid */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
             {contentState.images.map((image, index) => (
               <motion.div
                 key={image.id}
@@ -716,7 +677,7 @@ const Gallery = ({
                 whileHover={{ y: isEditing ? 0 : -5 }}
                 onClick={() => openLightbox(index)}
               >
-                <div className="relative overflow-hidden aspect-[4/3]"> {/* ✅ Fixed aspect ratio */}
+                <div className="relative overflow-hidden">
                   {/* Recommended Size Above Image */}
                   {isEditing && (
                     <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
@@ -728,10 +689,10 @@ const Gallery = ({
                     <img
                       src={image.url}
                       alt={image.title}
-                      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110" // ✅ Full coverage
+                      className="object-cover w-full h-64 transition-transform duration-300 group-hover:scale-110"
                     />
                   ) : (
-                    <div className="flex items-center justify-center w-full h-full bg-gray-200">
+                    <div className="flex items-center justify-center w-full h-64 bg-gray-200">
                       <span className="text-gray-500">No image</span>
                     </div>
                   )}
@@ -742,69 +703,85 @@ const Gallery = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute bottom-2 left-2 right-2 bg-black/80 p-2 rounded z-50"
+                      className="absolute bottom-2 left-2 right-2 bg-black/80 p-2 rounded z-50" // CHANGED: bg-white/80 to bg-black/80
                     >
                       <input
                         type="file"
                         accept="image/*"
-                        className="w-full text-xs cursor-pointer font-bold text-white"
+                        className="w-full text-xs cursor-pointer font-bold text-white" // CHANGED: Added text-white
                         onChange={(e) => handleGalleryImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="text-xs text-green-400 mt-1 text-center">
+                        <p className="text-xs text-green-400 mt-1 text-center"> {/* CHANGED: text-green-600 to text-green-400 */}
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
                     </motion.div>
                   )}
 
-                  {isEditing && (
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeImage(index);
-                      }}
-                      className="absolute p-1 text-white bg-red-500 rounded-full top-12 right-2"
-                    >
-                      <Trash2 size={16} />
-                    </motion.button>
-                  )}
+                  {/* REMOVED the hover overlay that showed title and category */}
                 </div>
 
-                {/* Description section below the image */}
+                {/* MOVED DESCRIPTION TO BE UNDER THE IMAGE */}
                 <div className="p-4">
                   {isEditing ? (
                     <>
-                      <input
-                        value={image.title}
-                        onChange={(e) =>
-                          updateImageField(index, "title", e.target.value)
-                        }
-                        className={`w-full mb-2 font-semibold bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900"
-                          }`}
-                        placeholder="Image Title"
-                      />
-                      <input
-                        value={image.category}
-                        onChange={(e) =>
-                          updateImageField(index, "category", e.target.value)
-                        }
-                        className={`w-full text-sm bg-transparent border-b ${theme === "dark" ? "text-gray-300" : "text-gray-600"
-                          }`}
-                        placeholder="Category"
-                      />
-                      <textarea
-                        value={image.description}
-                        onChange={(e) =>
-                          updateImageField(index, "description", e.target.value)
-                        }
-                        className={`w-full mt-2 text-xs bg-transparent border-b ${theme === "dark" ? "text-gray-400" : "text-gray-500"
-                          }`}
-                        placeholder="Image description"
-                        rows="2"
-                      />
+                      <div className="relative mb-2">
+                        <input
+                          value={image.title}
+                          onChange={(e) =>
+                            updateImageField(index, "title", e.target.value)
+                          }
+                          maxLength={TEXT_LIMITS.imageTitle}
+                          className={`w-full font-semibold bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900" // ADDED: theme-based text color
+                            } ${image.title.length >= TEXT_LIMITS.imageTitle
+                              ? "border-red-500"
+                              : ""
+                            }`}
+                        />
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
+                          }`}>
+                          {image.title.length}/{TEXT_LIMITS.imageTitle}
+                        </div>
+                      </div>
+                      <div className="relative mb-2">
+                        <input
+                          value={image.category}
+                          onChange={(e) =>
+                            updateImageField(index, "category", e.target.value)
+                          }
+                          maxLength={TEXT_LIMITS.imageCategory}
+                          className={`w-full text-sm bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900" // ADDED: theme-based text color
+                            } ${image.category.length >= TEXT_LIMITS.imageCategory
+                              ? "border-red-500"
+                              : ""
+                            }`}
+                        />
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
+                          }`}>
+                          {image.category.length}/{TEXT_LIMITS.imageCategory}
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <textarea
+                          value={image.description}
+                          onChange={(e) =>
+                            updateImageField(index, "description", e.target.value)
+                          }
+                          maxLength={TEXT_LIMITS.imageDescription}
+                          className={`w-full text-sm bg-transparent border-b resize-none ${theme === "dark" ? "text-gray-300" : "text-gray-600" // ADDED: theme-based text color
+                            } ${image.description.length >= TEXT_LIMITS.imageDescription
+                              ? "border-red-500"
+                              : ""
+                            }`}
+                          placeholder="Image description..."
+                          rows={2}
+                        />
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
+                          }`}>
+                          {image.description.length}/{TEXT_LIMITS.imageDescription}
+                        </div>
+                      </div>
                     </>
                   ) : (
                     <>
@@ -812,17 +789,31 @@ const Gallery = ({
                         }`}>
                         {image.title}
                       </h3>
-                      <p className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                      <p className={`text-sm text-justify ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                         }`}>
                         {image.category}
                       </p>
-                      <p className={`mt-2 text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"
+                      <p className={`text-sm mt-1 text-justify ${theme === "dark" ? "text-gray-300" : "text-gray-500"
                         }`}>
                         {image.description}
                       </p>
                     </>
                   )}
                 </div>
+
+                {isEditing && (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeImage(index);
+                    }}
+                    className="absolute p-1 text-white bg-red-500 rounded-full top-12 right-2"
+                  >
+                    <Trash2 size={16} />
+                  </motion.button>
+                )}
               </motion.div>
             ))}
 
@@ -832,7 +823,7 @@ const Gallery = ({
                 className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
                   ? "bg-gray-800 border-gray-700"
                   : "bg-white border-gray-300"
-                  } border-2 cursor-pointer aspect-[4/3]`} // ✅ Same aspect ratio
+                  } border-2 cursor-pointer`}
                 whileHover={{ scale: 1.02 }}
                 onClick={addImage}
               >
@@ -847,7 +838,7 @@ const Gallery = ({
           {/* Show message when maximum images reached */}
           {isEditing && contentState.images.length >= 6 && (
             <div className="p-4 mt-6 text-center border border-yellow-200 rounded-lg bg-yellow-50">
-              <p className="text-yellow-700">
+              <p className="text-yellow-700 text-justify">
                 Maximum 6 images reached. Remove an image to add a new one.
               </p>
             </div>
@@ -882,17 +873,14 @@ const Gallery = ({
               <img
                 src={contentState.images[selectedImage].url}
                 alt={contentState.images[selectedImage].title}
-                className="object-contain w-full h-auto max-h-full"
+                className="object-contain w-full h-auto max-h-full scale-110"
               />
               <div className="mt-4 text-center text-white">
                 <h3 className="text-xl font-semibold">
                   {contentState.images[selectedImage].title}
                 </h3>
-                <p className="text-gray-300">
+                <p className="text-gray-300 text-justify">
                   {contentState.images[selectedImage].category}
-                </p>
-                <p className="mt-2 text-gray-400">
-                  {contentState.images[selectedImage].description}
                 </p>
               </div>
             </div>

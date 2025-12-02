@@ -55,7 +55,7 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
               {serviceContent.heading.split(" ").slice(1).join(" ")}
             </span>
           </h2>
-          <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+          <p className="max-w-3xl mx-auto text-xl text-justify text-gray-600 dark:text-gray-400">
             {serviceContent.description}
           </p>
         </motion.div>

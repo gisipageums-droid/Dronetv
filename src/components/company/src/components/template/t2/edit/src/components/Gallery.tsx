@@ -52,7 +52,7 @@ const Gallery = ({
   const TEXT_LIMITS = {
     headingTitle: 60,
     headingDescription: 120,
-    imageTitle: 40,
+    imageTitle: 80,
     imageCategory: 30,
     imageDescription: 100,
   };
