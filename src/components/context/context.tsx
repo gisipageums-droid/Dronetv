@@ -342,19 +342,19 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         "Your site is successfully published and now it is under review"
       );
 
-      if (isLogin&&isAdminLogin === false) {
-        setNavModel(true);
-        // navigatemodel();
-      } else {
+      if (isLogin=== false) {
         if(isAdminLogin){
           navigate("/admin/company/dashboard");
-           setNavModel(false);
-        }else{
+          setNavModel(false);
+        }
+        else{
+          setNavModel(true);
+        }
+      }else{
 
           navigate("/user-companies");
           setNavModel(false);
         }
-      }
 
       setAIGenData({});
     } catch (error) {
@@ -393,11 +393,19 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your site is successfully published and now it is under review"
       );
-      if(isAdminLogin){
-        navigate("/admin/company/dashboard");
+      if (isLogin=== false) {
+        if(isAdminLogin){
+          navigate("/admin/company/dashboard");
+          setNavModel(false);
+        }
+        else{
+          setNavModel(true);
+        }
       }else{
-        navigate("/user-companies");
-      }
+
+          navigate("/user-companies");
+          setNavModel(false);
+        }
       setFinaleDataReview({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -455,11 +463,20 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your template is successfully published and now it is under review"
       );
-      if(isAdminLogin){
-        navigate("/admin/professional/dashboard");
+
+      if (isLogin=== false) {
+        if(isAdminLogin){
+          navigate("/admin/professional/dashboard");
+          setNavModel(false);
+        }
+        else{
+          setNavModel(true);
+        }
       }else{
-        navigate("/user-professionals");
-      }
+
+          navigate("/user-professionals");
+          setNavModel(false);
+        }
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -499,11 +516,19 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       toast.success(
         "Your template is successfully published and now it is under review"
       );
-      if(isAdminLogin){
-        navigate("/admin/event/dashboard");
+      if (isLogin=== false) {
+        if(isAdminLogin){
+          navigate("/admin/event/dashboard");
+          setNavModel(false);
+        }
+        else{
+          setNavModel(true);
+        }
       }else{
-        navigate("/user-events");
-      }
+
+          navigate("/user-events");
+          setNavModel(false);
+        }
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
