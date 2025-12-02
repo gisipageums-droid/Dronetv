@@ -574,7 +574,7 @@ export default function About({ aboutData }) {
               whileInView={{ opacity: [0, 1], x: [50, 0] }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <h2 className="text-3xl md:text-4xl text-foreground">
+              <h2 className="text-3xl md:text-4xl text-foreground text-justify">
                 {aboutState.aboutTitle}
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed text-justify">
@@ -660,7 +660,7 @@ export default function About({ aboutData }) {
           <motion.h2
             whileInView={{ opacity: [0, 1], x: [-20, 0] }}
             transition={{ duration: 1, ease: "backInOut" }}
-            className="text-3xl md:text-4xl text-foreground mb-6 text-center"
+            className="text-3xl md:text-4xl  mb-6 text-justify"
           >
             {aboutState.visionTitle}
           </motion.h2>

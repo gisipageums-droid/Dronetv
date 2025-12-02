@@ -53,7 +53,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ content }) => {
               {testimonialContent.heading.split(" ").slice(-1)}
             </span>
           </h2>
-          <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+          <p className="max-w-3xl mx-auto text-xl text-justify text-gray-600 dark:text-gray-400">
             {testimonialContent.description}
           </p>
         </motion.div>

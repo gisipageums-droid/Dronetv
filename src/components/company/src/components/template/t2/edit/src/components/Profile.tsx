@@ -429,8 +429,8 @@ const Profile = ({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     4:3 (Standard)
@@ -488,8 +488,8 @@ const Profile = ({
       <section
         id="our-team"
         className={`py-20 theme-transition ${theme === "dark"
-            ? "bg-black text-gray-100"
-            : "bg-gray-50 text-gray-900"
+          ? "bg-black text-gray-100"
+          : "bg-gray-50 text-gray-900"
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -502,8 +502,8 @@ const Profile = ({
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
               >
                 <Save size={16} />
@@ -536,8 +536,8 @@ const Profile = ({
                   }
                   maxLength={TEXT_LIMITS.heading}
                   className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full max-w-2xl mx-auto ${contentState.heading.length >= TEXT_LIMITS.heading
-                      ? "border-red-500"
-                      : ""
+                    ? "border-red-500"
+                    : ""
                     }`}
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -554,7 +554,7 @@ const Profile = ({
                 </div>
               </div>
             ) : (
-              <h2 className="text-3xl font-bold mb-4">
+              <h2 className="text-3xl font-bold mb-4 text-justify">
                 {contentState.heading}
               </h2>
             )}
@@ -571,8 +571,8 @@ const Profile = ({
                   }
                   maxLength={TEXT_LIMITS.subheading}
                   className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${contentState.subheading.length >= TEXT_LIMITS.subheading
-                      ? "border-red-500"
-                      : ""
+                    ? "border-red-500"
+                    : ""
                     }`}
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -590,7 +590,7 @@ const Profile = ({
                 </div>
               </div>
             ) : (
-              <p className="text-lg max-w-3xl mx-auto">
+              <p className="text-lg max-w-3xl mx-auto text-justify">
                 {contentState.subheading}
               </p>
             )}
@@ -639,7 +639,7 @@ const Profile = ({
                 </div>
                 <div className="p-6 text-center">
                   {isEditing ? (
-                    <div className="relative mb-1">
+                    <div className="relative mb-1 ">
                       <input
                         value={member.name}
                         onChange={(e) =>
@@ -647,8 +647,8 @@ const Profile = ({
                         }
                         maxLength={TEXT_LIMITS.memberName}
                         className={`text-xl font-semibold border-b bg-transparent text-center w-full ${member.name.length >= TEXT_LIMITS.memberName
-                            ? "border-red-500"
-                            : ""
+                          ? "border-red-500"
+                          : ""
                           }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
@@ -656,7 +656,7 @@ const Profile = ({
                       </div>
                     </div>
                   ) : (
-                    <h3 className="text-xl font-semibold mb-1">
+                    <h3 className="text-xl font-semibold mb-1 text-justify">
                       {member.name}
                     </h3>
                   )}
@@ -670,8 +670,8 @@ const Profile = ({
                         }
                         maxLength={TEXT_LIMITS.memberRole}
                         className={`font-medium border-b bg-transparent text-center w-full ${member.role.length >= TEXT_LIMITS.memberRole
-                            ? "border-red-500"
-                            : ""
+                          ? "border-red-500"
+                          : ""
                           }`}
                         style={{ color: "#facc15" }}
                       />
@@ -708,7 +708,7 @@ const Profile = ({
                     </div>
                   ) : (
                     <p
-                      className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                      className={`text-sm text-justify ${theme === "dark" ? "text-gray-300" : "text-gray-600"
                         }`}
                     >
                       {member.bio}
@@ -823,8 +823,8 @@ const Profile = ({
             {isEditing && (
               <motion.div
                 className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
-                    ? "bg-gray-900 border-gray-700"
-                    : "bg-white border-gray-300"
+                  ? "bg-gray-900 border-gray-700"
+                  : "bg-white border-gray-300"
                   } border-2`}
                 whileHover={{ scale: 1.02 }}
               >

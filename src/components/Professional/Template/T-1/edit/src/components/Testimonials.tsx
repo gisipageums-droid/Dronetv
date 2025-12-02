@@ -1269,12 +1269,12 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     if (!hasUnsavedChanges || !isEditMode) return;
 
     setIsAutoSaving(true);
-    
+
     try {
       onSave?.({ ...testimonialContent, testimonials });
       setLastSavedTime(new Date());
       setHasUnsavedChanges(false);
-      
+
       console.log("Testimonials section auto-saved at", new Date().toLocaleTimeString());
     } catch (error) {
       console.error("Testimonials auto-save failed:", error);
@@ -1289,7 +1289,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     if (!isEditMode) return;
 
     setHasUnsavedChanges(true);
-    
+
     // Clear existing timeout
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
@@ -1500,13 +1500,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
         const s3ImageUrl = uploadData.s3Url;
-        
+
         // Update with S3 URL
         setFormData((prev) => ({
           ...prev,
           image: s3ImageUrl,
         }));
-        
+
         // If editing existing testimonial, trigger save with the new S3 URL
         if (editingId !== null) {
           const updatedTestimonials = testimonials.map((t) =>
@@ -1518,7 +1518,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           setLastSavedTime(new Date());
           setHasUnsavedChanges(false);
         }
-        
+
         toast.success("Image uploaded and saved successfully!");
       } else {
         const errorData = await uploadResponse.json();
@@ -1646,7 +1646,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     const updated = testimonials.filter((t) => t.id !== id);
     setTestimonials(updated);
     setTestimonialContent((p) => ({ ...p, testimonials: updated }));
-    
+
     // Save immediately for deletions
     onSave?.({ ...testimonialContent, testimonials: updated });
     setLastSavedTime(new Date());
@@ -1828,11 +1828,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
           <div className="flex items-center gap-2">
             <label
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${
-                isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gray-100 dark:bg-gray-800"
-              }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${isUploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gray-100 dark:bg-gray-800"
+                }`}
             >
               <Upload className="w-4 h-4" />
               <span className="text-sm">
@@ -1901,11 +1900,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           <button
             onClick={editingId !== null ? handleSaveEdit : handleAddNew}
             disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
-              isUploading
-                ? "bg-green-400 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600"
-            }`}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${isUploading
+              ? "bg-green-400 cursor-not-allowed"
+              : "bg-green-500 hover:bg-green-600"
+              }`}
           >
             <Save className="w-4 h-4" />
             <span>{isUploading ? "Saving..." : "Save"}</span>
@@ -1913,11 +1911,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           <button
             onClick={handleCancelForm}
             disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
-              isUploading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gray-500 hover:bg-gray-600"
-            }`}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${isUploading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gray-500 hover:bg-gray-600"
+              }`}
           >
             <X className="w-4 h-4" />
             <span>Cancel</span>
@@ -2036,7 +2033,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                   {testimonialContent.heading.split(" ").slice(-1)}
                 </span>
               </h2>
-              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+              <p className="max-w-3xl mx-auto text-xl text-justify text-gray-600 dark:text-gray-400">
                 {testimonialContent.description}
               </p>
             </>

@@ -1034,12 +1034,12 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     if (!hasUnsavedChanges || !isEditMode) return;
 
     setIsAutoSaving(true);
-    
+
     try {
       onSave(serviceContent);
       setLastSavedTime(new Date());
       setHasUnsavedChanges(false);
-      
+
       console.log("Services section auto-saved at", new Date().toLocaleTimeString());
     } catch (error) {
       console.error("Services auto-save failed:", error);
@@ -1054,7 +1054,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     if (!isEditMode) return;
 
     setHasUnsavedChanges(true);
-    
+
     // Clear existing timeout
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
@@ -1118,10 +1118,10 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     const updatedServices = serviceContent.services.map((s) =>
       s.id === editingId
         ? {
-            ...s,
-            ...payload,
-            features: payload.features.filter((f) => f.trim() !== ""),
-          }
+          ...s,
+          ...payload,
+          features: payload.features.filter((f) => f.trim() !== ""),
+        }
         : s
     );
 
@@ -1307,7 +1307,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                   {serviceContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
-              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+              <p className="max-w-3xl mx-auto text-xl text-justify text-gray-600 dark:text-gray-400">
                 {serviceContent.description}
               </p>
             </>
@@ -1440,11 +1440,9 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                     ) : (
                       <>
                         <div
-                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${
-                            service.color
-                          } mb-6 ${
-                            isEditMode ? "" : "group-hover:scale-110"
-                          } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
+                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${service.color
+                            } mb-6 ${isEditMode ? "" : "group-hover:scale-110"
+                            } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
                         >
                           <span className="uppercase text-white">
                             {service.title[0]}
@@ -1492,11 +1490,9 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                           href="#contact"
                           whileHover={isEditMode ? undefined : { scale: 1.05 }}
                           whileTap={isEditMode ? undefined : { scale: 0.95 }}
-                          className={`w-full bg-orange-400 ${
-                            service.color
-                          } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                            isEditMode ? "" : "group-hover:shadow-lg"
-                          }`}
+                          className={`w-full bg-orange-400 ${service.color
+                            } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${isEditMode ? "" : "group-hover:shadow-lg"
+                            }`}
                         >
                           <span>Get Started</span>
                           <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

@@ -1181,10 +1181,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  
+
   // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Track if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
 
@@ -1304,10 +1304,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
     try {
       setIsAutoSaving(true);
-      
+
       // Call the save function
       onSave?.({ ...testimonialContent, testimonials });
-      
+
       // Update state
       setHasUnsavedChanges(false);
       setLastSavedTime(new Date());
@@ -1315,13 +1315,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       // Update original content after saving
       setOriginalContent(testimonialContent);
       setOriginalTestimonials(testimonials);
-      
+
       // Show subtle notification
       toast.success("Testimonials changes auto-saved", {
         duration: 1000,
         position: "bottom-right",
       });
-      
+
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -1363,7 +1363,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       formData.append("fieldName", "testimonialImage");
 
       const xhr = new XMLHttpRequest();
-      
+
       // Track upload progress
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
@@ -1554,12 +1554,12 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       // Auto-upload cropped image to AWS S3 immediately
       try {
         const s3Url = await uploadImageToS3(croppedFile);
-        
+
         setFormData((prev) => ({
           ...prev,
           image: s3Url,
         }));
-        
+
         toast.success("Image uploaded successfully!");
       } catch (uploadError) {
         console.error("Image upload failed:", uploadError);
@@ -1712,7 +1712,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     // Update original content after saving
     setOriginalContent(testimonialContent);
     setOriginalTestimonials(testimonials);
-    
+
     toast.success("Testimonials section saved.");
   };
 
@@ -1736,10 +1736,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   // Format last saved time for display
   const formatLastSavedTime = () => {
     if (!lastSavedTime) return "Never";
-    
+
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) return "Just now";
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
@@ -1855,11 +1855,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
           <div className="flex items-center gap-2">
             <label
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${
-                isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gray-100 dark:bg-gray-800"
-              }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${isUploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gray-100 dark:bg-gray-800"
+                }`}
             >
               <Upload className="w-4 h-4" />
               <span className="text-sm">
@@ -1881,7 +1880,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
             <div>Uploading... {Math.round(uploadProgress)}%</div>
             <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-green-500 transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               ></div>
@@ -1941,11 +1940,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           <button
             onClick={editingId !== null ? handleSaveEdit : handleAddNew}
             disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
-              isUploading
-                ? "bg-green-400 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600"
-            }`}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${isUploading
+              ? "bg-green-400 cursor-not-allowed"
+              : "bg-green-500 hover:bg-green-600"
+              }`}
           >
             <Save className="w-4 h-4" />
             <span>{isUploading ? "Saving..." : "Save"}</span>
@@ -1953,11 +1951,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           <button
             onClick={handleCancelForm}
             disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
-              isUploading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gray-500 hover:bg-gray-600"
-            }`}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${isUploading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gray-500 hover:bg-gray-600"
+              }`}
           >
             <X className="w-4 h-4" />
             <span>Cancel</span>
@@ -2078,7 +2075,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                   {testimonialContent.heading.split(" ").slice(-1)}
                 </span>
               </h2>
-              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400 text-justify">
                 {testimonialContent.description}
               </p>
             </>

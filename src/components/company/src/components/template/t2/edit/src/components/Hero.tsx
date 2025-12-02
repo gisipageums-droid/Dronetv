@@ -630,11 +630,10 @@ export default function Hero({
                           updateField("badgeText", e.target.value)
                         }
                         maxLength={75}
-                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${
-                          heroState.badgeText.length >= 75
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 75
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
                         {heroState.badgeText.length >= 75 && "Limit reached!"}
@@ -655,9 +654,8 @@ export default function Hero({
                         value={heroState.heading}
                         onChange={(e) => updateField("heading", e.target.value)}
                         maxLength={80}
-                        className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${
-                          heroState.heading.length >= 80 ? "border-red-500" : ""
-                        }`}
+                        className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80 ? "border-red-500" : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.heading.length}/80
@@ -669,7 +667,7 @@ export default function Hero({
                       </div>
                     </div>
                   ) : (
-                    <h1 className="text-4xl md:text-6xl text-foreground leading-tight">
+                    <h1 className="text-4xl md:text-6xl text-foreground leading-tight text-justify">
                       {heroState.heading}
                     </h1>
                   )}
@@ -685,18 +683,16 @@ export default function Hero({
                           updateField("description", e.target.value)
                         }
                         maxLength={500}
-                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${
-                          heroState.description.length >= 500
-                            ? "border-red-500"
-                            : "border-muted-foreground"
-                        }`}
+                        className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                          }`}
                       />
                       <div
-                        className={`absolute right-0 top-full mt-1 text-xs ${
-                          heroState.description.length >= 500
-                            ? "text-red-500"
-                            : "text-gray-500"
-                        }`}
+                        className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
+                          ? "text-red-500"
+                          : "text-gray-500"
+                          }`}
                       >
                         {heroState.description.length}/500
                         {heroState.description.length >= 500 && (
@@ -727,11 +723,10 @@ export default function Hero({
                         updateField("primaryBtn", e.target.value)
                       }
                       maxLength={30}
-                      className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${
-                        heroState.primaryBtn.length >= 30
-                          ? "border-red-500"
-                          : ""
-                      }`}
+                      className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
+                        ? "border-red-500"
+                        : ""
+                        }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {heroState.primaryBtn.length}/30
@@ -772,11 +767,10 @@ export default function Hero({
                           updateField("trustText", e.target.value)
                         }
                         maxLength={60}
-                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-                          heroState.trustText.length >= 60
-                            ? "border-red-500"
-                            : ""
-                        }`}
+                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
+                          ? "border-red-500"
+                          : ""
+                          }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.trustText.length}/60
@@ -811,9 +805,8 @@ export default function Hero({
                               updateStat(s.id, "value", e.target.value)
                             }
                             maxLength={15}
-                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${
-                              s.value.length >= 15 ? "border-red-500" : ""
-                            }`}
+                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.value.length}/15
@@ -832,9 +825,8 @@ export default function Hero({
                               updateStat(s.id, "label", e.target.value)
                             }
                             maxLength={25}
-                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
-                              s.label.length >= 25 ? "border-red-500" : ""
-                            }`}
+                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
+                              }`}
                           />
                           <div className="text-right text-xs text-gray-500 mt-1">
                             {s.label.length}/25
@@ -1006,11 +998,10 @@ export default function Hero({
                 whileTap={{ scale: 0.9 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${
-                  isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
-                } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                className={`${isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:shadow-2xl"
+                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save"}
               </motion.button>
