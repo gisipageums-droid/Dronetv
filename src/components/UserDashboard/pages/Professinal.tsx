@@ -229,7 +229,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
               Preview
             </button>
           </div>
-           <button
+           {/* <button
             onClick={() =>
               navigate(
                 `/professional/form/${professional.userId}/${professional.professionalId}`
@@ -239,7 +239,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
           >
             <Edit className="w-4 h-4" />
             Edit form
-          </button>
+          </button> */}
 
           <button
             onClick={() =>
@@ -255,11 +255,11 @@ const Card: React.FC<ProfessinalCardProps> = ({
         </div>
 
         {/* Published ID */}
-        <div className="mt-4 pt-4 border-t border-yellow-200">
+        {/* <div className="mt-4 pt-4 border-t border-yellow-200">
           <div className="text-xs text-gray-500">
             ID: {professional?.professionalId || "No ID"}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
