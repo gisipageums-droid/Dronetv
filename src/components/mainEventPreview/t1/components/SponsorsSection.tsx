@@ -51,7 +51,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 <img
                   src={partner.image}
                   alt={partner.header}
-                  className="h-20 object-contain"
+                  className="h-20 object-contain rounded-[8px]"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src =
                       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='60'%3E%3Crect width='100' height='60' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-size='10' text-anchor='middle'%3EImage Missing%3C/text%3E%3C/svg%3E";

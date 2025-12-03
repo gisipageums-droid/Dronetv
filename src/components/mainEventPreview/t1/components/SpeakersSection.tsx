@@ -106,7 +106,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData }) => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold">
-            <span className="text-yellow-500">{headerContent.eventTitle}</span>
+            <span className="text-yellow-500 ">{headerContent.eventTitle}</span>
             <span className="block text-3xl text-gray-800">{headerContent.sectionTitle}</span>
           </h2>
           <p className="text-gray-600 mt-4 text-justify">{headerContent.subtitle}</p>
@@ -119,8 +119,8 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData }) => {
               <button
                 key={index}
                 onClick={() => setActiveDay(index)}
-                className={`px-6 py-3 rounded-xl ${
-                  activeDay === index ? 'bg-yellow-500 text-white' : ''
+                className={`px-6 py-3 rounded-xl transition-colors ${
+                  activeDay === index ? 'bg-yellow-500 text-white font-bold hover:bg-yellow-600' : ''
                 }`}
               >
                 {day.day}

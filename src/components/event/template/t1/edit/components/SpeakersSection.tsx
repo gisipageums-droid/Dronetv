@@ -1191,7 +1191,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData, onState
                     onClick={() => setActiveDay(index)}
                     className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg md:rounded-xl text-sm sm:text-base whitespace-nowrap transition-colors ${
                       activeDay === index 
-                        ? 'bg-yellow-500 text-white hover:bg-yellow-600' 
+                        ? 'bg-yellow-400 text-black font-bold hover:bg-yellow-500' 
                         : 'hover:bg-gray-100'
                     }`}
                   >
