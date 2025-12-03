@@ -160,7 +160,7 @@ export default function CompanyProfile({ profileData }) {
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2, duration: 0.7 }}
             >
-              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight text-justify">
                 {profileState.companyName}
               </h2>
 

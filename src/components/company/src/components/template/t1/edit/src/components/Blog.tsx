@@ -658,8 +658,8 @@ export default function Blog({
 
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
-    } else if (field === "desc" && value.length > 200) {
-      processedValue = value.slice(0, 200);
+    } else if (field === "desc" && value.length > 100) {
+      processedValue = value.slice(0, 100);
     }
 
     setTempContent((prev) => ({
@@ -762,7 +762,7 @@ export default function Blog({
                   className="text-gray-600 dark:text-gray-600"
                   multiline
                   placeholder="Blog section description"
-                  maxLength={50}
+                  maxLength={100}
                 />
               </>
             ) : (

@@ -838,7 +838,7 @@ export default function EditableProducts({
                 maxLength={500}
               />
             ) : (
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto text-justify">
                 {displayContent.sectionDescription}
               </p>
             )}
@@ -1024,12 +1024,12 @@ export default function EditableProducts({
                         updateProductField(product.id, "description", val)
                       }
                       multiline
-                      className="text-gray-600 mb-4"
+                      className="text-gray-600 mb-4 text-justify"
                       placeholder="Product Description"
                       maxLength={500}
                     />
                   ) : (
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-gray-600 mb-4 text-justify">
                       {product.description?.slice(0, 20) + "..."}
                     </p>
                   )}

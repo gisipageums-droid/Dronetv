@@ -134,8 +134,8 @@ export default function Products({ productData }) {
               key={cat}
               onClick={() => setSelected(cat)}
               className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${selected === cat
-                  ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
-                  : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
+                : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
                 }`}
             >
               {cat}
@@ -211,7 +211,7 @@ export default function Products({ productData }) {
       <AnimatePresence>
         {isModalOpen && selectedProduct && (
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[99999999]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

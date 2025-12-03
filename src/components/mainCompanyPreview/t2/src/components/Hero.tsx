@@ -94,7 +94,7 @@ export default function Hero({ heroData }) {
 
               {/* Heading */}
               <motion.div variants={itemVariants}>
-                <h1 className="text-4xl md:text-6xl text-foreground leading-tight text-justify">
+                <h1 className="text-4xl md:text-6xl text-foreground leading-tight text-left">
                   {heroState.heading}
                 </h1>
               </motion.div>
