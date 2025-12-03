@@ -1200,7 +1200,7 @@ export default function Services({
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  
+
   // Refs for auto-save
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const changesCountRef = useRef(0);
@@ -1475,7 +1475,7 @@ export default function Services({
 
     try {
       setIsAutoSaving(true);
-      
+
       // Update services state with temp state
       setServicesSection(tempServicesSection);
       setHasUnsavedChanges(false);
@@ -1529,8 +1529,8 @@ export default function Services({
 
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
-    } else if (field === "description" && value.length > 500) {
-      processedValue = value.slice(0, 500);
+    } else if (field === "description" && value.length > 1000) {
+      processedValue = value.slice(0, 1000);
     } else if (field === "detailedDescription" && value.length > 1000) {
       processedValue = value.slice(0, 1000);
     } else if (field === "category" && value.length > 50) {
@@ -1723,7 +1723,7 @@ export default function Services({
   // Update category with change tracking
   const updateCategory = (index, value) => {
     if (value.length > 50) return;
-    
+
     setTempServicesSection((prev) => {
       if (prev.categories[index] === value) return prev;
       markChanges();

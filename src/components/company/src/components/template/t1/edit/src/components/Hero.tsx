@@ -726,15 +726,17 @@ export default function EditableHero({
 
         <div className="relative z-10 max-w-7xl mx-auto w-full ">
           {!isEditing ? (
-            <p className="text-lg sm:text-xl md:text-2xl text-justify text-[red] relative z-20 mb-8 inline-block font-bold">{heroState.badgeText}</p>
+            <p className="text-lg sm:text-xl md:text-2xl text-justify text-[red] relative z-20 mb-8 inline-block font-bold">{heroState.badgeText} </p>
           ) : (
-            <EditableText
-              value={tempHeroState.badgeText}
-              field="badgeText"
-              className="text-lg sm:text-xl md:text-2xl text-left text-[#facc15] relative z-20 mb-8 inline-block max-w-[530px]"
-              placeholder="Company Name"
-              maxLength={50}
-            />
+            <div className="relative z-20 mb-8 inline-block max-w-[530px]">
+              <EditableText
+                value={tempHeroState.badgeText}
+                field="badgeText"
+                className="text-lg sm:text-xl md:text-2xl text-left text-[#facc15]"
+                placeholder="Company Name"
+                maxLength={50}
+              />
+            </div>
           )}
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-center">
             <motion.div
@@ -745,11 +747,11 @@ export default function EditableHero({
             >
               {!isEditing ? (
                 <motion.h1
-                  className="text-3xl sm:text-4xl md:text-5xl xl:text-3xl font-bold text-white leading-tight px-2 sm:px-0"
+                  className="text-3xl sm:text-4xl md:text-5xl xl:text-3xl font-bold text-white leading-tight px-2 sm:px-0 text-left"
                   variants={itemVariants}
                 >
                   {heroState.heading}
-                  <span className="block text-yellow-400 mt-2">
+                  <span className="block text-yellow-400 mt-2 text-justify">
                     {heroState.subheading}
                   </span>
                 </motion.h1>
@@ -758,7 +760,7 @@ export default function EditableHero({
                   <EditableText
                     value={tempHeroState.heading}
                     field="heading"
-                    className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight"
+                    className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold leading-tight text-left"
                     placeholder="Main heading"
                     maxLength={100}
                   />
@@ -774,7 +776,7 @@ export default function EditableHero({
 
               {!isEditing ? (
                 <motion.p
-                  className="text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed"
+                  className="text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed text-justify"
                   variants={itemVariants}
                 >
                   {heroState.description}
@@ -784,7 +786,7 @@ export default function EditableHero({
                   value={tempHeroState.description}
                   field="description"
                   multiline
-                  className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed"
+                  className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed text-justify"
                   placeholder="Hero description"
                   maxLength={500}
                 />

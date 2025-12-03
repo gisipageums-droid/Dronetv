@@ -233,7 +233,7 @@ export default function Services({
     if (field === "title" && value.length > 100) {
       processedValue = value.slice(0, 100);
     } else if (field === "description" && value.length > 500) {
-      processedValue = value.slice(0, 500);
+      processedValue = value.slice(0, 1000);
     } else if (field === "detailedDescription" && value.length > 1000) {
       processedValue = value.slice(0, 1000);
     } else if (field === "category" && value.length > 50) {
@@ -940,22 +940,27 @@ export default function Services({
                     <li key={bi} className="flex gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
                       {isEditing ? (
-                        <div className="flex gap-2 w-full">
-                          <input
-                            value={b}
-                            onChange={(e) => {
-                              if (e.target.value.length <= 200) {
-                                updateServiceList(
-                                  selectedServiceIndex,
-                                  "benefits",
-                                  bi,
-                                  e.target.value
-                                );
-                              }
-                            }}
-                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                            maxLength={50}
-                          />
+                        <div className="flex gap-2 w-full items-start">
+                          <div className="w-full">
+                            <input
+                              value={b}
+                              onChange={(e) => {
+                                if (e.target.value.length <= 200) {
+                                  updateServiceList(
+                                    selectedServiceIndex,
+                                    "benefits",
+                                    bi,
+                                    e.target.value
+                                  );
+                                }
+                              }}
+                              className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                              maxLength={200}
+                            />
+                            <div className="text-xs text-gray-500 text-right mt-1">
+                              {b.length}/200
+                            </div>
+                          </div>
                           <Button
                             onClick={() =>
                               removeFromList(
@@ -998,22 +1003,27 @@ export default function Services({
                     <li key={pi} className="flex gap-2">
                       <span className="font-semibold">{pi + 1}.</span>
                       {isEditing ? (
-                        <div className="flex gap-2 w-full">
-                          <input
-                            value={p}
-                            onChange={(e) => {
-                              if (e.target.value.length <= 200) {
-                                updateServiceList(
-                                  selectedServiceIndex,
-                                  "process",
-                                  pi,
-                                  e.target.value
-                                );
-                              }
-                            }}
-                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
-                            maxLength={50}
-                          />
+                        <div className="flex gap-2 w-full items-start">
+                          <div className="w-full">
+                            <input
+                              value={p}
+                              onChange={(e) => {
+                                if (e.target.value.length <= 200) {
+                                  updateServiceList(
+                                    selectedServiceIndex,
+                                    "process",
+                                    pi,
+                                    e.target.value
+                                  );
+                                }
+                              }}
+                              className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                              maxLength={200}
+                            />
+                            <div className="text-xs text-gray-500 text-right mt-1">
+                              {p.length}/200
+                            </div>
+                          </div>
                           <Button
                             onClick={() =>
                               removeFromList(
