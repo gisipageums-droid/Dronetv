@@ -667,7 +667,7 @@ export default function Hero({
                                             </div>
                                         </div>
                                     ) : (
-                                        <h1 className="text-4xl md:text-6xl text-foreground leading-tight text-justify">
+                                        <h1 className="text-4xl md:text-6xl text-foreground leading-tight text-left">
                                             {heroState.heading}
                                         </h1>
                                     )}

@@ -741,7 +741,7 @@ export default function EditableHero({
             >
               {!isEditing ? (
                 <motion.h1
-                  className="text-3xl sm:text-4xl md:text-5xl xl:text-3xl font-bold text-white leading-tight px-2 sm:px-0"
+                  className="text-3xl sm:text-4xl md:text-5xl xl:text-3xl font-bold text-white leading-tight px-2 sm:px-0 text-left"
                   variants={itemVariants}
                 >
                   {heroState.heading}
