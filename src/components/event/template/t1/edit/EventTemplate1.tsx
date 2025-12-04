@@ -277,6 +277,23 @@ const EventTemplate1: React.FC = () => {
     []
   );
 
+  // Handler for form data changes
+  const handleFormDataChange = useCallback(
+    (updatedFormData: any) => {
+      setFinalTemplate((prev: any) => ({
+        ...prev,
+        formData: updatedFormData,
+      }));
+      
+      // Also update AIGenData if needed
+      setAIGenData((prev: any) => ({
+        ...prev,
+        formData: updatedFormData,
+      }));
+    },
+    [setFinalTemplate, setAIGenData]
+  );
+
   // Update finalTemplate whenever componentStates changes (similar to App.tsx)
   useEffect(() => {
     setFinalTemplate((prev: any) => ({
@@ -294,7 +311,6 @@ const EventTemplate1: React.FC = () => {
       },
     }));
   }, [componentStates, setFinalTemplate, AIGenData]);
-  //fethching data
 
   const fetchTemplateData = useCallback(
     async (draftId: string, userId: string, isAIgen: string) => {
@@ -409,7 +425,10 @@ const EventTemplate1: React.FC = () => {
       />
       <HeroSection
         heroData={componentStates.hero}
+        userId={userId}
+        formData={finalTemplate?.formData}
         onStateChange={createStateChangeHandler("hero")}
+        onFormDataChange={handleFormDataChange}
       />
       <AboutSection
         aboutData={componentStates.about}
@@ -437,9 +456,7 @@ const EventTemplate1: React.FC = () => {
         footerData={componentStates.footer}
         onStateChange={createStateChangeHandler("footer")}
       />
-      {(isAIgen === "AIgen")?null:
-      <Back />
-      }
+      {isAIgen === "AIgen" ? null : <Back />}
       <Publish />
       <Toaster position="top-right" richColors />
     </div>
