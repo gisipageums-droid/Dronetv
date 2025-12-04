@@ -87,13 +87,6 @@ export default function Footer({ footerData }) {
               variants={itemVariants}
             >
               <div className="flex items-center">
-                <div className="w-[50px] h-[50px] rounded-xl flex items-center justify-center mr-3 group">
-                  <img
-                    src={footerContent?.companyInfo?.logoUrl || logo}
-                    alt="Logo"
-                    className="w-full h-full object-contain cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl"
-                  />
-                </div>
                 <span className="text-xl font-bold text-white">{footerContent?.companyInfo?.companyName}</span>
               </div>
 

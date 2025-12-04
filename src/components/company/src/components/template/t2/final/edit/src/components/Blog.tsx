@@ -686,7 +686,7 @@ export default function Blog({
                 </div>
               </div>
             ) : (
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-justify">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-center">
                 {blogSection.header.desc}
               </p>
             )}

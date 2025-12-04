@@ -50,7 +50,7 @@ export default function Services({ serviceData }) {
                 <h2 className="text-3xl font-bold">{serviceData.heading.head}</h2>
               )}
               {serviceData.heading.desc && serviceData.heading.desc.length > 0 && (
-                <p className="text-muted-foreground text-justify">{serviceData.heading.desc}</p>
+                <p className="text-muted-foreground text-center">{serviceData.heading.desc}</p>
               )}
             </div>
 

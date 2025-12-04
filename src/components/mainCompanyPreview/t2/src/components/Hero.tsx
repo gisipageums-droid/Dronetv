@@ -86,7 +86,7 @@ export default function Hero({ heroData }) {
                   className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
                   variants={itemVariants}
                 >
-                  <span className="font-bold text-sm">
+                  <span className="font-bold text-sm text-black dark:text-white">
                     {heroState.badgeText}
                   </span>
                 </motion.div>

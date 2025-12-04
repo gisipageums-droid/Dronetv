@@ -626,7 +626,7 @@ export default function Hero({
                             updateField("badgeText", e.target.value)
                           }
                           maxLength={75}
-                          className={`bg-transparent hover:bg-blue-200 border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 75
+                          className={`bg-transparent border-b border-primary text-sm outline-none text-black dark:text-white ${heroState.badgeText.length >= 75
                             ? "border-red-500"
                             : ""
                             }`}
@@ -636,7 +636,8 @@ export default function Hero({
                         </div>
                       </div>
                     ) : (
-                      <span className="font-bold text-sm">
+                        <span className="font-bold text-sm text-black dark:text-white">
+
                         {heroState.badgeText}
                       </span>
                     )}

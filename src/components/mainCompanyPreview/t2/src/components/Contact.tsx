@@ -117,10 +117,10 @@ export default function Contact({ contactData, publishedId }) {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl md:text-4xl text-foreground mb-4 text-justify">
+          <h2 className="text-3xl md:text-4xl text-foreground mb-4 text-center">
             {contactData.header.title}
           </h2>
-          <p className="text-lg text-muted-foreground text-justify">
+          <p className="text-lg text-muted-foreground text-center">
             {contactData.header.descriptionPart1}
             <span className="text-red-accent font-semibold mx-1">
               {contactData.header.descriptionPart2}

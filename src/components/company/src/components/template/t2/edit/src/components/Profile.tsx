@@ -554,7 +554,7 @@ const Profile = ({
                 </div>
               </div>
             ) : (
-              <h2 className="text-3xl font-bold mb-4 text-justify">
+              <h2 className="text-3xl font-bold mb-4 text-center">
                 {contentState.heading}
               </h2>
             )}
@@ -590,7 +590,7 @@ const Profile = ({
                 </div>
               </div>
             ) : (
-              <p className="text-lg max-w-3xl mx-auto text-justify">
+              <p className="text-lg max-w-3xl mx-auto text-center">
                 {contentState.subheading}
               </p>
             )}
@@ -656,7 +656,7 @@ const Profile = ({
                       </div>
                     </div>
                   ) : (
-                    <h3 className="text-xl font-semibold mb-1 text-justify">
+                    <h3 className="text-xl font-semibold mb-1 text-center">
                       {member.name}
                     </h3>
                   )}

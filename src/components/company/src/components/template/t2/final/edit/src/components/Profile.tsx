@@ -2379,7 +2379,7 @@ const Profile = ({
                 </div>
               </div>
             ) : (
-              <p className="text-lg max-w-3xl mx-auto text-justify">
+              <p className="text-lg max-w-3xl mx-auto text-center">
                 {contentState.subheading}
               </p>
             )}
