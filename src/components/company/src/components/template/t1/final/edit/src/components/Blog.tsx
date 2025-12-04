@@ -4645,7 +4645,7 @@ export default function Blog({
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
                   {displayContent.header.title}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-gray-600 text-justify dark:text-gray-300">
                   {displayContent.header.desc}
                 </p>
               </>
@@ -4674,7 +4674,7 @@ export default function Blog({
                     initial="rest"
                     whileHover="hover"
                   >
-                    <Card className={`relative shadow-lg dark:bg-gray-700 transition-all duration-300 overflow-hidden ${isEditing ? "" : "h-[480px]"}`}>
+                    <Card className={`relative shadow-lg dark:bg-gray-700 transition-all duration-300 text-justify overflow-hidden ${isEditing ? "" : "h-[480px]"}`}>
                       <div className="relative">
                         <motion.img
                           src={b.image}

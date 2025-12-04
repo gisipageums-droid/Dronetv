@@ -692,7 +692,7 @@ export default function Product({
                       />
 
                       {/* Category at the top */}
-                      <div className="absolute top-2 left-2">
+                      {/* <div className="absolute top-2 left-2">
                         <Badge
                           className={`${product.categoryColor} border-0 text-xs`}
                         >
@@ -712,7 +712,7 @@ export default function Product({
                             product.category
                           )}
                         </Badge>
-                      </div>
+                      </div> */}
 
                       {product.isPopular && (
                         <div className="absolute flex items-center px-2 py-1 text-xs font-bold text-white rounded-full top-2 right-2 bg-red-accent">
@@ -950,7 +950,7 @@ export default function Product({
               >
                 <button
                   onClick={closeModal}
-                  className="absolute p-2 bg-white rounded-full top-4 right-4"
+                  className="absolute p-2 bg-white rounded-full top-0 right-0"
                 >
                   <X className="w-5 h-5" />
                 </button>

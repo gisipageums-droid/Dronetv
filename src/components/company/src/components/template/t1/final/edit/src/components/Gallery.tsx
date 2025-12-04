@@ -2984,7 +2984,7 @@ export default function EditableGallerySection({
                 initial={{ opacity: 0, y: 30 }}
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
+                className="text-gray-600 text-justify mt-4 max-w-2xl mx-auto text-lg"
               >
                 {displaygalleryData?.heading?.description}
               </motion.p>
