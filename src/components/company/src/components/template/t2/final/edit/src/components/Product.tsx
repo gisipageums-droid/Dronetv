@@ -800,7 +800,7 @@ export default function Product({
                   {contentState.heading.heading}
                 </h2>
 
-                <p className="inline text-lg text-muted-foreground text-justify">
+                <p className="inline text-lg text-muted-foreground text-center">
                   {contentState.heading.description}
                 </p>
                 <p className="inline text-lg font-bold text-muted-foreground text-foreground text-justify">

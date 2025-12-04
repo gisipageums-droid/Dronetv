@@ -609,7 +609,7 @@ export default function Testimonials({
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                   {testimonialsSection.headline.title}
                 </h2>
-                <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto text-justify">
+                <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto text-center">
                   {testimonialsSection.headline.description}
                 </p>
               </>

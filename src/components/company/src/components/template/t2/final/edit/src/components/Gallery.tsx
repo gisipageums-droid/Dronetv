@@ -659,7 +659,7 @@ const Gallery = ({
                 <h2 className="mb-4 text-3xl font-bold">
                   {contentState.heading.title}
                 </h2>
-                <p className="max-w-3xl mx-auto text-lg text-justify">
+                <p className="max-w-3xl mx-auto text-lg text-center">
                   {contentState.heading.description}
                 </p>
               </>

@@ -728,7 +728,7 @@ export default function Services({
                 <h2 className="text-3xl font-bold">
                   {servicesSection.heading.head}
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-center">
                   {servicesSection.heading.desc}
                 </p>
               </>

@@ -49,7 +49,7 @@ export default function Clients({ clientData }) {
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 {clientData.headline.title}
               </h2>
-              <p className="text-muted-foreground text-lg text-justify">
+              <p className="text-muted-foreground text-lg text-center">
                 {clientData.headline.description}
               </p>
             </motion.div>

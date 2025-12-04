@@ -15,7 +15,7 @@ const Profile = ({ profileData }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">{profileData.heading}</h2>
-          <p className="text-lg max-w-3xl mx-auto text-justify">{profileData.subheading}</p>
+          <p className="text-lg max-w-3xl mx-auto text-center">{profileData.subheading}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -38,7 +38,7 @@ const Profile = ({ profileData }) => {
                   style={{ backgroundColor: "#facc15" }}
                 ></div> */}
               </div>
-              <div className="p-6 text-justify">
+              <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold mb-1 ">{member.name}</h3>
                 <p className="font-medium mb-3" style={{ color: "#facc15" }}>
                   {member.role}

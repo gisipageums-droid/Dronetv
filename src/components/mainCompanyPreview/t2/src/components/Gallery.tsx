@@ -188,7 +188,7 @@ const Gallery = ({ galleryData }) => {
             {hasHeading && (
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold mb-4">{contentState.heading.title}</h2>
-                <p className="text-lg max-w-3xl mx-auto text-justify">
+                <p className="text-lg max-w-3xl mx-auto text-center">
                   {contentState.heading.description}
                 </p>
               </div>
