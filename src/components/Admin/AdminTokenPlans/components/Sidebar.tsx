@@ -9,6 +9,7 @@ import {
   User,
   LucideIcon,
   IndianRupeeIcon,
+  History as HistoryIcon,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -28,6 +29,11 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "token-price", label: "Token Price", icon: IndianRupeeIcon },
+  {
+    id: "transaction-history",
+    label: "Transaction History",
+    icon: HistoryIcon,
+  },
   { id: "one-time", label: "One-Time Plans", icon: ShoppingBag },
   { id: "monthly", label: "Monthly Plans", icon: Calendar },
   { id: "Quarterly", label: "Quarterly Plans", icon: CalendarRange },
