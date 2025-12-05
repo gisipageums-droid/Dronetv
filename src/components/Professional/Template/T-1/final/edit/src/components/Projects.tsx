@@ -1036,6 +1036,7 @@
 // };
 
 // export default Projects;
+// -----------------
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Cropper from "react-easy-crop";
@@ -1086,6 +1087,8 @@ interface ProjectsProps {
 
 const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   const [projectContent, setProjectContent] = useState<ProjectContent>(content);
+  const [originalContent, setOriginalContent] =
+    useState<ProjectContent>(content);
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
@@ -1097,11 +1100,11 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  
+
   // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
-  // Track if component is mounted to prevent state updates after unmount
+
+  // Track if component is mounted
   const isMounted = useRef(true);
 
   // Image upload progress state
@@ -1142,24 +1145,54 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     };
   }, []);
 
-  // ✅ Only update local state when content prop changes from parent
+  // Update local state when props change
   useEffect(() => {
-    const processedProjects = (content.projects || []).map((project) => ({
-      ...project,
-      id:
-        typeof project.id === "number"
-          ? project.id
-          : Math.floor(Number(project.id)) || Date.now(),
-      tags: Array.isArray(project.tags) ? project.tags : [],
-      featured: Boolean(project.featured),
-    }));
+    if (content) {
+      const processedProjects = (content.projects || []).map((project) => ({
+        ...project,
+        id:
+          typeof project.id === "number"
+            ? project.id
+            : Math.floor(Number(project.id)) || Date.now(),
+        tags: Array.isArray(project.tags) ? project.tags : [],
+        featured: Boolean(project.featured),
+      }));
 
-    setProjectContent({
-      ...content,
-      projects: processedProjects,
-    });
-    setHasUnsavedChanges(false);
-  }, [content]); // Only depend on content prop
+      setProjectContent({
+        ...content,
+        projects: processedProjects,
+      });
+      setOriginalContent({
+        ...content,
+        projects: processedProjects,
+      });
+      setHasUnsavedChanges(false);
+    }
+  }, [content]);
+
+  // Update current project when editingProjectId changes
+  useEffect(() => {
+    if (editingProjectId !== null) {
+      const projectToEdit = projectContent.projects.find(
+        (p) => p.id === editingProjectId
+      );
+      if (projectToEdit) {
+        setCurrentProject({ ...projectToEdit });
+        setTagInput(projectToEdit.tags ? projectToEdit.tags.join(", ") : "");
+      }
+    } else if (!isAdding) {
+      setCurrentProject(null);
+      setTagInput("");
+    }
+  }, [editingProjectId, projectContent.projects, isAdding]);
+
+  // Initialize currentProject when adding new project
+  useEffect(() => {
+    if (isAdding && !currentProject) {
+      setCurrentProject(getNewProjectTemplate());
+      setTagInput("");
+    }
+  }, [isAdding, currentProject]);
 
   // Auto-save effect
   useEffect(() => {
@@ -1182,7 +1215,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, [projectContent, hasUnsavedChanges, isEditing]);
+  }, [projectContent, hasUnsavedChanges, isEditing, currentProject, tagInput]);
 
   // Perform auto-save
   const performAutoSave = useCallback(async () => {
@@ -1190,20 +1223,81 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
     try {
       setIsAutoSaving(true);
-      
+
+      let contentToSave = { ...projectContent };
+
+      // If editing an existing project, update it in the content
+      if (editingProjectId !== null && currentProject) {
+        const parsedTags = tagInput
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        const updatedProject = { ...currentProject, tags: parsedTags };
+
+        const updatedProjects = projectContent.projects.map((p) =>
+          p.id === editingProjectId ? updatedProject : p
+        );
+
+        contentToSave = { ...projectContent, projects: updatedProjects };
+      }
+
+      // ✅ If adding a new project, auto-save it
+      if (isAdding && currentProject && currentProject.title.trim()) {
+        const parsedTags = tagInput
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        // Check if this project already exists (by title to prevent duplicates)
+        const projectExists = projectContent.projects.some(
+          (p) => p.title.trim().toLowerCase() === currentProject.title.trim().toLowerCase()
+        );
+
+        if (!projectExists) {
+          const newId =
+            projectContent.projects.length > 0
+              ? Math.max(...projectContent.projects.map((p) => p.id)) + 1
+              : 1;
+
+          const newProject: Project = {
+            ...currentProject,
+            id: newId,
+            tags: parsedTags,
+            featured: currentProject.featured || false,
+          };
+
+          contentToSave = {
+            ...projectContent,
+            projects: [...projectContent.projects, newProject],
+          };
+
+          // Reset adding state after auto-save
+          setIsAdding(false);
+          setCurrentProject(null);
+          setTagInput("");
+          setImageToCrop("");
+          setCroppedAreaPixels(null);
+        } else {
+          // Project already exists, just skip
+          setIsAutoSaving(false);
+          return;
+        }
+      }
+
       // Call the save function
-      onSave(projectContent);
-      
+      onSave(contentToSave);
+
       // Update state
       setHasUnsavedChanges(false);
       setLastSavedTime(new Date());
-      
+      setOriginalContent(contentToSave);
+
       // Show subtle notification
       toast.success("Projects changes auto-saved", {
         duration: 1000,
         position: "bottom-right",
       });
-      
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -1212,29 +1306,15 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
         setIsAutoSaving(false);
       }
     }
-  }, [projectContent, hasUnsavedChanges, onSave]);
-
-  useEffect(() => {
-    if (editingProjectId !== null) {
-      const projectToEdit = projectContent.projects.find(
-        (p) => p.id === editingProjectId
-      );
-      if (projectToEdit) {
-        setCurrentProject({ ...projectToEdit });
-        setTagInput(projectToEdit.tags ? projectToEdit.tags.join(", ") : "");
-      }
-    } else {
-      setCurrentProject(null);
-      setTagInput("");
-    }
-  }, [editingProjectId, projectContent.projects]);
-
-  useEffect(() => {
-    if (isAdding && !currentProject) {
-      setCurrentProject(getNewProjectTemplate());
-      setTagInput("");
-    }
-  }, [isAdding, currentProject]);
+  }, [
+    projectContent,
+    hasUnsavedChanges,
+    onSave,
+    editingProjectId,
+    currentProject,
+    tagInput,
+    isAdding,
+  ]);
 
   const getCharCountColor = (current: number, max: number) => {
     if (current >= max) return "text-red-500";
@@ -1251,7 +1331,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
       formData.append("fieldName", "projectImage");
 
       const xhr = new XMLHttpRequest();
-      
+
       // Track upload progress
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
@@ -1344,6 +1424,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
           setCurrentProject((prev) =>
             prev ? { ...prev, image: reader.result as string } : prev
           );
+          setHasUnsavedChanges(true);
         }
       };
       reader.readAsDataURL(croppedFile);
@@ -1356,21 +1437,19 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
       // Auto-upload cropped image to AWS S3 immediately
       try {
         const s3Url = await uploadImageToS3(croppedFile);
-        
-        setCurrentProject((prev) =>
-          prev ? { ...prev, image: s3Url } : prev
-        );
-        
-        // Mark as unsaved changes since image was updated
+
+        setCurrentProject((prev) => (prev ? { ...prev, image: s3Url } : prev));
+
         setHasUnsavedChanges(true);
-        
+
         toast.success("Image uploaded successfully!");
       } catch (uploadError) {
         console.error("Image upload failed:", uploadError);
         toast.error(
-          `Image upload failed: ${uploadError instanceof Error ? uploadError.message : "Unknown error"}`
+          `Image upload failed: ${
+            uploadError instanceof Error ? uploadError.message : "Unknown error"
+          }`
         );
-        // Keep the cropped image as base64 for manual save later
         toast.info("Cropped image saved locally. Save manually to persist.");
       }
 
@@ -1410,12 +1489,24 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     setZoom((prev) => Math.max(prev - 0.1, 0.1));
   };
 
+  const handleCancelCrop = () => {
+    setIsCropping(false);
+    setImageToCrop("");
+    setCroppedAreaPixels(null);
+    setZoom(1);
+    setCrop({ x: 0, y: 0 });
+    setImageLoaded(false);
+  };
+
   const handleSaveSection = () => {
     onSave(projectContent);
     setHasUnsavedChanges(false);
     setLastSavedTime(new Date());
+    setOriginalContent(projectContent);
     setIsEditing(false);
+    setIsAdding(false);
     setEditingProjectId(null);
+    setCurrentProject(null);
     toast.success("Projects section updated!");
   };
 
@@ -1439,7 +1530,9 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     );
     const updatedContent = { ...projectContent, projects: updatedProjects };
     setProjectContent(updatedContent);
-    setHasUnsavedChanges(true);
+    setHasUnsavedChanges(false);
+    setLastSavedTime(new Date());
+    setOriginalContent(updatedContent);
     onSave(updatedContent);
     setEditingProjectId(null);
     setCurrentProject(null);
@@ -1457,86 +1550,153 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
       return;
     }
 
-    let finalImage = currentProject.image;
+    // Check if project with same title already exists
+    const projectExists = projectContent.projects.some(
+      (p) => p.title.trim().toLowerCase() === currentProject.title.trim().toLowerCase()
+    );
 
-    // If an image was selected but crop wasn't confirmed, finalize it now
-    if (!finalImage && imageToCrop && croppedAreaPixels) {
+    if (projectExists) {
+      toast.error("A project with this title already exists!");
+      return;
+    }
+
+    // If we're cropping an image, wait for it to be processed
+    if (isCropping) {
+      toast.error("Please finish cropping the image before saving.");
+      return;
+    }
+
+    // If we have an image to crop but haven't confirmed it
+    if (imageToCrop && croppedAreaPixels) {
       try {
         setIsUploading(true);
         const croppedBlob = await getCroppedImage();
-        const croppedFile = new File([croppedBlob], "cropped-project-image.jpg", {
-          type: "image/jpeg",
-        });
+        const croppedFile = new File(
+          [croppedBlob],
+          "cropped-project-image.jpg",
+          {
+            type: "image/jpeg",
+          }
+        );
 
         // Base64 preview immediately
         const base64 = await new Promise<string>((resolve, reject) => {
           const r = new FileReader();
-          r.onloadend = () => (r.result ? resolve(r.result as string) : reject(new Error("preview failed")));
+          r.onloadend = () =>
+            r.result
+              ? resolve(r.result as string)
+              : reject(new Error("preview failed"));
           r.readAsDataURL(croppedFile);
         });
-        finalImage = base64;
 
         // Try S3 upload if userId available
+        let finalImage = base64;
         if (userId) {
-          const formData = new FormData();
-          formData.append("file", croppedFile);
-          formData.append("userId", userId);
-          formData.append("fieldName", "projectImage");
-          const uploadResponse = await fetch(
-            `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-            { method: "POST", body: formData }
-          );
-          if (uploadResponse.ok) {
-            const uploadData = await uploadResponse.json();
-            finalImage = uploadData.s3Url || finalImage;
-          } else {
-            const err = await uploadResponse.json().catch(() => ({}));
-            toast.error(`Image upload failed: ${err.message || "Unknown error"}`);
+          try {
+            const s3Url = await uploadImageToS3(croppedFile);
+            finalImage = s3Url;
+            toast.success("Image uploaded successfully!");
+          } catch (uploadError) {
+            console.error("Image upload failed:", uploadError);
+            toast.error(
+              `Image upload failed: ${
+                uploadError instanceof Error
+                  ? uploadError.message
+                  : "Unknown error"
+              }`
+            );
+            // Continue with base64 image
           }
         }
+
+        const newId =
+          projectContent.projects.length > 0
+            ? Math.max(...projectContent.projects.map((p) => p.id)) + 1
+            : 1;
+
+        const tagsFromInput = tagInput
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        const newProject: Project = {
+          ...currentProject,
+          id: newId,
+          image: finalImage,
+          tags: tagsFromInput,
+          featured: currentProject.featured || false,
+        };
+
+        // Create updated content with new project
+        const updatedContent = {
+          ...projectContent,
+          projects: [...projectContent.projects, newProject],
+        };
+
+        // ✅ Set isAdding to false FIRST to prevent auto-save from triggering
+        setIsAdding(false);
+        setCurrentProject(null);
+        setTagInput("");
+        setImageToCrop("");
+        setCroppedAreaPixels(null);
+
+        // Update local state
+        setProjectContent(updatedContent);
+        setHasUnsavedChanges(false);
+        setLastSavedTime(new Date());
+        setOriginalContent(updatedContent);
+
+        // Update parent state
+        onSave(updatedContent);
+        toast.success("Project added with image!");
       } catch (e) {
         console.error("Auto-crop on save failed:", e);
         toast.error("Could not process image. You can try cropping again.");
       } finally {
         setIsUploading(false);
+        setUploadProgress(0);
       }
+    } else {
+      // No image cropping needed, proceed with existing image
+      const newId =
+        projectContent.projects.length > 0
+          ? Math.max(...projectContent.projects.map((p) => p.id)) + 1
+          : 1;
+
+      const tagsFromInput = tagInput
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+
+      const newProject: Project = {
+        ...currentProject,
+        id: newId,
+        tags: tagsFromInput,
+        featured: currentProject.featured || false,
+      };
+
+      // Create updated content with new project
+      const updatedContent = {
+        ...projectContent,
+        projects: [...projectContent.projects, newProject],
+      };
+
+      // ✅ Set isAdding to false FIRST to prevent auto-save from triggering
+      setIsAdding(false);
+      setCurrentProject(null);
+      setTagInput("");
+
+      // Update local state
+      setProjectContent(updatedContent);
+      setHasUnsavedChanges(false);
+      setLastSavedTime(new Date());
+      setOriginalContent(updatedContent);
+
+      // Update parent state
+      onSave(updatedContent);
+
+      toast.success("Project added!");
     }
-
-    const newId =
-      projectContent.projects.length > 0
-        ? Math.max(...projectContent.projects.map((p) => p.id)) + 1
-        : 1;
-
-    const tagsFromInput = tagInput
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    const newProject: Project = {
-      ...currentProject,
-      id: newId,
-      image: finalImage || currentProject.image,
-      tags: tagsFromInput,
-      featured: currentProject.featured || false,
-    };
-
-    // ✅ Create updated content with new project
-    const updatedContent = {
-      ...projectContent,
-      projects: [...projectContent.projects, newProject],
-    };
-
-    // ✅ Update local state
-    setProjectContent(updatedContent);
-    setHasUnsavedChanges(true);
-
-    // ✅ Update parent state
-    onSave(updatedContent);
-
-    setIsAdding(false);
-    setCurrentProject(null);
-    setTagInput("");
-    toast.success("Project added!");
   };
 
   const handleDeleteProject = (id: number) => {
@@ -1547,6 +1707,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     setProjectContent(updatedContent);
     setHasUnsavedChanges(true);
     onSave(updatedContent);
+    setLastSavedTime(new Date());
     toast.success("Project removed");
   };
 
@@ -1556,13 +1717,21 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   ) => {
     if (!currentProject) return;
     setCurrentProject({ ...currentProject, [field]: value } as Project);
+    setHasUnsavedChanges(true);
+  };
+
+  const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTagInput(e.target.value);
+    setHasUnsavedChanges(true);
   };
 
   const handleCancelEdit = () => {
+    setProjectContent(originalContent);
+    setHasUnsavedChanges(false);
     setIsEditing(false);
+    setIsAdding(false);
     setEditingProjectId(null);
     setCurrentProject(null);
-    setHasUnsavedChanges(false);
     toast.info("Changes discarded");
     setTagInput("");
   };
@@ -1571,6 +1740,9 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     setIsAdding(false);
     setCurrentProject(null);
     setTagInput("");
+    setHasUnsavedChanges(false);
+    setImageToCrop("");
+    setCroppedAreaPixels(null);
   };
 
   const startAddingProject = () => {
@@ -1578,6 +1750,9 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
     setEditingProjectId(null);
     setCurrentProject(getNewProjectTemplate());
     setTagInput("");
+    setHasUnsavedChanges(false);
+    setImageToCrop("");
+    setCroppedAreaPixels(null);
   };
 
   const getNewProjectTemplate = (): Project => ({
@@ -1611,13 +1786,17 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   // Format last saved time for display
   const formatLastSavedTime = () => {
     if (!lastSavedTime) return "Never";
-    
+
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
-    
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
     if (diffInSeconds < 60) return "Just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return lastSavedTime.toLocaleDateString();
   };
 
@@ -1635,7 +1814,10 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   };
 
   return (
-    <section id="projects" className="py-20 text-justify bg-white dark:bg-gray-900">
+    <section
+      id="projects"
+      className="py-20 text-justify bg-white dark:bg-gray-900"
+    >
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
@@ -1807,7 +1989,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
                       <div>Uploading... {Math.round(uploadProgress)}%</div>
                       <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-green-500 transition-all duration-300"
                           style={{ width: `${uploadProgress}%` }}
                         ></div>
@@ -1864,7 +2046,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                   <input
                     type="text"
                     value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
+                    onChange={handleTagInputChange}
                     maxLength={CHAR_LIMITS.tags}
                     placeholder="Tags (comma separated, e.g., React, Node.js)"
                     className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
@@ -1879,24 +2061,37 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                   </div>
                 </div>
 
-                <div className="flex justify-end space-x-4">
-                  <motion.button
-                    onClick={handleCancelAdd}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2 font-semibold text-gray-900 bg-gray-200 rounded-lg dark:bg-gray-700 dark:text-white"
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    onClick={handleAddProject}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2 font-semibold text-white bg-orange-500 rounded-lg cursor-pointer"
-                    disabled={!currentProject?.title?.trim() || isUploading}
-                  >
-                    {isUploading ? "Uploading..." : "Save Project"}
-                  </motion.button>
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    {hasUnsavedChanges ? (
+                      <span className="text-yellow-500">
+                        ● Unsaved changes - Auto-save in 2 seconds
+                      </span>
+                    ) : (
+                      <span className="text-green-500">
+                        ● All changes saved
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex justify-end space-x-4">
+                    <motion.button
+                      onClick={handleCancelAdd}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-6 py-2 font-semibold text-gray-900 bg-gray-200 rounded-lg dark:bg-gray-700 dark:text-white"
+                    >
+                      Cancel
+                    </motion.button>
+                    <motion.button
+                      onClick={handleAddProject}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-6 py-2 font-semibold text-white bg-orange-500 rounded-lg cursor-pointer"
+                      disabled={!currentProject?.title?.trim() || isUploading}
+                    >
+                      {isUploading ? "Uploading..." : "Save Project"}
+                    </motion.button>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -1922,7 +2117,6 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
               {projectContent.projects.map((project) => (
                 <motion.div
                   key={project.id}
-                  // variants={itemVariants}
                   whileHover={{ y: isEditing ? 0 : -10 }}
                   className="overflow-hidden relative bg-gray-50 rounded-2xl shadow-lg transition-all duration-300 group dark:bg-gray-800 hover:shadow-2xl"
                 >
@@ -2107,7 +2301,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                           <input
                             type="text"
                             value={tagInput}
-                            onChange={(e) => setTagInput(e.target.value)}
+                            onChange={handleTagInputChange}
                             maxLength={CHAR_LIMITS.tags}
                             className="p-2 w-full text-gray-900 bg-transparent rounded border border-gray-300 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
                             placeholder="Separate tags with commas"
@@ -2157,7 +2351,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                 Crop Project Image
               </h3>
               <button
-                onClick={() => setIsCropping(false)}
+                onClick={handleCancelCrop}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
               >
                 <X className="w-6 h-6 text-gray-900 dark:text-white" />
@@ -2166,7 +2360,9 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
             <div className="p-6">
               <div
-                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${
+                  isDragging ? "cursor-grabbing" : "cursor-grab"
+                }`}
               >
                 <Cropper
                   image={imageToCrop}
@@ -2229,7 +2425,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
             <div className="flex gap-3 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
               <button
-                onClick={() => setIsCropping(false)}
+                onClick={handleCancelCrop}
                 className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 Cancel

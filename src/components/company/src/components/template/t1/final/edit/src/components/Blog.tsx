@@ -3881,7 +3881,7 @@ function BlogModal({ blog, onClose }: BlogModalProps) {
             {blog.title}
           </h1>
 
-          <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed text-justify">
+          <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed  mt-4">
             {blog.excerpt}
           </p>
 
@@ -3907,7 +3907,7 @@ function BlogModal({ blog, onClose }: BlogModalProps) {
           )}
 
           {/* Main Content */}
-          <div className="text-gray-700 dark:text-gray-300 leading-6 space-y-3 text-xs max-h-40 overflow-y-auto text-justify">
+          <div className="text-gray-700 dark:text-gray-300 leading-6 space-y-3 text-xs max-h-40 overflow-y-auto ">
             {blog.content ? (
               <div dangerouslySetInnerHTML={{ __html: blog.content }} />
             ) : (
@@ -4645,7 +4645,7 @@ export default function Blog({
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
                   {displayContent.header.title}
                 </h2>
-                <p className="text-gray-600 text-justify dark:text-gray-300">
+                <p className="text-gray-600 dark:text-gray-300">
                   {displayContent.header.desc}
                 </p>
               </>
@@ -4674,7 +4674,7 @@ export default function Blog({
                     initial="rest"
                     whileHover="hover"
                   >
-                    <Card className={`relative shadow-lg dark:bg-gray-700 transition-all duration-300 text-justify overflow-hidden ${isEditing ? "" : "h-[480px]"}`}>
+                    <Card className={`relative shadow-lg dark:bg-gray-700 transition-all duration-300  overflow-hidden ${isEditing ? "" : "h-[480px]"}`}>
                       <div className="relative">
                         <motion.img
                           src={b.image}

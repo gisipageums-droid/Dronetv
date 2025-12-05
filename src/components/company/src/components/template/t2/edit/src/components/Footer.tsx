@@ -611,7 +611,7 @@ export default function Footer({
                     }}
                     transition={{ duration: 0.6 }}
                   >
-                    {isEditing ? (
+                    {/* {isEditing ? (
                       <div className="relative">
                         {footerContent.companyInfo.logoUrl &&
                           (footerContent.companyInfo.logoUrl.startsWith("data:") ||
@@ -651,7 +651,7 @@ export default function Footer({
                           </span>
                         )}
                       </>
-                    )}
+                    )} */}
                     <input
                       type="file"
                       ref={fileInputRef}

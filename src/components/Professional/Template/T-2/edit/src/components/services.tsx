@@ -88,6 +88,12 @@
 //     const servicesRef = useRef<HTMLDivElement>(null);
 //     const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
 
+//     // Auto-save states
+//     const [isAutoSaving, setIsAutoSaving] = useState(false);
+//     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+//     const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+//     const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
+
 //     // Pending image files for S3 upload
 //     const [pendingImageFiles, setPendingImageFiles] = useState<Record<string, File>>({});
 
@@ -100,6 +106,10 @@
 //     const [imageToCrop, setImageToCrop] = useState(null);
 //     const [originalFile, setOriginalFile] = useState(null);
 //     const [aspectRatio] = useState(4 / 3);
+
+//     // Auto-upload states
+//     const [isAutoUploading, setIsAutoUploading] = useState(false);
+//     const [uploadProgress, setUploadProgress] = useState(0);
 
 //     // Initialize with props data or empty structure
 //     const [data, setData] = useState<ServicesData>(servicesData || {
@@ -140,6 +150,162 @@
 //         }
 //     }, [data]);
 
+//     // Auto-save effect
+//     useEffect(() => {
+//         return () => {
+//             // Cleanup timeout on unmount
+//             if (autoSaveTimeoutRef.current) {
+//                 clearTimeout(autoSaveTimeoutRef.current);
+//             }
+//         };
+//     }, []);
+
+//     // Enhanced uploadPendingImages function with proper state updates
+//     const uploadPendingImages = async (): Promise<boolean> => {
+//         const pendingEntries = Object.entries(pendingImageFiles);
+//         if (pendingEntries.length === 0) return true;
+
+//         try {
+//             setIsAutoUploading(true);
+//             setUploadProgress(0);
+
+//         for (let i = 0; i < pendingEntries.length; i++) {
+//             const [serviceId, file] = pendingEntries[i];
+
+//             if (!userId) {
+//                 console.error('Missing upload credentials:', { userId, professionalId, templateSelection });
+//                 toast.error('Missing user information. Please refresh and try again.');
+//                 return false;
+//             }
+
+//             const formData = new FormData();
+//             formData.append('file', file);
+//             formData.append('userId', userId);
+//             formData.append('fieldName', `service_${serviceId}`);
+
+//             console.log('Uploading pending image for service:', serviceId, file.name);
+
+//             const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+//                 method: 'POST',
+//                 body: formData,
+//             });
+
+//             if (uploadResponse.ok) {
+//                 const uploadData = await uploadResponse.json();
+//                 console.log('Upload successful:', uploadData);
+
+//                 // Use functional update to ensure proper state management
+//                 setTempData(prev => {
+//                     const updatedServices = prev.services.map(service =>
+//                         service.id === serviceId
+//                             ? {
+//                                 ...service,
+//                                 image: uploadData.s3Url
+//                             }
+//                             : service
+//                     );
+
+//                     console.log('Updated tempData services:', updatedServices);
+//                     return {
+//                         ...prev,
+//                         services: updatedServices
+//                     };
+//                 });
+
+//                 // Remove from pending files
+//                 setPendingImageFiles(prev => {
+//                     const updated = { ...prev };
+//                     delete updated[serviceId];
+//                     return updated;
+//                 });
+
+//                 setUploadProgress(((i + 1) / pendingEntries.length) * 100);
+//             } else {
+//                 const errorText = await uploadResponse.text();
+//                 console.error('Upload failed:', uploadResponse.status, errorText);
+//                 throw new Error(`Upload failed with status ${uploadResponse.status}`);
+//             }
+//         }
+
+//             setUploadProgress(100);
+//             toast.success('All pending images uploaded successfully!');
+//             return true;
+//         } catch (error) {
+//             console.error('Image upload failed:', error);
+//             toast.error(`Image upload failed: ${error.message}`);
+//             return false;
+//         } finally {
+//             setIsAutoUploading(false);
+//             setUploadProgress(0);
+//         }
+//     };
+
+//     // Enhanced performAutoSave to handle image uploads better
+//     const performAutoSave = useCallback(async () => {
+//         if (!hasUnsavedChanges || !isEditing) return;
+
+//         setIsAutoSaving(true);
+//         try {
+//             // Upload any pending images first
+//             const uploadSuccess = await uploadPendingImages();
+
+//             if (uploadSuccess) {
+//                 // Update data state only after successful uploads
+//                 setData(tempData);
+//                 setHasUnsavedChanges(false);
+//                 setLastSavedTime(new Date());
+
+//                 toast.success('Changes auto-saved successfully');
+//             } else {
+//                 // If upload fails, still save the data but keep pending images
+//                 setData(tempData);
+//                 setHasUnsavedChanges(false);
+//                 setLastSavedTime(new Date());
+//                 toast.warning('Content saved but some images failed to upload');
+//             }
+//         } catch (error) {
+//             console.error('Auto-save failed:', error);
+//             toast.error('Auto-save failed. Please save manually.');
+//         } finally {
+//             setIsAutoSaving(false);
+//         }
+//     }, [hasUnsavedChanges, isEditing, tempData, pendingImageFiles]);
+
+//     // Schedule auto-save
+//     const scheduleAutoSave = useCallback(() => {
+//         if (!isEditing) return;
+
+//         setHasUnsavedChanges(true);
+
+//         // Clear existing timeout
+//         if (autoSaveTimeoutRef.current) {
+//             clearTimeout(autoSaveTimeoutRef.current);
+//         }
+
+//         // Set new timeout
+//         autoSaveTimeoutRef.current = setTimeout(() => {
+//             performAutoSave();
+//         }, 2000);
+//     }, [isEditing, performAutoSave]);
+
+//     // Add this useEffect to handle auto-upload when component unmounts or when editing ends
+//     useEffect(() => {
+//         return () => {
+//             // Auto-upload any remaining pending images when component unmounts
+//             if (Object.keys(pendingImageFiles).length > 0) {
+//                 uploadPendingImages().catch(console.error);
+//             }
+//         };
+//     }, []);
+
+//     // Also add auto-upload when editing ends
+//     useEffect(() => {
+//         if (!isEditing && Object.keys(pendingImageFiles).length > 0) {
+//             // Auto-upload any pending images when exiting edit mode
+//             uploadPendingImages().catch(console.error);
+//         }
+//     }, [isEditing]);
+
 //     // Intersection observer
 //     useEffect(() => {
 //         const observer = new IntersectionObserver(
@@ -159,6 +325,7 @@
 //         setIsEditing(true);
 //         setTempData({ ...data });
 //         setPendingImageFiles({});
+//         setHasUnsavedChanges(false);
 //     };
 
 //     // Cropper functions
@@ -248,33 +415,108 @@
 //         event.target.value = '';
 //     };
 
-//     // Apply crop and set pending file
+//     // FIXED: Apply crop and auto-upload with immediate state update
 //     const applyCrop = async () => {
 //         try {
 //             if (!imageToCrop || !croppedAreaPixels || !currentCroppingService) return;
 
+//             setIsAutoUploading(true);
+//             setUploadProgress(0);
+
 //             const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
 
-//             // Update preview immediately with blob URL (temporary)
+//             // Auto-upload the cropped image
+//             setUploadProgress(30);
+
+//             const formData = new FormData();
+//             formData.append('file', file);
+//             formData.append('userId', userId);
+//             formData.append('fieldName', `service_${currentCroppingService}`);
+
+//             setUploadProgress(50);
+
+//             const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+//                 method: 'POST',
+//                 body: formData,
+//             });
+
+//             if (uploadResponse.ok) {
+//                 const uploadData = await uploadResponse.json();
+//                 setUploadProgress(100);
+
+//                 console.log('Upload successful, S3 URL:', uploadData.s3Url);
+
+//                 // IMMEDIATELY update both tempData AND data states
+//                 const updatedServices = tempData.services.map(service =>
+//                     service.id === currentCroppingService
+//                         ? { ...service, image: uploadData.s3Url }
+//                         : service
+//                 );
+
+//                 const newTempData = {
+//                     ...tempData,
+//                     services: updatedServices
+//                 };
+
+//                 // Update tempData
+//                 setTempData(newTempData);
+
+//                 // Also update main data state immediately
+//                 setData(newTempData);
+
+//                 // Trigger onStateChange immediately
+//                 if (onStateChangeRef.current) {
+//                     onStateChangeRef.current(newTempData);
+//                 }
+
+//                 // Mark as saved since we updated data directly
+//                 setHasUnsavedChanges(false);
+//                 setLastSavedTime(new Date());
+
+//                 toast.success('Image cropped and uploaded successfully!');
+
+//                 // Close cropper immediately after success
+//                 setShowCropper(false);
+//                 setImageToCrop(null);
+//                 setOriginalFile(null);
+//                 setCurrentCroppingService(null);
+//             } else {
+//                 const errorData = await uploadResponse.json();
+//                 throw new Error(errorData.message || 'Upload failed');
+//             }
+
+//         } catch (error) {
+//             console.error('Error cropping/uploading image:', error);
+
+//             // Fallback: use preview URL and store file for manual save
+//             const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+
+//             // Update tempData with preview URL
 //             setTempData(prevData => ({
 //                 ...prevData,
 //                 services: prevData.services.map(service =>
-//                     service.id === currentCroppingService ? { ...service, image: previewUrl } : service
+//                     service.id === currentCroppingService
+//                         ? { ...service, image: previewUrl }
+//                         : service
 //                 )
 //             }));
 
-//             // Store the file for upload on Save
+//             // Store the file for manual upload
 //             setPendingImageFiles(prev => ({ ...prev, [currentCroppingService]: file }));
 
-//             console.log('Service image cropped, file ready for upload:', file);
-//             toast.success('Image cropped successfully! Click Save to upload to S3.');
+//             // Schedule auto-save for the fallback
+//             scheduleAutoSave();
+
+//             toast.warning('Image cropped but upload failed. Changes will be auto-saved.');
+
+//             // Still close the cropper but show warning
 //             setShowCropper(false);
 //             setImageToCrop(null);
 //             setOriginalFile(null);
 //             setCurrentCroppingService(null);
-//         } catch (error) {
-//             console.error('Error cropping image:', error);
-//             toast.error('Error cropping image. Please try again.');
+//         } finally {
+//             setIsAutoUploading(false);
+//             setUploadProgress(0);
 //         }
 //     };
 
@@ -294,53 +536,22 @@
 //         setCrop({ x: 0, y: 0 });
 //     };
 
-//     // Save function with S3 upload
+//     // Save function with S3 upload (preserved for manual save)
 //     const handleSave = async () => {
 //         try {
 //             setIsUploading(true);
+//             setIsSaving(true);
 
-//             let updatedData = { ...tempData };
-
-//             // Upload images for services with pending files
-//             for (const [serviceId, file] of Object.entries(pendingImageFiles)) {
-//                 if (!userId || !professionalId || !templateSelection) {
-//                     toast.error('Missing user information. Please refresh and try again.');
-//                     return;
-//                 }
-
-//                 const formData = new FormData();
-//                 formData.append('file', file);
-//                 formData.append('userId', userId);
-//                 formData.append('fieldName', `service_${serviceId}`);
-
-//                 const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
-//                     method: 'POST',
-//                     body: formData,
-//                 });
-
-//                 if (uploadResponse.ok) {
-//                     const uploadData = await uploadResponse.json();
-//                     updatedData.services = updatedData.services.map(service =>
-//                         service.id === serviceId ? { ...service, image: uploadData.s3Url } : service
-//                     );
-//                     console.log('Service image uploaded to S3:', uploadData.s3Url);
-//                 } else {
-//                     const errorData = await uploadResponse.json();
-//                     toast.error(`Image upload failed: ${errorData.message || 'Unknown error'}`);
-//                     return;
-//                 }
+//             // Upload any remaining pending images
+//             const uploadSuccess = await uploadPendingImages();
+//             if (!uploadSuccess) {
+//                 return;
 //             }
 
-//             // Clear pending files
-//             setPendingImageFiles({});
-
-//             // Save the updated data with S3 URLs
-//             setIsSaving(true);
-//             await new Promise((resolve) => setTimeout(resolve, 1000));
-
-//             // Update both states with the new URLs
-//             setData(updatedData);
-//             setTempData(updatedData);
+//             // Update data state
+//             setData(tempData);
+//             setHasUnsavedChanges(false);
+//             setLastSavedTime(new Date());
 
 //             setIsEditing(false);
 //             toast.success('Services saved successfully');
@@ -357,26 +568,34 @@
 //     const handleCancel = () => {
 //         setTempData({ ...data });
 //         setPendingImageFiles({});
+//         setHasUnsavedChanges(false);
 //         setIsEditing(false);
+
+//         // Clear any pending auto-save
+//         if (autoSaveTimeoutRef.current) {
+//             clearTimeout(autoSaveTimeoutRef.current);
+//         }
 //     };
 
-//     // Stable update functions with useCallback
+//     // Stable update functions with useCallback and auto-save scheduling
 //     const updateService = useCallback((index: number, field: keyof Service, value: string) => {
 //         setTempData(prevData => {
 //             const updatedServices = [...prevData.services];
 //             updatedServices[index] = { ...updatedServices[index], [field]: value };
 //             return { ...prevData, services: updatedServices };
 //         });
-//     }, []);
+//         scheduleAutoSave();
+//     }, [scheduleAutoSave]);
 
 //     const updateHeader = useCallback((field: keyof Omit<ServicesData, 'services'>, value: string) => {
 //         setTempData(prevData => ({
 //             ...prevData,
 //             [field]: value
 //         }));
-//     }, []);
+//         scheduleAutoSave();
+//     }, [scheduleAutoSave]);
 
-//     // Memoized functions
+//     // Memoized functions with auto-save scheduling
 //     const addService = useCallback(() => {
 //         const newService: Service = {
 //             id: Date.now().toString(),
@@ -390,15 +609,11 @@
 //         }));
 //         // Set current index to the new service
 //         setCurrentIndex(tempData.services.length);
-//     }, [tempData.services.length]);
+//         scheduleAutoSave();
+//     }, [tempData.services.length, scheduleAutoSave]);
 
 //     const removeService = useCallback((index: number) => {
 //         setTempData(prevData => {
-//             // if (prevData.services.length <= 1) {
-//             //     toast.error("You must have at least one service");
-//             //     return prevData;
-//             // }
-
 //             const updatedServices = prevData.services.filter((_, i) => i !== index);
 
 //             // Adjust current index if needed
@@ -408,7 +623,8 @@
 
 //             return { ...prevData, services: updatedServices };
 //         });
-//     }, [currentIndex]);
+//         scheduleAutoSave();
+//     }, [currentIndex, scheduleAutoSave]);
 
 //     // Navigation functions
 //     const nextSlide = () => {
@@ -468,29 +684,6 @@
 //                             Add Services
 //                         </Button>
 //                     </div>
-
-//                     {/* Empty State
-//                     <div className="text-center py-16">
-//                         <div className="max-w-md mx-auto">
-//                             <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-//                                 <Briefcase className="w-12 h-12 text-gray-400" />
-//                             </div>
-//                             <h3 className="text-2xl font-semibold text-foreground mb-4">
-//                                 No Services Found
-//                             </h3>
-//                             <p className="text-muted-foreground mb-8">
-//                                 Showcase your professional services and expertise to attract potential clients and demonstrate your capabilities.
-//                             </p>
-//                             <Button
-//                                 onClick={handleEdit}
-//                                 size='lg'
-//                                 className='bg-red-500 hover:bg-red-600 text-white shadow-lg'
-//                             >
-//                                 <Plus className='w-5 h-5 mr-2' />
-//                                 Add Your First Service
-//                             </Button>
-//                         </div>
-//                     </div> */}
 //                 </div>
 //             </section>
 //         );
@@ -498,7 +691,7 @@
 
 //     return (
 //         <section ref={servicesRef} id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
-//             {/* Image Cropper Modal */}
+//             {/* Image Cropper Modal with Auto-upload Progress */}
 //             {showCropper && (
 //                 <motion.div
 //                     initial={{ opacity: 0 }}
@@ -514,10 +707,14 @@
 //                         <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
 //                             <h3 className="text-lg font-semibold text-gray-800">
 //                                 Crop Service Image (4:3 Standard)
+//                                 {isAutoUploading && (
+//                                     <span className="ml-2 text-blue-600 text-sm">Uploading... {uploadProgress}%</span>
+//                                 )}
 //                             </h3>
 //                             <button
 //                                 onClick={cancelCrop}
 //                                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                                 disabled={isAutoUploading}
 //                             >
 //                                 <X className="w-5 h-5 text-gray-600" />
 //                             </button>
@@ -554,6 +751,18 @@
 //                             />
 //                         </div>
 
+//                         {/* Upload Progress Bar */}
+//                         {isAutoUploading && (
+//                             <div className="px-4 pt-2">
+//                                 <div className="w-full bg-gray-200 rounded-full h-2">
+//                                     <div
+//                                         className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+//                                         style={{ width: `${uploadProgress}%` }}
+//                                     ></div>
+//                                 </div>
+//                             </div>
+//                         )}
+
 //                         {/* Controls */}
 //                         <div className="p-4 bg-gray-50 border-t border-gray-200">
 //                             {/* Aspect Ratio Info */}
@@ -563,8 +772,7 @@
 //                                 </p>
 //                             </div>
 
-//                             {/* Zoom Control */
-//                             }
+//                             {/* Zoom Control */}
 //                             <div className="space-y-2 mb-4">
 //                                 <div className="flex items-center justify-between text-sm">
 //                                     <span className="flex items-center gap-2 text-gray-700">
@@ -578,6 +786,7 @@
 //                                         type="button"
 //                                         onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
 //                                         className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                                         disabled={isAutoUploading}
 //                                     >
 //                                         <ZoomOut className="w-4 h-4" />
 //                                     </button>
@@ -589,11 +798,13 @@
 //                                         step={0.1}
 //                                         onChange={(e) => setZoom(Number(e.target.value))}
 //                                         className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                                         disabled={isAutoUploading}
 //                                     />
 //                                     <button
 //                                         type="button"
 //                                         onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
 //                                         className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                                         disabled={isAutoUploading}
 //                                     >
 //                                         <ZoomIn className="w-4 h-4" />
 //                                     </button>
@@ -605,20 +816,26 @@
 //                                 <button
 //                                     onClick={resetCropSettings}
 //                                     className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                                     disabled={isAutoUploading}
 //                                 >
 //                                     Reset
 //                                 </button>
 //                                 <button
 //                                     onClick={cancelCrop}
 //                                     className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                                     disabled={isAutoUploading}
 //                                 >
 //                                     Cancel
 //                                 </button>
 //                                 <button
 //                                     onClick={applyCrop}
-//                                     className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+//                                     className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium flex items-center justify-center gap-2"
+//                                     disabled={isAutoUploading}
 //                                 >
-//                                     Apply Crop
+//                                     {isAutoUploading ? (
+//                                         <Loader2 className="w-4 h-4 animate-spin" />
+//                                     ) : null}
+//                                     {isAutoUploading ? 'Uploading...' : 'Apply & Upload'}
 //                                 </button>
 //                             </div>
 //                         </div>
@@ -627,8 +844,31 @@
 //             )}
 
 //             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//                 {/* Edit Controls */}
+//                 {/* Edit Controls with Auto-save Status */}
 //                 <div className='text-right mb-8'>
+//                     {/* Auto-save Status */}
+//                     {isEditing && (
+//                         <div className="flex items-center justify-end gap-4 mb-4 text-sm">
+//                             {hasUnsavedChanges && (
+//                                 <div className="flex items-center gap-2 text-orange-600">
+//                                     <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+//                                     Unsaved changes
+//                                 </div>
+//                             )}
+//                             {isAutoSaving && (
+//                                 <div className="flex items-center gap-2 text-blue-600">
+//                                     <Loader2 className="w-3 h-3 animate-spin" />
+//                                     Auto-saving...
+//                                 </div>
+//                             )}
+//                             {lastSavedTime && !hasUnsavedChanges && !isAutoSaving && (
+//                                 <div className="text-green-600">
+//                                     Saved {lastSavedTime.toLocaleTimeString()}
+//                                 </div>
+//                             )}
+//                         </div>
+//                     )}
+
 //                     {!isEditing ? (
 //                         <Button
 //                             onClick={handleEdit}
@@ -771,7 +1011,7 @@
 //                                         }}
 //                                         className="absolute inset-0 grid md:grid-cols-2 gap-0"
 //                                     >
-//                                         {/* Service Image - UPDATED to match Certifications component */}
+//                                         {/* Service Image */}
 //                                         <div className="relative aspect-[4/3]">
 //                                             {isEditing && (
 //                                                 <div className='absolute top-2 right-2 z-10'>
@@ -1081,23 +1321,17 @@ export function Services({
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const servicesRef = useRef<HTMLDivElement>(null);
-  const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
+  const [pendingImageFiles, setPendingImageFiles] = useState<
+    Record<string, File>
+  >({});
 
-  // Auto-save states
+  // Auto-save states (same as Hero component)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedDataRef = useRef<ServicesData | null>(null);
-
-  // Pending image files for S3 upload
-  const [pendingImageFiles, setPendingImageFiles] = useState<
-    Record<string, File>
-  >({});
 
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
@@ -1111,59 +1345,63 @@ export function Services({
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio] = useState(4 / 3);
 
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
+
   // Use ref for onStateChange to prevent infinite loops
   const onStateChangeRef = useRef(onStateChange);
   useEffect(() => {
     onStateChangeRef.current = onStateChange;
   }, [onStateChange]);
 
-  // Initialize with empty data structure
-  const [data, setData] = useState<ServicesData>({
-    subtitle: "",
-    heading: "",
-    description: "",
-    services: [],
-  });
+  // Initialize with props data or empty structure
+  const [data, setData] = useState<ServicesData>(
+    servicesData || {
+      subtitle: "",
+      heading: "",
+      description: "",
+      services: [],
+    }
+  );
 
-  const [tempData, setTempData] = useState<ServicesData>({
-    subtitle: "",
-    heading: "",
-    description: "",
-    services: [],
-  });
+  const [tempData, setTempData] = useState<ServicesData>(
+    servicesData || {
+      subtitle: "",
+      heading: "",
+      description: "",
+      services: [],
+    }
+  );
 
-  // Auto-save functionality
+  // Auto-save functionality (same as Hero component)
   const performAutoSave = useCallback(
     async (dataToSave: ServicesData) => {
       try {
         setIsAutoSaving(true);
 
-        // Upload images for services with pending files
-        const updatedData = { ...dataToSave };
-
-        for (const [serviceId, file] of Object.entries(pendingImageFiles)) {
-          try {
-            const s3Url = await uploadImageToS3(file, serviceId);
-            updatedData.services = updatedData.services.map((service) =>
-              service.id === serviceId ? { ...service, image: s3Url } : service
-            );
-
-            // Remove from pending files after successful upload
-            setPendingImageFiles((prev) => {
-              const newPending = { ...prev };
-              delete newPending[serviceId];
-              return newPending;
-            });
-          } catch (uploadError) {
-            console.error(
-              `Upload failed for service ${serviceId}:`,
-              uploadError
-            );
-            // Keep the blob URL for now, auto-save will still work with it
-          }
+        // Upload any pending images first
+        const uploadSuccess = await uploadPendingImages();
+        if (!uploadSuccess) {
+          toast.error("Image upload failed during auto-save");
+          return;
         }
 
-        // Simulate API call
+        // Update with S3 URLs
+        const updatedData = {
+          ...dataToSave,
+          services: dataToSave.services.map((service) => ({
+            ...service,
+            image: pendingImageFiles[service.id]
+              ? // In real scenario, this would be the S3 URL from upload
+                // For now, keep as is and the actual upload will happen separately
+                service.image
+              : service.image,
+          })),
+        };
+
+        // Clear pending files after successful upload
+        setPendingImageFiles({});
+
         await new Promise((resolve) => setTimeout(resolve, 500));
 
         if (onStateChangeRef.current) {
@@ -1211,23 +1449,70 @@ export function Services({
     };
   }, []);
 
+  // Upload pending images to S3
+  const uploadPendingImages = async (): Promise<boolean> => {
+    const pendingEntries = Object.entries(pendingImageFiles);
+    if (pendingEntries.length === 0) return true;
+
+    try {
+      setIsUploading(true);
+
+      for (const [serviceId, file] of pendingEntries) {
+        if (!userId) {
+          throw new Error("Missing user information");
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("userId", userId);
+        formData.append("fieldName", `service_${serviceId}`);
+
+        const uploadResponse = await fetch(
+          `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json();
+          throw new Error(errorData.message || "Upload failed");
+        }
+
+        const uploadData = await uploadResponse.json();
+
+        // Update tempData with S3 URL
+        setTempData((prev) => {
+          const updatedServices = prev.services.map((service) =>
+            service.id === serviceId
+              ? { ...service, image: uploadData.s3Url }
+              : service
+          );
+          return { ...prev, services: updatedServices };
+        });
+      }
+
+      // Clear pending files
+      setPendingImageFiles({});
+      return true;
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast.error(`Image upload failed: ${error.message}`);
+      return false;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   // Data loading effect
   useEffect(() => {
     if (servicesData) {
       setData(servicesData);
       setTempData(servicesData);
       lastSavedDataRef.current = servicesData;
-      setDataLoaded(true);
-      setIsLoading(false);
-    } else if (!dataLoaded) {
-      setIsLoading(true);
-      const timer = setTimeout(() => {
-        setDataLoaded(true);
-        setIsLoading(false);
-      }, 1200);
-      return () => clearTimeout(timer);
     }
-  }, [servicesData, dataLoaded]);
+  }, [servicesData]);
 
   // Intersection observer
   useEffect(() => {
@@ -1240,35 +1525,6 @@ export function Services({
       if (servicesRef.current) observer.unobserve(servicesRef.current);
     };
   }, []);
-
-  // Trigger loading when component becomes visible
-  useEffect(() => {
-    if (isVisible && !dataLoaded && !isLoading) {
-      setIsLoading(true);
-      const timer = setTimeout(() => {
-        if (servicesData) {
-          setData(servicesData);
-          setTempData(servicesData);
-          lastSavedDataRef.current = servicesData;
-        }
-        setDataLoaded(true);
-        setIsLoading(false);
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isVisible, dataLoaded, isLoading, servicesData]);
-
-  // Lock body scroll while cropper is open
-  useEffect(() => {
-    if (showCropper) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    }
-  }, [showCropper]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -1283,7 +1539,7 @@ export function Services({
   }, []);
 
   // Helper function to create image element
-  const createImage = (url: string): Promise<HTMLImageElement> =>
+  const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
       image.addEventListener("load", () => resolve(image));
@@ -1293,12 +1549,10 @@ export function Services({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc: string, pixelCrop: any) => {
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-
-    if (!ctx) throw new Error("Canvas context not available");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
@@ -1315,11 +1569,9 @@ export function Services({
       pixelCrop.height
     );
 
-    return new Promise<{ file: File; previewUrl: string }>((resolve) => {
+    return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          if (!blob) throw new Error("Failed to create blob");
-
           const fileName = originalFile
             ? `cropped-service-${originalFile.name}`
             : `cropped-service-${Date.now()}.jpg`;
@@ -1347,7 +1599,7 @@ export function Services({
     file: File,
     serviceId: string
   ): Promise<string> => {
-    if (!userId || !professionalId) {
+    if (!userId) {
       throw new Error("Missing user information");
     }
 
@@ -1400,7 +1652,7 @@ export function Services({
       setZoom(1);
       setCrop({ x: 0, y: 0 });
     };
-    reader.readAsDataURL(file as Blob);
+    reader.readAsDataURL(file);
 
     // Clear the file input
     event.target.value = "";
@@ -1414,7 +1666,7 @@ export function Services({
       setIsUploading(true);
 
       const { file, previewUrl } = await getCroppedImg(
-        imageToCrop as string,
+        imageToCrop,
         croppedAreaPixels
       );
 
@@ -1444,9 +1696,14 @@ export function Services({
           ),
         };
         setTempData(finalUpdatedData);
-        performAutoSave(finalUpdatedData); // Immediate save with S3 URL
 
-        toast.success("Service image uploaded and saved successfully!");
+        // Perform immediate save with S3 URL
+        if (autoSaveTimeoutRef.current) {
+          clearTimeout(autoSaveTimeoutRef.current);
+        }
+        await performAutoSave(finalUpdatedData);
+
+        toast.success("Image uploaded and saved successfully!");
       } catch (uploadError) {
         console.error("Upload failed:", uploadError);
         toast.error("Image upload failed, but local copy is saved");
@@ -1493,31 +1750,20 @@ export function Services({
       }
 
       // Upload any remaining pending images
-      for (const [serviceId, file] of Object.entries(pendingImageFiles)) {
-        try {
-          const s3Url = await uploadImageToS3(file, serviceId);
-          tempData.services = tempData.services.map((service) =>
-            service.id === serviceId ? { ...service, image: s3Url } : service
-          );
-        } catch (uploadError) {
-          console.error("Upload failed:", uploadError);
-          toast.error("Image upload failed");
-          setIsUploading(false);
+      if (Object.keys(pendingImageFiles).length > 0) {
+        const uploadSuccess = await uploadPendingImages();
+        if (!uploadSuccess) {
           setIsSaving(false);
           return;
         }
       }
 
-      // Clear pending files
-      setPendingImageFiles({});
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      // Update data state
       setData(tempData);
       lastSavedDataRef.current = tempData;
       setIsEditing(false);
       setHasUnsavedChanges(false);
+      setLastSaved(new Date());
 
       if (onStateChangeRef.current) {
         onStateChangeRef.current(tempData);
@@ -1528,7 +1774,6 @@ export function Services({
       console.error("Error saving services:", error);
       toast.error("Error saving changes. Please try again.");
     } finally {
-      setIsUploading(false);
       setIsSaving(false);
     }
   };
@@ -1546,7 +1791,7 @@ export function Services({
     toast.info("Changes discarded");
   };
 
-  // Stable update functions with useCallback
+  // Update functions with auto-save scheduling
   const updateService = useCallback(
     (index: number, field: keyof Service, value: string) => {
       setTempData((prevData) => {
@@ -1574,15 +1819,14 @@ export function Services({
     [scheduleAutoSave]
   );
 
-  // Memoized functions
   const addService = useCallback(() => {
-    const newService: Service = {
-      id: Date.now().toString(),
-      title: "New Service",
-      description: "Service description",
-      image: "",
-    };
     setTempData((prevData) => {
+      const newService: Service = {
+        id: Date.now().toString(),
+        title: "New Service",
+        description: "Service description",
+        image: "",
+      };
       const updated = {
         ...prevData,
         services: [...prevData.services, newService],
@@ -1598,14 +1842,14 @@ export function Services({
     (index: number) => {
       setTempData((prevData) => {
         const updatedServices = prevData.services.filter((_, i) => i !== index);
-        const updated = { ...prevData, services: updatedServices };
-        scheduleAutoSave(updated);
 
         // Adjust current index if needed
         if (currentIndex >= updatedServices.length) {
           setCurrentIndex(Math.max(0, updatedServices.length - 1));
         }
 
+        const updated = { ...prevData, services: updatedServices };
+        scheduleAutoSave(updated);
         return updated;
       });
     },
@@ -1614,22 +1858,21 @@ export function Services({
 
   // Navigation functions
   const nextSlide = () => {
-    if (!displayData.services || displayData.services.length === 0) return;
+    if (!tempData.services || tempData.services.length === 0) return;
     setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % displayData.services.length);
+    setCurrentIndex((prev) => (prev + 1) % tempData.services.length);
   };
 
   const prevSlide = () => {
-    if (!displayData.services || displayData.services.length === 0) return;
+    if (!tempData.services || tempData.services.length === 0) return;
     setDirection(-1);
     setCurrentIndex(
-      (prev) =>
-        (prev - 1 + displayData.services.length) % displayData.services.length
+      (prev) => (prev - 1 + tempData.services.length) % tempData.services.length
     );
   };
 
   const goToSlide = (index: number) => {
-    if (!displayData.services || displayData.services.length === 0) return;
+    if (!tempData.services || tempData.services.length === 0) return;
     setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
   };
@@ -1651,34 +1894,13 @@ export function Services({
     }),
   };
 
-  // Calculate displayData based on editing state
-  const displayData = isEditing ? tempData : data;
-
   // Check if there's any meaningful data to display
+  const displayData = isEditing ? tempData : data;
   const hasData =
     data.services.length > 0 ||
     data.subtitle ||
     data.heading ||
     data.description;
-
-  if (isLoading) {
-    return (
-      <section
-        ref={servicesRef}
-        id="services"
-        className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-            <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-              <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-              <span className="text-gray-700">Loading content...</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   // No data state - show empty state with option to add data
   if (!isEditing && !hasData) {
@@ -1717,18 +1939,17 @@ export function Services({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/90 z-[2147483647] flex items-center justify-center p-4"
-            style={{ zIndex: 2147483647 }}
+            className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
+              className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
             >
               {/* Header */}
               <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Crop Service Image (4:3 Aspect Ratio)
+                  Crop Service Image (4:3 Standard)
                   {isUploading && (
                     <span className="ml-2 text-blue-600 text-sm flex items-center gap-1">
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -1867,38 +2088,39 @@ export function Services({
         )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Edit Controls */}
+        {/* Edit Controls with Auto-save Status */}
         <div className="text-right mb-8">
+          {/* Auto-save Status (same as Hero component) */}
+          {isEditing && (
+            <div className="flex items-center gap-2 text-sm mb-2 justify-end">
+              {isAutoSaving && (
+                <div className="flex items-center gap-1 text-blue-500">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Auto-saving...</span>
+                </div>
+              )}
+              {hasUnsavedChanges && !isAutoSaving && (
+                <div className="text-yellow-500">● Unsaved changes</div>
+              )}
+              {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
+                <div className="text-green-500">
+                  ✓ Auto-saved {lastSaved.toLocaleTimeString()}
+                </div>
+              )}
+            </div>
+          )}
+
           {!isEditing ? (
             <Button
               onClick={handleEdit}
               size="sm"
               className="bg-red-500 hover:bg-red-600 shadow-md text-white"
-              disabled={isLoading}
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Edit
             </Button>
           ) : (
             <div className="flex gap-2 justify-end">
-              {/* Auto-save indicator */}
-              <div className="flex items-center gap-2 mr-4 text-sm">
-                {isAutoSaving && (
-                  <div className="flex items-center gap-1 text-blue-500">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Auto-saving...</span>
-                  </div>
-                )}
-                {hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-yellow-500">● Unsaved changes</div>
-                )}
-                {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-green-500">
-                    ✓ Auto-saved {lastSaved.toLocaleTimeString()}
-                  </div>
-                )}
-              </div>
-
               <Button
                 onClick={handleSave}
                 size="sm"
@@ -1917,7 +2139,7 @@ export function Services({
               <Button
                 onClick={handleCancel}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-red-400 hover:bg-red-600 shadow-md text-white"
                 disabled={isSaving || isUploading}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -1968,12 +2190,12 @@ export function Services({
           </div>
           {isEditing ? (
             <>
-              <div className="relative">
+              <div className="relative max-w-3xl mx-auto mb-4">
                 <input
                   type="text"
                   value={displayData.subtitle || ""}
                   onChange={(e) => updateHeader("subtitle", e.target.value)}
-                  className="text-xl text-red-600 mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
+                  className="text-xl text-red-600 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
                   placeholder="Subtitle (e.g., Professional Services)"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
@@ -1981,11 +2203,11 @@ export function Services({
                   {displayData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
                 </div>
               </div>
-              <div className="relative">
+              <div className="relative max-w-3xl mx-auto">
                 <textarea
                   value={displayData.description || ""}
                   onChange={(e) => updateHeader("description", e.target.value)}
-                  className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                   rows={2}
                   placeholder="Description of your services"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
@@ -1999,12 +2221,12 @@ export function Services({
           ) : (
             <>
               {displayData.subtitle && (
-                <p className="text-xl text-red-600 mb-4 text-justify max-w-3xl mx-auto">
+                <p className="text-xl text-red-600 mb-4 text-center max-w-3xl mx-auto">
                   {displayData.subtitle}
                 </p>
               )}
               {displayData.description && (
-                <p className="text-lg text-muted-foreground text-justify max-w-3xl mx-auto">
+                <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto">
                   {displayData.description}
                 </p>
               )}
@@ -2108,7 +2330,7 @@ export function Services({
                       <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
                     </div>
 
-                    {/* Service Details - Fixed height container */}
+                    {/* Service Details */}
                     <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-red-50 dark:from-card dark:to-red-900/20">
                       {isEditing && (
                         <Button
@@ -2280,12 +2502,3 @@ export function Services({
     </section>
   );
 }
-
-// Add default props
-Services.defaultProps = {
-  servicesData: undefined,
-  onStateChange: undefined,
-  userId: "",
-  professionalId: "",
-  templateSelection: "",
-};

@@ -59,7 +59,6 @@
 //   const [imageLoaded, setImageLoaded] = useState(false);
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-
 //   useEffect(() => {
 //     if (content) {
 //       setAboutContent(content);
@@ -242,7 +241,7 @@
 //   };
 
 //   return (
-//     <section id="about" className="py-20 bg-white text-justify dark:bg-gray-900">
+//     <section id="about" className="py-20 text-justify bg-white dark:bg-gray-900">
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //         <motion.div
 //           variants={containerVariants}
@@ -580,7 +579,6 @@
 //                   />
 //                 </div>
 
-
 //               </div>
 //             </div>
 
@@ -616,9 +614,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import Cropper from "react-easy-crop";
 import {
-  Award,
-  Calendar,
-  Users,
   Edit,
   Save,
   X,
@@ -654,10 +649,15 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   const [skillsInput, setSkillsInput] = useState("");
 
   // Auto-save states
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+
+  // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track if component is mounted to prevent state updates after unmount
+  const isMounted = useRef(true);
 
   // Character limits
   const CHAR_LIMITS = {
@@ -680,89 +680,110 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Track content changes for auto-save
-  useEffect(() => {
-    if (content) {
-      setAboutContent(content);
-      setHasUnsavedChanges(false);
-    }
-  }, [content]);
+  // Image upload progress state
+  const [uploadProgress, setUploadProgress] = useState(0);
 
+  // Initialize component mount state
   useEffect(() => {
-    if (isEditing) {
-      setSkillsInput(aboutContent.skills.join(", "));
-    }
-  }, [isEditing, aboutContent.skills]);
-
-  // Auto-save effect
-  useEffect(() => {
+    isMounted.current = true;
     return () => {
-      // Cleanup timeout on unmount
+      isMounted.current = false;
+      // Cleanup auto-save timeout on unmount
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
   }, []);
 
-  // Auto-save function
-  const performAutoSave = useCallback(async () => {
-    if (!hasUnsavedChanges || !isEditing) return;
+  useEffect(() => {
+    if (content) {
+      setAboutContent(content);
+      // Update skills input when content changes and we're NOT editing
+      if (!isEditing) {
+        setSkillsInput(content.skills.join(", "));
+      }
+    }
+  }, [content]);
 
-    setIsAutoSaving(true);
-    
+  // Set skills input when entering edit mode
+  useEffect(() => {
+    if (isEditing) {
+      setSkillsInput(aboutContent.skills.join(", "));
+    }
+  }, [isEditing]);
+
+  // Auto-save effect
+  useEffect(() => {
+    // Don't auto-save if not editing or no unsaved changes
+    if (!isEditing || !hasUnsavedChanges) return;
+
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Set new timeout for auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      performAutoSave();
+    }, 2000); // 2-second delay
+
+    // Cleanup timeout on unmount or dependency change
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [aboutContent, hasUnsavedChanges, isEditing]);
+
+  // Perform auto-save
+  const performAutoSave = useCallback(async () => {
+    if (!isMounted.current || !hasUnsavedChanges) return;
+
     try {
+      setIsAutoSaving(true);
+
       const skillsArray = skillsInput
         .split(",")
         .map((skill) => skill.trim())
         .filter((skill) => skill.length > 0);
 
       const updated = { ...aboutContent, skills: skillsArray };
-      
+
       // Call the save function
       onSave?.(updated);
-      setLastSavedTime(new Date());
+
+      // Update state
       setHasUnsavedChanges(false);
-      
-      // Show subtle feedback (optional - can be removed if too intrusive)
-      console.log("Auto-saved at", new Date().toLocaleTimeString());
+      setLastSavedTime(new Date());
+
+      // Show subtle notification (optional - can be removed if too intrusive)
+      toast.success("Changes auto-saved", {
+        duration: 1000,
+        position: "bottom-right",
+      });
     } catch (error) {
       console.error("Auto-save failed:", error);
-      toast.error("Auto-save failed. Changes not saved.");
+      toast.error("Auto-save failed. Please save manually.");
     } finally {
-      setIsAutoSaving(false);
+      if (isMounted.current) {
+        setIsAutoSaving(false);
+      }
     }
-  }, [aboutContent, skillsInput, hasUnsavedChanges, isEditing, onSave]);
+  }, [aboutContent, skillsInput, hasUnsavedChanges, onSave]);
 
-  // Schedule auto-save when content changes
-  const scheduleAutoSave = useCallback(() => {
-    if (!isEditing) return;
-
-    setHasUnsavedChanges(true);
-    
-    // Clear existing timeout
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
-    // Set new timeout
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      performAutoSave();
-    }, 2000); // 2-second delay
-  }, [isEditing, performAutoSave]);
-
-  // Handle content changes with auto-save scheduling
+  // Handle content changes with auto-save tracking
   const handleContentChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setAboutContent((prev) => ({ ...prev, [name]: value }));
-    scheduleAutoSave();
+    setHasUnsavedChanges(true);
   };
 
-  // Handle skills input changes with auto-save scheduling
+  // Handle skills input change with auto-save tracking
   const handleSkillsInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSkillsInput(e.target.value);
-    scheduleAutoSave();
+    setHasUnsavedChanges(true);
   };
 
   const getCharCountColor = (current: number, max: number) => {
@@ -782,6 +803,49 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   const itemVariants = {
     hidden: { y: 50, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
+  };
+
+  // Enhanced image upload function with progress tracking
+  const uploadImageToS3 = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId!);
+      formData.append("fieldName", "aboutImage");
+
+      const xhr = new XMLHttpRequest();
+
+      // Track upload progress
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          setUploadProgress(progress);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            resolve(response.s3Url);
+          } catch (error) {
+            reject(new Error("Failed to parse upload response"));
+          }
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}`));
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        reject(new Error("Upload failed due to network error"));
+      });
+
+      xhr.open(
+        "POST",
+        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`
+      );
+      xhr.send(formData);
+    });
   };
 
   // Image cropping functions
@@ -829,7 +893,6 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     });
   };
 
-  // Auto-upload image after cropping
   const handleCropConfirm = async () => {
     try {
       const croppedBlob = await getCroppedImage();
@@ -841,71 +904,51 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          const tempImageSrc = reader.result as string;
           setAboutContent((prev) => ({
             ...prev,
-            imageSrc: tempImageSrc,
+            imageSrc: reader.result as string,
           }));
-          // Schedule auto-save for image change
-          setHasUnsavedChanges(true);
-          scheduleAutoSave();
         }
       };
       reader.readAsDataURL(croppedFile);
 
       setIsUploading(true);
+      setUploadProgress(0);
       setIsCropping(false);
       setImageLoaded(false);
 
-      // Upload cropped image to AWS S3 immediately
-      const formData = new FormData();
-      formData.append("file", croppedFile);
-      formData.append("userId", userId!);
-      formData.append("fieldName", "aboutImage");
+      // Auto-upload cropped image to AWS S3 immediately
+      try {
+        const s3Url = await uploadImageToS3(croppedFile);
 
-      const uploadResponse = await fetch(
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        const s3ImageUrl = uploadData.s3Url;
-        
-        // Update with S3 URL
         setAboutContent((prev) => ({
           ...prev,
-          imageSrc: s3ImageUrl,
+          imageSrc: s3Url,
         }));
-        
-        // Trigger save with the new S3 URL
-        const updatedWithS3 = {
-          ...aboutContent,
-          imageSrc: s3ImageUrl,
-        };
-        onSave?.(updatedWithS3);
-        setLastSavedTime(new Date());
-        setHasUnsavedChanges(false);
-        
-        toast.success("Image uploaded and saved successfully!");
-      } else {
-        const errorData = await uploadResponse.json();
+
+        // Mark as unsaved changes since image was updated
+        setHasUnsavedChanges(true);
+
+        toast.success("Image uploaded successfully!");
+      } catch (uploadError) {
+        console.error("Image upload failed:", uploadError);
         toast.error(
-          `Image upload failed: ${errorData.message || "Unknown error"}`
+          `Image upload failed: ${
+            uploadError instanceof Error ? uploadError.message : "Unknown error"
+          }`
         );
-        // Keep the base64 image as fallback
-        toast.info("Using local image version. Please try uploading again later.");
+        // Keep the cropped image as base64 for manual save later
+        toast.info("Cropped image saved locally. Save manually to persist.");
       }
 
       setIsUploading(false);
+      setUploadProgress(0);
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Failed to crop image");
       setIsCropping(false);
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -934,13 +977,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     setZoom((prev) => Math.max(prev - 0.1, 0.1));
   };
 
-  // Manual save function (preserved)
   const handleSave = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
     const skillsArray = skillsInput
       .split(",")
       .map((skill) => skill.trim())
@@ -955,22 +992,40 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
     toast.success("About section updated successfully!");
   };
 
-  // Manual cancel function (preserved)
   const handleCancel = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
     setAboutContent(content);
-    setSkillsInput(content.skills.join(", "));
     setIsEditing(false);
     setHasUnsavedChanges(false);
     toast.info("Changes discarded");
   };
 
+  const handleEditStart = () => {
+    setIsEditing(true);
+    setHasUnsavedChanges(false);
+  };
+
+  // Format last saved time for display
+  const formatLastSavedTime = () => {
+    if (!lastSavedTime) return "Never";
+
+    const now = new Date();
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return lastSavedTime.toLocaleDateString();
+  };
+
   return (
-    <section id="about" className="py-20 bg-white text-justify dark:bg-gray-900">
+    <section
+      id="about"
+      className="py-20 text-justify bg-white dark:bg-gray-900"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
@@ -987,21 +1042,23 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
               {isEditing ? (
                 <div className="flex items-center gap-2">
                   {/* Auto-save indicator */}
-                  <div className="flex items-center gap-2 mr-4">
+                  <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400">
                     {isAutoSaving ? (
-                      <div className="flex items-center gap-1 text-sm text-blue-500">
+                      <div className="flex items-center gap-1">
                         <Loader2 className="w-4 h-4 animate-spin" />
                         <span>Saving...</span>
                       </div>
                     ) : hasUnsavedChanges ? (
-                      <div className="text-sm text-yellow-500">
-                        Unsaved changes
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <span>Unsaved changes</span>
                       </div>
-                    ) : lastSavedTime ? (
-                      <div className="text-sm text-green-500">
-                        Saved {lastSavedTime.toLocaleTimeString()}
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>Saved {formatLastSavedTime()}</span>
                       </div>
-                    ) : null}
+                    )}
                   </div>
 
                   <button
@@ -1021,7 +1078,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                 </div>
               ) : (
                 <button
-                  onClick={() => setIsEditing(true)}
+                  onClick={handleEditStart}
                   className="p-3 text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-full transition-colors"
                   title="Edit Section"
                 >
@@ -1114,8 +1171,16 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                     </motion.label>
                   ) : (
                     <div className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/40 text-white font-semibold text-lg">
-                      <Loader2 className="w-6 h-6 animate-spin mr-2" />
-                      Uploading...
+                      <div className="text-center">
+                        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
+                        <div>Uploading... {Math.round(uploadProgress)}%</div>
+                        <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
+                          <div
+                            className="h-full bg-green-500 transition-all duration-300"
+                            style={{ width: `${uploadProgress}%` }}
+                          ></div>
+                        </div>
+                      </div>
                     </div>
                   ))}
               </div>
@@ -1267,7 +1332,9 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
             <div className="p-6">
               <div
-                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${
+                  isDragging ? "cursor-grabbing" : "cursor-grab"
+                }`}
               >
                 <Cropper
                   image={imageToCrop}
@@ -1333,20 +1400,11 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
               </button>
               <button
                 onClick={handleCropConfirm}
-                disabled={!imageLoaded || isUploading}
+                disabled={!imageLoaded}
                 className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isUploading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Crop & Upload
-                  </>
-                )}
+                <Check className="w-5 h-5" />
+                Crop & Upload
               </button>
             </div>
           </div>

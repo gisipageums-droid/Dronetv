@@ -89,7 +89,7 @@
 //   };
 
 //   return (
-//     <footer className="bg-dark-300 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
+//     <footer className="bg-dark-300 text-justify border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
 //         {onSave && (
 //           <div className="absolute top-6 right-6 z-20 flex gap-3">
@@ -197,7 +197,7 @@
 //                 </div>
 //               </div>
 //             ) : (
-//               <p className="text-gray-400 mb-6 text-justify leading-relaxed max-w-md">
+//               <p className="text-gray-400 mb-6 leading-relaxed max-w-md">
 //                 {content.personalInfo.description}
 //               </p>
 //             )}
@@ -360,7 +360,6 @@
 
 // export default Footer;
 
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Save, X, Edit, Loader2 } from "lucide-react";
@@ -429,154 +428,142 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   const [editedContent, setEditedContent] = useState<FooterContent>(content);
 
   // Auto-save states
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+
+  // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Track content changes
-  useEffect(() => {
-    setEditedContent(content);
-    setHasUnsavedChanges(false);
-  }, [content]);
+  // Track if component is mounted to prevent state updates after unmount
+  const isMounted = useRef(true);
 
-  // Auto-save cleanup
+  // Initialize component mount state
   useEffect(() => {
+    isMounted.current = true;
     return () => {
+      isMounted.current = false;
+      // Cleanup auto-save timeout on unmount
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
   }, []);
 
-  // Auto-save function
-  const performAutoSave = useCallback(async () => {
-    if (!hasUnsavedChanges || !isEditing) return;
+  // Reset edited content when content prop changes
+  useEffect(() => {
+    setEditedContent(content);
+    setHasUnsavedChanges(false);
+  }, [content]);
 
-    setIsAutoSaving(true);
-    
-    try {
-      onSave?.(editedContent);
-      setLastSavedTime(new Date());
-      setHasUnsavedChanges(false);
-      
-      console.log("Footer auto-saved at", new Date().toLocaleTimeString());
-    } catch (error) {
-      console.error("Footer auto-save failed:", error);
-      toast.error("Auto-save failed. Changes not saved.");
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [editedContent, hasUnsavedChanges, isEditing, onSave]);
+  // Auto-save effect
+  useEffect(() => {
+    // Don't auto-save if not editing or no unsaved changes
+    if (!isEditing || !hasUnsavedChanges) return;
 
-  // Schedule auto-save
-  const scheduleAutoSave = useCallback(() => {
-    if (!isEditing) return;
-
-    setHasUnsavedChanges(true);
-    
     // Clear existing timeout
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
 
-    // Set new timeout (2-second delay)
+    // Set new timeout for auto-save
     autoSaveTimeoutRef.current = setTimeout(() => {
       performAutoSave();
-    }, 2000);
-  }, [isEditing, performAutoSave]);
+    }, 2000); // 2-second delay
 
-  // Generic content update handler with auto-save
-  const updateContent = useCallback((updates: Partial<FooterContent>) => {
-    setEditedContent(prev => ({ ...prev, ...updates }));
-    scheduleAutoSave();
-  }, [scheduleAutoSave]);
-
-  // Personal info handlers
-  const handlePersonalNameChange = (name: string) => {
-    updateContent({
-      personalInfo: { ...editedContent.personalInfo, name }
-    });
-  };
-
-  const handlePersonalDescriptionChange = (description: string) => {
-    updateContent({
-      personalInfo: { ...editedContent.personalInfo, description }
-    });
-  };
-
-  // Quick links handlers
-  const handleQuickLinkChange = (index: number, field: 'label' | 'href', value: string) => {
-    const newQuickLinks = [...editedContent.quickLinks];
-    newQuickLinks[index] = { ...newQuickLinks[index], [field]: value };
-    updateContent({ quickLinks: newQuickLinks });
-  };
-
-  // More links handlers
-  const handleMoreLinkChange = (index: number, field: 'label' | 'href', value: string) => {
-    const newMoreLinks = [...editedContent.moreLinks];
-    newMoreLinks[index] = { ...newMoreLinks[index], [field]: value };
-    updateContent({ moreLinks: newMoreLinks });
-  };
-
-  // Social links handlers
-  const handleSocialLinkChange = (index: number, field: 'name' | 'href', value: string) => {
-    const newSocialLinks = [...editedContent.socialLinks];
-    newSocialLinks[index] = { ...newSocialLinks[index], [field]: value };
-    updateContent({ socialLinks: newSocialLinks });
-  };
-
-  // Newsletter handlers
-  const handleNewsletterChange = (field: keyof NewsletterContent, value: string) => {
-    updateContent({
-      newsletter: { ...editedContent.newsletter, [field]: value }
-    });
-  };
-
-  // Bottom section handlers
-  const handleBottomSectionChange = (field: keyof BottomSectionContent, value: string) => {
-    updateContent({
-      bottomSection: { ...editedContent.bottomSection, [field]: value }
-    });
-  };
-
-  const handlePolicyChange = (policy: 'privacyPolicy' | 'termsOfService', field: 'label' | 'href', value: string) => {
-    updateContent({
-      bottomSection: {
-        ...editedContent.bottomSection,
-        [policy]: {
-          ...editedContent.bottomSection[policy],
-          [field]: value
-        }
+    // Cleanup timeout on unmount or dependency change
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
       }
+    };
+  }, [editedContent, hasUnsavedChanges, isEditing]);
+
+  // Perform auto-save
+  const performAutoSave = useCallback(async () => {
+    if (!isMounted.current || !hasUnsavedChanges || !onSave) return;
+
+    try {
+      setIsAutoSaving(true);
+
+      // Call the save function
+      onSave(editedContent);
+
+      // Update state
+      setHasUnsavedChanges(false);
+      setLastSavedTime(new Date());
+
+      // Show subtle notification
+      toast.success("Footer changes auto-saved", {
+        duration: 1000,
+        position: "bottom-right",
+      });
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+      toast.error("Auto-save failed. Please save manually.");
+    } finally {
+      if (isMounted.current) {
+        setIsAutoSaving(false);
+      }
+    }
+  }, [editedContent, hasUnsavedChanges, onSave]);
+
+  // Handle content changes with auto-save tracking
+  const handlePersonalInfoChange = (field: string, value: string) => {
+    setEditedContent((prev) => ({
+      ...prev,
+      personalInfo: {
+        ...prev.personalInfo,
+        [field]: value,
+      },
+    }));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleQuickLinkChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    setEditedContent((prev) => {
+      const newQuickLinks = [...prev.quickLinks];
+      newQuickLinks[index] = { ...newQuickLinks[index], [field]: value };
+      return { ...prev, quickLinks: newQuickLinks };
     });
+    setHasUnsavedChanges(true);
   };
 
-  // Manual save function
+  const handleMoreLinkChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    setEditedContent((prev) => {
+      const newMoreLinks = [...prev.moreLinks];
+      newMoreLinks[index] = { ...newMoreLinks[index], [field]: value };
+      return { ...prev, moreLinks: newMoreLinks };
+    });
+    setHasUnsavedChanges(true);
+  };
+
   const handleSave = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
-    onSave?.(editedContent);
-    setLastSavedTime(new Date());
+    if (onSave) onSave(editedContent);
     setHasUnsavedChanges(false);
-    setIsEditing(false);
+    setLastSavedTime(new Date());
     toast.success("Footer updated successfully");
+    setIsEditing(false);
   };
 
-  // Manual cancel function
   const handleCancel = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
     setEditedContent(content);
     setHasUnsavedChanges(false);
-    setIsEditing(false);
     toast.info("Changes discarded");
+    setIsEditing(false);
+  };
+
+  const handleEditStart = () => {
+    setIsEditing(true);
+    setHasUnsavedChanges(false);
   };
 
   const scrollToSection = (href: string) => {
@@ -590,29 +577,48 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
     return "text-gray-500";
   };
 
+  // Format last saved time for display
+  const formatLastSavedTime = () => {
+    if (!lastSavedTime) return "Never";
+
+    const now = new Date();
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return lastSavedTime.toLocaleDateString();
+  };
+
   return (
-    <footer className="bg-dark-300 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
+    <footer className="bg-dark-300 text-justify border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
         {onSave && (
           <div className="absolute top-6 right-6 z-20 flex gap-3 items-center">
             {isEditing ? (
               <>
                 {/* Auto-save indicator */}
-                <div className="flex items-center gap-2 mr-4">
+                <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400">
                   {isAutoSaving ? (
-                    <div className="flex items-center gap-1 text-sm text-blue-500">
+                    <div className="flex items-center gap-1">
                       <Loader2 className="w-4 h-4 animate-spin" />
                       <span>Saving...</span>
                     </div>
                   ) : hasUnsavedChanges ? (
-                    <div className="text-sm text-yellow-500">
-                      Unsaved changes
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                      <span>Unsaved changes</span>
                     </div>
-                  ) : lastSavedTime ? (
-                    <div className="text-sm text-green-500">
-                      Saved {lastSavedTime.toLocaleTimeString()}
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span>Saved {formatLastSavedTime()}</span>
                     </div>
-                  ) : null}
+                  )}
                 </div>
 
                 <button
@@ -632,7 +638,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               </>
             ) : (
               <button
-                onClick={() => setIsEditing(true)}
+                onClick={handleEditStart}
                 className="p-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full shadow-md hover:shadow-lg transition-all"
                 title="Edit footer section"
               >
@@ -660,7 +666,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                   <input
                     type="text"
                     value={editedContent.personalInfo.name}
-                    onChange={(e) => handlePersonalNameChange(e.target.value)}
+                    onChange={(e) =>
+                      handlePersonalInfoChange("name", e.target.value)
+                    }
                     maxLength={CHAR_LIMITS.personalName}
                     className="text-2xl font-bold text-blue-500 dark:text-orange-500 bg-transparent border-b border-orange-400 focus:outline-none"
                   />
@@ -685,7 +693,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               <div className="mb-6">
                 <textarea
                   value={editedContent.personalInfo.description}
-                  onChange={(e) => handlePersonalDescriptionChange(e.target.value)}
+                  onChange={(e) =>
+                    handlePersonalInfoChange("description", e.target.value)
+                  }
                   maxLength={CHAR_LIMITS.personalDescription}
                   className="w-full bg-gray-800 border border-gray-700 text-gray-300 rounded-lg p-3 focus:border-orange-500 focus:outline-none resize-none"
                   rows={3}
@@ -701,71 +711,10 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-400 mb-6 text-justify leading-relaxed max-w-md">
+              <p className="text-gray-400 mb-6 leading-relaxed max-w-md">
                 {editedContent.personalInfo.description}
               </p>
             )}
-
-            {/* Social Links */}
-            {/* <div className="flex space-x-4">
-              {editedContent.socialLinks.map((link, index) => (
-                <div key={index}>
-                  {isEditing ? (
-                    <div className="flex flex-col gap-2 mb-4 p-3 bg-gray-800 rounded-lg">
-                      <div>
-                        <input
-                          type="text"
-                          value={link.name}
-                          onChange={(e) => handleSocialLinkChange(index, 'name', e.target.value)}
-                          maxLength={CHAR_LIMITS.socialLink}
-                          className="w-full px-2 py-1 text-sm bg-gray-700 border border-gray-600 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                          placeholder="Platform name"
-                        />
-                        <div
-                          className={`text-xs mt-1 text-right ${getCharCountClass(
-                            link.name.length,
-                            CHAR_LIMITS.socialLink
-                          )}`}
-                        >
-                          {link.name.length}/{CHAR_LIMITS.socialLink}
-                        </div>
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          value={link.href}
-                          onChange={(e) => handleSocialLinkChange(index, 'href', e.target.value)}
-                          maxLength={CHAR_LIMITS.linkHref}
-                          className="w-full px-2 py-1 text-sm bg-gray-700 border border-gray-600 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                          placeholder="URL"
-                        />
-                        <div
-                          className={`text-xs mt-1 text-right ${getCharCountClass(
-                            link.href.length,
-                            CHAR_LIMITS.linkHref
-                          )}`}
-                        >
-                          {link.href.length}/{CHAR_LIMITS.linkHref}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <motion.a
-                      whileHover={{ scale: 1.1 }}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-yellow-500 transition-colors"
-                      title={link.name}
-                    >
-                      {link.icon === 'Github' && 'Git'}
-                      {link.icon === 'Linkedin' && 'In'}
-                      {link.icon === 'Mail' && 'Mail'}
-                    </motion.a>
-                  )}
-                </div>
-              ))}
-            </div> */}
           </div>
 
           {/* Quick Links */}
@@ -782,7 +731,13 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         <input
                           type="text"
                           value={link.label}
-                          onChange={(e) => handleQuickLinkChange(index, 'label', e.target.value)}
+                          onChange={(e) =>
+                            handleQuickLinkChange(
+                              index,
+                              "label",
+                              e.target.value
+                            )
+                          }
                           maxLength={CHAR_LIMITS.linkLabel}
                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
                           placeholder="Label"
@@ -800,7 +755,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         <input
                           type="text"
                           value={link.href}
-                          onChange={(e) => handleQuickLinkChange(index, 'href', e.target.value)}
+                          onChange={(e) =>
+                            handleQuickLinkChange(index, "href", e.target.value)
+                          }
                           maxLength={CHAR_LIMITS.linkHref}
                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
                           placeholder="#section"
@@ -843,7 +800,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         <input
                           type="text"
                           value={link.label}
-                          onChange={(e) => handleMoreLinkChange(index, 'label', e.target.value)}
+                          onChange={(e) =>
+                            handleMoreLinkChange(index, "label", e.target.value)
+                          }
                           maxLength={CHAR_LIMITS.linkLabel}
                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
                           placeholder="Label"
@@ -861,7 +820,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         <input
                           type="text"
                           value={link.href}
-                          onChange={(e) => handleMoreLinkChange(index, 'href', e.target.value)}
+                          onChange={(e) =>
+                            handleMoreLinkChange(index, "href", e.target.value)
+                          }
                           maxLength={CHAR_LIMITS.linkHref}
                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
                           placeholder="#section"
@@ -888,166 +849,8 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                 </li>
               ))}
             </ul>
-
-            {/* Newsletter Section */}
-            {isEditing && (
-              <div className="mt-6 p-4 bg-gray-800 rounded-lg">
-                <h4 className="text-gray-300 font-semibold mb-3">Newsletter</h4>
-                <div className="space-y-3">
-                  <div>
-                    <input
-                      type="text"
-                      value={editedContent.newsletter.title}
-                      onChange={(e) => handleNewsletterChange('title', e.target.value)}
-                      maxLength={CHAR_LIMITS.newsletterTitle}
-                      className="w-full px-2 py-1 text-sm bg-gray-700 border border-gray-600 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                      placeholder="Newsletter title"
-                    />
-                    <div
-                      className={`text-xs mt-1 text-right ${getCharCountClass(
-                        editedContent.newsletter.title.length,
-                        CHAR_LIMITS.newsletterTitle
-                      )}`}
-                    >
-                      {editedContent.newsletter.title.length}/{CHAR_LIMITS.newsletterTitle}
-                    </div>
-                  </div>
-                  <div>
-                    <textarea
-                      value={editedContent.newsletter.description}
-                      onChange={(e) => handleNewsletterChange('description', e.target.value)}
-                      maxLength={CHAR_LIMITS.newsletterDescription}
-                      className="w-full px-2 py-1 text-sm bg-gray-700 border border-gray-600 rounded text-gray-300 focus:border-orange-500 focus:outline-none resize-none"
-                      placeholder="Newsletter description"
-                      rows={2}
-                    />
-                    <div
-                      className={`text-xs mt-1 text-right ${getCharCountClass(
-                        editedContent.newsletter.description.length,
-                        CHAR_LIMITS.newsletterDescription
-                      )}`}
-                    >
-                      {editedContent.newsletter.description.length}/{CHAR_LIMITS.newsletterDescription}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
-
-        {/* Bottom Section */}
-        {/* <div className="mt-12 pt-6 border-t border-gray-700">
-          {isEditing ? (
-            <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <input
-                    type="text"
-                    value={editedContent.bottomSection.copyrightText}
-                    onChange={(e) => handleBottomSectionChange('copyrightText', e.target.value)}
-                    maxLength={CHAR_LIMITS.copyrightText}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                    placeholder="Copyright text"
-                  />
-                  <div
-                    className={`text-xs mt-1 text-right ${getCharCountClass(
-                      editedContent.bottomSection.copyrightText.length,
-                      CHAR_LIMITS.copyrightText
-                    )}`}
-                  >
-                    {editedContent.bottomSection.copyrightText.length}/{CHAR_LIMITS.copyrightText}
-                  </div>
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    value={editedContent.bottomSection.afterCopyrightText}
-                    onChange={(e) => handleBottomSectionChange('afterCopyrightText', e.target.value)}
-                    maxLength={CHAR_LIMITS.afterCopyrightText}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                    placeholder="Additional copyright text"
-                  />
-                  <div
-                    className={`text-xs mt-1 text-right ${getCharCountClass(
-                      editedContent.bottomSection.afterCopyrightText.length,
-                      CHAR_LIMITS.afterCopyrightText
-                    )}`}
-                  >
-                    {editedContent.bottomSection.afterCopyrightText.length}/{CHAR_LIMITS.afterCopyrightText}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h5 className="text-gray-400 text-sm mb-2">Privacy Policy</h5>
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      value={editedContent.bottomSection.privacyPolicy.label}
-                      onChange={(e) => handlePolicyChange('privacyPolicy', 'label', e.target.value)}
-                      maxLength={CHAR_LIMITS.policyLabel}
-                      className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                      placeholder="Privacy Policy label"
-                    />
-                    <input
-                      type="text"
-                      value={editedContent.bottomSection.privacyPolicy.href}
-                      onChange={(e) => handlePolicyChange('privacyPolicy', 'href', e.target.value)}
-                      maxLength={CHAR_LIMITS.linkHref}
-                      className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                      placeholder="Privacy Policy URL"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h5 className="text-gray-400 text-sm mb-2">Terms of Service</h5>
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      value={editedContent.bottomSection.termsOfService.label}
-                      onChange={(e) => handlePolicyChange('termsOfService', 'label', e.target.value)}
-                      maxLength={CHAR_LIMITS.policyLabel}
-                      className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                      placeholder="Terms of Service label"
-                    />
-                    <input
-                      type="text"
-                      value={editedContent.bottomSection.termsOfService.href}
-                      onChange={(e) => handlePolicyChange('termsOfService', 'href', e.target.value)}
-                      maxLength={CHAR_LIMITS.linkHref}
-                      className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
-                      placeholder="Terms of Service URL"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
-              <div>
-                <span>{editedContent.bottomSection.copyrightText}</span>
-                <span className="mx-2">•</span>
-                <span>{editedContent.bottomSection.afterCopyrightText}</span>
-              </div>
-              <div className="flex space-x-4 mt-2 md:mt-0">
-                <a
-                  href={editedContent.bottomSection.privacyPolicy.href}
-                  className="hover:text-yellow-500 transition-colors"
-                >
-                  {editedContent.bottomSection.privacyPolicy.label}
-                </a>
-                <a
-                  href={editedContent.bottomSection.termsOfService.href}
-                  className="hover:text-yellow-500 transition-colors"
-                >
-                  {editedContent.bottomSection.termsOfService.label}
-                </a>
-              </div>
-            </div>
-          )}
-        </div> */}
       </div>
     </footer>
   );

@@ -2062,7 +2062,8 @@ export default function Blog({
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
                   {displayContent.header.title}
                 </h2>
-                <p className="text-justify text-gray-600 dark:text-gray-300">
+                {/* <p className="text-justify text-gray-600 dark:text-gray-300"> */}
+                <p className="mt-4 text-gray-600 dark:text-gray-300">
                   {displayContent.header.desc}
                 </p>
               </>
@@ -2225,7 +2226,8 @@ export default function Blog({
                             <h3 className="text-xl mb-2 font-semibold text-gray-900 dark:text-white">
                               {b.title}
                             </h3>
-                            <p className="text-justify text-gray-600 dark:text-gray-300 h-full overflow-auto">
+                            <p className=" text-gray-600 dark:text-gray-300 h-full overflow-auto">
+                            {/* <p className="text-justify text-gray-600 dark:text-gray-300 h-full overflow-auto"> */}
                               {b.excerpt}
                             </p>
                             <div className="flex justify-between items-center mt-4 absolute bottom-4">

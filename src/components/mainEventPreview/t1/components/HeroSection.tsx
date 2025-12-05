@@ -36,7 +36,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
     minutes: 0,
     seconds: 0,
     isEventStarted: false,
-    isEventExpired: false
+    isEventExpired: false,
   });
 
   // Initialize with prop data or default values
@@ -51,42 +51,39 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
     startTime: "",
     endTime: "",
     videoUrl: "",
-    highlights: [
-      "Highlight 1",
-      "Highlight 2"
-    ],
+    highlights: ["Highlight 1", "Highlight 2"],
     btn1: "Register to Visit",
     btn2: "Exhibitor Enquiry",
-    ...heroData
+    ...heroData,
   });
 
   // Helper function to convert YouTube URLs to embed format
   const convertToEmbedUrl = (url: string): string => {
     if (!url) return "";
-    
+
     // If it's already an embed URL, return as is
-    if (url.includes('youtube.com/embed/')) {
+    if (url.includes("youtube.com/embed/")) {
       return url;
     }
-    
+
     // Extract video ID from different YouTube URL formats
-    let videoId = '';
-    
+    let videoId = "";
+
     // Handle youtu.be format
-    if (url.includes('youtu.be/')) {
-      videoId = url.split('youtu.be/')[1].split('?')[0];
+    if (url.includes("youtu.be/")) {
+      videoId = url.split("youtu.be/")[1].split("?")[0];
     }
     // Handle youtube.com/watch format
-    else if (url.includes('youtube.com/watch')) {
-      const urlParams = new URLSearchParams(url.split('?')[1]);
-      videoId = urlParams.get('v') || '';
+    else if (url.includes("youtube.com/watch")) {
+      const urlParams = new URLSearchParams(url.split("?")[1]);
+      videoId = urlParams.get("v") || "";
     }
-    
+
     // If we found a video ID, create embed URL with autoplay parameters
     if (videoId) {
       return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&modestbranding=1&showinfo=0&rel=0`;
     }
-    
+
     // Return original URL if we can't parse it
     return url;
   };
@@ -94,19 +91,30 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
   // Countdown timer effect
   useEffect(() => {
     const updateCountdown = () => {
-      if (!heroContent.eventDate || !heroContent.endDate || !heroContent.endTime) return;
-      
+      if (
+        !heroContent.eventDate ||
+        !heroContent.endDate ||
+        !heroContent.endTime
+      )
+        return;
+
       const now = new Date().getTime();
       const eventStartTime = new Date(heroContent.eventDate).getTime();
-      const eventEndTime = new Date(`${heroContent.endDate}T${heroContent.endTime}:00`).getTime();
+      const eventEndTime = new Date(
+        `${heroContent.endDate}T${heroContent.endTime}:00`
+      ).getTime();
       const distanceToStart = eventStartTime - now;
       const distanceToEnd = eventEndTime - now;
 
       // Event hasn't started yet - show countdown
       if (distanceToStart > 0) {
         const days = Math.floor(distanceToStart / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distanceToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distanceToStart % (1000 * 60 * 60)) / (1000 * 60));
+        const hours = Math.floor(
+          (distanceToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (distanceToStart % (1000 * 60 * 60)) / (1000 * 60)
+        );
         const seconds = Math.floor((distanceToStart % (1000 * 60)) / 1000);
 
         setCountdown({
@@ -115,7 +123,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           minutes,
           seconds,
           isEventStarted: false,
-          isEventExpired: false
+          isEventExpired: false,
         });
       }
       // Event is currently running (started but not ended)
@@ -126,7 +134,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           minutes: 0,
           seconds: 0,
           isEventStarted: true,
-          isEventExpired: false
+          isEventExpired: false,
         });
       }
       // Event has ended - show expired
@@ -137,20 +145,60 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           minutes: 0,
           seconds: 0,
           isEventStarted: false,
-          isEventExpired: true
+          isEventExpired: true,
         });
       }
     };
 
     // Update immediately
     updateCountdown();
-    
+
     // Update every second
     const timer = setInterval(updateCountdown, 1000);
 
     // Cleanup interval on component unmount
     return () => clearInterval(timer);
   }, [heroContent.eventDate, heroContent.endDate, heroContent.endTime]);
+
+  // YouTube mute/unmute handling
+  const [player, setPlayer] = useState<any>(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  // Load YouTube Iframe API
+  useEffect(() => {
+    // Prevent loading API twice
+    if (document.getElementById("yt-api")) return;
+
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    tag.id = "yt-api";
+    document.body.appendChild(tag);
+
+    // When API is ready, create player
+    (window as any).onYouTubeIframeAPIReady = () => {
+      const newPlayer = new (window as any).YT.Player("hero-video", {
+        events: {
+          onReady: () => {
+            newPlayer.mute();
+            setPlayer(newPlayer);
+          },
+        },
+      });
+    };
+  }, []);
+
+  // Toggle mute/unmute
+  const toggleMute = () => {
+    if (!player) return;
+
+    if (isMuted) {
+      player.unMute();
+    } else {
+      player.mute();
+    }
+
+    setIsMuted(!isMuted);
+  };
 
   return (
     <section
@@ -160,6 +208,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
       {/* YouTube Video BG */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
         <iframe
+          id="hero-video"
           key={heroContent.videoUrl}
           className="w-full h-full object-cover"
           style={{
@@ -170,7 +219,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
             height: "100%",
             minHeight: "100vh",
           }}
-          src={convertToEmbedUrl(heroContent.videoUrl||"https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0")}
+          src={`${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1`}
           title="Event Background Video"
           frameBorder="0"
           allow="autoplay; encrypted-media; fullscreen"
@@ -178,6 +227,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
         />
         <div className="absolute inset-0 bg-black/60 z-10"></div>
       </div>
+{/* Mute / Unmute Button */}
+<button
+  onClick={toggleMute}
+  className="z-30 absolute bottom-6 right-6 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-md border border-white/20 transition"
+>
+  {isMuted ? (
+    // Mute Icon
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round"
+        d="M15 8.25v7.5m3-5.25v3m-6 6.25l-4-4H5a2 2 0 01-2-2v-3.5a2 2 0 012-2h3l4-4v14z" />
+    </svg>
+  ) : (
+    // Unmute Icon (volume)
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round"
+        d="M15 8.25a3.75 3.75 0 010 7.5m3-10.5a7.5 7.5 0 010 13.5M9 9l-4 4H3v-3.5L7 5l2 2v2z" />
+    </svg>
+  )}
+</button>
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-20 text-center pt-32">
@@ -208,36 +278,58 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
             {countdown.isEventExpired ? (
               <div className="text-center">
                 <div className="inline-block bg-orange-300/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-red-400/30">
-                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">✅ Event has been completed</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">
+                    ✅ Event has been completed
+                  </h3>
                   <p className="text-white text-lg">This event has ended</p>
                 </div>
               </div>
             ) : countdown.isEventStarted ? (
               <div className="text-center">
                 <div className="inline-block bg-green-500/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-green-400/30">
-                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">🎉 Event is Live!</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">
+                    🎉 Event is Live!
+                  </h3>
                   <p className="text-white text-lg">Join us now at the event</p>
                 </div>
               </div>
             ) : (
               <div className="text-center">
-                <h3 className="text-xl md:text-2xl font-semibold text-white mb-4">Event Starts In</h3>
+                <h3 className="text-xl md:text-2xl font-semibold text-white mb-4">
+                  Event Starts In
+                </h3>
                 <div className="flex justify-center gap-4 md:gap-6">
                   <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">{countdown.days}</div>
-                    <div className="text-sm md:text-base text-white/80">Days</div>
+                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                      {countdown.days}
+                    </div>
+                    <div className="text-sm md:text-base text-white/80">
+                      Days
+                    </div>
                   </div>
                   <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">{countdown.hours}</div>
-                    <div className="text-sm md:text-base text-white/80">Hours</div>
+                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                      {countdown.hours}
+                    </div>
+                    <div className="text-sm md:text-base text-white/80">
+                      Hours
+                    </div>
                   </div>
                   <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">{countdown.minutes}</div>
-                    <div className="text-sm md:text-base text-white/80">Minutes</div>
+                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                      {countdown.minutes}
+                    </div>
+                    <div className="text-sm md:text-base text-white/80">
+                      Minutes
+                    </div>
                   </div>
                   <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">{countdown.seconds}</div>
-                    <div className="text-sm md:text-base text-white/80">Seconds</div>
+                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                      {countdown.seconds}
+                    </div>
+                    <div className="text-sm md:text-base text-white/80">
+                      Seconds
+                    </div>
                   </div>
                 </div>
               </div>
@@ -254,7 +346,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <div className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              <span onClick={() => scrollToSection("#contact")}>{heroContent.btn1}</span>
+              <span onClick={() => scrollToSection("#contact")}>
+                {heroContent.btn1}
+              </span>
               <ArrowRight
                 size={20}
                 className="transform group-hover:translate-x-1 transition-transform"
@@ -262,7 +356,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
             </div>
 
             <div className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105">
-              <span onClick={() => scrollToSection("#contact")}>{heroContent.btn2}</span>
+              <span onClick={() => scrollToSection("#contact")}>
+                {heroContent.btn2}
+              </span>
               <ArrowRight
                 size={20}
                 className="transform group-hover:translate-x-1 transition-transform"

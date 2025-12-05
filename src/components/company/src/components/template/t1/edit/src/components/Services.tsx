@@ -1687,43 +1687,94 @@ export default function Services({
   };
 
   // Auto-save function
-  const performAutoSave = async () => {
-    if (!unsavedChanges || changesCountRef.current < MIN_CHANGES_FOR_AUTO_SAVE) {
-      return;
-    }
+  // const performAutoSave = async () => {
+  //   if (!unsavedChanges || changesCountRef.current < MIN_CHANGES_FOR_AUTO_SAVE) {
+  //     return;
+  //   }
 
-    try {
-      setIsSaving(true);
+  //   try {
+  //     setIsSaving(true);
       
-      // Here you would call your actual save API
-      // For now, simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  //     // Here you would call your actual save API
+  //     // For now, simulate API call
+  //     await new Promise((resolve) => setTimeout(resolve, 1000));
       
-      // Update services state with temp state
-      setServicesSection(tempServicesSection);
-      setUnsavedChanges(false);
-      changesCountRef.current = 0;
-      hasChangesRef.current = false;
-      setLastSaved(new Date().toLocaleTimeString());
+  //     // Update services state with temp state
+  //     setServicesSection(tempServicesSection);
+  //     setUnsavedChanges(false);
+  //     changesCountRef.current = 0;
+  //     hasChangesRef.current = false;
+  //     setLastSaved(new Date().toLocaleTimeString());
       
-      // Optional: Show success message
-      toast.success("Services saved automatically!", {
-        position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-      });
-    } catch (error) {
-      console.error("Error auto-saving services:", error);
-      toast.error("Auto-save failed. Please save manually.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  //     // Optional: Show success message
+  //     toast.success("Services saved automatically!", {
+  //       position: "bottom-right",
+  //       autoClose: 2000,
+  //       hideProgressBar: true,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error auto-saving services:", error);
+  //     toast.error("Auto-save failed. Please save manually.");
+  //   } finally {
+  //     setIsSaving(false);
+  //   }
+  // };
 
-  // Manual save function (kept for backward compatibility)
-  const handleSave = async () => {
-    await performAutoSave();
-  };
+  // // Manual save function (kept for backward compatibility)
+  // const handleSave = async () => {
+  //   await performAutoSave();
+  // };
+
+
+  // Auto-save function
+const performAutoSave = async (shouldExitEditMode = false) => {
+  if (!unsavedChanges || changesCountRef.current < MIN_CHANGES_FOR_AUTO_SAVE) {
+    // If there are no changes but we're manually saving, exit edit mode
+    if (shouldExitEditMode) {
+      setIsEditing(false);
+    }
+    return;
+  }
+
+  try {
+    setIsSaving(true);
+    
+    // Here you would call your actual save API
+    // For now, simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
+    // Update services state with temp state
+    setServicesSection(tempServicesSection);
+    setUnsavedChanges(false);
+    changesCountRef.current = 0;
+    hasChangesRef.current = false;
+    setLastSaved(new Date().toLocaleTimeString());
+    
+    // If this was a manual save (shouldExitEditMode is true), exit edit mode
+    if (shouldExitEditMode) {
+      setIsEditing(false);
+    }
+    
+    // Optional: Show success message
+    toast.success("Services saved successfully!", {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: true,
+    });
+  } catch (error) {
+    console.error("Error saving services:", error);
+    toast.error("Save failed. Please try again.");
+  } finally {
+    setIsSaving(false);
+  }
+};
+
+// Manual save function (kept for backward compatibility)
+const handleSave = async () => {
+  // Pass true to indicate we should exit edit mode after saving
+  await performAutoSave(true);
+}; 
+
 
   const handleCancel = () => {
     setTempServicesSection(servicesSection);
@@ -2138,7 +2189,8 @@ export default function Services({
                     maxLength={50}
                   />
                 ) : (
-                  <CardTitle className="text-base leading-snug">{service.title}</CardTitle>
+                  // <CardTitle className="text-base leading-snug">{service.title}</CardTitle>
+                  <CardTitle className="text-base leading-snug text-center font-bold">{service.title}</CardTitle>
                 )}
               </CardHeader>
               <CardContent className="px-4 pb-4 flex flex-col flex-1">
@@ -2150,7 +2202,8 @@ export default function Services({
                       multiline={true}
                       className="text-sm"
                       placeholder="Service description"
-                      maxLength={1000}
+                      maxLength={200}
+                      // maxLength={1000}
                     />
                     <div className="mt-2 space-y-2">
                       <label className="block text-xs font-medium text-gray-700">

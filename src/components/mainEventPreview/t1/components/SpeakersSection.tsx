@@ -1,4 +1,5 @@
-import React, { useState, memo } from 'react';
+import React, { useState, useEffect } from 'react';
+import { User } from 'lucide-react';
 
 interface Speaker {
   name: string;
@@ -26,6 +27,7 @@ interface SpeakersDataContent {
 
 interface SpeakersSectionProps {
   speakersData?: SpeakersDataContent;
+  userId?: string;
 }
 
 /** Default data structure */
@@ -38,7 +40,7 @@ const defaultSpeakersData: SpeakersDataContent = {
           "name": "Speaker Name",
           "company": "Organization",
           "id": 1,
-          "avatar": "Initials",
+          "avatar": "",
           "title": "Designation"
         }
       ]
@@ -59,68 +61,114 @@ const defaultSpeakersData: SpeakersDataContent = {
   }
 };
 
-/* Utility functions */
-const getColorForAvatar = (name = '') => {
-  const colors = [
-    'bg-purple-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500',
-    'bg-red-500', 'bg-indigo-500', 'bg-pink-500', 'bg-cyan-500'
-  ];
-  const code = name.length ? name.charCodeAt(0) : 65;
-  return colors[code % colors.length];
-};
-
-const getInitials = (name = '') => {
-  if (!name) return 'NA';
-  const parts = name.trim().split(/\s+/);
-  return parts.length > 1
-    ? (parts[0][0] + parts[1][0]).toUpperCase()
-    : parts[0].substring(0, 2).toUpperCase();
-};
-
-/* Speaker Card Component */
-const SpeakerCard = memo(({ speaker }: any) => {
-  return (
-    <div className="group bg-white rounded-xl shadow-lg p-6">
-      <div className={`w-16 h-16 mx-auto rounded-xl ${getColorForAvatar(speaker.name)} text-white flex items-center justify-center text-xl font-bold`}>
-        {speaker.avatar || getInitials(speaker.name)}
-      </div>
-
-      <h4 className="text-center font-bold mt-4">{speaker.name}</h4>
-      {speaker.title && <p className="text-justify text-sm">{speaker.title}</p>}
-      {speaker.company && <p className="text-justify text-sm text-gray-600">{speaker.company}</p>}
-    </div>
-  );
-});
-
-const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData }) => {
+/* Main Component */
+const SpeakersSection: React.FC<SpeakersSectionProps> = ({ 
+  speakersData
+}) => {
+  const [localSpeakersData, setLocalSpeakersData] = useState<SpeakersDataContent>(defaultSpeakersData);
   const [activeDay, setActiveDay] = useState(0);
 
-  // Use prop data or default values
-  const speakersContent = speakersData || defaultSpeakersData;
-  const { speakers, headerContent } = speakersContent;
+  const { speakers, headerContent } = localSpeakersData;
 
+  /* --------------------------
+      Update local state when prop data changes
+     -------------------------- */
+  useEffect(() => {
+    if (speakersData) {
+      setLocalSpeakersData(speakersData);
+    }
+  }, [speakersData]);
+
+  /* --------------------------
+        Speaker Card Component
+     -------------------------- */
+  const SpeakerCard = ({ speaker }: { speaker: Speaker }) => {
+    // Function to render avatar - only image or default icon
+    const renderAvatar = (avatarUrl: string | undefined, altText: string = 'Speaker') => {
+      if (avatarUrl && avatarUrl.trim() !== '') {
+        return (
+          <img 
+            src={avatarUrl} 
+            alt={altText}
+            className="w-full h-full object-cover rounded-full"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const parent = target.parentElement;
+              if (parent) {
+                const fallback = parent.querySelector('.avatar-fallback') as HTMLElement;
+                if (fallback) fallback.classList.remove('hidden');
+              }
+            }}
+          />
+        );
+      }
+      
+      return (
+        <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full">
+          <User className="w-8 h-8 text-gray-500" />
+        </div>
+      );
+    };
+
+    return (
+      <div className="group bg-white rounded-lg md:rounded-xl shadow-md md:shadow-lg p-4 md:p-6 relative h-full min-h-[200px] md:min-h-[250px] hover:shadow-lg transition-shadow duration-300">
+        {/* Avatar */}
+        <div className="relative">
+          <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full overflow-hidden flex items-center justify-center">
+            {renderAvatar(speaker.avatar, speaker.name)}
+            <div className="avatar-fallback hidden w-full h-full items-center justify-center bg-gray-200 rounded-full">
+              <User className="w-8 h-8 text-gray-500" />
+            </div>
+          </div>
+        </div>
+
+        <h4 className="text-center font-bold mt-3 md:mt-4 text-sm md:text-base line-clamp-1">
+          {speaker.name}
+        </h4>
+        {speaker.title && (
+          <p className="text-justify text-xs md:text-sm mt-1 md:mt-2 line-clamp-2">
+            {speaker.title}
+          </p>
+        )}
+        {speaker.company && (
+          <p className="text-justify text-xs md:text-sm text-gray-600 mt-1 line-clamp-2">
+            {speaker.company}
+          </p>
+        )}
+      </div>
+    );
+  };
+
+  /* --------------------------
+            Render UI
+     -------------------------- */
   return (
-    <section id="speakers" className="py-20 bg-gray-50 min-h-screen">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <section id="speakers" className="py-12 md:py-20 bg-gray-50 min-h-screen">
+      <div className="container mx-auto px-3 sm:px-4 max-w-7xl relative">
         
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold">
-            <span className="text-yellow-500 ">{headerContent.eventTitle}</span>
-            <span className="block text-3xl text-gray-800">{headerContent.sectionTitle}</span>
+        <div className="text-center mb-10 md:mb-16 px-2">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+            <span className="text-yellow-500 block md:inline">{headerContent.eventTitle}</span>
+            <span className="block text-xl sm:text-2xl md:text-3xl text-gray-800 mt-2">{headerContent.sectionTitle}</span>
           </h2>
-          <p className="text-gray-600 mt-4 text-justify">{headerContent.subtitle}</p>
+          <p className="text-gray-600 mt-3 md:mt-4 text-justify md:text-center px-4 sm:px-6 md:px-0 max-w-3xl mx-auto">
+            {headerContent.subtitle}
+          </p>
         </div>
 
         {/* Day Tabs */}
-        <div className="flex justify-center mb-12">
-          <div className="bg-white shadow-lg p-2 rounded-2xl flex gap-2">
+        <div className="flex flex-col sm:flex-row justify-center items-center mb-8 md:mb-12 gap-4">
+          <div className="bg-white shadow-lg p-1 sm:p-2 rounded-xl md:rounded-2xl flex flex-wrap justify-center gap-1 sm:gap-2 max-w-full overflow-x-auto">
             {speakers.map((day, index) => (
               <button
                 key={index}
                 onClick={() => setActiveDay(index)}
-                className={`px-6 py-3 rounded-xl transition-colors ${
-                  activeDay === index ? 'bg-yellow-500 text-white font-bold hover:bg-yellow-600' : ''
+                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg md:rounded-xl text-sm sm:text-base whitespace-nowrap transition-colors ${
+                  activeDay === index 
+                    ? 'bg-yellow-400 text-black font-bold hover:bg-yellow-500' 
+                    : 'hover:bg-gray-100'
                 }`}
               >
                 {day.day}
@@ -130,20 +178,29 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({ speakersData }) => {
         </div>
 
         {/* Speakers Grid */}
-        <div>
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-3xl font-bold">{speakers[activeDay]?.day}</h3>
+        <div className="px-2 sm:px-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-3">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
+              {speakers[activeDay]?.day}
+            </h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {speakers[activeDay]?.speakers.map((speaker) => (
-              <SpeakerCard
-                key={speaker.id}
-                speaker={speaker}
-              />
-            ))}
-          </div>
+          {speakers[activeDay]?.speakers.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+              <p className="text-gray-500 text-lg">No speakers added for this day yet.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {speakers[activeDay]?.speakers.map((speaker) => (
+                <SpeakerCard
+                  key={speaker.id}
+                  speaker={speaker}
+                />
+              ))}
+            </div>
+          )}
         </div>
+
       </div>
     </section>
   );

@@ -387,7 +387,13 @@
 
 // export default Navbar;
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { motion } from "framer-motion";
 import {
   Sun,
@@ -431,10 +437,10 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  
+
   // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Track if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
 
@@ -490,7 +496,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
 
     try {
       setIsAutoSaving(true);
-      
+
       const validatedContent = {
         ...editedContent,
         navLinks: editedContent.navLinks
@@ -503,17 +509,16 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
 
       // Call the save function
       onSave(validatedContent);
-      
+
       // Update state
       setHasUnsavedChanges(false);
       setLastSavedTime(new Date());
-      
+
       // Show subtle notification
       toast.success("Header changes auto-saved", {
         duration: 1000,
         position: "bottom-right",
       });
-      
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -646,13 +651,17 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
   // Format last saved time for display
   const formatLastSavedTime = () => {
     if (!lastSavedTime) return "Never";
-    
+
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
-    
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
     if (diffInSeconds < 60) return "Just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return lastSavedTime.toLocaleDateString();
   };
 

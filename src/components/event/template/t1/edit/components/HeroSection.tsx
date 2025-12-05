@@ -645,6 +645,48 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     });
   };
 
+
+  // YouTube mute/unmute handling
+const [player, setPlayer] = useState<any>(null);
+const [isMuted, setIsMuted] = useState(true);
+
+// Load YouTube Iframe API
+useEffect(() => {
+  // Prevent loading API twice
+  if (document.getElementById("yt-api")) return;
+
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  tag.id = "yt-api";
+  document.body.appendChild(tag);
+
+  // When API is ready, create player
+  (window as any).onYouTubeIframeAPIReady = () => {
+    const newPlayer = new (window as any).YT.Player("hero-video", {
+      events: {
+        onReady: () => {
+          newPlayer.mute();
+          setPlayer(newPlayer);
+        },
+      },
+    });
+  };
+}, []);
+
+// Toggle mute/unmute
+const toggleMute = () => {
+  if (!player) return;
+
+  if (isMuted) {
+    player.unMute();
+  } else {
+    player.mute();
+  }
+
+  setIsMuted(!isMuted);
+};
+
+
   return (
     <section
       id="home"
@@ -652,28 +694,49 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     >
       {/* YouTube Video BG */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-        <iframe
-          key={heroContent.videoUrl} // Force reload when URL changes
-          className="w-full h-full object-cover"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            minHeight: "100vh",
-          }}
-          src={convertToEmbedUrl(
-            heroContent.videoUrl ||
-              "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"
-          )}
-          title="Event Background Video"
-          frameBorder="0"
-          allow="autoplay; encrypted-media; fullscreen"
-          allowFullScreen
-        />
+       <iframe
+  id="hero-video"
+  key={heroContent.videoUrl}
+  className="w-full h-full object-cover"
+  style={{
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    minHeight: "100vh",
+  }}
+  src={`${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1`|| "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"}
+  title="Event Background Video"
+  frameBorder="0"
+  allow="autoplay; encrypted-media; fullscreen"
+  allowFullScreen
+/>
+
         <div className="absolute inset-0 bg-black/60 z-10"></div>
       </div>
+      {/* Mute / Unmute Button */}
+<button
+  onClick={toggleMute}
+  className="z-30 absolute bottom-6 right-6 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-md border border-white/20 transition"
+>
+  {isMuted ? (
+    // Mute Icon
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round"
+        d="M15 8.25v7.5m3-5.25v3m-6 6.25l-4-4H5a2 2 0 01-2-2v-3.5a2 2 0 012-2h3l4-4v14z" />
+    </svg>
+  ) : (
+    // Unmute Icon (volume)
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round"
+        d="M15 8.25a3.75 3.75 0 010 7.5m3-10.5a7.5 7.5 0 010 13.5M9 9l-4 4H3v-3.5L7 5l2 2v2z" />
+    </svg>
+  )}
+</button>
+
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-20 text-center pt-32">

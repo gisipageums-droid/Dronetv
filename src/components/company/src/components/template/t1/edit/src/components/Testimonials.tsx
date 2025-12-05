@@ -1705,7 +1705,7 @@ export default function EditableTestimonials({
           )}
 
           {/* Editable Description */}
-          {isEditing ? (
+          {/* {isEditing ? (
             <div className="flex flex-col items-center justify-center gap-2">
               <textarea
                 value={tempData.headline.description}
@@ -1722,10 +1722,35 @@ export default function EditableTestimonials({
               </div>
             </div>
           ) : (
-            <p className="text-gray-600 max-w-2xl mx-auto text-justify">
-              {tempData.headline.description}
-            </p>
-          )}
+            <p className="text-gray-600 max-w-2xl mx-auto">
+            {/* <p className="text-gray-600 max-w-2xl mx-auto text-justify"> */}
+              {/* {tempData.headline.description} */}
+            {/* </p> */}
+          {/* )}  */}
+
+{/* Editable Description */}
+{isEditing ? (
+  <div className="flex flex-col items-center justify-center gap-2 w-full max-w-2xl mx-auto">
+    <textarea
+      value={tempData.headline.description}
+      onChange={(e) =>
+        updateHeadlineField("description", e.target.value)
+      }
+      className="w-full text-gray-600 text-base px-3 py-2 border-2 border-dashed border-blue-200 rounded-lg resize-none text-center focus:outline-none focus:border-blue-500 focus:border-solid"
+      rows={2}
+      maxLength={CHAR_LIMITS.description}
+    />
+    <div className="text-xs text-gray-500 self-end">
+      {tempData.headline.description.length}/{CHAR_LIMITS.description}{" "}
+      characters
+    </div>
+  </div>
+) : (
+  <p className="text-gray-600 max-w-2xl mx-auto text-base">
+    {tempData.headline.description}
+  </p>
+)}
+
         </div>
 
         <div className="relative overflow-hidden">

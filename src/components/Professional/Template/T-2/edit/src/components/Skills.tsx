@@ -4,11 +4,11 @@
 // import { toast } from 'sonner';
 
 // // Import your static skill images
-// import skill1 from '../../../../../Images/skill1.png';
-// import skill2 from '../../../../../Images/skill2.png';
-// import skill3 from '../../../../../Images/skill3.jpeg';
-// import skill4 from '../../../../../Images/skill4.png';
-// import skill5 from '../../../../../Images/skill5.jpeg';
+// import skill1 from '../../../../../../Images/skill1.png';
+// import skill2 from '../../../../../../Images/skill2.png';
+// import skill3 from '../../../../../../Images/skill3.jpeg';
+// import skill4 from '../../../../../../Images/skill4.png';
+// import skill5 from '../../../../../../Images/skill5.jpeg';
 
 // // Text limits
 // const TEXT_LIMITS = {
@@ -93,6 +93,12 @@
 //   const [isVisible, setIsVisible] = useState(false);
 //   const skillsRef = useRef<HTMLDivElement>(null);
 
+//   // Auto-save states
+//   const [isAutoSaving, setIsAutoSaving] = useState(false);
+//   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+//   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+//   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
+
 //   // Array of imported skill images
 //   const skillImages = [skill1, skill2, skill3, skill4, skill5];
 
@@ -116,6 +122,53 @@
 //       }
 //     }
 //   );
+
+//   // Auto-save effect
+//   useEffect(() => {
+//     return () => {
+//       // Cleanup timeout on unmount
+//       if (autoSaveTimeoutRef.current) {
+//         clearTimeout(autoSaveTimeoutRef.current);
+//       }
+//     };
+//   }, []);
+
+//   // Auto-save function
+//   const performAutoSave = useCallback(async () => {
+//     if (!hasUnsavedChanges || !isEditing) return;
+
+//     setIsAutoSaving(true);
+//     try {
+//       // Update data state
+//       setData(tempData);
+//       setHasUnsavedChanges(false);
+//       setLastSavedTime(new Date());
+
+//       toast.success('Changes auto-saved successfully');
+//     } catch (error) {
+//       console.error('Auto-save failed:', error);
+//       toast.error('Auto-save failed. Please save manually.');
+//     } finally {
+//       setIsAutoSaving(false);
+//     }
+//   }, [hasUnsavedChanges, isEditing, tempData]);
+
+//   // Schedule auto-save
+//   const scheduleAutoSave = useCallback(() => {
+//     if (!isEditing) return;
+
+//     setHasUnsavedChanges(true);
+
+//     // Clear existing timeout
+//     if (autoSaveTimeoutRef.current) {
+//       clearTimeout(autoSaveTimeoutRef.current);
+//     }
+
+//     // Set new timeout
+//     autoSaveTimeoutRef.current = setTimeout(() => {
+//       performAutoSave();
+//     }, 2000);
+//   }, [isEditing, performAutoSave]);
 
 //   // Modified icon rendering logic - using static images
 //   const renderSkillIcon = (skill: Skill, index: number) => {
@@ -192,14 +245,18 @@
 //   const handleEdit = () => {
 //     setIsEditing(true);
 //     setTempData({ ...data });
+//     setHasUnsavedChanges(false);
 //   };
 
 //   const handleSave = async () => {
 //     try {
 //       setIsSaving(true);
-//       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate save API call
 
+//       // Update data state
 //       setData(tempData);
+//       setHasUnsavedChanges(false);
+//       setLastSavedTime(new Date());
+
 //       setIsEditing(false);
 //       toast.success('Skills section saved successfully');
 
@@ -213,22 +270,30 @@
 
 //   const handleCancel = () => {
 //     setTempData({ ...data });
+//     setHasUnsavedChanges(false);
 //     setIsEditing(false);
+
+//     // Clear any pending auto-save
+//     if (autoSaveTimeoutRef.current) {
+//       clearTimeout(autoSaveTimeoutRef.current);
+//     }
 //   };
 
-//   // Stable update functions with useCallback
+//   // Stable update functions with useCallback and auto-save scheduling
 //   const updateSkill = useCallback((index: number, field: keyof Skill, value: any) => {
 //     const updatedSkills = [...tempData.skills];
 //     updatedSkills[index] = { ...updatedSkills[index], [field]: value };
 //     setTempData({ ...tempData, skills: updatedSkills });
-//   }, [tempData]);
+//     scheduleAutoSave();
+//   }, [tempData, scheduleAutoSave]);
 
 //   const updateHeader = useCallback((field: keyof SkillsData['header'], value: string) => {
 //     setTempData(prev => ({
 //       ...prev,
 //       header: { ...prev.header, [field]: value }
 //     }));
-//   }, []);
+//     scheduleAutoSave();
+//   }, [scheduleAutoSave]);
 
 //   const addSkill = useCallback(() => {
 //     const newSkill: Skill = {
@@ -241,12 +306,14 @@
 //       ...tempData,
 //       skills: [...tempData.skills, newSkill]
 //     });
-//   }, [tempData]);
+//     scheduleAutoSave();
+//   }, [tempData, scheduleAutoSave]);
 
 //   const removeSkill = useCallback((index: number) => {
 //     const updatedSkills = tempData.skills.filter((_, i) => i !== index);
 //     setTempData({ ...tempData, skills: updatedSkills });
-//   }, [tempData]);
+//     scheduleAutoSave();
+//   }, [tempData, scheduleAutoSave]);
 
 //   const displayData = isEditing ? tempData : data;
 
@@ -265,8 +332,31 @@
 //   return (
 //     <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         {/* Edit Controls */}
+//         {/* Edit Controls with Auto-save Status */}
 //         <div className='text-right mb-8'>
+//           {/* Auto-save Status */}
+//           {isEditing && (
+//             <div className="flex items-center justify-end gap-4 mb-4 text-sm">
+//               {hasUnsavedChanges && (
+//                 <div className="flex items-center gap-2 text-orange-600">
+//                   <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+//                   Unsaved changes
+//                 </div>
+//               )}
+//               {isAutoSaving && (
+//                 <div className="flex items-center gap-2 text-blue-600">
+//                   <Loader2 className="w-3 h-3 animate-spin" />
+//                   Auto-saving...
+//                 </div>
+//               )}
+//               {lastSavedTime && !hasUnsavedChanges && !isAutoSaving && (
+//                 <div className="text-green-600">
+//                   Saved {lastSavedTime.toLocaleTimeString()}
+//                 </div>
+//               )}
+//             </div>
+//           )}
+
 //           {!isEditing ? (
 //             <Button
 //               onClick={handleEdit}
@@ -567,21 +657,20 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const skillsRef = useRef<HTMLDivElement>(null);
 
-  // Auto-save states
+  // Auto-save states - Added from Hero.tsx
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedDataRef = useRef<SkillsData | null>(null);
 
-  // Ref for onStateChange to prevent stale closures
+  // FIX: Use ref for onStateChange to prevent infinite loops
   const onStateChangeRef = useRef(onStateChange);
   useEffect(() => {
     onStateChangeRef.current = onStateChange;
   }, [onStateChange]);
-
-  const skillsRef = useRef<HTMLDivElement>(null);
 
   // Array of imported skill images
   const skillImages = [skill1, skill2, skill3, skill4, skill5];
@@ -611,7 +700,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
       }
   );
 
-  // Auto-save functionality
+  // Auto-save functionality - Added from Hero.tsx
   const performAutoSave = useCallback(async (dataToSave: SkillsData) => {
     try {
       setIsAutoSaving(true);
@@ -739,7 +828,6 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
-    lastSavedDataRef.current = data;
     setHasUnsavedChanges(false);
   };
 
@@ -752,7 +840,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
 
-      // Simulate save API call
+      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setData(tempData);
@@ -760,7 +848,11 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
       setIsEditing(false);
       setHasUnsavedChanges(false);
 
-      toast.success("Skills section saved successfully");
+      if (onStateChangeRef.current) {
+        onStateChangeRef.current(tempData);
+      }
+
+      toast.success("Skills section saved successfully!");
     } catch (error) {
       console.error("Error saving skills section:", error);
       toast.error("Error saving changes. Please try again.");
@@ -781,15 +873,15 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
     toast.info("Changes discarded");
   };
 
-  // Stable update functions with useCallback - UPDATED WITH AUTO-SAVE
+  // Stable update functions with useCallback and auto-save scheduling
   const updateSkill = useCallback(
     (index: number, field: keyof Skill, value: any) => {
       setTempData((prev) => {
         const updatedSkills = [...prev.skills];
         updatedSkills[index] = { ...updatedSkills[index], [field]: value };
-        const updatedData = { ...prev, skills: updatedSkills };
-        scheduleAutoSave(updatedData);
-        return updatedData;
+        const updated = { ...prev, skills: updatedSkills };
+        scheduleAutoSave(updated);
+        return updated;
       });
     },
     [scheduleAutoSave]
@@ -798,31 +890,31 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
   const updateHeader = useCallback(
     (field: keyof SkillsData["header"], value: string) => {
       setTempData((prev) => {
-        const updatedData = {
+        const updated = {
           ...prev,
           header: { ...prev.header, [field]: value },
         };
-        scheduleAutoSave(updatedData);
-        return updatedData;
+        scheduleAutoSave(updated);
+        return updated;
       });
     },
     [scheduleAutoSave]
   );
 
   const addSkill = useCallback(() => {
-    const newSkill: Skill = {
-      id: Date.now().toString(),
-      title: "New Skill",
-      description: "Skill description",
-      level: 50,
-    };
     setTempData((prev) => {
-      const updatedData = {
+      const newSkill: Skill = {
+        id: Date.now().toString(),
+        title: "New Skill",
+        description: "Skill description",
+        level: 50,
+      };
+      const updated = {
         ...prev,
         skills: [...prev.skills, newSkill],
       };
-      scheduleAutoSave(updatedData);
-      return updatedData;
+      scheduleAutoSave(updated);
+      return updated;
     });
   }, [scheduleAutoSave]);
 
@@ -830,9 +922,9 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
     (index: number) => {
       setTempData((prev) => {
         const updatedSkills = prev.skills.filter((_, i) => i !== index);
-        const updatedData = { ...prev, skills: updatedSkills };
-        scheduleAutoSave(updatedData);
-        return updatedData;
+        const updated = { ...prev, skills: updatedSkills };
+        scheduleAutoSave(updated);
+        return updated;
       });
     },
     [scheduleAutoSave]
@@ -866,8 +958,28 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
       className="py-20 bg-yellow-50 dark:bg-yellow-900/20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Edit Controls */}
+        {/* Edit Controls with Auto-save Status */}
         <div className="text-right mb-8">
+          {/* Auto-save Status - Updated to match Hero.tsx */}
+          {isEditing && (
+            <div className="flex items-center justify-end gap-4 mb-4 text-sm">
+              {isAutoSaving && (
+                <div className="flex items-center gap-1 text-blue-500">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Auto-saving...</span>
+                </div>
+              )}
+              {hasUnsavedChanges && !isAutoSaving && (
+                <div className="text-yellow-500">● Unsaved changes</div>
+              )}
+              {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
+                <div className="text-green-500">
+                  ✓ Auto-saved {lastSaved.toLocaleTimeString()}
+                </div>
+              )}
+            </div>
+          )}
+
           {!isEditing ? (
             <Button
               onClick={handleEdit}
@@ -915,26 +1027,6 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
           )}
         </div>
 
-        {/* Auto-save indicator */}
-        {isEditing && (
-          <div className="flex items-center justify-center gap-2 text-sm mb-4">
-            {isAutoSaving && (
-              <div className="flex items-center gap-1 text-blue-500">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Auto-saving...</span>
-              </div>
-            )}
-            {hasUnsavedChanges && !isAutoSaving && (
-              <div className="text-yellow-500">● Unsaved changes</div>
-            )}
-            {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-              <div className="text-green-500">
-                ✓ Auto-saved {lastSaved.toLocaleTimeString()}
-              </div>
-            )}
-          </div>
-        )}
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -975,7 +1067,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
               <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
                 {displayData.header.title}
               </h2>
-              <p className="text-lg text-muted-foreground text-justify max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground text-center max-w-2xl mx-auto">
                 {displayData.header.subtitle}
               </p>
             </>

@@ -770,7 +770,7 @@ export default function EditableHero({
 
               {!isEditing ? (
                 <motion.p
-                  className="text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed text-justify"
+                  className="text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed "
                   variants={itemVariants}
                 >
                   {heroState.description}
@@ -780,7 +780,7 @@ export default function EditableHero({
                   value={tempHeroState.description}
                   field="description"
                   multiline
-                  className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed text-justify"
+                  className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed "
                   placeholder="Hero description"
                   maxLength={500}
                 />

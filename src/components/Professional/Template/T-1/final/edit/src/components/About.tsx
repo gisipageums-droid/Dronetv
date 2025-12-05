@@ -59,7 +59,6 @@
 //   const [imageLoaded, setImageLoaded] = useState(false);
 //   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-
 //   useEffect(() => {
 //     if (content) {
 //       setAboutContent(content);
@@ -580,7 +579,6 @@
 //                   />
 //                 </div>
 
-
 //               </div>
 //             </div>
 
@@ -612,14 +610,10 @@
 
 // export default About;
 
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import Cropper from "react-easy-crop";
 import {
-  Award,
-  Calendar,
-  Users,
   Edit,
   Save,
   X,
@@ -658,10 +652,10 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  
+
   // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Track if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
 
@@ -704,14 +698,19 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   useEffect(() => {
     if (content) {
       setAboutContent(content);
+      // Update skills input when content changes and we're NOT editing
+      if (!isEditing) {
+        setSkillsInput(content.skills.join(", "));
+      }
     }
   }, [content]);
 
+  // Set skills input when entering edit mode
   useEffect(() => {
     if (isEditing) {
       setSkillsInput(aboutContent.skills.join(", "));
     }
-  }, [isEditing, aboutContent.skills]);
+  }, [isEditing]);
 
   // Auto-save effect
   useEffect(() => {
@@ -742,27 +741,26 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
     try {
       setIsAutoSaving(true);
-      
+
       const skillsArray = skillsInput
         .split(",")
         .map((skill) => skill.trim())
         .filter((skill) => skill.length > 0);
 
       const updated = { ...aboutContent, skills: skillsArray };
-      
+
       // Call the save function
       onSave?.(updated);
-      
+
       // Update state
       setHasUnsavedChanges(false);
       setLastSavedTime(new Date());
-      
+
       // Show subtle notification (optional - can be removed if too intrusive)
       toast.success("Changes auto-saved", {
         duration: 1000,
         position: "bottom-right",
       });
-      
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -816,7 +814,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
       formData.append("fieldName", "aboutImage");
 
       const xhr = new XMLHttpRequest();
-      
+
       // Track upload progress
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
@@ -922,20 +920,22 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
       // Auto-upload cropped image to AWS S3 immediately
       try {
         const s3Url = await uploadImageToS3(croppedFile);
-        
+
         setAboutContent((prev) => ({
           ...prev,
           imageSrc: s3Url,
         }));
-        
+
         // Mark as unsaved changes since image was updated
         setHasUnsavedChanges(true);
-        
+
         toast.success("Image uploaded successfully!");
       } catch (uploadError) {
         console.error("Image upload failed:", uploadError);
         toast.error(
-          `Image upload failed: ${uploadError instanceof Error ? uploadError.message : "Unknown error"}`
+          `Image upload failed: ${
+            uploadError instanceof Error ? uploadError.message : "Unknown error"
+          }`
         );
         // Keep the cropped image as base64 for manual save later
         toast.info("Cropped image saved locally. Save manually to persist.");
@@ -994,7 +994,6 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
   const handleCancel = () => {
     setAboutContent(content);
-    setSkillsInput(content.skills.join(", "));
     setIsEditing(false);
     setHasUnsavedChanges(false);
     toast.info("Changes discarded");
@@ -1008,18 +1007,25 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   // Format last saved time for display
   const formatLastSavedTime = () => {
     if (!lastSavedTime) return "Never";
-    
+
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
-    
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
     if (diffInSeconds < 60) return "Just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return lastSavedTime.toLocaleDateString();
   };
 
   return (
-    <section id="about" className="py-20 text-justify bg-white dark:bg-gray-900">
+    <section
+      id="about"
+      className="py-20 text-justify bg-white dark:bg-gray-900"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
@@ -1169,7 +1175,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
                         <div>Uploading... {Math.round(uploadProgress)}%</div>
                         <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
-                          <div 
+                          <div
                             className="h-full bg-green-500 transition-all duration-300"
                             style={{ width: `${uploadProgress}%` }}
                           ></div>
@@ -1326,7 +1332,9 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
             <div className="p-6">
               <div
-                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${
+                  isDragging ? "cursor-grabbing" : "cursor-grab"
+                }`}
               >
                 <Cropper
                   image={imageToCrop}

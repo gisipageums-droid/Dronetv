@@ -92,7 +92,7 @@
 //   const [dataLoaded, setDataLoaded] = useState(false);
 //   const [isVisible, setIsVisible] = useState(false);
 //   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
-  
+
 //   // Cropping states
 //   const [showCropper, setShowCropper] = useState(false);
 //   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -101,15 +101,15 @@
 //   const [imageToCrop, setImageToCrop] = useState(null);
 //   const [originalFile, setOriginalFile] = useState(null);
 //   const [aspectRatio] = useState(4 / 3); // Fixed 4:3 aspect ratio
-  
+
 //   const heroRef = useRef<HTMLDivElement>(null);
 //   const descriptionRef = useRef<HTMLDivElement>(null);
-  
+
 //   // Helper function to transform backend data to component format
 //   const transformHeroData = useCallback((backendData: Partial<HeroData>): HeroData => {
 //     // Handle buttons transformation - convert ctaButtons array to buttons object
 //     let buttons = { work: "", contact: "" };
-    
+
 //     if (backendData.ctaButtons && backendData.ctaButtons.length > 0) {
 //       // Use the first button for "work" and second for "contact" if available
 //       buttons = {
@@ -120,13 +120,13 @@
 //       // Fallback to existing buttons structure
 //       buttons = backendData.buttons;
 //     }
-    
+
 //     return {
 //       name: backendData.name || "",
 //       title: backendData.title || "",
 //       description: backendData.description || "",
 //       image: backendData.image || "",
-      
+
 //       buttons,
 //       // Keep original ctaButtons for saving back to backend if needed
 //       ctaButtons: backendData.ctaButtons
@@ -138,7 +138,7 @@
 //     // If we had original ctaButtons structure, maintain it
 //     if (componentData.ctaButtons) {
 //       const updatedCtaButtons = [...componentData.ctaButtons];
-      
+
 //       // Update the text of existing buttons
 //       if (updatedCtaButtons[0]) {
 //         updatedCtaButtons[0].text = componentData.buttons?.work || updatedCtaButtons[0].text;
@@ -146,13 +146,13 @@
 //       if (updatedCtaButtons[1]) {
 //         updatedCtaButtons[1].text = componentData.buttons?.contact || updatedCtaButtons[1].text;
 //       }
-      
+
 //       return {
 //         ...componentData,
 //         ctaButtons: updatedCtaButtons
 //       };
 //     }
-    
+
 //     // If no ctaButtons existed, create them from buttons
 //     return {
 //       ...componentData,
@@ -163,7 +163,7 @@
 //           href: "#projects"
 //         },
 //         {
-//           variant: "secondary", 
+//           variant: "secondary",
 //           text: componentData.buttons?.contact || "Contact Me",
 //           href: "#contact"
 //         }
@@ -182,7 +182,7 @@
 //       contact: ""
 //     }
 //   });
-  
+
 //   const [tempData, setTempData] = useState<HeroData>({
 //     name: "",
 //     title: "",
@@ -248,7 +248,7 @@
 //         setDataLoaded(true);
 //         setIsLoading(false);
 //       }, 500);
-      
+
 //       return () => clearTimeout(timer);
 //     }
 //   }, [isVisible, dataLoaded, isLoading, heroData, transformHeroData]);
@@ -297,20 +297,20 @@
 
 //     return new Promise((resolve) => {
 //       canvas.toBlob((blob) => {
-//         const fileName = originalFile ? 
-//           `cropped-hero-${originalFile.name}` : 
+//         const fileName = originalFile ?
+//           `cropped-hero-${originalFile.name}` :
 //           `cropped-hero-${Date.now()}.jpg`;
-        
-//         const file = new File([blob], fileName, { 
+
+//         const file = new File([blob], fileName, {
 //           type: 'image/jpeg',
 //           lastModified: Date.now()
 //         });
-        
+
 //         const previewUrl = URL.createObjectURL(blob);
-        
-//         resolve({ 
-//           file, 
-//           previewUrl 
+
+//         resolve({
+//           file,
+//           previewUrl
 //         });
 //       }, 'image/jpeg', 0.95);
 //     });
@@ -340,7 +340,7 @@
 //       setCrop({ x: 0, y: 0 });
 //     };
 //     reader.readAsDataURL(file);
-    
+
 //     // Clear the file input
 //     e.target.value = '';
 //   };
@@ -351,7 +351,7 @@
 //       if (!imageToCrop || !croppedAreaPixels) return;
 
 //       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-      
+
 //       // Update preview immediately with blob URL (temporary)
 //       setTempData(prev => ({
 //         ...prev,
@@ -389,7 +389,7 @@
 //   const handleSave = async () => {
 //     try {
 //       setIsSaving(true);
-      
+
 //       if (pendingImageFile) {
 //         setIsUploading(true);
 //       }
@@ -432,18 +432,18 @@
 
 //       // Simulate API call
 //       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
 //       setData(updatedData);
 //       setTempData(updatedData);
 //       setPendingImageFile(null);
 //       setIsEditing(false);
-      
+
 //       if (onStateChange) {
 //         onStateChange(backendData);
 //       }
-      
-//       toast.success(pendingImageFile 
-//         ? 'Hero section saved with new image!' 
+
+//       toast.success(pendingImageFile
+//         ? 'Hero section saved with new image!'
 //         : 'Hero section updated successfully!');
 
 //     } catch (error) {
@@ -484,18 +484,18 @@
 
 //   // Stable update functions with useCallback
 //   const updateTempContent = useCallback((field: keyof HeroData, value: string) => {
-//     setTempData((prev) => ({ 
-//       ...prev, 
-//       [field]: value 
+//     setTempData((prev) => ({
+//       ...prev,
+//       [field]: value
 //     }));
 //   }, []);
 
 //   const updateStat = useCallback((stat: keyof HeroData['stats'], value: string) => {
 //     setTempData(prev => ({
 //       ...prev,
-//       stats: { 
-//         ...prev.stats, 
-//         [stat]: value 
+//       stats: {
+//         ...prev.stats,
+//         [stat]: value
 //       }
 //     }));
 //   }, []);
@@ -503,9 +503,9 @@
 //   const updateButton = useCallback((button: keyof HeroData['buttons'], value: string) => {
 //     setTempData(prev => ({
 //       ...prev,
-//       buttons: { 
-//         ...prev.buttons, 
-//         [button]: value 
+//       buttons: {
+//         ...prev.buttons,
+//         [button]: value
 //       }
 //     }));
 //   }, []);
@@ -535,12 +535,12 @@
 //     }) => {
 //       const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 //         const newValue = e.target.value;
-        
+
 //         // Apply character limit if specified
 //         if (charLimit && newValue.length > charLimit) {
 //           return; // Don't update if over limit
 //         }
-        
+
 //         if (statField) {
 //           updateStat(statField, newValue);
 //         } else if (buttonField) {
@@ -624,7 +624,7 @@
 
 //   if (isLoading) {
 //     return (
-//       <section 
+//       <section
 //         ref={heroRef}
 //         className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
 //       >
@@ -639,8 +639,8 @@
 //   }
 
 //   return (
-//     <section 
-//       id="home" 
+//     <section
+//       id="home"
 //       ref={heroRef}
 //       className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20 relative"
 //     >
@@ -782,7 +782,7 @@
 //             animate='visible'
 //             variants={itemVariants}
 //           >
-//             <motion.h1 
+//             <motion.h1
 //               className="text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight"
 //               variants={itemVariants}
 //             >
@@ -800,7 +800,7 @@
 //               )}
 //             </motion.h1>
 
-//             <motion.div 
+//             <motion.div
 //               variants={itemVariants}
 //             >
 //               {isEditing ? (
@@ -816,7 +816,7 @@
 //                   />
 //                 </div>
 //               ) : (
-//                 <div 
+//                 <div
 //                   ref={descriptionRef}
 //                   className="text-xl text-justify text-muted-foreground leading-relaxed whitespace-pre-wrap break-words"
 //                 >
@@ -825,7 +825,7 @@
 //               )}
 //             </motion.div>
 
-//             <motion.div 
+//             <motion.div
 //               className="flex flex-col sm:flex-row gap-4 mt-4"
 //               variants={itemVariants}
 //             >
@@ -979,7 +979,6 @@
 //   templateSelection: '',
 // };
 
-
 // import { Edit2, Loader2, Save, Upload, X, ZoomIn, ZoomOut } from 'lucide-react';
 
 // import { motion } from 'motion/react';
@@ -1074,14 +1073,14 @@
 //   const [dataLoaded, setDataLoaded] = useState(false);
 //   const [isVisible, setIsVisible] = useState(false);
 //   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
-  
+
 //   // Auto-save states
 //   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 //   const [isAutoSaving, setIsAutoSaving] = useState(false);
 //   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 //   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
 //   const lastSavedDataRef = useRef<HeroData | null>(null);
-  
+
 //   // Cropping states
 //   const [showCropper, setShowCropper] = useState(false);
 //   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -1090,15 +1089,15 @@
 //   const [imageToCrop, setImageToCrop] = useState(null);
 //   const [originalFile, setOriginalFile] = useState(null);
 //   const [aspectRatio] = useState(4 / 3); // Fixed 4:3 aspect ratio
-  
+
 //   const heroRef = useRef<HTMLDivElement>(null);
 //   const descriptionRef = useRef<HTMLDivElement>(null);
-  
+
 //   // Helper function to transform backend data to component format
 //   const transformHeroData = useCallback((backendData: Partial<HeroData>): HeroData => {
 //     // Handle buttons transformation - convert ctaButtons array to buttons object
 //     let buttons = { work: "", contact: "" };
-    
+
 //     if (backendData.ctaButtons && backendData.ctaButtons.length > 0) {
 //       // Use the first button for "work" and second for "contact" if available
 //       buttons = {
@@ -1109,13 +1108,13 @@
 //       // Fallback to existing buttons structure
 //       buttons = backendData.buttons;
 //     }
-    
+
 //     return {
 //       name: backendData.name || "",
 //       title: backendData.title || "",
 //       description: backendData.description || "",
 //       image: backendData.image || "",
-      
+
 //       buttons,
 //       // Keep original ctaButtons for saving back to backend if needed
 //       ctaButtons: backendData.ctaButtons
@@ -1127,7 +1126,7 @@
 //     // If we had original ctaButtons structure, maintain it
 //     if (componentData.ctaButtons) {
 //       const updatedCtaButtons = [...componentData.ctaButtons];
-      
+
 //       // Update the text of existing buttons
 //       if (updatedCtaButtons[0]) {
 //         updatedCtaButtons[0].text = componentData.buttons?.work || updatedCtaButtons[0].text;
@@ -1135,13 +1134,13 @@
 //       if (updatedCtaButtons[1]) {
 //         updatedCtaButtons[1].text = componentData.buttons?.contact || updatedCtaButtons[1].text;
 //       }
-      
+
 //       return {
 //         ...componentData,
 //         ctaButtons: updatedCtaButtons
 //       };
 //     }
-    
+
 //     // If no ctaButtons existed, create them from buttons
 //     return {
 //       ...componentData,
@@ -1152,7 +1151,7 @@
 //           href: "#projects"
 //         },
 //         {
-//           variant: "secondary", 
+//           variant: "secondary",
 //           text: componentData.buttons?.contact || "Contact Me",
 //           href: "#contact"
 //         }
@@ -1171,7 +1170,7 @@
 //       contact: ""
 //     }
 //   });
-  
+
 //   const [tempData, setTempData] = useState<HeroData>({
 //     name: "",
 //     title: "",
@@ -1187,21 +1186,21 @@
 //   const performAutoSave = useCallback(async (dataToSave: HeroData) => {
 //     try {
 //       setIsAutoSaving(true);
-      
+
 //       // Transform data back to backend format before saving
 //       const backendData = transformToBackendFormat(dataToSave);
-      
+
 //       // Simulate API call
 //       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
 //       if (onStateChange) {
 //         onStateChange(backendData);
 //       }
-      
+
 //       lastSavedDataRef.current = dataToSave;
 //       setLastSaved(new Date());
 //       setHasUnsavedChanges(false);
-      
+
 //       console.log("Auto-save completed:", dataToSave);
 //     } catch (error) {
 //       console.error("Auto-save failed:", error);
@@ -1213,12 +1212,12 @@
 
 //   const scheduleAutoSave = useCallback((updatedData: HeroData) => {
 //     setHasUnsavedChanges(true);
-    
+
 //     // Clear existing timeout
 //     if (autoSaveTimeoutRef.current) {
 //       clearTimeout(autoSaveTimeoutRef.current);
 //     }
-    
+
 //     // Schedule new auto-save
 //     autoSaveTimeoutRef.current = setTimeout(() => {
 //       performAutoSave(updatedData);
@@ -1290,7 +1289,7 @@
 //         setDataLoaded(true);
 //         setIsLoading(false);
 //       }, 500);
-      
+
 //       return () => clearTimeout(timer);
 //     }
 //   }, [isVisible, dataLoaded, isLoading, heroData, transformHeroData]);
@@ -1340,20 +1339,20 @@
 
 //     return new Promise((resolve) => {
 //       canvas.toBlob((blob) => {
-//         const fileName = originalFile ? 
-//           `cropped-hero-${originalFile.name}` : 
+//         const fileName = originalFile ?
+//           `cropped-hero-${originalFile.name}` :
 //           `cropped-hero-${Date.now()}.jpg`;
-        
-//         const file = new File([blob], fileName, { 
+
+//         const file = new File([blob], fileName, {
 //           type: 'image/jpeg',
 //           lastModified: Date.now()
 //         });
-        
+
 //         const previewUrl = URL.createObjectURL(blob);
-        
-//         resolve({ 
-//           file, 
-//           previewUrl 
+
+//         resolve({
+//           file,
+//           previewUrl
 //         });
 //       }, 'image/jpeg', 0.95);
 //     });
@@ -1408,7 +1407,7 @@
 //       setCrop({ x: 0, y: 0 });
 //     };
 //     reader.readAsDataURL(file);
-    
+
 //     // Clear the file input
 //     e.target.value = '';
 //   };
@@ -1419,9 +1418,9 @@
 //       if (!imageToCrop || !croppedAreaPixels) return;
 
 //       setIsUploading(true);
-      
+
 //       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-      
+
 //       // Update preview immediately with blob URL (temporary)
 //       const updatedData = {
 //         ...tempData,
@@ -1433,7 +1432,7 @@
 //       // Upload to S3 immediately
 //       try {
 //         const s3Url = await uploadImageToS3(file);
-        
+
 //         // Update with S3 URL
 //         const finalUpdatedData = {
 //           ...tempData,
@@ -1441,7 +1440,7 @@
 //         };
 //         setTempData(finalUpdatedData);
 //         performAutoSave(finalUpdatedData); // Immediate save with S3 URL
-        
+
 //         toast.success('Image uploaded and saved successfully!');
 //       } catch (uploadError) {
 //         console.error('Upload failed:', uploadError);
@@ -1481,7 +1480,7 @@
 //   const handleSave = async () => {
 //     try {
 //       setIsSaving(true);
-      
+
 //       // Clear any pending auto-save
 //       if (autoSaveTimeoutRef.current) {
 //         clearTimeout(autoSaveTimeoutRef.current);
@@ -1508,17 +1507,17 @@
 
 //       // Simulate API call
 //       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
 //       setData(tempData);
 //       lastSavedDataRef.current = tempData;
 //       setPendingImageFile(null);
 //       setIsEditing(false);
 //       setHasUnsavedChanges(false);
-      
+
 //       if (onStateChange) {
 //         onStateChange(backendData);
 //       }
-      
+
 //       toast.success('Hero section saved successfully!');
 
 //     } catch (error) {
@@ -1535,7 +1534,7 @@
 //     if (autoSaveTimeoutRef.current) {
 //       clearTimeout(autoSaveTimeoutRef.current);
 //     }
-    
+
 //     setTempData(lastSavedDataRef.current || data);
 //     setPendingImageFile(null);
 //     setHasUnsavedChanges(false);
@@ -1566,10 +1565,10 @@
 
 //   // Stable update functions with useCallback
 //   const updateTempContent = useCallback((field: keyof HeroData, value: string) => {
-//     setTempData((prev) => { 
-//       const updated = { 
-//         ...prev, 
-//         [field]: value 
+//     setTempData((prev) => {
+//       const updated = {
+//         ...prev,
+//         [field]: value
 //       };
 //       scheduleAutoSave(updated);
 //       return updated;
@@ -1580,9 +1579,9 @@
 //     setTempData(prev => {
 //       const updated = {
 //         ...prev,
-//         stats: { 
-//           ...prev.stats, 
-//           [stat]: value 
+//         stats: {
+//           ...prev.stats,
+//           [stat]: value
 //         }
 //       };
 //       scheduleAutoSave(updated);
@@ -1594,9 +1593,9 @@
 //     setTempData(prev => {
 //       const updated = {
 //         ...prev,
-//         buttons: { 
-//           ...prev.buttons, 
-//           [button]: value 
+//         buttons: {
+//           ...prev.buttons,
+//           [button]: value
 //         }
 //       };
 //       scheduleAutoSave(updated);
@@ -1629,12 +1628,12 @@
 //     }) => {
 //       const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 //         const newValue = e.target.value;
-        
+
 //         // Apply character limit if specified
 //         if (charLimit && newValue.length > charLimit) {
 //           return; // Don't update if over limit
 //         }
-        
+
 //         if (statField) {
 //           updateStat(statField, newValue);
 //         } else if (buttonField) {
@@ -1718,7 +1717,7 @@
 
 //   if (isLoading) {
 //     return (
-//       <section 
+//       <section
 //         ref={heroRef}
 //         className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
 //       >
@@ -1733,8 +1732,8 @@
 //   }
 
 //   return (
-//     <section 
-//       id="home" 
+//     <section
+//       id="home"
 //       ref={heroRef}
 //       className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20 relative"
 //     >
@@ -1918,7 +1917,7 @@
 //               </div>
 //             )}
 
-//             <motion.h1 
+//             <motion.h1
 //               className="text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight"
 //               variants={itemVariants}
 //             >
@@ -1936,7 +1935,7 @@
 //               )}
 //             </motion.h1>
 
-//             <motion.div 
+//             <motion.div
 //               variants={itemVariants}
 //             >
 //               {isEditing ? (
@@ -1952,7 +1951,7 @@
 //                   />
 //                 </div>
 //               ) : (
-//                 <div 
+//                 <div
 //                   ref={descriptionRef}
 //                   className="text-xl text-justify text-muted-foreground leading-relaxed whitespace-pre-wrap break-words"
 //                 >
@@ -1961,7 +1960,7 @@
 //               )}
 //             </motion.div>
 
-//             <motion.div 
+//             <motion.div
 //               className="flex flex-col sm:flex-row gap-4 mt-4"
 //               variants={itemVariants}
 //             >
@@ -2115,12 +2114,12 @@
 //   templateSelection: '',
 // };
 
-import { Edit2, Loader2, Save, Upload, X, ZoomIn, ZoomOut } from 'lucide-react';
-import { motion } from 'motion/react';
-import { createPortal } from 'react-dom';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
-import Cropper from 'react-easy-crop';
+import { Edit2, Loader2, Save, Upload, X, ZoomIn, ZoomOut } from "lucide-react";
+import { motion } from "motion/react";
+import { createPortal } from "react-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
+import Cropper from "react-easy-crop";
 
 // Text limits
 const TEXT_LIMITS = {
@@ -2159,8 +2158,9 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant || 'default']} ${sizes[size || 'default']
-        } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant || "default"]} ${
+        sizes[size || "default"]
+      } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -2208,7 +2208,13 @@ interface HeroProps {
   templateSelection?: string;
 }
 
-export function Hero({ heroData, onStateChange, userId, professionalId, templateSelection }: HeroProps) {
+export function Hero({
+  heroData,
+  onStateChange,
+  userId,
+  professionalId,
+  templateSelection,
+}: HeroProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -2216,14 +2222,14 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
-  
+
   // Auto-save states
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedDataRef = useRef<HeroData | null>(null);
-  
+
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -2232,10 +2238,10 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio] = useState(4 / 3); // Fixed 4:3 aspect ratio
-  
+
   const heroRef = useRef<HTMLDivElement>(null);
   const descriptionRef = useRef<HTMLDivElement>(null);
-  
+
   // FIX: Use ref for onStateChange to prevent infinite loops
   const onStateChangeRef = useRef(onStateChange);
   useEffect(() => {
@@ -2243,70 +2249,81 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   }, [onStateChange]);
 
   // Helper function to transform backend data to component format
-  const transformHeroData = useCallback((backendData: Partial<HeroData>): HeroData => {
-    // Handle buttons transformation - convert ctaButtons array to buttons object
-    let buttons = { work: "", contact: "" };
-    
-    if (backendData.ctaButtons && backendData.ctaButtons.length > 0) {
-      // Use the first button for "work" and second for "contact" if available
-      buttons = {
-        work: backendData.ctaButtons[0]?.text || "",
-        contact: backendData.ctaButtons[1]?.text || backendData.ctaButtons[0]?.text || ""
+  const transformHeroData = useCallback(
+    (backendData: Partial<HeroData>): HeroData => {
+      // Handle buttons transformation - convert ctaButtons array to buttons object
+      let buttons = { work: "", contact: "" };
+
+      if (backendData.ctaButtons && backendData.ctaButtons.length > 0) {
+        // Use the first button for "work" and second for "contact" if available
+        buttons = {
+          work: backendData.ctaButtons[0]?.text || "",
+          contact:
+            backendData.ctaButtons[1]?.text ||
+            backendData.ctaButtons[0]?.text ||
+            "",
+        };
+      } else if (backendData.buttons) {
+        // Fallback to existing buttons structure
+        buttons = backendData.buttons;
+      }
+
+      return {
+        name: backendData.name || "",
+        title: backendData.title || "",
+        description: backendData.description || "",
+        image: backendData.image || "",
+        stats: backendData.stats || {},
+        buttons,
+        // Keep original ctaButtons for saving back to backend if needed
+        ctaButtons: backendData.ctaButtons,
       };
-    } else if (backendData.buttons) {
-      // Fallback to existing buttons structure
-      buttons = backendData.buttons;
-    }
-    
-    return {
-      name: backendData.name || "",
-      title: backendData.title || "",
-      description: backendData.description || "",
-      image: backendData.image || "",
-      stats: backendData.stats || {},
-      buttons,
-      // Keep original ctaButtons for saving back to backend if needed
-      ctaButtons: backendData.ctaButtons
-    };
-  }, []);
+    },
+    []
+  );
 
   // Helper function to transform component data back to backend format
-  const transformToBackendFormat = useCallback((componentData: HeroData): HeroData => {
-    // If we had original ctaButtons structure, maintain it
-    if (componentData.ctaButtons) {
-      const updatedCtaButtons = [...componentData.ctaButtons];
-      
-      // Update the text of existing buttons
-      if (updatedCtaButtons[0]) {
-        updatedCtaButtons[0].text = componentData.buttons?.work || updatedCtaButtons[0].text;
+  const transformToBackendFormat = useCallback(
+    (componentData: HeroData): HeroData => {
+      // If we had original ctaButtons structure, maintain it
+      if (componentData.ctaButtons) {
+        const updatedCtaButtons = [...componentData.ctaButtons];
+
+        // Update the text of existing buttons
+        if (updatedCtaButtons[0]) {
+          updatedCtaButtons[0].text =
+            componentData.buttons?.work || updatedCtaButtons[0].text;
+        }
+        if (updatedCtaButtons[1]) {
+          updatedCtaButtons[1].text =
+            componentData.buttons?.contact || updatedCtaButtons[1].text;
+        }
+
+        return {
+          ...componentData,
+          ctaButtons: updatedCtaButtons,
+        };
       }
-      if (updatedCtaButtons[1]) {
-        updatedCtaButtons[1].text = componentData.buttons?.contact || updatedCtaButtons[1].text;
-      }
-      
+
+      // If no ctaButtons existed, create them from buttons
       return {
         ...componentData,
-        ctaButtons: updatedCtaButtons
+        ctaButtons: [
+          {
+            variant: "primary",
+            text: componentData.buttons?.work || "View Work",
+            href: "#projects",
+          },
+          {
+            variant: "secondary",
+            text: componentData.buttons?.contact || "Contact Me",
+            href: "#contact",
+          },
+        ],
       };
-    }
-    
-    // If no ctaButtons existed, create them from buttons
-    return {
-      ...componentData,
-      ctaButtons: [
-        {
-          variant: "primary",
-          text: componentData.buttons?.work || "View Work",
-          href: "#projects"
-        },
-        {
-          variant: "secondary", 
-          text: componentData.buttons?.contact || "Contact Me",
-          href: "#contact"
-        }
-      ]
-    };
-  }, []);
+    },
+    []
+  );
 
   // Initialize with empty data structure
   const [data, setData] = useState<HeroData>({
@@ -2316,11 +2333,11 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
     image: "",
     buttons: {
       work: "",
-      contact: ""
+      contact: "",
     },
-    stats: {}
+    stats: {},
   });
-  
+
   const [tempData, setTempData] = useState<HeroData>({
     name: "",
     title: "",
@@ -2328,52 +2345,58 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
     image: "",
     buttons: {
       work: "",
-      contact: ""
+      contact: "",
     },
-    stats: {}
+    stats: {},
   });
 
   // Auto-save functionality
-  const performAutoSave = useCallback(async (dataToSave: HeroData) => {
-    try {
-      setIsAutoSaving(true);
-      
-      // Transform data back to backend format before saving
-      const backendData = transformToBackendFormat(dataToSave);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      if (onStateChangeRef.current) {
-        onStateChangeRef.current(backendData);
-      }
-      
-      lastSavedDataRef.current = dataToSave;
-      setLastSaved(new Date());
-      setHasUnsavedChanges(false);
-      
-      console.log("Auto-save completed:", dataToSave);
-    } catch (error) {
-      console.error("Auto-save failed:", error);
-      toast.error("Failed to auto-save changes");
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [transformToBackendFormat]);
+  const performAutoSave = useCallback(
+    async (dataToSave: HeroData) => {
+      try {
+        setIsAutoSaving(true);
 
-  const scheduleAutoSave = useCallback((updatedData: HeroData) => {
-    setHasUnsavedChanges(true);
-    
-    // Clear existing timeout
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-    
-    // Schedule new auto-save
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      performAutoSave(updatedData);
-    }, 2000); // 2 second delay
-  }, [performAutoSave]);
+        // Transform data back to backend format before saving
+        const backendData = transformToBackendFormat(dataToSave);
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        if (onStateChangeRef.current) {
+          onStateChangeRef.current(backendData);
+        }
+
+        lastSavedDataRef.current = dataToSave;
+        setLastSaved(new Date());
+        setHasUnsavedChanges(false);
+
+        console.log("Auto-save completed:", dataToSave);
+      } catch (error) {
+        console.error("Auto-save failed:", error);
+        toast.error("Failed to auto-save changes");
+      } finally {
+        setIsAutoSaving(false);
+      }
+    },
+    [transformToBackendFormat]
+  );
+
+  const scheduleAutoSave = useCallback(
+    (updatedData: HeroData) => {
+      setHasUnsavedChanges(true);
+
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Schedule new auto-save
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        performAutoSave(updatedData);
+      }, 2000); // 2 second delay
+    },
+    [performAutoSave]
+  );
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -2419,7 +2442,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   useEffect(() => {
     if (showCropper) {
       const prev = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
       return () => {
         document.body.style.overflow = prev;
       };
@@ -2440,7 +2463,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
         setDataLoaded(true);
         setIsLoading(false);
       }, 500);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isVisible, dataLoaded, isLoading, heroData, transformHeroData]);
@@ -2461,17 +2484,17 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
-      image.addEventListener('load', () => resolve(image));
-      image.addEventListener('error', (error) => reject(error));
-      image.setAttribute('crossOrigin', 'anonymous');
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.setAttribute("crossOrigin", "anonymous");
       image.src = url;
     });
 
   // Function to get cropped image
   const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
@@ -2489,45 +2512,52 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
     );
 
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        const fileName = originalFile ? 
-          `cropped-hero-${originalFile.name}` : 
-          `cropped-hero-${Date.now()}.jpg`;
-        
-        const file = new File([blob], fileName, { 
-          type: 'image/jpeg',
-          lastModified: Date.now()
-        });
-        
-        const previewUrl = URL.createObjectURL(blob);
-        
-        resolve({ 
-          file, 
-          previewUrl 
-        });
-      }, 'image/jpeg', 0.95);
+      canvas.toBlob(
+        (blob) => {
+          const fileName = originalFile
+            ? `cropped-hero-${originalFile.name}`
+            : `cropped-hero-${Date.now()}.jpg`;
+
+          const file = new File([blob], fileName, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+
+          const previewUrl = URL.createObjectURL(blob);
+
+          resolve({
+            file,
+            previewUrl,
+          });
+        },
+        "image/jpeg",
+        0.95
+      );
     });
   };
 
   // Upload image to S3
   const uploadImageToS3 = async (file: File): Promise<string> => {
     if (!userId || !professionalId) {
-      throw new Error('Missing user information');
+      throw new Error("Missing user information");
     }
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('userId', userId);
-    formData.append('fieldName', 'heroImage');
+    formData.append("file", file);
+    formData.append("userId", userId);
+    formData.append("fieldName", "heroImage");
 
-    const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
-      method: 'POST',
-      body: formData,
-    });
+    const uploadResponse = await fetch(
+      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     if (!uploadResponse.ok) {
       const errorData = await uploadResponse.json();
-      throw new Error(errorData.message || 'Upload failed');
+      throw new Error(errorData.message || "Upload failed");
     }
 
     const uploadData = await uploadResponse.json();
@@ -2539,13 +2569,13 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be less than 5MB');
+      toast.error("File size must be less than 5MB");
       return;
     }
 
@@ -2558,9 +2588,9 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
-    
+
     // Clear the file input
-    e.target.value = '';
+    e.target.value = "";
   };
 
   // Apply crop and automatically upload to S3
@@ -2569,44 +2599,37 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
       if (!imageToCrop || !croppedAreaPixels) return;
 
       setIsUploading(true);
-      
-      const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-      
-      // Update preview immediately with blob URL (temporary)
-      const updatedData = {
-        ...tempData,
-        image: previewUrl
-      };
-      setTempData(updatedData);
-      scheduleAutoSave(updatedData);
 
-      // Upload to S3 immediately
+      const { file } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+
+      // Upload to S3 immediately (don't use blob URL at all)
       try {
         const s3Url = await uploadImageToS3(file);
-        
-        // Update with S3 URL
+
+        // Update with S3 URL directly
         const finalUpdatedData = {
           ...tempData,
-          image: s3Url
+          image: s3Url,
         };
         setTempData(finalUpdatedData);
         performAutoSave(finalUpdatedData); // Immediate save with S3 URL
-        
-        toast.success('Image uploaded and saved successfully!');
+
+        toast.success("Image uploaded and saved successfully!");
       } catch (uploadError) {
-        console.error('Upload failed:', uploadError);
-        toast.error('Image upload failed, but local copy is saved');
-        // Content with blob URL is already saved via auto-save
+        console.error("Upload failed:", uploadError);
+        toast.error("Image upload failed. Please try again.");
+        setIsUploading(false);
+        setShowCropper(false);
+        return;
       }
 
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
       setIsUploading(false);
-
     } catch (error) {
-      console.error('Error cropping image:', error);
-      toast.error('Failed to crop image');
+      console.error("Error cropping image:", error);
+      toast.error("Failed to crop image");
       setShowCropper(false);
       setIsUploading(false);
     }
@@ -2631,7 +2654,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      
+
       // Clear any pending auto-save
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
@@ -2645,8 +2668,8 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
           tempData.image = s3Url;
           setPendingImageFile(null);
         } catch (uploadError) {
-          console.error('Upload failed:', uploadError);
-          toast.error('Image upload failed');
+          console.error("Upload failed:", uploadError);
+          toast.error("Image upload failed");
           setIsUploading(false);
           setIsSaving(false);
           return;
@@ -2658,22 +2681,21 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       setData(tempData);
       lastSavedDataRef.current = tempData;
       setPendingImageFile(null);
       setIsEditing(false);
       setHasUnsavedChanges(false);
-      
+
       if (onStateChangeRef.current) {
         onStateChangeRef.current(backendData);
       }
-      
-      toast.success('Hero section saved successfully!');
 
+      toast.success("Hero section saved successfully!");
     } catch (error) {
-      console.error('Error saving hero section:', error);
-      toast.error('Error saving changes. Please try again.');
+      console.error("Error saving hero section:", error);
+      toast.error("Error saving changes. Please try again.");
     } finally {
       setIsUploading(false);
       setIsSaving(false);
@@ -2685,12 +2707,12 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
-    
+
     setTempData(lastSavedDataRef.current || data);
     setPendingImageFile(null);
     setHasUnsavedChanges(false);
     setIsEditing(false);
-    toast.info('Changes discarded');
+    toast.info("Changes discarded");
   };
 
   // Safe data accessor functions
@@ -2715,44 +2737,53 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   };
 
   // FIX: Stable update functions with useCallback - CORRECTED VERSION
-  const updateTempContent = useCallback((field: keyof HeroData, value: string) => {
-    setTempData(prev => { 
-      const updated = { 
-        ...prev, 
-        [field]: value 
-      };
-      scheduleAutoSave(updated);
-      return updated;
-    });
-  }, [scheduleAutoSave]);
+  const updateTempContent = useCallback(
+    (field: keyof HeroData, value: string) => {
+      setTempData((prev) => {
+        const updated = {
+          ...prev,
+          [field]: value,
+        };
+        scheduleAutoSave(updated);
+        return updated;
+      });
+    },
+    [scheduleAutoSave]
+  );
 
-  const updateStat = useCallback((stat: keyof HeroStats, value: string) => {
-    setTempData(prev => {
-      const updated = {
-        ...prev,
-        stats: { 
-          ...prev.stats, 
-          [stat]: value 
-        }
-      };
-      scheduleAutoSave(updated);
-      return updated;
-    });
-  }, [scheduleAutoSave]);
+  const updateStat = useCallback(
+    (stat: keyof HeroStats, value: string) => {
+      setTempData((prev) => {
+        const updated = {
+          ...prev,
+          stats: {
+            ...prev.stats,
+            [stat]: value,
+          },
+        };
+        scheduleAutoSave(updated);
+        return updated;
+      });
+    },
+    [scheduleAutoSave]
+  );
 
-  const updateButton = useCallback((button: keyof HeroData['buttons'], value: string) => {
-    setTempData(prev => {
-      const updated = {
-        ...prev,
-        buttons: { 
-          ...prev.buttons, 
-          [button]: value 
-        }
-      };
-      scheduleAutoSave(updated);
-      return updated;
-    });
-  }, [scheduleAutoSave]);
+  const updateButton = useCallback(
+    (button: keyof HeroData["buttons"], value: string) => {
+      setTempData((prev) => {
+        const updated = {
+          ...prev,
+          buttons: {
+            ...prev.buttons,
+            [button]: value,
+          },
+        };
+        scheduleAutoSave(updated);
+        return updated;
+      });
+    },
+    [scheduleAutoSave]
+  );
 
   // FIX: Memoized EditableText component with character limits - CORRECTED VERSION
   const EditableText = useMemo(() => {
@@ -2774,17 +2805,19 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
       placeholder?: string;
       rows?: number;
       statField?: keyof HeroStats;
-      buttonField?: keyof HeroData['buttons'];
+      buttonField?: keyof HeroData["buttons"];
       charLimit?: number;
     }) => {
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      ) => {
         const newValue = e.target.value;
-        
+
         // Apply character limit if specified
         if (charLimit && newValue.length > charLimit) {
           return; // Don't update if over limit
         }
-        
+
         if (statField) {
           updateStat(statField, newValue);
         } else if (buttonField) {
@@ -2794,7 +2827,8 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
         }
       };
 
-      const baseClasses = "w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-gray-800 placeholder-gray-500";
+      const baseClasses =
+        "w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-gray-800 placeholder-gray-500";
       const currentLength = value?.length || 0;
       const isOverLimit = charLimit && currentLength > charLimit;
 
@@ -2803,19 +2837,21 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
           {multiline ? (
             <div className="relative">
               <textarea
-                value={value || ''}
+                value={value || ""}
                 onChange={handleChange}
                 className={`${baseClasses} p-3 resize-y overflow-auto whitespace-pre-wrap break-words ${className} ${
-                  isOverLimit ? 'border-red-400' : ''
+                  isOverLimit ? "border-red-400" : ""
                 }`}
                 placeholder={placeholder}
                 rows={rows}
-                style={{ whiteSpace: 'pre-wrap' }}
+                style={{ whiteSpace: "pre-wrap" }}
               />
               {charLimit && (
-                <div className={`absolute bottom-2 right-2 text-xs ${
-                  isOverLimit ? 'text-red-400' : 'text-gray-400'
-                }`}>
+                <div
+                  className={`absolute bottom-2 right-2 text-xs ${
+                    isOverLimit ? "text-red-400" : "text-gray-400"
+                  }`}
+                >
                   {currentLength}/{charLimit}
                 </div>
               )}
@@ -2823,18 +2859,20 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
           ) : (
             <div className="relative">
               <input
-                type='text'
-                value={value || ''}
+                type="text"
+                value={value || ""}
                 onChange={handleChange}
                 className={`${baseClasses} p-2 ${className} ${
-                  isOverLimit ? 'border-red-400' : ''
+                  isOverLimit ? "border-red-400" : ""
                 }`}
                 placeholder={placeholder}
               />
               {charLimit && (
-                <div className={`absolute -bottom-6 right-0 text-xs ${
-                  isOverLimit ? 'text-red-400' : 'text-gray-400'
-                }`}>
+                <div
+                  className={`absolute -bottom-6 right-0 text-xs ${
+                    isOverLimit ? "text-red-400" : "text-gray-400"
+                  }`}
+                >
                   {currentLength}/{charLimit}
                 </div>
               )}
@@ -2854,7 +2892,11 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   // Animation variants
   const itemVariants = {
     hidden: { y: 50, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
   };
 
   const imageVariants = {
@@ -2868,14 +2910,14 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
 
   if (isLoading) {
     return (
-      <section 
+      <section
         ref={heroRef}
         className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
       >
         <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-          <div className='bg-white rounded-lg p-6 shadow-lg flex items-center gap-3'>
-            <Loader2 className='w-5 h-5 animate-spin text-blue-600' />
-            <span className='text-gray-700'>Loading content...</span>
+          <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+            <span className="text-gray-700">Loading content...</span>
           </div>
         </div>
       </section>
@@ -2883,8 +2925,8 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
   }
 
   return (
-    <section 
-      id="home" 
+    <section
+      id="home"
       ref={heroRef}
       className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20 relative"
     >
@@ -2958,7 +3000,8 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
                 {/* Aspect Ratio Info */}
                 <div className="mb-4">
                   <p className="text-sm font-medium text-gray-700 mb-2">
-                    Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+                    Aspect Ratio:{" "}
+                    <span className="text-blue-600">4:3 (Standard)</span>
                   </p>
                 </div>
 
@@ -2974,25 +3017,29 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
+                      onClick={() =>
+                        setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))
+                      }
                       className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
                       disabled={isUploading}
                     >
                       <ZoomOut className="w-4 h-4" />
                     </button>
-                  <input
-                    type="range"
-                    value={zoom}
-                    min={0.1}
-                    max={5}
-                    step={0.1}
-                    onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                    disabled={isUploading}
-                  />
+                    <input
+                      type="range"
+                      value={zoom}
+                      min={0.1}
+                      max={5}
+                      step={0.1}
+                      onChange={(e) => setZoom(Number(e.target.value))}
+                      className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                      disabled={isUploading}
+                    />
                     <button
                       type="button"
-                      onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
+                      onClick={() =>
+                        setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))
+                      }
                       className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
                       disabled={isUploading}
                     >
@@ -3028,7 +3075,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
                         Uploading...
                       </>
                     ) : (
-                      'Apply & Upload'
+                      "Apply & Upload"
                     )}
                   </button>
                 </div>
@@ -3042,8 +3089,8 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
           {/* Left Content */}
           <motion.div
             className="space-y-8 order-2 lg:order-1"
-            initial='hidden'
-            animate='visible'
+            initial="hidden"
+            animate="visible"
             variants={itemVariants}
           >
             {/* Auto-save indicator */}
@@ -3056,9 +3103,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
                   </div>
                 )}
                 {hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-yellow-500">
-                    ● Unsaved changes
-                  </div>
+                  <div className="text-yellow-500">● Unsaved changes</div>
                 )}
                 {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
                   <div className="text-green-500">
@@ -3068,15 +3113,15 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
               </div>
             )}
 
-            <motion.h1 
+            <motion.h1
               className="text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight"
               variants={itemVariants}
             >
-              Hi, I'm{' '}
+              Hi, I'm{" "}
               {isEditing ? (
                 <EditableText
                   value={displayData.name}
-                  field='name'
+                  field="name"
                   className="text-yellow-500"
                   placeholder="Your name"
                   charLimit={TEXT_LIMITS.HEADING}
@@ -3086,14 +3131,12 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
               )}
             </motion.h1>
 
-            <motion.div 
-              variants={itemVariants}
-            >
+            <motion.div variants={itemVariants}>
               {isEditing ? (
                 <div className="min-h-[120px]">
                   <EditableText
                     value={displayData.description}
-                    field='description'
+                    field="description"
                     multiline
                     className="text-lg text-yellow-500 min-h-[120px]"
                     placeholder="Your description"
@@ -3102,7 +3145,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
                   />
                 </div>
               ) : (
-                <div 
+                <div
                   ref={descriptionRef}
                   className="text-xl text-justify text-muted-foreground leading-relaxed whitespace-pre-wrap break-words"
                 >
@@ -3111,7 +3154,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
               )}
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="flex flex-col sm:flex-row gap-4 mt-4"
               variants={itemVariants}
             >
@@ -3119,14 +3162,14 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
                 <>
                   <EditableText
                     value={safeButtons.work}
-                    buttonField='work'
+                    buttonField="work"
                     className="px-6 py-3 rounded-lg text-center bg-blue-600 text-black"
                     placeholder="Work button text"
                     charLimit={TEXT_LIMITS.SUBTITLE}
                   />
                   <EditableText
                     value={safeButtons.contact}
-                    buttonField='contact'
+                    buttonField="contact"
                     className="px-6 py-3 rounded-lg text-center bg-transparent text-blue-600 border border-blue-600"
                     placeholder="Contact button text"
                     charLimit={TEXT_LIMITS.SUBTITLE}
@@ -3154,46 +3197,50 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
           {/* Right Content - User Image with Edit Button on Top */}
           <motion.div
             className="relative order-1 lg:order-2"
-            initial='hidden'
-            animate='visible'
+            initial="hidden"
+            animate="visible"
             variants={imageVariants}
           >
             {/* Edit Controls - Now placed on top of the image container */}
-            <div className='absolute -top-4 right-4 z-20'>
+            <div className="absolute -top-4 right-4 z-20">
               {!isEditing ? (
                 <Button
                   onClick={handleEdit}
-                  size='sm'
-                  className='bg-red-500 hover:bg-red-600 shadow-md'
+                  size="sm"
+                  className="bg-red-500 hover:bg-red-600 shadow-md"
                   disabled={isLoading}
                 >
-                  <Edit2 className='w-4 h-4 mr-2' />
+                  <Edit2 className="w-4 h-4 mr-2" />
                   Edit
                 </Button>
               ) : (
-                <div className='flex gap-2 justify-end'>
+                <div className="flex gap-2 justify-end">
                   <Button
                     onClick={handleSave}
-                    size='sm'
-                    className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+                    size="sm"
+                    className="bg-green-600 hover:bg-green-700 text-white shadow-md"
                     disabled={isSaving || isUploading}
                   >
                     {isUploading ? (
-                      <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     ) : isSaving ? (
-                      <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     ) : (
-                      <Save className='w-4 h-4 mr-2' />
+                      <Save className="w-4 h-4 mr-2" />
                     )}
-                    {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+                    {isUploading
+                      ? "Uploading..."
+                      : isSaving
+                      ? "Saving..."
+                      : "Save"}
                   </Button>
                   <Button
                     onClick={handleCancel}
-                    size='sm'
-                    className='bg-red-400 hover:bg-red-600 shadow-md'
+                    size="sm"
+                    className="bg-red-400 hover:bg-red-600 shadow-md"
                     disabled={isSaving || isUploading}
                   >
-                    <X className='w-4 h-4 mr-2' />
+                    <X className="w-4 h-4 mr-2" />
                     Cancel
                   </Button>
                 </div>
@@ -3205,14 +3252,12 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <motion.div
-                className="absolute inset-0 bg-yellow-400 rounded-3xl transform rotate-6"
-              ></motion.div>
+              <motion.div className="absolute inset-0 bg-yellow-400 rounded-3xl transform rotate-6"></motion.div>
               <motion.div
                 className="relative bg-card rounded-3xl overflow-hidden shadow-2xl"
                 whileHover={{
                   boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-                  y: -5
+                  y: -5,
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               >
@@ -3223,24 +3268,24 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
                     className="w-full h-96 object-cover object-center transition-transform duration-300 hover:scale-110"
                   />
                   {isEditing && (
-                    <div className='absolute bottom-2 right-2 flex flex-col gap-2'>
+                    <div className="absolute bottom-2 right-2 flex flex-col gap-2">
                       <div className="bg-black/70 text-white p-2 rounded">
-                        <label className='cursor-pointer hover:bg-black/90 transition-colors flex items-center gap-2'>
-                          <Upload className='w-4 h-4' />
+                        <label className="cursor-pointer hover:bg-black/90 transition-colors flex items-center gap-2">
+                          <Upload className="w-4 h-4" />
                           Change Image
                           <input
-                            type='file'
-                            accept='image/*'
-                            className='hidden'
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
                             onChange={handleImageSelect}
                           />
                         </label>
                         {pendingImageFile && (
-                          <div className='text-xs text-orange-300 mt-1'>
+                          <div className="text-xs text-orange-300 mt-1">
                             Pending upload: {pendingImageFile.name}
                           </div>
                         )}
-                        <div className='text-xs text-gray-300 mt-1'>
+                        <div className="text-xs text-gray-300 mt-1">
                           Recommended: 600×800px (3:4 ratio) - Portrait
                         </div>
                       </div>
@@ -3260,7 +3305,7 @@ export function Hero({ heroData, onStateChange, userId, professionalId, template
 Hero.defaultProps = {
   heroData: undefined,
   onStateChange: undefined,
-  userId: '',
-  professionalId: '',
-  templateSelection: '',
+  userId: "",
+  professionalId: "",
+  templateSelection: "",
 };

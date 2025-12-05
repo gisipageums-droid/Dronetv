@@ -48,7 +48,7 @@ export default function Testimonials({ content }) {
           <h2 className='text-3xl font-bold text-gray-900 mb-4'>
             {testimonialsData.headline.title}
           </h2>
-          <p className='text-gray-600 max-w-2xl mx-auto text-justify'>
+          <p className='text-gray-600 max-w-2xl mx-auto '>
             {testimonialsData.headline.description}
           </p>
         </div>
@@ -98,7 +98,7 @@ export default function Testimonials({ content }) {
                     </div>
 
                     <div className='mb-6'>
-                      <blockquote className='text-lg text-gray-700 italic text-justify'>
+                      <blockquote className='text-lg text-gray-700 italic '>
                         "{testimonial.quote}"
                       </blockquote>
                     </div>

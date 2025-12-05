@@ -585,10 +585,10 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  
+
   // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Track if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
 
@@ -663,21 +663,20 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
     try {
       setIsAutoSaving(true);
-      
+
       // Call the save function
       onSave(heroContent);
-      
+
       // Update state
       setHasUnsavedChanges(false);
       setLastSavedTime(new Date());
       setOriginalContent(heroContent);
-      
+
       // Show subtle notification
       toast.success("Hero changes auto-saved", {
         duration: 1000,
         position: "bottom-right",
       });
-      
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -728,7 +727,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
       formData.append("fieldName", "heroImage");
 
       const xhr = new XMLHttpRequest();
-      
+
       // Track upload progress
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
@@ -786,17 +785,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
         ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(
-          img,
-          x,
-          y,
-          width,
-          height,
-          0,
-          0,
-          outputSize,
-          outputSize
-        );
+        ctx.drawImage(img, x, y, width, height, 0, 0, outputSize, outputSize);
         canvas.toBlob(
           (blob) => {
             if (blob) resolve(blob);
@@ -836,20 +825,22 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
       // Auto-upload cropped image to AWS S3 immediately
       try {
         const s3Url = await uploadImageToS3(croppedFile);
-        
+
         setHeroContent((prev) => ({
           ...prev,
           image: s3Url,
         }));
-        
+
         // Mark as unsaved changes since image was updated
         setHasUnsavedChanges(true);
-        
+
         toast.success("Image uploaded successfully!");
       } catch (uploadError) {
         console.error("Image upload failed:", uploadError);
         toast.error(
-          `Image upload failed: ${uploadError instanceof Error ? uploadError.message : "Unknown error"}`
+          `Image upload failed: ${
+            uploadError instanceof Error ? uploadError.message : "Unknown error"
+          }`
         );
         // Keep the cropped image as base64 for manual save later
         toast.info("Cropped image saved locally. Save manually to persist.");
@@ -915,13 +906,17 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   // Format last saved time for display
   const formatLastSavedTime = () => {
     if (!lastSavedTime) return "Never";
-    
+
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
-    
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
     if (diffInSeconds < 60) return "Just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return lastSavedTime.toLocaleDateString();
   };
 
@@ -1108,7 +1103,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
                         <div>Uploading... {Math.round(uploadProgress)}%</div>
                         <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
-                          <div 
+                          <div
                             className="h-full bg-green-500 transition-all duration-300"
                             style={{ width: `${uploadProgress}%` }}
                           ></div>
@@ -1159,7 +1154,9 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
               <div className="p-6">
                 <div
-                  className={`relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+                  className={`relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 ${
+                    isDragging ? "cursor-grabbing" : "cursor-grab"
+                  }`}
                 >
                   <Cropper
                     image={imageToCrop}

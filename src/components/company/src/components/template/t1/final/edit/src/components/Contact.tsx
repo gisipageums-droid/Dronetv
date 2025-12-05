@@ -236,7 +236,7 @@ export default function EditableContact({
               />
             </div>
           ) : (
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg text-justify">
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg ">
               {displayData.description}
             </p>
           )}
@@ -281,7 +281,7 @@ export default function EditableContact({
                 />
               </div>
             ) : (
-              <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm text-justify">
+              <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm ">
                 {displayData.formDescription}
               </p>
             )}

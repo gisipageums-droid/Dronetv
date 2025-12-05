@@ -758,7 +758,7 @@ export default function EditableCompanyProfile({
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2, duration: 0.7 }}
               >
-                <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight text-justify">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight ">
                   {isEditing ? (
                     <div className="relative">
                       <input
@@ -801,7 +801,7 @@ export default function EditableCompanyProfile({
                     </div>
                   </div>
                 ) : (
-                  <p className="text-lg text-gray-700 mt-4 max-w-xl text-justify">
+                  <p className="text-lg text-gray-700 mt-4 max-w-xl ">
                     {displayContent.description}
                   </p>
                 )}

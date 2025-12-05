@@ -2221,12 +2221,12 @@ export function Services({
           ) : (
             <>
               {displayData.subtitle && (
-                <p className="text-xl text-red-600 mb-4 text-justify max-w-3xl mx-auto">
+                <p className="text-xl text-red-600 mb-4 text-center max-w-3xl mx-auto">
                   {displayData.subtitle}
                 </p>
               )}
               {displayData.description && (
-                <p className="text-lg text-muted-foreground text-justify max-w-3xl mx-auto">
+                <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto">
                   {displayData.description}
                 </p>
               )}

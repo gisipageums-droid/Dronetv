@@ -1281,21 +1281,13 @@ export function About({
 
       setIsUploading(true);
       
-      const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      const { file } = await getCroppedImg(imageToCrop, croppedAreaPixels);
       
-      // Update preview immediately with blob URL (temporary)
-      const updatedData = {
-        ...tempData,
-        imageSrc: previewUrl
-      };
-      setTempData(updatedData);
-      scheduleAutoSave(updatedData);
-
-      // Upload to S3 immediately
+      // Upload to S3 immediately (don't use blob URL at all)
       try {
         const s3Url = await uploadImageToS3(file);
         
-        // Update with S3 URL
+        // Update with S3 URL directly
         const finalUpdatedData = {
           ...tempData,
           imageSrc: s3Url
@@ -1306,8 +1298,10 @@ export function About({
         toast.success('Image uploaded and saved successfully!');
       } catch (uploadError) {
         console.error('Upload failed:', uploadError);
-        toast.error('Image upload failed, but local copy is saved');
-        // Content with blob URL is already saved via auto-save
+        toast.error('Image upload failed. Please try again.');
+        setIsUploading(false);
+        setShowCropper(false);
+        return;
       }
 
       setShowCropper(false);

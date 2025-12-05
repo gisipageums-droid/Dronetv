@@ -83,12 +83,12 @@ export function Clients({ clientData }: ClientsProps) {
             </h2>
           )}
           {clientData.description && (
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4 text-justify">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4 text-center">
               {clientData.description}
             </p>
           )}
           {clientData.subtitle && (
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-justify">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-center">
               {clientData.subtitle}
             </p>
           )}
@@ -123,7 +123,7 @@ export function Clients({ clientData }: ClientsProps) {
         {/* Client Grid - Dynamic */}
         {clients.length > 0 ? (
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12"
+            className="flex items-center justify-center gap-4 flex-wrap lg:gap-8 mb-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}

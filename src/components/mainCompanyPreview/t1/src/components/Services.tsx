@@ -12,7 +12,7 @@ const Card = ({ children, className = "" }) => (
 const CardHeader = ({ children }) => <div className="p-6 pb-3">{children}</div>;
 
 const CardTitle = ({ children }) => (
-  <h3 className="text-xl font-bold text-gray-900">{children}</h3>
+  <h3 className="text-xl font-bold text-center text-gray-900">{children}</h3>
 );
 
 const CardContent = ({ children }) => (
@@ -99,7 +99,7 @@ export default function Services({ serviceData }) {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {serviceData.heading.head}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto text-justify">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto ">
             {serviceData.heading.desc}
           </p>
         </motion.div>
@@ -199,7 +199,7 @@ export default function Services({ serviceData }) {
             onClick={closeModal}
           >
             <motion.div
-              className="bg-white rounded-2xl w-full max-w-4xl max-h-[70vh] overflow-hidden shadow-2xl"
+              className="bg-white rounded-2xl w-full max-w-4xl mt-20 max-h-[70vh] overflow-hidden shadow-2xl"
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}

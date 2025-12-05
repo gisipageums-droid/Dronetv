@@ -1112,7 +1112,6 @@
 
 // export default Testimonials;
 
-
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -1321,7 +1320,6 @@ const Testimonials: React.FC<TestimonialsProps> = ({
         duration: 1000,
         position: "bottom-right",
       });
-
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -1333,8 +1331,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   }, [testimonialContent, testimonials, hasUnsavedChanges, onSave]);
 
   // Form handlers
-  const setFormField = (k: keyof FormData, v: any) =>
+  const setFormField = (k: keyof FormData, v: any) => {
     setFormData((p) => ({ ...p, [k]: v }));
+    // Mark as unsaved when form data changes (for new testimonials being created)
+    if (isAddingNew) {
+      setHasUnsavedChanges(true);
+    }
+  };
 
   // Auto-focus effect for form
   useEffect(() => {
@@ -1564,7 +1567,9 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       } catch (uploadError) {
         console.error("Image upload failed:", uploadError);
         toast.error(
-          `Image upload failed: ${uploadError instanceof Error ? uploadError.message : "Unknown error"}`
+          `Image upload failed: ${
+            uploadError instanceof Error ? uploadError.message : "Unknown error"
+          }`
         );
         // Keep the cropped image as base64 for manual save later
         toast.info("Cropped image saved locally. Save manually to persist.");
@@ -1646,7 +1651,6 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     resetForm();
 
     toast.success("Testimonial added.");
-    onSave?.({ ...testimonialContent, testimonials: updated });
   };
 
   const handleSaveEdit = () => {
@@ -1671,7 +1675,6 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     setTestimonialContent((p) => ({ ...p, testimonials: updated }));
     setHasUnsavedChanges(true);
     toast.success("Testimonial removed.");
-    onSave?.({ ...testimonialContent, testimonials: updated });
   };
 
   const resetForm = () => {
@@ -1694,14 +1697,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   };
 
   // Section content handlers with auto-save tracking
-  const handleContentChange = (
-    field: keyof TestimonialContent,
-    value: string
-  ) => {
-    const updated = { ...testimonialContent, [field]: value };
-    setTestimonialContent(updated);
-    setHasUnsavedChanges(true);
-  };
+  const handleContentChange = useCallback(
+    (field: keyof TestimonialContent, value: string) => {
+      setTestimonialContent((prev) => ({ ...prev, [field]: value }));
+      setHasUnsavedChanges(true);
+    },
+    []
+  );
 
   const handleSaveSection = () => {
     onSave?.({ ...testimonialContent, testimonials });
@@ -1738,11 +1740,15 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     if (!lastSavedTime) return "Never";
 
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
 
     if (diffInSeconds < 60) return "Just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return lastSavedTime.toLocaleDateString();
   };
 
@@ -1855,10 +1861,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
           <div className="flex items-center gap-2">
             <label
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${isUploading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gray-100 dark:bg-gray-800"
-                }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${
+                isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gray-100 dark:bg-gray-800"
+              }`}
             >
               <Upload className="w-4 h-4" />
               <span className="text-sm">
@@ -1940,10 +1947,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           <button
             onClick={editingId !== null ? handleSaveEdit : handleAddNew}
             disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${isUploading
-              ? "bg-green-400 cursor-not-allowed"
-              : "bg-green-500 hover:bg-green-600"
-              }`}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
+              isUploading
+                ? "bg-green-400 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600"
+            }`}
           >
             <Save className="w-4 h-4" />
             <span>{isUploading ? "Saving..." : "Save"}</span>
@@ -1951,10 +1959,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           <button
             onClick={handleCancelForm}
             disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${isUploading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-gray-500 hover:bg-gray-600"
-              }`}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
+              isUploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gray-500 hover:bg-gray-600"
+            }`}
           >
             <X className="w-4 h-4" />
             <span>Cancel</span>
@@ -2075,7 +2084,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                   {testimonialContent.heading.split(" ").slice(-1)}
                 </span>
               </h2>
-              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400 text-justify">
+              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400 text-center">
                 {testimonialContent.description}
               </p>
             </>

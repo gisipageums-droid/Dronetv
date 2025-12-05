@@ -113,7 +113,7 @@ export function Services({ serviceData }: ServicesProps) {
     }
 
     return (
-        <section id="services" className="py-20 text-justify bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
+        <section id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <motion.div
@@ -189,7 +189,7 @@ export function Services({ serviceData }: ServicesProps) {
                                         <div className="w-1/2 p-8 flex flex-col items-center justify-center">
                                             {/* Service Title */}
                                             <motion.h3
-                                                className="text-3xl lg:text-4xl text-foreground mb-4 text-center"
+                                                className="text-3xl lg:text-4xl text-foreground mb-4 text-left"
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: 0.2 }}
@@ -199,7 +199,7 @@ export function Services({ serviceData }: ServicesProps) {
 
                                             {/* Service Description */}
                                             <motion.p
-                                                className="text-muted-foreground mb-4 leading-relaxed text-center"
+                                                className="text-muted-foreground mb-4 leading-relaxed text-justify"
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: 0.3 }}
