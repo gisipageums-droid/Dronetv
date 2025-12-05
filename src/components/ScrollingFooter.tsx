@@ -7,7 +7,7 @@ import {
 const advertisements = [
   { icon: Zap, text: "Drone EXPO 2025", url: "/products" },
   { icon: Target, text: "indadass.com", url: "/services" },
-  { icon: Award, text: "Corteve: Advanced GIS Mapping Services - Contact Us Now! Call +1-800-123-4567", url: "/professionals" },
+  { icon: Award, text: "Corteva: Advanced GIS Mapping Services - Contact Us Now! Call +1-800-123-4567", url: "/professionals" },
   { icon: Zap, text: "AI-Powered Flight Controllers - Revolutionary Technology!", url: "/" },
   { icon: Star, text: "IDA Aerial  Workshop", url: "/company/india-drone-academy" },
   { icon: Clock, text: "Extended Battery Life - Up to 60 Minutes Flight Time!", url: "/products" },
@@ -15,7 +15,7 @@ const advertisements = [
   { icon: Truck, text: "Drogo Drone: Free Shipping - Limited Time Offer!", url: "/products" },
   { icon: Wrench, text: "Professional Maintenance Services - Keep Your Drones Flying!", url: "/products" },
   { icon: Smartphone, text: "Drogo Drone: New Mobile App - Control Your Fleet from Anywhere!", url: "/services" },
-  { icon: Users, text: "Corteve: Join 10,000+ Professionals in Our Community!", url: "/professionals" },
+  { icon: Users, text: "Corteva: Join 10,000+ Professionals in Our Community!", url: "/professionals" },
 ];
 
 const ScrollingFooter = () => {
