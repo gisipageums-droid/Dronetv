@@ -41,14 +41,14 @@ export default function About({ aboutData }) {
             {/* Company Info Grid */}
             <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="space-y-1">
+                {/* <div className="space-y-1">
                   <p className="text-gray-500 text-xs uppercase tracking-wide">
                     Company
                   </p>
                   <p className="font-semibold text-gray-900">
                     {aboutData.companyName}
                   </p>
-                </div>
+                </div> */}
                 <div className="space-y-1">
                   <p className="text-gray-500 text-xs uppercase tracking-wide">
                     Industry
@@ -78,10 +78,10 @@ export default function About({ aboutData }) {
 
             {/* Description */}
             <div className="space-y-4">
-              <p className="text-gray-600 leading-relaxed text-base text-justify">
+              <p className="text-gray-600 leading-relaxed text-base ">
                 {aboutData.description1}
               </p>
-              <p className="text-gray-600 leading-relaxed text-base text-justify">
+              <p className="text-gray-600 leading-relaxed text-base  ">
                 {aboutData.description2}
               </p>
             </div>
@@ -92,7 +92,7 @@ export default function About({ aboutData }) {
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
                   <span className="text-blue-600">🎯</span> Mission
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed text-justify">
+                <p className="text-gray-700 text-sm leading-relaxed ">
                   {aboutData.mission}
                 </p>
               </div>
@@ -100,7 +100,7 @@ export default function About({ aboutData }) {
                 <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
                   <span className="text-purple-600">👁️</span> Vision
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed text-justify">
+                <p className="text-gray-700 text-sm leading-relaxed ">
                   {aboutData.vision}
                 </p>
               </div>

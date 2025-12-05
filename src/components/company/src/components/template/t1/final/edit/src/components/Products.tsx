@@ -964,7 +964,8 @@ export default function EditableProducts({
                 />
               </div>
             ) : (
-              <p className="text-lg text-justify text-gray-600 max-w-3xl mx-auto mb-2">
+              // <p className="text-lg text-justify text-gray-600 max-w-3xl mx-auto mb-2">
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-2">
                 {displayContent.sectionDescription}
               </p>
             )}
@@ -1155,7 +1156,7 @@ export default function EditableProducts({
                       maxLength={50}
                     />
                   ) : (
-                    <h3 className="text-xl font-bold mb-3">{product.title}</h3>
+                    <h3 className="text-xl font-bold mb-3 text-center">{product.title}</h3>
                   )}
 
                   {isEditing ? (
@@ -1167,15 +1168,16 @@ export default function EditableProducts({
                       multiline
                       className="text-gray-600 mb-4"
                       placeholder="Product Description"
-                      maxLength={500}
+                      maxLength={150}
                     />
                   ) : (
                     <p className="text-gray-600 mb-4">
-                      {product.description?.slice(0, 20) + "..."}
+                      {/* {product.description?.slice(0, 20) + "..."} */}
+                      {product.description}
                     </p>
                   )}
 
-                  {product.features && product.features.length > 0 && (
+                  {/* {product.features && product.features.length > 0 && (
                     <div className="mb-4">
                       {isEditing && (
                         <h4 className="font-semibold mb-2 text-sm">
@@ -1230,7 +1232,59 @@ export default function EditableProducts({
                         </Button>
                       )}
                     </div>
-                  )}
+                  )} */}
+
+                    {product.features && product.features.length > 0 && (
+  <div className="mb-4">
+    {isEditing ? (
+      <h4 className="font-semibold mb-2 text-sm">Features:</h4>
+    ) : (
+      <h4 className="font-semibold mb-2 text-sm">Key Features:</h4>
+    )}
+    <ul className="text-sm text-gray-600 space-y-1">
+      {product.features.map((feature, idx) => (
+        <li key={idx} className="flex items-center">
+          {/* Bullet point for both views */}
+          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 flex-shrink-0"></div>
+          
+          {isEditing ? (
+            <div className="flex items-center gap-2 w-full">
+              <input
+                value={feature}
+                onChange={(e) => updateFeature(product.id, idx, e.target.value)}
+                className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs"
+                placeholder="Feature"
+                maxLength={35}
+              />
+              <Button
+                onClick={() => removeFeature(product.id, idx)}
+                size="sm"
+                variant="outline"
+                className="bg-red-50 hover:bg-red-100 text-red-700"
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </div>
+          ) : (
+            // Normal view - display the feature text
+            <span>{feature}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+    {isEditing && (
+      <Button
+        onClick={() => addFeature(product.id)}
+        size="sm"
+        variant="outline"
+        className="bg-green-50 hover:bg-green-100 text-green-700 mt-2"
+      >
+        <Plus className="w-3 h-3 mr-1" />
+        Add Feature
+      </Button>
+    )}
+  </div>
+)}
 
                   <div className="flex gap-2">
                     <Button

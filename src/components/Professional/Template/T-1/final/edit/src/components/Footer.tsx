@@ -360,7 +360,6 @@
 
 // export default Footer;
 
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Save, X, Edit, Loader2 } from "lucide-react";
@@ -432,10 +431,10 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  
+
   // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Track if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
 
@@ -486,20 +485,19 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
 
     try {
       setIsAutoSaving(true);
-      
+
       // Call the save function
       onSave(editedContent);
-      
+
       // Update state
       setHasUnsavedChanges(false);
       setLastSavedTime(new Date());
-      
+
       // Show subtle notification
       toast.success("Footer changes auto-saved", {
         duration: 1000,
         position: "bottom-right",
       });
-      
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -512,18 +510,22 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
 
   // Handle content changes with auto-save tracking
   const handlePersonalInfoChange = (field: string, value: string) => {
-    setEditedContent(prev => ({
+    setEditedContent((prev) => ({
       ...prev,
       personalInfo: {
         ...prev.personalInfo,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
     setHasUnsavedChanges(true);
   };
 
-  const handleQuickLinkChange = (index: number, field: string, value: string) => {
-    setEditedContent(prev => {
+  const handleQuickLinkChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    setEditedContent((prev) => {
       const newQuickLinks = [...prev.quickLinks];
       newQuickLinks[index] = { ...newQuickLinks[index], [field]: value };
       return { ...prev, quickLinks: newQuickLinks };
@@ -531,8 +533,12 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
     setHasUnsavedChanges(true);
   };
 
-  const handleMoreLinkChange = (index: number, field: string, value: string) => {
-    setEditedContent(prev => {
+  const handleMoreLinkChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    setEditedContent((prev) => {
       const newMoreLinks = [...prev.moreLinks];
       newMoreLinks[index] = { ...newMoreLinks[index], [field]: value };
       return { ...prev, moreLinks: newMoreLinks };
@@ -574,13 +580,17 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   // Format last saved time for display
   const formatLastSavedTime = () => {
     if (!lastSavedTime) return "Never";
-    
+
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
-    
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
     if (diffInSeconds < 60) return "Just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return lastSavedTime.toLocaleDateString();
   };
 
@@ -656,7 +666,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                   <input
                     type="text"
                     value={editedContent.personalInfo.name}
-                    onChange={(e) => handlePersonalInfoChange("name", e.target.value)}
+                    onChange={(e) =>
+                      handlePersonalInfoChange("name", e.target.value)
+                    }
                     maxLength={CHAR_LIMITS.personalName}
                     className="text-2xl font-bold text-blue-500 dark:text-orange-500 bg-transparent border-b border-orange-400 focus:outline-none"
                   />
@@ -681,7 +693,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               <div className="mb-6">
                 <textarea
                   value={editedContent.personalInfo.description}
-                  onChange={(e) => handlePersonalInfoChange("description", e.target.value)}
+                  onChange={(e) =>
+                    handlePersonalInfoChange("description", e.target.value)
+                  }
                   maxLength={CHAR_LIMITS.personalDescription}
                   className="w-full bg-gray-800 border border-gray-700 text-gray-300 rounded-lg p-3 focus:border-orange-500 focus:outline-none resize-none"
                   rows={3}
@@ -717,7 +731,13 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         <input
                           type="text"
                           value={link.label}
-                          onChange={(e) => handleQuickLinkChange(index, "label", e.target.value)}
+                          onChange={(e) =>
+                            handleQuickLinkChange(
+                              index,
+                              "label",
+                              e.target.value
+                            )
+                          }
                           maxLength={CHAR_LIMITS.linkLabel}
                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
                           placeholder="Label"
@@ -735,7 +755,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         <input
                           type="text"
                           value={link.href}
-                          onChange={(e) => handleQuickLinkChange(index, "href", e.target.value)}
+                          onChange={(e) =>
+                            handleQuickLinkChange(index, "href", e.target.value)
+                          }
                           maxLength={CHAR_LIMITS.linkHref}
                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
                           placeholder="#section"
@@ -778,7 +800,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         <input
                           type="text"
                           value={link.label}
-                          onChange={(e) => handleMoreLinkChange(index, "label", e.target.value)}
+                          onChange={(e) =>
+                            handleMoreLinkChange(index, "label", e.target.value)
+                          }
                           maxLength={CHAR_LIMITS.linkLabel}
                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
                           placeholder="Label"
@@ -796,7 +820,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         <input
                           type="text"
                           value={link.href}
-                          onChange={(e) => handleMoreLinkChange(index, "href", e.target.value)}
+                          onChange={(e) =>
+                            handleMoreLinkChange(index, "href", e.target.value)
+                          }
                           maxLength={CHAR_LIMITS.linkHref}
                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
                           placeholder="#section"

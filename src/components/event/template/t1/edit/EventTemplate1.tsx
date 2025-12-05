@@ -436,6 +436,7 @@ const EventTemplate1: React.FC = () => {
       />
       <SpeakersSection
         speakersData={componentStates.speakersData}
+        userId={userId}
         onStateChange={createStateChangeHandler("speakersData")}
       />
       <AgendaSection

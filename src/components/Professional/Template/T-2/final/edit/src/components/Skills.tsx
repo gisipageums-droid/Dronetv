@@ -1067,7 +1067,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
               <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
                 {displayData.header.title}
               </h2>
-              <p className="text-lg text-muted-foreground text-justify max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground text-center max-w-2xl mx-auto">
                 {displayData.header.subtitle}
               </p>
             </>

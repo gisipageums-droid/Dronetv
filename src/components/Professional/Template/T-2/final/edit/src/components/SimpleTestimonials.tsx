@@ -1614,7 +1614,7 @@ export function Testimonials({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
                 viewport={{ once: true }}
-                className="text-3xl sm:text-4xl text-foreground mb-4 max-w-2xl mx-auto text-justify"
+                className="text-3xl sm:text-4xl text-foreground mb-4 max-w-2xl mx-auto text-center"
               >
                 {renderHeading()}
               </motion.h2>
@@ -1624,7 +1624,7 @@ export function Testimonials({
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
                   viewport={{ once: true }}
-                  className="text-lg text-muted-foreground max-w-2xl mx-auto text-justify"
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto text-center"
                 >
                   {data.description}
                 </motion.p>
@@ -1753,9 +1753,9 @@ export function Testimonials({
                 {/* Client Info - Fixed at bottom */}
                 <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
-                    <span className="text-gray-900 text-lg">
-                      {testimonial.name.charAt(0)}
-                    </span>
+                    <div className="text-gray-900 text-lg w-full h-full rounded-full border border-gray-400 overflow-hidden">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s" alt={testimonial.name} className="w-full h-full object-cover rounded-full" />
+                    </div>
                   </div>
                   <div className="flex-1 min-w-0">
                     {isEditing ? (

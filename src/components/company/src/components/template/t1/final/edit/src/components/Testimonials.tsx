@@ -824,7 +824,7 @@ export default function EditableTestimonials({
                 </div>
               </div>
             ) : (
-              <p className="text-gray-600 max-w-2xl mx-auto text-justify">
+              <p className="text-gray-600 max-w-2xl mx-auto ">
                 {contentState.headline.description}
               </p>
             )}
@@ -936,7 +936,7 @@ export default function EditableTestimonials({
                             </div>
                           </div>
                         ) : (
-                          <blockquote className="text-lg text-gray-700 italic text-justify">
+                          <blockquote className="text-lg text-gray-700 italic ">
                             "{testimonial.quote}"
                           </blockquote>
                         )}
@@ -944,7 +944,7 @@ export default function EditableTestimonials({
 
                       {/* Editable Role */}
                       <div className="border-t pt-6">
-                        <p className="text-gray-600 text-justify">
+                        <p className="text-gray-600 ">
                           {editMode ? (
                             <div className="flex flex-col items-center">
                               <input

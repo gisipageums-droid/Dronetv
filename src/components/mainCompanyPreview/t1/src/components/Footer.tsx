@@ -84,7 +84,7 @@ export default function Footer({ content }) {
               </span>
             </div>
 
-            <p className="text-gray-300 text-sm leading-relaxed mb-6 text-justify">
+            <p className="text-gray-300 text-sm leading-relaxed mb-6 ">
               {footerData.brand.description}
             </p>
           </motion.div>

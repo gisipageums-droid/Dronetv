@@ -1034,7 +1034,7 @@ export default function Header({
         { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
         { id: 9, label: "Clients", href: "#clients", color: "primary" },
       ],
-      ctaText: "Get Started",
+      ctaText: "Contact us",
     };
     initialHeaderState.current = initialState;
     return initialState;

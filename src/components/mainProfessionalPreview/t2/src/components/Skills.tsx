@@ -122,7 +122,7 @@ export function Skills({ skillsData }: SkillsProps) {
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             {data.header.title}
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-justify">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-center">
             {data.header.subtitle}
           </p>
         </motion.div>

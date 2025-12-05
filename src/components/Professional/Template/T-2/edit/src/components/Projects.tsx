@@ -1116,6 +1116,7 @@
 //   );
 // }
 
+// Projects.tsx
 import {
   Edit2,
   ExternalLink,
@@ -1130,7 +1131,6 @@ import {
   ZoomOut,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { createPortal } from "react-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Cropper from "react-easy-crop";
@@ -1238,15 +1238,10 @@ export function Projects({
   const [activeCategory, setActiveCategory] = useState("All");
   const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
 
-  // Pending image files for S3 upload
-  const [pendingImageFiles, setPendingImageFiles] = useState<
-    Record<string, File>
-  >({});
-
   // Auto-save states
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedDataRef = useRef<ProjectsData | null>(null);
 
@@ -1256,7 +1251,12 @@ export function Projects({
     onStateChangeRef.current = onStateChange;
   }, [onStateChange]);
 
-  // Cropping states
+  // Pending image files for S3 upload
+  const [pendingImageFiles, setPendingImageFiles] = useState<
+    Record<string, File>
+  >({});
+
+  // Cropping states - UPDATED WITH ZOOM OUT LOGIC
   const [showCropper, setShowCropper] = useState(false);
   const [currentCroppingProject, setCurrentCroppingProject] = useState<
     string | null
@@ -1268,6 +1268,10 @@ export function Projects({
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio] = useState(16 / 9); // Fixed 16:9 aspect ratio for projects
 
+  // Auto-upload states
+  const [isAutoUploading, setIsAutoUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   // Initialize with props data or empty structure
   const [data, setData] = useState<ProjectsData>(
     projectsData || {
@@ -1278,7 +1282,6 @@ export function Projects({
       categories: [],
     }
   );
-
   const [tempData, setTempData] = useState<ProjectsData>(
     projectsData || {
       subtitle: "",
@@ -1288,66 +1291,6 @@ export function Projects({
       categories: [],
     }
   );
-
-  // Auto-save functionality
-  const performAutoSave = useCallback(async (dataToSave: ProjectsData) => {
-    try {
-      setIsAutoSaving(true);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      if (onStateChangeRef.current) {
-        onStateChangeRef.current(dataToSave);
-      }
-
-      lastSavedDataRef.current = dataToSave;
-      setLastSaved(new Date());
-      setHasUnsavedChanges(false);
-
-      console.log("Projects auto-save completed:", dataToSave);
-    } catch (error) {
-      console.error("Auto-save failed:", error);
-      toast.error("Failed to auto-save changes");
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, []);
-
-  const scheduleAutoSave = useCallback(
-    (updatedData: ProjectsData) => {
-      setHasUnsavedChanges(true);
-
-      // Clear existing timeout
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-
-      // Schedule new auto-save
-      autoSaveTimeoutRef.current = setTimeout(() => {
-        performAutoSave(updatedData);
-      }, 2000); // 2 second delay
-    },
-    [performAutoSave]
-  );
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Sync with props data when it changes
-  useEffect(() => {
-    if (projectsData) {
-      setData(projectsData);
-      setTempData(projectsData);
-      lastSavedDataRef.current = projectsData;
-    }
-  }, [projectsData]);
 
   // Calculate displayData based on editing state
   const displayData = isEditing ? tempData : data;
@@ -1373,6 +1316,192 @@ export function Projects({
     return heading;
   };
 
+  // Sync with props data when it changes
+  useEffect(() => {
+    if (projectsData) {
+      setData(projectsData);
+      setTempData(projectsData);
+      lastSavedDataRef.current = projectsData;
+    }
+  }, [projectsData]);
+
+  // Notify parent of state changes
+  useEffect(() => {
+    if (onStateChangeRef.current) {
+      onStateChangeRef.current(data);
+    }
+  }, [data]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Auto-save functionality
+  const performAutoSave = useCallback(async (dataToSave: ProjectsData) => {
+    try {
+      setIsAutoSaving(true);
+
+      // Upload any pending images first
+      const uploadSuccess = await uploadPendingImages(dataToSave);
+      if (!uploadSuccess) {
+        console.log("Auto-save skipped due to upload failure");
+        return;
+      }
+
+      // Update data state
+      setData(dataToSave);
+      lastSavedDataRef.current = dataToSave;
+      setLastSavedTime(new Date());
+      setHasUnsavedChanges(false);
+
+      console.log("Auto-save completed:", dataToSave);
+      toast.success("Changes auto-saved successfully");
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+      toast.error("Failed to auto-save changes");
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, []);
+
+  const scheduleAutoSave = useCallback(
+    (updatedData: ProjectsData) => {
+      setHasUnsavedChanges(true);
+
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Schedule new auto-save
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        performAutoSave(updatedData);
+      }, 2000); // 2 second delay
+    },
+    [performAutoSave]
+  );
+
+  // Upload pending images function
+  const uploadPendingImages = async (
+    dataToUpload: ProjectsData
+  ): Promise<boolean> => {
+    const pendingEntries = Object.entries(pendingImageFiles);
+    if (pendingEntries.length === 0) return true;
+
+    try {
+      setIsAutoUploading(true);
+      setUploadProgress(0);
+
+      for (let i = 0; i < pendingEntries.length; i++) {
+        const [projectId, file] = pendingEntries[i];
+
+        if (!userId || !professionalId || !templateSelection) {
+          toast.error(
+            "Missing user information. Please refresh and try again."
+          );
+          return false;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("userId", userId);
+        formData.append("fieldName", `project_${projectId}`);
+
+        const uploadResponse = await fetch(
+          `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+
+          // Update data with the new S3 URL
+          dataToUpload.projects = dataToUpload.projects.map((project) =>
+            project.id.toString() === projectId
+              ? { ...project, image: uploadData.s3Url }
+              : project
+          );
+
+          // Remove from pending files
+          setPendingImageFiles((prev) => {
+            const updated = { ...prev };
+            delete updated[projectId];
+            return updated;
+          });
+
+          setUploadProgress(((i + 1) / pendingEntries.length) * 100);
+        } else {
+          const errorData = await uploadResponse.json();
+          throw new Error(errorData.message || "Upload failed");
+        }
+      }
+
+      setUploadProgress(100);
+      return true;
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast.error(`Image upload failed: ${error.message}`);
+      return false;
+    } finally {
+      setIsAutoUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  // Auto-upload image after cropping
+  const autoUploadImage = async (
+    file: File,
+    projectId: string
+  ): Promise<string | null> => {
+    if (!userId || !professionalId || !templateSelection) {
+      toast.error("Missing user information for upload.");
+      return null;
+    }
+
+    try {
+      setIsAutoUploading(true);
+      setUploadProgress(50);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId);
+      formData.append("fieldName", `project_${projectId}`);
+
+      const uploadResponse = await fetch(
+        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        setUploadProgress(100);
+        toast.success("Image uploaded successfully!");
+        return uploadData.s3Url;
+      } else {
+        const errorData = await uploadResponse.json();
+        throw new Error(errorData.message || "Upload failed");
+      }
+    } catch (error) {
+      console.error("Auto-upload failed:", error);
+      toast.error(`Image upload failed: ${error.message}`);
+      return null;
+    } finally {
+      setIsAutoUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
@@ -1380,7 +1509,7 @@ export function Projects({
     setHasUnsavedChanges(false);
   };
 
-  // Cropper functions
+  // Cropper functions - UPDATED WITH ZOOM OUT LOGIC
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
@@ -1441,37 +1570,6 @@ export function Projects({
     });
   };
 
-  // Upload image to S3
-  const uploadImageToS3 = async (
-    file: File,
-    projectId: string
-  ): Promise<string> => {
-    if (!userId || !professionalId) {
-      throw new Error("Missing user information");
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("userId", userId);
-    formData.append("fieldName", `project_${projectId}`);
-
-    const uploadResponse = await fetch(
-      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    if (!uploadResponse.ok) {
-      const errorData = await uploadResponse.json();
-      throw new Error(errorData.message || "Upload failed");
-    }
-
-    const uploadData = await uploadResponse.json();
-    return uploadData.s3Url;
-  };
-
   // Handle image selection - opens cropper
   const handleImageSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -1505,36 +1603,26 @@ export function Projects({
     event.target.value = "";
   };
 
-  // Apply crop and automatically upload to S3
+  // Apply crop and auto-upload - UPDATED WITH AUTO-UPLOAD
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || !currentCroppingProject) return;
 
-      setIsUploading(true);
+      setIsAutoUploading(true);
+      setUploadProgress(0);
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
 
-      // Update preview immediately with blob URL (temporary)
-      const updatedData = {
-        ...tempData,
-        projects: tempData.projects.map((project) =>
-          project.id.toString() === currentCroppingProject
-            ? { ...project, image: previewUrl }
-            : project
-        ),
-      };
-      setTempData(updatedData);
-      scheduleAutoSave(updatedData);
+      // Auto-upload the cropped image
+      setUploadProgress(30);
+      const s3Url = await autoUploadImage(file, currentCroppingProject);
 
-      // Upload to S3 immediately
-      try {
-        const s3Url = await uploadImageToS3(file, currentCroppingProject);
-
-        // Update with S3 URL
-        const finalUpdatedData = {
+      if (s3Url) {
+        // Update with S3 URL directly
+        const updatedData = {
           ...tempData,
           projects: tempData.projects.map((project) =>
             project.id.toString() === currentCroppingProject
@@ -1542,30 +1630,49 @@ export function Projects({
               : project
           ),
         };
-        setTempData(finalUpdatedData);
-        performAutoSave(finalUpdatedData); // Immediate save with S3 URL
+        setTempData(updatedData);
 
-        toast.success("Image uploaded and saved successfully!");
-      } catch (uploadError) {
-        console.error("Upload failed:", uploadError);
-        toast.error("Image upload failed, but local copy is saved");
-        // Content with blob URL is already saved via auto-save
+        // Schedule auto-save for the content change
+        scheduleAutoSave(updatedData);
+
+        toast.success("Image cropped and uploaded successfully!");
+      } else {
+        // Fallback: use preview URL and store file for manual save
+        const updatedData = {
+          ...tempData,
+          projects: tempData.projects.map((project) =>
+            project.id.toString() === currentCroppingProject
+              ? { ...project, image: previewUrl }
+              : project
+          ),
+        };
+        setTempData(updatedData);
+
+        // Store the file for manual upload
+        setPendingImageFiles((prev) => ({
+          ...prev,
+          [currentCroppingProject]: file,
+        }));
+        scheduleAutoSave(updatedData);
+        toast.warning(
+          "Image cropped but upload failed. Click Save to retry upload."
+        );
       }
 
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
       setCurrentCroppingProject(null);
-      setIsUploading(false);
     } catch (error) {
       console.error("Error cropping image:", error);
-      toast.error("Failed to crop image");
-      setShowCropper(false);
-      setIsUploading(false);
+      toast.error("Error cropping image. Please try again.");
+    } finally {
+      setIsAutoUploading(false);
+      setUploadProgress(0);
     }
   };
 
-  // Cancel cropping
+  // Cancel cropping - UPDATED WITH ZOOM OUT LOGIC
   const cancelCrop = () => {
     setShowCropper(false);
     setImageToCrop(null);
@@ -1575,7 +1682,7 @@ export function Projects({
     setZoom(1);
   };
 
-  // Zoom functions
+  // Zoom functions - ADDED ZOOM OUT LOGIC
   const handleZoomIn = () => {
     setZoom((prev) => Math.min(5, +(prev + 0.1).toFixed(2)));
   };
@@ -1588,15 +1695,16 @@ export function Projects({
     setZoom(Math.max(0.1, Math.min(5, value)));
   };
 
-  // Reset zoom
+  // Reset zoom - UPDATED WITH ZOOM OUT LOGIC
   const resetCropSettings = () => {
     setZoom(1);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Manual save function
+  // Save function with S3 upload (preserved for manual save)
   const handleSave = async () => {
     try {
+      setIsUploading(true);
       setIsSaving(true);
 
       // Clear any pending auto-save
@@ -1604,44 +1712,22 @@ export function Projects({
         clearTimeout(autoSaveTimeoutRef.current);
       }
 
-      // Upload images for projects with pending files
-      if (Object.keys(pendingImageFiles).length > 0) {
-        setIsUploading(true);
-
-        let updatedData = { ...tempData };
-
-        for (const [projectId, file] of Object.entries(pendingImageFiles)) {
-          try {
-            const s3Url = await uploadImageToS3(file, projectId);
-            updatedData.projects = updatedData.projects.map((project) =>
-              project.id.toString() === projectId
-                ? { ...project, image: s3Url }
-                : project
-            );
-          } catch (uploadError) {
-            console.error("Upload failed:", uploadError);
-            toast.error(`Image upload for project ${projectId} failed`);
-            setIsUploading(false);
-            setIsSaving(false);
-            return;
-          }
-        }
-
-        setTempData(updatedData);
-        setPendingImageFiles({});
+      // Upload any remaining pending images
+      const uploadSuccess = await uploadPendingImages(tempData);
+      if (!uploadSuccess) {
+        setIsUploading(false);
+        setIsSaving(false);
+        return;
       }
 
-      // Update both data and tempData to ensure UI consistency
+      // Update data state
       setData(tempData);
       lastSavedDataRef.current = tempData;
-      setIsEditing(false);
       setHasUnsavedChanges(false);
+      setLastSavedTime(new Date());
 
-      if (onStateChangeRef.current) {
-        onStateChangeRef.current(tempData);
-      }
-
-      toast.success("Projects section saved successfully!");
+      setIsEditing(false);
+      toast.success("Projects section saved successfully");
     } catch (error) {
       console.error("Error saving projects section:", error);
       toast.error("Error saving changes. Please try again.");
@@ -1664,7 +1750,7 @@ export function Projects({
     toast.info("Changes discarded");
   };
 
-  // Update functions with auto-save
+  // Update functions with auto-save scheduling
   const updateProject = useCallback(
     (index: number, field: keyof Project, value: any) => {
       setTempData((prevData) => {
@@ -1731,21 +1817,21 @@ export function Projects({
   );
 
   const addProject = useCallback(() => {
+    const newProject: Project = {
+      id: Date.now(),
+      title: "New Project",
+      description: "Add a short description for your project here.",
+      longDescription: "Add a detailed description for your project here.",
+      image: "",
+      tags: ["Technology 1", "Technology 2"],
+      github: "https://github.com/username/project",
+      live: "https://project-demo.com",
+      date: "2024",
+      category: "Development",
+      featured: false,
+      client: "",
+    };
     setTempData((prevData) => {
-      const newProject: Project = {
-        id: Date.now(),
-        title: "New Project",
-        description: "Add a short description for your project here.",
-        longDescription: "Add a detailed description for your project here.",
-        image: "",
-        tags: ["Technology 1", "Technology 2"],
-        github: "https://github.com/username/project",
-        live: "https://project-demo.com",
-        date: "2024",
-        category: "Development",
-        featured: false,
-        client: "",
-      };
       const updated = {
         ...prevData,
         projects: [...prevData.projects, newProject],
@@ -1829,180 +1915,187 @@ export function Projects({
       id="projects"
       className="relative text-justify py-20 bg-background"
     >
-      {/* Image Cropper Modal */}
-      {showCropper &&
-        createPortal(
+      {/* Image Cropper Modal - UPDATED WITH AUTO-UPLOAD PROGRESS */}
+      {showCropper && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/90 z-[2147483647] flex items-center justify-center p-4"
-            style={{ zIndex: 2147483647 }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
-            >
-              {/* Header */}
-              <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Crop Project Image (16:9 Aspect Ratio)
-                  {isUploading && (
-                    <span className="ml-2 text-blue-600 text-sm flex items-center gap-1">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Uploading...
-                    </span>
-                  )}
-                </h3>
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Crop Project Image (16:9 Aspect Ratio)
+                {isAutoUploading && (
+                  <span className="ml-2 text-blue-600 text-sm">
+                    Uploading... {uploadProgress}%
+                  </span>
+                )}
+              </h3>
+              <button
+                onClick={cancelCrop}
+                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                disabled={isAutoUploading}
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Cropper Area */}
+            <div className="flex-1 relative bg-gray-900 min-h-0">
+              <Cropper
+                image={imageToCrop}
+                crop={crop}
+                zoom={zoom}
+                aspect={aspectRatio}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                showGrid={false}
+                cropShape="rect"
+                minZoom={0.1}
+                maxZoom={5}
+                restrictPosition={false}
+                zoomWithScroll={true}
+                zoomSpeed={0.2}
+                style={{
+                  containerStyle: {
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  },
+                  cropAreaStyle: {
+                    border: "2px solid white",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </div>
+
+            {/* Upload Progress Bar */}
+            {isAutoUploading && (
+              <div className="px-4 pt-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+
+            {/* Controls - UPDATED WITH ZOOM OUT BUTTONS */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              {/* Aspect Ratio Info */}
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio:{" "}
+                  <span className="text-blue-600">16:9 (Widescreen)</span>
+                </p>
+              </div>
+
+              {/* Zoom Control - UPDATED WITH ZOOM OUT BUTTON */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </span>
+                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleZoomOut}
+                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    disabled={isAutoUploading}
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    onChange={(e) => handleZoomChange(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    disabled={isAutoUploading}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleZoomIn}
+                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    disabled={isAutoUploading}
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons - Centered like About section */}
+              <div className="flex justify-center gap-3 pt-4">
+                <button
+                  onClick={resetCropSettings}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                  disabled={isAutoUploading}
+                >
+                  Reset Zoom
+                </button>
                 <button
                   onClick={cancelCrop}
-                  className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                  disabled={isUploading}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                  disabled={isAutoUploading}
                 >
-                  <X className="w-5 h-5 text-gray-600" />
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-2"
+                  disabled={isAutoUploading}
+                >
+                  {isAutoUploading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : null}
+                  {isAutoUploading ? "Uploading..." : "Apply & Upload"}
                 </button>
               </div>
-
-              {/* Cropper Area */}
-              <div className="flex-1 relative bg-gray-900 min-h-0">
-                <Cropper
-                  image={imageToCrop}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={aspectRatio}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                  showGrid={false}
-                  cropShape="rect"
-                  minZoom={0.1}
-                  maxZoom={5}
-                  restrictPosition={false}
-                  zoomWithScroll={true}
-                  zoomSpeed={0.2}
-                  style={{
-                    containerStyle: {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    cropAreaStyle: {
-                      border: "2px solid white",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
-
-              {/* Controls */}
-              <div className="p-4 bg-gray-50 border-t border-gray-200">
-                {/* Aspect Ratio Info */}
-                <div className="mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
-                    Aspect Ratio:{" "}
-                    <span className="text-blue-600">16:9 (Widescreen)</span>
-                  </p>
-                </div>
-
-                {/* Zoom Control */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
-                      <ZoomIn className="w-4 h-4" />
-                      Zoom
-                    </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleZoomOut}
-                      className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
-                      disabled={isUploading}
-                    >
-                      <ZoomOut className="w-4 h-4" />
-                    </button>
-                    <input
-                      type="range"
-                      value={zoom}
-                      min={0.1}
-                      max={5}
-                      step={0.1}
-                      onChange={(e) => handleZoomChange(Number(e.target.value))}
-                      className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                      disabled={isUploading}
-                    />
-                    <button
-                      type="button"
-                      onClick={handleZoomIn}
-                      className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
-                      disabled={isUploading}
-                    >
-                      <ZoomIn className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex justify-center gap-3 pt-4">
-                  <button
-                    onClick={resetCropSettings}
-                    className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors disabled:opacity-50"
-                    disabled={isUploading}
-                  >
-                    Reset Zoom
-                  </button>
-                  <button
-                    onClick={cancelCrop}
-                    className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors disabled:opacity-50"
-                    disabled={isUploading}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={applyCrop}
-                    className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                    disabled={isUploading}
-                  >
-                    {isUploading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Uploading...
-                      </>
-                    ) : (
-                      "Apply & Upload"
-                    )}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>,
-          document.body
-        )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Auto-save indicator */}
-        {isEditing && (
-          <div className="flex items-center gap-2 text-sm mb-4">
-            {isAutoSaving && (
-              <div className="flex items-center gap-1 text-blue-500">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Auto-saving...</span>
-              </div>
-            )}
-            {hasUnsavedChanges && !isAutoSaving && (
-              <div className="text-yellow-500">● Unsaved changes</div>
-            )}
-            {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-              <div className="text-green-500">
-                ✓ Auto-saved {lastSaved.toLocaleTimeString()}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Edit Controls */}
+        {/* Edit Controls with Auto-save Indicator */}
         <div className="text-right mb-20">
+          {/* Auto-save Status */}
+          {isEditing && (
+            <div className="flex items-center justify-end gap-4 mb-4 text-sm">
+              {hasUnsavedChanges && (
+                <div className="flex items-center gap-2 text-orange-600">
+                  <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+                  Unsaved changes
+                </div>
+              )}
+              {isAutoSaving && (
+                <div className="flex items-center gap-2 text-blue-600">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Auto-saving...
+                </div>
+              )}
+              {lastSavedTime && !hasUnsavedChanges && !isAutoSaving && (
+                <div className="text-green-600">
+                  Saved {lastSavedTime.toLocaleTimeString()}
+                </div>
+              )}
+            </div>
+          )}
+
           {!isEditing ? (
             <Button
               onClick={handleEdit}
@@ -2119,7 +2212,7 @@ export function Projects({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
                 viewport={{ once: true }}
-                className="text-3xl sm:text-4xl text-foreground mb-4 text-justify max-w-2xl mx-auto"
+                className="text-3xl text-center max-w-2xl mx-auto text-foreground mb-4"
               >
                 {renderHeading()}
               </motion.h2>
@@ -2129,7 +2222,7 @@ export function Projects({
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
                   viewport={{ once: true }}
-                  className="text-lg text-muted-foreground text-justify max-w-2xl mx-auto"
+                  className="text-lg text-muted-foreground text-center max-w-2xl mx-auto"
                 >
                   {data.description}
                 </motion.p>
@@ -2229,7 +2322,7 @@ export function Projects({
                   </Button>
                 )}
 
-                {/* Project Image */}
+                {/* Project Image - UPDATED with 16:9 aspect ratio */}
                 <div className="relative overflow-hidden bg-gray-100 aspect-[16/9]">
                   <motion.div transition={{ duration: 0.3 }} className="h-full">
                     {isEditing && (

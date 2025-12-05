@@ -1,5 +1,5 @@
-import { Quote, Star } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Quote, Star } from "lucide-react";
+import { motion } from "motion/react";
 
 export function SimpleTestimonials({ testimonialData }) {
   // If no testimonialData provided, return loading state
@@ -13,7 +13,10 @@ export function SimpleTestimonials({ testimonialData }) {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(3)].map((_, index) => (
-              <div key={index} className="animate-pulse bg-card rounded-2xl p-6 shadow-lg min-h-[400px] flex flex-col">
+              <div
+                key={index}
+                className="animate-pulse bg-card rounded-2xl p-6 shadow-lg min-h-[400px] flex flex-col"
+              >
                 <div className="w-12 h-12 bg-gray-300 rounded-full mb-4"></div>
                 <div className="flex space-x-1 mb-4">
                   {[...Array(5)].map((_, i) => (
@@ -42,7 +45,10 @@ export function SimpleTestimonials({ testimonialData }) {
 
   // Process testimonials data from backend
   const processTestimonialsData = () => {
-    if (!testimonialData.testimonials || testimonialData.testimonials.length === 0) {
+    if (
+      !testimonialData.testimonials ||
+      testimonialData.testimonials.length === 0
+    ) {
       return [];
     }
 
@@ -52,7 +58,7 @@ export function SimpleTestimonials({ testimonialData }) {
       rating: testimonial.rating || 5,
       review: testimonial.content,
       project: testimonial.project,
-      date: testimonial.date
+      date: testimonial.date,
     }));
   };
 
@@ -61,9 +67,10 @@ export function SimpleTestimonials({ testimonialData }) {
   // Dynamic CTA data
   const ctaData = testimonialData.cta || {
     title: "Ready to be the next success story?",
-    description: "Join the growing list of satisfied clients who have transformed their businesses with innovative digital solutions.",
+    description:
+      "Join the growing list of satisfied clients who have transformed their businesses with innovative digital solutions.",
     buttonText: "Start Your Success Story",
-    buttonLink: "#contact"
+    buttonLink: "#contact",
   };
 
   return (
@@ -113,7 +120,10 @@ export function SimpleTestimonials({ testimonialData }) {
                 {/* Stars - Dynamic Rating */}
                 <div className="flex space-x-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star
+                      key={i}
+                      className="w-5 h-5 text-yellow-400 fill-current"
+                    />
                   ))}
                 </div>
 
@@ -127,12 +137,18 @@ export function SimpleTestimonials({ testimonialData }) {
                 {/* Client Info - Fixed at bottom */}
                 <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
-                    <span className="text-gray-900 text-lg font-semibold">
-                      {testimonial.name.charAt(0)}
-                    </span>
+                    <div className="text-gray-900 text-lg w-full h-full rounded-full border border-gray-400 overflow-hidden">
+                      <img
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s"
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-foreground mb-1 truncate">{testimonial.name}</h4>
+                    <h4 className="text-foreground mb-1 truncate">
+                      {testimonial.name}
+                    </h4>
                     <p className="text-sm text-muted-foreground truncate">
                       {testimonial.position}
                     </p>
@@ -155,11 +171,10 @@ export function SimpleTestimonials({ testimonialData }) {
           <div className="text-center py-12 hidden">
             <p className="text-muted-foreground text-lg">
               {testimonialData.emptyMessage ||
-                (testimonialData.testimonials && testimonialData.testimonials.length === 0
+                (testimonialData.testimonials &&
+                testimonialData.testimonials.length === 0
                   ? "Client testimonials are being updated"
-                  : "No testimonials data available"
-                )
-              }
+                  : "No testimonials data available")}
             </p>
           </div>
         )}

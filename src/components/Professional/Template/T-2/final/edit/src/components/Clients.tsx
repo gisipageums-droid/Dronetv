@@ -1339,12 +1339,12 @@ export function Clients({
                 </p>
               )}
               {displayData.heading && (
-                <h2 className="text-3xl sm:text-4xl max-w-2xl mx-auto text-foreground mb-4 text-justify">
+                <h2 className="text-3xl sm:text-4xl max-w-2xl mx-auto text-foreground mb-4 text-center">
                   {displayData.heading}
                 </h2>
               )}
               {displayData.description && (
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-justify">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-center">
                   {displayData.description}
                 </p>
               )}
@@ -1427,7 +1427,7 @@ export function Clients({
 
         {/* Client Grid - Show if editing OR if there are clients */}
         {isEditing || displayData.clients.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
+          <div className="flex items-center justify-center gap-4 lg:gap-8 mb-12">
             {displayData.clients.map((client, index) => (
               <div
                 key={client.id}

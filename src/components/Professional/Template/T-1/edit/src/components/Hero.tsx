@@ -582,10 +582,18 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   const [originalContent, setOriginalContent] = useState<HeroContent>(content);
 
   // Auto-save states
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+
+  // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track if component is mounted to prevent state updates after unmount
+  const isMounted = useRef(true);
+
+  // Image upload progress state
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Character limits
   const CHAR_LIMITS = {
@@ -605,7 +613,19 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Update local state if props change
+  // Initialize component mount state
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      // Cleanup auto-save timeout on unmount
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // update local state if props change
   useEffect(() => {
     if (content) {
       setHeroContent(content);
@@ -614,16 +634,60 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
     }
   }, [content]);
 
-  // Auto-save cleanup
+  // Auto-save effect
   useEffect(() => {
+    // Don't auto-save if not editing or no unsaved changes
+    if (!isEditing || !hasUnsavedChanges) return;
+
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Set new timeout for auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      performAutoSave();
+    }, 2000); // 2-second delay
+
+    // Cleanup timeout on unmount or dependency change
     return () => {
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, []);
+  }, [heroContent, hasUnsavedChanges, isEditing]);
 
-  // Lock body scroll when cropping
+  // Perform auto-save
+  const performAutoSave = useCallback(async () => {
+    if (!isMounted.current || !hasUnsavedChanges) return;
+
+    try {
+      setIsAutoSaving(true);
+
+      // Call the save function
+      onSave(heroContent);
+
+      // Update state
+      setHasUnsavedChanges(false);
+      setLastSavedTime(new Date());
+      setOriginalContent(heroContent);
+
+      // Show subtle notification
+      toast.success("Hero changes auto-saved", {
+        duration: 1000,
+        position: "bottom-right",
+      });
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+      toast.error("Auto-save failed. Please save manually.");
+    } finally {
+      if (isMounted.current) {
+        setIsAutoSaving(false);
+      }
+    }
+  }, [heroContent, hasUnsavedChanges, onSave]);
+
+  // lock body scroll when cropping
   useEffect(() => {
     if (isCropping) {
       const prev = document.body.style.overflow;
@@ -634,45 +698,8 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
     }
   }, [isCropping]);
 
-  // Auto-save function
-  const performAutoSave = useCallback(async () => {
-    if (!hasUnsavedChanges || !isEditing) return;
-
-    setIsAutoSaving(true);
-    
-    try {
-      onSave(heroContent);
-      setLastSavedTime(new Date());
-      setHasUnsavedChanges(false);
-      
-      console.log("Hero section auto-saved at", new Date().toLocaleTimeString());
-    } catch (error) {
-      console.error("Hero auto-save failed:", error);
-      toast.error("Auto-save failed. Changes not saved.");
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [heroContent, hasUnsavedChanges, isEditing, onSave]);
-
-  // Schedule auto-save
-  const scheduleAutoSave = useCallback(() => {
-    if (!isEditing) return;
-
-    setHasUnsavedChanges(true);
-    
-    // Clear existing timeout
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
-    // Set new timeout (2-second delay)
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      performAutoSave();
-    }, 2000);
-  }, [isEditing, performAutoSave]);
-
-  // Content change handler with auto-save
-  const handleChange = useCallback((field: string, value: string) => {
+  // Handle content changes with auto-save tracking
+  const handleChange = (field: string, value: string) => {
     if (field.startsWith("socials.")) {
       const socialKey = field.split(".")[1];
       setHeroContent((prev) => ({
@@ -682,13 +709,56 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
     } else {
       setHeroContent((prev) => ({ ...prev, [field]: value }));
     }
-    scheduleAutoSave();
-  }, [scheduleAutoSave]);
+    setHasUnsavedChanges(true);
+  };
 
   const getCharCountColor = (current: number, max: number) => {
     if (current >= max) return "text-red-500";
     if (current >= max * 0.9) return "text-yellow-500";
     return "text-gray-500";
+  };
+
+  // Enhanced image upload function with progress tracking
+  const uploadImageToS3 = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId!);
+      formData.append("fieldName", "heroImage");
+
+      const xhr = new XMLHttpRequest();
+
+      // Track upload progress
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          setUploadProgress(progress);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            resolve(response.s3Url);
+          } catch (error) {
+            reject(new Error("Failed to parse upload response"));
+          }
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}`));
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        reject(new Error("Upload failed due to network error"));
+      });
+
+      xhr.open(
+        "POST",
+        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`
+      );
+      xhr.send(formData);
+    });
   };
 
   const getCroppedImage = async (): Promise<Blob> => {
@@ -715,17 +785,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
         ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(
-          img,
-          x,
-          y,
-          width,
-          height,
-          0,
-          0,
-          outputSize,
-          outputSize
-        );
+        ctx.drawImage(img, x, y, width, height, 0, 0, outputSize, outputSize);
         canvas.toBlob(
           (blob) => {
             if (blob) resolve(blob);
@@ -738,7 +798,6 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
     });
   };
 
-  // Auto-upload image after cropping
   const handleCropConfirm = async () => {
     try {
       const croppedBlob = await getCroppedImage();
@@ -750,71 +809,51 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          const tempImageSrc = reader.result as string;
           setHeroContent((prev) => ({
             ...prev,
-            image: tempImageSrc,
+            image: reader.result as string,
           }));
-          // Schedule auto-save for image change
-          setHasUnsavedChanges(true);
-          scheduleAutoSave();
         }
       };
       reader.readAsDataURL(croppedFile);
 
       setIsUploading(true);
+      setUploadProgress(0);
       setIsCropping(false);
       setImageLoaded(false);
 
-      // Upload cropped image to AWS S3 immediately
-      const formData = new FormData();
-      formData.append("file", croppedFile);
-      formData.append("userId", userId!);
-      formData.append("fieldName", "heroImage");
+      // Auto-upload cropped image to AWS S3 immediately
+      try {
+        const s3Url = await uploadImageToS3(croppedFile);
 
-      const uploadResponse = await fetch(
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        const s3ImageUrl = uploadData.s3Url;
-        
-        // Update with S3 URL
         setHeroContent((prev) => ({
           ...prev,
-          image: s3ImageUrl,
+          image: s3Url,
         }));
-        
-        // Trigger save with the new S3 URL
-        const updatedWithS3 = {
-          ...heroContent,
-          image: s3ImageUrl,
-        };
-        onSave(updatedWithS3);
-        setLastSavedTime(new Date());
-        setHasUnsavedChanges(false);
-        
-        toast.success("Image uploaded and saved successfully!");
-      } else {
-        const errorData = await uploadResponse.json();
+
+        // Mark as unsaved changes since image was updated
+        setHasUnsavedChanges(true);
+
+        toast.success("Image uploaded successfully!");
+      } catch (uploadError) {
+        console.error("Image upload failed:", uploadError);
         toast.error(
-          `Image upload failed: ${errorData.message || "Unknown error"}`
+          `Image upload failed: ${
+            uploadError instanceof Error ? uploadError.message : "Unknown error"
+          }`
         );
-        // Keep the base64 image as fallback
-        toast.info("Using local image version. Please try uploading again later.");
+        // Keep the cropped image as base64 for manual save later
+        toast.info("Cropped image saved locally. Save manually to persist.");
       }
 
       setIsUploading(false);
+      setUploadProgress(0);
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Failed to crop image");
       setIsCropping(false);
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -835,32 +874,25 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
     }
   };
 
-  // Manual save function
   const handleSave = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
-    onSave(heroContent);
-    setOriginalContent(heroContent);
-    setLastSavedTime(new Date());
+    if (onSave) onSave(heroContent);
     setHasUnsavedChanges(false);
-    setIsEditing(false);
+    setLastSavedTime(new Date());
+    setOriginalContent(heroContent);
     toast.success("Hero section updated successfully!");
+    setIsEditing(false);
   };
 
-  // Manual cancel function
   const handleCancel = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
     setHeroContent(originalContent);
     setHasUnsavedChanges(false);
     setIsEditing(false);
     toast.info("Changes discarded");
+  };
+
+  const handleEditStart = () => {
+    setIsEditing(true);
+    setHasUnsavedChanges(false);
   };
 
   const handleZoomIn = () => {
@@ -869,6 +901,23 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
   const handleZoomOut = () => {
     setZoom((prev) => Math.max(prev - 0.1, 0.1));
+  };
+
+  // Format last saved time for display
+  const formatLastSavedTime = () => {
+    if (!lastSavedTime) return "Never";
+
+    const now = new Date();
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return lastSavedTime.toLocaleDateString();
   };
 
   return (
@@ -882,21 +931,23 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
           {isEditing ? (
             <div className="absolute top-0 right-0 flex items-center justify-center gap-2">
               {/* Auto-save indicator */}
-              <div className="flex items-center gap-2 mr-4">
+              <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                 {isAutoSaving ? (
-                  <div className="flex items-center gap-1 text-sm text-blue-500">
+                  <div className="flex items-center gap-1">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span>Saving...</span>
                   </div>
                 ) : hasUnsavedChanges ? (
-                  <div className="text-sm text-yellow-500">
-                    Unsaved changes
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    <span>Unsaved changes</span>
                   </div>
-                ) : lastSavedTime ? (
-                  <div className="text-sm text-green-500">
-                    Saved {lastSavedTime.toLocaleTimeString()}
+                ) : (
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Saved {formatLastSavedTime()}</span>
                   </div>
-                ) : null}
+                )}
               </div>
 
               <button
@@ -916,7 +967,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
             </div>
           ) : (
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={handleEditStart}
               title="update hero section"
               className="absolute top-0 right-0 p-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full"
             >
@@ -1048,11 +1099,15 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                     </label>
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white z-10">
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="w-6 h-6 animate-spin" />
-                        <p className="text-center text-lg font-bold">
-                          Uploading...
-                        </p>
+                      <div className="text-center">
+                        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
+                        <div>Uploading... {Math.round(uploadProgress)}%</div>
+                        <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
+                          <div
+                            className="h-full bg-green-500 transition-all duration-300"
+                            style={{ width: `${uploadProgress}%` }}
+                          ></div>
+                        </div>
                       </div>
                     </div>
                   )
@@ -1099,7 +1154,9 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
               <div className="p-6">
                 <div
-                  className={`relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+                  className={`relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 ${
+                    isDragging ? "cursor-grabbing" : "cursor-grab"
+                  }`}
                 >
                   <Cropper
                     image={imageToCrop}
@@ -1168,20 +1225,11 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                 </button>
                 <button
                   onClick={handleCropConfirm}
-                  disabled={!imageLoaded || isUploading}
+                  disabled={!imageLoaded}
                   className="px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                 >
-                  {isUploading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <Check className="w-5 h-5" />
-                      Crop & Upload Image
-                    </>
-                  )}
+                  <Check className="w-5 h-5" />
+                  Crop & Upload Image
                 </button>
               </div>
             </div>

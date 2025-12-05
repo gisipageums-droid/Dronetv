@@ -1,4 +1,3 @@
-
 import {
   Facebook,
   Twitter,
@@ -53,8 +52,16 @@ export default function Footer({
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(1); // Square for logos
-  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
-  const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
+  const [mediaSize, setMediaSize] = useState<{
+    width: number;
+    height: number;
+    naturalWidth: number;
+    naturalHeight: number;
+  } | null>(null);
+  const [cropAreaSize, setCropAreaSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
   const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
   const [isDragging, setIsDragging] = useState(false);
   const PAN_STEP = 10;
@@ -68,44 +75,46 @@ export default function Footer({
     const processedData = footerData || {
       companyInfo: {
         companyName: "Your Company",
-        description: "Transforming businesses with innovative solutions and cutting-edge technology.",
-        logoUrl: ""
+        description:
+          "Transforming businesses with innovative solutions and cutting-edge technology.",
+        logoUrl: "",
       },
       footerLinks: {
         Services: [
           { name: "Web Development", href: "#services" },
           { name: "Mobile Apps", href: "#services" },
           { name: "Cloud Solutions", href: "#services" },
-          { name: "Digital Marketing", href: "#services" }
+          { name: "Digital Marketing", href: "#services" },
         ],
         Company: [
           { name: "About Us", href: "#about" },
           { name: "Our Team", href: "#team" },
           { name: "Careers", href: "#careers" },
-          { name: "Contact", href: "#contact" }
+          { name: "Contact", href: "#contact" },
         ],
         Support: [
           { name: "Help Center", href: "#help" },
           { name: "Documentation", href: "#docs" },
           { name: "API Status", href: "#status" },
-          { name: "Community", href: "#community" }
-        ]
+          { name: "Community", href: "#community" },
+        ],
       },
       socialLinks: [
         { name: "Facebook", url: "#", icon: "Facebook" },
         { name: "Twitter", url: "#", icon: "Twitter" },
         { name: "LinkedIn", url: "#", icon: "LinkedIn" },
-        { name: "Instagram", url: "#", icon: "Instagram" }
-      ]
+        { name: "Instagram", url: "#", icon: "Instagram" },
+      ],
     };
 
     // Process social links to ensure icons are proper components
     if (processedData.socialLinks) {
       processedData.socialLinks = processedData.socialLinks.map((link) => ({
         ...link,
-        icon: typeof link.icon === "string" && iconMap[link.icon]
-          ? iconMap[link.icon]
-          : iconMap[link.name] || Facebook,
+        icon:
+          typeof link.icon === "string" && iconMap[link.icon]
+            ? iconMap[link.icon]
+            : iconMap[link.name] || Facebook,
       }));
     }
 
@@ -136,7 +145,9 @@ export default function Footer({
     }
 
     // Check if there are any changes from initial state
-    const hasChanges = JSON.stringify(footerContent) !== JSON.stringify(initialFooterState.current);
+    const hasChanges =
+      JSON.stringify(footerContent) !==
+      JSON.stringify(initialFooterState.current);
     setHasUnsavedChanges(hasChanges);
   }, [footerContent, onStateChange]);
 
@@ -155,10 +166,19 @@ export default function Footer({
   useEffect(() => {
     if (!showCropper) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
-      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
-      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
-      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        nudge(-PAN_STEP, 0);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nudge(PAN_STEP, 0);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        nudge(0, -PAN_STEP);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        nudge(0, PAN_STEP);
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -477,7 +497,11 @@ export default function Footer({
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div
+              className={`flex-1 relative bg-gray-900 min-h-0 ${
+                isDragging ? "cursor-grabbing" : "cursor-grab"
+              }`}
+            >
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -522,28 +546,31 @@ export default function Footer({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 1
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 4 / 3
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
+                    className={`px-3 py-2 text-sm rounded border ${
+                      aspectRatio === 16 / 9
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
+                    }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -620,12 +647,13 @@ export default function Footer({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={handleSave}
                 disabled={isUploading}
-                className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : hasUnsavedChanges || pendingLogoFile
+                className={`${
+                  isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : hasUnsavedChanges || pendingLogoFile
                     ? "bg-green-600 hover:font-semibold"
                     : "bg-gray-400 cursor-not-allowed"
-                  } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
+                } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl`}
               >
                 {isUploading ? (
                   "Uploading..."
@@ -665,11 +693,15 @@ export default function Footer({
               >
                 <div className="flex items-center">
                   <div className="relative flex items-center justify-center mr-3 overflow-hidden rounded-lg group">
-                    {isEditing ? (
+                    {/* {isEditing ? (
                       <div className="relative">
                         {footerContent.companyInfo.logoUrl &&
-                          (footerContent.companyInfo.logoUrl.startsWith("data:") ||
-                            footerContent.companyInfo.logoUrl.startsWith("http")) ? (
+                        (footerContent.companyInfo.logoUrl.startsWith(
+                          "data:"
+                        ) ||
+                          footerContent.companyInfo.logoUrl.startsWith(
+                            "http"
+                          )) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl || logo}
                             alt="Logo"
@@ -692,8 +724,12 @@ export default function Footer({
                     ) : (
                       <>
                         {footerContent.companyInfo.logoUrl &&
-                          (footerContent.companyInfo.logoUrl.startsWith("data:") ||
-                            footerContent.companyInfo.logoUrl.startsWith("http")) ? (
+                        (footerContent.companyInfo.logoUrl.startsWith(
+                          "data:"
+                        ) ||
+                          footerContent.companyInfo.logoUrl.startsWith(
+                            "http"
+                          )) ? (
                           <img
                             src={footerContent.companyInfo.logoUrl}
                             alt="Logo"
@@ -705,7 +741,7 @@ export default function Footer({
                           </span>
                         )}
                       </>
-                    )}
+                    )} */}
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -723,10 +759,11 @@ export default function Footer({
                           updateCompanyInfo("companyName", e.target.value)
                         }
                         maxLength={50}
-                        className={`w-full text-xl font-bold text-white bg-transparent border-b ${footerContent.companyInfo.companyName.length >= 50
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`w-full text-xl font-bold text-white bg-transparent border-b ${
+                          footerContent.companyInfo.companyName.length >= 50
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-300 mt-1">
                         {footerContent.companyInfo.companyName.length}/50
@@ -753,10 +790,11 @@ export default function Footer({
                         updateCompanyInfo("description", e.target.value)
                       }
                       maxLength={200}
-                      className={`w-full max-w-md text-gray-400 bg-transparent border-b ${footerContent.companyInfo.description.length >= 200
-                        ? "border-red-500"
-                        : ""
-                        }`}
+                      className={`w-full max-w-md text-gray-400 bg-transparent border-b ${
+                        footerContent.companyInfo.description.length >= 200
+                          ? "border-red-500"
+                          : ""
+                      }`}
                       rows={3}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
@@ -793,8 +831,9 @@ export default function Footer({
                             });
                           }}
                           maxLength={25}
-                          className={`w-full mb-4 font-medium text-white bg-transparent border-b ${category.length >= 25 ? "border-red-500" : ""
-                            }`}
+                          className={`w-full mb-4 font-medium text-white bg-transparent border-b ${
+                            category.length >= 25 ? "border-red-500" : ""
+                          }`}
                         />
                         <div className="text-right text-xs text-gray-300 mt-1 -mb-2">
                           {category.length}/25

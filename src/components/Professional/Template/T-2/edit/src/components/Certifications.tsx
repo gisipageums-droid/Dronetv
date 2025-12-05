@@ -1172,6 +1172,8 @@ export function Certifications({
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const certificationsRef = useRef<HTMLDivElement>(null);
+  const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
 
   // Auto-save states
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -1180,15 +1182,12 @@ export function Certifications({
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedDataRef = useRef<CertificationsData | null>(null);
 
-  const certificationsRef = useRef<HTMLDivElement>(null);
-  const fileInputRefs = useRef<Record<string, HTMLInputElement>>({});
-
   // Pending image files for S3 upload
   const [pendingImageFiles, setPendingImageFiles] = useState<
     Record<string, File>
   >({});
 
-  // Cropping states - UPDATED WITH ZOOM OUT LOGIC
+  // Cropping states
   const [showCropper, setShowCropper] = useState(false);
   const [currentCroppingCert, setCurrentCroppingCert] = useState<string | null>(
     null
@@ -1206,20 +1205,20 @@ export function Certifications({
     certData || defaultData
   );
 
-  // FIX: Use ref for onStateChange to prevent infinite loops
+  // Use ref for onStateChange to prevent infinite loops
   const onStateChangeRef = useRef(onStateChange);
   useEffect(() => {
     onStateChangeRef.current = onStateChange;
   }, [onStateChange]);
+
+  // Track previous data to avoid unnecessary updates
+  const prevDataRef = useRef<CertificationsData>();
 
   // Auto-save functionality
   const performAutoSave = useCallback(
     async (dataToSave: CertificationsData) => {
       try {
         setIsAutoSaving(true);
-
-        // Note: For now, auto-save doesn't upload images
-        // Images will be uploaded only when user clicks Save
 
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -1232,7 +1231,7 @@ export function Certifications({
         setLastSaved(new Date());
         setHasUnsavedChanges(false);
 
-        console.log("Certifications auto-save completed:", dataToSave);
+        console.log("Auto-save completed:", dataToSave);
       } catch (error) {
         console.error("Auto-save failed:", error);
         toast.error("Failed to auto-save changes");
@@ -1278,6 +1277,14 @@ export function Certifications({
     }
   }, [certData]);
 
+  // Safe state change notification without infinite loop
+  useEffect(() => {
+    if (onStateChangeRef.current && prevDataRef.current !== data) {
+      onStateChangeRef.current(data);
+      prevDataRef.current = data;
+    }
+  }, [data]);
+
   // Intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -1301,7 +1308,7 @@ export function Certifications({
     setHasUnsavedChanges(false);
   };
 
-  // Cropper functions - UPDATED WITH ZOOM OUT LOGIC
+  // Cropper functions
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
@@ -1362,6 +1369,34 @@ export function Certifications({
     });
   };
 
+  // Upload image to S3
+  const uploadImageToS3 = async (file: File): Promise<string> => {
+    if (!userId || !professionalId) {
+      throw new Error("Missing user information");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userId", userId);
+    formData.append("fieldName", "certification_image");
+
+    const uploadResponse = await fetch(
+      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!uploadResponse.ok) {
+      const errorData = await uploadResponse.json();
+      throw new Error(errorData.message || "Upload failed");
+    }
+
+    const uploadData = await uploadResponse.json();
+    return uploadData.s3Url;
+  };
+
   // Handle image selection - opens cropper
   const handleImageSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -1395,45 +1430,51 @@ export function Certifications({
     event.target.value = "";
   };
 
-  // Apply crop and set pending file
+  // Apply crop and automatically upload to S3
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || !currentCroppingCert) return;
 
-      const { file, previewUrl } = await getCroppedImg(
+      setIsUploading(true);
+
+      const { file } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
 
-      // Update preview immediately with blob URL (temporary)
-      setTempData((prevData) => {
-        const updatedData = {
-          ...prevData,
-          certifications: prevData.certifications.map((cert) =>
-            cert.id === currentCroppingCert
-              ? { ...cert, image: previewUrl }
-              : cert
+      // Upload to S3 immediately (don't use blob URL at all)
+      try {
+        const s3Url = await uploadImageToS3(file);
+
+        // Update with S3 URL directly
+        const finalUpdatedData = {
+          ...tempData,
+          certifications: tempData.certifications.map((cert) =>
+            cert.id === currentCroppingCert ? { ...cert, image: s3Url } : cert
           ),
         };
-        scheduleAutoSave(updatedData);
-        return updatedData;
-      });
+        setTempData(finalUpdatedData);
+        performAutoSave(finalUpdatedData); // Immediate save with S3 URL
 
-      // Store the file for upload on Save
-      setPendingImageFiles((prev) => ({
-        ...prev,
-        [currentCroppingCert]: file,
-      }));
+        toast.success("Image uploaded and saved successfully!");
+      } catch (uploadError) {
+        console.error("Upload failed:", uploadError);
+        toast.error("Image upload failed. Please try again.");
+        setIsUploading(false);
+        setShowCropper(false);
+        return;
+      }
 
-      console.log("Certification image cropped, file ready for upload:", file);
-      toast.success("Image cropped successfully! Changes will be auto-saved.");
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
       setCurrentCroppingCert(null);
+      setIsUploading(false);
     } catch (error) {
       console.error("Error cropping image:", error);
-      toast.error("Error cropping image. Please try again.");
+      toast.error("Failed to crop image");
+      setShowCropper(false);
+      setIsUploading(false);
     }
   };
 
@@ -1447,7 +1488,7 @@ export function Certifications({
     setZoom(1);
   };
 
-  // Zoom functions - ADDED ZOOM OUT LOGIC
+  // Zoom functions
   const handleZoomIn = () => {
     setZoom((prev) => Math.min(5, +(prev + 0.1).toFixed(2)));
   };
@@ -1460,59 +1501,35 @@ export function Certifications({
     setZoom(Math.max(0.1, Math.min(5, value)));
   };
 
-  // Reset zoom - UPDATED WITH ZOOM OUT LOGIC
+  // Reset zoom
   const resetCropSettings = () => {
     setZoom(1);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Save function with S3 upload
+  // Manual save function
   const handleSave = async () => {
     try {
-      setIsUploading(true);
+      setIsSaving(true);
 
       // Clear any pending auto-save
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
 
-      // Create a copy of tempData to update with S3 URLs
-      let updatedData = { ...tempData };
-
       // Upload images for certifications with pending files
       for (const [certId, file] of Object.entries(pendingImageFiles)) {
-        if (!userId || !professionalId || !templateSelection) {
-          toast.error(
-            "Missing user information. Please refresh and try again."
+        setIsUploading(true);
+        try {
+          const s3Url = await uploadImageToS3(file);
+          tempData.certifications = tempData.certifications.map((cert) =>
+            cert.id === certId ? { ...cert, image: s3Url } : cert
           );
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("userId", userId);
-        formData.append("fieldName", `certification_${certId}`);
-
-        const uploadResponse = await fetch(
-          `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Update the certification image with the S3 URL
-          updatedData.certifications = updatedData.certifications.map((cert) =>
-            cert.id === certId ? { ...cert, image: uploadData.s3Url } : cert
-          );
-          console.log("Certification image uploaded to S3:", uploadData.s3Url);
-        } else {
-          const errorData = await uploadResponse.json();
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
+        } catch (uploadError) {
+          console.error("Upload failed:", uploadError);
+          toast.error("Image upload failed");
+          setIsUploading(false);
+          setIsSaving(false);
           return;
         }
       }
@@ -1520,18 +1537,20 @@ export function Certifications({
       // Clear pending files
       setPendingImageFiles({});
 
-      // Save the updated data with S3 URLs
-      setIsSaving(true);
+      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Update both states with the new URLs
-      setData(updatedData);
-      setTempData(updatedData);
-      lastSavedDataRef.current = updatedData;
-
+      setData(tempData);
+      lastSavedDataRef.current = tempData;
+      setPendingImageFiles({});
       setIsEditing(false);
       setHasUnsavedChanges(false);
-      toast.success("Certifications saved successfully");
+
+      if (onStateChangeRef.current) {
+        onStateChangeRef.current(tempData);
+      }
+
+      toast.success("Certifications saved successfully!");
     } catch (error) {
       console.error("Error saving certifications:", error);
       toast.error("Error saving changes. Please try again.");
@@ -1554,15 +1573,15 @@ export function Certifications({
     toast.info("Changes discarded");
   };
 
-  // Stable update functions with useCallback - UPDATED WITH AUTO-SAVE
+  // Stable update functions with useCallback
   const updateCertification = useCallback(
     (index: number, field: keyof Certification, value: string) => {
       setTempData((prevData) => {
         const updatedCerts = [...prevData.certifications];
         updatedCerts[index] = { ...updatedCerts[index], [field]: value };
-        const updatedData = { ...prevData, certifications: updatedCerts };
-        scheduleAutoSave(updatedData);
-        return updatedData;
+        const updated = { ...prevData, certifications: updatedCerts };
+        scheduleAutoSave(updated);
+        return updated;
       });
     },
     [scheduleAutoSave]
@@ -1574,18 +1593,18 @@ export function Certifications({
       value: string
     ) => {
       setTempData((prevData) => {
-        const updatedData = {
+        const updated = {
           ...prevData,
           [field]: value,
         };
-        scheduleAutoSave(updatedData);
-        return updatedData;
+        scheduleAutoSave(updated);
+        return updated;
       });
     },
     [scheduleAutoSave]
   );
 
-  // Memoized functions - UPDATED WITH AUTO-SAVE
+  // Memoized functions
   const addCertification = useCallback(() => {
     const newCert: Certification = {
       id: Date.now().toString(),
@@ -1597,12 +1616,12 @@ export function Certifications({
       credentialUrl: "",
     };
     setTempData((prevData) => {
-      const updatedData = {
+      const updated = {
         ...prevData,
         certifications: [...prevData.certifications, newCert],
       };
-      scheduleAutoSave(updatedData);
-      return updatedData;
+      scheduleAutoSave(updated);
+      return updated;
     });
     // Set current index to the new certification
     setCurrentIndex(tempData.certifications.length);
@@ -1614,15 +1633,15 @@ export function Certifications({
         const updatedCerts = prevData.certifications.filter(
           (_, i) => i !== index
         );
-        const updatedData = { ...prevData, certifications: updatedCerts };
-        scheduleAutoSave(updatedData);
 
         // Adjust current index if needed
         if (currentIndex >= updatedCerts.length) {
           setCurrentIndex(Math.max(0, updatedCerts.length - 1));
         }
 
-        return updatedData;
+        const updated = { ...prevData, certifications: updatedCerts };
+        scheduleAutoSave(updated);
+        return updated;
       });
     },
     [currentIndex, scheduleAutoSave]
@@ -1698,30 +1717,6 @@ export function Certifications({
               Add Certifications
             </Button>
           </div>
-
-          {/* Empty State */}
-          <div className="text-center py-16">
-            <div className="max-w-md mx-auto">
-              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                <Award className="w-12 h-12 text-gray-400" />
-              </div>
-              <h3 className="text-2xl font-semibold text-foreground mb-4">
-                No Certifications Found
-              </h3>
-              <p className="text-muted-foreground mb-8">
-                Showcase your professional certifications, awards, and
-                achievements to build credibility and trust with your audience.
-              </p>
-              <Button
-                onClick={handleEdit}
-                size="lg"
-                className="bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Add Your First Certification
-              </Button>
-            </div>
-          </div>
         </div>
       </section>
     );
@@ -1733,7 +1728,7 @@ export function Certifications({
       id="certifications"
       className="py-20 text-justify bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background"
     >
-      {/* Image Cropper Modal - UPDATED WITH ZOOM OUT LOGIC */}
+      {/* Image Cropper Modal */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -1749,16 +1744,23 @@ export function Certifications({
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
                 Crop Certification Image (4:3 Standard)
+                {isUploading && (
+                  <span className="ml-2 text-blue-600 text-sm flex items-center gap-1">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading...
+                  </span>
+                )}
               </h3>
               <button
                 onClick={cancelCrop}
                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                disabled={isUploading}
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
-            {/* Cropper Area - UPDATED WITH ZOOM OUT PROPS */}
+            {/* Cropper Area */}
             <div className="flex-1 relative bg-gray-900 min-h-0">
               <Cropper
                 image={imageToCrop}
@@ -1788,7 +1790,7 @@ export function Certifications({
               />
             </div>
 
-            {/* Controls - UPDATED WITH ZOOM OUT BUTTONS */}
+            {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
               {/* Aspect Ratio Info */}
               <div className="mb-4">
@@ -1798,7 +1800,7 @@ export function Certifications({
                 </p>
               </div>
 
-              {/* Zoom Control - UPDATED WITH ZOOM OUT BUTTON */}
+              {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2 text-gray-700">
@@ -1812,6 +1814,7 @@ export function Certifications({
                     type="button"
                     onClick={handleZoomOut}
                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    disabled={isUploading}
                   >
                     <ZoomOut className="w-4 h-4" />
                   </button>
@@ -1823,36 +1826,48 @@ export function Certifications({
                     step={0.1}
                     onChange={(e) => handleZoomChange(Number(e.target.value))}
                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    disabled={isUploading}
                   />
                   <button
                     type="button"
                     onClick={handleZoomIn}
                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    disabled={isUploading}
                   >
                     <ZoomIn className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              {/* Action Buttons - UPDATED LAYOUT */}
+              {/* Action Buttons */}
               <div className="flex justify-center gap-3 pt-4">
                 <button
                   onClick={resetCropSettings}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                  disabled={isUploading}
                 >
                   Reset Zoom
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                  disabled={isUploading}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
+                  disabled={isUploading}
                 >
-                  Apply Crop
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    "Apply & Upload"
+                  )}
                 </button>
               </div>
             </div>
@@ -1873,9 +1888,9 @@ export function Certifications({
               Edit
             </Button>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex gap-2 justify-end items-center">
               {/* Auto-save indicator */}
-              <div className="flex items-center gap-2 text-sm mb-2 justify-end">
+              <div className="flex items-center gap-2 mr-4 text-sm">
                 {isAutoSaving && (
                   <div className="flex items-center gap-1 text-blue-500">
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -1891,45 +1906,40 @@ export function Certifications({
                   </div>
                 )}
               </div>
-              <div className="flex gap-2 justify-end">
-                <Button
-                  onClick={handleSave}
-                  size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-md"
-                  disabled={isSaving || isUploading}
-                >
-                  {isUploading ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : isSaving ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Save className="w-4 h-4 mr-2" />
-                  )}
-                  {isUploading
-                    ? "Uploading..."
-                    : isSaving
-                    ? "Saving..."
-                    : "Save"}
-                </Button>
-                <Button
-                  onClick={handleCancel}
-                  size="sm"
-                  className="bg-red-500 hover:bg-red-600 shadow-md text-white"
-                  disabled={isSaving || isUploading}
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button
-                  onClick={addCertification}
-                  variant="outline"
-                  size="sm"
-                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Certification
-                </Button>
-              </div>
+
+              <Button
+                onClick={handleSave}
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                disabled={isSaving || isUploading}
+              >
+                {isUploading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : isSaving ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4 mr-2" />
+                )}
+                {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
+              </Button>
+              <Button
+                onClick={handleCancel}
+                size="sm"
+                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                disabled={isSaving || isUploading}
+              >
+                <X className="w-4 h-4 mr-2" />
+                Cancel
+              </Button>
+              <Button
+                onClick={addCertification}
+                variant="outline"
+                size="sm"
+                className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Certification
+              </Button>
             </div>
           )}
         </div>
@@ -1997,12 +2007,12 @@ export function Certifications({
           ) : (
             <>
               {displayData.subtitle && (
-                <p className="text-xl text-yellow-600 mb-4 max-w-3xl mx-auto text-justify">
+                <p className="text-xl text-yellow-600 mb-4 max-w-3xl mx-auto text-center">
                   {displayData.subtitle}
                 </p>
               )}
               {displayData.description && (
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-justify">
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-center">
                   {displayData.description}
                 </p>
               )}

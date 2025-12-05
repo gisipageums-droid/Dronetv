@@ -6414,10 +6414,10 @@ export default function EditableAbout({
                   </>
                 ) : (
                   <>
-                    <p className="text-gray-600 leading-relaxed text-base text-justify">
+                    <p className="text-gray-600 leading-relaxed text-base ">
                       {displayContent.description1}
                     </p>
-                    <p className="text-gray-600 leading-relaxed text-base text-justify">
+                    <p className="text-gray-600 leading-relaxed text-base ">
                       {displayContent.description2}
                     </p>
                   </>
@@ -6440,7 +6440,7 @@ export default function EditableAbout({
                       maxLength={600}
                     />
                   ) : (
-                    <p className="text-gray-700 text-sm leading-relaxed text-justify">
+                    <p className="text-gray-700 text-sm leading-relaxed ">
                       {displayContent.mission}
                     </p>
                   )}
@@ -6459,7 +6459,7 @@ export default function EditableAbout({
                       maxLength={600}
                     />
                   ) : (
-                    <p className="text-gray-700 text-sm leading-relaxed text-justify">
+                    <p className="text-gray-700 text-sm leading-relaxed ">
                       {displayContent.vision}
                     </p>
                   )}

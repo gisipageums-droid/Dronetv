@@ -124,12 +124,12 @@ export function Certifications({ certificationsData }: CertificationsProps) {
             </div>
           )}
           {certificationsData.description && (
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-4 text-justify">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-4 text-center">
               {certificationsData.description}
             </p>
           )}
           {certificationsData.subtitle && (
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-justify">
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-center">
               {certificationsData.subtitle}
             </p>
           )}
@@ -182,7 +182,7 @@ export function Certifications({ certificationsData }: CertificationsProps) {
                       {certificates[currentIndex].description}
                     </p>
 
-                    {certificates[currentIndex].credentialUrl && certificates[currentIndex].credentialUrl !== '#' && (
+                    {/* {certificates[currentIndex].credentialUrl && certificates[currentIndex].credentialUrl !== '#' && (
                       <a
                         href={certificates[currentIndex].credentialUrl}
                         target="_blank"
@@ -192,7 +192,7 @@ export function Certifications({ certificationsData }: CertificationsProps) {
                         <span className="mr-2">View Credential</span>
                         <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </a>
-                    )}
+                    )} */}
                   </div>
                 </motion.div>
               </AnimatePresence>

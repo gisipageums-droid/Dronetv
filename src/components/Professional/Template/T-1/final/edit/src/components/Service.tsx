@@ -696,6 +696,8 @@
 
 // export default Service;
 
+/// ---------------
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -1038,7 +1040,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
   // Auto-save effect
   useEffect(() => {
     // Don't auto-save if not editing or no unsaved changes
-    if (!isEditMode || !hasUnsavedChanges) return;
+    if (!isEditMode || !hasUnsavedChanges || !serviceContent) return;
 
     // Clear existing timeout
     if (autoSaveTimeoutRef.current) {
@@ -1060,7 +1062,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
 
   // Perform auto-save
   const performAutoSave = useCallback(async () => {
-    if (!isMounted.current || !hasUnsavedChanges) return;
+    if (!isMounted.current || !hasUnsavedChanges || !serviceContent) return;
 
     try {
       setIsAutoSaving(true);
@@ -1077,7 +1079,6 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
         duration: 1000,
         position: "bottom-right",
       });
-
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -1094,12 +1095,10 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     return "text-gray-500";
   };
 
-  // Handle content changes with auto-save tracking
   const handleContentChange = (field: keyof ServiceContent, value: string) => {
     const updated = { ...serviceContent, [field]: value };
     setServiceContent(updated);
     setHasUnsavedChanges(true);
-    onSave(updated);
   };
 
   const handleAddService = (payload: Omit<Service, "id">) => {
@@ -1119,7 +1118,6 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
 
     setServiceContent(updatedContent);
     setHasUnsavedChanges(true);
-    onSave(updatedContent);
     setIsAddingNew(false);
     toast.success("Service added successfully!");
   };
@@ -1130,17 +1128,16 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     const updatedServices = serviceContent.services.map((s) =>
       s.id === editingId
         ? {
-          ...s,
-          ...payload,
-          features: payload.features.filter((f) => f.trim() !== ""),
-        }
+            ...s,
+            ...payload,
+            features: payload.features.filter((f) => f.trim() !== ""),
+          }
         : s
     );
 
     const updatedContent = { ...serviceContent, services: updatedServices };
     setServiceContent(updatedContent);
     setHasUnsavedChanges(true);
-    onSave(updatedContent);
     setEditingId(null);
     toast.success("Service updated successfully!");
   };
@@ -1151,7 +1148,6 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
 
     setServiceContent(updatedContent);
     setHasUnsavedChanges(true);
-    onSave(updatedContent);
 
     if (editingId === id) {
       setEditingId(null);
@@ -1175,17 +1171,32 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     toast.success("Services section saved successfully!");
   };
 
+  const handleCancelEditMode = () => {
+    if (content) {
+      const processedServices = (content.services ?? []).map((s) => ({
+        ...s,
+        id:
+          typeof s.id === "number" ? Math.floor(s.id) : parseInt(String(s.id)),
+        features: Array.isArray(s.features) ? s.features : [],
+        icon: s.icon || "Code",
+        color: s.color || "from-blue-500 to-cyan-500",
+      }));
+
+      setServiceContent({
+        subtitle: content.subtitle ?? defaultContent.subtitle,
+        heading: content.heading ?? defaultContent.heading,
+        description: content.description ?? defaultContent.description,
+        services: processedServices,
+      });
+      setHasUnsavedChanges(false);
+    }
+    toast.info("Changes discarded");
+    setIsEditMode(false);
+  };
+
   const handleEditStart = () => {
     setIsEditMode(true);
     setHasUnsavedChanges(false);
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditMode(false);
-    setEditingId(null);
-    setIsAddingNew(false);
-    setHasUnsavedChanges(false);
-    toast.info("Changes discarded");
   };
 
   // Format last saved time for display
@@ -1193,21 +1204,28 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     if (!lastSavedTime) return "Never";
 
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
 
     if (diffInSeconds < 60) return "Just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return lastSavedTime.toLocaleDateString();
   };
 
   return (
-    <section id="services" className="py-20 text-justify bg-gray-50 dark:bg-gray-800">
+    <section
+      id="services"
+      className="py-20 text-justify bg-gray-50 dark:bg-gray-800"
+    >
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Edit Mode Toggle */}
-        <div className="absolute top-0 right-0">
+        <div className="absolute top-0 right-0 flex items-center gap-2">
           {isEditMode ? (
-            <div className="flex items-center gap-2">
+            <>
               {/* Auto-save indicator */}
               <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                 {isAutoSaving ? (
@@ -1231,22 +1249,25 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
               <button
                 onClick={handleSaveSection}
                 className="p-3 text-white transition-colors bg-green-500 rounded-full hover:bg-green-600"
+                title="Save All Changes"
               >
                 <SaveAll className="w-6 h-6" />
               </button>
               <button
-                onClick={handleCancelEdit}
+                onClick={handleCancelEditMode}
                 className="p-3 text-white transition-colors bg-red-500 rounded-full hover:bg-red-600"
+                title="Cancel Editing"
               >
                 <X className="w-6 h-6" />
               </button>
-            </div>
+            </>
           ) : (
             <button
               onClick={handleEditStart}
-              className="p-3 text-gray-900 transition-colors bg-gray-200 rounded-full dark:bg-gray-500 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
+              className="p-3 transition-colors bg-gray-200 rounded-full dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+              title="Edit Services"
             >
-              <Edit className="w-6 h-6" />
+              <Edit className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             </button>
           )}
         </div>
@@ -1314,7 +1335,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                   {serviceContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
-              <p className=" max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400  text-justify">
+              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
                 {serviceContent.description}
               </p>
             </>
@@ -1446,9 +1467,11 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                     ) : (
                       <>
                         <div
-                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${service.color
-                            } mb-6 ${isEditMode ? "" : "group-hover:scale-110"
-                            } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
+                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${
+                            service.color
+                          } mb-6 ${
+                            isEditMode ? "" : "group-hover:scale-110"
+                          } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
                         >
                           <span className="uppercase text-white">
                             {service.title[0]}
@@ -1496,9 +1519,11 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                           href="#contact"
                           whileHover={isEditMode ? undefined : { scale: 1.05 }}
                           whileTap={isEditMode ? undefined : { scale: 0.95 }}
-                          className={`w-full bg-orange-400 ${service.color
-                            } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${isEditMode ? "" : "group-hover:shadow-lg"
-                            }`}
+                          className={`w-full bg-orange-400 ${
+                            service.color
+                          } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                            isEditMode ? "" : "group-hover:shadow-lg"
+                          }`}
                         >
                           <span>Get Started</span>
                           <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

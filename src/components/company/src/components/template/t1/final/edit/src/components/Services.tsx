@@ -2016,7 +2016,7 @@ export default function Services({
                     maxLength={50}
                   />
                 ) : (
-                  <CardTitle className="text-base leading-snug">{service.title}</CardTitle>
+                  <CardTitle className="text-base leading-snug text-center font-bold">{service.title}</CardTitle>
                 )}
               </CardHeader>
               <CardContent className="px-4 pb-4 flex flex-col flex-1">
@@ -2028,7 +2028,8 @@ export default function Services({
                       multiline={true}
                       className="text-sm"
                       placeholder="Service description"
-                      maxLength={1000}
+                      // maxLength={1000}
+                      maxLength={200}
                     />
                     <div className="mt-2 space-y-2">
                       <label className="block text-xs font-medium text-gray-700">

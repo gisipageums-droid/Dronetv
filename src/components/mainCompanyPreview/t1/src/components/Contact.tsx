@@ -92,7 +92,7 @@ export default function Contact({ content, publishedId }) {
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
             {contactData?.title || "Get In Touch"}
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg text-justify">
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg ">
             {contactData?.description ||
               "Ready to transform your business? Let's start a conversation about how we can help you achieve your goals with our expert solutions."}
           </p>

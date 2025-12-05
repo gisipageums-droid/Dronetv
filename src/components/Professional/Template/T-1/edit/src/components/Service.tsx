@@ -141,7 +141,7 @@
 
 //   return (
 //     <div
-//       className="p-6 text-justify bg-white border-2 border-orange-300 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
+//       className="p-6 bg-white border-2 border-orange-300 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
 //       onMouseDown={(e) => e.stopPropagation()}
 //       onPointerDown={(e) => e.stopPropagation()}
 //     >
@@ -393,7 +393,7 @@
 //   };
 
 //   return (
-//     <section id="services" className="py-20 bg-gray-50 dark:bg-gray-800">
+//     <section id="services" className="py-20 text-justify bg-gray-50 dark:bg-gray-800">
 //       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
 //         {/* Edit Mode Toggle */}
 //         <div className="absolute top-0 right-0">
@@ -488,7 +488,7 @@
 //                   {serviceContent.heading.split(" ").slice(1).join(" ")}
 //                 </span>
 //               </h2>
-//               <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+//               <p className=" max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
 //                 {serviceContent.description}
 //               </p>
 //             </>
@@ -696,6 +696,7 @@
 
 // export default Service;
 
+/// ---------------
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -752,8 +753,7 @@ const ServiceForm: React.FC<{
   onCancel: () => void;
   onSave: (payload: FormData) => void;
   autoFocus?: boolean;
-  isEditing?: boolean;
-}> = React.memo(({ initial, onCancel, onSave, autoFocus = false, isEditing = false }) => {
+}> = React.memo(({ initial, onCancel, onSave, autoFocus = false }) => {
   const [local, setLocal] = useState<FormData>(() => ({
     title: initial.title ?? "",
     shortDescription: initial.shortDescription ?? "",
@@ -842,7 +842,7 @@ const ServiceForm: React.FC<{
 
   return (
     <div
-      className="p-6 text-justify bg-white border-2 border-orange-300 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
+      className="p-6 bg-white border-2 border-orange-300 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
       onMouseDown={(e) => e.stopPropagation()}
       onPointerDown={(e) => e.stopPropagation()}
     >
@@ -987,16 +987,33 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
   const [hoveredService, setHoveredService] = useState<number | null>(null);
 
   // Auto-save states
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+
+  // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track if component is mounted to prevent state updates after unmount
+  const isMounted = useRef(true);
 
   // Character limits for section headers
   const CHAR_LIMITS = {
     heading: 100,
     description: 500,
   };
+
+  // Initialize component mount state
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      // Cleanup auto-save timeout on unmount
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Sync with parent content
   useEffect(() => {
@@ -1020,51 +1037,57 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     }
   }, [content]);
 
-  // Auto-save cleanup
+  // Auto-save effect
   useEffect(() => {
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Auto-save function
-  const performAutoSave = useCallback(async () => {
-    if (!hasUnsavedChanges || !isEditMode) return;
-
-    setIsAutoSaving(true);
-
-    try {
-      onSave(serviceContent);
-      setLastSavedTime(new Date());
-      setHasUnsavedChanges(false);
-
-      console.log("Services section auto-saved at", new Date().toLocaleTimeString());
-    } catch (error) {
-      console.error("Services auto-save failed:", error);
-      toast.error("Auto-save failed. Changes not saved.");
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [serviceContent, hasUnsavedChanges, isEditMode, onSave]);
-
-  // Schedule auto-save
-  const scheduleAutoSave = useCallback(() => {
-    if (!isEditMode) return;
-
-    setHasUnsavedChanges(true);
+    // Don't auto-save if not editing or no unsaved changes
+    if (!isEditMode || !hasUnsavedChanges || !serviceContent) return;
 
     // Clear existing timeout
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
 
-    // Set new timeout (2-second delay)
+    // Set new timeout for auto-save
     autoSaveTimeoutRef.current = setTimeout(() => {
       performAutoSave();
-    }, 2000);
-  }, [isEditMode, performAutoSave]);
+    }, 2000); // 2-second delay
+
+    // Cleanup timeout on unmount or dependency change
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [serviceContent, hasUnsavedChanges, isEditMode]);
+
+  // Perform auto-save
+  const performAutoSave = useCallback(async () => {
+    if (!isMounted.current || !hasUnsavedChanges || !serviceContent) return;
+
+    try {
+      setIsAutoSaving(true);
+
+      // Call the save function
+      onSave(serviceContent);
+
+      // Update state
+      setHasUnsavedChanges(false);
+      setLastSavedTime(new Date());
+
+      // Show subtle notification
+      toast.success("Services changes auto-saved", {
+        duration: 1000,
+        position: "bottom-right",
+      });
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+      toast.error("Auto-save failed. Please save manually.");
+    } finally {
+      if (isMounted.current) {
+        setIsAutoSaving(false);
+      }
+    }
+  }, [serviceContent, hasUnsavedChanges, onSave]);
 
   const getCharCountColor = (current: number, max: number) => {
     if (current >= max) return "text-red-500";
@@ -1072,19 +1095,13 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     return "text-gray-500";
   };
 
-  // Content change handler with auto-save
-  const handleContentChange = useCallback((field: keyof ServiceContent, value: string) => {
+  const handleContentChange = (field: keyof ServiceContent, value: string) => {
     const updated = { ...serviceContent, [field]: value };
     setServiceContent(updated);
-    scheduleAutoSave();
-  }, [serviceContent, scheduleAutoSave]);
+    setHasUnsavedChanges(true);
+  };
 
-  const handleAddService = useCallback((payload: Omit<Service, "id">) => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
+  const handleAddService = (payload: Omit<Service, "id">) => {
     const id =
       serviceContent.services.length > 0
         ? Math.max(...serviceContent.services.map((s) => s.id)) + 1
@@ -1100,146 +1117,157 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     const updatedContent = { ...serviceContent, services: updatedServices };
 
     setServiceContent(updatedContent);
-    onSave(updatedContent);
-    setLastSavedTime(new Date());
-    setHasUnsavedChanges(false);
+    setHasUnsavedChanges(true);
     setIsAddingNew(false);
     toast.success("Service added successfully!");
-  }, [serviceContent, onSave]);
+  };
 
-  const handleEditService = useCallback((payload: Omit<Service, "id">) => {
+  const handleEditService = (payload: Omit<Service, "id">) => {
     if (editingId === null) return;
-
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
 
     const updatedServices = serviceContent.services.map((s) =>
       s.id === editingId
         ? {
-          ...s,
-          ...payload,
-          features: payload.features.filter((f) => f.trim() !== ""),
-        }
+            ...s,
+            ...payload,
+            features: payload.features.filter((f) => f.trim() !== ""),
+          }
         : s
     );
 
     const updatedContent = { ...serviceContent, services: updatedServices };
     setServiceContent(updatedContent);
-    onSave(updatedContent);
-    setLastSavedTime(new Date());
-    setHasUnsavedChanges(false);
+    setHasUnsavedChanges(true);
     setEditingId(null);
     toast.success("Service updated successfully!");
-  }, [serviceContent, editingId, onSave]);
+  };
 
-  const handleDeleteService = useCallback((id: number) => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
+  const handleDeleteService = (id: number) => {
     const updatedServices = serviceContent.services.filter((s) => s.id !== id);
     const updatedContent = { ...serviceContent, services: updatedServices };
 
     setServiceContent(updatedContent);
-    onSave(updatedContent);
-    setLastSavedTime(new Date());
-    setHasUnsavedChanges(false);
+    setHasUnsavedChanges(true);
 
     if (editingId === id) {
       setEditingId(null);
     }
 
     toast.success("Service deleted successfully!");
-  }, [serviceContent, editingId, onSave]);
+  };
 
-  const handleCancel = useCallback(() => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
+  const handleCancel = () => {
     setEditingId(null);
     setIsAddingNew(false);
-    setHasUnsavedChanges(false);
-  }, []);
+  };
 
-  // Manual save function
   const handleSaveSection = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
     onSave(serviceContent);
-    setLastSavedTime(new Date());
     setHasUnsavedChanges(false);
+    setLastSavedTime(new Date());
     setIsEditMode(false);
     setEditingId(null);
     setIsAddingNew(false);
     toast.success("Services section saved successfully!");
   };
 
-  // Manual cancel function
-  const handleCancelEdit = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
+  const handleCancelEditMode = () => {
+    if (content) {
+      const processedServices = (content.services ?? []).map((s) => ({
+        ...s,
+        id:
+          typeof s.id === "number" ? Math.floor(s.id) : parseInt(String(s.id)),
+        features: Array.isArray(s.features) ? s.features : [],
+        icon: s.icon || "Code",
+        color: s.color || "from-blue-500 to-cyan-500",
+      }));
 
-    setIsEditMode(false);
-    setEditingId(null);
-    setIsAddingNew(false);
-    setHasUnsavedChanges(false);
+      setServiceContent({
+        subtitle: content.subtitle ?? defaultContent.subtitle,
+        heading: content.heading ?? defaultContent.heading,
+        description: content.description ?? defaultContent.description,
+        services: processedServices,
+      });
+      setHasUnsavedChanges(false);
+    }
     toast.info("Changes discarded");
+    setIsEditMode(false);
+  };
+
+  const handleEditStart = () => {
+    setIsEditMode(true);
+    setHasUnsavedChanges(false);
+  };
+
+  // Format last saved time for display
+  const formatLastSavedTime = () => {
+    if (!lastSavedTime) return "Never";
+
+    const now = new Date();
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return lastSavedTime.toLocaleDateString();
   };
 
   return (
-    <section id="services" className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section
+      id="services"
+      className="py-20 text-justify bg-gray-50 dark:bg-gray-800"
+    >
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Edit Mode Toggle */}
-        <div className="absolute top-0 right-0">
+        <div className="absolute top-0 right-0 flex items-center gap-2">
           {isEditMode ? (
-            <div className="flex items-center gap-2">
+            <>
               {/* Auto-save indicator */}
-              <div className="flex items-center gap-2 mr-4">
+              <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                 {isAutoSaving ? (
-                  <div className="flex items-center gap-1 text-sm text-blue-500">
+                  <div className="flex items-center gap-1">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span>Saving...</span>
                   </div>
                 ) : hasUnsavedChanges ? (
-                  <div className="text-sm text-yellow-500">
-                    Unsaved changes
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    <span>Unsaved changes</span>
                   </div>
-                ) : lastSavedTime ? (
-                  <div className="text-sm text-green-500">
-                    Saved {lastSavedTime.toLocaleTimeString()}
+                ) : (
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Saved {formatLastSavedTime()}</span>
                   </div>
-                ) : null}
+                )}
               </div>
 
               <button
                 onClick={handleSaveSection}
                 className="p-3 text-white transition-colors bg-green-500 rounded-full hover:bg-green-600"
+                title="Save All Changes"
               >
                 <SaveAll className="w-6 h-6" />
               </button>
               <button
-                onClick={handleCancelEdit}
+                onClick={handleCancelEditMode}
                 className="p-3 text-white transition-colors bg-red-500 rounded-full hover:bg-red-600"
+                title="Cancel Editing"
               >
                 <X className="w-6 h-6" />
               </button>
-            </div>
+            </>
           ) : (
             <button
-              onClick={() => setIsEditMode(true)}
-              className="p-3 text-gray-900 transition-colors bg-gray-200 rounded-full dark:bg-gray-500 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
+              onClick={handleEditStart}
+              className="p-3 transition-colors bg-gray-200 rounded-full dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+              title="Edit Services"
             >
-              <Edit className="w-6 h-6" />
+              <Edit className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             </button>
           )}
         </div>
@@ -1307,7 +1335,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                   {serviceContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
-              <p className="max-w-3xl mx-auto text-xl text-justify text-gray-600 dark:text-gray-400">
+              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
                 {serviceContent.description}
               </p>
             </>
@@ -1435,14 +1463,15 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                         autoFocus
                         onCancel={handleCancel}
                         onSave={handleEditService}
-                        isEditing={true}
                       />
                     ) : (
                       <>
                         <div
-                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${service.color
-                            } mb-6 ${isEditMode ? "" : "group-hover:scale-110"
-                            } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
+                          className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${
+                            service.color
+                          } mb-6 ${
+                            isEditMode ? "" : "group-hover:scale-110"
+                          } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
                         >
                           <span className="uppercase text-white">
                             {service.title[0]}
@@ -1490,9 +1519,11 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                           href="#contact"
                           whileHover={isEditMode ? undefined : { scale: 1.05 }}
                           whileTap={isEditMode ? undefined : { scale: 0.95 }}
-                          className={`w-full bg-orange-400 ${service.color
-                            } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${isEditMode ? "" : "group-hover:shadow-lg"
-                            }`}
+                          className={`w-full bg-orange-400 ${
+                            service.color
+                          } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                            isEditMode ? "" : "group-hover:shadow-lg"
+                          }`}
                         >
                           <span>Get Started</span>
                           <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

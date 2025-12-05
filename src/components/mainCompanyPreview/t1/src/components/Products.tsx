@@ -111,7 +111,7 @@ export default function Products({ productData }) {
           <h3 className="text-2xl font-semibold text-gray-700 mb-4">
             {content.sectionSubtitle}
           </h3>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto text-justify">
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto ">
             {content.sectionDescription}
             {content.trustText && (
               <span className="font-bold text-yellow-600">
@@ -182,15 +182,40 @@ export default function Products({ productData }) {
                       </Badge>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    <h3 className="text-xl text-center font-bold text-gray-900 mb-3">
                       {product.title}
                     </h3>
 
-                    <p className="text-gray-600 text-sm mb-4 flex-1 text-justify">
+                    <p className="text-gray-600 text-sm mb-4 flex-1">
                       {product.description
-                        ? product.description.slice(0, 30) + "..."
-                        : ""}
+                        // ? product.description.slice(0, 30) + "..."
+                        ? product.description : ""}
                     </p>
+
+
+
+                     {product.features && product.features.length > 0 && (
+      <div className="mb-4">
+        <h4 className="font-semibold mb-2 text-sm text-gray-700">Key Features:</h4>
+        <ul className="text-xs text-gray-600 space-y-1">
+          {product.features.slice(0, 3).map((feature, idx) => (
+            <li key={idx} className="flex items-start">
+              <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 mt-1 flex-shrink-0"></div>
+              <span>{feature}</span>
+            </li>
+          ))}
+          {product.features.length > 3 && (
+            <li className="text-xs text-gray-500 italic">
+              + {product.features.length - 3} more features...
+            </li>
+          )}
+        </ul>
+      </div>
+    )}
+
+
+
+
 
                     <Button
                       size="sm"
@@ -209,149 +234,166 @@ export default function Products({ productData }) {
 
       {/* Modal */}
       <AnimatePresence>
-        {isModalOpen && selectedProduct && (
-          <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[99999999]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+  {isModalOpen && selectedProduct && (
+    <motion.div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={closeModal}
+    >
+      <motion.div
+        className="bg-white rounded-xl w-full max-w-4xl mt-20 max-h-[75vh] overflow-hidden shadow-xl flex flex-col"
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        transition={{ duration: 0.3 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Header with Image */}
+        <div className="relative h-32 sm:h-36 overflow-hidden flex-shrink-0">
+          <img
+            src={selectedProduct.image}
+            alt={selectedProduct.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+          <button
             onClick={closeModal}
+            className="absolute top-2 right-2 bg-white/90 hover:bg-white rounded-full p-1.5 transition-colors shadow-sm"
+            aria-label="Close modal"
           >
-            <motion.div
-              className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl"
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Modal Header with Image */}
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  src={selectedProduct.image}
-                  alt={selectedProduct.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                <button
-                  onClick={closeModal}
-                  className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors shadow-lg"
-                  aria-label="Close modal"
-                >
-                  <X className="w-5 h-5 text-gray-900" />
-                </button>
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge
-                      className={`${selectedProduct.categoryColor ||
-                        "bg-yellow-400 text-gray-900"
-                        }`}
-                    >
-                      {selectedProduct.category}
-                    </Badge>
-                    {selectedProduct.isPopular && (
-                      <Badge className="bg-yellow-400 text-gray-900">
-                        <Star className="w-3 h-3 mr-1" fill="currentColor" />
-                        Popular
-                      </Badge>
-                    )}
+            <X className="w-4 h-4 text-gray-900" />
+          </button>
+          <div className="absolute bottom-2 left-3 right-3">
+            <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+              <Badge
+                className={`text-xs ${selectedProduct.categoryColor ||
+                  "bg-yellow-400 text-gray-900"
+                  }`}
+              >
+                {selectedProduct.category}
+              </Badge>
+              {selectedProduct.isPopular && (
+                <Badge className="bg-yellow-400 text-gray-900 text-xs">
+                  <Star className="w-2.5 h-2.5 mr-0.5" fill="currentColor" />
+                  Popular
+                </Badge>
+              )}
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold text-white leading-tight line-clamp-2">
+              {selectedProduct.title}
+            </h2>
+          </div>
+        </div>
+
+        {/* Modal Content - Compact */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4">
+          <div className="mb-3">
+            <h3 className="text-base font-bold text-gray-900 mb-2">
+              About This Product
+            </h3>
+            <p className="text-gray-700 text-sm leading-relaxed mb-3 line-clamp-3">
+              {selectedProduct.detailedDescription ||
+                selectedProduct.description}
+            </p>
+          </div>
+
+          {selectedProduct.features?.length > 0 && (
+            <div className="mb-3">
+              <h3 className="text-base font-bold text-gray-900 mb-2 flex items-center gap-1.5">
+                <span className="text-yellow-600 text-sm">✨</span> Features
+              </h3>
+              <div className="space-y-1.5">
+                {selectedProduct.features.slice(0, 4).map((feature, idx) => (
+                  <div
+                    key={idx}
+                    className="flex gap-2 items-start"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700 text-xs sm:text-sm">
+                      {feature}
+                    </span>
                   </div>
-                  <h2 className="text-3xl font-bold text-white">
-                    {selectedProduct.title}
-                  </h2>
-                </div>
-              </div>
-
-              {/* Modal Content */}
-              <div className="overflow-y-auto max-h-[calc(90vh-16rem)] p-8">
-                <div className="mb-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    About This Product
-                  </h3>
-                  <p className="text-gray-700 text-base leading-relaxed mb-4 text-justify">
-                    {selectedProduct.detailedDescription ||
-                      selectedProduct.description}
-                  </p>
-                </div>
-
-                {selectedProduct.features?.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <span className="text-yellow-600">✨</span> All Features
-                    </h3>
-                    <div className="grid md:grid-cols-2 gap-3">
-                      {selectedProduct.features.map((feature, idx) => (
-                        <div
-                          key={idx}
-                          className="flex gap-3 items-start bg-yellow-50 p-4 rounded-lg"
-                        >
-                          <CheckCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
+                ))}
+                {selectedProduct.features.length > 4 && (
+                  <div className="text-xs text-gray-500 italic ml-5.5">
+                    + {selectedProduct.features.length - 4} more features
                   </div>
                 )}
+              </div>
+            </div>
+          )}
 
-                {selectedProduct.specifications && (
-                  <div className="mb-8">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <span className="text-blue-600">📋</span> Specifications
-                    </h3>
-                    <div className="bg-blue-50 rounded-xl p-6">
-                      <div className="space-y-3">
-                        {Object.entries(selectedProduct.specifications).map(
-                          ([key, value], idx) => (
-                            <div
-                              key={idx}
-                              className="flex justify-between items-center border-b border-blue-100 pb-2 last:border-0"
-                            >
-                              <span className="font-medium text-gray-700">
-                                {key}:
-                              </span>
-                              <span className="text-gray-900">{value}</span>
-                            </div>
-                          )
-                        )}
+          {selectedProduct.specifications && (
+            <div className="mb-3">
+              <h3 className="text-base font-bold text-gray-900 mb-2 flex items-center gap-1.5">
+                <span className="text-blue-600 text-sm">📋</span> Specifications
+              </h3>
+              <div className="bg-blue-50 rounded-lg p-3">
+                <div className="space-y-1.5">
+                  {Object.entries(selectedProduct.specifications).slice(0, 3).map(
+                    ([key, value], idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center"
+                      >
+                        <span className="font-medium text-gray-700 text-xs sm:text-sm">
+                          {key}:
+                        </span>
+                        <span className="text-gray-900 text-xs sm:text-sm">
+                          {value}
+                        </span>
                       </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="grid md:grid-cols-2 gap-6 mb-6">
-                  {selectedProduct.pricing && (
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
-                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <span className="text-green-600">💰</span> Pricing
-                      </h3>
-                      <p className="text-gray-900 text-xl font-bold text-justify">
-                        {selectedProduct.pricing}
-                      </p>
+                    )
+                  )}
+                  {Object.entries(selectedProduct.specifications).length > 3 && (
+                    <div className="text-xs text-gray-500 italic text-center pt-1">
+                      + {Object.entries(selectedProduct.specifications).length - 3} more specs
                     </div>
                   )}
-                  {selectedProduct.timeline && (
-                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
-                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <span className="text-purple-600">⏱️</span> Delivery
-                        Timeline
-                      </h3>
-                      <p className="text-gray-900 text-xl font-bold text-justify">
-                        {selectedProduct.timeline}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-center gap-4">
-                  <Button onClick={closeModal} className="px-8">
-                    Got it, thanks!
-                  </Button>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {selectedProduct.pricing && (
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-2.5 rounded-lg border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-1 flex items-center gap-1 text-xs sm:text-sm">
+                  <span className="text-green-600">💰</span> Price
+                </h3>
+                <p className="text-gray-900 text-sm font-bold truncate">
+                  {selectedProduct.pricing}
+                </p>
+              </div>
+            )}
+            {selectedProduct.timeline && (
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-2.5 rounded-lg border border-purple-200">
+                <h3 className="font-bold text-gray-900 mb-1 flex items-center gap-1 text-xs sm:text-sm">
+                  <span className="text-purple-600">⏱️</span> Delivery
+                </h3>
+                <p className="text-gray-900 text-sm font-bold truncate">
+                  {selectedProduct.timeline}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-center pt-2 border-t border-gray-100">
+            <Button 
+              onClick={closeModal} 
+              className="px-4 py-1.5 text-sm"
+              size="sm"
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
     </section>
   );
 }

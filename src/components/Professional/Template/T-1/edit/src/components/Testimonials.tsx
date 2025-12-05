@@ -625,7 +625,7 @@
 //           </div>
 //         )}
 
-//         <div className="space-y-1 ">
+//         <div className="space-y-1">
 //           <textarea
 //             placeholder="Testimonial content *"
 //             value={formData.content}
@@ -876,7 +876,7 @@
 //                         </div>
 //                       </div>
 
-//                       <blockquote className="mb-6 text-justify italic leading-relaxed text-gray-700 dark:text-gray-300">
+//                       <blockquote className="text-justify mb-6 italic leading-relaxed text-gray-700 dark:text-gray-300">
 //                         "{testimonial.content}"
 //                       </blockquote>
 
@@ -906,13 +906,13 @@
 //                           }}
 //                         />
 //                         <div className="flex-1">
-//                           <h3 className="font-bold text-justify text-gray-900 dark:text-white">
+//                           <h3 className="font-bold text-gray-900 dark:text-white">
 //                             {testimonial.name}
 //                           </h3>
-//                           <p className="text-sm text-justify font-medium text-orange-500">
+//                           <p className="text-sm font-medium text-orange-500">
 //                             {testimonial.position}
 //                           </p>
-//                           <p className="text-xs text-justify text-gray-600 dark:text-gray-400">
+//                           <p className="text-xs text-gray-600 dark:text-gray-400">
 //                             {testimonial.company}
 //                           </p>
 //                         </div>
@@ -1112,7 +1112,6 @@
 
 // export default Testimonials;
 
-
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -1178,10 +1177,15 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   const [isAddingNew, setIsAddingNew] = useState(false);
 
   // Auto-save states
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+
+  // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track if component is mounted to prevent state updates after unmount
+  const isMounted = useRef(true);
 
   // Store original content for cancel functionality
   const [originalContent, setOriginalContent] =
@@ -1217,6 +1221,9 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const nameRef = useRef<HTMLInputElement | null>(null);
 
+  // Image upload progress state
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   // Cropping states
   const [isCropping, setIsCropping] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string>("");
@@ -1228,6 +1235,18 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Initialize component mount state
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      // Cleanup auto-save timeout on unmount
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Initialize content
   useEffect(() => {
@@ -1255,55 +1274,70 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     setHasUnsavedChanges(false);
   }, [content]);
 
-  // Auto-save cleanup
+  // Auto-save effect
   useEffect(() => {
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Auto-save function
-  const performAutoSave = useCallback(async () => {
-    if (!hasUnsavedChanges || !isEditMode) return;
-
-    setIsAutoSaving(true);
-
-    try {
-      onSave?.({ ...testimonialContent, testimonials });
-      setLastSavedTime(new Date());
-      setHasUnsavedChanges(false);
-
-      console.log("Testimonials section auto-saved at", new Date().toLocaleTimeString());
-    } catch (error) {
-      console.error("Testimonials auto-save failed:", error);
-      toast.error("Auto-save failed. Changes not saved.");
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [testimonialContent, testimonials, hasUnsavedChanges, isEditMode, onSave]);
-
-  // Schedule auto-save
-  const scheduleAutoSave = useCallback(() => {
-    if (!isEditMode) return;
-
-    setHasUnsavedChanges(true);
+    // Don't auto-save if not editing or no unsaved changes
+    if (!isEditMode || !hasUnsavedChanges) return;
 
     // Clear existing timeout
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
 
-    // Set new timeout (2-second delay)
+    // Set new timeout for auto-save
     autoSaveTimeoutRef.current = setTimeout(() => {
       performAutoSave();
-    }, 2000);
-  }, [isEditMode, performAutoSave]);
+    }, 2000); // 2-second delay
+
+    // Cleanup timeout on unmount or dependency change
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [testimonialContent, testimonials, hasUnsavedChanges, isEditMode]);
+
+  // Perform auto-save
+  const performAutoSave = useCallback(async () => {
+    if (!isMounted.current || !hasUnsavedChanges) return;
+
+    try {
+      setIsAutoSaving(true);
+
+      // Call the save function
+      onSave?.({ ...testimonialContent, testimonials });
+
+      // Update state
+      setHasUnsavedChanges(false);
+      setLastSavedTime(new Date());
+
+      // Update original content after saving
+      setOriginalContent(testimonialContent);
+      setOriginalTestimonials(testimonials);
+
+      // Show subtle notification
+      toast.success("Testimonials changes auto-saved", {
+        duration: 1000,
+        position: "bottom-right",
+      });
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+      toast.error("Auto-save failed. Please save manually.");
+    } finally {
+      if (isMounted.current) {
+        setIsAutoSaving(false);
+      }
+    }
+  }, [testimonialContent, testimonials, hasUnsavedChanges, onSave]);
 
   // Form handlers
-  const setFormField = useCallback((k: keyof FormData, v: any) =>
-    setFormData((p) => ({ ...p, [k]: v })), []);
+  const setFormField = (k: keyof FormData, v: any) => {
+    setFormData((p) => ({ ...p, [k]: v }));
+    // Mark as unsaved when form data changes (for new testimonials being created)
+    if (isAddingNew) {
+      setHasUnsavedChanges(true);
+    }
+  };
 
   // Auto-focus effect for form
   useEffect(() => {
@@ -1321,6 +1355,49 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     if (current >= max) return "text-red-500";
     if (current >= max * 0.9) return "text-yellow-500";
     return "text-gray-500";
+  };
+
+  // Enhanced image upload function with progress tracking
+  const uploadImageToS3 = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId!);
+      formData.append("fieldName", "testimonialImage");
+
+      const xhr = new XMLHttpRequest();
+
+      // Track upload progress
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          setUploadProgress(progress);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            resolve(response.s3Url);
+          } catch (error) {
+            reject(new Error("Failed to parse upload response"));
+          }
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}`));
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        reject(new Error("Upload failed due to network error"));
+      });
+
+      xhr.open(
+        "POST",
+        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`
+      );
+      xhr.send(formData);
+    });
   };
 
   // Image cropping functions
@@ -1449,7 +1526,6 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     });
   };
 
-  // Auto-upload image after cropping
   const handleCropConfirm = async () => {
     try {
       const croppedBlob = await getCroppedImage();
@@ -1465,76 +1541,48 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          const tempImageSrc = reader.result as string;
           setFormData((prev) => ({
             ...prev,
-            image: tempImageSrc,
+            image: reader.result as string,
           }));
-          // Schedule auto-save for image change if editing existing testimonial
-          if (editingId !== null) {
-            setHasUnsavedChanges(true);
-            scheduleAutoSave();
-          }
         }
       };
       reader.readAsDataURL(croppedFile);
 
       setIsUploading(true);
+      setUploadProgress(0);
       setIsCropping(false);
       setImageLoaded(false);
 
-      // Upload cropped image to AWS S3 immediately
-      const formData = new FormData();
-      formData.append("file", croppedFile);
-      formData.append("userId", userId!);
-      formData.append("fieldName", "testimonialImage");
+      // Auto-upload cropped image to AWS S3 immediately
+      try {
+        const s3Url = await uploadImageToS3(croppedFile);
 
-      const uploadResponse = await fetch(
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        const s3ImageUrl = uploadData.s3Url;
-
-        // Update with S3 URL
         setFormData((prev) => ({
           ...prev,
-          image: s3ImageUrl,
+          image: s3Url,
         }));
 
-        // If editing existing testimonial, trigger save with the new S3 URL
-        if (editingId !== null) {
-          const updatedTestimonials = testimonials.map((t) =>
-            t.id === editingId ? { ...t, image: s3ImageUrl } : t
-          );
-          setTestimonials(updatedTestimonials);
-          setTestimonialContent(prev => ({ ...prev, testimonials: updatedTestimonials }));
-          onSave?.({ ...testimonialContent, testimonials: updatedTestimonials });
-          setLastSavedTime(new Date());
-          setHasUnsavedChanges(false);
-        }
-
-        toast.success("Image uploaded and saved successfully!");
-      } else {
-        const errorData = await uploadResponse.json();
+        toast.success("Image uploaded successfully!");
+      } catch (uploadError) {
+        console.error("Image upload failed:", uploadError);
         toast.error(
-          `Image upload failed: ${errorData.message || "Unknown error"}`
+          `Image upload failed: ${
+            uploadError instanceof Error ? uploadError.message : "Unknown error"
+          }`
         );
-        // Keep the base64 image as fallback
-        toast.info("Using local image version. Please try uploading again later.");
+        // Keep the cropped image as base64 for manual save later
+        toast.info("Cropped image saved locally. Save manually to persist.");
       }
 
       setIsUploading(false);
+      setUploadProgress(0);
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Failed to crop image");
       setIsCropping(false);
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -1567,8 +1615,8 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     setScale((prev) => Math.max(prev - 0.1, 1));
   };
 
-  // Testimonial CRUD operations with auto-save
-  const startEdit = useCallback((testimonial: Testimonial) => {
+  // Testimonial CRUD operations
+  const startEdit = (testimonial: Testimonial) => {
     setFormData({
       name: testimonial.name,
       position: testimonial.position,
@@ -1581,17 +1629,12 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     });
     setEditingId(testimonial.id);
     setIsAddingNew(false);
-  }, []);
+  };
 
-  const handleAddNew = useCallback(async () => {
+  const handleAddNew = async () => {
     if (!formData.name.trim() || !formData.content.trim()) {
       toast.error("Please provide name and testimonial content.");
       return;
-    }
-
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
     }
 
     const id =
@@ -1603,23 +1646,15 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
     setTestimonials(updated);
     setTestimonialContent((p) => ({ ...p, testimonials: updated }));
+    setHasUnsavedChanges(true);
     setIsAddingNew(false);
     resetForm();
 
-    // Save immediately for new testimonials
-    onSave?.({ ...testimonialContent, testimonials: updated });
-    setLastSavedTime(new Date());
-    setHasUnsavedChanges(false);
     toast.success("Testimonial added.");
-  }, [formData, testimonials, testimonialContent, onSave]);
+  };
 
-  const handleSaveEdit = useCallback(() => {
+  const handleSaveEdit = () => {
     if (editingId == null) return;
-
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
 
     const updated = testimonials.map((t) =>
       t.id === editingId ? { ...t, ...formData } : t
@@ -1627,34 +1662,22 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
     setTestimonials(updated);
     setTestimonialContent((p) => ({ ...p, testimonials: updated }));
+    setHasUnsavedChanges(true);
     setEditingId(null);
     resetForm();
 
-    // Save immediately for edits
-    onSave?.({ ...testimonialContent, testimonials: updated });
-    setLastSavedTime(new Date());
-    setHasUnsavedChanges(false);
     toast.success("Testimonial updated.");
-  }, [editingId, formData, testimonials, testimonialContent, onSave]);
+  };
 
-  const handleDelete = useCallback((id: number) => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
+  const handleDelete = (id: number) => {
     const updated = testimonials.filter((t) => t.id !== id);
     setTestimonials(updated);
     setTestimonialContent((p) => ({ ...p, testimonials: updated }));
-
-    // Save immediately for deletions
-    onSave?.({ ...testimonialContent, testimonials: updated });
-    setLastSavedTime(new Date());
-    setHasUnsavedChanges(false);
+    setHasUnsavedChanges(true);
     toast.success("Testimonial removed.");
-  }, [testimonials, testimonialContent, onSave]);
+  };
 
-  const resetForm = useCallback(() => {
+  const resetForm = () => {
     setFormData({
       name: "",
       position: "",
@@ -1665,49 +1688,37 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       project: "",
       date: new Date().getFullYear().toString(),
     });
-  }, []);
+  };
 
-  const handleCancelForm = useCallback(() => {
+  const handleCancelForm = () => {
     setEditingId(null);
     setIsAddingNew(false);
     resetForm();
-  }, [resetForm]);
+  };
 
-  // Section content handlers with auto-save
-  const handleContentChange = useCallback((
-    field: keyof TestimonialContent,
-    value: string
-  ) => {
-    const updated = { ...testimonialContent, [field]: value };
-    setTestimonialContent(updated);
-    scheduleAutoSave();
-  }, [testimonialContent, scheduleAutoSave]);
+  // Section content handlers with auto-save tracking
+  const handleContentChange = useCallback(
+    (field: keyof TestimonialContent, value: string) => {
+      setTestimonialContent((prev) => ({ ...prev, [field]: value }));
+      setHasUnsavedChanges(true);
+    },
+    []
+  );
 
-  // Manual save function
-  const handleSaveSection = useCallback(() => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
+  const handleSaveSection = () => {
     onSave?.({ ...testimonialContent, testimonials });
-    setLastSavedTime(new Date());
     setHasUnsavedChanges(false);
+    setLastSavedTime(new Date());
     setIsEditMode(false);
 
     // Update original content after saving
     setOriginalContent(testimonialContent);
     setOriginalTestimonials(testimonials);
+
     toast.success("Testimonials section saved.");
-  }, [testimonialContent, testimonials, onSave]);
+  };
 
-  // Manual cancel function
-  const handleCancelSection = useCallback(() => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
+  const handleCancelSection = () => {
     // Revert to original content when canceling
     setTestimonialContent(originalContent);
     setTestimonials(originalTestimonials);
@@ -1717,7 +1728,29 @@ const Testimonials: React.FC<TestimonialsProps> = ({
     setEditingId(null);
     setIsAddingNew(false);
     toast.info("Changes discarded.");
-  }, [originalContent, originalTestimonials, resetForm]);
+  };
+
+  const handleEditStart = () => {
+    setIsEditMode(true);
+    setHasUnsavedChanges(false);
+  };
+
+  // Format last saved time for display
+  const formatLastSavedTime = () => {
+    if (!lastSavedTime) return "Never";
+
+    const now = new Date();
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return lastSavedTime.toLocaleDateString();
+  };
 
   // Render testimonial form
   const renderTestimonialForm = () => (
@@ -1828,10 +1861,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
           <div className="flex items-center gap-2">
             <label
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${isUploading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gray-100 dark:bg-gray-800"
-                }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${
+                isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gray-100 dark:bg-gray-800"
+              }`}
             >
               <Upload className="w-4 h-4" />
               <span className="text-sm">
@@ -1848,6 +1882,19 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           </div>
         </div>
 
+        {isUploading && (
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
+            <div>Uploading... {Math.round(uploadProgress)}%</div>
+            <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
+              <div
+                className="h-full bg-green-500 transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+
         {formData.image && (
           <div className="flex justify-center">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-orange-400">
@@ -1860,7 +1907,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           </div>
         )}
 
-        <div className="space-y-1 ">
+        <div className="space-y-1">
           <textarea
             placeholder="Testimonial content *"
             value={formData.content}
@@ -1900,10 +1947,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           <button
             onClick={editingId !== null ? handleSaveEdit : handleAddNew}
             disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${isUploading
-              ? "bg-green-400 cursor-not-allowed"
-              : "bg-green-500 hover:bg-green-600"
-              }`}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
+              isUploading
+                ? "bg-green-400 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600"
+            }`}
           >
             <Save className="w-4 h-4" />
             <span>{isUploading ? "Saving..." : "Save"}</span>
@@ -1911,10 +1959,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           <button
             onClick={handleCancelForm}
             disabled={isUploading}
-            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${isUploading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-gray-500 hover:bg-gray-600"
-              }`}
+            className={`flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg ${
+              isUploading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gray-500 hover:bg-gray-600"
+            }`}
           >
             <X className="w-4 h-4" />
             <span>Cancel</span>
@@ -1931,21 +1980,23 @@ const Testimonials: React.FC<TestimonialsProps> = ({
           {isEditMode ? (
             <>
               {/* Auto-save indicator */}
-              <div className="flex items-center gap-2 mr-4">
+              <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                 {isAutoSaving ? (
-                  <div className="flex items-center gap-1 text-sm text-blue-500">
+                  <div className="flex items-center gap-1">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span>Saving...</span>
                   </div>
                 ) : hasUnsavedChanges ? (
-                  <div className="text-sm text-yellow-500">
-                    Unsaved changes
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    <span>Unsaved changes</span>
                   </div>
-                ) : lastSavedTime ? (
-                  <div className="text-sm text-green-500">
-                    Saved {lastSavedTime.toLocaleTimeString()}
+                ) : (
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Saved {formatLastSavedTime()}</span>
                   </div>
-                ) : null}
+                )}
               </div>
 
               <button
@@ -1965,7 +2016,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
             </>
           ) : (
             <button
-              onClick={() => setIsEditMode(true)}
+              onClick={handleEditStart}
               className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-lg"
               title="Edit Testimonials"
             >
@@ -2033,7 +2084,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                   {testimonialContent.heading.split(" ").slice(-1)}
                 </span>
               </h2>
-              <p className="max-w-3xl mx-auto text-xl text-justify text-gray-600 dark:text-gray-400">
+              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400 text-center">
                 {testimonialContent.description}
               </p>
             </>
@@ -2127,7 +2178,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                         </div>
                       </div>
 
-                      <blockquote className="mb-6 text-justify italic leading-relaxed text-gray-700 dark:text-gray-300">
+                      <blockquote className="text-justify mb-6 italic leading-relaxed text-gray-700 dark:text-gray-300">
                         "{testimonial.content}"
                       </blockquote>
 
@@ -2157,13 +2208,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                           }}
                         />
                         <div className="flex-1">
-                          <h3 className="font-bold text-justify text-gray-900 dark:text-white">
+                          <h3 className="font-bold text-gray-900 dark:text-white">
                             {testimonial.name}
                           </h3>
-                          <p className="text-sm text-justify font-medium text-orange-500">
+                          <p className="text-sm font-medium text-orange-500">
                             {testimonial.position}
                           </p>
-                          <p className="text-xs text-justify text-gray-600 dark:text-gray-400">
+                          <p className="text-xs text-gray-600 dark:text-gray-400">
                             {testimonial.company}
                           </p>
                         </div>
@@ -2344,20 +2395,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
               </button>
               <button
                 onClick={handleCropConfirm}
-                disabled={!imageLoaded || isUploading}
+                disabled={!imageLoaded}
                 className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isUploading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Crop & Upload
-                  </>
-                )}
+                <Check className="w-5 h-5" />
+                Crop & Upload
               </button>
             </div>
           </div>

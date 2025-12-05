@@ -3940,7 +3940,7 @@ const handleAutoSave = async () => {
                       maxLength={600}
                     />
                   ) : (
-                    <p className="text-gray-700 text-sm leading-relaxed text-justify">
+                    <p className="text-gray-700 text-sm leading-relaxed ">
                       {displayContent.mission}
                     </p>
                   )}
@@ -3959,7 +3959,7 @@ const handleAutoSave = async () => {
                       maxLength={600}
                     />
                   ) : (
-                    <p className="text-gray-700 text-sm leading-relaxed text-justify">
+                    <p className="text-gray-700 text-sm leading-relaxed ">
                       {displayContent.vision}
                     </p>
                   )}

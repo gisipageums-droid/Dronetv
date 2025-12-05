@@ -387,7 +387,13 @@
 
 // export default Navbar;
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { motion } from "framer-motion";
 import {
   Sun,
@@ -428,10 +434,32 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
   );
 
   // Auto-save states
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+
+  // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track if component is mounted to prevent state updates after unmount
+  const isMounted = useRef(true);
+
+  const navLinks = useMemo(
+    () => editedContent.navLinks || [],
+    [editedContent.navLinks]
+  );
+
+  // Initialize component mount state
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      // Cleanup auto-save timeout on unmount
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Sync external updates
   useEffect(() => {
@@ -439,29 +467,36 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
     setHasUnsavedChanges(false);
   }, [content]);
 
-  // Auto-save cleanup
+  // Auto-save effect
   useEffect(() => {
+    // Don't auto-save if not editing or no unsaved changes
+    if (!isEditing || !hasUnsavedChanges) return;
+
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Set new timeout for auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      performAutoSave();
+    }, 2000); // 2-second delay
+
+    // Cleanup timeout on unmount or dependency change
     return () => {
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, []);
+  }, [editedContent, hasUnsavedChanges, isEditing]);
 
-  // Scroll detection
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Auto-save function
+  // Perform auto-save
   const performAutoSave = useCallback(async () => {
-    if (!hasUnsavedChanges || !isEditing) return;
+    if (!isMounted.current || !hasUnsavedChanges) return;
 
-    setIsAutoSaving(true);
-    
     try {
+      setIsAutoSaving(true);
+
       const validatedContent = {
         ...editedContent,
         navLinks: editedContent.navLinks
@@ -472,81 +507,41 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
           .filter((link) => link.href && link.href.length > 1),
       };
 
+      // Call the save function
       onSave(validatedContent);
-      setLastSavedTime(new Date());
+
+      // Update state
       setHasUnsavedChanges(false);
-      
-      console.log("Navbar auto-saved at", new Date().toLocaleTimeString());
+      setLastSavedTime(new Date());
+
+      // Show subtle notification
+      toast.success("Header changes auto-saved", {
+        duration: 1000,
+        position: "bottom-right",
+      });
     } catch (error) {
-      console.error("Navbar auto-save failed:", error);
-      toast.error("Auto-save failed. Changes not saved.");
+      console.error("Auto-save failed:", error);
+      toast.error("Auto-save failed. Please save manually.");
     } finally {
-      setIsAutoSaving(false);
+      if (isMounted.current) {
+        setIsAutoSaving(false);
+      }
     }
-  }, [editedContent, hasUnsavedChanges, isEditing, onSave]);
+  }, [editedContent, hasUnsavedChanges, onSave]);
 
-  // Schedule auto-save
-  const scheduleAutoSave = useCallback(() => {
-    if (!isEditing) return;
-
-    setHasUnsavedChanges(true);
-    
-    // Clear existing timeout
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
-    // Set new timeout (2-second delay)
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      performAutoSave();
-    }, 2000);
-  }, [isEditing, performAutoSave]);
-
-  // Generic content update handler with auto-save
-  const updateContent = useCallback((updates: Partial<HeaderContent>) => {
-    setEditedContent(prev => ({ ...prev, ...updates }));
-    scheduleAutoSave();
-  }, [scheduleAutoSave]);
-
-  // Logo text handler
-  const handleLogoTextChange = (logoText: string) => {
-    if (logoText.length <= 50) {
-      updateContent({ logoText });
-    }
-  };
-
-  // Nav link handlers
-  const updateNavLink = useCallback((
-    index: number,
-    field: "href" | "label",
-    value: string
-  ) => {
-    if (value.length <= 50) {
-      const updatedLinks = [...editedContent.navLinks];
-      updatedLinks[index] = { ...updatedLinks[index], [field]: value };
-      updateContent({ navLinks: updatedLinks });
-    }
-  }, [editedContent.navLinks, updateContent]);
-
-  const addNavLink = useCallback(() => {
-    const newLinks = [
-      ...(editedContent.navLinks || []),
-      { href: "#new-section", label: "New Link" },
-    ];
-    updateContent({ navLinks: newLinks });
-  }, [editedContent.navLinks, updateContent]);
-
-  const removeNavLink = useCallback((index: number) => {
-    const filteredLinks = editedContent.navLinks.filter((_, i) => i !== index);
-    updateContent({ navLinks: filteredLinks });
-  }, [editedContent.navLinks, updateContent]);
+  // Scroll detection
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Track section in view - FIXED VERSION
   useEffect(() => {
     // Skip observation if in editing mode or if navLinks is empty
-    if (isEditing || editedContent.navLinks.length === 0) return;
+    if (isEditing || navLinks.length === 0) return;
 
-    const sections = editedContent.navLinks
+    const sections = navLinks
       .map((link) => {
         // Only query selector if href is valid and not empty
         if (link.href && link.href.startsWith("#") && link.href.length > 1) {
@@ -574,7 +569,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
       sections.forEach((section) => observer.unobserve(section));
       observer.disconnect();
     };
-  }, [editedContent.navLinks, isEditing]);
+  }, [navLinks, isEditing]); // Add isEditing as dependency
 
   const scrollToSection = (href: string) => {
     // Only scroll if href is valid and not empty
@@ -586,13 +581,44 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
     setIsMenuOpen(false);
   };
 
-  // Manual save function
-  const handleSave = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
+  // Handle content changes with auto-save tracking
+  const handleLogoTextChange = (value: string) => {
+    if (value.length <= 50) {
+      setEditedContent({
+        ...editedContent,
+        logoText: value,
+      });
+      setHasUnsavedChanges(true);
     }
+  };
 
+  const updateNavLink = (
+    index: number,
+    field: "href" | "label",
+    value: string
+  ) => {
+    const updatedLinks = [...editedContent.navLinks];
+    updatedLinks[index] = { ...updatedLinks[index], [field]: value };
+    setEditedContent({ ...editedContent, navLinks: updatedLinks });
+    setHasUnsavedChanges(true);
+  };
+
+  const addNavLink = () => {
+    const newLinks = [
+      ...(editedContent.navLinks || []),
+      { href: "#new-section", label: "New Link" },
+    ];
+    setEditedContent({ ...editedContent, navLinks: newLinks });
+    setHasUnsavedChanges(true);
+  };
+
+  const removeNavLink = (index: number) => {
+    const filteredLinks = editedContent.navLinks.filter((_, i) => i !== index);
+    setEditedContent({ ...editedContent, navLinks: filteredLinks });
+    setHasUnsavedChanges(true);
+  };
+
+  const handleSave = () => {
     const validatedContent = {
       ...editedContent,
       navLinks: editedContent.navLinks
@@ -604,23 +630,39 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
     };
 
     onSave(validatedContent);
-    setLastSavedTime(new Date());
     setHasUnsavedChanges(false);
-    setIsEditing(false);
+    setLastSavedTime(new Date());
     toast.success("Header section updated");
+    setIsEditing(false);
   };
 
-  // Manual cancel function
   const handleCancel = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
     setEditedContent(content);
     setHasUnsavedChanges(false);
-    setIsEditing(false);
     toast.info("Changes discarded");
+    setIsEditing(false);
+  };
+
+  const handleEditStart = () => {
+    setIsEditing(true);
+    setHasUnsavedChanges(false);
+  };
+
+  // Format last saved time for display
+  const formatLastSavedTime = () => {
+    if (!lastSavedTime) return "Never";
+
+    const now = new Date();
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return lastSavedTime.toLocaleDateString();
   };
 
   return (
@@ -673,7 +715,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
             <div
               className={`hidden md:flex items-center justify-center space-x-2 flex-1 mx-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600`}
             >
-              {editedContent.navLinks.map((link, index) => (
+              {navLinks.map((link, index) => (
                 <motion.div
                   key={index}
                   whileHover={!isEditing ? { y: -2 } : {}}
@@ -704,21 +746,23 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
               {isEditing ? (
                 <>
                   {/* Auto-save indicator */}
-                  <div className="flex items-center gap-2 mr-2">
+                  <div className="hidden md:flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400">
                     {isAutoSaving ? (
-                      <div className="flex items-center gap-1 text-sm text-blue-500">
+                      <div className="flex items-center gap-1">
                         <Loader2 className="w-4 h-4 animate-spin" />
                         <span>Saving...</span>
                       </div>
                     ) : hasUnsavedChanges ? (
-                      <div className="text-sm text-yellow-500">
-                        Unsaved changes
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <span>Unsaved changes</span>
                       </div>
-                    ) : lastSavedTime ? (
-                      <div className="text-sm text-green-500">
-                        Saved {lastSavedTime.toLocaleTimeString()}
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>Saved {formatLastSavedTime()}</span>
                       </div>
-                    ) : null}
+                    )}
                   </div>
 
                   <motion.button
@@ -744,7 +788,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsEditing(true)}
+                  onClick={handleEditStart}
                   title="Edit header"
                   className="p-3 bg-gray-500/50 text-white rounded-full"
                 >
@@ -789,8 +833,32 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
               exit={{ opacity: 0, height: 0 }}
               className="md:hidden border-t border-gray-200 dark:border-gray-800 overflow-hidden"
             >
+              {/* Mobile Auto-save indicator */}
+              {isEditing && (
+                <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                    {isAutoSaving ? (
+                      <div className="flex items-center gap-1">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Saving...</span>
+                      </div>
+                    ) : hasUnsavedChanges ? (
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <span>Unsaved changes</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>Saved {formatLastSavedTime()}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="px-2 pt-2 pb-3 space-y-2">
-                {editedContent.navLinks.map((link, index) => (
+                {navLinks.map((link, index) => (
                   <div
                     key={index}
                     className={`flex flex-col space-y-2 p-3 rounded-lg ${
@@ -806,7 +874,11 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                             <input
                               type="text"
                               value={link.label}
-                              onChange={(e) => updateNavLink(index, "label", e.target.value)}
+                              onChange={(e) => {
+                                if (e.target.value.length <= 50) {
+                                  updateNavLink(index, "label", e.target.value);
+                                }
+                              }}
                               className="w-full bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-gray-800 dark:text-gray-100"
                               placeholder="Link label"
                               maxLength={50}
@@ -826,7 +898,11 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                           <input
                             type="text"
                             value={link.href}
-                            onChange={(e) => updateNavLink(index, "href", e.target.value)}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 50) {
+                                updateNavLink(index, "href", e.target.value);
+                              }
+                            }}
                             className="w-full bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-sm text-gray-600 dark:text-gray-400"
                             placeholder="#section-id"
                             maxLength={50}

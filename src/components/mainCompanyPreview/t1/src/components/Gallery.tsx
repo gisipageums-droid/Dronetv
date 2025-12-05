@@ -87,7 +87,7 @@ export default function GallerySection({ galleryData }) {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isVisible ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                        className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg text-justify"
+                        className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg "
                     >
                         {galleryData.heading.description}
                     </motion.p>
@@ -132,7 +132,7 @@ export default function GallerySection({ galleryData }) {
                                     <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
                                         <h3 className="font-semibold">{image.title}</h3>
                                         <p className="text-sm">{image.category}</p>
-                                        <p className="text-xs mt-1 opacity-90 text-justify">{image.description}</p>
+                                        <p className="text-xs mt-1 opacity-90 ">{image.description}</p>
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +178,7 @@ export default function GallerySection({ galleryData }) {
                         <div className="text-white text-center mt-4">
                             <h3 className="text-xl font-semibold">{galleryData.images[selectedImage].title}</h3>
                             <p className="text-gray-300">{galleryData.images[selectedImage].category}</p>
-                            <p className="text-gray-400 text-sm mt-2 text-justify">{galleryData.images[selectedImage].description}</p>
+                            <p className="text-gray-400 text-sm mt-2 ">{galleryData.images[selectedImage].description}</p>
                         </div>
                     </div>
                 </motion.div>

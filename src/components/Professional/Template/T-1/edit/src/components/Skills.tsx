@@ -21,11 +21,11 @@
 // import { motion } from "framer-motion";
 
 // // Import your static skill images
-// import skill1 from '../../../../../Images/skill1.png';
-// import skill2 from '../../../../../Images/skill2.png';
-// import skill3 from '../../../../../Images/skill3.jpeg';
-// import skill4 from '../../../../../Images/skill4.png';
-// import skill5 from '../../../../../Images/skill5.jpeg';
+// import skill1 from '../../../../../../Images/skill1.png';
+// import skill2 from '../../../../../../Images/skill2.png';
+// import skill3 from '../../../../../../Images/skill3.jpeg';
+// import skill4 from '../../../../../../Images/skill4.png';
+// import skill5 from '../../../../../../Images/skill5.jpeg';
 
 // interface Skill {
 //   name: string;
@@ -528,8 +528,8 @@
 //                   <div className="flex items-center flex-1">
 //                     {!isEditing && (
 //                       <div className="w-12 h-12 flex items-center justify-center overflow-hidden rounded-full mr-3 border-2">
-//                         <img 
-//                           src={getCategoryImage(categoryIndex)} 
+//                         <img
+//                           src={getCategoryImage(categoryIndex)}
 //                           alt={category.title}
 //                           className="w-full h-full object-cover"
 //                         />
@@ -768,7 +768,7 @@
 
 // export default Skills;
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Code,
   Database,
@@ -792,11 +792,11 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 // Import your static skill images
-import skill1 from '../../../../../Images/skill1.png';
-import skill2 from '../../../../../Images/skill2.png';
-import skill3 from '../../../../../Images/skill3.jpeg';
-import skill4 from '../../../../../Images/skill4.png';
-import skill5 from '../../../../../Images/skill5.jpeg';
+import skill1 from "../../../../../Images/skill1.png";
+import skill2 from "../../../../../Images/skill2.png";
+import skill3 from "../../../../../Images/skill3.jpeg";
+import skill4 from "../../../../../Images/skill4.png";
+import skill5 from "../../../../../Images/skill5.jpeg";
 
 interface Skill {
   name: string;
@@ -876,10 +876,15 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
   const [technologiesInput, setTechnologiesInput] = useState("");
 
   // Auto-save states
-  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
+
+  // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track if component is mounted to prevent state updates after unmount
+  const isMounted = useRef(true);
 
   // Array of imported skill images
   const skillImages = [skill1, skill2, skill3, skill4, skill5];
@@ -892,6 +897,18 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
     skillName: 50,
     technologies: 500,
   };
+
+  // Initialize component mount state
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      // Cleanup auto-save timeout on unmount
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (content) {
@@ -916,22 +933,36 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
     }
   }, [content]);
 
-  // Auto-save cleanup
+  // Auto-save effect
   useEffect(() => {
+    // Don't auto-save if not editing or no unsaved changes
+    if (!isEditing || !hasUnsavedChanges || !skillContent) return;
+
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Set new timeout for auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      performAutoSave();
+    }, 2000); // 2-second delay
+
+    // Cleanup timeout on unmount or dependency change
     return () => {
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
     };
-  }, []);
+  }, [skillContent, hasUnsavedChanges, isEditing]);
 
-  // Auto-save function
+  // Perform auto-save
   const performAutoSave = useCallback(async () => {
-    if (!hasUnsavedChanges || !isEditing || !skillContent) return;
+    if (!isMounted.current || !hasUnsavedChanges || !skillContent) return;
 
-    setIsAutoSaving(true);
-    
     try {
+      setIsAutoSaving(true);
+
       // Create save data without React components
       const dataToSave: SkillContent = {
         heading: skillContent.heading,
@@ -948,35 +979,27 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
         technologies: skillContent.technologies,
       };
 
+      // Call the save function
       onSave(dataToSave);
-      setLastSavedTime(new Date());
+
+      // Update state
       setHasUnsavedChanges(false);
-      
-      console.log("Skills section auto-saved at", new Date().toLocaleTimeString());
+      setLastSavedTime(new Date());
+
+      // Show subtle notification
+      toast.success("Skills changes auto-saved", {
+        duration: 1000,
+        position: "bottom-right",
+      });
     } catch (error) {
-      console.error("Skills auto-save failed:", error);
-      toast.error("Auto-save failed. Changes not saved.");
+      console.error("Auto-save failed:", error);
+      toast.error("Auto-save failed. Please save manually.");
     } finally {
-      setIsAutoSaving(false);
+      if (isMounted.current) {
+        setIsAutoSaving(false);
+      }
     }
-  }, [skillContent, hasUnsavedChanges, isEditing, onSave]);
-
-  // Schedule auto-save
-  const scheduleAutoSave = useCallback(() => {
-    if (!isEditing || !skillContent) return;
-
-    setHasUnsavedChanges(true);
-    
-    // Clear existing timeout
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
-    // Set new timeout (2-second delay)
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      performAutoSave();
-    }, 2000);
-  }, [isEditing, skillContent, performAutoSave]);
+  }, [skillContent, hasUnsavedChanges, onSave]);
 
   const getCharCountColor = (current: number, max: number) => {
     if (current >= max) return "text-red-500";
@@ -989,18 +1012,6 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
     const imageIndex = categoryIndex % skillImages.length;
     return skillImages[imageIndex];
   };
-
-  // Content change handler with auto-save
-  const handleContentChange = useCallback((field: keyof SkillContent, value: string) => {
-    setSkillContent((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        [field]: value,
-      };
-    });
-    scheduleAutoSave();
-  }, [scheduleAutoSave]);
 
   const handleSkillUpdate = useCallback(
     (
@@ -1040,14 +1051,15 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
         newSkills[skillIndex] = skill;
         newCategories[categoryIndex] = { ...category, skills: newSkills };
 
-        return { ...prev, categories: newCategories };
+        const updated = { ...prev, categories: newCategories };
+        setHasUnsavedChanges(true);
+        return updated;
       });
-      scheduleAutoSave();
     },
-    [scheduleAutoSave]
+    []
   );
 
-  const addNewSkill = useCallback((categoryIndex: number) => {
+  const addNewSkill = (categoryIndex: number) => {
     if (
       !skillContent ||
       categoryIndex < 0 ||
@@ -1072,12 +1084,13 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
         ],
       };
 
-      return { ...prev, categories: newCategories };
+      const updated = { ...prev, categories: newCategories };
+      setHasUnsavedChanges(true);
+      return updated;
     });
-    scheduleAutoSave();
-  }, [skillContent, scheduleAutoSave]);
+  };
 
-  const removeSkill = useCallback((categoryIndex: number, skillIndex: number) => {
+  const removeSkill = (categoryIndex: number, skillIndex: number) => {
     if (
       !skillContent ||
       categoryIndex < 0 ||
@@ -1101,12 +1114,13 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
       newSkills.splice(skillIndex, 1);
 
       newCategories[categoryIndex] = { ...category, skills: newSkills };
-      return { ...prev, categories: newCategories };
+      const updated = { ...prev, categories: newCategories };
+      setHasUnsavedChanges(true);
+      return updated;
     });
-    scheduleAutoSave();
-  }, [skillContent, scheduleAutoSave]);
+  };
 
-  const addNewCategory = useCallback(() => {
+  const addNewCategory = () => {
     if (!skillContent) return;
 
     const colors = [
@@ -1126,15 +1140,16 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
 
     setSkillContent((prev) => {
       if (!prev) return prev;
-      return {
+      const updated = {
         ...prev,
         categories: [...prev.categories, newCategory],
       };
+      setHasUnsavedChanges(true);
+      return updated;
     });
-    scheduleAutoSave();
-  }, [skillContent, scheduleAutoSave]);
+  };
 
-  const removeCategory = useCallback((categoryIndex: number) => {
+  const removeCategory = (categoryIndex: number) => {
     if (
       !skillContent ||
       categoryIndex < 0 ||
@@ -1146,12 +1161,13 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
       if (!prev) return prev;
       const newCategories = [...prev.categories];
       newCategories.splice(categoryIndex, 1);
-      return { ...prev, categories: newCategories };
+      const updated = { ...prev, categories: newCategories };
+      setHasUnsavedChanges(true);
+      return updated;
     });
-    scheduleAutoSave();
-  }, [skillContent, scheduleAutoSave]);
+  };
 
-  const handleTechnologiesChange = useCallback((value: string) => {
+  const handleTechnologiesChange = (value: string) => {
     setTechnologiesInput(value);
 
     // Parse technologies and update skillContent in real-time
@@ -1162,22 +1178,26 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
 
     setSkillContent((prev) => {
       if (!prev) return prev;
-      return {
+      const updated = {
         ...prev,
         technologies: technologiesArray,
       };
+      setHasUnsavedChanges(true);
+      return updated;
     });
-    scheduleAutoSave();
-  }, [scheduleAutoSave]);
+  };
 
-  // Manual save function
+  const handleContentChange = (field: keyof SkillContent, value: string) => {
+    setSkillContent((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, [field]: value };
+      setHasUnsavedChanges(true);
+      return updated;
+    });
+  };
+
   const handleSave = () => {
     if (!skillContent) return;
-
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
 
     // Create save data without React components
     const dataToSave: SkillContent = {
@@ -1195,20 +1215,14 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
       technologies: skillContent.technologies,
     };
 
-    onSave(dataToSave);
-    setLastSavedTime(new Date());
+    if (onSave) onSave(dataToSave);
     setHasUnsavedChanges(false);
+    setLastSavedTime(new Date());
     setIsEditing(false);
     toast.success("Skills updated successfully!");
   };
 
-  // Manual cancel function
   const handleCancel = () => {
-    // Clear any pending auto-save
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-
     if (content) {
       const processedContent = {
         ...content,
@@ -1232,6 +1246,28 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
       setHasUnsavedChanges(false);
     }
     setIsEditing(false);
+  };
+
+  const handleEditStart = () => {
+    setIsEditing(true);
+    setHasUnsavedChanges(false);
+  };
+
+  // Format last saved time for display
+  const formatLastSavedTime = () => {
+    if (!lastSavedTime) return "Never";
+
+    const now = new Date();
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return lastSavedTime.toLocaleDateString();
   };
 
   if (!skillContent) {
@@ -1268,21 +1304,23 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
               {isEditing ? (
                 <>
                   {/* Auto-save indicator */}
-                  <div className="flex items-center gap-2 mr-4">
+                  <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                     {isAutoSaving ? (
-                      <div className="flex items-center gap-1 text-sm text-blue-500">
+                      <div className="flex items-center gap-1">
                         <Loader2 className="w-4 h-4 animate-spin" />
                         <span>Saving...</span>
                       </div>
                     ) : hasUnsavedChanges ? (
-                      <div className="text-sm text-yellow-500">
-                        Unsaved changes
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <span>Unsaved changes</span>
                       </div>
-                    ) : lastSavedTime ? (
-                      <div className="text-sm text-green-500">
-                        Saved {lastSavedTime.toLocaleTimeString()}
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>Saved {formatLastSavedTime()}</span>
                       </div>
-                    ) : null}
+                    )}
                   </div>
 
                   <button
@@ -1302,7 +1340,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                 </>
               ) : (
                 <button
-                  onClick={() => setIsEditing(true)}
+                  onClick={handleEditStart}
                   className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-lg"
                   title="Edit Skills"
                 >
@@ -1318,7 +1356,9 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   value={skillContent.heading}
                   maxLength={CHAR_LIMITS.heading}
                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner mb-4"
-                  onChange={(e) => handleContentChange("heading", e.target.value)}
+                  onChange={(e) =>
+                    handleContentChange("heading", e.target.value)
+                  }
                 />
                 <div
                   className={`text-sm text-right ${getCharCountColor(
@@ -1345,7 +1385,9 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                 <textarea
                   value={skillContent.subtitle || ""}
                   maxLength={CHAR_LIMITS.subtitle}
-                  onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                  onChange={(e) =>
+                    handleContentChange("subtitle", e.target.value)
+                  }
                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner"
                   rows={2}
                   placeholder="Enter subtitle describing your skills"
@@ -1403,8 +1445,8 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   <div className="flex items-center flex-1">
                     {!isEditing && (
                       <div className="w-12 h-12 flex items-center justify-center overflow-hidden rounded-full mr-3 border-2">
-                        <img 
-                          src={getCategoryImage(categoryIndex)} 
+                        <img
+                          src={getCategoryImage(categoryIndex)}
                           alt={category.title}
                           className="w-full h-full object-cover"
                         />
@@ -1426,12 +1468,13 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                               };
                               setSkillContent((prev) => {
                                 if (!prev) return prev;
-                                return {
+                                const updated = {
                                   ...prev,
                                   categories: newCategories,
                                 };
+                                setHasUnsavedChanges(true);
+                                return updated;
                               });
-                              scheduleAutoSave();
                             }
                           }}
                           className="bg-gray-100 dark:bg-gray-800 text-2xl font-bold text-gray-900 dark:text-white rounded-lg p-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none flex-1"

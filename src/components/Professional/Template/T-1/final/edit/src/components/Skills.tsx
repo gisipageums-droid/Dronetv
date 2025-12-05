@@ -528,8 +528,8 @@
 //                   <div className="flex items-center flex-1">
 //                     {!isEditing && (
 //                       <div className="w-12 h-12 flex items-center justify-center overflow-hidden rounded-full mr-3 border-2">
-//                         <img 
-//                           src={getCategoryImage(categoryIndex)} 
+//                         <img
+//                           src={getCategoryImage(categoryIndex)}
 //                           alt={category.title}
 //                           className="w-full h-full object-cover"
 //                         />
@@ -792,11 +792,11 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 // Import your static skill images
-import skill1 from '../../../../../../Images/skill1.png';
-import skill2 from '../../../../../../Images/skill2.png';
-import skill3 from '../../../../../../Images/skill3.jpeg';
-import skill4 from '../../../../../../Images/skill4.png';
-import skill5 from '../../../../../../Images/skill5.jpeg';
+import skill1 from "../../../../../../Images/skill1.png";
+import skill2 from "../../../../../../Images/skill2.png";
+import skill3 from "../../../../../../Images/skill3.jpeg";
+import skill4 from "../../../../../../Images/skill4.png";
+import skill5 from "../../../../../../Images/skill5.jpeg";
 
 interface Skill {
   name: string;
@@ -879,15 +879,15 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
-  
+
   // Auto-save timeout ref
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Track if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
 
   // Array of imported skill images
-  const skillImages = [skill1, skill2, skill3 , skill4, skill5];
+  const skillImages = [skill1, skill2, skill3, skill4, skill5];
 
   // Character limits
   const CHAR_LIMITS = {
@@ -962,7 +962,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
 
     try {
       setIsAutoSaving(true);
-      
+
       // Create save data without React components
       const dataToSave: SkillContent = {
         heading: skillContent.heading,
@@ -981,17 +981,16 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
 
       // Call the save function
       onSave(dataToSave);
-      
+
       // Update state
       setHasUnsavedChanges(false);
       setLastSavedTime(new Date());
-      
+
       // Show subtle notification
       toast.success("Skills changes auto-saved", {
         duration: 1000,
         position: "bottom-right",
       });
-      
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -1257,13 +1256,17 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
   // Format last saved time for display
   const formatLastSavedTime = () => {
     if (!lastSavedTime) return "Never";
-    
+
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - lastSavedTime.getTime()) / 1000);
-    
+    const diffInSeconds = Math.floor(
+      (now.getTime() - lastSavedTime.getTime()) / 1000
+    );
+
     if (diffInSeconds < 60) return "Just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return lastSavedTime.toLocaleDateString();
   };
 
@@ -1353,7 +1356,9 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   value={skillContent.heading}
                   maxLength={CHAR_LIMITS.heading}
                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner mb-4"
-                  onChange={(e) => handleContentChange("heading", e.target.value)}
+                  onChange={(e) =>
+                    handleContentChange("heading", e.target.value)
+                  }
                 />
                 <div
                   className={`text-sm text-right ${getCharCountColor(
@@ -1380,7 +1385,9 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                 <textarea
                   value={skillContent.subtitle || ""}
                   maxLength={CHAR_LIMITS.subtitle}
-                  onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                  onChange={(e) =>
+                    handleContentChange("subtitle", e.target.value)
+                  }
                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner"
                   rows={2}
                   placeholder="Enter subtitle describing your skills"
@@ -1438,8 +1445,8 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   <div className="flex items-center flex-1">
                     {!isEditing && (
                       <div className="w-12 h-12 flex items-center justify-center overflow-hidden rounded-full mr-3 border-2">
-                        <img 
-                          src={getCategoryImage(categoryIndex)} 
+                        <img
+                          src={getCategoryImage(categoryIndex)}
                           alt={category.title}
                           className="w-full h-full object-cover"
                         />
@@ -1667,7 +1674,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400 italic">
                     No technologies specified
-                    </p>
+                  </p>
                 )}
               </div>
             )}

@@ -849,7 +849,6 @@ export function Clients({
   const [isSaving, setIsSaving] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const clientsRef = useRef<HTMLDivElement>(null);
 
   // Auto-save states
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -857,6 +856,8 @@ export function Clients({
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedDataRef = useRef<ClientsData | null>(null);
+
+  const clientsRef = useRef<HTMLDivElement>(null);
 
   // Use ref for onStateChange to prevent infinite loops
   const onStateChangeRef = useRef(onStateChange);
@@ -866,6 +867,57 @@ export function Clients({
 
   const [data, setData] = useState<ClientsData>(defaultData);
   const [tempData, setTempData] = useState<ClientsData>(defaultData);
+
+  // Auto-save functionality
+  const performAutoSave = useCallback(async (dataToSave: ClientsData) => {
+    try {
+      setIsAutoSaving(true);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      if (onStateChangeRef.current) {
+        onStateChangeRef.current(dataToSave);
+      }
+
+      lastSavedDataRef.current = dataToSave;
+      setLastSaved(new Date());
+      setHasUnsavedChanges(false);
+
+      console.log("Auto-save completed:", dataToSave);
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+      toast.error("Failed to auto-save changes");
+    } finally {
+      setIsAutoSaving(false);
+    }
+  }, []);
+
+  const scheduleAutoSave = useCallback(
+    (updatedData: ClientsData) => {
+      setHasUnsavedChanges(true);
+
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Schedule new auto-save
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        performAutoSave(updatedData);
+      }, 2000); // 2 second delay
+    },
+    [performAutoSave]
+  );
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Initialize data from props when component mounts or props change
   useEffect(() => {
@@ -952,57 +1004,6 @@ export function Clients({
     loadDataIfNeeded();
   }, [isVisible, dataLoaded, clientsData, isLoading]);
 
-  // Auto-save functionality
-  const performAutoSave = useCallback(async (dataToSave: ClientsData) => {
-    try {
-      setIsAutoSaving(true);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      if (onStateChangeRef.current) {
-        onStateChangeRef.current(dataToSave);
-      }
-
-      lastSavedDataRef.current = dataToSave;
-      setLastSaved(new Date());
-      setHasUnsavedChanges(false);
-
-      console.log("Auto-save completed:", dataToSave);
-    } catch (error) {
-      console.error("Auto-save failed:", error);
-      toast.error("Failed to auto-save changes");
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, []);
-
-  const scheduleAutoSave = useCallback(
-    (updatedData: ClientsData) => {
-      setHasUnsavedChanges(true);
-
-      // Clear existing timeout
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-
-      // Schedule new auto-save (2 second delay like Hero)
-      autoSaveTimeoutRef.current = setTimeout(() => {
-        performAutoSave(updatedData);
-      }, 2000);
-    },
-    [performAutoSave]
-  );
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, []);
-
   const handleEdit = () => {
     setIsEditing(true);
     setTempData({ ...data });
@@ -1045,11 +1046,10 @@ export function Clients({
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
-
     setTempData(lastSavedDataRef.current || data);
     setHasUnsavedChanges(false);
     setIsEditing(false);
-    toast.info("Changes discarded");
+    toast.info("Changes cancelled");
   };
 
   // Stable update functions with useCallback - UPDATED TO TRIGGER AUTO-SAVE
@@ -1219,23 +1219,21 @@ export function Clients({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Auto-save indicator */}
         {isEditing && (
-          <div className="mb-4">
-            <div className="flex items-center gap-2 text-sm">
-              {isAutoSaving && (
-                <div className="flex items-center gap-1 text-blue-500">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Auto-saving...</span>
-                </div>
-              )}
-              {hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-yellow-500">● Unsaved changes</div>
-              )}
-              {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-green-500">
-                  ✓ Auto-saved {lastSaved.toLocaleTimeString()}
-                </div>
-              )}
-            </div>
+          <div className="mb-4 flex items-center gap-2 text-sm">
+            {isAutoSaving && (
+              <div className="flex items-center gap-1 text-blue-500">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Auto-saving...</span>
+              </div>
+            )}
+            {hasUnsavedChanges && !isAutoSaving && (
+              <div className="text-yellow-500">● Unsaved changes</div>
+            )}
+            {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
+              <div className="text-green-500">
+                ✓ Auto-saved {lastSaved.toLocaleTimeString()}
+              </div>
+            )}
           </div>
         )}
 
@@ -1341,12 +1339,12 @@ export function Clients({
                 </p>
               )}
               {displayData.heading && (
-                <h2 className="text-3xl sm:text-4xl text-foreground mb-4 text-justify max-w-2xl mx-auto">
+                <h2 className="text-3xl sm:text-4xl max-w-2xl mx-auto text-foreground mb-4 text-center">
                   {displayData.heading}
                 </h2>
               )}
               {displayData.description && (
-                <p className="text-lg text-muted-foreground text-justify max-w-2xl mx-auto">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-center">
                   {displayData.description}
                 </p>
               )}
@@ -1429,7 +1427,7 @@ export function Clients({
 
         {/* Client Grid - Show if editing OR if there are clients */}
         {isEditing || displayData.clients.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
+          <div className="flex items-center justify-center gap-4 lg:gap-8 mb-12">
             {displayData.clients.map((client, index) => (
               <div
                 key={client.id}

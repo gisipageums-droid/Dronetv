@@ -164,7 +164,7 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
               </span>
             </h2>
 
-            <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto text-justify">
+            <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto text-center">
               {skillContent.subtitle}
             </p>
           </div>
