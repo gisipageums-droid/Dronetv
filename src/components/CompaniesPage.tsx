@@ -124,13 +124,23 @@ const CompaniesPage: React.FC = () => {
     }
   };
 
-  // 7. Company Card Component (reusable)
+  // 7. Handle card click
+  const handleCardClick = (company: Company) => {
+    if (company.templateSelection === 'template-1') {
+      navigate(`/company/${company.companyName}`);
+    } else if (company.templateSelection === 'template-2') {
+      navigate(`/companies/${company.companyName}`);
+    }
+  };
+
+  // 8. Company Card Component (reusable)
   const CompanyCard: React.FC<{ company: Company; index: number }> = ({ company, index }) => {
     const totalServices = company.servicesCount || 0;
     const totalProducts = company.productsCount || 0;
 
     return (
       <div
+        onClick={() => handleCardClick(company)}
         className="group bg-[#f1ee8e] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] flex flex-col justify-between"
       >
         {/* Top Section */}
@@ -180,19 +190,10 @@ const CompaniesPage: React.FC = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              if (company.templateSelection === 'template-1') {
-                navigate(`/company/${company.companyName}`);
-              } else if (company.templateSelection === 'template-2') {
-                navigate(`/companies/${company.companyName}`);
-              }
-            }}
-            className="flex gap-1 justify-center items-center px-3 py-2 w-full text-xs font-medium text-black bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-md border border-orange-200 shadow-sm transition-all duration-300 hover:from-yellow-500 hover:to-yellow-700"
-          >
+          {/* <div className="flex gap-1 justify-center items-center px-3 py-2 w-full text-xs font-medium text-black bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-md border border-orange-200 shadow-sm transition-all duration-300 group-hover:from-yellow-500 group-hover:to-yellow-700">
             <span>View Profile</span>
             <ExternalLink className="w-3 h-3 transition-transform group-hover:translate-x-1" />
-          </button>
+          </div> */}
         </div>
       </div>
     );

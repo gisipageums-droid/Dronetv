@@ -612,10 +612,10 @@ export default function Hero({
               animate="visible"
             >
               <div className="space-y-4">
-                {/* Badge */}
-                {heroState.badgeText && (
+                {/* Badge - FIXED: Show badge container when editing OR when there's badge text */}
+                {(isEditing || heroState.badgeText) && (
                   <motion.div
-                    className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
+                    className="inline-flex items-center px-4 py-2 bg-yellow-400 rounded-full text-primary border border-primary/20 mb-4 min-h-[44px]"
                     variants={itemVariants}
                   >
                     {isEditing ? (
@@ -626,7 +626,8 @@ export default function Hero({
                             updateField("badgeText", e.target.value)
                           }
                           maxLength={75}
-                          className={`bg-transparent border-b border-primary text-sm outline-none text-black dark:text-white ${heroState.badgeText.length >= 75
+                          placeholder="Enter company name/badge..."
+                          className={`bg-transparent border-b border-primary text-lg outline-none text-black font-bold uppercase placeholder:text-gray-600 ${heroState.badgeText.length >= 75
                             ? "border-red-500"
                             : ""
                             }`}
@@ -636,8 +637,7 @@ export default function Hero({
                         </div>
                       </div>
                     ) : (
-                        <span className="font-bold text-sm text-black dark:text-white">
-
+                      <span className="font-bold text-lg text-black uppercase">
                         {heroState.badgeText}
                       </span>
                     )}
@@ -748,7 +748,7 @@ export default function Hero({
                     {heroState.primaryBtn && (
                       <Button
                         size="lg"
-                        className="bg-primary text-primary-foreground shadow-xl"
+                        className="bg-yellow-100 text-primary-foreground shadow-xl hover:bg-yellow-200"
                       >
                         <a href="#contact">{heroState.primaryBtn}</a>
                         <ArrowRight className="ml-2 h-5 w-5" />
@@ -758,8 +758,8 @@ export default function Hero({
                 )}
               </motion.div>
 
-              {/* Trust text */}
-              {heroState.trustText && (
+              {/* Trust text - FIXED: Show trust text container when editing OR when there's trust text */}
+              {(isEditing || heroState.trustText) && (
                 <motion.div
                   className="flex items-center space-x-6 pt-4"
                   variants={itemVariants}
@@ -778,7 +778,8 @@ export default function Hero({
                             updateField("trustText", e.target.value)
                           }
                           maxLength={60}
-                          className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
+                          placeholder="Enter trust text (e.g., 'Trusted by 1000+ companies')"
+                          className={`bg-transparent border-b border-muted-foreground text-sm outline-none placeholder:text-gray-500 ${heroState.trustText.length >= 60
                             ? "border-red-500"
                             : ""
                             }`}

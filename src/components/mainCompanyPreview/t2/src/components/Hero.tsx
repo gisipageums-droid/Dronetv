@@ -83,10 +83,10 @@ export default function Hero({ heroData }) {
               {/* Badge - Using heroData.badgeText */}
               {heroState.badgeText && (
                 <motion.div
-                  className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
+                  className="inline-flex  items-center px-4 py-2 bg-yellow-400 rounded-full text-primary border border-primary/20 mb-4"
                   variants={itemVariants}
                 >
-                  <span className="font-bold text-sm text-black dark:text-white">
+                  <span className="font-bold text-lg text-black uppercase">
                     {heroState.badgeText}
                   </span>
                 </motion.div>
@@ -115,7 +115,7 @@ export default function Hero({ heroData }) {
               >
                 <button
                   size="lg"
-                  className="bg-primary text-primary-foreground shadow-xl px-6 py-3 rounded-lg flex items-center"
+                  className="bg-yellow-100 text-primary-foreground shadow-xl px-6 py-3 rounded-lg flex items-center"
                 >
                   <a href="#contact">{heroState.primaryBtn}</a>
                 </button>
