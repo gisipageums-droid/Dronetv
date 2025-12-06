@@ -184,6 +184,14 @@ const EventsPage = () => {
     navigate('/event/select');
   };
 
+  const handleCardClick = (event) => {
+    if (event.templateSelection === '1') {
+      navigate(`/event/${event.name}`);
+    } else {
+      navigate(`/events/${event.name}`);
+    }
+  };
+
   const eventTypes = ['All', 'Expo', 'Webinar', 'Conference', 'Workshop', 'Summit', 'Trade Show', 'General'];
   const sortOptions = [
     { value: 'upcoming', label: 'Sort by Upcoming' },
@@ -266,15 +274,6 @@ const EventsPage = () => {
 
   const getStatusColor = (status) => {
     return status === 'upcoming' ? 'bg-green-500' : 'bg-gray-500';
-  };
-
-  const handleViewDetailsClick = (event) => {
-    console.log(event);
-    if (event.templateSelection === '1') {
-      navigate(`/event/${event.name}`);
-    } else {
-      navigate(`/events/${event.name}`);
-    }
   };
 
   if (loading) {
@@ -419,6 +418,7 @@ const EventsPage = () => {
               {featuredEvents.map((event, index) => (
                 <div
                   key={event.id}
+                  onClick={() => handleCardClick(event)}
                   className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 border-2 border-black/20 hover:border-black/40"
                   style={{
                     animationDelay: `${index * 200}ms`,
@@ -432,18 +432,6 @@ const EventsPage = () => {
                       className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110 border-b-2 border-black/10"
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <div
-                        onClick={() => handleViewDetailsClick(event)}
-                        className="bg-yellow-400 text-black px-6 py-3 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300 flex items-center gap-2"
-                      >
-                        <span>View Event Details</span>
-                        <ArrowRight className="h-4 w-4" />
-                      </div>
-                    </div>
-
                     <div className={`absolute top-4 right-4 ${getTypeColor(event.type)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg`}>
                       {event.type}
                     </div>
@@ -453,10 +441,12 @@ const EventsPage = () => {
                       <EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} />
                     </div>
 
-                    <div className="absolute top-4 left-4 bg-yellow-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
-                      <Star className="h-3 w-3 fill-current" />
-                      Featured
-                    </div>
+                    {event.featured && (
+                      <div className="absolute top-4 left-4 bg-yellow-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
+                        <Star className="h-3 w-3 fill-current" />
+                        Featured
+                      </div>
+                    )}
 
                     <div className={`absolute bottom-4 left-4 ${getPriceColor(event.price)} text-white px-2 py-1 rounded-lg text-xs font-medium`}>
                       {event.price}
@@ -516,6 +506,7 @@ const EventsPage = () => {
               {currentEvents.map((event, index) => (
                 <div
                   key={event.id}
+                  onClick={() => handleCardClick(event)}
                   className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 border-2 border-black/20 hover:border-black/40"
                   style={{
                     animationDelay: `${index * 100}ms`,
@@ -530,22 +521,9 @@ const EventsPage = () => {
                         className="w-full h-40 object-cover transition-all duration-700 group-hover:scale-110"
                       />
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                        <div
-                          onClick={() => handleViewDetailsClick(event)}
-                          className="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300 flex items-center gap-2"
-                        >
-                          <span>View Details</span>
-                          <ArrowRight className="h-3 w-3" />
-                        </div>
-                      </div>
-
                       <div className={`absolute top-3 right-3 ${getTypeColor(event.type)} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg`}>
                         {event.type}
                       </div>
-
 
                       <div className={`absolute bottom-3 left-3 ${getPriceColor(event.price)} text-white px-2 py-1 rounded-lg text-xs font-medium`}>
                         {event.price}

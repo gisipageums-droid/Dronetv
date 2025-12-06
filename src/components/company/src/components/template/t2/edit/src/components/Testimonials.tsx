@@ -45,7 +45,7 @@ export default function Testimonials({
     headlineDescription: 120,
     testimonialQuote: 300,
     testimonialName: 40,
-    testimonialRole: 30,
+    testimonialRole: 60,
   };
 
   // Pending images for upload

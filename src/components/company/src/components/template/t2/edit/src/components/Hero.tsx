@@ -617,34 +617,37 @@ export default function Hero({
                             animate="visible"
                         >
                             <div className="space-y-4">
-                                {/* Badge */}
-                                <motion.div
-                                    className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary border border-primary/20 mb-4"
-                                    variants={itemVariants}
-                                >
-                                    {isEditing ? (
-                                        <div className="relative">
-                                            <input
-                                                value={heroState.badgeText}
-                                                onChange={(e) =>
-                                                    updateField("badgeText", e.target.value)
-                                                }
-                                                maxLength={75}
-                                                className={`bg-transparent text-black dark:text-white border-b border-primary text-sm outline-none ${heroState.badgeText.length >= 75
-                                                    ? "border-red-500"
-                                                    : ""
-                                                    }`}
-                                            />
-                                            <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
-                                                {heroState.badgeText.length >= 75 && "Limit reached!"}
+                                {/* Badge - FIXED: Show badge container when editing OR when there's badge text */}
+                                {(isEditing || heroState.badgeText) && (
+                                    <motion.div
+                                        className="inline-flex items-center px-4 py-2 bg-yellow-400 rounded-full text-primary border border-primary/20 mb-4 min-h-[44px]"
+                                        variants={itemVariants}
+                                    >
+                                        {isEditing ? (
+                                            <div className="relative">
+                                                <input
+                                                    value={heroState.badgeText}
+                                                    onChange={(e) =>
+                                                        updateField("badgeText", e.target.value)
+                                                    }
+                                                    maxLength={75}
+                                                    placeholder="Enter company name/badge..."
+                                                    className={`bg-transparent text-black border-b border-primary text-lg uppercase font-bold outline-none placeholder:text-gray-600 ${heroState.badgeText.length >= 75
+                                                        ? "border-red-500"
+                                                        : ""
+                                                        }`}
+                                                />
+                                                <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
+                                                    {heroState.badgeText.length >= 75 && "Limit reached!"}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <span className="font-bold text-sm text-black dark:text-white">
-                                            {heroState.badgeText}
-                                        </span>
-                                    )}
-                                </motion.div>
+                                        ) : (
+                                            <span className="font-bold text-lg text-black uppercase">
+                                                {heroState.badgeText}
+                                            </span>
+                                        )}
+                                    </motion.div>
+                                )}
 
                                 {/* Heading */}
                                 <motion.div variants={itemVariants}>
@@ -723,7 +726,8 @@ export default function Hero({
                                                 updateField("primaryBtn", e.target.value)
                                             }
                                             maxLength={30}
-                                            className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
+                                            placeholder="Enter button text..."
+                                            className={`bg-transparent border-b border-primary outline-none max-w-[200px] placeholder:text-gray-500 ${heroState.primaryBtn.length >= 30
                                                 ? "border-red-500"
                                                 : ""
                                                 }`}
@@ -738,141 +742,148 @@ export default function Hero({
                                         </div>
                                     </div>
                                 ) : (
-                                    <Button
-                                        size="lg"
-                                        className="bg-primary text-primary-foreground shadow-xl"
-                                    >
-                                        <a href="#contact">{heroState.primaryBtn}</a>
-                                        <ArrowRight className="ml-2 h-5 w-5" />
-                                    </Button>
+                                    heroState.primaryBtn && (
+                                        <Button
+                                            size="lg"
+                                            className="bg-yellow-100 hover:bg-yellow-200 text-primary-foreground shadow-xl"
+                                        >
+                                            <a href="#contact">{heroState.primaryBtn}</a>
+                                            <ArrowRight className="ml-2 h-5 w-5" />
+                                        </Button>
+                                    )
                                 )}
                             </motion.div>
 
-                            {/* Trust text */}
-                            <motion.div
-                                className="flex items-center space-x-6 pt-4"
-                                variants={itemVariants}
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <div className="flex -space-x-2">
-                                        <div className="w-8 h-8 bg-primary rounded-full border-2 border-background" />
-                                        <div className="w-8 h-8 bg-primary/80 rounded-full border-2 border-background" />
-                                        <div className="w-8 h-8 bg-red-accent rounded-full border-2 border-background" />
-                                    </div>
-                                    {isEditing ? (
-                                        <div className="relative">
-                                            <input
-                                                value={heroState.trustText}
-                                                onChange={(e) =>
-                                                    updateField("trustText", e.target.value)
-                                                }
-                                                maxLength={60}
-                                                className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${heroState.trustText.length >= 60
-                                                    ? "border-red-500"
-                                                    : ""
-                                                    }`}
-                                            />
-                                            <div className="text-right text-xs text-gray-500 mt-1">
-                                                {heroState.trustText.length}/60
-                                                {heroState.trustText.length >= 60 && (
-                                                    <span className="ml-2 text-red-500 font-bold">
-                                                        Character limit reached!
-                                                    </span>
-                                                )}
-                                            </div>
+                            {/* Trust text - FIXED: Show trust text container when editing OR when there's trust text */}
+                            {(isEditing || heroState.trustText) && (
+                                <motion.div
+                                    className="flex items-center space-x-6 pt-4"
+                                    variants={itemVariants}
+                                >
+                                    <div className="flex items-center space-x-2">
+                                        <div className="flex -space-x-2">
+                                            <div className="w-8 h-8 bg-primary rounded-full border-2 border-background" />
+                                            <div className="w-8 h-8 bg-primary/80 rounded-full border-2 border-background" />
+                                            <div className="w-8 h-8 bg-red-accent rounded-full border-2 border-background" />
                                         </div>
-                                    ) : (
-                                        <span className="text-sm text-muted-foreground">
-                                            {heroState.trustText}
-                                        </span>
-                                    )}
-                                </div>
-                            </motion.div>
-
-                            {/* Stats */}
-                            <motion.div
-                                className="grid grid-cols-3 gap-8 pt-8"
-                                variants={itemVariants}
-                            >
-                                {heroState.stats.map((s) => (
-                                    <div key={s.id} className="group">
                                         {isEditing ? (
-                                            <div className="flex flex-col gap-1">
-                                                <div className="relative">
-                                                    <input
-                                                        value={s.value}
-                                                        onChange={(e) =>
-                                                            updateStat(s.id, "value", e.target.value)
-                                                        }
-                                                        maxLength={15}
-                                                        className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
-                                                            }`}
-                                                    />
-                                                    <div className="text-right text-xs text-gray-500 mt-1">
-                                                        {s.value.length}/15
-                                                        {s.value.length >= 15 && (
-                                                            <span className="ml-2 text-red-500 font-bold">
-                                                                Limit reached!
-                                                            </span>
-                                                        )}
-                                                    </div>
+                                            <div className="relative">
+                                                <input
+                                                    value={heroState.trustText}
+                                                    onChange={(e) =>
+                                                        updateField("trustText", e.target.value)
+                                                    }
+                                                    maxLength={60}
+                                                    placeholder="Enter trust text (e.g., 'Trusted by 1000+ companies')"
+                                                    className={`bg-transparent border-b border-muted-foreground text-sm outline-none placeholder:text-gray-500 ${heroState.trustText.length >= 60
+                                                        ? "border-red-500"
+                                                        : ""
+                                                        }`}
+                                                />
+                                                <div className="text-right text-xs text-gray-500 mt-1">
+                                                    {heroState.trustText.length}/60
+                                                    {heroState.trustText.length >= 60 && (
+                                                        <span className="ml-2 text-red-500 font-bold">
+                                                            Character limit reached!
+                                                        </span>
+                                                    )}
                                                 </div>
-
-                                                <div className="relative">
-                                                    <input
-                                                        value={s.label}
-                                                        onChange={(e) =>
-                                                            updateStat(s.id, "label", e.target.value)
-                                                        }
-                                                        maxLength={25}
-                                                        className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
-                                                            }`}
-                                                    />
-                                                    <div className="text-right text-xs text-gray-500 mt-1">
-                                                        {s.label.length}/25
-                                                        {s.label.length >= 25 && (
-                                                            <span className="ml-2 text-red-500 font-bold">
-                                                                Limit reached!
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <motion.button
-                                                    whileTap={{ scale: 0.9 }}
-                                                    whileHover={{ scale: 1.2 }}
-                                                    onClick={() => removeStat(s.id)}
-                                                    className="text-red-500 cursor-pointer text-xs"
-                                                >
-                                                    ✕ Remove
-                                                </motion.button>
                                             </div>
                                         ) : (
-                                            <>
-                                                <div
-                                                    className={`text-2xl font-bold group-hover:text-${s.color}`}
-                                                >
-                                                    {s.value}
-                                                </div>
-                                                <div className="text-muted-foreground">{s.label}</div>
-                                                <div
-                                                    className={`w-8 h-1 bg-${s.color}/30 group-hover:bg-${s.color} mt-1`}
-                                                />
-                                            </>
+                                            <span className="text-sm text-muted-foreground">
+                                                {heroState.trustText}
+                                            </span>
                                         )}
                                     </div>
-                                ))}
-                                {isEditing && (
-                                    <motion.button
-                                        whileTap={{ scale: 0.9 }}
-                                        whileHover={{ scale: 1.2 }}
-                                        onClick={addStat}
-                                        className="text-green-600 cursor-pointer shadow-sm  text-sm font-medium"
-                                    >
-                                        + Add Stat
-                                    </motion.button>
-                                )}
-                            </motion.div>
+                                </motion.div>
+                            )}
+
+                            {/* Stats */}
+                            {heroState.stats && heroState.stats.length > 0 && (
+                                <motion.div
+                                    className="grid grid-cols-3 gap-8 pt-8"
+                                    variants={itemVariants}
+                                >
+                                    {heroState.stats.map((s) => (
+                                        <div key={s.id} className="group">
+                                            {isEditing ? (
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="relative">
+                                                        <input
+                                                            value={s.value}
+                                                            onChange={(e) =>
+                                                                updateStat(s.id, "value", e.target.value)
+                                                            }
+                                                            maxLength={15}
+                                                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
+                                                                }`}
+                                                        />
+                                                        <div className="text-right text-xs text-gray-500 mt-1">
+                                                            {s.value.length}/15
+                                                            {s.value.length >= 15 && (
+                                                                <span className="ml-2 text-red-500 font-bold">
+                                                                    Limit reached!
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="relative">
+                                                        <input
+                                                            value={s.label}
+                                                            onChange={(e) =>
+                                                                updateStat(s.id, "label", e.target.value)
+                                                            }
+                                                            maxLength={25}
+                                                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
+                                                                }`}
+                                                        />
+                                                        <div className="text-right text-xs text-gray-500 mt-1">
+                                                            {s.label.length}/25
+                                                            {s.label.length >= 25 && (
+                                                                <span className="ml-2 text-red-500 font-bold">
+                                                                    Limit reached!
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <motion.button
+                                                        whileTap={{ scale: 0.9 }}
+                                                        whileHover={{ scale: 1.2 }}
+                                                        onClick={() => removeStat(s.id)}
+                                                        className="text-red-500 cursor-pointer text-xs"
+                                                    >
+                                                        ✕ Remove
+                                                    </motion.button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div
+                                                        className={`text-2xl font-bold group-hover:text-${s.color}`}
+                                                    >
+                                                        {s.value}
+                                                    </div>
+                                                    <div className="text-muted-foreground">{s.label}</div>
+                                                    <div
+                                                        className={`w-8 h-1 bg-${s.color}/30 group-hover:bg-${s.color} mt-1`}
+                                                    />
+                                                </>
+                                            )}
+                                        </div>
+                                    ))}
+                                    {isEditing && (
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
+                                            whileHover={{ scale: 1.2 }}
+                                            onClick={addStat}
+                                            className="text-green-600 cursor-pointer shadow-sm  text-sm font-medium"
+                                        >
+                                            + Add Stat
+                                        </motion.button>
+                                    )}
+                                </motion.div>
+                            )}
                         </motion.div>
 
                         {/* Hero Image */}

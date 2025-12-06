@@ -132,13 +132,23 @@ const ProfessionalsPage: React.FC = () => {
 
     return (
       <div
+        onClick={() => {
+              if (professional.templateSelection === 'template-1') {
+                navigate(`/professional/${professional.userName}`);
+              } else if (professional.templateSelection === 'template-2') {
+                navigate(`/professionals/${professional.userName}`);
+              } else {
+                // Default fallback
+                navigate(`/professional/${professional.userName}`);
+              }
+            }}
         className="group bg-[#f1ee8e] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] flex flex-col justify-between"
       >
         {/* Top Section */}
         <div className="flex flex-col items-center p-4 text-center">
           <div className="relative mb-3">
             <div className="absolute inset-0 rounded-xl blur-lg transition-transform duration-500 scale-110 bg-yellow-300/30 group-hover:scale-125"></div>
-            <div className="flex relative justify-center items-center w-14 h-14 bg-yellow-100 rounded-xl border shadow-inner border-yellow-400/30">
+            <div className="flex relative justify-center items-center w-14 h-14 bg-yellow-100 rounded-xl border shadow-inner border-yellow-400/30" >
               {professional.previewImage ? (
                 <img
                   src={professional.previewImage}
@@ -181,7 +191,7 @@ const ProfessionalsPage: React.FC = () => {
             </div>
           </div>
 
-          <button
+          {/* <button
             onClick={() => {
               if (professional.templateSelection === 'template-1') {
                 navigate(`/professional/${professional.userName}`);
@@ -196,7 +206,7 @@ const ProfessionalsPage: React.FC = () => {
           >
             <span>View Profile</span>
             <ExternalLink className="w-3 h-3 transition-transform group-hover:translate-x-1" />
-          </button>
+          </button> */}
         </div>
       </div>
     );
