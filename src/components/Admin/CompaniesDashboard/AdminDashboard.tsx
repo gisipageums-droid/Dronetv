@@ -188,11 +188,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                value === option
-                  ? "bg-gray-50 text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
+                ? "bg-gray-50 text-gray-900 font-medium"
+                : "text-gray-700 hover:bg-gray-50"
+                }`}
               role="option"
               aria-selected={value === option}
             >
@@ -222,11 +221,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
-      ${
-        isMobileSidebarOpen
+      ${isMobileSidebarOpen
           ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
-      }`}
+        }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
@@ -451,12 +449,12 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
   const displayDateLabel = company.publishedDate
     ? "Published"
     : company.lastModified
-    ? "Last Modified"
-    : company.lastActivity
-    ? "Last Activity"
-    : company.createdAt
-    ? "Created"
-    : "Date";
+      ? "Last Modified"
+      : company.lastActivity
+        ? "Last Activity"
+        : company.createdAt
+          ? "Created"
+          : "Date";
 
   const getStatusBadge = (reviewStatus?: string) => {
     if (reviewStatus === "active")
@@ -821,43 +819,43 @@ const RecentCompaniesSection: React.FC<{
   onEdit,
   disabled,
 }) => {
-  if (recentCompanies.length === 0) return null;
+    if (recentCompanies.length === 0) return null;
 
-  return (
-    <div className="mb-8">
-      <div className="flex gap-3 items-center mb-6">
-        <div className="flex gap-2 items-center">
-          <Clock className="w-6 h-6 text-yellow-600" />
-          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
-            Recent Companies
-          </h2>
-        </div>
-        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
-          Last 7 days
-        </span>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 md:gap-6">
-        {recentCompanies.map((company) => (
-          <div key={company.publishedId} className="animate-fadeIn">
-            <CompanyCard
-              company={company}
-              onCredentials={onCredentials}
-              onPreview={onPreview}
-              onApprove={onApprove}
-              onReject={onReject}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              disabled={disabled}
-            />
+    return (
+      <div className="mb-8">
+        <div className="flex gap-3 items-center mb-6">
+          <div className="flex gap-2 items-center">
+            <Clock className="w-6 h-6 text-yellow-600" />
+            <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
+              Recent Companies
+            </h2>
           </div>
-        ))}
-      </div>
+          <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
+            Last 7 days
+          </span>
+        </div>
 
-      <div className="mt-6 border-t border-yellow-200/50"></div>
-    </div>
-  );
-};
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 md:gap-6">
+          {recentCompanies.map((company) => (
+            <div key={company.publishedId} className="animate-fadeIn">
+              <CompanyCard
+                company={company}
+                onCredentials={onCredentials}
+                onPreview={onPreview}
+                onApprove={onApprove}
+                onReject={onReject}
+                onDelete={onDelete}
+                onEdit={onEdit}
+                disabled={disabled}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 border-t border-yellow-200/50"></div>
+      </div>
+    );
+  };
 
 // -------------------- Main Component --------------------
 const AdminDashboard: React.FC = () => {
@@ -1319,16 +1317,19 @@ const AdminDashboard: React.FC = () => {
 
         <div className="flex-1 p-4 md:p-8">
           {/* Recent Companies Section */}
-          <RecentCompaniesSection
-            recentCompanies={recentCompanies}
-            onCredentials={handleCredentials}
-            onPreview={handlePreview}
-            onApprove={handleApprove}
-            onReject={handleReject}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            disabled={isMutating}
-          />
+          {/* Recent Companies Section */}
+          {!debouncedSearchTerm && (
+            <RecentCompaniesSection
+              recentCompanies={recentCompanies}
+              onCredentials={handleCredentials}
+              onPreview={handlePreview}
+              onApprove={handleApprove}
+              onReject={handleReject}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              disabled={isMutating}
+            />
+          )}
 
           {/* All Companies Section */}
           <div className="flex gap-3 items-center mb-6">
