@@ -280,11 +280,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                value === option
-                  ? "bg-gray-50 text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
+                ? "bg-gray-50 text-gray-900 font-medium"
+                : "text-gray-700 hover:bg-gray-50"
+                }`}
             >
               {option}
             </button>
@@ -317,11 +316,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
-      ${
-        isMobileSidebarOpen
+      ${isMobileSidebarOpen
           ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
-      }`}
+        }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
@@ -426,9 +424,8 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   disabled = false,
 }) => {
   // Create a placeholder image using professional name
-  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
-    professional.professionalName?.charAt(0) || "P"
-  }%3C/text%3E%3C/svg%3E`;
+  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${professional.professionalName?.charAt(0) || "P"
+    }%3C/text%3E%3C/svg%3E`;
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -660,43 +657,43 @@ const RecentProfessionalsSection: React.FC<{
   onEdit,
   disabled,
 }) => {
-  if (recentProfessionals.length === 0) return null;
+    if (recentProfessionals.length === 0) return null;
 
-  return (
-    <div className="mb-8">
-      <div className="flex gap-3 items-center mb-6">
-        <div className="flex gap-2 items-center">
-          <Clock className="w-6 h-6 text-yellow-600" />
-          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
-            Recent Professionals
-          </h2>
-        </div>
-        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
-          Last 7 days
-        </span>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {recentProfessionals.map((professional) => (
-          <div key={professional.professionalId} className="animate-fadeIn">
-            <ProfessionalCard
-              professional={professional}
-              onCredentials={onCredentials}
-              onPreview={onPreview}
-              onApprove={onApprove}
-              onReject={onReject}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              disabled={disabled}
-            />
+    return (
+      <div className="mb-8">
+        <div className="flex gap-3 items-center mb-6">
+          <div className="flex gap-2 items-center">
+            <Clock className="w-6 h-6 text-yellow-600" />
+            <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
+              Recent Professionals
+            </h2>
           </div>
-        ))}
-      </div>
+          <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
+            Last 7 days
+          </span>
+        </div>
 
-      <div className="mt-6 border-t border-yellow-200/50"></div>
-    </div>
-  );
-};
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {recentProfessionals.map((professional) => (
+            <div key={professional.professionalId} className="animate-fadeIn">
+              <ProfessionalCard
+                professional={professional}
+                onCredentials={onCredentials}
+                onPreview={onPreview}
+                onApprove={onApprove}
+                onReject={onReject}
+                onDelete={onDelete}
+                onEdit={onEdit}
+                disabled={disabled}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 border-t border-yellow-200/50"></div>
+      </div>
+    );
+  };
 
 // Main Content Area Component
 const MainContent: React.FC<MainContentProps> = ({
@@ -749,16 +746,19 @@ const MainContent: React.FC<MainContentProps> = ({
       </button>
 
       {/* Recent Professionals Section */}
-      <RecentProfessionalsSection
-        recentProfessionals={recentProfessionals}
-        onCredentials={onCredentials}
-        onPreview={onPreview}
-        onApprove={onApprove}
-        onReject={onReject}
-        onDelete={onDelete}
-        onEdit={onEdit}
-        disabled={isMutating}
-      />
+      {/* Recent Professionals Section */}
+      {!searchTerm && (
+        <RecentProfessionalsSection
+          recentProfessionals={recentProfessionals}
+          onCredentials={onCredentials}
+          onPreview={onPreview}
+          onApprove={onApprove}
+          onReject={onReject}
+          onDelete={onDelete}
+          onEdit={onEdit}
+          disabled={isMutating}
+        />
+      )}
 
       {/* Results Header */}
       <div className="flex items-center justify-between mb-6 md:mb-8 flex-wrap gap-3 md:gap-4">
@@ -805,8 +805,8 @@ const MainContent: React.FC<MainContentProps> = ({
         <>
           {/* Check if filters are applied */}
           {searchTerm ||
-          categoryFilter !== "All Categories" ||
-          sortBy !== "Sort by Name" ? (
+            categoryFilter !== "All Categories" ||
+            sortBy !== "Sort by Name" ? (
             // Empty State with Filters Applied
             <div className="text-center py-12 md:py-16">
               <div className="text-6xl mb-4">🔍</div>
@@ -1427,7 +1427,8 @@ const AdminProfessionalDashboard: React.FC = () => {
           <Menu className="w-5 h-5" />
         </button>
         <span className="text-sm font-medium text-gray-700">
-          {totalCount} {totalCount === 1 ? "professional" : "professionals"}
+          {sortedProfessionals.length}{" "}
+          {sortedProfessionals.length === 1 ? "professional" : "professionals"}
         </span>
       </div>
 
@@ -1455,7 +1456,7 @@ const AdminProfessionalDashboard: React.FC = () => {
           loading={loading}
           error={error}
           onRetry={fetchProfessionals}
-          totalCount={totalCount}
+          totalCount={sortedProfessionals.length}
           hasMore={hasMore}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           onCredentials={handleCredentials}
