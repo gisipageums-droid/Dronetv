@@ -438,13 +438,12 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
                       Current Status
                     </label>
                     <p
-                      className={`text-sm font-medium p-2 rounded border ${
-                        publishedData.metadata.status === "approved"
-                          ? "text-green-800 bg-green-100 border-green-200"
-                          : publishedData.metadata.status === "rejected"
+                      className={`text-sm font-medium p-2 rounded border ${publishedData.metadata.status === "approved"
+                        ? "text-green-800 bg-green-100 border-green-200"
+                        : publishedData.metadata.status === "rejected"
                           ? "text-red-800 bg-red-100 border-red-200"
                           : "text-yellow-800 bg-yellow-100 border-yellow-200"
-                      }`}
+                        }`}
                     >
                       {publishedData.metadata.status?.toUpperCase() ||
                         "UNDER REVIEW"}
@@ -632,11 +631,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                value === option
-                  ? "bg-gray-50 text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
+                ? "bg-gray-50 text-gray-900 font-medium"
+                : "text-gray-700 hover:bg-gray-50"
+                }`}
               role="option"
               aria-selected={value === option}
             >
@@ -666,11 +664,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
-      ${
-        isMobileSidebarOpen
+      ${isMobileSidebarOpen
           ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
-      }`}
+        }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
@@ -821,7 +818,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
             <div className="flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
               {event.previewImage ? (
                 <img
-                  src={event.heroBannerImage} 
+                  src={event.heroBannerImage}
                   alt={`${event.eventName} logo`}
                   className="w-full h-full object-cover rounded-lg transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
                   loading="lazy"
@@ -951,42 +948,42 @@ const RecentEventsSection: React.FC<{
   onDelete,
   disabled,
 }) => {
-  if (recentEvents.length === 0) return null;
+    if (recentEvents.length === 0) return null;
 
-  return (
-    <div className="mb-8">
-      <div className="flex gap-3 items-center mb-6">
-        <div className="flex gap-2 items-center">
-          <Clock className="w-6 h-6 text-yellow-600" />
-          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
-            Recent Events
-          </h2>
-        </div>
-        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
-          Last 7 days
-        </span>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
-        {recentEvents.map((event) => (
-          <div key={event.eventId} className="animate-fadeIn">
-            <EventCard
-              event={event}
-              onCredentials={onCredentials}
-              onPreview={onPreview}
-              onApprove={onApprove}
-              onReject={onReject}
-              onDelete={onDelete}
-              disabled={disabled}
-            />
+    return (
+      <div className="mb-8">
+        <div className="flex gap-3 items-center mb-6">
+          <div className="flex gap-2 items-center">
+            <Clock className="w-6 h-6 text-yellow-600" />
+            <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
+              Recent Events
+            </h2>
           </div>
-        ))}
-      </div>
+          <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
+            Last 7 days
+          </span>
+        </div>
 
-      <div className="mt-6 border-t border-yellow-200/50"></div>
-    </div>
-  );
-};
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+          {recentEvents.map((event) => (
+            <div key={event.eventId} className="animate-fadeIn">
+              <EventCard
+                event={event}
+                onCredentials={onCredentials}
+                onPreview={onPreview}
+                onApprove={onApprove}
+                onReject={onReject}
+                onDelete={onDelete}
+                disabled={disabled}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 border-t border-yellow-200/50"></div>
+      </div>
+    );
+  };
 
 // -------------------- API Service --------------------
 const eventApiService = {
@@ -1051,7 +1048,7 @@ const EventAdminDashboard: React.FC = () => {
       type,
       eventId,
       userId: userId || null,
-      event,
+      event: event || null,
     });
   };
 
@@ -1424,15 +1421,17 @@ const EventAdminDashboard: React.FC = () => {
           ) : (
             <>
               {/* Recent Events Section */}
-              <RecentEventsSection
-                recentEvents={recentEvents}
-                onCredentials={handleCredentials}
-                onPreview={handlePreview}
-                onApprove={handleApprove}
-                onReject={handleReject}
-                onDelete={handleDelete}
-                disabled={isMutating}
-              />
+              {!searchTerm && (
+                <RecentEventsSection
+                  recentEvents={recentEvents}
+                  onCredentials={handleCredentials}
+                  onPreview={handlePreview}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  onDelete={handleDelete}
+                  disabled={isMutating}
+                />
+              )}
 
               {/* All Events Section */}
               <div className="flex gap-3 items-center mb-6">
