@@ -196,14 +196,16 @@ export default function Services({ serviceData }) {
 
                     {/* Pricing & Timeline */}
                     <div className="grid grid-cols-2 gap-4 pt-2">
+                      {serviceData.services[selectedServiceIndex].pricing && serviceData.services[selectedServiceIndex].pricing.trim().length > 0 &&(
                       <div>
                         <h3 className="font-semibold text-sm mb-1">Pricing</h3>
                         <p className="text-sm text-justify">{serviceData.services[selectedServiceIndex].pricing}</p>
-                      </div>
+                      </div>)}
+                      {serviceData.services[selectedServiceIndex].timeline && serviceData.services[selectedServiceIndex].timeline.trim().length > 0 &&(
                       <div>
                         <h3 className="font-semibold text-sm mb-1">Timeline</h3>
                         <p className="text-sm text-justify">{serviceData.services[selectedServiceIndex].timeline}</p>
-                      </div>
+                      </div>)}
                     </div>
                   </div>
                 </motion.div>
