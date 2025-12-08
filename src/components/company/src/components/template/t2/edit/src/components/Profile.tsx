@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
-import { X, Zap, Edit, Save, Plus, Trash2, ZoomIn } from "lucide-react";
+import { X, Zap, Edit, Save, Plus, Trash2, ZoomIn, CheckCircle } from "lucide-react";
 import Cropper from "react-easy-crop";
 
 const Profile = ({
@@ -23,59 +23,116 @@ const Profile = ({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
-
-  // Dynamic zoom calculation states
-  const [mediaSize, setMediaSize] = useState<{
-    width: number;
-    height: number;
-    naturalWidth: number;
-    naturalHeight: number;
-  } | null>(null);
+  const [aspectRatio, setAspectRatio] = useState(3 / 4);
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
-  const [prevZoom, setPrevZoom] = useState(1);
-
-  // Text field limits
-  const TEXT_LIMITS = {
-    heading: 60,
-    subheading: 120,
-    memberName: 40,
-    memberRole: 30,
-    memberBio: 150,
-    socialLink: 100,
-  };
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
 
   // Consolidated state
   const [contentState, setContentState] = useState(profileData);
 
-  // Add this useEffect to notify parent of state changes
+  // Auto-update parent when contentState changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(contentState);
     }
   }, [contentState, onStateChange]);
 
-  // Compute dynamic min zoom (free pan/zoom)
+  // NEW: Function to upload image to AWS
+  const uploadImageToAWS = async (file, imageField) => {
+    if (!userId || !publishedId || !templateSelection) {
+      console.error("Missing required props:", {
+        userId,
+        publishedId,
+        templateSelection,
+      });
+      toast.error("Missing user information. Please refresh and try again.");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("sectionName", "profile");
+    formData.append("imageField", `${imageField}_${Date.now()}`);
+    formData.append("templateSelection", templateSelection);
+
+    console.log(`Uploading ${imageField} to S3:`, file);
+
+    try {
+      const uploadResponse = await fetch(
+        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
+        return uploadData.imageUrl;
+      } else {
+        const errorData = await uploadResponse.json();
+        console.error(`${imageField} upload failed:`, errorData);
+        toast.error(
+          `${imageField} upload failed: ${errorData.message || "Unknown error"}`
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error uploading ${imageField}:`, error);
+      toast.error(`Error uploading image. Please try again.`);
+      return null;
+    }
+  };
+
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
-      const coverW = cropAreaSize.width / mediaSize.width;
-      const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.1);
-      setMinZoomDynamic(computedMin);
-      setZoom((z) => (z < computedMin ? computedMin : z));
+      setMinZoomDynamic(0.1);
     }
   }, [mediaSize, cropAreaSize]);
 
-  // Track previous zoom only (no auto recentre to allow free panning)
-  useEffect(() => {
-    setPrevZoom(zoom);
-  }, [zoom]);
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
 
-  // Update function for team members
+  useEffect(() => {
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
+
+  // Update function for heading - now auto-updates
+  const updateHeading = (value) => {
+    setContentState((prev) => ({
+      ...prev,
+      heading: value,
+    }));
+  };
+
+  // Update function for subheading - now auto-updates
+  const updateSubheading = (value) => {
+    setContentState((prev) => ({
+      ...prev,
+      subheading: value,
+    }));
+  };
+
+  // Update function for team members - now auto-updates
   const updateTeamMemberField = (index, field, value) => {
     setContentState((prev) => ({
       ...prev,
@@ -85,7 +142,7 @@ const Profile = ({
     }));
   };
 
-  // Add a new team member
+  // Add a new team member - now auto-updates
   const addTeamMember = () => {
     setContentState((prev) => ({
       ...prev,
@@ -106,7 +163,7 @@ const Profile = ({
     }));
   };
 
-  // Remove a team member
+  // Remove a team member - now auto-updates
   const removeTeamMember = (index) => {
     setContentState((prev) => ({
       ...prev,
@@ -114,7 +171,7 @@ const Profile = ({
     }));
   };
 
-  // Update social links
+  // Update social links - now auto-updates
   const updateSocialLink = (index, platform, value) => {
     setContentState((prev) => ({
       ...prev,
@@ -150,9 +207,10 @@ const Profile = ({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setAspectRatio(4 / 3); // Default to 4:3 for profile
+      setAspectRatio(1); // Enforce square 1:1
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      setRotation(0);
     };
     reader.readAsDataURL(file);
 
@@ -176,13 +234,17 @@ const Profile = ({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    // Fixed output size for 1:1 ratio (like Hero's fixed export behavior)
+    const outputWidth = 600;
+    const outputHeight = 600;
+
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
     ctx.drawImage(
       image,
@@ -192,8 +254,8 @@ const Profile = ({
       pixelCrop.height,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      outputWidth,
+      outputHeight
     );
 
     return new Promise((resolve) => {
@@ -221,24 +283,44 @@ const Profile = ({
     });
   };
 
-  // Apply crop and set pending file
+  // Apply crop and UPLOAD IMMEDIATELY to AWS - UPDATED
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
 
+      setIsUploading(true);
+
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
-      // Update preview immediately with blob URL (temporary)
+      // Show preview immediately with blob URL (temporary)
       updateTeamMemberField(croppingIndex, "image", previewUrl);
 
-      // Set the actual file for upload on save
-      setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
-      console.log("Profile image cropped, file ready for upload:", file);
+      // UPLOAD TO AWS IMMEDIATELY
+      const imageField = `teamMembers[${croppingIndex}].image`;
+      const awsImageUrl = await uploadImageToAWS(file, imageField);
 
-      toast.success("Image cropped successfully! Click Save to upload to S3.");
+      if (awsImageUrl) {
+        // Update with actual S3 URL
+        updateTeamMemberField(croppingIndex, "image", awsImageUrl);
+
+        // Remove from pending images since it's uploaded
+        setPendingImages((prev) => {
+          const newPending = { ...prev };
+          delete newPending[croppingIndex];
+          return newPending;
+        });
+
+        toast.success("Profile image cropped and uploaded to AWS successfully!");
+      } else {
+        // If upload fails, keep the preview URL and set as pending
+        setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
+        toast.warning("Image cropped but upload failed. It will be saved locally.");
+      }
+
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
@@ -246,6 +328,8 @@ const Profile = ({
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -257,79 +341,87 @@ const Profile = ({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
-  // Reset zoom
+  // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Save button handler - uploads images and stores S3 URLs
-  const handleSave = async () => {
+  // Separate function to handle image upload only (for failed uploads)
+  const handleImageUpload = async () => {
     try {
       setIsUploading(true);
+      const uploadPromises = [];
 
-      // Upload all pending images
+      // Create upload promises for all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
 
-        if (!userId || !publishedId || !templateSelection) {
-          console.error("Missing required props:", {
-            userId,
-            publishedId,
-            templateSelection,
-          });
-          toast.error(
-            "Missing user information. Please refresh and try again."
-          );
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("sectionName", "profile");
-        formData.append(
-          "imageField",
-          `teamMembers[${index}].image` + Date.now()
-        );
-        formData.append("templateSelection", templateSelection);
-
-        console.log("Uploading profile image to S3:", file);
-
-        const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
+        const imageField = `teamMembers[${index}].image`;
+        const uploadPromise = uploadImageToAWS(file, imageField).then((awsImageUrl) => {
+          if (awsImageUrl) {
+            updateTeamMemberField(index, "image", awsImageUrl);
+            return { success: true, index };
+          } else {
+            throw new Error("Upload failed");
           }
-        );
+        });
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL
-          updateTeamMemberField(index, "image", uploadData.imageUrl);
-          console.log("Image uploaded to S3:", uploadData.imageUrl);
-        } else {
-          const errorData = await uploadResponse.json();
-          console.error("Image upload failed:", errorData);
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
-          return;
-        }
+        uploadPromises.push(uploadPromise);
       }
 
-      // Clear pending images
-      setPendingImages({});
+      // Wait for all uploads to complete
+      const results = await Promise.allSettled(uploadPromises);
+
+      const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
+      const failedUploads = results.filter(result => result.status === 'rejected').length;
+
+      if (successfulUploads > 0) {
+        toast.success(`${successfulUploads} image(s) uploaded successfully!`);
+      }
+      if (failedUploads > 0) {
+        toast.error(`${failedUploads} image(s) failed to upload. Please try again.`);
+      }
+
+      // Clear only successfully uploaded images from pending
+      const successfulIndices = results
+        .filter(result => result.status === 'fulfilled')
+        .map(result => result.value.index);
+
+      setPendingImages(prev => {
+        const updated = { ...prev };
+        successfulIndices.forEach(index => {
+          delete updated[index];
+        });
+        return updated;
+      });
+
+    } catch (error) {
+      console.error("Error in upload:", error);
+      toast.error("Error uploading images. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Updated Save button handler - now only handles non-image changes and exits edit mode
+  const handleSave = async () => {
+    try {
+      // If there are pending images, upload them first
+      if (Object.keys(pendingImages).length > 0) {
+        await handleImageUpload();
+      }
+
       // Exit edit mode
       setIsEditing(false);
-      toast.success("Profile section saved with S3 URLs!");
+      toast.success("Profile section saved!");
     } catch (error) {
       console.error("Error saving profile section:", error);
       toast.error("Error saving changes. Please try again.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -351,7 +443,7 @@ const Profile = ({
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Crop Profile Image (4:3 Ratio)
+                  Crop Profile Image
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
                   Recommended: 100×100px (1:1 ratio) - square
@@ -366,22 +458,25 @@ const Profile = ({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
+                rotation={rotation}
                 aspect={aspectRatio}
                 minZoom={minZoomDynamic}
                 maxZoom={5}
                 restrictPosition={false}
                 zoomWithScroll={true}
                 zoomSpeed={0.2}
-                onMediaLoaded={(ms) => setMediaSize(ms)}
-                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
                 showGrid={true}
                 cropShape="rect"
                 style={{
@@ -406,31 +501,11 @@ const Profile = ({
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
-                  {/* <button
-                    onClick={() => setAspectRatio(3 / 4)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 3 / 4
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    3:4 (Portrait)
-                  </button> */}
-                  {/* <button
-                    onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    1:1 (Square)
-                  </button> */}
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-700 border-gray-300"
                       }`}
                   >
                     4:3 (Standard)
@@ -447,15 +522,33 @@ const Profile = ({
                   </span>
                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                 </div>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={minZoomDynamic}
-                  max={5}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    aria-label="Zoom out"
+                    onClick={() => setZoom((z) => Math.max(minZoomDynamic, parseFloat((z - 0.1).toFixed(2))))}
+                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={minZoomDynamic}
+                    max={5}
+                    step={0.1}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Zoom in"
+                    onClick={() => setZoom((z) => Math.min(5, parseFloat((z + 0.1).toFixed(2))))}
+                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -474,9 +567,10 @@ const Profile = ({
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm"
+                  disabled={isUploading}
+                  className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm`}
                 >
-                  Apply Crop
+                  {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
               </div>
             </div>
@@ -488,8 +582,8 @@ const Profile = ({
       <section
         id="our-team"
         className={`py-20 theme-transition ${theme === "dark"
-          ? "bg-black text-gray-100"
-          : "bg-gray-50 text-gray-900"
+            ? "bg-black text-gray-100"
+            : "bg-gray-50 text-gray-900"
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -502,12 +596,12 @@ const Profile = ({
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:shadow-2xl"
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
               >
                 <Save size={16} />
-                {isUploading ? "Uploading..." : "Save"}
+                {isUploading ? "Uploading..." : "Save & Exit"}
               </motion.button>
             ) : (
               <motion.button
@@ -522,39 +616,36 @@ const Profile = ({
             )}
           </div>
 
+          {/* Auto-update status indicator */}
+          {isEditing && (
+            <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+              <CheckCircle className="w-4 h-4 mr-1" />
+              Auto-saving changes...
+            </div>
+          )}
+
           <div className="text-center mb-16">
             {isEditing ? (
               <div className="relative">
                 <input
                   type="text"
                   value={contentState.heading}
-                  onChange={(e) =>
-                    setContentState((prev) => ({
-                      ...prev,
-                      heading: e.target.value,
-                    }))
-                  }
-                  maxLength={TEXT_LIMITS.heading}
-                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full max-w-2xl mx-auto ${contentState.heading.length >= TEXT_LIMITS.heading
-                    ? "border-red-500"
-                    : ""
+                  onChange={(e) => updateHeading(e.target.value)}
+                  maxLength={100}
+                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full ${contentState.heading.length >= 100 ? "border-red-500" : ""
                     }`}
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <div>
-                    {contentState.heading.length >= TEXT_LIMITS.heading && (
-                      <span className="text-red-500 font-bold">
-                        ⚠️ Character limit reached!
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    {contentState.heading.length}/{TEXT_LIMITS.heading}
-                  </div>
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {contentState.heading.length}/100
+                  {contentState.heading.length >= 100 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Character limit reached!
+                    </span>
+                  )}
                 </div>
               </div>
             ) : (
-              <h2 className="text-3xl font-bold mb-4 text-center">
+              <h2 className="text-3xl font-bold mb-4">
                 {contentState.heading}
               </h2>
             )}
@@ -563,30 +654,20 @@ const Profile = ({
               <div className="relative">
                 <textarea
                   value={contentState.subheading}
-                  onChange={(e) =>
-                    setContentState((prev) => ({
-                      ...prev,
-                      subheading: e.target.value,
-                    }))
-                  }
-                  maxLength={TEXT_LIMITS.subheading}
-                  className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${contentState.subheading.length >= TEXT_LIMITS.subheading
-                    ? "border-red-500"
-                    : ""
+                  onChange={(e) => updateSubheading(e.target.value)}
+                  maxLength={200}
+                  className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${contentState.subheading.length >= 200
+                      ? "border-red-500"
+                      : ""
                     }`}
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <div>
-                    {contentState.subheading.length >=
-                      TEXT_LIMITS.subheading && (
-                        <span className="text-red-500 font-bold">
-                          ⚠️ Character limit reached!
-                        </span>
-                      )}
-                  </div>
-                  <div>
-                    {contentState.subheading.length}/{TEXT_LIMITS.subheading}
-                  </div>
+                <div className="text-right text-xs text-gray-500 mt-1">
+                  {contentState.subheading.length}/200
+                  {contentState.subheading.length >= 200 && (
+                    <span className="ml-2 text-red-500 font-bold">
+                      Character limit reached!
+                    </span>
+                  )}
                 </div>
               </div>
             ) : (
@@ -609,7 +690,7 @@ const Profile = ({
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-full object-cover scale-110"
+                    className="w-full h-full object-cover"
                   />
 
                   {isEditing && (
@@ -639,44 +720,50 @@ const Profile = ({
                 </div>
                 <div className="p-6 text-center">
                   {isEditing ? (
-                    <div className="relative mb-1 ">
+                    <div className="relative">
                       <input
                         value={member.name}
                         onChange={(e) =>
                           updateTeamMemberField(index, "name", e.target.value)
                         }
-                        maxLength={TEXT_LIMITS.memberName}
-                        className={`text-xl font-semibold border-b bg-transparent text-center w-full ${member.name.length >= TEXT_LIMITS.memberName
-                          ? "border-red-500"
-                          : ""
+                        maxLength={50}
+                        className={`text-xl font-semibold mb-1 border-b bg-transparent text-center w-full ${member.name.length >= 50 ? "border-red-500" : ""
                           }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
-                        {member.name.length}/{TEXT_LIMITS.memberName}
+                        {member.name.length}/50
+                        {member.name.length >= 50 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Character limit reached!
+                          </span>
+                        )}
                       </div>
                     </div>
                   ) : (
-                    <h3 className="text-xl font-semibold mb-1 text-center">
+                    <h3 className="text-xl font-semibold mb-1">
                       {member.name}
                     </h3>
                   )}
 
                   {isEditing ? (
-                    <div className="relative mb-3">
+                    <div className="relative">
                       <input
                         value={member.role}
                         onChange={(e) =>
                           updateTeamMemberField(index, "role", e.target.value)
                         }
-                        maxLength={TEXT_LIMITS.memberRole}
-                        className={`font-medium border-b bg-transparent text-center w-full ${member.role.length >= TEXT_LIMITS.memberRole
-                          ? "border-red-500"
-                          : ""
+                        maxLength={60}
+                        className={`font-medium mb-3 border-b bg-transparent text-center w-full ${member.role.length >= 60 ? "border-red-500" : ""
                           }`}
                         style={{ color: "#facc15" }}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
-                        {member.role.length}/{TEXT_LIMITS.memberRole}
+                        {member.role.length}/60
+                        {member.role.length >= 60 && (
+                          <span className="ml-2 text-red-500 font-bold">
+                            Character limit reached!
+                          </span>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -689,121 +776,55 @@ const Profile = ({
                   )}
 
                   {isEditing ? (
-                    <div className="relative">
-                      <textarea
-                        value={member.bio}
-                        onChange={(e) =>
-                          updateTeamMemberField(index, "bio", e.target.value)
-                        }
-                        maxLength={TEXT_LIMITS.memberBio}
-                        className={`text-sm border-b bg-transparent text-center w-full ${theme === "dark" ? "text-gray-300" : "text-gray-600"
-                          } ${member.bio.length >= TEXT_LIMITS.memberBio
-                            ? "border-red-500"
+                    <textarea
+                      value={member.bio}
+                      onChange={(e) =>
+                        updateTeamMemberField(index, "bio", e.target.value)
+                      }
+                      maxLength={200}
+                      className={`text-sm border-b bg-transparent text-center w-full ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                        } ${member.bio.length >= 200
+                          ? "border-red-500"
+                          : member.bio.length >= 180
+                            ? "border-orange-500"
                             : ""
-                          }`}
-                      />
-                      <div className="text-right text-xs text-gray-500 mt-1">
-                        {member.bio.length}/{TEXT_LIMITS.memberBio}
-                      </div>
-                    </div>
+                        }`}
+                    />
                   ) : (
                     <p
-                      className={`text-sm text-justify ${theme === "dark" ? "text-gray-300" : "text-gray-600"
-                        }`}
+                      className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                        } text-justify`}
                     >
                       {member.bio}
                     </p>
                   )}
-                  {/* 
+
                   <div className="flex justify-center mt-4 space-x-3">
                     {isEditing ? (
                       <>
-                        <div className="relative">
-                          <input
-                            value={member.socialLinks.twitter}
-                            onChange={(e) =>
-                              updateSocialLink(index, "twitter", e.target.value)
-                            }
-                            maxLength={TEXT_LIMITS.socialLink}
-                            className={`text-xs border-b bg-transparent text-center w-20 ${
-                              member.socialLinks.twitter.length >=
-                              TEXT_LIMITS.socialLink
-                                ? "border-red-500"
-                                : ""
-                            }`}
-                            placeholder="Twitter URL"
-                          />
-                          <div className="text-right text-xs text-gray-500 mt-1">
-                            {member.socialLinks.twitter.length}/
-                            {TEXT_LIMITS.socialLink}
-                          </div>
-                        </div>
-                        <div className="relative">
-                          <input
-                            value={member.socialLinks.linkedin}
-                            onChange={(e) =>
-                              updateSocialLink(
-                                index,
-                                "linkedin",
-                                e.target.value
-                              )
-                            }
-                            maxLength={TEXT_LIMITS.socialLink}
-                            className={`text-xs border-b bg-transparent text-center w-20 ${
-                              member.socialLinks.linkedin.length >=
-                              TEXT_LIMITS.socialLink
-                                ? "border-red-500"
-                                : ""
-                            }`}
-                            placeholder="LinkedIn URL"
-                          />
-                          <div className="text-right text-xs text-gray-500 mt-1">
-                            {member.socialLinks.linkedin.length}/
-                            {TEXT_LIMITS.socialLink}
-                          </div>
-                        </div>
+                        <input
+                          value={member.socialLinks.twitter}
+                          onChange={(e) =>
+                            updateSocialLink(index, "twitter", e.target.value)
+                          }
+                          className="text-xs border-b bg-transparent text-center w-20"
+                          placeholder="Twitter URL"
+                        />
+                        <input
+                          value={member.socialLinks.linkedin}
+                          onChange={(e) =>
+                            updateSocialLink(index, "linkedin", e.target.value)
+                          }
+                          className="text-xs border-b bg-transparent text-center w-20"
+                          placeholder="LinkedIn URL"
+                        />
                       </>
                     ) : (
-                      <> */}
-                  {/* <a
-                          href={member.socialLinks.twitter}
-                          target="_blank"
-                          className={`p-2 rounded-full ${
-                            theme === "dark"
-                              ? "bg-gray-800 hover:bg-gray-500"
-                              : "bg-gray-100 hover:bg-gray-200"
-                          }`}
-                          aria-label="X (formerly Twitter)"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                          </svg>
-                        </a>
-                        <a
-                          href={member.socialLinks.linkedin}
-                          target="_blank"
-                          className={`p-2 rounded-full ${
-                            theme === "dark"
-                              ? "bg-gray-800 hover:bg-gray-500"
-                              : "bg-gray-100 hover:bg-gray-200"
-                          }`}
-                          aria-label="LinkedIn"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                          </svg>
-                        </a> */}
-                  {/* </> */}
-                  {/* )} */}
-                  {/* </div> */}
+                      <>
+                        {/* Social icons remain commented out as in original */}
+                      </>
+                    )}
+                  </div>
 
                   {isEditing && (
                     <motion.button
@@ -823,8 +844,8 @@ const Profile = ({
             {isEditing && (
               <motion.div
                 className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
-                  ? "bg-gray-900 border-gray-700"
-                  : "bg-white border-gray-300"
+                    ? "bg-gray-900 border-gray-700"
+                    : "bg-white border-gray-300"
                   } border-2`}
                 whileHover={{ scale: 1.02 }}
               >
@@ -845,6 +866,8 @@ const Profile = ({
     </>
   );
 };
+
+
 
 // Default profile data structure
 Profile.defaultProps = {

@@ -9,6 +9,7 @@ import {
   Save,
   Plus,
   Trash2,
+  CheckCircle,
 } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
@@ -26,6 +27,9 @@ const Gallery = ({
   const [isUploading, setIsUploading] = useState(false);
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
   const { theme } = useTheme();
+
+  // Auto-save states
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
 
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
@@ -137,6 +141,16 @@ const Gallery = ({
     }
   }, [contentState, onStateChange]);
 
+  // Auto-save status indicator
+  useEffect(() => {
+    if (isEditing && autoSaveStatus === "saving") {
+      const timer = setTimeout(() => {
+        setAutoSaveStatus("saved");
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [autoSaveStatus, isEditing]);
+
   // Compute dynamic min zoom (free pan/zoom)
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
@@ -153,8 +167,57 @@ const Gallery = ({
     setPrevZoom(zoom);
   }, [zoom]);
 
-  // Update function for gallery images
+  // Function to upload image to AWS immediately
+  const uploadImageToAWS = async (file: File, imageField: string) => {
+    if (!userId || !publishedId || !templateSelection) {
+      console.error("Missing required props:", {
+        userId,
+        publishedId,
+        templateSelection,
+      });
+      toast.error("Missing user information. Please refresh and try again.");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("sectionName", "gallery");
+    formData.append("imageField", `${imageField}_${Date.now()}`);
+    formData.append("templateSelection", templateSelection);
+
+    console.log(`Uploading gallery image to S3:`, file);
+
+    try {
+      const uploadResponse = await fetch(
+        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        console.log(`Gallery image uploaded to S3:`, uploadData.imageUrl);
+        return uploadData.imageUrl;
+      } else {
+        const errorData = await uploadResponse.json();
+        console.error(`Gallery image upload failed:`, errorData);
+        toast.error(
+          `Image upload failed: ${errorData.message || "Unknown error"}`
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error uploading gallery image:`, error);
+      toast.error(`Error uploading image. Please try again.`);
+      return null;
+    }
+  };
+
+  // Update function for gallery images with auto-save
   const updateImageField = (index, field, value) => {
+    setAutoSaveStatus("saving");
     setContentState((prev) => ({
       ...prev,
       images: prev.images.map((img, i) =>
@@ -170,6 +233,7 @@ const Gallery = ({
       return;
     }
 
+    setAutoSaveStatus("saving");
     setContentState((prev) => ({
       ...prev,
       images: [
@@ -188,14 +252,16 @@ const Gallery = ({
 
   // Remove an image
   const removeImage = (index) => {
+    setAutoSaveStatus("saving");
     setContentState((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
   };
 
-  // Update function for header
+  // Update function for header with auto-save
   const updateHeaderField = (field, value) => {
+    setAutoSaveStatus("saving");
     setContentState((prev) => ({
       ...prev,
       heading: {
@@ -297,31 +363,51 @@ const Gallery = ({
     });
   };
 
-  // Apply crop and set pending file
+  // Apply crop and UPLOAD IMMEDIATELY to AWS
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
+
+      setIsUploading(true);
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
 
-      // Update preview immediately with blob URL (temporary)
+      // Show preview immediately with blob URL (temporary)
       updateImageField(croppingIndex, "url", previewUrl);
 
-      // Set the actual file for upload on save
-      setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
-      console.log("Gallery image cropped, file ready for upload:", file);
+      // UPLOAD TO AWS IMMEDIATELY
+      const imageField = `images[${croppingIndex}].url`;
+      const awsImageUrl = await uploadImageToAWS(file, imageField);
 
-      toast.success("Image cropped successfully! Click Save to upload to S3.");
+      if (awsImageUrl) {
+        // Update with actual S3 URL
+        updateImageField(croppingIndex, "url", awsImageUrl);
+        setPendingImages((prev) => {
+          const newPending = { ...prev };
+          delete newPending[croppingIndex];
+          return newPending;
+        });
+        console.log(`Gallery image uploaded to S3:`, awsImageUrl);
+        toast.success("Image uploaded to S3 successfully!");
+      } else {
+        // If upload fails, keep the file as pending
+        setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
+        toast.warning("Image cropped but upload failed. It will be saved locally.");
+      }
+
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
       setCroppingIndex(null);
+      setCroppedAreaPixels(null);
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -341,68 +427,80 @@ const Gallery = ({
     setCrop({ x: 0, y: 0 });
   };
 
-  // Save button handler - uploads images and stores S3 URLs
-  const handleSave = async () => {
+  // Separate function to handle image upload only (for failed uploads)
+  const handleImageUpload = async () => {
+    const uploadPromises = [];
+    
+    for (const [indexStr, file] of Object.entries(pendingImages)) {
+      const index = parseInt(indexStr);
+      uploadPromises.push(
+        uploadImageToAWS(file, `images[${index}].url`).then((awsImageUrl) => {
+          if (awsImageUrl) {
+            updateImageField(index, "url", awsImageUrl);
+            return { success: true, index };
+          } else {
+            throw new Error(`Image upload failed for index ${index}`);
+          }
+        })
+      );
+    }
+
+    if (uploadPromises.length === 0) return true;
+
     try {
       setIsUploading(true);
+      const results = await Promise.allSettled(uploadPromises);
 
-      // Upload all pending images
-      for (const [indexStr, file] of Object.entries(pendingImages)) {
-        const index = parseInt(indexStr);
+      const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
+      const failedUploads = results.filter(result => result.status === 'rejected').length;
 
-        if (!userId || !publishedId || !templateSelection) {
-          console.error("Missing required props:", {
-            userId,
-            publishedId,
-            templateSelection,
-          });
-          toast.error(
-            "Missing user information. Please refresh and try again."
-          );
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("sectionName", "gallery");
-        formData.append("imageField", `images[${index}].url` + Date.now());
-        formData.append("templateSelection", templateSelection);
-
-        console.log("Uploading gallery image to S3:", file);
-
-        const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
+      if (successfulUploads > 0) {
+        // Remove successful uploads from pendingImages
+        results.forEach((result, i) => {
+          if (result.status === 'fulfilled') {
+            const index = Object.keys(pendingImages)[i];
+            setPendingImages((prev) => {
+              const newPending = { ...prev };
+              delete newPending[index];
+              return newPending;
+            });
           }
-        );
+        });
+        toast.success(`${successfulUploads} image(s) uploaded successfully!`);
+      }
+      if (failedUploads > 0) {
+        toast.error(`${failedUploads} image(s) failed to upload. Please try again.`);
+        return false;
+      }
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL
-          updateImageField(index, "url", uploadData.imageUrl);
-          console.log("Image uploaded to S3:", uploadData.imageUrl);
-        } else {
-          const errorData = await uploadResponse.json();
-          console.error("Image upload failed:", errorData);
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
-          return;
+      return true;
+    } catch (error) {
+      console.error("Error in upload:", error);
+      toast.error("Error uploading images. Please try again.");
+      return false;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Save button handler - now only handles pending images and exits edit mode
+  const handleSave = async () => {
+    try {
+      // If there are pending images, upload them first
+      if (Object.keys(pendingImages).length > 0) {
+        const uploadSuccess = await handleImageUpload();
+        if (!uploadSuccess) {
+          return; // Don't exit edit mode if upload fails
         }
       }
 
-      // Clear pending images
-      setPendingImages({});
       // Exit edit mode
       setIsEditing(false);
-      toast.success("Gallery section saved with S3 URLs!");
+      setAutoSaveStatus("idle");
+      toast.success("Gallery section saved!");
     } catch (error) {
       console.error("Error saving gallery section:", error);
       toast.error("Error saving changes. Please try again.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -547,9 +645,11 @@ const Gallery = ({
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                  disabled={isUploading}
+                  className={`w-full ${isUploading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+                    } text-white rounded py-2 text-sm font-medium`}
                 >
-                  Apply Crop
+                  {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
               </div>
             </div>
@@ -566,34 +666,62 @@ const Gallery = ({
           }`}
       >
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          {/* Edit/Save Buttons */}
-          <div className="flex justify-end mb-6">
-            {isEditing ? (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={handleSave}
-                disabled={isUploading}
-                className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:shadow-2xl"
-                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
-              >
-                <Save size={16} />
-                {isUploading ? "Uploading..." : "Save"}
-              </motion.button>
-            ) : (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2 px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
-              >
-                <Edit size={16} />
-                Edit
-              </motion.button>
+          {/* Auto-save status and Edit/Save Buttons */}
+          <div className="flex justify-between items-center mb-6">
+            {/* Auto-save status on left */}
+            {isEditing && (
+              <div className="text-sm bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1 shadow">
+                {autoSaveStatus === "saving" && (
+                  <span className="text-yellow-600 animate-pulse">Saving changes...</span>
+                )}
+                {autoSaveStatus === "saved" && (
+                  <span className="text-green-600 flex items-center gap-1">
+                    <CheckCircle className="w-4 h-4" />
+                    Changes saved
+                  </span>
+                )}
+              </div>
             )}
+
+            {/* Edit/Save button on right */}
+            <div className="ml-auto">
+              {isEditing ? (
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ y: -1, scaleX: 1.1 }}
+                  onClick={handleSave}
+                  disabled={isUploading}
+                  className={`${isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:shadow-2xl"
+                    } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
+                >
+                  <Save size={16} />
+                  {isUploading ? "Uploading..." : "Save & Exit"}
+                </motion.button>
+              ) : (
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ y: -1, scaleX: 1.1 }}
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
+                >
+                  <Edit size={16} />
+                  Edit
+                </motion.button>
+              )}
+            </div>
           </div>
+
+          {/* Pending image upload notices */}
+          {isEditing && Object.keys(pendingImages).length > 0 && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-yellow-800 text-sm">
+                <span className="font-medium">⚠️ Images ready for upload:</span>
+                {' '}Click "Save & Exit" to upload {Object.keys(pendingImages).length} image(s) to S3
+              </p>
+            </div>
+          )}
 
           <div className="mb-16 text-center">
             {isEditing ? (
@@ -703,16 +831,16 @@ const Gallery = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute bottom-2 left-2 right-2 bg-black/80 p-2 rounded z-50" // CHANGED: bg-white/80 to bg-black/80
+                      className="absolute bottom-2 left-2 right-2 bg-black/80 p-2 rounded z-50"
                     >
                       <input
                         type="file"
                         accept="image/*"
-                        className="w-full text-xs cursor-pointer font-bold text-white" // CHANGED: Added text-white
+                        className="w-full text-xs cursor-pointer font-bold text-white"
                         onChange={(e) => handleGalleryImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="text-xs text-green-400 mt-1 text-center"> {/* CHANGED: text-green-600 to text-green-400 */}
+                        <p className="text-xs text-green-400 mt-1 text-center">
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
@@ -733,13 +861,13 @@ const Gallery = ({
                             updateImageField(index, "title", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.imageTitle}
-                          className={`w-full font-semibold bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900" // ADDED: theme-based text color
+                          className={`w-full font-semibold bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900"
                             } ${image.title.length >= TEXT_LIMITS.imageTitle
                               ? "border-red-500"
                               : ""
                             }`}
                         />
-                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"
                           }`}>
                           {image.title.length}/{TEXT_LIMITS.imageTitle}
                         </div>
@@ -751,13 +879,13 @@ const Gallery = ({
                             updateImageField(index, "category", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.imageCategory}
-                          className={`w-full text-sm bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900" // ADDED: theme-based text color
+                          className={`w-full text-sm bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900"
                             } ${image.category.length >= TEXT_LIMITS.imageCategory
                               ? "border-red-500"
                               : ""
                             }`}
                         />
-                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"
                           }`}>
                           {image.category.length}/{TEXT_LIMITS.imageCategory}
                         </div>
@@ -769,7 +897,7 @@ const Gallery = ({
                             updateImageField(index, "description", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.imageDescription}
-                          className={`w-full text-sm bg-transparent border-b resize-none ${theme === "dark" ? "text-gray-300" : "text-gray-600" // ADDED: theme-based text color
+                          className={`w-full text-sm bg-transparent border-b resize-none ${theme === "dark" ? "text-gray-300" : "text-gray-600"
                             } ${image.description.length >= TEXT_LIMITS.imageDescription
                               ? "border-red-500"
                               : ""
@@ -777,7 +905,7 @@ const Gallery = ({
                           placeholder="Image description..."
                           rows={2}
                         />
-                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500" // ADDED: theme-based text color
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"
                           }`}>
                           {image.description.length}/{TEXT_LIMITS.imageDescription}
                         </div>

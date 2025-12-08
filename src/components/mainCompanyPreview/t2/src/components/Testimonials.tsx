@@ -1,5 +1,7 @@
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion } from "motion/react";
+import maleAvatar from "/logos/maleAvatar.png"
+import femaleAvatar from "/logos/femaleAvatar.png"
 
 export default function Testimonials({ testimonialsData }) {
   // Duplicate testimonials for marquee loop (showing 3 at a time)
@@ -148,7 +150,7 @@ function TestimonialCard({ testimonial, index }) {
               transition={{ duration: 0.3 }}
             >
               <ImageWithFallback
-                src={testimonial.image}
+                src={testimonial.image|| testimonial.gender === "male" ? maleAvatar : femaleAvatar}
                 alt={testimonial.name}
                 className="w-full h-full object-cover"
               />

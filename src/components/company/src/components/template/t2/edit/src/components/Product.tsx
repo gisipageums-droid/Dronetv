@@ -1,3 +1,5 @@
+
+
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -37,49 +39,100 @@ export default function Product({
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
-
-  // Dynamic zoom calculation states
-  const [mediaSize, setMediaSize] = useState<{
-    width: number;
-    height: number;
-    naturalWidth: number;
-    naturalHeight: number;
-  } | null>(null);
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
-  const [prevZoom, setPrevZoom] = useState(1);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
 
   // Consolidated state
   const [contentState, setContentState] = useState(productData);
 
-  // Add this useEffect to notify parent of state changes
+  // Auto-update parent when contentState changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(contentState);
     }
   }, [contentState, onStateChange]);
 
-  // Compute dynamic min zoom (free pan/zoom)
+  // NEW: Function to upload image to AWS
+  const uploadImageToAWS = async (file, imageField) => {
+    if (!userId || !publishedId || !templateSelection) {
+      console.error("Missing required props:", {
+        userId,
+        publishedId,
+        templateSelection,
+      });
+      toast.error("Missing user information. Please refresh and try again.");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("sectionName", "products");
+    formData.append("imageField", `${imageField}_${Date.now()}`);
+    formData.append("templateSelection", templateSelection);
+
+    console.log(`Uploading ${imageField} to S3:`, file);
+
+    try {
+      const uploadResponse = await fetch(
+        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
+        return uploadData.imageUrl;
+      } else {
+        const errorData = await uploadResponse.json();
+        console.error(`${imageField} upload failed:`, errorData);
+        toast.error(
+          `${imageField} upload failed: ${errorData.message || "Unknown error"}`
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error uploading ${imageField}:`, error);
+      toast.error(`Error uploading image. Please try again.`);
+      return null;
+    }
+  };
+
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
-      const coverW = cropAreaSize.width / mediaSize.width;
-      const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.1);
-      setMinZoomDynamic(computedMin);
-      setZoom((z) => (z < computedMin ? computedMin : z));
+      setMinZoomDynamic(0.1);
     }
   }, [mediaSize, cropAreaSize]);
 
-  // Track previous zoom only (no auto recentre to allow free panning)
-  useEffect(() => {
-    setPrevZoom(zoom);
-  }, [zoom]);
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
 
-  // Update function for simple fields
+  useEffect(() => {
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
+
+  // Update function for simple fields - now auto-updates
   const updateField = (section, field, value) => {
     setContentState((prev) => ({
       ...prev,
@@ -87,7 +140,7 @@ export default function Product({
     }));
   };
 
-  // Update function for products
+  // Update function for products - now auto-updates
   const updateProductField = (index, field, value) => {
     setContentState((prev) => ({
       ...prev,
@@ -97,7 +150,7 @@ export default function Product({
     }));
   };
 
-  // Update function for product features
+  // Update function for product features - now auto-updates
   const updateFeature = (index, fIndex, value) => {
     setContentState((prev) => ({
       ...prev,
@@ -112,7 +165,7 @@ export default function Product({
     }));
   };
 
-  // Add a new feature to a product
+  // Add a new feature to a product - now auto-updates
   const addFeature = (index) => {
     setContentState((prev) => ({
       ...prev,
@@ -122,7 +175,7 @@ export default function Product({
     }));
   };
 
-  // Remove a feature from a product
+  // Remove a feature from a product - now auto-updates
   const removeFeature = (index, fIndex) => {
     setContentState((prev) => ({
       ...prev,
@@ -160,6 +213,7 @@ export default function Product({
       setShowCropper(true);
       setAspectRatio(4 / 3);
       setZoom(1);
+      setRotation(0);
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
@@ -184,13 +238,17 @@ export default function Product({
     });
 
   // Function to get cropped image
-  const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    // Fixed output size for 4:3 ratio (match Hero's fixed export behavior)
+    const outputWidth = 600;
+    const outputHeight = 450;
+
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
     ctx.drawImage(
       image,
@@ -200,8 +258,8 @@ export default function Product({
       pixelCrop.height,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      outputWidth,
+      outputHeight
     );
 
     return new Promise((resolve) => {
@@ -229,24 +287,44 @@ export default function Product({
     });
   };
 
-  // Apply crop and set pending file
+  // Apply crop and UPLOAD IMMEDIATELY to AWS - UPDATED
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
 
+      setIsUploading(true);
+
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
-        croppedAreaPixels
+        croppedAreaPixels,
+        rotation
       );
 
-      // Update preview immediately with blob URL (temporary)
+      // Show preview immediately with blob URL (temporary)
       updateProductField(croppingIndex, "image", previewUrl);
 
-      // Set the actual file for upload on save
-      setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
-      console.log("Product image cropped, file ready for upload:", file);
+      // UPLOAD TO AWS IMMEDIATELY
+      const imageField = `products[${croppingIndex}].image`;
+      const awsImageUrl = await uploadImageToAWS(file, imageField);
 
-      toast.success("Image cropped successfully! Click Save to upload to S3.");
+      if (awsImageUrl) {
+        // Update with actual S3 URL
+        updateProductField(croppingIndex, "image", awsImageUrl);
+
+        // Remove from pending images since it's uploaded
+        setPendingImages((prev) => {
+          const newPending = { ...prev };
+          delete newPending[croppingIndex];
+          return newPending;
+        });
+
+        toast.success("Image cropped and uploaded to AWS successfully!");
+      } else {
+        // If upload fails, keep the preview URL and set as pending
+        setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
+        toast.warning("Image cropped but upload failed. It will be saved locally.");
+      }
+
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
@@ -254,6 +332,8 @@ export default function Product({
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -265,80 +345,91 @@ export default function Product({
     setCroppingIndex(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
   };
 
   // Reset zoom and rotation
   const resetCropSettings = () => {
     setZoom(1);
+    setRotation(0);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Updated Save button handler - uploads images and stores S3 URLs
-  const handleSave = async () => {
+  // Separate function to handle image upload only (for failed uploads)
+  const handleImageUpload = async () => {
     try {
       setIsUploading(true);
+      const uploadPromises = [];
 
-      // Upload all pending images
+      // Create upload promises for all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
 
-        if (!userId || !publishedId || !templateSelection) {
-          console.error("Missing required props:", {
-            userId,
-            publishedId,
-            templateSelection,
-          });
-          toast.error(
-            "Missing user information. Please refresh and try again."
-          );
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("sectionName", "products");
-        formData.append("imageField", `products[${index}].image` + Date.now());
-        formData.append("templateSelection", templateSelection);
-
-        console.log("Uploading product image to S3:", file);
-
-        const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
+        const imageField = `products[${index}].image`;
+        const uploadPromise = uploadImageToAWS(file, imageField).then((awsImageUrl) => {
+          if (awsImageUrl) {
+            updateProductField(index, "image", awsImageUrl);
+            return { success: true, index };
+          } else {
+            throw new Error("Upload failed");
           }
-        );
+        });
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL
-          updateProductField(index, "image", uploadData.imageUrl);
-          console.log("Image uploaded to S3:", uploadData.imageUrl);
-        } else {
-          const errorData = await uploadResponse.json();
-          console.error("Image upload failed:", errorData);
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
-          return;
-        }
+        uploadPromises.push(uploadPromise);
       }
 
-      // Clear pending images
-      setPendingImages({});
-      // Exit edit mode
-      setIsEditing(false);
-      toast.success("Products section saved with S3 URLs!");
+      // Wait for all uploads to complete
+      const results = await Promise.allSettled(uploadPromises);
+
+      const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
+      const failedUploads = results.filter(result => result.status === 'rejected').length;
+
+      if (successfulUploads > 0) {
+        toast.success(`${successfulUploads} image(s) uploaded successfully!`);
+      }
+      if (failedUploads > 0) {
+        toast.error(`${failedUploads} image(s) failed to upload. Please try again.`);
+      }
+
+      // Clear only successfully uploaded images from pending
+      const successfulIndices = results
+        .filter(result => result.status === 'fulfilled')
+        .map(result => result.value.index);
+
+      setPendingImages(prev => {
+        const updated = { ...prev };
+        successfulIndices.forEach(index => {
+          delete updated[index];
+        });
+        return updated;
+      });
+
     } catch (error) {
-      console.error("Error saving products section:", error);
-      toast.error("Error saving changes. Please try again.");
+      console.error("Error in upload:", error);
+      toast.error("Error uploading images. Please try again.");
     } finally {
       setIsUploading(false);
     }
   };
 
-  // Add a new product
+  // Updated Save button handler - now only handles non-image changes and exits edit mode
+  const handleSave = async () => {
+    try {
+      // If there are pending images, upload them first
+      if (Object.keys(pendingImages).length > 0) {
+        await handleImageUpload();
+      }
+
+      // Exit edit mode
+      setIsEditing(false);
+      toast.success("Products section saved!");
+    } catch (error) {
+      console.error("Error saving products section:", error);
+      toast.error("Error saving changes. Please try again.");
+    }
+  };
+
+  // Add a new product - now auto-updates
   const addProduct = () => {
     setContentState((prev) => ({
       ...prev,
@@ -355,14 +446,13 @@ export default function Product({
           categoryColor: "bg-gray-100 text-gray-800",
           detailedDescription: "Detailed description for new product...",
           pricing: "TBD",
-          // pricing: "TBD",
           timeline: "TBD",
         },
       ],
     }));
   };
 
-  // Remove a product
+  // Remove a product - now auto-updates
   const removeProduct = (index) => {
     setContentState((prev) => ({
       ...prev,
@@ -397,7 +487,7 @@ export default function Product({
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                Crop Product Image (4:3 Ratio)
+                Crop Product Image
               </h3>
               <button
                 onClick={cancelCrop}
@@ -408,22 +498,25 @@ export default function Product({
             </div>
 
             {/* Cropper Area */}
-            <div className="relative flex-1 min-h-0 bg-gray-900">
+            <div className={`relative flex-1 min-h-0 bg-gray-900 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
+                rotation={rotation}
                 aspect={aspectRatio}
                 minZoom={minZoomDynamic}
                 maxZoom={5}
                 restrictPosition={false}
                 zoomWithScroll={true}
                 zoomSpeed={0.2}
-                onMediaLoaded={(ms) => setMediaSize(ms)}
-                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
                 showGrid={true}
                 cropShape="rect"
                 style={{
@@ -442,12 +535,21 @@ export default function Product({
 
             {/* Controls */}
             <div className="p-4 border-t border-gray-200 bg-gray-50">
-              {/* Aspect Ratio Button - Only 4:3 */}
+              {/* Aspect Ratio Buttons */}
               <div className="mb-4">
                 <p className="mb-2 text-sm font-medium text-gray-700">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
+                  <button
+                    onClick={() => setAspectRatio(1)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
+                  >
+                    1:1 (Square)
+                  </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
@@ -456,6 +558,15 @@ export default function Product({
                       }`}
                   >
                     4:3 (Standard)
+                  </button>
+                  <button
+                    onClick={() => setAspectRatio(16 / 9)}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
+                  >
+                    16:9 (Widescreen)
                   </button>
                 </div>
               </div>
@@ -468,15 +579,33 @@ export default function Product({
                   </span>
                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
                 </div>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={minZoomDynamic}
-                  max={5}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                />
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    aria-label="Zoom out"
+                    onClick={() => setZoom((z) => Math.max(minZoomDynamic, parseFloat((z - 0.1).toFixed(2))))}
+                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={minZoomDynamic}
+                    max={5}
+                    step={0.1}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Zoom in"
+                    onClick={() => setZoom((z) => Math.min(5, parseFloat((z + 0.1).toFixed(2))))}
+                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -495,9 +624,10 @@ export default function Product({
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full py-2 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700"
+                  disabled={isUploading}
+                  className={`w-full py-2 text-sm font-medium text-white rounded ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
                 >
-                  Apply Crop
+                  {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
               </div>
             </div>
@@ -528,7 +658,7 @@ export default function Product({
                   : "bg-green-600 hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
-                {isUploading ? "Uploading..." : "Save"}
+                {isUploading ? "Uploading..." : "Save & Exit"}
               </motion.button>
             ) : (
               <motion.button
@@ -541,6 +671,14 @@ export default function Product({
               </motion.button>
             )}
           </div>
+
+          {/* Auto-update status indicator */}
+          {isEditing && (
+            <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+              <CheckCircle className="w-4 h-4 mr-1" />
+              Auto-saving changes...
+            </div>
+          )}
 
           {/* Header */}
           <div className="max-w-3xl mx-auto mb-16 text-center">
@@ -573,7 +711,7 @@ export default function Product({
                   </div>
                 </div>
 
-                <div className="relative mb-6">
+                <div className="relative mb-4">
                   <input
                     type="text"
                     value={contentState.heading.heading}
@@ -597,7 +735,7 @@ export default function Product({
                   </div>
                 </div>
 
-                <div className="relative mb-6">
+                <div className="relative mb-4">
                   <input
                     type="text"
                     className="block w-full mb-1 text-3xl font-medium text-center bg-transparent border-b md:text-4xl text-foreground"
@@ -658,12 +796,11 @@ export default function Product({
                     </div>
                   </>
                 ) : null}
-
                 <h2 className="mb-4 text-3xl md:text-4xl text-foreground">
                   {contentState.heading.heading}
                 </h2>
 
-                <p className="inline text-lg text-muted-foreground text-justify">
+                <p className="inline text-lg text-muted-foreground text-center">
                   {contentState.heading.description}
                 </p>
                 <p className="inline text-lg font-bold text-muted-foreground text-foreground text-justify">
@@ -697,17 +834,32 @@ export default function Product({
                           className={`${product.categoryColor} border-0 text-xs`}
                         >
                           {isEditing ? (
-                            <input
-                              value={product.category}
-                              onChange={(e) =>
-                                updateProductField(
-                                  index,
-                                  "category",
-                                  e.target.value
-                                )
-                              }
-                              className="text-xs bg-transparent border-b"
-                            />
+                            <div className="relative">
+                              <input
+                                value={product.category}
+                                onChange={(e) =>
+                                  updateProductField(
+                                    index,
+                                    "category",
+                                    e.target.value
+                                  )
+                                }
+                                maxLength={20}
+                                className="pr-8 text-xs bg-transparent border-b"
+                              />
+                              <div
+                                className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${product.category.length >= 20
+                                  ? "text-red-500 font-bold"
+                                  : product.category.length > 15
+                                    ? "text-red-500"
+                                    : "text-gray-400"
+                                  }`}
+                              >
+                                {product.category.length >= 20
+                                  ? "MAX"
+                                  : `${product.category.length}`}
+                              </div>
+                            </div>
                           ) : (
                             product.category
                           )}
@@ -761,7 +913,7 @@ export default function Product({
                                 )
                               }
                               maxLength={60}
-                              className={`w-full text-lg font-bold text-center border-b pr-16 ${product.title.length >= 60
+                              className={`border-b w-full font-bold text-lg text-center pr-16 ${product.title.length >= 60
                                 ? "border-red-500"
                                 : ""
                                 }`}
@@ -837,7 +989,7 @@ export default function Product({
                                         updateFeature(index, fi, e.target.value)
                                       }
                                       maxLength={40}
-                                      className={`w-full border-b pr-12 ${f.length >= 40 ? "border-red-500" : ""
+                                      className={`border-b w-full pr-10 ${f.length >= 40 ? "border-red-500" : ""
                                         }`}
                                     />
                                     <div
@@ -967,14 +1119,14 @@ export default function Product({
                         )
                       }
                       maxLength={60}
-                      className={`w-full mb-4 text-2xl font-bold text-center border-b pr-16 ${contentState.products[selectedProductIndex].title
+                      className={`border-b w-full text-2xl font-bold mb-4 text-center pr-16 ${contentState.products[selectedProductIndex].title
                         .length >= 60
                         ? "border-red-500"
                         : ""
                         }`}
                     />
                     <div
-                      className={`absolute top-[-15px] right-0 text-xs ${contentState.products[selectedProductIndex].title
+                      className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${contentState.products[selectedProductIndex].title
                         .length >= 60
                         ? "text-red-500 font-bold animate-pulse"
                         : contentState.products[selectedProductIndex].title
@@ -1011,7 +1163,7 @@ export default function Product({
                       }
                       maxLength={1000}
                       rows={4}
-                      className={`w-full mb-4 text-center border-b resize-none pr-16 ${contentState.products[selectedProductIndex]
+                      className={`border-b w-full mb-4 text-center resize-none pr-16 ${contentState.products[selectedProductIndex]
                         .detailedDescription.length >= 1000
                         ? "border-red-500"
                         : ""
@@ -1022,7 +1174,7 @@ export default function Product({
                         .detailedDescription.length >= 1000
                         ? "text-red-500 font-bold animate-pulse"
                         : contentState.products[selectedProductIndex]
-                          .detailedDescription.length > 1000
+                          .detailedDescription.length > 900
                           ? "text-red-500"
                           : "text-gray-400"
                         }`}
@@ -1060,7 +1212,7 @@ export default function Product({
                             )
                           }
                           maxLength={30}
-                          className={`w-full border-b pr-10 ${contentState.products[selectedProductIndex].pricing
+                          className={`border-b w-full pr-10 ${contentState.products[selectedProductIndex].pricing
                             .length >= 30
                             ? "border-red-500"
                             : ""
@@ -1104,7 +1256,7 @@ export default function Product({
                             )
                           }
                           maxLength={50}
-                          className={`w-full border-b pr-10 ${contentState.products[selectedProductIndex].timeline
+                          className={`border-b w-full pr-10 ${contentState.products[selectedProductIndex].timeline
                             .length >= 50
                             ? "border-red-500"
                             : ""
@@ -1115,7 +1267,7 @@ export default function Product({
                             .length >= 50
                             ? "text-red-500 font-bold"
                             : contentState.products[selectedProductIndex]
-                              .timeline.length > 50
+                              .timeline.length > 40
                               ? "text-red-500"
                               : "text-gray-400"
                             }`}
