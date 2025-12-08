@@ -188,15 +188,28 @@ export default function Product({ productData }) {
                   </p>
 
                   {/* Pricing & Timeline */}
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="font-semibold mb-2">Pricing</h3>
-                      <p className="text-justify">{productData.products[selectedProductIndex].pricing}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Timeline</h3>
-                      <p className="text-justify">{productData.products[selectedProductIndex].timeline}</p>
-                    </div>
+                  <div className="grid grid-cols-2 gap-6 mt-4">
+                    {/* Check using .trim() to handle strings with just spaces */}
+                    {productData.products[selectedProductIndex].pricing && 
+                     productData.products[selectedProductIndex].pricing.trim().length > 0 && (
+                      <div>
+                        <h3 className="font-semibold mb-2">Pricing</h3>
+                        <p className="text-justify">
+                          {productData.products[selectedProductIndex].pricing}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Check using .trim() to handle strings with just spaces */}
+                    {productData.products[selectedProductIndex].timeline && 
+                     productData.products[selectedProductIndex].timeline.trim().length > 0 && (
+                      <div>
+                        <h3 className="font-semibold mb-2">Timeline</h3>
+                        <p className="text-justify">
+                          {productData.products[selectedProductIndex].timeline}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>

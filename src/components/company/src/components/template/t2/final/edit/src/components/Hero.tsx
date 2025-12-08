@@ -615,7 +615,7 @@ export default function Hero({
                 {/* Badge - FIXED: Show badge container when editing OR when there's badge text */}
                 {(isEditing || heroState.badgeText) && (
                   <motion.div
-                    className="inline-flex items-center px-4 py-2 bg-yellow-400 rounded-full text-primary border border-primary/20 mb-4 min-h-[44px]"
+                    className="inline-flex items-center px-4 py-2 bg-yellow-400 rounded-md text-primary border border-primary/20 mb-4 min-h-[44px]"
                     variants={itemVariants}
                   >
                     {isEditing ? (
