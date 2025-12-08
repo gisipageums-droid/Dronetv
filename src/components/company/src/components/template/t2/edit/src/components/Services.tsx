@@ -1,3 +1,4 @@
+// Services.tsx with same cropping functionality as Clients
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -32,40 +33,57 @@ export default function Services({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [prevZoom, setPrevZoom] = useState(1);
-  const [mediaSize, setMediaSize] = useState<{
-    width: number;
-    height: number;
-    naturalWidth: number;
-    naturalHeight: number;
-  } | null>(null);
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
-
-  useEffect(() => {
-    setPrevZoom(zoom);
-  }, [zoom]);
-
-  // Compute dynamic min zoom (free pan/zoom)
-  useEffect(() => {
-    if (mediaSize && cropAreaSize) {
-      const coverW = cropAreaSize.width / mediaSize.width;
-      const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.1);
-      setMinZoomDynamic(computedMin);
-      setZoom((z) => (z < computedMin ? computedMin : z));
-    }
-  }, [mediaSize, cropAreaSize]);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
 
   // Merged all state into a single object
   const [servicesSection, setServicesSection] = useState(serviceData);
 
-  // Add this useEffect to notify parent of state changes
+  // Auto-update parent when contentState changes
   useEffect(() => {
     if (onStateChange) {
       onStateChange(servicesSection);
     }
   }, [servicesSection, onStateChange]);
+
+  // Auto-save when images are uploaded
+  useEffect(() => {
+    const autoSaveImages = async () => {
+      const pendingEntries = Object.entries(pendingImages);
+      if (pendingEntries.length > 0 && !isUploading) {
+        await handleImageUpload();
+      }
+    };
+
+    autoSaveImages();
+  }, [pendingImages]);
+
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      setMinZoomDynamic(0.1);
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
+  useEffect(() => {
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
 
   // Get categories from services
   const filteredServices =
@@ -75,7 +93,7 @@ export default function Services({
 
   const visibleServices = filteredServices.slice(0, visibleCount);
 
-  // Handlers
+  // Handlers - now auto-update
   const updateServiceField = (index: number, field: string, value: any) => {
     setServicesSection((prev) => ({
       ...prev,
@@ -135,6 +153,22 @@ export default function Services({
           }
           : s
       ),
+    }));
+  };
+
+  // Update heading - now auto-updates
+  const updateHeading = (field: string, value: string) => {
+    setServicesSection((prev) => ({
+      ...prev,
+      heading: { ...prev.heading, [field]: value },
+    }));
+  };
+
+  // Update categories - now auto-updates
+  const updateCategory = (index: number, value: string) => {
+    setServicesSection((prev) => ({
+      ...prev,
+      categories: prev.categories.map((c, i) => (i === index ? value : c)),
     }));
   };
 
@@ -240,7 +274,7 @@ export default function Services({
     });
   };
 
-  // Apply crop and set pending file
+  // Apply crop and set pending file - now auto-uploads
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels || croppingIndex === null) return;
@@ -254,11 +288,14 @@ export default function Services({
       // Update preview immediately with blob URL (temporary)
       updateServiceField(croppingIndex, "image", previewUrl);
 
-      // Set the actual file for upload on save
+      // Set the actual file for auto-upload
       setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
-      console.log("Service image cropped, file ready for upload:", file);
+      console.log("Service image cropped, file ready for auto-upload:", file);
 
-      toast.success("Image cropped successfully! Click Save to upload to S3.");
+      // Auto-upload immediately after cropping
+      await handleImageUpload();
+
+      toast.success("Image cropped and uploaded successfully!");
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
@@ -287,12 +324,13 @@ export default function Services({
     setCrop({ x: 0, y: 0 });
   };
 
-  // Updated Save button handler - uploads images and stores S3 URLs
-  const handleSave = async () => {
+  // Separate function to handle image upload only
+  const handleImageUpload = async () => {
     try {
       setIsUploading(true);
+      const uploadPromises = [];
 
-      // Upload all pending images
+      // Create upload promises for all pending images
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = parseInt(indexStr);
 
@@ -305,50 +343,88 @@ export default function Services({
           toast.error(
             "Missing user information. Please refresh and try again."
           );
-          return;
+          continue;
         }
 
         const formData = new FormData();
         formData.append("file", file);
         formData.append("sectionName", "services");
-        formData.append("imageField", `services[${index}].image` + Date.now());
+        formData.append("imageField", `services[${index}].image`);
         formData.append("templateSelection", templateSelection);
 
-        console.log("Uploading service image to S3:", file);
+        console.log("Auto-uploading service image to S3:", file);
 
-        const uploadResponse = await fetch(
+        const uploadPromise = fetch(
           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
             body: formData,
           }
-        );
+        ).then(async (uploadResponse) => {
+          if (uploadResponse.ok) {
+            const uploadData = await uploadResponse.json();
+            // Replace local preview with S3 URL
+            updateServiceField(index, "image", uploadData.imageUrl);
+            console.log("Image auto-uploaded to S3:", uploadData.imageUrl);
+            return { success: true, index };
+          } else {
+            const errorData = await uploadResponse.json();
+            console.error("Image auto-upload failed:", errorData);
+            throw new Error(errorData.message || "Upload failed");
+          }
+        });
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Replace local preview with S3 URL
-          updateServiceField(index, "image", uploadData.imageUrl);
-          console.log("Image uploaded to S3:", uploadData.imageUrl);
-        } else {
-          const errorData = await uploadResponse.json();
-          console.error("Image upload failed:", errorData);
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
-          return;
-        }
+        uploadPromises.push(uploadPromise);
       }
 
-      // Clear pending images
-      setPendingImages({});
+      // Wait for all uploads to complete
+      const results = await Promise.allSettled(uploadPromises);
+      
+      const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
+      const failedUploads = results.filter(result => result.status === 'rejected').length;
+
+      if (successfulUploads > 0) {
+        toast.success(`${successfulUploads} image(s) uploaded successfully!`);
+      }
+      if (failedUploads > 0) {
+        toast.error(`${failedUploads} image(s) failed to upload. Please try again.`);
+      }
+
+      // Clear only successfully uploaded images from pending
+      const successfulIndices = results
+        .filter(result => result.status === 'fulfilled')
+        .map(result => result.value.index);
+      
+      setPendingImages(prev => {
+        const updated = { ...prev };
+        successfulIndices.forEach(index => {
+          delete updated[index];
+        });
+        return updated;
+      });
+
+    } catch (error) {
+      console.error("Error in auto-upload:", error);
+      toast.error("Error uploading images. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Updated Save button handler - now only handles non-image changes and exits edit mode
+  const handleSave = async () => {
+    try {
+      // If there are pending images, upload them first
+      if (Object.keys(pendingImages).length > 0) {
+        await handleImageUpload();
+      }
+      
       // Exit edit mode
       setIsEditing(false);
-      toast.success("Services section saved with S3 URLs!");
+      toast.success("Services section saved!");
     } catch (error) {
       console.error("Error saving services section:", error);
       toast.error("Error saving changes. Please try again.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -447,7 +523,7 @@ export default function Services({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -459,12 +535,14 @@ export default function Services({
                 restrictPosition={false}
                 zoomWithScroll={true}
                 zoomSpeed={0.2}
-                onMediaLoaded={(ms) => setMediaSize(ms)}
-                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
+                showGrid={true}
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -536,9 +614,14 @@ export default function Services({
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full py-2 text-sm text-white bg-green-600 rounded hover:bg-green-700"
+                  disabled={isUploading}
+                  className={`w-full py-2 text-sm text-white rounded ${
+                    isUploading 
+                      ? "bg-gray-400 cursor-not-allowed" 
+                      : "bg-green-600 hover:bg-green-700"
+                  }`}
                 >
-                  Apply Crop
+                  {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
               </div>
             </div>
@@ -565,7 +648,7 @@ export default function Services({
                   : "bg-green-600 hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
-                {isUploading ? "Uploading..." : "Save"}
+                {isUploading ? "Uploading..." : "Save & Exit"}
               </motion.button>
             ) : (
               <motion.button
@@ -579,6 +662,14 @@ export default function Services({
             )}
           </div>
 
+          {/* Auto-update status indicator */}
+          {isEditing && (
+            <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+              <CheckCircle className="w-4 h-4 mr-1" />
+              Auto-saving changes...
+            </div>
+          )}
+
           {/* Header */}
           <div className="mb-8 text-center">
             {isEditing ? (
@@ -591,12 +682,7 @@ export default function Services({
                       : ""
                       }`}
                     value={servicesSection.heading.head}
-                    onChange={(e) =>
-                      setServicesSection((prev) => ({
-                        ...prev,
-                        heading: { ...prev.heading, head: e.target.value },
-                      }))
-                    }
+                    onChange={(e) => updateHeading("head", e.target.value)}
                     maxLength={60}
                   />
                   <div
@@ -620,12 +706,7 @@ export default function Services({
                       : ""
                       }`}
                     value={servicesSection.heading.desc}
-                    onChange={(e) =>
-                      setServicesSection((prev) => ({
-                        ...prev,
-                        heading: { ...prev.heading, desc: e.target.value },
-                      }))
-                    }
+                    onChange={(e) => updateHeading("desc", e.target.value)}
                     maxLength={120}
                   />
                   <div
@@ -662,14 +743,7 @@ export default function Services({
                   <div className="relative">
                     <input
                       value={cat}
-                      onChange={(e) =>
-                        setServicesSection((prev) => ({
-                          ...prev,
-                          categories: prev.categories.map((c, idx) =>
-                            idx === i ? e.target.value : c
-                          ),
-                        }))
-                      }
+                      onChange={(e) => updateCategory(i, e.target.value)}
                       maxLength={40}
                       className={`px-2 border-b pr-10 ${cat.length >= 40 ? "border-red-500" : ""
                         }`}
@@ -743,9 +817,6 @@ export default function Services({
                       transition={{ duration: 0.3 }}
                       className="absolute p-1 rounded bottom-2 left-2 bg-white/80"
                     >
-                      <div className="mb-1 text-xs text-gray-600">
-                        Recommended: 1600×900px (16:9)
-                      </div>
                       <input
                         type="file"
                         accept="image/*"
@@ -760,6 +831,7 @@ export default function Services({
                     </motion.div>
                   )}
                 </div>
+
                 <div className="flex flex-col flex-grow p-6">
                   <div className="flex-shrink-0 mb-4">
                     {isEditing ? (
@@ -857,10 +929,10 @@ export default function Services({
                       </>
                     ) : (
                       <>
-                        <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem] text-justify">
+                        <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
                           {service.description}
                         </p>
-                        <p className="mt-1 text-xs italic text-gray-500 text-justify">
+                        <p className="mt-1 text-xs italic text-gray-500">
                           Category: {service.category}
                         </p>
                       </>
@@ -889,6 +961,7 @@ export default function Services({
                 </div>
               </Card>
             ))}
+
             {isEditing && (
               <Card className="flex items-center justify-center border-dashed min-h-[350px]">
                 <Button
@@ -1023,7 +1096,7 @@ export default function Services({
                     </div>
                   </div>
                 ) : (
-                  <p className="mb-3 text-sm text-muted-foreground text-justify">
+                  <p className="mb-3 text-sm text-muted-foreground">
                     {
                       servicesSection.services[selectedServiceIndex]
                         .detailedDescription
@@ -1206,7 +1279,7 @@ export default function Services({
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-justify">
+                      <p className="text-sm">
                         {servicesSection.services[selectedServiceIndex].pricing}
                       </p>
                     )}
@@ -1251,7 +1324,7 @@ export default function Services({
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-justify">
+                      <p className="text-sm">
                         {
                           servicesSection.services[selectedServiceIndex]
                             .timeline

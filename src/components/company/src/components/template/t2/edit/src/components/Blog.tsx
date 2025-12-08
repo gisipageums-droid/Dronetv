@@ -1,5 +1,5 @@
-// Blog.tsx - Full Updated Code with Text Limitations
-import { useState, useEffect, useCallback } from "react";
+// Blog.tsx - Full Updated Code with Enhanced Cropping Logic
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Calendar, User, ArrowRight } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -20,8 +20,9 @@ export default function Blog({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [pendingImages, setPendingImages] = useState<Record<number, File>>({});
   const [isUploading, setIsUploading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  // Cropping states
+  // Cropping states - ENHANCED WITH GALLERY LOGIC
   const [showCropper, setShowCropper] = useState(false);
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -29,44 +30,77 @@ export default function Blog({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
-
-  // Dynamic zoom calculation states
-  const [mediaSize, setMediaSize] = useState<{
-    width: number;
-    height: number;
-    naturalWidth: number;
-    naturalHeight: number;
-  } | null>(null);
+  const [mediaSize, setMediaSize] = useState<{ width: number; height: number; naturalWidth: number; naturalHeight: number } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(0.1);
+  const [isDragging, setIsDragging] = useState(false);
+  const PAN_STEP = 10;
+
   const [prevZoom, setPrevZoom] = useState(1);
 
-  // Merged all state into a single object
-  const [blogSection, setBlogSection] = useState(blogData);
+  // Track initial state to detect changes
+  const initialBlogState = useRef(null);
 
-  // Add this useEffect to notify parent of state changes
+  // Allow more zoom-out; do not enforce cover when media/crop sizes change
+  useEffect(() => {
+    if (mediaSize && cropAreaSize) {
+      setMinZoomDynamic(0.1);
+    }
+  }, [mediaSize, cropAreaSize]);
+
+  // Arrow keys to pan image inside crop area when cropper is open
+  const nudge = useCallback((dx: number, dy: number) => {
+    setCrop((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  }, []);
+
+  useEffect(() => {
+    if (!showCropper) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-PAN_STEP, 0); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); nudge(PAN_STEP, 0); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -PAN_STEP); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, PAN_STEP); }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCropper, nudge]);
+
+  // Merged all state into a single object
+  const [blogSection, setBlogSection] = useState(() => {
+    const initialState = blogData || {
+      header: {
+        badge: "Our Blog",
+        title: "Latest Insights & Updates",
+        desc: "Stay updated with the latest industry trends, company news, and expert insights from our team."
+      },
+      posts: [
+        {
+          id: 1,
+          title: "The Future of Digital Transformation",
+          excerpt: "Exploring how digital transformation is reshaping industries and creating new opportunities for growth and innovation.",
+          image: "https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG1lZXRpbmd8ZW58MXx8fHwxNzU1NjE5MDEzfDA&ixlib=rb-4.1.0&q=80&w=400",
+          category: "Technology",
+          date: "March 15, 2024",
+          author: "Sarah Johnson",
+          content: "<p>Digital transformation is no longer just a buzzword—it's a fundamental shift in how businesses operate and deliver value to customers. In this post, we explore the key trends shaping the future of digital transformation and how companies can adapt to stay competitive.</p>"
+        },
+        // ... more default posts
+      ]
+    };
+    initialBlogState.current = initialState;
+    return initialState;
+  });
+
+  // Add this useEffect to notify parent of state changes immediately
   useEffect(() => {
     if (onStateChange) {
       onStateChange(blogSection);
     }
+
+    // Check if there are any changes from initial state
+    const hasChanges = JSON.stringify(blogSection) !== JSON.stringify(initialBlogState.current);
+    setHasUnsavedChanges(hasChanges);
   }, [blogSection, onStateChange]);
-
-  // Compute dynamic min zoom (free pan/zoom)
-  useEffect(() => {
-    if (mediaSize && cropAreaSize) {
-      const coverW = cropAreaSize.width / mediaSize.width;
-      const coverH = cropAreaSize.height / mediaSize.height;
-      const computedMin = Math.max(coverW, coverH, 0.1);
-      setMinZoomDynamic(computedMin);
-      setZoom((z) => (z < computedMin ? computedMin : z));
-    }
-  }, [mediaSize, cropAreaSize]);
-
-  // Track prev zoom only; no auto-recenter to allow free pan
-  useEffect(() => {
-    setPrevZoom(zoom);
-  }, [zoom]);
 
   const displayedPosts = showAllPosts
     ? blogSection.posts
@@ -97,7 +131,55 @@ export default function Blog({
     document.body.style.overflow = "auto";
   };
 
-  // Handle blog image selection - now opens cropper
+  // NEW: Function to upload image to AWS
+  const uploadImageToAWS = async (file, imageField) => {
+    if (!userId || !publishedId || !templateSelection) {
+      console.error("Missing required props:", {
+        userId,
+        publishedId,
+        templateSelection,
+      });
+      toast.error("Missing user information. Please refresh and try again.");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("sectionName", "blog");
+    formData.append("imageField", `${imageField}_${Date.now()}`);
+    formData.append("templateSelection", templateSelection);
+
+    console.log(`Uploading ${imageField} to S3:`, file);
+
+    try {
+      const uploadResponse = await fetch(
+        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
+        return uploadData.imageUrl;
+      } else {
+        const errorData = await uploadResponse.json();
+        console.error(`${imageField} upload failed:`, errorData);
+        toast.error(
+          `${imageField} upload failed: ${errorData.message || "Unknown error"}`
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error uploading ${imageField}:`, error);
+      toast.error(`Error uploading image. Please try again.`);
+      return null;
+    }
+  };
+
+  // Handle blog image selection - UPDATED WITH GALLERY LOGIC
   const handleBlogImageSelect = async (
     index: number | null,
     e: React.ChangeEvent<HTMLInputElement>
@@ -121,7 +203,6 @@ export default function Blog({
       setOriginalFile(file);
       setCroppingIndex(index);
       setShowCropper(true);
-      setAspectRatio(4 / 3);
       setZoom(1);
       setCrop({ x: 0, y: 0 });
     };
@@ -131,12 +212,12 @@ export default function Blog({
     e.target.value = "";
   };
 
-  // Cropper functions
+  // Cropper functions - FROM GALLERY
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  // Helper function to create image element
+  // Helper function to create image element - FROM GALLERY
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
@@ -146,14 +227,18 @@ export default function Blog({
       image.src = url;
     });
 
-  // Function to get cropped image
+  // Function to get cropped image - UPDATED WITH FIXED 4:3 RATIO
   const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    // Fixed output size for 4:3 ratio - SAME AS GALLERY
+    const outputWidth = 600;
+    const outputHeight = 450;
+
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
     ctx.drawImage(
       image,
@@ -163,19 +248,19 @@ export default function Blog({
       pixelCrop.height,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      outputWidth,
+      outputHeight
     );
 
     return new Promise((resolve) => {
       canvas.toBlob(
         (blob) => {
-          const fileName = originalFile
-            ? `cropped-blog-${croppingIndex}-${originalFile.name}`
-            : `cropped-blog-modal-${Date.now()}.jpg`;
+          const pngName = originalFile
+            ? `cropped-blog-${croppingIndex}-${originalFile.name.replace(/\.[^.]+$/, "")}.png`
+            : `cropped-blog-modal-${Date.now()}.png`;
 
-          const file = new File([blob], fileName, {
-            type: "image/jpeg",
+          const file = new File([blob], pngName, {
+            type: "image/png",
             lastModified: Date.now(),
           });
 
@@ -186,23 +271,24 @@ export default function Blog({
             previewUrl,
           });
         },
-        "image/jpeg",
-        0.95
+        "image/png"
       );
     });
   };
 
-  // Apply crop and set pending file
+  // Apply crop and UPLOAD IMMEDIATELY to AWS - UPDATED
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels) return;
+
+      setIsUploading(true);
 
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
 
-      // Update preview immediately with blob URL (temporary)
+      // Show preview immediately with blob URL (temporary)
       if (croppingIndex !== null) {
         setBlogSection((prev) => ({
           ...prev,
@@ -210,14 +296,49 @@ export default function Blog({
             i === croppingIndex ? { ...p, image: previewUrl } : p
           ),
         }));
-        setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
       } else if (selectedPost) {
         setSelectedPost((s: any) => ({ ...s, image: previewUrl }));
-        setPendingImages((prev) => ({ ...prev, modal: file }));
       }
 
-      console.log("Blog image cropped, file ready for upload:", file);
-      toast.success("Image cropped successfully! Click Save to upload to S3.");
+      // UPLOAD TO AWS IMMEDIATELY
+      const imageField = croppingIndex !== null ? `posts[${croppingIndex}].image` : "modal.image";
+      const awsImageUrl = await uploadImageToAWS(file, imageField);
+
+      if (awsImageUrl) {
+        // Update with actual S3 URL
+        if (croppingIndex !== null) {
+          setBlogSection((prev) => ({
+            ...prev,
+            posts: prev.posts.map((p, i) =>
+              i === croppingIndex ? { ...p, image: awsImageUrl } : p
+            ),
+          }));
+        } else if (selectedPost) {
+          setSelectedPost((s: any) => ({ ...s, image: awsImageUrl }));
+        }
+
+        // Remove from pending images since it's uploaded
+        setPendingImages((prev) => {
+          const newPending = { ...prev };
+          if (croppingIndex !== null) {
+            delete newPending[croppingIndex];
+          } else {
+            delete newPending["modal"];
+          }
+          return newPending;
+        });
+
+        toast.success("Image cropped and uploaded to AWS successfully!");
+      } else {
+        // If upload fails, keep the preview URL and set as pending
+        if (croppingIndex !== null) {
+          setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
+        } else {
+          setPendingImages((prev) => ({ ...prev, modal: file }));
+        }
+        toast.warning("Image cropped but upload failed. It will be saved locally.");
+      }
+
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
@@ -225,10 +346,12 @@ export default function Blog({
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  // Cancel cropping
+  // Cancel cropping - UPDATED
   const cancelCrop = () => {
     setShowCropper(false);
     setImageToCrop(null);
@@ -238,79 +361,58 @@ export default function Blog({
     setZoom(1);
   };
 
-  // Reset zoom and rotation
+  // Reset zoom and rotation - UPDATED
   const resetCropSettings = () => {
     setZoom(1);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Save handler - uploads all pending images
+  // Handle cancel editing
+  const handleCancel = () => {
+    // Reset to initial state
+    setBlogSection(initialBlogState.current);
+    setPendingImages({});
+    setHasUnsavedChanges(false);
+    setIsEditing(false);
+  };
+
+  // Save handler - only handles text changes and failed uploads now
   const handleSave = async () => {
     try {
       setIsUploading(true);
 
-      // Upload all pending images
+      // Upload any pending images that failed during automatic upload
       for (const [indexStr, file] of Object.entries(pendingImages)) {
         const index = indexStr === "modal" ? null : parseInt(indexStr);
 
-        if (!userId || !publishedId || !templateSelection) {
-          console.error("Missing required props:", {
-            userId,
-            publishedId,
-            templateSelection,
-          });
-          toast.error(
-            "Missing user information. Please refresh and try again."
-          );
-          return;
-        }
+        const imageField = index !== null ? `posts[${index}].image` : "modal.image";
+        const awsImageUrl = await uploadImageToAWS(file, imageField);
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("sectionName", "blog");
-        formData.append(
-          "imageField",
-          index !== null ? `posts[${index}].image` : "modal.image" + Date.now()
-        );
-        formData.append("templateSelection", templateSelection);
-
-        console.log("Uploading blog image to S3:", file);
-
-        const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
+        if (awsImageUrl) {
           // Replace local preview with S3 URL
           if (index !== null) {
             setBlogSection((prev) => ({
               ...prev,
               posts: prev.posts.map((p, i) =>
-                i === index ? { ...p, image: uploadData.imageUrl } : p
+                i === index ? { ...p, image: awsImageUrl } : p
               ),
             }));
           }
-          console.log("Image uploaded to S3:", uploadData.imageUrl);
         } else {
-          const errorData = await uploadResponse.json();
-          console.error("Image upload failed:", errorData);
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
+          toast.error(`Failed to upload image for post ${indexStr}`);
           return;
         }
       }
+
+      // Update initial state reference to current state
+      initialBlogState.current = blogSection;
+      setHasUnsavedChanges(false);
 
       // Clear pending images
       setPendingImages({});
       // Exit edit mode
       setIsEditing(false);
-      toast.success("Blog section saved with S3 URLs!");
+      toast.success("Blog section saved!");
     } catch (error) {
       console.error("Error saving blog section:", error);
       toast.error("Error saving changes. Please try again.");
@@ -321,7 +423,7 @@ export default function Blog({
 
   return (
     <>
-      {/* Image Cropper Modal - Standardized like Clients */}
+      {/* Image Cropper Modal - UPDATED WITH GALLERY STYLING AND LOGIC */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -347,23 +449,25 @@ export default function Blog({
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                aspect={aspectRatio}
+                aspect={4 / 3} // ✅ FIXED 4:3 ASPECT RATIO LIKE GALLERY
                 minZoom={minZoomDynamic}
                 maxZoom={5}
                 restrictPosition={false}
                 zoomWithScroll={true}
                 zoomSpeed={0.2}
-                onMediaLoaded={(ms) => setMediaSize(ms)}
-                onCropAreaChange={(area) => setCropAreaSize(area)}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={true}
+                onMediaLoaded={(ms) => setMediaSize(ms)}
+                onCropAreaChange={(area, areaPixels) => setCropAreaSize(area)}
+                onInteractionStart={() => setIsDragging(true)}
+                onInteractionEnd={() => setIsDragging(false)}
+                showGrid={true} // ✅ Better alignment like Gallery
                 cropShape="rect"
                 style={{
                   containerStyle: {
@@ -381,24 +485,6 @@ export default function Blog({
 
             {/* Controls */}
             <div className="p-4 bg-gray-50 border-t border-gray-200">
-              {/* Aspect Ratio Button - Only 4:3 */}
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  Aspect Ratio:
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                  >
-                    4:3 (Standard)
-                  </button>
-                </div>
-              </div>
-
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
@@ -434,9 +520,10 @@ export default function Blog({
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                  disabled={isUploading}
+                  className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm font-medium`}
                 >
-                  Apply Crop
+                  {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
               </div>
             </div>
@@ -445,23 +532,35 @@ export default function Blog({
       )}
 
       {/* Main Blog Section */}
-      <section id="blog" className=" bg-background theme-transition ">
+      <section id="blog" className=" bg-background theme-transition">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit/Save Buttons */}
-          <div className="flex justify-end mt-6">
+          <div className="flex justify-end mt-6 gap-2">
             {isEditing ? (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={handleSave}
-                disabled={isUploading}
-                className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:shadow-2xl"
-                  } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
-              >
-                {isUploading ? "Uploading..." : "Save"}
-              </motion.button>
+              <>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ y: -1, scaleX: 1.05 }}
+                  onClick={handleCancel}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ y: -1, scaleX: 1.1 }}
+                  onClick={handleSave}
+                  disabled={isUploading}
+                  className={`${isUploading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : hasUnsavedChanges || Object.keys(pendingImages).length > 0
+                      ? "bg-green-600 hover:shadow-2xl"
+                      : "bg-gray-400 cursor-not-allowed"
+                    } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                >
+                  {isUploading ? "Uploading..." : "Save"}
+                </motion.button>
+              </>
             ) : (
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -659,7 +758,7 @@ export default function Blog({
                     >
                       {/* Recommendation text connected with select image */}
                       <div className="text-xs text-gray-600 mb-1 text-center">
-                        Recommended: 400×300px (4:3 ratio)
+                        Recommended: 600×450px (4:3 ratio)
                       </div>
                       <input
                         type="file"
@@ -842,6 +941,7 @@ export default function Blog({
                 </div>
               </motion.article>
             ))}
+
             {isEditing && (
               <motion.div
                 whileTap={{ scale: 0.9 }}
@@ -896,7 +996,7 @@ export default function Blog({
         <AnimatePresence>
           {isModalOpen && selectedPost && (
             <motion.div
-              className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-[999999999999999]"
+              className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-[99999999999999]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1081,7 +1181,7 @@ export default function Blog({
 
                       <div className="mb-4">
                         <div className="text-xs text-gray-600 mb-1">
-                          Recommended: 800×600px (4:3 ratio)
+                          Recommended: 600×450px (4:3 ratio)
                         </div>
                         <input
                           type="file"
@@ -1102,10 +1202,11 @@ export default function Blog({
                         {selectedPost.title}
                       </h2>
                       <div
-                        className="prose prose-gray max-w-none text-card-foreground"
+                        className="prose prose-gray max-w-none text-card-foreground text-justify"
                         dangerouslySetInnerHTML={{
                           __html: selectedPost.content,
                         }}
+                        // {selectedPost.map((post: any) => post.content)}
                       />
                     </>
                   )}

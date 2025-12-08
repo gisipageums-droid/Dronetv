@@ -14,13 +14,14 @@ export default function Hero({
     templateSelection,
 }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [pendingImageFile, setPendingImageFile] = useState(null);
-    const [pendingSmallImageFile, setPendingSmallImageFile] = useState(null);
+    const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+    const [pendingSmallImageFile, setPendingSmallImageFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
+    const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
 
     // Cropping states
     const [showCropper, setShowCropper] = useState(false);
-    const [croppingFor, setCroppingFor] = useState(null); // 'heroImage' or 'hero3Image'
+    const [croppingFor, setCroppingFor] = useState<"heroImage" | "hero3Image" | null>(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -43,7 +44,6 @@ export default function Hero({
     const [prevZoom, setPrevZoom] = useState(1);
 
     // Consolidated state
-    // console.log("heroState", headerData?.name)
     const [heroState, setHeroState] = useState({
         badgeText: headerData?.name || "Company",
         heading: heroData?.title || "Transform Your Business with Innovation",
@@ -72,11 +72,21 @@ export default function Hero({
         }
     }, [heroState, onStateChange]);
 
+    // Auto-save status indicator
+    useEffect(() => {
+        if (isEditing && autoSaveStatus === "saving") {
+            const timer = setTimeout(() => {
+                setAutoSaveStatus("saved");
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [autoSaveStatus, isEditing]);
+
     // Compute dynamic min zoom
     useEffect(() => {
         if (mediaSize && cropAreaSize) {
-            const coverW = cropAreaSize.width / mediaSize.width;
-            const coverH = cropAreaSize.height / mediaSize.height;
+            const coverW = cropAreaSize.width / mediaSize.naturalWidth;
+            const coverH = cropAreaSize.height / mediaSize.naturalHeight;
             const computedMin = Math.max(coverW, coverH, 0.5);
             setMinZoomDynamic(computedMin);
             setZoom((z) => (z < computedMin ? computedMin : z));
@@ -91,13 +101,15 @@ export default function Hero({
         setPrevZoom(zoom);
     }, [zoom]);
 
-    // Update function for simple fields
+    // Update function for simple fields with auto-save
     const updateField = (field, value) => {
+        setAutoSaveStatus("saving");
         setHeroState((prev) => ({ ...prev, [field]: value }));
     };
 
-    // Stats functions
+    // Stats functions with auto-save
     const updateStat = (id, field, value) => {
+        setAutoSaveStatus("saving");
         setHeroState((prev) => ({
             ...prev,
             stats: prev.stats.map((s) =>
@@ -107,6 +119,7 @@ export default function Hero({
     };
 
     const addStat = () => {
+        setAutoSaveStatus("saving");
         setHeroState((prev) => ({
             ...prev,
             stats: [
@@ -117,10 +130,60 @@ export default function Hero({
     };
 
     const removeStat = (id) => {
+        setAutoSaveStatus("saving");
         setHeroState((prev) => ({
             ...prev,
             stats: prev.stats.filter((s) => s.id !== id),
         }));
+    };
+
+    // Function to upload image to AWS immediately
+    const uploadImageToAWS = async (file: File, imageField: string) => {
+        if (!userId || !publishedId || !templateSelection) {
+            console.error("Missing required props:", {
+                userId,
+                publishedId,
+                templateSelection,
+            });
+            toast.error("Missing user information. Please refresh and try again.");
+            return null;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("sectionName", "hero");
+        formData.append("imageField", `${imageField}_${Date.now()}`);
+        formData.append("templateSelection", templateSelection);
+
+        console.log(`Uploading ${imageField} to S3:`, file);
+
+        try {
+            const uploadResponse = await fetch(
+                `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            if (uploadResponse.ok) {
+                const uploadData = await uploadResponse.json();
+                console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
+                toast.success(`${imageField} uploaded to S3 successfully!`);
+                return uploadData.imageUrl;
+            } else {
+                const errorData = await uploadResponse.json();
+                console.error(`${imageField} upload failed:`, errorData);
+                toast.error(
+                    `Image upload failed: ${errorData.message || "Unknown error"}`
+                );
+                return null;
+            }
+        } catch (error) {
+            console.error(`Error uploading ${imageField}:`, error);
+            toast.error(`Error uploading image. Please try again.`);
+            return null;
+        }
     };
 
     // Image selection handlers - now open cropper
@@ -205,11 +268,18 @@ export default function Hero({
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
+        if (!ctx) {
+            throw new Error("Could not get canvas context");
+        }
+
         // Set canvas size to the desired crop size
         canvas.width = pixelCrop.width;
         canvas.height = pixelCrop.height;
 
-        // Draw the cropped image scaled to the fixed output size
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the cropped image
         ctx.drawImage(
             image,
             pixelCrop.x,
@@ -222,10 +292,14 @@ export default function Hero({
             pixelCrop.height
         );
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             canvas.toBlob(
                 (blob) => {
-                    // Create a proper file with original file name or generate one
+                    if (!blob) {
+                        reject(new Error("Canvas is empty"));
+                        return;
+                    }
+                    
                     const fileName = originalFile
                         ? `cropped-${originalFile.name}`
                         : `cropped-${croppingFor}-${Date.now()}.jpg`;
@@ -235,7 +309,6 @@ export default function Hero({
                         lastModified: Date.now(),
                     });
 
-                    // Create object URL for preview
                     const previewUrl = URL.createObjectURL(blob);
 
                     resolve({
@@ -245,43 +318,63 @@ export default function Hero({
                 },
                 "image/jpeg",
                 0.95
-            ); // 95% quality
+            );
         });
     };
 
-    // Apply crop and set pending file - FIXED
+    // Apply crop and UPLOAD IMMEDIATELY to AWS
     const applyCrop = async () => {
         try {
-            if (!imageToCrop || !croppedAreaPixels) {
+            if (!imageToCrop || !croppedAreaPixels || !croppingFor) {
                 toast.error("Please select an area to crop");
                 return;
             }
+
+            setIsUploading(true);
 
             const { file, previewUrl } = await getCroppedImg(
                 imageToCrop,
                 croppedAreaPixels
             );
 
-            // Update preview immediately with blob URL (temporary)
+            // Show preview immediately with blob URL (temporary)
             updateField(croppingFor, previewUrl);
 
-            // Set the actual file for upload on save
-            if (croppingFor === "heroImage") {
-                setPendingImageFile(file);
-                console.log("Hero image cropped, file ready for upload:", file);
+            // UPLOAD TO AWS IMMEDIATELY
+            const imageField = croppingFor === "heroImage" ? "heroImage" : "hero3Image";
+            const awsImageUrl = await uploadImageToAWS(file, imageField);
+
+            if (awsImageUrl) {
+                // Update with actual S3 URL
+                updateField(croppingFor, awsImageUrl);
+                
+                if (croppingFor === "heroImage") {
+                    setPendingImageFile(null);
+                } else {
+                    setPendingSmallImageFile(null);
+                }
+                
+                console.log(`${imageField} uploaded to S3:`, awsImageUrl);
             } else {
-                setPendingSmallImageFile(file);
-                console.log("Small image cropped, file ready for upload:", file);
+                // If upload fails, keep the file as pending
+                if (croppingFor === "heroImage") {
+                    setPendingImageFile(file);
+                } else {
+                    setPendingSmallImageFile(file);
+                }
+                toast.warning("Image cropped but upload failed. It will be saved locally.");
             }
 
-            toast.success("Image cropped successfully! Click Save to upload to S3.");
             setShowCropper(false);
             setImageToCrop(null);
             setOriginalFile(null);
             setCroppingFor(null);
+            setCroppedAreaPixels(null);
         } catch (error) {
             console.error("Error cropping image:", error);
             toast.error("Error cropping image. Please try again.");
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -291,6 +384,7 @@ export default function Hero({
         setImageToCrop(null);
         setOriginalFile(null);
         setCroppingFor(null);
+        setCroppedAreaPixels(null);
         setCrop({ x: 0, y: 0 });
         setZoom(1);
     };
@@ -301,115 +395,83 @@ export default function Hero({
         setCrop({ x: 0, y: 0 });
     };
 
-    // Updated Save button handler - uploads cropped images to S3 - FIXED
-    const handleSave = async () => {
+    // Separate function to handle image upload only (for failed uploads)
+    const handleImageUpload = async () => {
+        const uploadPromises = [];
+        
+        if (pendingImageFile) {
+            uploadPromises.push(
+                uploadImageToAWS(pendingImageFile, "heroImage").then((awsImageUrl) => {
+                    if (awsImageUrl) {
+                        updateField("heroImage", awsImageUrl);
+                        setPendingImageFile(null);
+                        return { success: true, type: "heroImage" };
+                    } else {
+                        throw new Error("Hero image upload failed");
+                    }
+                })
+            );
+        }
+
+        if (pendingSmallImageFile) {
+            uploadPromises.push(
+                uploadImageToAWS(pendingSmallImageFile, "hero3Image").then((awsImageUrl) => {
+                    if (awsImageUrl) {
+                        updateField("hero3Image", awsImageUrl);
+                        setPendingSmallImageFile(null);
+                        return { success: true, type: "hero3Image" };
+                    } else {
+                        throw new Error("Small image upload failed");
+                    }
+                })
+            );
+        }
+
+        if (uploadPromises.length === 0) return true;
+
         try {
             setIsUploading(true);
+            const results = await Promise.allSettled(uploadPromises);
 
-            // Upload main image if cropped
-            if (pendingImageFile) {
-                if (!userId || !publishedId || !templateSelection) {
-                    console.error("Missing required props:", {
-                        userId,
-                        publishedId,
-                        templateSelection,
-                    });
-                    toast.error(
-                        "Missing user information. Please refresh and try again."
-                    );
-                    return;
-                }
+            const successfulUploads = results.filter(result => result.status === 'fulfilled').length;
+            const failedUploads = results.filter(result => result.status === 'rejected').length;
 
-                const formData = new FormData();
-                formData.append("file", pendingImageFile);
-                formData.append("sectionName", "hero");
-                // Use unique filename with timestamp to avoid conflicts
-                formData.append("imageField", `heroImage_${Date.now()}`);
-                formData.append("templateSelection", templateSelection);
-
-                console.log("Uploading hero image to S3:", pendingImageFile);
-
-                const uploadResponse = await fetch(
-                    `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-                    {
-                        method: "POST",
-                        body: formData,
-                    }
-                );
-
-                if (uploadResponse.ok) {
-                    const uploadData = await uploadResponse.json();
-                    // Update with actual S3 URL, not blob URL
-                    updateField("heroImage", uploadData.imageUrl);
-                    setPendingImageFile(null);
-                    console.log("Main image uploaded to S3:", uploadData.imageUrl);
-                    toast.success("Hero image uploaded to S3 successfully!");
-                } else {
-                    const errorData = await uploadResponse.json();
-                    console.error("Main image upload failed:", errorData);
-                    toast.error(
-                        `Main image upload failed: ${errorData.message || "Unknown error"}`
-                    );
-                    return;
-                }
+            if (successfulUploads > 0) {
+                toast.success(`${successfulUploads} image(s) uploaded successfully!`);
+            }
+            if (failedUploads > 0) {
+                toast.error(`${failedUploads} image(s) failed to upload. Please try again.`);
+                return false;
             }
 
-            // Upload small image if cropped
-            if (pendingSmallImageFile) {
-                if (!userId || !publishedId || !templateSelection) {
-                    console.error("Missing required props:", {
-                        userId,
-                        publishedId,
-                        templateSelection,
-                    });
-                    toast.error(
-                        "Missing user information. Please refresh and try again."
-                    );
-                    return;
-                }
+            return true;
+        } catch (error) {
+            console.error("Error in upload:", error);
+            toast.error("Error uploading images. Please try again.");
+            return false;
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
-                const formData = new FormData();
-                formData.append("file", pendingSmallImageFile);
-                formData.append("sectionName", "hero");
-                // Use unique filename with timestamp to avoid conflicts
-                formData.append("imageField", `hero3Image_${Date.now()}`);
-                formData.append("templateSelection", templateSelection);
-
-                console.log("Uploading small image to S3:", pendingSmallImageFile);
-
-                const uploadResponse = await fetch(
-                    `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-                    {
-                        method: "POST",
-                        body: formData,
-                    }
-                );
-
-                if (uploadResponse.ok) {
-                    const uploadData = await uploadResponse.json();
-                    // Update with actual S3 URL, not blob URL
-                    updateField("hero3Image", uploadData.imageUrl);
-                    setPendingSmallImageFile(null);
-                    console.log("Small image uploaded to S3:", uploadData.imageUrl);
-                    toast.success("Small image uploaded to S3 successfully!");
-                } else {
-                    const errorData = await uploadResponse.json();
-                    console.error("Small image upload failed:", errorData);
-                    toast.error(
-                        `Small image upload failed: ${errorData.message || "Unknown error"}`
-                    );
-                    return;
+    // Updated Save button handler - now only handles pending images and exits edit mode
+    const handleSave = async () => {
+        try {
+            // If there are pending images, upload them first
+            if (pendingImageFile || pendingSmallImageFile) {
+                const uploadSuccess = await handleImageUpload();
+                if (!uploadSuccess) {
+                    return; // Don't exit edit mode if upload fails
                 }
             }
 
             // Exit edit mode
             setIsEditing(false);
-            toast.success("Hero section saved with S3 URLs!");
+            setAutoSaveStatus("idle");
+            toast.success("Hero section saved!");
         } catch (error) {
             console.error("Error saving hero section:", error);
             toast.error("Error saving changes. Please try again.");
-        } finally {
-            setIsUploading(false);
         }
     };
 
@@ -459,7 +521,7 @@ export default function Hero({
 
     return (
         <>
-            {/* Image Cropper Modal - FIXED with locked aspect ratios */}
+            {/* Image Cropper Modal */}
             {showCropper && (
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -575,9 +637,12 @@ export default function Hero({
                                 </button>
                                 <button
                                     onClick={applyCrop}
-                                    className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                                    disabled={isUploading}
+                                    className={`w-full ${
+                                        isUploading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+                                    } text-white rounded py-2 text-sm font-medium`}
                                 >
-                                    Apply Crop
+                                    {isUploading ? "Uploading..." : "Apply Crop"}
                                 </button>
                             </div>
                         </div>
@@ -608,6 +673,64 @@ export default function Hero({
                 />
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+                    {/* Auto-save status and Edit/Save buttons - Combined in one row */}
+                    <div className="absolute top-4 right-4 z-50 pointer-events-auto">
+                        <div className="flex items-center gap-4">
+                            {/* Auto-save status on left */}
+                            {isEditing && (
+                                <div className="text-sm bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1 shadow">
+                                    {autoSaveStatus === "saving" && (
+                                        <span className="text-yellow-600 animate-pulse">Saving changes...</span>
+                                    )}
+                                    {autoSaveStatus === "saved" && (
+                                        <span className="text-green-600 flex items-center gap-1">
+                                            <CheckCircle className="w-4 h-4" />
+                                            Changes saved
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+                            
+                            {/* Edit/Save button on right */}
+                            {isEditing ? (
+                                <motion.button
+                                    whileHover={{ y: -1, scaleX: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={handleSave}
+                                    disabled={isUploading}
+                                    className={`${
+                                        isUploading
+                                            ? "bg-gray-400 cursor-not-allowed"
+                                            : "bg-green-600 hover:shadow-2xl"
+                                    } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
+                                >
+                                    {isUploading ? "Uploading..." : "Save & Exit"}
+                                </motion.button>
+                            ) : (
+                                <motion.button
+                                    whileHover={{ y: -1, scaleX: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => setIsEditing(true)}
+                                    className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+                                >
+                                    Edit
+                                </motion.button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Pending image upload notices */}
+                    {isEditing && (pendingImageFile || pendingSmallImageFile) && (
+                        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p className="text-yellow-800 text-sm">
+                                <span className="font-medium">⚠️ Images ready for upload:</span>
+                                {pendingImageFile && ` ${pendingImageFile.name}`}
+                                {pendingSmallImageFile && ` ${pendingSmallImageFile.name}`}
+                                {' - Click "Save & Exit" to upload to S3'}
+                            </p>
+                        </div>
+                    )}
+
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         {/* Content */}
                         <motion.div
@@ -617,10 +740,10 @@ export default function Hero({
                             animate="visible"
                         >
                             <div className="space-y-4">
-                                {/* Badge - FIXED: Show badge container when editing OR when there's badge text */}
+                                {/* Badge */}
                                 {(isEditing || heroState.badgeText) && (
                                     <motion.div
-                                        className="inline-flex items-center px-4 py-2 bg-yellow-400 rounded-full text-primary border border-primary/20 mb-4 min-h-[44px]"
+                                        className="inline-flex items-center px-4 py-2 bg-yellow-400 rounded-xl text-primary border border-primary/20 mb-4 min-h-[44px]"
                                         variants={itemVariants}
                                     >
                                         {isEditing ? (
@@ -632,10 +755,11 @@ export default function Hero({
                                                     }
                                                     maxLength={75}
                                                     placeholder="Enter company name/badge..."
-                                                    className={`bg-transparent text-black border-b border-primary text-lg uppercase font-bold outline-none placeholder:text-gray-600 ${heroState.badgeText.length >= 75
-                                                        ? "border-red-500"
-                                                        : ""
-                                                        }`}
+                                                    className={`bg-transparent text-black border-b border-primary text-lg uppercase font-bold outline-none placeholder:text-gray-600 ${
+                                                        heroState.badgeText.length >= 75
+                                                            ? "border-red-500"
+                                                            : ""
+                                                    }`}
                                                 />
                                                 <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
                                                     {heroState.badgeText.length >= 75 && "Limit reached!"}
@@ -657,8 +781,9 @@ export default function Hero({
                                                 value={heroState.heading}
                                                 onChange={(e) => updateField("heading", e.target.value)}
                                                 maxLength={80}
-                                                className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80 ? "border-red-500" : ""
-                                                    }`}
+                                                className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${
+                                                    heroState.heading.length >= 80 ? "border-red-500" : ""
+                                                }`}
                                             />
                                             <div className="text-right text-xs text-gray-500 mt-1">
                                                 {heroState.heading.length}/80
@@ -686,16 +811,18 @@ export default function Hero({
                                                     updateField("description", e.target.value)
                                                 }
                                                 maxLength={500}
-                                                className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
-                                                    ? "border-red-500"
-                                                    : "border-muted-foreground"
-                                                    }`}
+                                                className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${
+                                                    heroState.description.length >= 500
+                                                        ? "border-red-500"
+                                                        : "border-muted-foreground"
+                                                }`}
                                             />
                                             <div
-                                                className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
-                                                    ? "text-red-500"
-                                                    : "text-gray-500"
-                                                    }`}
+                                                className={`absolute right-0 top-full mt-1 text-xs ${
+                                                    heroState.description.length >= 500
+                                                        ? "text-red-500"
+                                                        : "text-gray-500"
+                                                }`}
                                             >
                                                 {heroState.description.length}/500
                                                 {heroState.description.length >= 500 && (
@@ -727,10 +854,11 @@ export default function Hero({
                                             }
                                             maxLength={30}
                                             placeholder="Enter button text..."
-                                            className={`bg-transparent border-b border-primary outline-none max-w-[200px] placeholder:text-gray-500 ${heroState.primaryBtn.length >= 30
-                                                ? "border-red-500"
-                                                : ""
-                                                }`}
+                                            className={`bg-transparent border-b border-primary outline-none max-w-[200px] placeholder:text-gray-500 ${
+                                                heroState.primaryBtn.length >= 30
+                                                    ? "border-red-500"
+                                                    : ""
+                                            }`}
                                         />
                                         <div className="text-right text-xs text-gray-500 mt-1">
                                             {heroState.primaryBtn.length}/30
@@ -754,7 +882,7 @@ export default function Hero({
                                 )}
                             </motion.div>
 
-                            {/* Trust text - FIXED: Show trust text container when editing OR when there's trust text */}
+                            {/* Trust text */}
                             {(isEditing || heroState.trustText) && (
                                 <motion.div
                                     className="flex items-center space-x-6 pt-4"
@@ -775,10 +903,11 @@ export default function Hero({
                                                     }
                                                     maxLength={60}
                                                     placeholder="Enter trust text (e.g., 'Trusted by 1000+ companies')"
-                                                    className={`bg-transparent border-b border-muted-foreground text-sm outline-none placeholder:text-gray-500 ${heroState.trustText.length >= 60
-                                                        ? "border-red-500"
-                                                        : ""
-                                                        }`}
+                                                    className={`bg-transparent border-b border-muted-foreground text-sm outline-none placeholder:text-gray-500 ${
+                                                        heroState.trustText.length >= 60
+                                                            ? "border-red-500"
+                                                            : ""
+                                                    }`}
                                                 />
                                                 <div className="text-right text-xs text-gray-500 mt-1">
                                                     {heroState.trustText.length}/60
@@ -815,8 +944,9 @@ export default function Hero({
                                                                 updateStat(s.id, "value", e.target.value)
                                                             }
                                                             maxLength={15}
-                                                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
-                                                                }`}
+                                                            className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${
+                                                                s.value.length >= 15 ? "border-red-500" : ""
+                                                            }`}
                                                         />
                                                         <div className="text-right text-xs text-gray-500 mt-1">
                                                             {s.value.length}/15
@@ -835,8 +965,9 @@ export default function Hero({
                                                                 updateStat(s.id, "label", e.target.value)
                                                             }
                                                             maxLength={25}
-                                                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
-                                                                }`}
+                                                            className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${
+                                                                s.label.length >= 25 ? "border-red-500" : ""
+                                                            }`}
                                                         />
                                                         <div className="text-right text-xs text-gray-500 mt-1">
                                                             {s.label.length}/25
@@ -999,33 +1130,6 @@ export default function Hero({
                                 </motion.div>
                             </div>
                         </motion.div>
-                    </div>
-
-                    {/* Edit/Save Buttons */}
-                    <div className="absolute top-4 right-4 z-50 pointer-events-auto">
-                        {isEditing ? (
-                            <motion.button
-                                whileHover={{ y: -1, scaleX: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={handleSave}
-                                disabled={isUploading}
-                                className={`${isUploading
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-green-600 hover:shadow-2xl"
-                                    } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
-                            >
-                                {isUploading ? "Uploading..." : "Save"}
-                            </motion.button>
-                        ) : (
-                            <motion.button
-                                whileHover={{ y: -1, scaleX: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => setIsEditing(true)}
-                                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
-                            >
-                                Edit
-                            </motion.button>
-                        )}
                     </div>
                 </div>
             </section>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import {
@@ -25,8 +24,9 @@ export default function About({
   templateSelection,
 }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [pendingImageFile, setPendingImageFile] = useState(null);
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
 
   // Cropping states
   const [showCropper, setShowCropper] = useState(false);
@@ -36,8 +36,6 @@ export default function About({
   const [imageToCrop, setImageToCrop] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
-
-  // Dynamic zoom calculation states (like final edit)
   const [mediaSize, setMediaSize] = useState<{
     width: number;
     height: number;
@@ -45,8 +43,8 @@ export default function About({
     naturalHeight: number;
   } | null>(null);
   const [cropAreaSize, setCropAreaSize] = useState<{ width: number; height: number } | null>(null);
-  const [minZoomDynamic, setMinZoomDynamic] = useState(0.5);
-  const [prevZoom, setPrevZoom] = useState(1);
+  const [minZoomDynamic, setMinZoomDynamic] = useState(1);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Map the string icons to Lucide React components
   const iconMap = {
@@ -87,7 +85,7 @@ export default function About({
     visionPillars: aboutData?.visionPillars
       ? aboutData.visionPillars.map((pillar) => ({
         ...pillar,
-        icon: iconMap[pillar.icon] || Globe, // Fallback to Globe if icon not found
+        icon: iconMap[pillar.icon] || Globe,
       }))
       : [
         {
@@ -130,51 +128,111 @@ export default function About({
     }
   }, [aboutState, onStateChange]);
 
-  // Compute dynamic min zoom based on media and crop area (free pan/zoom)
+  // Auto-save status indicator
+  useEffect(() => {
+    if (isEditing && autoSaveStatus === "saving") {
+      const timer = setTimeout(() => {
+        setAutoSaveStatus("saved");
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [autoSaveStatus, isEditing]);
+
+  // Compute dynamic min zoom based on media and crop area
   useEffect(() => {
     if (mediaSize && cropAreaSize) {
-      const coverW = cropAreaSize.width / mediaSize.width;
-      const coverH = cropAreaSize.height / mediaSize.height;
+      const coverW = cropAreaSize.width / mediaSize.naturalWidth;
+      const coverH = cropAreaSize.height / mediaSize.naturalHeight;
       const computedMin = Math.max(coverW, coverH, 0.1);
       setMinZoomDynamic(computedMin);
-      setZoom((z) => (z < computedMin ? computedMin : z));
+      if (zoom < computedMin) {
+        setZoom(computedMin);
+      }
     }
-  }, [mediaSize, cropAreaSize]);
+  }, [mediaSize, cropAreaSize, zoom]);
 
-  // Track previous zoom only (no auto recentre to allow free panning)
-  useEffect(() => {
-    setPrevZoom(zoom);
-  }, [zoom]);
-
-  // Update function for simple fields
+  // Update function for simple fields with auto-save
   const updateField = (field, value) => {
+    setAutoSaveStatus("saving");
     setAboutState((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Update function for features
+  // Update function for features with auto-save
   const updateFeature = (index, value) => {
+    setAutoSaveStatus("saving");
     setAboutState((prev) => ({
       ...prev,
       features: prev.features.map((f, i) => (i === index ? value : f)),
     }));
   };
 
-  // Add a new feature
+  // Add a new feature with auto-save
   const addFeature = () => {
+    setAutoSaveStatus("saving");
     setAboutState((prev) => ({
       ...prev,
       features: [...prev.features, "New Feature"],
     }));
   };
 
-  // Update function for vision pillars
+  // Update function for vision pillars with auto-save
   const updatePillar = (index, field, value) => {
+    setAutoSaveStatus("saving");
     setAboutState((prev) => ({
       ...prev,
       visionPillars: prev.visionPillars.map((p, i) =>
         i === index ? { ...p, [field]: value } : p
       ),
     }));
+  };
+
+  // Function to upload image to AWS immediately
+  const uploadImageToAWS = async (file: File, imageField: string) => {
+    if (!userId || !publishedId || !templateSelection) {
+      console.error("Missing required props:", {
+        userId,
+        publishedId,
+        templateSelection,
+      });
+      toast.error("Missing user information. Please refresh and try again.");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("sectionName", "about");
+    formData.append("imageField", `${imageField}_${Date.now()}`);
+    formData.append("templateSelection", templateSelection);
+
+    console.log(`Uploading ${imageField} to S3:`, file);
+
+    try {
+      const uploadResponse = await fetch(
+        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
+        toast.success("About image uploaded to S3 successfully!");
+        return uploadData.imageUrl;
+      } else {
+        const errorData = await uploadResponse.json();
+        console.error(`${imageField} upload failed:`, errorData);
+        toast.error(
+          `Image upload failed: ${errorData.message || "Unknown error"}`
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error uploading ${imageField}:`, error);
+      toast.error(`Error uploading image. Please try again.`);
+      return null;
+    }
   };
 
   // Image selection handler - now opens cropper
@@ -222,15 +280,22 @@ export default function About({
       image.src = url;
     });
 
-  // Function to get cropped image
+  // Function to get cropped image - FIXED VERSION
   const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Set canvas size to the desired crop size
+    if (!ctx) {
+      throw new Error("Could not get canvas context");
+    }
+
+    // Set canvas size to the cropped area
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw the cropped image
     ctx.drawImage(
@@ -245,9 +310,14 @@ export default function About({
       pixelCrop.height
     );
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       canvas.toBlob(
         (blob) => {
+          if (!blob) {
+            reject(new Error("Canvas is empty"));
+            return;
+          }
+          
           const fileName = originalFile
             ? `cropped-${originalFile.name}`
             : `cropped-about-${Date.now()}.jpg`;
@@ -270,7 +340,7 @@ export default function About({
     });
   };
 
-  // Apply crop and set pending file
+  // Apply crop and UPLOAD IMMEDIATELY to AWS - FIXED
   const applyCrop = async () => {
     try {
       if (!imageToCrop || !croppedAreaPixels) {
@@ -278,25 +348,39 @@ export default function About({
         return;
       }
 
+      setIsUploading(true);
+
       const { file, previewUrl } = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels
       );
 
-      // Update preview immediately with blob URL (temporary)
+      // Show preview immediately with blob URL (temporary)
       updateField("imageUrl", previewUrl);
 
-      // Set the actual file for upload on save
-      setPendingImageFile(file);
-      console.log("About image cropped, file ready for upload:", file);
+      // UPLOAD TO AWS IMMEDIATELY
+      const awsImageUrl = await uploadImageToAWS(file, "aboutImage");
 
-      toast.success("Image cropped successfully! Click Save to upload to S3.");
+      if (awsImageUrl) {
+        // Update with actual S3 URL
+        updateField("imageUrl", awsImageUrl);
+        setPendingImageFile(null);
+        console.log("About image uploaded to S3:", awsImageUrl);
+      } else {
+        // If upload fails, keep the file as pending
+        setPendingImageFile(file);
+        toast.warning("Image cropped but upload failed. It will be saved locally.");
+      }
+
       setShowCropper(false);
       setImageToCrop(null);
       setOriginalFile(null);
+      setCroppedAreaPixels(null);
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -305,82 +389,61 @@ export default function About({
     setShowCropper(false);
     setImageToCrop(null);
     setOriginalFile(null);
+    setCroppedAreaPixels(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
   };
 
-  // Reset zoom and rotation
+  // Reset zoom and crop position
   const resetCropSettings = () => {
     setZoom(1);
     setCrop({ x: 0, y: 0 });
   };
 
-  // Updated Save button handler - uploads cropped image to S3
-  const handleSave = async () => {
+  // Separate function to handle image upload only (for failed uploads)
+  const handleImageUpload = async () => {
+    if (!pendingImageFile) return;
+
     try {
       setIsUploading(true);
+      const awsImageUrl = await uploadImageToAWS(pendingImageFile, "aboutImage");
 
-      // If there's a pending image, upload it first
-      if (pendingImageFile) {
-        if (!userId || !publishedId || !templateSelection) {
-          console.error("Missing required props:", {
-            userId,
-            publishedId,
-            templateSelection,
-          });
-          toast.error(
-            "Missing user information. Please refresh and try again."
-          );
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", pendingImageFile);
-        formData.append("sectionName", "about");
-        formData.append("imageField", "imageUrl" + Date.now());
-        formData.append("templateSelection", templateSelection);
-
-        console.log("Uploading about image to S3:", pendingImageFile);
-
-        const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          // Update with actual S3 URL, not blob URL
-          updateField("imageUrl", uploadData.imageUrl);
-          setPendingImageFile(null);
-          console.log("Image uploaded to S3:", uploadData.imageUrl);
-          toast.success("About image uploaded to S3 successfully!");
-        } else {
-          const errorData = await uploadResponse.json();
-          console.error("Image upload failed:", errorData);
-          toast.error(
-            `Image upload failed: ${errorData.message || "Unknown error"}`
-          );
-          return;
-        }
+      if (awsImageUrl) {
+        updateField("imageUrl", awsImageUrl);
+        setPendingImageFile(null);
+        toast.success("About image uploaded to S3 successfully!");
+      } else {
+        toast.error("Image upload failed. Please try again.");
       }
-
-      // Exit edit mode
-      setIsEditing(false);
-      toast.success("About section saved with S3 URLs!");
     } catch (error) {
-      console.error("Error saving about section:", error);
-      toast.error("Error saving changes. Please try again.");
+      console.error("Error in upload:", error);
+      toast.error("Error uploading image. Please try again.");
     } finally {
       setIsUploading(false);
     }
   };
 
+  // Updated Save button handler - now only handles pending images and exits edit mode
+  const handleSave = async () => {
+    try {
+      // If there's a pending image, upload it first
+      if (pendingImageFile) {
+        await handleImageUpload();
+      }
+
+      // Exit edit mode
+      setIsEditing(false);
+      setAutoSaveStatus("idle");
+      toast.success("About section saved!");
+    } catch (error) {
+      console.error("Error saving about section:", error);
+      toast.error("Error saving changes. Please try again.");
+    }
+  };
+
   return (
     <>
-      {/* Image Cropper Modal - Standardized like Clients */}
+      {/* Image Cropper Modal - Fixed Version */}
       {showCropper && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -416,9 +479,25 @@ export default function About({
                 maxZoom={5}
                 restrictPosition={false}
                 zoomWithScroll={true}
-                zoomSpeed={0.2}
-                onMediaLoaded={(ms) => setMediaSize(ms)}
-                onCropAreaChange={(area) => setCropAreaSize(area)}
+                zoomSpeed={0.1}
+                onMediaLoaded={(mediaSize) => {
+                  setMediaSize(mediaSize);
+                  // Calculate initial min zoom
+                  if (mediaSize && cropAreaSize) {
+                    const coverW = cropAreaSize.width / mediaSize.naturalWidth;
+                    const coverH = cropAreaSize.height / mediaSize.naturalHeight;
+                    setMinZoomDynamic(Math.max(coverW, coverH, 0.1));
+                  }
+                }}
+                onCropAreaChange={(area) => {
+                  setCropAreaSize(area);
+                  // Recalculate min zoom when crop area changes
+                  if (mediaSize && area) {
+                    const coverW = area.width / mediaSize.naturalWidth;
+                    const coverH = area.height / mediaSize.naturalHeight;
+                    setMinZoomDynamic(Math.max(coverW, coverH, 0.1));
+                  }
+                }}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
@@ -446,35 +525,16 @@ export default function About({
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
-                  {/* <button
-                    onClick={() => setAspectRatio(1)}
+                  <button
+                    onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
+                      aspectRatio === 4 / 3
                         ? "bg-blue-500 text-white border-blue-500"
                         : "bg-white text-gray-700 border-gray-300"
                     }`}
-                  >
-                    1:1 (Square)
-                  </button> */}
-                  <button
-                    onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
-                      }`}
                   >
                     4:3 (Standard)
                   </button>
-                  {/* <button
-                    onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
-                  >
-                    16:9 (Widescreen)
-                  </button> */}
                 </div>
               </div>
 
@@ -513,9 +573,12 @@ export default function About({
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                  disabled={isUploading}
+                  className={`w-full ${
+                    isUploading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+                  } text-white rounded py-2 text-sm font-medium`}
                 >
-                  Apply Crop
+                  {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
               </div>
             </div>
@@ -526,34 +589,63 @@ export default function About({
       {/* Main About Section */}
       <section id="about" className="py-20 bg-secondary theme-transition">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Edit / Save */}
+          {/* Edit / Save with Auto-save status - BUTTON ON RIGHT SIDE */}
           <div className="flex justify-end mb-6">
-            {isEditing ? (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={handleSave}
-                disabled={isUploading}
-                className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:shadow-2xl"
+            <div className="flex items-center gap-4">
+              {/* Auto-save status on left */}
+              {isEditing && (
+                <div className="flex items-center gap-2 text-sm">
+                  {autoSaveStatus === "saving" && (
+                    <span className="text-yellow-600 animate-pulse">Saving changes...</span>
+                  )}
+                  {autoSaveStatus === "saved" && (
+                    <span className="text-green-600 flex items-center gap-1">
+                      <CheckCircle className="w-4 h-4" />
+                      Changes saved
+                    </span>
+                  )}
+                </div>
+              )}
+              
+              {/* Edit/Save button on right */}
+              {isEditing ? (
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ y: -1, scaleX: 1.1 }}
+                  onClick={handleSave}
+                  disabled={isUploading}
+                  className={`${
+                    isUploading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-600 hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
-              >
-                {isUploading ? "Uploading..." : "Save"}
-              </motion.button>
-            ) : (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -1, scaleX: 1.1 }}
-                onClick={() => setIsEditing(true)}
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
-              >
-                Edit
-              </motion.button>
-            )}
+                >
+                  {isUploading ? "Uploading..." : "Save & Exit"}
+                </motion.button>
+              ) : (
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ y: -1, scaleX: 1.1 }}
+                  onClick={() => setIsEditing(true)}
+                  className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+                >
+                  Edit
+                </motion.button>
+              )}
+            </div>
           </div>
 
-          {/* Main About Section - UPDATED LAYOUT: Image on Left, Title & Description1 on Right */}
+          {/* Pending image upload notice */}
+          {isEditing && pendingImageFile && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-yellow-800 text-sm flex items-center gap-2">
+                <span className="font-medium">⚠️ Image ready for upload:</span>
+                {pendingImageFile.name} - Click "Save & Exit" to upload to S3
+              </p>
+            </div>
+          )}
+
+          {/* Rest of the component remains the same... */}
           <div className="grid lg:grid-cols-2 gap-12 items-start mb-20">
             {/* Left Column - Image and Description2 */}
             <div className="space-y-12">
@@ -570,27 +662,6 @@ export default function About({
                   </div>
                 )}
 
-                {/* Image Container */}
-                {/* <div className="relative w-full">
-                  <motion.div 
-                    className="relative"
-                    whileInView={{ opacity: [0, 1], scale: [0.8, 1] }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                  >
-                    <div className="relative flex justify-center">
-                      <img
-                        src={aboutState.imageUrl}
-                        alt="About"
-                        className="w-full max-w-full h-auto object-contain rounded-2xl shadow-2xl"
-                        style={{ 
-                          maxHeight: '500px',
-                          width: 'auto',
-                          margin: '0 auto'
-                        }}
-                      />
-                    </div>
-                  </motion.div>
-                </div> */}
                 {/* Image Container */}
                 <div className="relative w-full">
                   <motion.div
@@ -637,10 +708,11 @@ export default function About({
                         updateField("description2", e.target.value)
                       }
                       maxLength={600}
-                      className={`w-full bg-transparent border-b text-muted-foreground outline-none ${aboutState.description2.length >= 600
-                        ? "border-red-500"
-                        : "border-muted-foreground"
-                        }`}
+                      className={`w-full bg-transparent border-b text-muted-foreground outline-none ${
+                        aboutState.description2.length >= 600
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                      }`}
                       rows={4}
                     />
                     <div className="flex justify-between items-center mt-1">
@@ -652,10 +724,11 @@ export default function About({
                         )}
                       </div>
                       <div
-                        className={`text-xs ${aboutState.description2.length >= 600
-                          ? "text-red-500"
-                          : "text-gray-500"
-                          }`}
+                        className={`text-xs ${
+                          aboutState.description2.length >= 600
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}
                       >
                         {aboutState.description2.length}/600
                       </div>
@@ -683,10 +756,11 @@ export default function About({
                       value={aboutState.aboutTitle}
                       onChange={(e) => updateField("aboutTitle", e.target.value)}
                       maxLength={50}
-                      className={`bg-transparent border-b text-3xl md:text-4xl text-foreground outline-none w-full ${aboutState.aboutTitle.length >= 50
+                      className={`bg-transparent border-b text-3xl md:text-4xl text-foreground outline-none w-full ${
+                        aboutState.aboutTitle.length >= 50
                           ? "border-red-500"
                           : "border-primary"
-                        }`}
+                      }`}
                     />
                     <div className="text-right text-xs text-gray-500 mt-1">
                       {aboutState.aboutTitle.length}/50
@@ -711,10 +785,11 @@ export default function About({
                         updateField("description1", e.target.value)
                       }
                       maxLength={600}
-                      className={`w-full bg-transparent border-b text-lg text-muted-foreground outline-none ${aboutState.description1.length >= 600
-                        ? "border-red-500"
-                        : "border-muted-foreground"
-                        }`}
+                      className={`w-full bg-transparent border-b text-lg text-muted-foreground outline-none ${
+                        aboutState.description1.length >= 600
+                          ? "border-red-500"
+                          : "border-muted-foreground"
+                      }`}
                       rows={4}
                     />
                     <div className="flex justify-between items-center mt-1">
@@ -726,10 +801,11 @@ export default function About({
                         )}
                       </div>
                       <div
-                        className={`text-xs ${aboutState.description1.length >= 600
-                          ? "text-red-500"
-                          : "text-gray-500"
-                          }`}
+                        className={`text-xs ${
+                          aboutState.description1.length >= 600
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}
                       >
                         {aboutState.description1.length}/600
                       </div>
@@ -758,10 +834,11 @@ export default function About({
                           value={feature}
                           onChange={(e) => updateFeature(index, e.target.value)}
                           maxLength={50}
-                          className={`bg-transparent border-b text-muted-foreground outline-none w-full ${feature.length >= 50
-                            ? "border-red-500"
-                            : "border-muted-foreground"
-                            }`}
+                          className={`bg-transparent border-b text-muted-foreground outline-none w-full ${
+                            feature.length >= 50
+                              ? "border-red-500"
+                              : "border-muted-foreground"
+                          }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {feature.length}/50
@@ -804,10 +881,11 @@ export default function About({
                           updateField("metric1Num", e.target.value)
                         }
                         maxLength={15}
-                        className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${aboutState.metric1Num.length >= 15
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${
+                          aboutState.metric1Num.length >= 15
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {aboutState.metric1Num.length}/15
@@ -835,10 +913,11 @@ export default function About({
                           updateField("metric1Label", e.target.value)
                         }
                         maxLength={25}
-                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${aboutState.metric1Label.length >= 25
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${
+                          aboutState.metric1Label.length >= 25
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {aboutState.metric1Label.length}/25
@@ -869,10 +948,11 @@ export default function About({
                           updateField("metric2Num", e.target.value)
                         }
                         maxLength={15}
-                        className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${aboutState.metric2Num.length >= 15
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${
+                          aboutState.metric2Num.length >= 15
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {aboutState.metric2Num.length}/15
@@ -900,10 +980,11 @@ export default function About({
                           updateField("metric2Label", e.target.value)
                         }
                         maxLength={25}
-                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${aboutState.metric2Label.length >= 25
-                          ? "border-red-500"
-                          : ""
-                          }`}
+                        className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${
+                          aboutState.metric2Label.length >= 25
+                            ? "border-red-500"
+                            : ""
+                        }`}
                       />
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {aboutState.metric2Label.length}/25
@@ -928,7 +1009,7 @@ export default function About({
             </div>
           </div>
 
-          {/* Vision Section - Centrally Aligned and Justified */}
+          {/* Vision Section */}
           <motion.div className="text-center mb-16 mt-16">
             {isEditing ? (
               <div className="relative flex justify-center">
@@ -936,8 +1017,9 @@ export default function About({
                   value={aboutState.visionBadge}
                   onChange={(e) => updateField("visionBadge", e.target.value)}
                   maxLength={25}
-                  className={`bg-transparent border-b border-primary text-primary outline-none text-center ${aboutState.visionBadge.length >= 25 ? "border-red-500" : ""
-                    }`}
+                  className={`bg-transparent border-b border-primary text-primary outline-none text-center ${
+                    aboutState.visionBadge.length >= 25 ? "border-red-500" : ""
+                  }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1 absolute -bottom-6 right-0">
                   {aboutState.visionBadge.length}/25
@@ -957,7 +1039,6 @@ export default function About({
                   {aboutState.visionBadge}
                 </span>
               </motion.div>
-
             )}
 
             {isEditing ? (
@@ -966,8 +1047,9 @@ export default function About({
                   value={aboutState.visionTitle}
                   onChange={(e) => updateField("visionTitle", e.target.value)}
                   maxLength={80}
-                  className={`bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center ${aboutState.visionTitle.length >= 80 ? "border-red-500" : ""
-                    }`}
+                  className={`bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center ${
+                    aboutState.visionTitle.length >= 80 ? "border-red-500" : ""
+                  }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {aboutState.visionTitle.length}/80
@@ -994,8 +1076,9 @@ export default function About({
                   value={aboutState.visionDesc}
                   onChange={(e) => updateField("visionDesc", e.target.value)}
                   maxLength={600}
-                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.visionDesc.length >= 600 ? "border-red-500" : ""
-                    }`}
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${
+                    aboutState.visionDesc.length >= 600 ? "border-red-500" : ""
+                  }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {aboutState.visionDesc.length}/600
@@ -1039,8 +1122,9 @@ export default function About({
                             updatePillar(index, "title", e.target.value)
                           }
                           maxLength={40}
-                          className={`bg-transparent border-b border-foreground font-semibold outline-none w-full text-center ${pillar.title.length >= 40 ? "border-red-500" : ""
-                            }`}
+                          className={`bg-transparent border-b border-foreground font-semibold outline-none w-full text-center ${
+                            pillar.title.length >= 40 ? "border-red-500" : ""
+                          }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {pillar.title.length}/40
@@ -1065,10 +1149,11 @@ export default function About({
                             updatePillar(index, "description", e.target.value)
                           }
                           maxLength={150}
-                          className={`w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none text-center text-justify ${pillar.description.length >= 150
-                            ? "border-red-500"
-                            : ""
-                            }`}
+                          className={`w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none text-center text-justify ${
+                            pillar.description.length >= 150
+                              ? "border-red-500"
+                              : ""
+                          }`}
                         />
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {pillar.description.length}/150
@@ -1090,7 +1175,7 @@ export default function About({
             </div>
           </motion.div>
 
-          {/* Mission Section - Centrally Aligned and Justified */}
+          {/* Mission Section */}
           <motion.div className="bg-gradient-to-r from-primary/5 to-red-accent/5 rounded-2xl p-12 text-center">
             <Target className="w-12 h-12 text-primary mx-auto mb-6" />
 
@@ -1100,8 +1185,9 @@ export default function About({
                   value={aboutState.missionTitle}
                   onChange={(e) => updateField("missionTitle", e.target.value)}
                   maxLength={60}
-                  className={`bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center ${aboutState.missionTitle.length >= 60 ? "border-red-500" : ""
-                    }`}
+                  className={`bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center ${
+                    aboutState.missionTitle.length >= 60 ? "border-red-500" : ""
+                  }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {aboutState.missionTitle.length}/60
@@ -1128,8 +1214,9 @@ export default function About({
                   value={aboutState.missionDesc}
                   onChange={(e) => updateField("missionDesc", e.target.value)}
                   maxLength={600}
-                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.missionDesc.length >= 600 ? "border-red-500" : ""
-                    }`}
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${
+                    aboutState.missionDesc.length >= 600 ? "border-red-500" : ""
+                  }`}
                 />
                 <div className="text-right text-xs text-gray-500 mt-1">
                   {aboutState.missionDesc.length}/600
