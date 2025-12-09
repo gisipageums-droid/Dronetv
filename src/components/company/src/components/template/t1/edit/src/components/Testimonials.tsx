@@ -417,6 +417,7 @@ export default function EditableTestimonials({
         autoClose: 2000,
         hideProgressBar: true,
       });
+      
     } catch (error) {
       console.error("Error auto-saving testimonials:", error);
       toast.error("Auto-save failed. Please save manually.");
@@ -428,6 +429,7 @@ export default function EditableTestimonials({
   // Manual save function (kept for backward compatibility)
   const handleSave = async () => {
     await performAutoSave();
+    setIsEditing(false);
   };
 
   const handleEdit = () => {
