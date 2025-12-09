@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useCallback, useRef, ChangeEvent } from "react";
+import { useState, useEffect, useRef, useCallback, ChangeEvent } from "react";
 import type { Area } from "react-easy-crop/types";
 import {
   Edit2,
+  Check,
+  X,
   Plus,
   Trash2,
   Upload,
   Loader2,
   Save,
-  X,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
 import { motion } from "motion/react";
 import user from "/images/user.png";
+import maleAvatar from "/logos/maleAvatar.png";
+import femaleAvatar from "/logos/femaleAvatar.png";
 
 interface Testimonial {
   name: string;
@@ -21,6 +24,7 @@ interface Testimonial {
   image?: string;
   role?: string;
   quote?: string;
+  gender?: string; // Added gender field
 }
 
 interface TestimonialsContent {
@@ -53,20 +57,34 @@ export default function EditableTestimonials({
     name: 100,
     role: 100,
     quote: 500,
+    statValue: 20,
+    statLabel: 50,
   };
 
-  const [editMode, setEditMode] = useState<boolean>(false);
+  // Auto-save configuration
+  const AUTO_SAVE_DELAY = 2000; // 2 seconds delay for auto-save
+  const MIN_CHANGES_FOR_AUTO_SAVE = 1; // Minimum changes before auto-save
+
+  const initialData: TestimonialsContent = content ?? {
+    headline: { title: "", description: "" },
+    testimonials: [],
+  };
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [current, setCurrent] = useState<number>(0);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingField, setEditingField] = useState<keyof Testimonial | null>(
+    null
+  );
+  const [tempValue, setTempValue] = useState<string>("");
 
-  // Track changes for auto-save
-  const hasUnsavedChanges = useRef(false);
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
-  const previousContentRef = useRef<any>(null);
+  // Auto-save state
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState<boolean>(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [unsavedChanges, setUnsavedChanges] = useState<boolean>(false);
 
-  // Crop modal state
   const [cropModalOpen, setCropModalOpen] = useState<boolean>(false);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState<number>(1);
@@ -77,285 +95,114 @@ export default function EditableTestimonials({
   const [aspectRatio, setAspectRatio] = useState<number>(1);
   const [cropIndex, setCropIndex] = useState<number | null>(null);
 
-  // Default data
-  const defaultTestimonials: Testimonial[] = [
-    {
-      name: "John Doe",
-      rating: 5.0,
-      image: "https://tamilnaducouncil.ac.in/wp-content/uploads/2020-04/dummy-avatar.jpg",
-      role: "CEO, TechCorp",
-      quote: "This event was absolutely amazing! The organization and content were top-notch.",
-    },
-    {
-      name: "Jane Smith",
-      rating: 4.5,
-      image: "https://tamilnaducouncil.ac.in/wp-content/uploads/2020-04/dummy-avatar.jpg",
-      role: "Marketing Director",
-      quote: "Great networking opportunities and insightful sessions. Highly recommended!",
-    },
-    {
-      name: "Robert Johnson",
-      rating: 5.0,
-      image: "https://tamilnaducouncil.ac.in/wp-content/uploads/2020-04/dummy-avatar.jpg",
-      role: "Startup Founder",
-      quote: "The best industry event I've attended this year. Will definitely come back!",
-    },
-  ];
+  const [testimonialsData, setTestimonialsData] =
+    useState<TestimonialsContent>(initialData);
+  const [tempData, setTempData] = useState<TestimonialsContent>(initialData);
 
-  const defaultContent: TestimonialsContent = {
-    headline: { 
-      title: "What Our Attendees Say", 
-      description: "Hear from our past attendees about their experience at our events. Real feedback from real people." 
-    },
-    testimonials: defaultTestimonials,
-  };
+  // Refs for auto-save
+  const fileInputRefs = useRef<Record<number, HTMLInputElement | null>>({});
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const changesCountRef = useRef<number>(0);
 
-  // Initialize with prop data or default values
-  const [contentState, setContentState] = useState<TestimonialsContent>(defaultContent);
-  const [backupContent, setBackupContent] = useState<TestimonialsContent>(defaultContent);
-
-  // Update local state when prop data changes
   useEffect(() => {
     if (content) {
-      setContentState(content);
-      setBackupContent(content);
-      previousContentRef.current = content;
+      setTestimonialsData(content);
+      setTempData(content);
+      setAutoSaveEnabled(true);
     }
   }, [content]);
 
-  // Auto-save function
-  const autoSave = useCallback(async () => {
-    if (!onStateChange || !editMode || !hasUnsavedChanges.current) return;
-
-    setIsSaving(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    onStateChange(contentState);
-    setLastSaved(new Date());
-    setIsSaving(false);
-    hasUnsavedChanges.current = false; // Reset changes flag after save
-  }, [contentState, editMode, onStateChange]);
-
-  // Debounced auto-save effect - only triggers when content actually changes
   useEffect(() => {
-    // Skip if not in edit mode or no changes detected
-    if (!editMode || !onStateChange || !hasUnsavedChanges.current) return;
-
-    // Clear existing timeout
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
+    if (onStateChange) {
+      onStateChange(testimonialsData);
     }
+  }, [testimonialsData, onStateChange]);
 
-    // Set new timeout for auto-save (1 second debounce)
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      autoSave();
-    }, 1000);
-
-    // Cleanup timeout on unmount or when dependencies change
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, [contentState, editMode, autoSave, onStateChange]);
-
-  // Effect to detect actual changes in content
   useEffect(() => {
-    // Skip initial render and when not in edit mode
-    if (previousContentRef.current === null || !editMode) {
-      previousContentRef.current = contentState;
-      return;
-    }
-
-    // Check if content actually changed
-    const hasChanged = JSON.stringify(previousContentRef.current) !== JSON.stringify(contentState);
-    
-    if (hasChanged) {
-      hasUnsavedChanges.current = true;
-      previousContentRef.current = contentState;
-    }
-  }, [contentState, editMode]);
-
-  // Carousel auto-rotate effect (only in non-edit mode)
-  useEffect(() => {
-    if (!editMode && contentState.testimonials.length > 1) {
+    if (!isEditing && tempData.testimonials.length > 0) {
       const interval = setInterval(
-        () => setCurrent((c) => (c + 1) % contentState.testimonials.length),
+        () => setCurrent((c) => (c + 1) % tempData.testimonials.length),
         5000
       );
       return () => clearInterval(interval);
     }
-  }, [contentState.testimonials.length, editMode]);
+    return;
+  }, [tempData.testimonials.length, isEditing]);
 
-  const handleEditToggle = () => {
-    if (!editMode) {
-      setBackupContent(contentState); // Save current before editing
-      hasUnsavedChanges.current = false; // Reset changes flag when entering edit mode
-    } else {
-      // When exiting edit mode, save if there are unsaved changes
-      if (hasUnsavedChanges.current && onStateChange) {
-        onStateChange(contentState);
-        setLastSaved(new Date());
-        hasUnsavedChanges.current = false;
+  // Auto-save effect
+  useEffect(() => {
+    if (!autoSaveEnabled || !unsavedChanges || changesCountRef.current < MIN_CHANGES_FOR_AUTO_SAVE) {
+      return;
+    }
+
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Set new timeout for auto-save
+    saveTimeoutRef.current = setTimeout(() => {
+      performAutoSave();
+    }, AUTO_SAVE_DELAY);
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
       }
-    }
-    setEditMode(!editMode);
-  };
-
-  const handleCancel = () => {
-    setContentState(backupContent); // Restore backup
-    if (onStateChange) {
-      onStateChange(backupContent); // Sync with parent
-    }
-    setEditMode(false);
-    hasUnsavedChanges.current = false; // Reset changes flag
-  };
-
-  const handleSave = async () => {
-    if (!onStateChange) return;
-
-    try {
-      setIsSaving(true);
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-      
-      onStateChange(contentState);
-      setLastSaved(new Date());
-      setEditMode(false);
-      hasUnsavedChanges.current = false;
-      
-      toast.success("Testimonials section saved successfully!");
-    } catch (error) {
-      console.error("Error saving testimonials section:", error);
-      toast.error("Error saving changes. Please try again.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // Update functions
-  const updateHeadline = (field: 'title' | 'description', value: string) => {
-    if (field === 'title' && value.length > CHAR_LIMITS.title) {
-      toast.error(`Title cannot exceed ${CHAR_LIMITS.title} characters`);
-      return;
-    }
-    if (field === 'description' && value.length > CHAR_LIMITS.description) {
-      toast.error(`Description cannot exceed ${CHAR_LIMITS.description} characters`);
-      return;
-    }
-    
-    setContentState(prev => ({
-      ...prev,
-      headline: {
-        ...prev.headline,
-        [field]: value
-      }
-    }));
-  };
-
-  const updateTestimonialField = (
-    index: number,
-    field: keyof Testimonial,
-    value: string | number
-  ) => {
-    // Validate character limits
-    if (field === 'name' && typeof value === 'string' && value.length > CHAR_LIMITS.name) {
-      toast.error(`Name cannot exceed ${CHAR_LIMITS.name} characters`);
-      return;
-    }
-    if (field === 'role' && typeof value === 'string' && value.length > CHAR_LIMITS.role) {
-      toast.error(`Role cannot exceed ${CHAR_LIMITS.role} characters`);
-      return;
-    }
-    if (field === 'quote' && typeof value === 'string' && value.length > CHAR_LIMITS.quote) {
-      toast.error(`Quote cannot exceed ${CHAR_LIMITS.quote} characters`);
-      return;
-    }
-
-    setContentState(prev => ({
-      ...prev,
-      testimonials: prev.testimonials.map((testimonial, i) =>
-        i === index ? { ...testimonial, [field]: value } : testimonial
-      )
-    }));
-  };
-
-  const addTestimonial = () => {
-    const newTestimonial: Testimonial = {
-      name: "New Client",
-      rating: 5.0,
-      image: "https://tamilnaducouncil.ac.in/wp-content/uploads/2020-04/dummy-avatar.jpg",
-      role: "Position",
-      quote: "Add testimonial quote here.",
     };
-    setContentState(prev => ({
-      ...prev,
-      testimonials: [...prev.testimonials, newTestimonial]
-    }));
+  }, [tempData, autoSaveEnabled, unsavedChanges]);
+
+  // Mark changes when content is updated
+  const markChanges = () => {
+    setUnsavedChanges(true);
+    changesCountRef.current += 1;
   };
 
-  const deleteTestimonial = (index: number) => {
-    if (contentState.testimonials.length <= 1) {
-      toast.error("Cannot delete the last testimonial");
+  const handleImageUpload = (
+    testimonialIndex: number,
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
       return;
     }
-    
-    setContentState(prev => ({
-      ...prev,
-      testimonials: prev.testimonials.filter((_, i) => i !== index)
-    }));
-    
-    // Adjust current index if necessary
-    if (current >= contentState.testimonials.length - 1) {
-      setCurrent(0);
-    }
-  };
 
-  // Upload image to AWS S3
-  const uploadImageToAWS = async (file: File, testimonialId: number): Promise<string | null> => {
-    if (!userId || !publishedId || !templateSelection) {
-      console.error("Missing required props for image upload");
-      toast.error("Missing user information. Please refresh and try again.");
-      return null;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("sectionName", "testimonials");
-      formData.append(
-        "imageField",
-        `testimonials[${testimonialId}].image-${Date.now()}`
-      );
-      formData.append("templateSelection", templateSelection);
+    // Set cropIndex BEFORE opening the modal
+    setCropIndex(testimonialIndex);
 
-      const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        console.log(`Testimonial image ${testimonialId} uploaded to S3:`, uploadData.imageUrl);
-        return uploadData.imageUrl;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // reader.result can be string | ArrayBuffer | null; we only accept string
+      const result = reader.result;
+      if (typeof result === "string") {
+        setImageToCrop(result);
+        setOriginalFile(file);
+        setCropModalOpen(true);
+        setAspectRatio(1); // Square for testimonial images
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+        setRotation(0);
       } else {
-        const errorData = await uploadResponse.json();
-        console.error("Image upload failed:", errorData);
-        toast.error(`Image upload failed: ${errorData.message || "Unknown error"}`);
-        return null;
+        toast.error("Failed to read image file");
       }
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      toast.error("Error uploading image. Please try again.");
-      return null;
+    };
+    reader.readAsDataURL(file);
+
+    // clear input so same file can be picked again if needed
+    if (event.target) {
+      event.target.value = "";
     }
   };
 
-  // Cropper functions
   const onCropComplete = useCallback(
     (_croppedArea: Area, croppedArea: Area) => {
       setCroppedAreaPixels(croppedArea);
@@ -381,17 +228,18 @@ export default function EditableTestimonials({
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
     if (!ctx) {
       throw new Error("Could not get canvas context");
     }
-
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
 
     ctx.translate(pixelCrop.width / 2, pixelCrop.height / 2);
     ctx.rotate((rotation * Math.PI) / 180);
     ctx.translate(-pixelCrop.width / 2, -pixelCrop.height / 2);
 
+    // image is HTMLImageElement which is a CanvasImageSource
     ctx.drawImage(
       image as CanvasImageSource,
       pixelCrop.x,
@@ -434,93 +282,97 @@ export default function EditableTestimonials({
     });
   };
 
-  // Image upload handler
-  const handleImageUpload = (
-    testimonialIndex: number,
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type and size
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
+  // Upload image directly to AWS
+  const uploadImageToAWS = async (file: File, index: number) => {
+    if (!userId || !publishedId || !templateSelection) {
+      toast.error("Missing user information. Please refresh and try again.");
+      return null;
     }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
-      return;
-    }
-
-    // Set cropIndex BEFORE opening the modal
-    setCropIndex(testimonialIndex);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        setImageToCrop(result);
-        setOriginalFile(file);
-        setCropModalOpen(true);
-        setAspectRatio(1); // Square for testimonial images
-        setCrop({ x: 0, y: 0 });
-        setZoom(1);
-        setRotation(0);
-      } else {
-        toast.error("Failed to read image file");
-      }
-    };
-    reader.readAsDataURL(file);
-
-    // Clear input so same file can be picked again if needed
-    if (event.target) {
-      event.target.value = "";
-    }
-  };
-
-  // Apply crop function with direct AWS upload
-  const applyCrop = async () => {
-    if (!imageToCrop || !croppedAreaPixels || cropIndex === null) return;
 
     try {
       setIsUploading(true);
-      
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("sectionName", "testimonials");
+      formData.append("imageField", `testimonial-${index}-${Date.now()}`);
+      formData.append("templateSelection", templateSelection);
+
+      const uploadResponse = await fetch(
+        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        toast.success("Testimonial image uploaded to AWS!");
+        return uploadData.imageUrl;
+      } else {
+        const errorData = await uploadResponse.json();
+        toast.error(`Image upload failed: ${errorData.message || "Unknown error"}`);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error uploading image to AWS:", error);
+      toast.error("Error uploading image. Please try again.");
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const applyCrop = async () => {
+    try {
+      if (!imageToCrop || !croppedAreaPixels || cropIndex === null) {
+        console.error("Please select an area to crop or cropIndex is null");
+        return;
+      }
+
       const result = await getCroppedImg(
         imageToCrop,
         croppedAreaPixels,
         rotation
       );
 
-      const { file } = result;
+      const { file, previewUrl } = result;
 
-      // Upload cropped image directly to AWS
-      const imageUrl = await uploadImageToAWS(file, cropIndex);
+      // Upload image directly to AWS
+      const awsImageUrl = await uploadImageToAWS(file, cropIndex);
 
-      if (imageUrl) {
-        // Update content with AWS URL directly
-        setContentState(prev => ({
+      if (awsImageUrl) {
+        // Update state with AWS URL
+        setTempData((prev: TestimonialsContent) => ({
           ...prev,
           testimonials: prev.testimonials.map((testimonial, idx) =>
-            idx === cropIndex
-              ? { ...testimonial, image: imageUrl }
+            idx === (cropIndex ?? -1)
+              ? { ...testimonial, image: awsImageUrl }
               : testimonial
           ),
         }));
 
-        toast.success("Image cropped and uploaded successfully");
+        markChanges(); // Mark changes for auto-save
+      } else {
+        // Fallback to local preview if AWS upload fails
+        setTempData((prev: TestimonialsContent) => ({
+          ...prev,
+          testimonials: prev.testimonials.map((testimonial, idx) =>
+            idx === (cropIndex ?? -1)
+              ? { ...testimonial, image: previewUrl }
+              : testimonial
+          ),
+        }));
+        toast.info("Using local preview. AWS upload failed.");
       }
 
       setCropModalOpen(false);
       setImageToCrop(null);
       setOriginalFile(null);
-      setCropIndex(null);
-      resetCropSettings();
+      setCropIndex(null); // Reset cropIndex
     } catch (error) {
       console.error("Error cropping image:", error);
       toast.error("Error cropping image. Please try again.");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -528,18 +380,164 @@ export default function EditableTestimonials({
     setCropModalOpen(false);
     setImageToCrop(null);
     setOriginalFile(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
     setCropIndex(null);
-    resetCropSettings();
   };
 
   const resetCropSettings = () => {
     setZoom(1);
     setRotation(0);
     setCrop({ x: 0, y: 0 });
-    setAspectRatio(1);
   };
 
-  // Render stars for rating
+  // Auto-save function
+  const performAutoSave = async () => {
+    if (!unsavedChanges || changesCountRef.current < MIN_CHANGES_FOR_AUTO_SAVE) {
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      
+      // Here you would call your actual save API
+      // For now, simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Update testimonials data with temp data
+      setTestimonialsData(tempData);
+      setUnsavedChanges(false);
+      changesCountRef.current = 0;
+      setLastSaved(new Date().toLocaleTimeString());
+      
+      // Optional: Show success message
+      toast.success("Testimonials saved automatically!", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      });
+    } catch (error) {
+      console.error("Error auto-saving testimonials:", error);
+      toast.error("Auto-save failed. Please save manually.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Manual save function (kept for backward compatibility)
+  const handleSave = async () => {
+    await performAutoSave();
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setTempData(testimonialsData);
+    setUnsavedChanges(false);
+    changesCountRef.current = 0;
+  };
+
+  const handleCancel = () => {
+    setTempData(testimonialsData);
+    setUnsavedChanges(false);
+    changesCountRef.current = 0;
+    setIsEditing(false);
+  };
+
+  const updateHeadlineField = (
+    field: keyof TestimonialsContent["headline"],
+    value: string
+  ) => {
+    setTempData((prev: TestimonialsContent) => {
+      if (prev.headline[field] === value) return prev;
+      markChanges();
+      return {
+        ...prev,
+        headline: {
+          ...prev.headline,
+          [field]: value,
+        },
+      };
+    });
+  };
+
+  const updateTestimonialField = (
+    index: number,
+    field: keyof Testimonial,
+    value: string | number | undefined
+  ) => {
+    setTempData((prev: TestimonialsContent) => {
+      if (prev.testimonials[index][field] === value) return prev;
+      markChanges();
+      return {
+        ...prev,
+        testimonials: prev.testimonials.map((testimonial, i) =>
+          i === index ? { ...testimonial, [field]: value } : testimonial
+        ),
+      };
+    });
+  };
+
+  const addTestimonial = () => {
+    const newTestimonial: Testimonial = {
+      name: "New Client",
+      rating: 5.0,
+      gender: "male", // Add default gender
+      image:
+        "https://tamilnaducouncil.ac.in/wp-content/uploads/2020-04/dummy-avatar.jpg",
+      role: "Position",
+      quote: "Add testimonial quote here.",
+    };
+    
+    setTempData((prev: TestimonialsContent) => {
+      markChanges();
+      return {
+        ...prev,
+        testimonials: [...prev.testimonials, newTestimonial],
+      };
+    });
+  };
+
+  const deleteTestimonial = (index: number) => {
+    setTempData((prev: TestimonialsContent) => {
+      markChanges();
+      const newTestimonials = prev.testimonials.filter((_, i) => i !== index);
+      // adjust current index if necessary
+      setCurrent((cur) => {
+        if (newTestimonials.length === 0) return 0;
+        if (cur >= newTestimonials.length) return 0;
+        return cur;
+      });
+      return {
+        ...prev,
+        testimonials: newTestimonials,
+      };
+    });
+  };
+
+  const startEditField = (
+    id: number,
+    field: keyof Testimonial,
+    currentValue: string
+  ) => {
+    setEditingId(id);
+    setEditingField(field);
+    setTempValue(currentValue);
+  };
+
+  const saveFieldEdit = () => {
+    if (editingId !== null && editingField) {
+      updateTestimonialField(editingId, editingField, tempValue);
+    }
+    cancelEdit();
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditingField(null);
+    setTempValue("");
+  };
+
   const renderStars = (rating?: number) => {
     const stars: JSX.Element[] = [];
     const rate = rating ?? 0;
@@ -556,13 +554,373 @@ export default function EditableTestimonials({
     return stars;
   };
 
-  // Safe image source
-  const getImageSrc = (image?: string) => {
-    return image || user;
+  const EditableField = ({
+    testimonial,
+    index,
+    field,
+    className = "",
+    multiline = false,
+  }: {
+    testimonial: Testimonial;
+    index: number;
+    field: keyof Testimonial;
+    className?: string;
+    multiline?: boolean;
+  }) => {
+    const isCurrentlyEditing = editingId === index && editingField === field;
+    const value = testimonial[field] as string | undefined;
+
+    // Get character limit based on field type
+    const getCharLimit = () => {
+      switch (field) {
+        case "name":
+          return CHAR_LIMITS.name;
+        case "role":
+          return CHAR_LIMITS.role;
+        case "quote":
+          return CHAR_LIMITS.quote;
+        default:
+          return 100;
+      }
+    };
+
+    const charLimit = getCharLimit();
+
+    if (isCurrentlyEditing) {
+      return (
+        <div className="flex flex-col gap-2 w-full">
+          <div className="flex items-center gap-2">
+            {multiline ? (
+              <textarea
+                value={tempValue}
+                onChange={(e) => setTempValue(e.target.value)}
+                className="flex-1 px-2 py-1 border border-blue-300 rounded resize-none"
+                rows={3}
+                maxLength={charLimit}
+                autoFocus
+              />
+            ) : (
+              <input
+                type="text"
+                value={tempValue}
+                onChange={(e) => setTempValue(e.target.value)}
+                className="flex-1 px-2 py-1 border border-blue-300 rounded"
+                maxLength={charLimit}
+                autoFocus
+              />
+            )}
+            <button
+              onClick={saveFieldEdit}
+              className="p-1 text-green-600 hover:text-green-800"
+            >
+              <Check size={16} />
+            </button>
+            <button
+              onClick={cancelEdit}
+              className="p-1 text-red-600 hover:text-red-800"
+            >
+              <X size={16} />
+            </button>
+          </div>
+          <div className="text-xs text-gray-500 text-right">
+            {tempValue.length}/{charLimit} characters
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={`group relative ${className}`}>
+        {multiline ? (
+          <blockquote className="text-lg text-gray-700 italic text-justify">
+            "{value}"
+          </blockquote>
+        ) : (
+          <span>{value}</span>
+        )}
+        <button
+          onClick={() => startEditField(index, field, (value as string) ?? "")}
+          className="opacity-0 group-hover:opacity-100 absolute -right-6 top-0 p-1 text-gray-400 hover:text-blue-600 transition-all duration-200"
+        >
+          <Edit2 size={14} />
+        </button>
+      </div>
+    );
   };
 
   return (
-    <>
+    <section
+      id="testimonials"
+      className="bg-gray-50 py-16 scroll-mt-20 relative"
+    >
+      {/* Auto-save indicator */}
+      {isEditing && (
+        <div className="absolute top-4 left-4 z-10">
+          <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
+            {isSaving ? (
+              <>
+                <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
+                <span className="text-xs text-gray-700">Saving...</span>
+              </>
+            ) : unsavedChanges ? (
+              <>
+                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                <span className="text-xs text-gray-700">Unsaved changes</span>
+              </>
+            ) : (
+              <>
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-xs text-gray-700">
+                  Saved {lastSaved && `at ${lastSaved}`}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Edit Controls */}
+      <div className="absolute top-4 right-4 z-10">
+        {!isEditing ? (
+          <Button
+            onClick={handleEdit}
+            variant="outline"
+            size="sm"
+            className="bg-white hover:bg-gray-50 shadow-md"
+          >
+            <Edit2 className="w-4 h-4 mr-2" />
+            Edit
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              onClick={handleSave}
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+              disabled={isSaving || isUploading}
+            >
+              {isSaving ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4 mr-2" />
+              )}
+              {isSaving ? "Saving..." : "Save Now"}
+            </Button>
+            <Button
+              onClick={handleCancel}
+              variant="outline"
+              size="sm"
+              className="bg-white hover:bg-gray-50 shadow-md"
+              disabled={isSaving || isUploading}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Cancel
+            </Button>
+          </div>
+        )}
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-12">
+          {/* Editable Title */}
+          {isEditing ? (
+            <div className="flex flex-col items-center justify-center gap-2 mb-4">
+              <input
+                type="text"
+                value={tempData.headline.title}
+                onChange={(e) => updateHeadlineField("title", e.target.value)}
+                className="text-3xl font-bold text-gray-900 px-2 py-1 border border-blue-300 rounded text-center"
+                maxLength={CHAR_LIMITS.title}
+              />
+              <div className="text-xs text-gray-500">
+                {tempData.headline.title.length}/{CHAR_LIMITS.title} characters
+              </div>
+            </div>
+          ) : (
+            <div className="mb-4">
+              <h2 className="text-3xl font-bold text-gray-900">
+                {tempData.headline.title}
+              </h2>
+            </div>
+          )}
+
+          {/* Editable Description */}
+          {isEditing ? (
+            <div className="flex flex-col items-center justify-center gap-2 w-full max-w-2xl mx-auto">
+              <textarea
+                value={tempData.headline.description}
+                onChange={(e) =>
+                  updateHeadlineField("description", e.target.value)
+                }
+                className="w-full text-gray-600 text-base px-3 py-2 border-2 border-dashed border-blue-200 rounded-lg resize-none text-center focus:outline-none focus:border-blue-500 focus:border-solid"
+                rows={2}
+                maxLength={CHAR_LIMITS.description}
+              />
+              <div className="text-xs text-gray-500 self-end">
+                {tempData.headline.description.length}/{CHAR_LIMITS.description}{" "}
+                characters
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-600 max-w-2xl mx-auto text-base">
+              {tempData.headline.description}
+            </p>
+          )}
+        </div>
+
+        <div className="relative overflow-hidden">
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${current * 100}%)` }}
+          >
+            {tempData.testimonials.map((testimonial, index) => (
+              <div key={index} className="w-full flex-shrink-0">
+                <div className="mx-4 bg-white shadow-lg border-0 rounded-lg relative">
+                  {/* Delete Button */}
+                  {isEditing && (
+                    <button
+                      onClick={() => deleteTestimonial(index)}
+                      className="absolute top-2 right-2 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full z-10"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+
+                  <div className="p-8 text-center">
+                    <div className="mb-6">
+                      <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden relative">
+                        <img
+                          src={testimonial.image || (testimonial.gender === "male" ? maleAvatar : femaleAvatar)}
+                          alt={testimonial.name}
+                          className="w-full h-full object-cover scale-110"
+                        />
+                        {isEditing && (
+                          <>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              ref={(el) => (fileInputRefs.current[index] = el)}
+                              onChange={(e) => handleImageUpload(index, e)}
+                              className="hidden"
+                            />
+                            <button
+                              onClick={() =>
+                                fileInputRefs.current[index]?.click()
+                              }
+                              className="absolute bottom-0 right-0 bg-white/80 p-1 rounded-full"
+                            >
+                              <Upload size={12} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      <h3 className="font-semibold text-xl text-gray-900 mb-2">
+                        <EditableField
+                          testimonial={testimonial}
+                          index={index}
+                          field="name"
+                        />
+                      </h3>
+                      
+                      {/* Gender and Rating Editing */}
+                      {isEditing && (
+                        <div className="flex flex-wrap justify-center gap-4 mb-2">
+                          {/* Gender Selection */}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-600">Gender:</span>
+                            <select
+                              value={testimonial.gender || "male"}
+                              onChange={(e) => updateTestimonialField(index, "gender", e.target.value)}
+                              className="text-sm border border-gray-300 rounded px-2 py-1"
+                            >
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                            </select>
+                          </div>
+                          
+                          {/* Rating Selection */}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-600">Rating:</span>
+                            <select
+                              value={testimonial.rating || 5}
+                              onChange={(e) => updateTestimonialField(index, "rating", Number(e.target.value))}
+                              className="text-sm border border-gray-300 rounded px-2 py-1"
+                            >
+                              <option value={1}>1</option>
+                              <option value={2}>2</option>
+                              <option value={3}>3</option>
+                              <option value={4}>4</option>
+                              <option value={5}>5</option>
+                            </select>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Star rating display (non-editing mode) */}
+                      {!isEditing && (
+                        <div className="flex justify-center mb-2">
+                          {renderStars(testimonial.rating)}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mb-6">
+                      <EditableField
+                        testimonial={testimonial}
+                        index={index}
+                        field="quote"
+                        multiline={true}
+                      />
+                    </div>
+
+                    <div className="border-t pt-6">
+                      <p className="text-gray-600 text-justify">
+                        <EditableField
+                          testimonial={testimonial}
+                          index={index}
+                          field="role"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="flex justify-center items-center mt-8 space-x-4">
+          {/* Add Button */}
+          {isEditing && (
+            <button
+              onClick={addTestimonial}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+            >
+              <Plus size={16} />
+              Add Testimonial
+            </button>
+          )}
+
+          {/* Pagination Dots */}
+          {tempData.testimonials.length > 0 && (
+            <div className="flex space-x-2">
+              {tempData.testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrent(index)}
+                  className={`w-3 h-3 rounded-full transition-colors duration-200 ${index === current
+                    ? "bg-blue-600"
+                    : "bg-gray-300 hover:bg-gray-400"
+                    }`}
+                  aria-label={`Go to testimonial ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Enhanced Crop Modal */}
       {cropModalOpen && (
         <motion.div
@@ -592,7 +950,7 @@ export default function EditableTestimonials({
             <div className="flex-1 relative bg-gray-900 min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
-                  image={imageToCrop || ""}
+                  image={imageToCrop ?? undefined}
                   crop={crop}
                   zoom={zoom}
                   rotation={rotation}
@@ -630,31 +988,28 @@ export default function EditableTestimonials({
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     1:1 (Square)
                   </button>
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     4:3 (Standard)
                   </button>
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
-                    className={`px-3 py-2 text-sm rounded border ${
-                      aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
-                    }`}
+                    className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-700 border-gray-300"
+                      }`}
                   >
                     16:9 (Widescreen)
                   </button>
@@ -718,12 +1073,15 @@ export default function EditableTestimonials({
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
-                    <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                    <>
+                      <Loader2 className="w-4 h-4 inline mr-2 animate-spin" />
+                      Uploading...
+                    </>
                   ) : (
-                    "Apply Crop"
+                    "Apply & Upload"
                   )}
                 </button>
               </div>
@@ -731,278 +1089,6 @@ export default function EditableTestimonials({
           </motion.div>
         </motion.div>
       )}
-
-      <section
-        id="testimonials"
-        className="bg-gray-50 py-16 scroll-mt-20 relative"
-      >
-        {/* Auto-save status */}
-        {editMode && onStateChange && (
-          <div className="absolute top-4 left-4 z-30 flex gap-2 items-center text-sm text-gray-500 bg-white/80 px-3 py-1 rounded-lg">
-            {isSaving ? (
-              <span className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                Auto-saving...
-              </span>
-            ) : lastSaved ? (
-              <span>Auto-saved {lastSaved.toLocaleTimeString()}</span>
-            ) : (
-              <span>No changes to save</span>
-            )}
-          </div>
-        )}
-
-        {/* Edit/Save/Cancel Buttons */}
-        <div className="absolute top-4 right-4 z-20 flex gap-3">
-          {editMode ? (
-            <>
-              <button
-                onClick={handleSave}
-                disabled={isSaving || isUploading}
-                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:bg-gray-400"
-              >
-                {isSaving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Save size={18} />
-                )}
-                {isSaving ? "Saving..." : "Save"}
-              </button>
-              <button
-                onClick={handleCancel}
-                className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-              >
-                <X size={18} /> Cancel
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={handleEditToggle}
-              className="flex items-center gap-2 bg-black/60 text-white px-4 py-2 rounded-lg border border-white/30 hover:bg-black/80 transition"
-            >
-              <Edit2 size={18} /> Edit
-            </button>
-          )}
-        </div>
-
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-12">
-            {/* Editable Title */}
-            {editMode ? (
-              <div className="flex flex-col items-center justify-center gap-2 mb-4">
-                <input
-                  type="text"
-                  value={contentState.headline.title}
-                  onChange={(e) => updateHeadline('title', e.target.value)}
-                  className="text-3xl font-bold text-gray-900 px-4 py-2 border-2 border-blue-300 rounded text-center w-full max-w-2xl"
-                  maxLength={CHAR_LIMITS.title}
-                />
-                <div className="text-xs text-gray-500">
-                  {contentState.headline.title.length}/{CHAR_LIMITS.title} characters
-                </div>
-              </div>
-            ) : (
-              <div className="mb-4">
-                <h2 className="text-3xl font-bold text-gray-900">
-                  {contentState.headline.title}
-                </h2>
-              </div>
-            )}
-
-            {/* Editable Description */}
-            {editMode ? (
-              <div className="flex flex-col items-center justify-center gap-2">
-                <textarea
-                  value={contentState.headline.description}
-                  onChange={(e) => updateHeadline('description', e.target.value)}
-                  className="text-gray-600 max-w-2xl px-4 py-2 border-2 border-blue-300 rounded resize-none w-full"
-                  rows={2}
-                  maxLength={CHAR_LIMITS.description}
-                />
-                <div className="text-xs text-gray-500">
-                  {contentState.headline.description.length}/{CHAR_LIMITS.description} characters
-                </div>
-              </div>
-            ) : (
-              <p className="text-gray-600 max-w-2xl mx-auto ">
-                {contentState.headline.description}
-              </p>
-            )}
-          </div>
-
-          <div className="relative overflow-hidden">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${current * 100}%)` }}
-            >
-              {contentState.testimonials.map((testimonial, index) => (
-                <div key={index} className="w-full flex-shrink-0">
-                  <div className="mx-4 bg-white shadow-lg border-0 rounded-lg relative">
-                    {/* Delete Button */}
-                    {editMode && (
-                      <button
-                        onClick={() => deleteTestimonial(index)}
-                        className="absolute top-2 right-2 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full z-10"
-                        title="Delete testimonial"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    )}
-
-                    <div className="p-8 text-center">
-                      <div className="mb-6">
-                        <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden relative">
-                          <img
-                            src={getImageSrc(testimonial.image)}
-                            alt={testimonial.name}
-                            className="w-full h-full object-cover scale-110"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = user;
-                            }}
-                          />
-                          {editMode && (
-                            <>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleImageUpload(index, e)}
-                                className="hidden"
-                                id={`testimonial-image-${index}`}
-                              />
-                              <label
-                                htmlFor={`testimonial-image-${index}`}
-                                className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-full cursor-pointer"
-                                title="Change photo"
-                              >
-                                <Upload className="w-4 h-4 text-white" />
-                              </label>
-                            </>
-                          )}
-                        </div>
-                        
-                        {/* Editable Name */}
-                        <h3 className="font-semibold text-xl text-gray-900 mb-2">
-                          {editMode ? (
-                            <div className="flex flex-col items-center">
-                              <input
-                                type="text"
-                                value={testimonial.name}
-                                onChange={(e) => updateTestimonialField(index, 'name', e.target.value)}
-                                className="text-xl font-semibold text-center px-2 py-1 border border-gray-300 rounded"
-                                maxLength={CHAR_LIMITS.name}
-                              />
-                              <div className="text-xs text-gray-500 mt-1">
-                                {testimonial.name.length}/{CHAR_LIMITS.name}
-                              </div>
-                            </div>
-                          ) : (
-                            testimonial.name
-                          )}
-                        </h3>
-                        
-                        <div className="flex justify-center mb-2">
-                          {editMode ? (
-                            <div className="flex items-center gap-2">
-                              <select
-                                value={testimonial.rating || 5}
-                                onChange={(e) => updateTestimonialField(index, 'rating', parseFloat(e.target.value))}
-                                className="border border-gray-300 rounded px-2 py-1"
-                              >
-                                {[1, 2, 3, 4, 5].map(r => (
-                                  <option key={r} value={r}>{r}.0</option>
-                                ))}
-                              </select>
-                              <span className="text-gray-600">stars</span>
-                            </div>
-                          ) : (
-                            renderStars(testimonial.rating)
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Editable Quote */}
-                      <div className="mb-6">
-                        {editMode ? (
-                          <div className="flex flex-col">
-                            <textarea
-                              value={testimonial.quote || ""}
-                              onChange={(e) => updateTestimonialField(index, 'quote', e.target.value)}
-                              className="text-lg text-gray-700 italic px-2 py-1 border border-gray-300 rounded resize-none"
-                              rows={3}
-                              maxLength={CHAR_LIMITS.quote}
-                            />
-                            <div className="text-xs text-gray-500 text-right mt-1">
-                              {(testimonial.quote || "").length}/{CHAR_LIMITS.quote}
-                            </div>
-                          </div>
-                        ) : (
-                          <blockquote className="text-lg text-gray-700 italic ">
-                            "{testimonial.quote}"
-                          </blockquote>
-                        )}
-                      </div>
-
-                      {/* Editable Role */}
-                      <div className="border-t pt-6">
-                        <p className="text-gray-600 ">
-                          {editMode ? (
-                            <div className="flex flex-col items-center">
-                              <input
-                                type="text"
-                                value={testimonial.role || ""}
-                                onChange={(e) => updateTestimonialField(index, 'role', e.target.value)}
-                                className="text-gray-600 text-center px-2 py-1 border border-gray-300 rounded w-full max-w-xs"
-                                maxLength={CHAR_LIMITS.role}
-                              />
-                              <div className="text-xs text-gray-500 mt-1">
-                                {(testimonial.role || "").length}/{CHAR_LIMITS.role}
-                              </div>
-                            </div>
-                          ) : (
-                            testimonial.role
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Controls */}
-          <div className="flex justify-center items-center mt-8 space-x-4">
-            {/* Add Button */}
-            {editMode && (
-              <button
-                onClick={addTestimonial}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-              >
-                <Plus size={16} />
-                Add Testimonial
-              </button>
-            )}
-
-            {/* Pagination Dots */}
-            {contentState.testimonials.length > 0 && (
-              <div className="flex space-x-2">
-                {contentState.testimonials.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrent(index)}
-                    className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                      index === current
-                        ? "bg-blue-600"
-                        : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                    aria-label={`Go to testimonial ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-    </>
+    </section>
   );
 }
