@@ -271,6 +271,7 @@ function App() {
   }
 
   const templateId = location.state?.templateId;
+  // console.log("templateId", templateId);
   initialFormData.templateSelection = templateId || "";
 
   const [draftId, setDraftId] = useState<string | undefined>(undefined);
