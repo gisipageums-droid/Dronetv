@@ -1,10 +1,68 @@
-// components/Profile.tsx
+
 import React from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 
+// Import local avatar images .- adjust  the path based on your project structure
+import maleAvatar from "../../../../../../public/logos/maleAvatar.png";
+import femaleAvatar from "../../../../../../public/logos/femaleAvatar.png";
+import neutralAvatar from "../../../../../../public/logos/maleAvatar.png";
+
 const Profile = ({ profileData }) => {
   const { theme } = useTheme();
+
+  // Function to get avatar based on directorPrefix
+  const getAvatar = (prefix) => {
+    if (!prefix) return neutralAvatar;
+    
+    const cleanPrefix = prefix.toLowerCase().trim();
+    
+    if (cleanPrefix === "mr") {
+      return maleAvatar;
+    } else if (cleanPrefix === "mrs" || cleanPrefix === "ms") {
+      return femaleAvatar;
+    } else {
+      return neutralAvatar;
+    }
+  };
+
+  // Function to get the team member image - checks for valid image first, then falls back to avatar
+  const getTeamMemberImage = (member) => {
+    // If member has a valid image URL (not empty or null), use it
+    if (member.image && member.image.trim() !== "" && member.image !== null) {
+      return member.image;
+    }
+    
+    // If member has a prefix field, use that for avatar
+    if (member.prefix) {
+      return getAvatar(member.prefix);
+    }
+    
+    // If member has directorPrefix field, use that for avatar
+    if (member.directorPrefix) {
+      return getAvatar(member.directorPrefix);
+    }
+    
+    // Default to neutral avatar
+    return neutralAvatar;
+  };
+
+  // Function to get prefix display name
+  const getPrefixDisplayName = (prefix) => {
+    if (!prefix) return "";
+    
+    switch (prefix.toLowerCase()) {
+      case "mr": return "Mr.";
+      case "mrs": return "Mrs.";
+      case "ms": return "Ms.";
+      default: return "";
+    }
+  };
+
+  // Helper to extract prefix from member
+  const getMemberPrefix = (member) => {
+    return member.prefix || member.directorPrefix || "";
+  };
 
   return (
     <section
@@ -19,77 +77,55 @@ const Profile = ({ profileData }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {profileData.teamMembers.map((member) => (
-            <motion.div
-              key={member.id}
-              className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
-                }`}
-              whileHover={{ y: -5 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="relative h-60 overflow-hidden">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-full object-cover"
-                />
-                {/* <div 
-                  className="absolute bottom-0 left-0 w-full h-16 bg-opacity-90"
-                  style={{ backgroundColor: "#facc15" }}
-                ></div> */}
-              </div>
-              <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold mb-1 ">{member.name}</h3>
-                <p className="font-medium mb-3" style={{ color: "#facc15" }}>
-                  {member.role}
-                </p>
-                <p
-                  className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
-                    } text-justify`}
-                >
-                  {member.bio}
-                </p>
-                <div className="flex justify-center mt-4 space-x-3">
-                  {/* <a
-                    href={member.socialLinks.twitter}
-                    target="_blank"
-                    className={`p-2 rounded-full ${
-                      theme === "dark"
-                        ? "bg-gray-800 hover:bg-gray-500"
-                        : "bg-gray-100 hover:bg-gray-200"
-                    }`}
-                    aria-label="X (formerly Twitter)"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                  </a>
-                  <a
-                    href={member.socialLinks.linkedin}
-                    target="_blank"
-                    className={`p-2 rounded-full ${
-                      theme === "dark"
-                        ? "bg-gray-800 hover:bg-gray-500"
-                        : "bg-gray-100 hover:bg-gray-200"
-                    }`}
-                    aria-label="LinkedIn"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                    </svg>
-                  </a> */}
+          {profileData.teamMembers.map((member) => {
+            const memberPrefix = getMemberPrefix(member);
+            const prefixDisplay = getPrefixDisplayName(memberPrefix);
+            
+            return (
+              <motion.div
+                key={member.id}
+                className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
+                  }`}
+                whileHover={{ y: -5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="relative h-60 overflow-hidden">
+                  <img
+                    src={getTeamMemberImage(member)}
+                    alt={member.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback if image fails to load
+                      e.target.onerror = null;
+                      e.target.src = getAvatar(memberPrefix);
+                    }}
+                  />
                 </div>
-              </div>
-            </motion.div>
-          ))}
+                <div className="p-6 text-center">
+                  {/* Show prefix if available */}
+                  {prefixDisplay && (
+                    <div className="text-sm text-gray-500 mb-1">
+                      {prefixDisplay}
+                    </div>
+                  )}
+                  
+                  <h3 className="text-xl font-semibold mb-1 ">{member.name}</h3>
+                  <p className="font-medium mb-3" style={{ color: "#facc15" }}>
+                    {member.role}
+                  </p>
+                  <p
+                    className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                      } text-justify`}
+                  >
+                    {member.bio}
+                  </p>
+                  <div className="flex justify-center mt-4 space-x-3">
+                    {/* Social icons (commented out as in original) */}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
