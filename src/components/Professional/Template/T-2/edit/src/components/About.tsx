@@ -205,20 +205,20 @@
 
 //     return new Promise((resolve) => {
 //       canvas.toBlob((blob) => {
-//         const fileName = originalFile ?
-//           `cropped-about-${originalFile.name}` :
+//         const fileName = originalFile ? 
+//           `cropped-about-${originalFile.name}` : 
 //           `cropped-about-${Date.now()}.jpg`;
-
-//         const file = new File([blob], fileName, {
+        
+//         const file = new File([blob], fileName, { 
 //           type: 'image/jpeg',
 //           lastModified: Date.now()
 //         });
-
+        
 //         const previewUrl = URL.createObjectURL(blob);
-
-//         resolve({
-//           file,
-//           previewUrl
+        
+//         resolve({ 
+//           file, 
+//           previewUrl 
 //         });
 //       }, 'image/jpeg', 0.95);
 //     });
@@ -248,7 +248,7 @@
 //       setCrop({ x: 0, y: 0 });
 //     };
 //     reader.readAsDataURL(file);
-
+    
 //     // Clear the file input
 //     event.target.value = '';
 //   };
@@ -259,7 +259,7 @@
 //       if (!imageToCrop || !croppedAreaPixels) return;
 
 //       const { file, previewUrl } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-
+      
 //       // Update preview immediately with blob URL (temporary)
 //       setTempData(prev => ({
 //         ...prev,
@@ -476,10 +476,10 @@
 //   }, [updateTempContent, updateSkill]);
 
 //   // Check if there's any meaningful data to display
-//   const hasData = data.heading ||
-//                   data.subtitle ||
-//                   data.description1 ||
-//                   data.description2 ||
+//   const hasData = data.heading || 
+//                   data.subtitle || 
+//                   data.description1 || 
+//                   data.description2 || 
 //                   (data.skills.length > 0 && data.skills[0] !== '') ||
 //                   data.imageSrc;
 
@@ -936,6 +936,7 @@
 //   );
 // }
 
+
 import { Edit2, Loader2, Save, Upload, X, ZoomIn, ZoomOut } from "lucide-react";
 
 import { motion } from "motion/react";
@@ -943,7 +944,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AnimatedButton } from "./AnimatedButton";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import Cropper from "react-easy-crop";
+import Cropper from 'react-easy-crop';
 
 // Text limits
 const TEXT_LIMITS = {
@@ -985,9 +986,8 @@ const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variants[variant || "default"]} ${
-        sizes[size || "default"]
-      } ${className || ""}`}
+      className={`${baseClasses} ${variants[variant || 'default']} ${sizes[size || 'default']
+        } ${className || ""}`}
       onClick={onClick}
       disabled={disabled}
       {...props}
@@ -1050,28 +1050,24 @@ export function About({
   const [aspectRatio] = useState(4 / 3); // Fixed 4:3 aspect ratio
 
   // Initialize with props data or empty structure
-  const [data, setData] = useState<AboutData>(
-    aboutData || {
-      heading: "",
-      subtitle: "",
-      description1: "",
-      description2: "",
-      skills: [""],
-      imageSrc: "",
-      buttonText: "",
-    }
-  );
-  const [tempData, setTempData] = useState<AboutData>(
-    aboutData || {
-      heading: "",
-      subtitle: "",
-      description1: "",
-      description2: "",
-      skills: [""],
-      imageSrc: "",
-      buttonText: "",
-    }
-  );
+  const [data, setData] = useState<AboutData>(aboutData || {
+    heading: "",
+    subtitle: "",
+    description1: "",
+    description2: "",
+    skills: [''],
+    imageSrc: "",
+    buttonText: ""
+  });
+  const [tempData, setTempData] = useState<AboutData>(aboutData || {
+    heading: "",
+    subtitle: "",
+    description1: "",
+    description2: "",
+    skills: [''],
+    imageSrc: "",
+    buttonText: ""
+  });
 
   // FIX: Use ref for onStateChange to prevent infinite loops
   const onStateChangeRef = useRef(onStateChange);
@@ -1092,18 +1088,18 @@ export function About({
   const performAutoSave = useCallback(async (dataToSave: AboutData) => {
     try {
       setIsAutoSaving(true);
-
+      
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       if (onStateChangeRef.current) {
         onStateChangeRef.current(dataToSave);
       }
-
+      
       lastSavedDataRef.current = dataToSave;
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
-
+      
       console.log("Auto-save completed:", dataToSave);
     } catch (error) {
       console.error("Auto-save failed:", error);
@@ -1113,22 +1109,19 @@ export function About({
     }
   }, []);
 
-  const scheduleAutoSave = useCallback(
-    (updatedData: AboutData) => {
-      setHasUnsavedChanges(true);
-
-      // Clear existing timeout
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-
-      // Schedule new auto-save
-      autoSaveTimeoutRef.current = setTimeout(() => {
-        performAutoSave(updatedData);
-      }, 2000); // 2 second delay
-    },
-    [performAutoSave]
-  );
+  const scheduleAutoSave = useCallback((updatedData: AboutData) => {
+    setHasUnsavedChanges(true);
+    
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    // Schedule new auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      performAutoSave(updatedData);
+    }, 2000); // 2 second delay
+  }, [performAutoSave]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -1179,17 +1172,17 @@ export function About({
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const image = new Image();
-      image.addEventListener("load", () => resolve(image));
-      image.addEventListener("error", (error) => reject(error));
-      image.setAttribute("crossOrigin", "anonymous");
+      image.addEventListener('load', () => resolve(image));
+      image.addEventListener('error', (error) => reject(error));
+      image.setAttribute('crossOrigin', 'anonymous');
       image.src = url;
     });
 
   // Function to get cropped image
   const getCroppedImg = async (imageSrc, pixelCrop) => {
     const image = await createImage(imageSrc);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
@@ -1207,52 +1200,45 @@ export function About({
     );
 
     return new Promise((resolve) => {
-      canvas.toBlob(
-        (blob) => {
-          const fileName = originalFile
-            ? `cropped-about-${originalFile.name}`
-            : `cropped-about-${Date.now()}.jpg`;
-
-          const file = new File([blob], fileName, {
-            type: "image/jpeg",
-            lastModified: Date.now(),
-          });
-
-          const previewUrl = URL.createObjectURL(blob);
-
-          resolve({
-            file,
-            previewUrl,
-          });
-        },
-        "image/jpeg",
-        0.95
-      );
+      canvas.toBlob((blob) => {
+        const fileName = originalFile ? 
+          `cropped-about-${originalFile.name}` : 
+          `cropped-about-${Date.now()}.jpg`;
+        
+        const file = new File([blob], fileName, { 
+          type: 'image/jpeg',
+          lastModified: Date.now()
+        });
+        
+        const previewUrl = URL.createObjectURL(blob);
+        
+        resolve({ 
+          file, 
+          previewUrl 
+        });
+      }, 'image/jpeg', 0.95);
     });
   };
 
   // Upload image to S3
   const uploadImageToS3 = async (file: File): Promise<string> => {
     if (!userId || !professionalId) {
-      throw new Error("Missing user information");
+      throw new Error('Missing user information');
     }
 
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("userId", userId);
-    formData.append("fieldName", "about_image");
+    formData.append('file', file);
+    formData.append('userId', userId);
+    formData.append('fieldName', 'about_image');
 
-    const uploadResponse = await fetch(
-      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+      method: 'POST',
+      body: formData,
+    });
 
     if (!uploadResponse.ok) {
       const errorData = await uploadResponse.json();
-      throw new Error(errorData.message || "Upload failed");
+      throw new Error(errorData.message || 'Upload failed');
     }
 
     const uploadData = await uploadResponse.json();
@@ -1264,14 +1250,13 @@ export function About({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      // 5MB limit
-      toast.error("File size must be less than 5MB");
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      toast.error('File size must be less than 5MB');
       return;
     }
 
@@ -1284,9 +1269,9 @@ export function About({
       setCrop({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
-
+    
     // Clear the file input
-    event.target.value = "";
+    event.target.value = '';
   };
 
   // Apply crop and automatically upload to S3
@@ -1295,25 +1280,25 @@ export function About({
       if (!imageToCrop || !croppedAreaPixels) return;
 
       setIsUploading(true);
-
+      
       const { file } = await getCroppedImg(imageToCrop, croppedAreaPixels);
-
+      
       // Upload to S3 immediately (don't use blob URL at all)
       try {
         const s3Url = await uploadImageToS3(file);
-
+        
         // Update with S3 URL directly
         const finalUpdatedData = {
           ...tempData,
-          imageSrc: s3Url,
+          imageSrc: s3Url
         };
         setTempData(finalUpdatedData);
         performAutoSave(finalUpdatedData); // Immediate save with S3 URL
-
-        toast.success("Image uploaded and saved successfully!");
+        
+        toast.success('Image uploaded and saved successfully!');
       } catch (uploadError) {
-        console.error("Upload failed:", uploadError);
-        toast.error("Image upload failed. Please try again.");
+        console.error('Upload failed:', uploadError);
+        toast.error('Image upload failed. Please try again.');
         setIsUploading(false);
         setShowCropper(false);
         return;
@@ -1323,9 +1308,10 @@ export function About({
       setImageToCrop(null);
       setOriginalFile(null);
       setIsUploading(false);
+
     } catch (error) {
-      console.error("Error cropping image:", error);
-      toast.error("Failed to crop image");
+      console.error('Error cropping image:', error);
+      toast.error('Failed to crop image');
       setShowCropper(false);
       setIsUploading(false);
     }
@@ -1350,7 +1336,7 @@ export function About({
   const handleSave = async () => {
     try {
       setIsSaving(true);
-
+      
       // Clear any pending auto-save
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
@@ -1364,8 +1350,8 @@ export function About({
           tempData.imageSrc = s3Url;
           setPendingImageFile(null);
         } catch (uploadError) {
-          console.error("Upload failed:", uploadError);
-          toast.error("Image upload failed");
+          console.error('Upload failed:', uploadError);
+          toast.error('Image upload failed');
           setIsUploading(false);
           setIsSaving(false);
           return;
@@ -1374,21 +1360,22 @@ export function About({
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      
       setData(tempData);
       lastSavedDataRef.current = tempData;
       setPendingImageFile(null);
       setIsEditing(false);
       setHasUnsavedChanges(false);
-
+      
       if (onStateChangeRef.current) {
         onStateChangeRef.current(tempData);
       }
+      
+      toast.success('About section saved successfully!');
 
-      toast.success("About section saved successfully!");
     } catch (error) {
-      console.error("Error saving about section:", error);
-      toast.error("Error saving changes. Please try again.");
+      console.error('Error saving about section:', error);
+      toast.error('Error saving changes. Please try again.');
     } finally {
       setIsUploading(false);
       setIsSaving(false);
@@ -1400,73 +1387,64 @@ export function About({
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
-
+    
     setTempData(lastSavedDataRef.current || data);
     setPendingImageFile(null);
     setHasUnsavedChanges(false);
     setIsEditing(false);
-    toast.info("Changes discarded");
+    toast.info('Changes discarded');
   };
 
   // Stable update functions with useCallback
-  const updateTempContent = useCallback(
-    (field: keyof AboutData, value: string) => {
-      setTempData((prev) => {
-        const updated = {
-          ...prev,
-          [field]: value,
-        };
-        scheduleAutoSave(updated);
-        return updated;
-      });
-    },
-    [scheduleAutoSave]
-  );
-
-  const updateSkill = useCallback(
-    (index: number, value: string) => {
-      setTempData((prevData) => {
-        const updatedSkills = [...prevData.skills];
-        updatedSkills[index] = value;
-        const updated = {
-          ...prevData,
-          skills: updatedSkills,
-        };
-        scheduleAutoSave(updated);
-        return updated;
-      });
-    },
-    [scheduleAutoSave]
-  );
-
-  const addSkill = useCallback(() => {
-    setTempData((prevData) => {
-      const updated = {
-        ...prevData,
-        skills: [...prevData.skills, "New skill"],
+  const updateTempContent = useCallback((field: keyof AboutData, value: string) => {
+    setTempData(prev => { 
+      const updated = { 
+        ...prev, 
+        [field]: value 
       };
       scheduleAutoSave(updated);
       return updated;
     });
   }, [scheduleAutoSave]);
 
-  const removeSkill = useCallback(
-    (index: number) => {
-      setTempData((prevData) => {
-        if (prevData.skills.length <= 1) {
-          toast.error("You must have at least one skill");
-          return prevData;
-        }
-        const updated = {
-          ...prevData,
-          skills: prevData.skills.filter((_, i) => i !== index),
-        };
-        scheduleAutoSave(updated);
-        return updated;
-      });
-    },
-    [scheduleAutoSave]
-  );
+  const updateSkill = useCallback((index: number, value: string) => {
+    setTempData(prevData => {
+      const updatedSkills = [...prevData.skills];
+      updatedSkills[index] = value;
+      const updated = { 
+        ...prevData, 
+        skills: updatedSkills 
+      };
+      scheduleAutoSave(updated);
+      return updated;
+    });
+  }, [scheduleAutoSave]);
+
+  const addSkill = useCallback(() => {
+    setTempData(prevData => {
+      const updated = {
+        ...prevData,
+        skills: [...prevData.skills, "New skill"]
+      };
+      scheduleAutoSave(updated);
+      return updated;
+    });
+  }, [scheduleAutoSave]);
+
+  const removeSkill = useCallback((index: number) => {
+    setTempData(prevData => {
+      if (prevData.skills.length <= 1) {
+        toast.error("You must have at least one skill");
+        return prevData;
+      }
+      const updated = {
+        ...prevData,
+        skills: prevData.skills.filter((_, i) => i !== index)
+      };
+      scheduleAutoSave(updated);
+      return updated;
+    });
+  }, [scheduleAutoSave]);
 
   // Memoized EditableText component
   const EditableText = useMemo(() => {
@@ -1489,9 +1467,7 @@ export function About({
       isSkill?: boolean;
       skillIndex?: number;
     }) => {
-      const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      ) => {
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const newValue = e.target.value;
         if (isSkill && skillIndex !== undefined) {
           updateSkill(skillIndex, newValue);
@@ -1502,19 +1478,17 @@ export function About({
 
       const getMaxLength = () => {
         if (isSkill) return TEXT_LIMITS.SKILL;
-        if (field === "heading") return TEXT_LIMITS.HEADING;
-        if (field === "subtitle") return TEXT_LIMITS.SUBTITLE;
-        if (field === "description1" || field === "description2")
-          return TEXT_LIMITS.DESCRIPTION1;
-        if (field === "buttonText") return TEXT_LIMITS.BUTTON_TEXT;
+        if (field === 'heading') return TEXT_LIMITS.HEADING;
+        if (field === 'subtitle') return TEXT_LIMITS.SUBTITLE;
+        if (field === 'description1' || field === 'description2') return TEXT_LIMITS.DESCRIPTION1;
+        if (field === 'buttonText') return TEXT_LIMITS.BUTTON_TEXT;
         return undefined;
       };
 
       const maxLength = getMaxLength();
       const currentLength = value?.length || 0;
 
-      const baseClasses =
-        "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+      const baseClasses = "w-full bg-white/80 dark:bg-black/80 dark:text-white border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
 
       if (multiline) {
         return (
@@ -1539,7 +1513,7 @@ export function About({
       return (
         <div className="relative">
           <input
-            type="text"
+            type='text'
             value={value}
             onChange={handleChange}
             className={`${baseClasses} p-1 ${className}`}
@@ -1557,31 +1531,26 @@ export function About({
   }, [updateTempContent, updateSkill]);
 
   // Check if there's any meaningful data to display
-  const hasData =
-    data.heading ||
-    data.subtitle ||
-    data.description1 ||
-    data.description2 ||
-    (data.skills.length > 0 && data.skills[0] !== "") ||
-    data.imageSrc;
+  const hasData = data.heading || 
+                  data.subtitle || 
+                  data.description1 || 
+                  data.description2 || 
+                  (data.skills.length > 0 && data.skills[0] !== '') ||
+                  data.imageSrc;
 
   // No data state - show empty state with option to add data
   if (!isEditing && !hasData) {
     return (
-      <section
-        ref={aboutRef}
-        id="about"
-        className="relative py-20 bg-background"
-      >
+      <section ref={aboutRef} id="about" className="relative py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit Controls */}
-          <div className="text-right mb-8">
+          <div className='text-right mb-8'>
             <Button
               onClick={handleEdit}
-              size="sm"
-              className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+              size='sm'
+              className='bg-red-500 hover:bg-red-600 text-white shadow-md'
             >
-              <Edit2 className="w-4 h-4 mr-2" />
+              <Edit2 className='w-4 h-4 mr-2' />
               Add About Content
             </Button>
           </div>
@@ -1596,15 +1565,14 @@ export function About({
                 No About Content Found
               </h3>
               <p className="text-muted-foreground mb-8">
-                Tell your story and showcase your skills to help visitors get to
-                know you better.
+                Tell your story and showcase your skills to help visitors get to know you better.
               </p>
               <Button
                 onClick={handleEdit}
-                size="lg"
-                className="bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg"
+                size='lg'
+                className='bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'
               >
-                <Edit2 className="w-5 h-5 mr-2" />
+                <Edit2 className='w-5 h-5 mr-2' />
                 Add About Content
               </Button>
             </div>
@@ -1615,11 +1583,7 @@ export function About({
   }
 
   return (
-    <section
-      ref={aboutRef}
-      id="about"
-      className="relative text-justify py-20 bg-background"
-    >
+    <section ref={aboutRef} id="about" className="relative text-justify py-20 bg-background">
       {/* Image Cropper Modal */}
       {showCropper && (
         <motion.div
@@ -1688,8 +1652,7 @@ export function About({
               {/* Aspect Ratio Info */}
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">
-                  Aspect Ratio:{" "}
-                  <span className="text-blue-600">4:3 (Standard)</span>
+                  Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
                 </p>
               </div>
 
@@ -1705,9 +1668,7 @@ export function About({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() =>
-                      setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))
-                    }
+                    onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
                     disabled={isUploading}
                   >
@@ -1725,9 +1686,7 @@ export function About({
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))
-                    }
+                    onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
                     disabled={isUploading}
                   >
@@ -1763,7 +1722,7 @@ export function About({
                       Uploading...
                     </>
                   ) : (
-                    "Apply & Upload"
+                    'Apply & Upload'
                   )}
                 </button>
               </div>
@@ -1774,18 +1733,18 @@ export function About({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
-        <div className="text-right z-50 mb-20">
+        <div className='text-right z-50 mb-20'>
           {!isEditing ? (
             <Button
               onClick={handleEdit}
-              size="sm"
-              className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+              size='sm'
+              className='bg-red-500 hover:bg-red-600 text-white shadow-md'
             >
-              <Edit2 className="w-4 h-4 mr-2" />
+              <Edit2 className='w-4 h-4 mr-2' />
               Edit
             </Button>
           ) : (
-            <div className="flex gap-2 justify-end items-center">
+            <div className='flex gap-2 justify-end items-center'>
               {/* Auto-save indicator */}
               <div className="flex items-center gap-2 mr-4 text-sm">
                 {isAutoSaving && (
@@ -1795,7 +1754,9 @@ export function About({
                   </div>
                 )}
                 {hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-yellow-500">● Unsaved changes</div>
+                  <div className="text-yellow-500">
+                    ● Unsaved changes
+                  </div>
                 )}
                 {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
                   <div className="text-green-500">
@@ -1806,34 +1767,34 @@ export function About({
 
               <Button
                 onClick={handleSave}
-                size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                size='sm'
+                className='bg-green-600 hover:bg-green-700 text-white shadow-md'
                 disabled={isSaving || isUploading}
               >
                 {isUploading ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                 ) : isSaving ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                 ) : (
-                  <Save className="w-4 h-4 mr-2" />
+                  <Save className='w-4 h-4 mr-2' />
                 )}
                 {isUploading ? "Uploading..." : isSaving ? "Saving..." : "Save"}
               </Button>
               <Button
                 onClick={handleCancel}
-                size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                size='sm'
+                className='bg-red-500 hover:bg-red-600 shadow-md text-white'
                 disabled={isSaving || isUploading}
               >
-                <X className="w-4 h-4 mr-2" />
+                <X className='w-4 h-4 mr-2' />
                 Cancel
               </Button>
               {isEditing && (
                 <Button
                   onClick={addSkill}
-                  variant="outline"
-                  size="sm"
-                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                  variant='outline'
+                  size='sm'
+                  className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
                 >
                   Add Skill
                 </Button>
@@ -1875,17 +1836,8 @@ export function About({
                       Image selected: {pendingImageFile.name}
                     </p>
                   )}
-                  <div className="text-xs text-gray-500 mt-1 text-center">
-                    Recommended:{" "}
-                    {Math.round(
-                      aboutImageContainerRef.current?.offsetWidth || 400
-                    )}
-                    ×
-                    {Math.round(
-                      (aboutImageContainerRef.current?.offsetWidth || 400) *
-                        (4 / 3)
-                    )}
-                    px (3:4 ratio) - Portrait
+                  <div className='text-xs text-gray-500 mt-1 text-center'>
+                    Recommended: {Math.round(aboutImageContainerRef.current?.offsetWidth || 400)}×{Math.round((aboutImageContainerRef.current?.offsetWidth || 400) * (4/3))}px (3:4 ratio) - Portrait
                   </div>
                 </div>
               </div>
@@ -1906,8 +1858,7 @@ export function About({
                     className="w-full h-96 object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.src =
-                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23f3f4f6" width="400" height="400"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EProfile Image%3C/text%3E%3C/svg%3E';
+                      target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23f3f4f6" width="400" height="400"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EProfile Image%3C/text%3E%3C/svg%3E';
                     }}
                   />
                 ) : (
@@ -2045,7 +1996,7 @@ export function About({
                       </Button>
                     </div>
                   ) : (
-                    skill && <span className="text-gray-700">{skill}</span>
+                    skill && <span className="text-gray-700 dark:text-gray-300">{skill}</span>
                   )}
                 </div>
               ))}

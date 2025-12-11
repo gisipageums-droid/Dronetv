@@ -2159,7 +2159,7 @@ export function Projects({
                   type="text"
                   value={tempData.subtitle || ""}
                   onChange={(e) => updateSection("subtitle", e.target.value)}
-                  className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-lg text-yellow-500 mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   placeholder="Subtitle"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
@@ -2172,7 +2172,7 @@ export function Projects({
                   type="text"
                   value={tempData.heading || ""}
                   onChange={(e) => updateSection("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   placeholder="Heading"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
@@ -2184,7 +2184,7 @@ export function Projects({
                 <textarea
                   value={tempData.description || ""}
                   onChange={(e) => updateSection("description", e.target.value)}
-                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                   rows={2}
                   placeholder="Description"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
@@ -2261,20 +2261,20 @@ export function Projects({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="mb-12 p-6 bg-gray-50 rounded-2xl"
+            className="mb-12 p-6 bg-gray-50 dark:bg-black rounded-2xl"
           >
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <div className="flex flex-wrap gap-2 mb-4">
               {tempData.categories.map((category, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 bg-white px-3 py-1 rounded-full"
+                  className="flex items-center gap-2 bg-white dark:bg-black px-3 py-1 rounded-full"
                 >
                   <input
                     type="text"
                     value={category}
                     onChange={(e) => updateCategory(index, e.target.value)}
-                    className="bg-transparent border-none outline-none"
+                    className="bg-transparent border"
                     maxLength={TEXT_LIMITS.CATEGORY}
                   />
                   <div className="text-xs text-gray-500">
@@ -2341,6 +2341,7 @@ export function Projects({
                             <Upload className="w-4 h-4 mr-2 text-black" />
                             Upload
                           </Button>
+
                           <input
                             ref={(el) =>
                               (fileInputRefs.current[project.id.toString()] =
@@ -2416,7 +2417,7 @@ export function Projects({
                         onChange={(e) =>
                           updateProject(index, "title", e.target.value)
                         }
-                        className="text-xl text-foreground mb-2 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-xl text-foreground mb-2 w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                         maxLength={TEXT_LIMITS.PROJECT_TITLE}
                       />
                       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
@@ -2437,7 +2438,7 @@ export function Projects({
                         onChange={(e) =>
                           updateProject(index, "description", e.target.value)
                         }
-                        className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                         rows={3}
                         maxLength={TEXT_LIMITS.PROJECT_DESCRIPTION}
                       />
@@ -2506,10 +2507,10 @@ export function Projects({
                             updateProject(index, "category", e.target.value)
                           }
                           placeholder="Category"
-                          className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                          className="w-full p-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
                           maxLength={TEXT_LIMITS.CATEGORY}
                         />
-                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500 ">
                           {project.category.length}/{TEXT_LIMITS.CATEGORY}
                         </div>
                       </div>
@@ -2521,7 +2522,7 @@ export function Projects({
                             updateProject(index, "date", e.target.value)
                           }
                           placeholder="Date"
-                          className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                          className="w-full p-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
                           maxLength={TEXT_LIMITS.DATE}
                         />
                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
@@ -2531,7 +2532,7 @@ export function Projects({
                     </div>
                   ) : (
                     <div className="flex justify-between items-center mb-4 text-sm text-muted-foreground">
-                      <span className="bg-gray-100 px-3 py-1 rounded-full">
+                      <span className="bg-gray-100 px-3 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300">
                         {project.category}
                       </span>
                       <span>{project.date}</span>

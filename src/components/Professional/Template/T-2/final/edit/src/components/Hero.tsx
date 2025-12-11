@@ -2828,7 +2828,7 @@ export function Hero({
       };
 
       const baseClasses =
-        "w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-gray-800 placeholder-gray-500";
+        "w-full bg-white/80 dark:bg-black/80 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-gray-800 dark:text-white placeholder-gray-500";
       const currentLength = value?.length || 0;
       const isOverLimit = charLimit && currentLength > charLimit;
 

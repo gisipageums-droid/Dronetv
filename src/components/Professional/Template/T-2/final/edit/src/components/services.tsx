@@ -2174,7 +2174,7 @@ export function Services({
                   type="text"
                   value={displayData.heading || ""}
                   onChange={(e) => updateHeader("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                  className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
                   placeholder="Services"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
@@ -2195,7 +2195,7 @@ export function Services({
                   type="text"
                   value={displayData.subtitle || ""}
                   onChange={(e) => updateHeader("subtitle", e.target.value)}
-                  className="text-xl text-red-600 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
+                  className="text-xl text-red-600 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
                   placeholder="Subtitle (e.g., Professional Services)"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
@@ -2207,7 +2207,7 @@ export function Services({
                 <textarea
                   value={displayData.description || ""}
                   onChange={(e) => updateHeader("description", e.target.value)}
-                  className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                   rows={2}
                   placeholder="Description of your services"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
@@ -2257,7 +2257,7 @@ export function Services({
                     <div className="relative aspect-[4/3]">
                       {isEditing && (
                         <div className="absolute top-2 right-2 z-10">
-                          <div className="bg-white/90 backdrop-blur-sm shadow-md rounded p-2">
+                          <div className="bg-white/90 dark:bg-black/90 backdrop-blur-sm shadow-md rounded p-2">
                             <Button
                               onClick={() =>
                                 fileInputRefs.current[
@@ -2360,7 +2360,7 @@ export function Services({
                                     e.target.value
                                   )
                                 }
-                                className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                                className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                                 placeholder="Service Title"
                                 maxLength={TEXT_LIMITS.SERVICE_TITLE}
                               />
@@ -2391,7 +2391,7 @@ export function Services({
                                   e.target.value
                                 )
                               }
-                              className="w-full h-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground leading-relaxed resize-none"
+                              className="w-full h-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground leading-relaxed resize-none"
                               placeholder="Service description"
                               maxLength={TEXT_LIMITS.SERVICE_DESCRIPTION}
                             />

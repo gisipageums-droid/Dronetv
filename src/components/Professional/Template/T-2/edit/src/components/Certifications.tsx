@@ -1960,7 +1960,7 @@ export function Certifications({
                   type="text"
                   value={displayData.heading || ""}
                   onChange={(e) => updateHeader("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                  className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
                   placeholder="Certifications & Awards"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
@@ -1981,7 +1981,7 @@ export function Certifications({
                   type="text"
                   value={displayData.subtitle || ""}
                   onChange={(e) => updateHeader("subtitle", e.target.value)}
-                  className="text-xl text-yellow-600 mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
+                  className="text-xl text-yellow-600 mb-4 max-w-3xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
                   placeholder="Subtitle (e.g., Professional Credentials)"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
@@ -1993,7 +1993,7 @@ export function Certifications({
                 <textarea
                   value={displayData.description || ""}
                   onChange={(e) => updateHeader("description", e.target.value)}
-                  className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                   rows={2}
                   placeholder="Description of your certifications and achievements"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
@@ -2043,7 +2043,7 @@ export function Certifications({
                     <div className="relative">
                       {isEditing && (
                         <div className="absolute top-2 right-2 z-10">
-                          <div className="bg-white/90 backdrop-blur-sm shadow-md rounded p-2">
+                          <div className="bg-white/90 dark:bg-black/90 backdrop-blur-sm shadow-md rounded p-2">
                             <Button
                               onClick={() =>
                                 fileInputRefs.current[
@@ -2149,7 +2149,7 @@ export function Certifications({
                                   e.target.value
                                 )
                               }
-                              className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                              className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                               placeholder="Certification Title"
                               maxLength={TEXT_LIMITS.CERT_TITLE}
                             />
@@ -2184,7 +2184,7 @@ export function Certifications({
                                       e.target.value
                                     )
                                   }
-                                  className="bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg w-full"
+                                  className="bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg w-full"
                                   placeholder="Issuer"
                                   maxLength={TEXT_LIMITS.CERT_ISSUER}
                                 />
@@ -2209,7 +2209,7 @@ export function Certifications({
                                       e.target.value
                                     )
                                   }
-                                  className="bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg w-20"
+                                  className="bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-lg w-20"
                                   placeholder="Date"
                                   maxLength={TEXT_LIMITS.CERT_DATE}
                                 />
@@ -2246,7 +2246,7 @@ export function Certifications({
                                 e.target.value
                               )
                             }
-                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground mb-6 leading-relaxed"
+                            className="w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground mb-6 leading-relaxed"
                             rows={4}
                             placeholder="Certification description"
                             maxLength={TEXT_LIMITS.CERT_DESCRIPTION}
@@ -2279,7 +2279,7 @@ export function Certifications({
                                 e.target.value
                               )
                             }
-                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                            className="w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
                             placeholder="Credential URL (optional)"
                             maxLength={TEXT_LIMITS.CERT_URL}
                           />

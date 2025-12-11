@@ -613,7 +613,7 @@ export function Header({
                         type="text"
                         value={displayData.logoText}
                         onChange={(e) => updateLogoText(e.target.value)}
-                        className="px-3 py-2 text-base bg-white/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48"
+                        className="px-3 py-2 text-base bg-white/80 dark:bg-black/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48"
                         placeholder="Enter your name"
                       />
                       <p className="text-xs text-gray-500">

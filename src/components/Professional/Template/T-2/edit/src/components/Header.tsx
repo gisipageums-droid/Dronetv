@@ -1,4 +1,4 @@
-// import { Edit2, Loader2, Menu, Save, X } from 'lucide-react';
+// import { Edit2, Loader2, Menu, Save, Upload, X } from 'lucide-react';
 // import { useEffect, useRef, useState } from 'react';
 // import { toast } from 'sonner';
 // import { DarkModeToggle } from './DarkModeToggle';
@@ -54,17 +54,6 @@
 //   logoText: string;
 //   navLinks: NavLink[];
 // }
-// const staticnavLinks =  [
-//     { href: '#home', label: 'Home' },
-//     { href: '#about', label: 'About' },
-//     { href: '#skills', label: 'Skills' },
-//     { href: '#projects', label: 'Projects' },
-//     { href: '#services', label: 'Services' },
-//     { href: '#certification', label: 'Certification' },
-//     { href: '#clients', label: 'clients' },
-//     { href: '#testimonials', label: 'Testimonials' },
-//     { href: '#contact', label: 'Contact' },
-//   ]
 
 // const defaultHeaderData: HeaderData = {
 //   logoText: "arijit",
@@ -72,8 +61,8 @@
 //     { href: '#home', label: 'Home' },
 //     { href: '#about', label: 'About' },
 //     { href: '#skills', label: 'Skills' },
-//     { href: '#projects', label: 'Projects' },
 //     { href: '#services', label: 'Services' },
+//     { href: '#projects', label: 'Projects' },
 //     { href: '#certification', label: 'Certification' },
 //     { href: '#clients', label: 'clients' },
 //     { href: '#testimonials', label: 'Testimonials' },
@@ -235,7 +224,7 @@
 //           <div className="flex items-center space-x-6">
 //             {/* Desktop Navigation - Static (Non-editable) */}
 //             <nav className="hidden space-x-8 md:flex">
-//               {staticnavLinks.map((link, index) => (
+//               {data.navLinks.map((link, index) => (
 //                 <a
 //                   key={index}
 //                   href={link.href}
@@ -301,7 +290,7 @@
 //         {/* Mobile Navigation - Static (Non-editable) */}
 //         {isMenuOpen && (
 //           <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
-//             {staticnavLinks.map((link, index) => (
+//             {defaultHeaderData.navLinks.map((link, index) => (
 //               <a
 //                 key={index}
 //                 href={link.href}
@@ -317,8 +306,8 @@
 //     </header>
 //   )}
 
-import { Edit2, Loader2, Menu, Save, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Edit2, Loader2, Menu, Save, Upload, X } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { DarkModeToggle } from "./DarkModeToggle";
 
@@ -374,26 +363,14 @@ interface HeaderData {
   navLinks: NavLink[];
 }
 
-const staticnavLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
-  { href: "#services", label: "Services" },
-  { href: "#certification", label: "Certification" },
-  { href: "#clients", label: "clients" },
-  { href: "#testimonials", label: "Testimonials" },
-  { href: "#contact", label: "Contact" },
-];
-
 const defaultHeaderData: HeaderData = {
   logoText: "arijit",
   navLinks: [
     { href: "#home", label: "Home" },
     { href: "#about", label: "About" },
     { href: "#skills", label: "Skills" },
-    { href: "#projects", label: "Projects" },
     { href: "#services", label: "Services" },
+    { href: "#projects", label: "Projects" },
     { href: "#certification", label: "Certification" },
     { href: "#clients", label: "clients" },
     { href: "#testimonials", label: "Testimonials" },
@@ -429,14 +406,14 @@ export function Header({
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedDataRef = useRef<HeaderData | null>(null);
 
-  const [data, setData] = useState<HeaderData>(defaultHeaderData);
-  const [tempData, setTempData] = useState<HeaderData>(defaultHeaderData);
-
   // Use ref for onStateChange to prevent infinite loops
   const onStateChangeRef = useRef(onStateChange);
   useEffect(() => {
     onStateChangeRef.current = onStateChange;
   }, [onStateChange]);
+
+  const [data, setData] = useState<HeaderData>(defaultHeaderData);
+  const [tempData, setTempData] = useState<HeaderData>(defaultHeaderData);
 
   // Auto-save functionality
   const performAutoSave = useCallback(async (dataToSave: HeaderData) => {
@@ -489,27 +466,23 @@ export function Header({
     };
   }, []);
 
-  // Fake API fetch
-  const fetchHeaderData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await new Promise<HeaderData>((resolve) =>
-        setTimeout(() => resolve(headerData || defaultHeaderData), 1200)
-      );
-      setData(response);
-      setTempData(response);
-      lastSavedDataRef.current = response;
-      setDataLoaded(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  // Data loading effect
   useEffect(() => {
-    if (!dataLoaded && !isLoading) {
-      fetchHeaderData();
+    if (headerData) {
+      setData(headerData);
+      setTempData(headerData);
+      lastSavedDataRef.current = headerData;
+      setDataLoaded(true);
+      setIsLoading(false);
+    } else if (!dataLoaded) {
+      setIsLoading(true);
+      const timer = setTimeout(() => {
+        setDataLoaded(true);
+        setIsLoading(false);
+      }, 1200);
+      return () => clearTimeout(timer);
     }
-  }, [dataLoaded, isLoading, headerData]);
+  }, [headerData, dataLoaded]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -527,6 +500,7 @@ export function Header({
         clearTimeout(autoSaveTimeoutRef.current);
       }
 
+      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setData(tempData);
@@ -607,10 +581,29 @@ export function Header({
                 <>
                   {/* Edit Mode */}
                   <div className="flex items-center gap-4">
-                    {/* Avatar Display */}
+                    {/* Auto-save indicator */}
                     <div className="flex flex-col items-center gap-2">
+                      {/* Avatar Display */}
                       <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
                         {getAvatarLetter(displayData.logoText)}
+                      </div>
+
+                      {/* Auto-save status indicator */}
+                      <div className="flex items-center gap-2 text-xs">
+                        {isAutoSaving && (
+                          <div className="flex items-center gap-1 text-blue-500">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <span>Auto-saving...</span>
+                          </div>
+                        )}
+                        {hasUnsavedChanges && !isAutoSaving && (
+                          <div className="text-yellow-500">
+                            ● Unsaved changes
+                          </div>
+                        )}
+                        {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
+                          <div className="text-green-500">✓ Auto-saved</div>
+                        )}
                       </div>
                     </div>
 
@@ -620,38 +613,12 @@ export function Header({
                         type="text"
                         value={displayData.logoText}
                         onChange={(e) => updateLogoText(e.target.value)}
-                        className="px-3 py-2 text-base bg-white/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48"
+                        className="px-3 py-2 text-base bg-white/80 dark:bg-black/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48"
                         placeholder="Enter your name"
                       />
                       <p className="text-xs text-gray-500">
                         First letter will be shown in avatar
                       </p>
-
-                      {/* Auto-save indicator */}
-                      {isEditing && (
-                        <div className="flex items-center gap-2 text-xs mt-1">
-                          {isAutoSaving && (
-                            <div className="flex items-center gap-1 text-blue-500">
-                              <Loader2 className="w-3 h-3 animate-spin" />
-                              <span>Auto-saving...</span>
-                            </div>
-                          )}
-                          {hasUnsavedChanges && !isAutoSaving && (
-                            <div className="text-yellow-500">
-                              ● Unsaved changes
-                            </div>
-                          )}
-                          {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                            <div className="text-green-500">
-                              ✓ Auto-saved{" "}
-                              {lastSaved.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </div>
                   </div>
                 </>
@@ -675,7 +642,7 @@ export function Header({
           <div className="flex items-center space-x-6">
             {/* Desktop Navigation - Static (Non-editable) */}
             <nav className="hidden space-x-8 md:flex">
-              {staticnavLinks.map((link, index) => (
+              {data.navLinks.map((link, index) => (
                 <a
                   key={index}
                   href={link.href}
@@ -741,7 +708,7 @@ export function Header({
         {/* Mobile Navigation - Static (Non-editable) */}
         {isMenuOpen && (
           <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
-            {staticnavLinks.map((link, index) => (
+            {defaultHeaderData.navLinks.map((link, index) => (
               <a
                 key={index}
                 href={link.href}
