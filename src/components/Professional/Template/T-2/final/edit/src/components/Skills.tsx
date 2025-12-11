@@ -1041,7 +1041,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                   type="text"
                   value={displayData.header.title}
                   onChange={(e) => updateHeader("title", e.target.value)}
-                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   maxLength={TEXT_LIMITS.HEADER_TITLE}
                 />
                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
@@ -1052,7 +1052,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                 <textarea
                   value={displayData.header.subtitle}
                   onChange={(e) => updateHeader("subtitle", e.target.value)}
-                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                   rows={2}
                   maxLength={TEXT_LIMITS.HEADER_SUBTITLE}
                 />
@@ -1114,7 +1114,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                       onChange={(e) =>
                         updateSkill(index, "title", e.target.value)
                       }
-                      className="text-xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+                      className="text-xl text-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
                       maxLength={TEXT_LIMITS.SKILL_TITLE}
                     />
                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
@@ -1127,7 +1127,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                       onChange={(e) =>
                         updateSkill(index, "description", e.target.value)
                       }
-                      className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+                      className="text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
                       rows={2}
                       maxLength={TEXT_LIMITS.SKILL_DESCRIPTION}
                     />
@@ -1158,7 +1158,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                       onChange={(e) =>
                         updateSkill(index, "level", parseInt(e.target.value))
                       }
-                      className="w-16 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-right"
+                      className="w-16 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-right"
                       min="0"
                       max="100"
                     />

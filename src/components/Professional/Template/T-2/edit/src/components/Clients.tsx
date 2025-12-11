@@ -1295,7 +1295,7 @@ export function Clients({
                   type="text"
                   value={displayData.subtitle}
                   onChange={(e) => updateHeading("subtitle", e.target.value)}
-                  className="text-lg text-muted-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  className="text-lg text-muted-foreground mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
                   placeholder="Subtitle (e.g., Trusted by amazing companies)"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
@@ -1308,7 +1308,7 @@ export function Clients({
                   type="text"
                   value={displayData.heading}
                   onChange={(e) => updateHeading("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
                   placeholder="Heading (e.g., Clients & Partners)"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
@@ -1320,7 +1320,7 @@ export function Clients({
                 <textarea
                   value={displayData.description}
                   onChange={(e) => updateHeading("description", e.target.value)}
-                  className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  className="text-lg text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
                   rows="2"
                   placeholder="Description"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
@@ -1380,7 +1380,7 @@ export function Clients({
                       type="text"
                       value={displayData.stats[stat.key]}
                       onChange={(e) => updateStat(stat.key, e.target.value)}
-                      className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                      className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
                       placeholder="50+"
                       maxLength={TEXT_LIMITS.STAT_VALUE}
                     />
@@ -1404,7 +1404,7 @@ export function Clients({
                       onChange={(e) =>
                         updateStatLabel(stat.key, e.target.value)
                       }
-                      className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
+                      className="text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
                       placeholder={stat.defaultLabel}
                       maxLength={TEXT_LIMITS.STAT_LABEL}
                     />
@@ -1454,7 +1454,7 @@ export function Clients({
                           onChange={(e) =>
                             updateClient(index, "name", e.target.value)
                           }
-                          className="w-full text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                          className="w-full text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
                           placeholder="Client Name"
                           maxLength={TEXT_LIMITS.CLIENT_NAME}
                         />
@@ -1469,7 +1469,7 @@ export function Clients({
                           onChange={(e) =>
                             updateClient(index, "industry", e.target.value)
                           }
-                          className="w-full text-xs text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                          className="w-full text-xs text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
                           placeholder="Industry"
                           maxLength={TEXT_LIMITS.CLIENT_INDUSTRY}
                         />

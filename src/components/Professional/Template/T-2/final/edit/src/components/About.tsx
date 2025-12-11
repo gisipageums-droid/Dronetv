@@ -1488,7 +1488,7 @@ export function About({
       const maxLength = getMaxLength();
       const currentLength = value?.length || 0;
 
-      const baseClasses = "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+      const baseClasses = "w-full bg-white/80 dark:bg-black/80 dark:text-white border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
 
       if (multiline) {
         return (
@@ -1996,7 +1996,7 @@ export function About({
                       </Button>
                     </div>
                   ) : (
-                    skill && <span className="text-gray-700">{skill}</span>
+                    skill && <span className="text-gray-700 dark:text-gray-300">{skill}</span>
                   )}
                 </div>
               ))}

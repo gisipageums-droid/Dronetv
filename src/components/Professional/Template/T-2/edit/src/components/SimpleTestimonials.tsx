@@ -1561,7 +1561,7 @@ export function Testimonials({
                   type="text"
                   value={tempData.subtitle || ""}
                   onChange={(e) => updateSection("subtitle", e.target.value)}
-                  className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-lg text-yellow-500 mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   placeholder="Subtitle"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
@@ -1574,7 +1574,7 @@ export function Testimonials({
                   type="text"
                   value={tempData.heading || ""}
                   onChange={(e) => updateSection("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   placeholder="Heading"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
@@ -1586,7 +1586,7 @@ export function Testimonials({
                 <textarea
                   value={tempData.description || ""}
                   onChange={(e) => updateSection("description", e.target.value)}
-                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
                   rows={2}
                   placeholder="Description"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
@@ -1692,7 +1692,7 @@ export function Testimonials({
                         onChange={(e) =>
                           updateTestimonial(index, "content", e.target.value)
                         }
-                        className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 resize-none"
+                        className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 resize-none"
                         maxLength={TEXT_LIMITS.TESTIMONIAL_CONTENT}
                       />
                       <div className="absolute right-2 bottom-2 text-xs text-gray-500">
@@ -1717,7 +1717,7 @@ export function Testimonials({
                         onChange={(e) =>
                           updateTestimonial(index, "project", e.target.value)
                         }
-                        className="text-sm text-yellow-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-sm text-yellow-500 w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                         placeholder="Project type"
                         maxLength={TEXT_LIMITS.PROJECT}
                       />
@@ -1732,7 +1732,7 @@ export function Testimonials({
                         onChange={(e) =>
                           updateTestimonial(index, "date", e.target.value)
                         }
-                        className="text-sm text-gray-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-sm text-gray-500 w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
                         placeholder="Date"
                         maxLength={TEXT_LIMITS.DATE}
                       />
@@ -1767,7 +1767,7 @@ export function Testimonials({
                             onChange={(e) =>
                               updateTestimonial(index, "name", e.target.value)
                             }
-                            className="text-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+                            className="text-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
                             placeholder="Client name"
                             maxLength={TEXT_LIMITS.CLIENT_NAME}
                           />
@@ -1786,7 +1786,7 @@ export function Testimonials({
                                 e.target.value
                               )
                             }
-                            className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+                            className="text-sm text-muted-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
                             placeholder="Position"
                             maxLength={TEXT_LIMITS.CLIENT_POSITION}
                           />
