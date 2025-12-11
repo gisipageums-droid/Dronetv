@@ -1331,7 +1331,7 @@ const NameWithTitle: React.FC<NameWithTitleProps> = ({
             className="h-10 pl-3 pr-8 text-sm bg-white border-0 rounded-l-lg focus:outline-none focus:ring-0 appearance-none text-gray-700"
             style={{ minWidth: '80px' }}
           >
-            <option value="" className="text-gray-400">Title</option>
+            {/* <option value="" className="text-gray-400">Title</option> */}
             {genderOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -1569,10 +1569,10 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                   {/* Director Name with integrated Title */}
                   <NameWithTitle
                     label="Director Name"
-                    titleValue={formData.directorGender || ''}
+                    titleValue={formData.directorPrefix || ''}
                     nameValue={formData.directorName}
                     onTitleChange={(value) => updateFormData({ 
-                      directorGender: value as 'Mr' | 'Mrs' | 'Ms' 
+                      directorPrefix: value as 'Mr' | 'Mrs' | 'Ms' 
                     })}
                     onNameChange={(value) => updateFormData({ directorName: value })}
                     required

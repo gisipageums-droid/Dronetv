@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { Edit2, Save, X, Plus, Trash2, Edit, Upload, Loader2, User } from 'lucide-react';
 import Cropper from 'react-easy-crop';
 import { toast } from 'sonner';
+import maleAvatar from '../../../../../../../public/logos/maleAvatar.png'
+import femaleAvatar from '../../../../../../../public/logos/femaleAvatar.png'
 
 interface Speaker {
   name: string;
@@ -9,6 +11,7 @@ interface Speaker {
   id: number;
   avatar: string;
   title: string;
+  prefix: string; // Added prefix field
 }
 
 interface SpeakerDay {
@@ -45,7 +48,8 @@ const defaultSpeakersData: SpeakersDataContent = {
           "company": "Organization",
           "id": 1,
           "avatar": "",
-          "title": "Designation"
+          "title": "Designation",
+          "prefix": "Mr" // Default prefix
         }
       ]
     },
@@ -67,6 +71,18 @@ const defaultSpeakersData: SpeakersDataContent = {
 
 // === Avatar Dimensions - Fixed for circular avatar ===
 const AVATAR_DIMENSIONS = { width: 200, height: 200 }; // Fixed size for speaker avatars
+
+// Default avatar images
+const DEFAULT_AVATARS = {
+  'Mr': maleAvatar,
+  'Mrs': femaleAvatar,
+  'Ms': femaleAvatar
+};
+// const DEFAULT_AVATARS = {
+//   'Mr': '/images/maleavatar.png',
+//   'Mrs': '/images/femaleavatar.png',
+//   'Ms': '/images/femaleavatar.png'
+// };
 
 /* Main Component */
 const SpeakersSection: React.FC<SpeakersSectionProps> = ({ 
@@ -240,6 +256,18 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
 
     const uploadData = await uploadResponse.json();
     return uploadData.s3Url;
+  };
+
+  // Helper function to get avatar URL based on prefix
+  const getAvatarUrl = (speaker: Speaker): string => {
+    // If custom avatar exists, use it
+    if (speaker.avatar && speaker.avatar.trim() !== '') {
+      return speaker.avatar;
+    }
+    
+    // Otherwise use default avatar based on prefix
+    const prefix = speaker.prefix || 'Mr';
+    return DEFAULT_AVATARS[prefix as keyof typeof DEFAULT_AVATARS] || DEFAULT_AVATARS.Mr;
   };
 
   // ---------- Image / crop helpers ----------
@@ -471,7 +499,11 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
             ...day,
             speakers: day.speakers.map((sp, sIndex) =>
               sIndex === speakerIndex
-                ? { ...editForm, avatar: editForm.avatar || sp.avatar } as Speaker
+                ? { 
+                    ...editForm, 
+                    avatar: editForm.avatar || sp.avatar,
+                    prefix: editForm.prefix || 'Mr'
+                  } as Speaker
                 : sp
             )
           }
@@ -516,7 +548,8 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
       name: 'New Speaker',
       title: '',
       company: '',
-      avatar: ''
+      avatar: '',
+      prefix: 'Mr' // Default prefix when adding new speaker
     };
 
     const updatedSpeakers = speakers.map((day, dIndex) =>
@@ -619,8 +652,10 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
         }
       }, [isEditMode, dayIndex, speakerIndex, onAvatarUpload]);
 
-      // Function to render avatar - only image or default icon
-      const renderAvatar = (avatarUrl: string | undefined, altText: string = 'Speaker') => {
+      // Function to render avatar - uses getAvatarUrl helper
+      const renderAvatar = (speakerData: Speaker, altText: string = 'Speaker') => {
+        const avatarUrl = getAvatarUrl(speakerData);
+        
         if (avatarUrl && avatarUrl.trim() !== '') {
           return (
             <img 
@@ -647,8 +682,8 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
         );
       };
 
-      // Get current avatar URL
-      const currentAvatar = isEditing ? (editForm.avatar || speaker.avatar) : speaker.avatar;
+      // Get current speaker data
+      const currentSpeaker = isEditing ? { ...speaker, ...editForm } : speaker;
 
       if (isEditing) {
         return (
@@ -661,7 +696,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                   onClick={handleAvatarClick}
                 >
                   <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center">
-                    {renderAvatar(currentAvatar, editForm.name || speaker.name)}
+                    {renderAvatar(currentSpeaker, editForm.name || speaker.name)}
                     <div className="avatar-fallback hidden w-full h-full items-center justify-center bg-gray-200 rounded-full">
                       <User className="w-8 h-8 text-gray-500" />
                     </div>
@@ -681,6 +716,22 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
               </div>
 
               <div className="flex-grow space-y-3 md:space-y-4">
+                {/* Prefix Dropdown */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Prefix
+                  </label>
+                  <select
+                    value={editForm.prefix || speaker.prefix || 'Mr'}
+                    onChange={(e) => onFormChange({ ...editForm, prefix: e.target.value })}
+                    className="w-full px-3 py-2 text-sm md:text-base border rounded-lg bg-white"
+                  >
+                    <option value="Mr">Mr</option>
+                    <option value="Mrs">Mrs</option>
+                    <option value="Ms">Ms</option>
+                  </select>
+                </div>
+
                 <div>
                   <input
                     value={editForm.name || ''}
@@ -766,7 +817,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
             onClick={isEditMode ? handleAvatarClick : undefined}
           >
             <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full overflow-hidden flex items-center justify-center">
-              {renderAvatar(speaker.avatar, speaker.name)}
+              {renderAvatar(speaker, speaker.name)}
               <div className="avatar-fallback hidden w-full h-full items-center justify-center bg-gray-200 rounded-full">
                 <User className="w-8 h-8 text-gray-500" />
               </div>
@@ -786,7 +837,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
           </div>
 
           <h4 className="text-center font-bold mt-3 md:mt-4 text-sm md:text-base line-clamp-1">
-            {speaker.name}
+            {speaker.prefix && `${speaker.prefix} `}{speaker.name}
           </h4>
           {speaker.title && (
             <p className="text-justify text-xs md:text-sm mt-1 md:mt-2 line-clamp-2">

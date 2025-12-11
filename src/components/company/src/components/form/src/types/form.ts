@@ -1,5 +1,10 @@
 export interface FormData {
   // A0. Company Category
+
+  // directorGender?: 'Mr' | 'Mrs' | 'Ms';
+  directorPrefix?: 'Mr' | 'Mrs' | 'Ms';
+  altContactGender?: 'Mr' | 'Mrs' | 'Ms';
+  
   companyCategory: string[];
 
   // A. Company Identity & Contacts
