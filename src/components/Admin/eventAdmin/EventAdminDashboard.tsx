@@ -1147,8 +1147,25 @@ const EventAdminDashboard: React.FC = () => {
         "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
       );
       const data = await response.json();
-      setEvents(data?.cards || []);
-      setRecentEvents(data?.cards?.slice(0, 3) || []);
+      const allEvents = data?.cards || [];
+      setEvents(allEvents);
+
+      // Filter and sort for Recent Events (Last 7 days)
+      const now = new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+      const recent = [...allEvents]
+        .filter((event) => {
+          if (!event.createdAt) return false;
+          return new Date(event.createdAt) >= sevenDaysAgo;
+        })
+        .sort((a, b) => {
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateB - dateA;
+        });
+
+      setRecentEvents(recent);
     } catch (error) {
       console.error("Error fetching events:", error);
     } finally {
