@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { memo } from 'react';
 import { User } from 'lucide-react';
+import maleAvatar from "/logos/maleAvatar.png"
+import femaleAvatar from "/logos/femaleAvatar.png"
 
 interface Speaker {
   name: string;
@@ -7,6 +9,7 @@ interface Speaker {
   id: number;
   avatar: string;
   title: string;
+  prefix?: string;
 }
 
 interface SpeakerDay {
@@ -27,7 +30,6 @@ interface SpeakersDataContent {
 
 interface SpeakersSectionProps {
   speakersData?: SpeakersDataContent;
-  userId?: string;
 }
 
 /** Default data structure */
@@ -41,7 +43,8 @@ const defaultSpeakersData: SpeakersDataContent = {
           "company": "Organization",
           "id": 1,
           "avatar": "",
-          "title": "Designation"
+          "title": "Designation",
+          "prefix": "mr"
         }
       ]
     },
@@ -61,30 +64,23 @@ const defaultSpeakersData: SpeakersDataContent = {
   }
 };
 
-/* Main Component */
-const SpeakersSection: React.FC<SpeakersSectionProps> = ({ 
-  speakersData
-}) => {
-  const [localSpeakersData, setLocalSpeakersData] = useState<SpeakersDataContent>(defaultSpeakersData);
-  const [activeDay, setActiveDay] = useState(0);
+// Helper function to get prefix display text
+const getPrefixDisplay = (prefix: string | undefined): string => {
+  switch (prefix) {
+    case 'mr': return 'Mr.';
+    case 'mrs': return 'Mrs.';
+    case 'ms': return 'Ms.';
+    default: return '';
+  }
+};
 
-  const { speakers, headerContent } = localSpeakersData;
-
-  /* --------------------------
-      Update local state when prop data changes
-     -------------------------- */
-  useEffect(() => {
-    if (speakersData) {
-      setLocalSpeakersData(speakersData);
-    }
-  }, [speakersData]);
-
-  /* --------------------------
-        Speaker Card Component
-     -------------------------- */
-  const SpeakerCard = ({ speaker }: { speaker: Speaker }) => {
+/* Speaker Card Component */
+const SpeakerCard = memo(
+  ({
+    speaker
+  }: any) => {
     // Function to render avatar - only image or default icon
-    const renderAvatar = (avatarUrl: string | undefined, altText: string = 'Speaker') => {
+    const renderAvatar = (avatarUrl: string | undefined, altText: string = 'Speaker', prefix?: string) => {
       if (avatarUrl && avatarUrl.trim() !== '') {
         return (
           <img 
@@ -104,9 +100,16 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
         );
       }
       
+      // Use prefix to determine which default avatar to show
+      const defaultAvatar = prefix === 'Mr.' ? maleAvatar : femaleAvatar;
+      
       return (
         <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full">
-          <User className="w-8 h-8 text-gray-500" />
+          <img 
+            src={defaultAvatar} 
+            alt={altText}
+            className="w-full h-full object-cover rounded-full"
+          />
         </div>
       );
     };
@@ -116,7 +119,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
         {/* Avatar */}
         <div className="relative">
           <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full overflow-hidden flex items-center justify-center">
-            {renderAvatar(speaker.avatar, speaker.name)}
+            {renderAvatar(speaker.avatar, speaker.name, speaker.prefix)}
             <div className="avatar-fallback hidden w-full h-full items-center justify-center bg-gray-200 rounded-full">
               <User className="w-8 h-8 text-gray-500" />
             </div>
@@ -124,7 +127,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
         </div>
 
         <h4 className="text-center font-bold mt-3 md:mt-4 text-sm md:text-base line-clamp-1">
-          {speaker.name}
+          {speaker.prefix && `${getPrefixDisplay(speaker.prefix)} `}{speaker.name}
         </h4>
         {speaker.title && (
           <p className="text-justify text-xs md:text-sm mt-1 md:mt-2 line-clamp-2">
@@ -138,11 +141,19 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
         )}
       </div>
     );
-  };
+  }
+);
 
-  /* --------------------------
-            Render UI
-     -------------------------- */
+SpeakerCard.displayName = 'SpeakerCard';
+
+/* Main Component */
+const SpeakersSection: React.FC<SpeakersSectionProps> = ({ 
+  speakersData 
+}) => {
+  // Use provided data or default
+  const { speakers, headerContent } = speakersData || defaultSpeakersData;
+  const [activeDay, setActiveDay] = React.useState(0);
+
   return (
     <section id="speakers" className="py-12 md:py-20 bg-gray-50 min-h-screen">
       <div className="container mx-auto px-3 sm:px-4 max-w-7xl relative">
@@ -159,20 +170,21 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
         </div>
 
         {/* Day Tabs */}
-        <div className="flex flex-col sm:flex-row justify-center items-center mb-8 md:mb-12 gap-4">
+        <div className="flex justify-center items-center mb-8 md:mb-12 gap-4">
           <div className="bg-white shadow-lg p-1 sm:p-2 rounded-xl md:rounded-2xl flex flex-wrap justify-center gap-1 sm:gap-2 max-w-full overflow-x-auto">
             {speakers.map((day, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveDay(index)}
-                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg md:rounded-xl text-sm sm:text-base whitespace-nowrap transition-colors ${
-                  activeDay === index 
-                    ? 'bg-yellow-400 text-black font-bold hover:bg-yellow-500' 
-                    : 'hover:bg-gray-100'
-                }`}
-              >
-                {day.day}
-              </button>
+              <div key={index} className="relative">
+                <button
+                  onClick={() => setActiveDay(index)}
+                  className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg md:rounded-xl text-sm sm:text-base whitespace-nowrap transition-colors ${
+                    activeDay === index 
+                      ? 'bg-yellow-400 text-black font-bold hover:bg-yellow-500' 
+                      : 'hover:bg-gray-100'
+                  }`}
+                >
+                  {day.day}
+                </button>
+              </div>
             ))}
           </div>
         </div>
@@ -200,10 +212,9 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
             </div>
           )}
         </div>
-
       </div>
     </section>
-  );
+  );  
 };
 
 export default SpeakersSection;
