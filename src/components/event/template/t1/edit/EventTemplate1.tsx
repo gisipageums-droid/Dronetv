@@ -23,17 +23,7 @@ interface EventTemplateData {
   eventType?: string;
   createdAt?: string;
   updatedAt?: string;
-  formData?: {
-    speakers?: Array<{
-      name: string;
-      sequence: number;
-      designation: string;
-      day: string;
-      prefix: string;
-      organization: string;
-    }>;
-    [key: string]: any;
-  };
+  formData?: object;
   uploadedFiles?: object;
   isPublished?: boolean;
   content: {
@@ -129,7 +119,6 @@ interface Speaker {
   id: number;
   avatar: string;
   title: string;
-  prefix: string; // Added prefix field
 }
 
 interface SpeakersHeaderContent {
@@ -192,58 +181,6 @@ interface ComponentStates {
   sponsorsData: SponsorsDataContent;
   footer: FooterContent;
 }
-
-// Helper function to map formData speakers to content speakers
-const mapFormDataSpeakersToContent = (
-  formDataSpeakers: any[] = [],
-  contentSpeakers: SpeakersDataContent
-): SpeakersDataContent => {
-  if (!formDataSpeakers || formDataSpeakers.length === 0) {
-    return contentSpeakers;
-  }
-
-  // Group speakers by day
-  const speakersByDay: { [day: string]: Speaker[] } = {};
-  
-  formDataSpeakers.forEach((formSpeaker, index) => {
-    const day = formSpeaker.day || "Day 1";
-    const contentSpeaker = contentSpeakers.speakers
-      .flatMap(dayGroup => dayGroup.speakers)
-      .find(cs => cs.name === formSpeaker.name);
-    
-    const speaker: Speaker = {
-      id: contentSpeaker?.id || Date.now() + index,
-      name: formSpeaker.name || `Speaker ${index + 1}`,
-      title: formSpeaker.designation || contentSpeaker?.title || "",
-      company: formSpeaker.organization || contentSpeaker?.company || "",
-      avatar: contentSpeaker?.avatar || "",
-      prefix: formSpeaker.prefix || contentSpeaker?.prefix || "Mr" // Get prefix from formData
-    };
-    
-    if (!speakersByDay[day]) {
-      speakersByDay[day] = [];
-    }
-    speakersByDay[day].push(speaker);
-  });
-
-  // Create or update speaker days
-  const updatedSpeakerDays: SpeakerDay[] = Object.entries(speakersByDay).map(([day, speakers], index) => ({
-    day: day || `Day ${index + 1}`,
-    speakers
-  }));
-
-  // If we have existing content speakers without formData, keep them
-  contentSpeakers.speakers.forEach(existingDay => {
-    if (!updatedSpeakerDays.find(day => day.day === existingDay.day)) {
-      updatedSpeakerDays.push(existingDay);
-    }
-  });
-
-  return {
-    ...contentSpeakers,
-    speakers: updatedSpeakerDays
-  };
-};
 
 const EventTemplate1: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -353,21 +290,8 @@ const EventTemplate1: React.FC = () => {
         ...prev,
         formData: updatedFormData,
       }));
-
-      // If speakers data changed in formData, update speakersData component state
-      if (updatedFormData.speakers) {
-        const updatedSpeakersData = mapFormDataSpeakersToContent(
-          updatedFormData.speakers,
-          componentStates.speakersData
-        );
-        
-        setComponentStates(prev => ({
-          ...prev,
-          speakersData: updatedSpeakersData
-        }));
-      }
     },
-    [setFinalTemplate, setAIGenData, componentStates.speakersData]
+    [setFinalTemplate, setAIGenData]
   );
 
   // Update finalTemplate whenever componentStates changes (similar to App.tsx)
@@ -421,7 +345,7 @@ const EventTemplate1: React.FC = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json() as { data: EventTemplateData };
+        const data = await response.json();
 
         // Set both AIGenData and finalTemplate similar to App.tsx
         setFinalTemplate(data.data);
@@ -429,20 +353,9 @@ const EventTemplate1: React.FC = () => {
 
         // Initialize component states with fetched data or default values
         if (data.data.content) {
-          let speakersData = data.data.content.speakersData;
-          
-          // Map formData speakers to content speakers if formData exists
-          if (data.data.formData?.speakers) {
-            speakersData = mapFormDataSpeakersToContent(
-              data.data.formData.speakers,
-              speakersData
-            );
-          }
-
           setComponentStates({
             ...componentStates, // Keep existing state as fallback
             ...data.data.content,
-            speakersData
           });
         }
 
