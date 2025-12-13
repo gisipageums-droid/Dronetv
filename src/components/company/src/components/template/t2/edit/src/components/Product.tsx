@@ -812,7 +812,7 @@ export default function Product({
           </div>
 
           {/* Products Grid */}
-          <div className="grid gap-6 mb-16 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 mb-16 md:grid-cols-2 lg:grid-cols-3">
             {contentState.products
               .slice(0, visibleCount)
               .map((product, index) => {
@@ -821,7 +821,7 @@ export default function Product({
                     key={index}
                     className="relative flex flex-col h-full overflow-hidden border-2 shadow-lg group hover:shadow-xl shadow-gray-500"
                   >
-                    <div className="relative flex-shrink-0 h-32 overflow-hidden">
+                    <div className="relative flex-shrink-0 h-40 overflow-hidden">
                       <ImageWithFallback
                         src={product.image}
                         alt={product.title}
