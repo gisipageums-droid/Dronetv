@@ -73,11 +73,10 @@ export default function Header() {
 
   return (
     <motion.header
-      className={`fixed top-16 left-0 right-0 border-b z-50 ${
-        theme === "dark"
+      className={`fixed top-16 left-0 right-0 border-b z-50 ${theme === "dark"
           ? "bg-gray-800 border-gray-700 text-white"
           : "bg-white border-gray-200 text-black"
-      }`}
+        }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -102,7 +101,7 @@ export default function Header() {
                 />
               ) : (
                 <span className='text-black font-bold text-lg'>
-                  {content.logoLetter} 
+                  {content.logoLetter}
                 </span>
               )}
             </motion.div>
@@ -153,11 +152,10 @@ export default function Header() {
                 ) : (
                   <motion.a
                     href={item.href}
-                    className={`font-medium relative group whitespace-nowrap ${
-                      theme == "dark"
+                    className={`font-medium relative group whitespace-nowrap ${theme == "dark"
                         ? "text-white hover:text-gray-200"
                         : "text-black hover:text-primary "
-                    }`}
+                      }`}
                     whileHover={{ y: -2 }}
                   >
                     {item.label}
@@ -166,7 +164,7 @@ export default function Header() {
                       transition={{ duration: 0.3 }}
                     />
                   </motion.a>
-                 
+
                 )}
               </div>
             ))}
@@ -190,7 +188,7 @@ export default function Header() {
                 className='bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] '
               />
             ) : (
-              
+
               <Button className='bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300  hidden md:block'>
                 {content.ctaText}
               </Button>
@@ -231,14 +229,13 @@ export default function Header() {
                   <motion.a
                     key={item.id}
                     href={item.href}
-                    className={`${
-                      theme === "dark"
+                    className={`${theme === "dark"
                         ? "text-white hover:text-gray-200"
                         : "text-black hover:text-primary "
-                    }`}
+                      }`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
-                    // onClick={() => setIsMenuOpen(false)}
+                  // onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
                   </motion.a>

@@ -6,9 +6,24 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import logo from "/images/Drone tv .in.jpg";
 
-export default function Header({ headerData }) {
+export default function Header({
+  headerData,
+}: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
+
+  // choose container width based on companyName length (adjust threshold as needed)
+  const containerMaxClass =
+    (headerData?.companyName || "").trim().length > 30 /* threshold */
+      ? "min-w-[1270px]"
+      : "max-w-7xl";
+
+  // Static content
+  const content = headerData || {
+    companyName: "Your Company",
+    ctaText: "Get Started",
+    logoUrl: logo
+  };
 
   // Static navigation items
   const staticNavItems = [
@@ -23,44 +38,24 @@ export default function Header({ headerData }) {
     { id: 9, label: "Clients", href: "#clients", color: "primary" },
   ];
 
-  // Function to handle smooth scrolling
-  const handleScrollToSection = (href: string) => {
-    setIsMenuOpen(false);
-
-    // Wait for menu to close before scrolling
-    setTimeout(() => {
-      const targetId = href.replace('#', '');
-      const element = document.getElementById(targetId);
-
-      if (element) {
-        const headerHeight = 64; // Height of your fixed header (4rem = 64px)
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }, 300); // Match this with your menu closing animation duration
-  };
-
-  // Function to handle desktop navigation (preserve default anchor behavior)
-  const handleDesktopNavigation = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    const targetId = href.replace('#', '');
+  // Smooth scroll function
+  const scrollToSection = (href: string) => {
+    const targetId = href.replace("#", "");
     const element = document.getElementById(targetId);
-
     if (element) {
-      const headerHeight = 64;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
       });
     }
+  };
+
+  // Handle navigation click
+  const handleNavClick = (href: string) => {
+    setIsMenuOpen(false); // Close mobile menu
+    setTimeout(() => {
+      scrollToSection(href);
+    }, 100); // Small delay to ensure menu is closed before scrolling
   };
 
   const menuVariants = {
@@ -79,7 +74,7 @@ export default function Header({ headerData }) {
 
   return (
     <motion.header
-      className={`fixed top-[4rem] left-0 right-0 border-b z-50 ${theme === "dark"
+      className={`fixed top-16 left-0 right-0 border-b z-10 ${theme === "dark"
         ? "bg-gray-800 border-gray-700 text-gray-300"
         : "bg-white border-gray-200"
         }`}
@@ -87,39 +82,55 @@ export default function Header({ headerData }) {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo - Only show logo image, removed company name */}
-          <div className="flex rounded-lg items-center group">
-            <div className="rounded-lg flex items-center justify-center flex-shrink-0 mr-2  ">
-              <img
-                src={headerData?.logoUrl || logo}
-                alt="Logo"
-                className="w-[77px] h-[45px] mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl bg-cover"
-              />
+      <div
+        className={`px-4 mx-auto lg:min-w-[1180px] ${containerMaxClass} sm:px-6 lg:px-16`}
+      >
+        <div className="flex items-center justify-between py-[1px] ">
+          {/* Logo + Company */}
+          <div className="flex items-center flex-shrink-0 min-w-0 mr-6 lg:mr-10">
+            {/* Logo display only */}
+            <div className="relative flex items-center justify-center flex-shrink-0 mr-2 rounded-lg shadow-md group pt-[5px]">
+              {content.logoUrl &&
+                (content.logoUrl.startsWith("data:") ||
+                  content.logoUrl.startsWith("http")) ? (
+                <img
+                  src={content.logoUrl || logo}
+                  alt="Logo"
+                  className="cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain h-[65px] min-w-[77px] max-w-[200px]"
+                />
+              ) : (
+                <span
+                  className="text-lg font-bold text-black flex items-center justify-center min-w-[77px] max-w-[200px]"
+                  style={{
+                    height: '65px',
+                  }}
+                >
+                  {content.logoUrl}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Desktop Nav - Improved responsiveness */}
+          {/* Desktop Nav - Centered with proper spacing */}
           <nav className="items-center justify-center flex-1 hidden mx-4 lg:flex min-w-0">
             <div className="flex items-center justify-center space-x-3">
               {staticNavItems.map((item) => (
                 <motion.a
                   key={item.id}
                   href={item.href}
-                  onClick={(e) => handleDesktopNavigation(e, item.href)}
-                  className={`font-medium relative group whitespace-nowrap text-sm xl:text-base ${theme === "dark"
+                  className={`font-medium relative group whitespace-nowrap ${theme === "dark"
                     ? "text-gray-300 hover:text-gray-200"
                     : "text-gray-700 hover:text-primary"
                     }`}
                   whileHover={{ y: -2 }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(item.href);
+                  }}
                 >
                   {item.label}
                   <motion.span
-                    className={`absolute -bottom-1 left-0 w-0 h-0.5 ${item.color === "red-accent"
-                      ? "bg-red-500"
-                      : "bg-primary"
-                      } transition-all group-hover:w-full`}
+                    className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-${item.color} transition-all group-hover:w-full`}
                     transition={{ duration: 0.3 }}
                   />
                 </motion.a>
@@ -127,95 +138,73 @@ export default function Header({ headerData }) {
             </div>
           </nav>
 
-          {/* Right side - Improved responsive spacing and sizing */}
-          <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-shrink-0">
-            <div className="hidden lg:block">
-              <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap text-sm px-3 py-2 md:px-4 md:py-2">
-                <a
-                  href="#contact"
-                  onClick={(e) => handleDesktopNavigation(e, '#contact')}
-                  className="text-xs sm:text-sm"
-                >
-                  {headerData?.ctaText || "Get Started"}
-                </a>
+          {/* Right side - Fixed width to prevent shifting */}
+          <div className="flex items-center flex-shrink-0 space-x-1">
+            <div className="hidden md:flex">
+              <Button
+                className="text-black transition-all duration-300 shadow-lg bg-primary hover:bg-primary/90 whitespace-nowrap "
+                onClick={() => handleNavClick("#contact")}
+              >
+                {content.ctaText}
               </Button>
             </div>
 
-            <div className="hidden lg:block">
-              <ThemeToggle />
-            </div>
+            <ThemeToggle />
+
+            {/* Mobile menu button */}
+            <motion.div className="flex-shrink-0 lg:hidden">
+              <motion.button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className={`hover:text-primary transition-colors p-2 ${theme === "dark"
+                  ? "text-gray-300 hover:text-gray-200"
+                  : "text-gray-700 hover:text-primary"
+                  }`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                animate={{ rotate: isMenuOpen ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <AnimatePresence mode="wait">
+                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </AnimatePresence>
+              </motion.button>
+            </motion.div>
           </div>
-
-          {/* Mobile menu button - Improved visibility */}
-          <motion.div className="flex items-center space-x-2 flex-shrink-0 lg:hidden">
-            {/* Show ThemeToggle on mobile when menu is closed */}
-            <AnimatePresence>
-              {!isMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                >
-                  <ThemeToggle />
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <motion.button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`p-2 rounded-md transition-colors ${theme === "dark"
-                ? "text-gray-300 hover:bg-gray-700"
-                : "text-gray-700 hover:bg-gray-100"
-                }`}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              animate={{ rotate: isMenuOpen ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <AnimatePresence mode="wait">
-                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-              </AnimatePresence>
-            </motion.button>
-          </motion.div>
         </div>
 
-        {/* Mobile Nav - Improved spacing and typography */}
+        {/* Mobile Nav - Using static navigation items */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className={`lg:hidden border-t overflow-hidden ${theme === "dark" ? "border-gray-700" : "border-gray-200"
+              className={`lg:hidden border-t border-gray-200 overflow-hidden ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white"
                 }`}
               variants={menuVariants}
               initial="closed"
               animate="open"
               exit="closed"
             >
-              <motion.nav className="flex flex-col space-y-2 py-4">
-                {staticNavItems.map((item) => (
-                  <motion.button
+              <motion.nav className="flex flex-col py-4 space-y-4">
+                {staticNavItems.map((item, index) => (
+                  <motion.a
                     key={item.id}
-                    onClick={() => handleScrollToSection(item.href)}
-                    className={`text-left transition-colors py-3 px-4 rounded-lg text-base font-medium ${theme === "dark"
-                      ? "text-gray-300 hover:text-gray-200 hover:bg-gray-700"
-                      : "text-gray-700 hover:text-primary hover:bg-gray-50"
-                      }`}
+                    href={item.href}
+                    className={`hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10 cursor-pointer`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(item.href);
+                    }}
                   >
                     {item.label}
-                  </motion.button>
+                  </motion.a>
                 ))}
-                <motion.div
-                  className="px-4 pt-2"
-                  variants={itemVariants}
+                <Button
+                  className="w-full mt-4 text-black shadow-lg bg-primary hover:bg-primary/90"
+                  onClick={() => handleNavClick("#contact")}
                 >
-                  <Button
-                    className="bg-primary text-black hover:bg-primary/90 w-full shadow-lg py-3 text-base font-medium"
-                    onClick={() => handleScrollToSection('#contact')}
-                  >
-                    {headerData?.ctaText || "Get Started"}
-                  </Button>
-                </motion.div>
+                  {content.ctaText}
+                </Button>
               </motion.nav>
             </motion.div>
           )}
