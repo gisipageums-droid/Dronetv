@@ -315,7 +315,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   // Status filter options - Updated to match EventAdminDashboard
   const statusOptions = [
     { value: "all", label: "All Professionals", color: "text-yellow-900" },
-    { value: "under_review", label: "Needs Review", color: "text-yellow-600" },
+    { value: "under_review", label: "Under Review", color: "text-yellow-600" },
     { value: "approved", label: "Approved", color: "text-green-600" },
     { value: "rejected", label: "Rejected", color: "text-red-600" },
   ];
@@ -813,7 +813,7 @@ const MainContent: React.FC<MainContentProps> = ({
         <div className="flex gap-2 items-center">
           <User className="w-6 h-6 text-yellow-600" />
           <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
-            {statusFilter === "all" ? "All Professionals" : statusFilter === "under_review" ? "Needs Review Professionals" : statusFilter === "approved" ? "Approved Professionals" : "Rejected Professionals"}
+            {statusFilter === "all" ? "All Professionals" : statusFilter === "under_review" ? "Under Review Professionals" : statusFilter === "approved" ? "Approved Professionals" : "Rejected Professionals"}
           </h2>
         </div>
         <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
