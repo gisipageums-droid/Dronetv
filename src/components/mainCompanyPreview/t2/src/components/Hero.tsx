@@ -51,7 +51,7 @@ export default function Hero({ heroData }) {
   return (
     <section
       id="home"
-      className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition"
+      className="pt-20 mt-[5rem] pb-16 bg-background relative overflow-hidden theme-transition"
     >
       {/* Background decorations */}
       <motion.div
@@ -101,7 +101,7 @@ export default function Hero({ heroData }) {
 
               {/* Description */}
               <motion.div variants={itemVariants} className="max-w-lg text-justify">
-                <p className="text-xl text-red-500">
+                <p className="text-xl text-gray-700 dark:text-gray-300">
                   {heroState.description}
                 </p>
               </motion.div>

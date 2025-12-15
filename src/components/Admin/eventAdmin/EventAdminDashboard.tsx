@@ -140,6 +140,8 @@ interface SidebarProps {
   onSortChange: (value: string) => void;
   isMobileSidebarOpen: boolean;
   onCloseMobileSidebar: () => void;
+  statusFilter: string;
+  onStatusFilterChange: (value: string) => void;
 }
 
 interface EventCardProps {
@@ -655,10 +657,20 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSortChange,
   isMobileSidebarOpen,
   onCloseMobileSidebar,
+  statusFilter,
+  onStatusFilterChange,
 }) => {
   const sortOptions: string[] = [
     "Sort by Date",
     ...SORT_OPTIONS.filter((s) => s !== "Sort by Date"),
+  ];
+
+  // Status filter options
+  const statusOptions = [
+    { value: "all", label: "All Events", color: "text-yellow-900" },
+    { value: "under_review", label: "Needs Review", color: "text-yellow-600" },
+    { value: "approved", label: "Approved", color: "text-green-600" },
+    { value: "rejected", label: "Rejected", color: "text-red-600" },
   ];
 
   return (
@@ -683,6 +695,44 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <div className="space-y-6 md:space-y-8">
+        {/* Status Filter Section */}
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-yellow-900 block">
+            Filter by Status
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {statusOptions.map((option) => (
+              <motion.button
+                key={option.value}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onStatusFilterChange(option.value)}
+                className={`px-3 py-2 text-xs font-medium rounded-lg border transition-colors flex items-center justify-center gap-1 ${statusFilter === option.value
+                    ? option.value === "under_review"
+                      ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                      : option.value === "approved"
+                        ? "bg-green-100 border-green-300 text-green-800"
+                        : option.value === "rejected"
+                          ? "bg-red-100 border-red-300 text-red-800"
+                          : "bg-gray-100 border-gray-300 text-gray-800"
+                    : "bg-white/50 border-yellow-200/50 hover:bg-gray-50 text-gray-700"
+                  }`}
+              >
+                {option.label === "Needs Review" && (
+                  <Clock className="w-3 h-3" />
+                )}
+                {option.label === "Approved" && (
+                  <CheckCircle className="w-3 h-3" />
+                )}
+                {option.label === "Rejected" && <XCircle className="w-3 h-3" />}
+                {option.label === "All Events" && (
+                  <Calendar className="w-3 h-3" />
+                )}
+                <span>{option.label}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
         {/* Search Section */}
         <div className="space-y-3">
           <label className="text-sm font-medium text-yellow-900 block">
@@ -722,6 +772,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => {
             onSearchChange("");
             onSortChange("Sort by Date");
+            onStatusFilterChange("all");
           }}
           className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
         >
@@ -1010,6 +1061,7 @@ const eventApiService = {
 const EventAdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
     useState<boolean>(false);
   const [events, setEvents] = useState<Event[]>([]);
@@ -1148,7 +1200,7 @@ const EventAdminDashboard: React.FC = () => {
       );
       const data = await response.json();
       setEvents(data?.cards || []);
-      setRecentEvents(data?.cards?.slice(0, 3) || []);
+      setRecentEvents(data?.cards.sort((a, b) => a.createdAt - b.createdAt).slice(0, 6));
     } catch (error) {
       console.error("Error fetching events:", error);
     } finally {
@@ -1259,7 +1311,7 @@ const EventAdminDashboard: React.FC = () => {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, sortBy]);
+  }, [searchTerm, sortBy, statusFilter]);
 
   // Filter and Sort Logic
   const filteredEvents = useMemo(() => {
@@ -1273,9 +1325,16 @@ const EventAdminDashboard: React.FC = () => {
         (event.category &&
           event.category.toLowerCase().includes(searchTerm.toLowerCase()));
 
-      return matchesSearch;
+      // Status filter logic
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "under_review" && event.reviewStatus === "under_review") ||
+        (statusFilter === "approved" && event.reviewStatus === "approved") ||
+        (statusFilter === "rejected" && event.reviewStatus === "rejected");
+
+      return matchesSearch && matchesStatus;
     });
-  }, [events, searchTerm]);
+  }, [events, searchTerm, statusFilter]);
 
   const sortedEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {
@@ -1413,6 +1472,8 @@ const EventAdminDashboard: React.FC = () => {
           onSortChange={setSortBy}
           isMobileSidebarOpen={isMobileSidebarOpen}
           onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
         />
 
         <div className="flex-1 p-4 md:p-8 bg-orange-50">
@@ -1420,8 +1481,8 @@ const EventAdminDashboard: React.FC = () => {
             <LoadingSpinner />
           ) : (
             <>
-              {/* Recent Events Section */}
-              {!searchTerm && (
+              {/* Recent Events Section - Updated condition to hide when status filter is not "all" */}
+              {!searchTerm && statusFilter === "all" && (
                 <RecentEventsSection
                   recentEvents={recentEvents}
                   onCredentials={handleCredentials}
@@ -1438,7 +1499,7 @@ const EventAdminDashboard: React.FC = () => {
                 <div className="flex gap-2 items-center">
                   <Calendar className="w-6 h-6 text-yellow-600" />
                   <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
-                    All Events
+                    {statusFilter === "all" ? "All Events" : statusFilter === "under_review" ? "Needs Review Events" : statusFilter === "approved" ? "Approved Events" : "Rejected Events"}
                   </h2>
                 </div>
                 <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">

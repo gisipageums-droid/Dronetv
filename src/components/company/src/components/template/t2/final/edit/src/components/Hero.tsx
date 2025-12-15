@@ -583,7 +583,7 @@ export default function Hero({
       {/* Main Hero Section */}
       <section
         id="home"
-        className="pt-20 mt-[4rem] pb-16 bg-background relative overflow-hidden theme-transition"
+        className="pt-20 mt-[5rem] pb-16 bg-background relative overflow-hidden theme-transition"
       >
         {/* Background decorations */}
         <motion.div
@@ -632,7 +632,7 @@ export default function Hero({
                             : ""
                             }`}
                         />
-                        <div className="absolute -bottom-5 left-0 text-xs text-red-500 font-bold">
+                        <div className="absolute -bottom-5 left-0 text-xs text-gray-500 font-bold">
                           {heroState.badgeText.length >= 75 && "Limit reached!"}
                         </div>
                       </div>
@@ -663,7 +663,7 @@ export default function Hero({
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.heading.length}/80
                           {heroState.heading.length >= 80 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-gray-500 font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -694,7 +694,7 @@ export default function Hero({
                       />
                       <div
                         className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
-                          ? "text-red-500"
+                          ? "text-gray-500"
                           : "text-gray-500"
                           }`}
                       >
@@ -707,7 +707,7 @@ export default function Hero({
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xl text-red-500 max-w-lg text-justify">
+                    <p className="text-xl text-gray-700 dark:text-gray-300 max-w-lg text-justify">
                       {heroState.description}
                     </p>
                   )}
@@ -736,7 +736,7 @@ export default function Hero({
                       <div className="text-right text-xs text-gray-500 mt-1">
                         {heroState.primaryBtn.length}/30
                         {heroState.primaryBtn.length >= 30 && (
-                          <span className="ml-2 text-red-500 font-bold">
+                          <span className="ml-2 text-gray-500 font-bold">
                             Character limit reached!
                           </span>
                         )}
@@ -787,7 +787,7 @@ export default function Hero({
                         <div className="text-right text-xs text-gray-500 mt-1">
                           {heroState.trustText.length}/60
                           {heroState.trustText.length >= 60 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-gray-500 font-bold">
                               Character limit reached!
                             </span>
                           )}
@@ -825,7 +825,7 @@ export default function Hero({
                             <div className="text-right text-xs text-gray-500 mt-1">
                               {s.value.length}/15
                               {s.value.length >= 15 && (
-                                <span className="ml-2 text-red-500 font-bold">
+                                <span className="ml-2 text-gray-500 font-bold">
                                   Limit reached!
                                 </span>
                               )}
@@ -845,7 +845,7 @@ export default function Hero({
                             <div className="text-right text-xs text-gray-500 mt-1">
                               {s.label.length}/25
                               {s.label.length >= 25 && (
-                                <span className="ml-2 text-red-500 font-bold">
+                                <span className="ml-2 text-gray-500 font-bold">
                                   Limit reached!
                                 </span>
                               )}
@@ -856,7 +856,7 @@ export default function Hero({
                             whileTap={{ scale: 0.9 }}
                             whileHover={{ scale: 1.2 }}
                             onClick={() => removeStat(s.id)}
-                            className="text-red-500 cursor-pointer text-xs"
+                            className="text-gray-500 cursor-pointer text-xs"
                           >
                             ✕ Remove
                           </motion.button>
