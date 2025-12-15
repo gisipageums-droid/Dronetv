@@ -336,7 +336,7 @@ export default function Header({
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <div
-          className={`px-4 mx-auto lg:min-w-[1180px] ${containerMaxClass} sm:px-6 lg:px-16`}
+          className={`px-4 mx-auto max-w-7xl sm:px-6 `}
         >
           <div className="flex items-center justify-between min-h-[70px]  py-[1px] ">
             {/* Logo + Company - keep space and long company names */}
