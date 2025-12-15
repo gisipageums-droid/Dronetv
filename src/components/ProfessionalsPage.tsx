@@ -293,7 +293,7 @@ const ProfessionalsPage: React.FC = () => {
               <h2 className="text-2xl font-black text-black md:text-3xl">
                 All Professionals
               </h2>
-              <span className="px-3 py-1 text-sm font-medium text-black bg-yellow-200 rounded-full">
+              <span className="hidden px-3 py-1 text-sm font-medium text-black bg-yellow-200 rounded-full">
                 {filteredProfessionals.length} {filteredProfessionals.length === 1 ? 'professional' : 'professionals'}
               </span>
             </div>
