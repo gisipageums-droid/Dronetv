@@ -15,11 +15,13 @@ import {
   Clock,
   AlertCircle,
   Edit,
+  Calendar,
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
 import { motion, AnimatePresence } from "motion/react";
+
 // -------------------- Types --------------------
 interface Company {
   publishedId: string;
@@ -75,13 +77,12 @@ interface DropdownProps {
 interface SidebarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  industryFilter: string;
-  onIndustryChange: (value: string) => void;
   sortBy: string;
   onSortChange: (value: string) => void;
-  industries: string[];
   isMobileSidebarOpen: boolean;
   onCloseMobileSidebar: () => void;
+  statusFilter: string;
+  onStatusChange: (value: string) => void;
 }
 
 interface CompanyCardProps {
@@ -120,30 +121,30 @@ function useDebounce<T>(value: T, delay = 300) {
 // -------------------- Header --------------------
 const Header: React.FC = () => {
   return (
-    <div className="relative h-[40vh] md:h-[60vh] bg-amber-50 flex items-center justify-center px-4 sm:px-6 overflow-hidden">
+    <div className="relative h-[40vh] bg-amber-50 flex items-center justify-center px-4 sm:px-6 overflow-hidden">
       {/* Geometric Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
       </div>
 
-      <div className="relative z-10 mt-[30px] text-center">
-        <div className="flex gap-2 justify-center items-center mb-4 md:gap-4 md:mb-8">
-          <div className="w-2 h-2 bg-amber-400 rounded-full md:w-3 md:h-3"></div>
-          <div className="w-4 h-4 border-2 border-amber-400 md:w-6 md:h-6"></div>
-          <div className="w-3 h-3 bg-amber-600 rotate-45 md:w-4 md:h-4"></div>
-        </div>
+      <div className="relative w-full max-w-3xl text-center z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="mb-4 text-3xl font-extrabold text-yellow-900 md:text-5xl md:mb-6 tracking-tight">
+            Admin Dashboard
+            <span className="block mt-2 text-transparent bg-clip-text bg-amber-600 ">
+              Company Management
+            </span>
+          </h1>
 
-        <h1 className="mb-4 text-3xl font-light text-yellow-900 md:text-5xl md:mb-6">
-          Admin Dashboard
-          <span className="block mt-1 text-xl font-extralight text-amber-600 md:text-3xl md:mt-2">
-            Company Management
-          </span>
-        </h1>
-
-        <p className="mx-auto mb-6 max-w-xl text-base font-light text-yellow-800/80 md:text-lg md:mb-10">
-          Review and manage all company listings, credentials, and approvals.
-        </p>
+          <p className="mx-auto mb-8 max-w-xl text-base font-medium text-yellow-800/80 md:text-lg leading-relaxed">
+            Review and manage all company listings, credentials, and approvals with ease.
+          </p>
+        </motion.div>
       </div>
     </div>
   );
@@ -188,10 +189,11 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
-                ? "bg-gray-50 text-gray-900 font-medium"
-                : "text-gray-700 hover:bg-gray-50"
-                }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                value === option
+                  ? "bg-gray-50 text-gray-900 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
               role="option"
               aria-selected={value === option}
             >
@@ -212,19 +214,30 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSortChange,
   isMobileSidebarOpen,
   onCloseMobileSidebar,
+  statusFilter,
+  onStatusChange,
 }) => {
   const sortOptions: string[] = [
     "Sort by Date",
     ...SORT_OPTIONS.filter((s) => s !== "Sort by Date"),
   ];
 
+  // Status filter options - Updated to match EventAdminDashboard
+  const statusOptions = [
+    { value: "all", label: "All Companies", color: "text-yellow-900" },
+    { value: "under_review", label: "Needs Review", color: "text-yellow-600" },
+    { value: "approved", label: "Approved", color: "text-green-600" },
+    { value: "rejected", label: "Rejected", color: "text-red-600" },
+  ];
+
   return (
     <div
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
-      ${isMobileSidebarOpen
+      ${
+        isMobileSidebarOpen
           ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
-        }`}
+      }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
@@ -240,6 +253,45 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <div className="space-y-6 md:space-y-8">
+        {/* Status Filter Section - Updated to match EventAdminDashboard */}
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-yellow-900 block">
+            Filter by Status
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {statusOptions.map((option) => (
+              <motion.button
+                key={option.value}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onStatusChange(option.value)}
+                className={`px-3 py-2 text-xs font-medium rounded-lg border transition-colors flex items-center justify-center gap-1 ${
+                  statusFilter === option.value
+                    ? option.value === "under_review"
+                      ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                      : option.value === "approved"
+                      ? "bg-green-100 border-green-300 text-green-800"
+                      : option.value === "rejected"
+                      ? "bg-red-100 border-red-300 text-red-800"
+                      : "bg-gray-100 border-gray-300 text-gray-800"
+                    : "bg-white/50 border-yellow-200/50 hover:bg-gray-50 text-gray-700"
+                }`}
+              >
+                {option.label === "Needs Review" && (
+                  <Clock className="w-3 h-3" />
+                )}
+                {option.label === "Approved" && (
+                  <CheckCircle className="w-3 h-3" />
+                )}
+                {option.label === "Rejected" && <XCircle className="w-3 h-3" />}
+                {option.label === "All Companies" && (
+                  <Building2 className="w-3 h-3" />
+                )}
+                <span>{option.label}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
         {/* Search Section */}
         <div className="space-y-3">
           <label className="text-sm font-medium text-yellow-900 block">
@@ -279,6 +331,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => {
             onSearchChange("");
             onSortChange("Sort by Date");
+            onStatusChange("all");
           }}
           className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
         >
@@ -457,7 +510,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
           : "Date";
 
   const getStatusBadge = (reviewStatus?: string) => {
-    if (reviewStatus === "active")
+    if (reviewStatus === "active" || reviewStatus === "under_review")
       return {
         bg: "bg-yellow-100",
         text: "text-yellow-800",
@@ -803,7 +856,6 @@ const apiService = {
 const RecentCompaniesSection: React.FC<{
   recentCompanies: Company[];
   onCredentials: (publishedId: string) => void;
-  onPreview: (publishedId: string) => void;
   onApprove: (publishedId: string) => void;
   onReject: (publishedId: string) => void;
   onDelete: (publishedId: string) => void;
@@ -812,7 +864,6 @@ const RecentCompaniesSection: React.FC<{
 }> = ({
   recentCompanies,
   onCredentials,
-  onPreview,
   onApprove,
   onReject,
   onDelete,
@@ -841,7 +892,6 @@ const RecentCompaniesSection: React.FC<{
               <CompanyCard
                 company={company}
                 onCredentials={onCredentials}
-                onPreview={onPreview}
                 onApprove={onApprove}
                 onReject={onReject}
                 onDelete={onDelete}
@@ -869,10 +919,10 @@ const AdminDashboard: React.FC = () => {
   const [isFetching, setIsFetching] = useState<boolean>(true); // initial fetch
   const [isMutating, setIsMutating] = useState<boolean>(false); // approve/reject/delete
 
-  // UI state
+  // UI state - Updated statusFilter default value
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
-  const [industryFilter, setIndustryFilter] = useState<string>("All Sectors");
+  const [statusFilter, setStatusFilter] = useState<string>("all"); // Changed from "All Statuses"
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(12);
@@ -946,6 +996,7 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     // default sort on mount
     setSortBy("Sort by Date");
+    setStatusFilter("all");
     const controller = new AbortController();
     fetchCompanies(controller.signal);
     return () => controller.abort();
@@ -955,7 +1006,7 @@ const AdminDashboard: React.FC = () => {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchTerm, industryFilter, sortBy]);
+  }, [debouncedSearchTerm, statusFilter, sortBy]);
 
   // Derived lists
   const industries = useMemo(() => {
@@ -976,12 +1027,17 @@ const AdminDashboard: React.FC = () => {
         (company.sectors &&
           company.sectors.some((sector) => sector.toLowerCase().includes(q)));
 
-      const matchesSector =
-        industryFilter === "All Sectors" ||
-        (company.sectors && company.sectors.includes(industryFilter));
-      return matchesSearch && matchesSector;
+      // Status filter logic - Updated to match EventAdminDashboard
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "under_review" && 
+         (company.reviewStatus === "active" || company.reviewStatus === "under_review")) ||
+        (statusFilter === "approved" && company.reviewStatus === "approved") ||
+        (statusFilter === "rejected" && company.reviewStatus === "rejected");
+
+      return matchesSearch && matchesStatus;
     });
-  }, [companies, debouncedSearchTerm, industryFilter]);
+  }, [companies, debouncedSearchTerm, statusFilter]);
 
   const getMostRecentDate = (company: Company) =>
     Math.max(
@@ -1271,7 +1327,7 @@ const AdminDashboard: React.FC = () => {
 
   // -------------------- Render --------------------
   return (
-    <div className="min-h-screen bg-orange-50">
+    <div className="w-full min-h-screen h-full bg-orange-50">
       <Header />
 
       {/* Universal Confirmation Modal */}
@@ -1288,41 +1344,33 @@ const AdminDashboard: React.FC = () => {
       />
 
       {/* Mobile sidebar toggle */}
-      <div className="flex sticky top-0 z-40 justify-between items-center p-4 bg-white border-b border-gray-200 md:hidden">
-        <button
-          onClick={() => setIsMobileSidebarOpen(true)}
-          className="p-2 rounded-lg border border-gray-200"
-          aria-label="Open filters"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-        <span className="text-sm font-medium text-gray-700">
-          {totalCount} {totalCount === 1 ? "company" : "companies"}
-        </span>
-      </div>
+      <button
+        onClick={() => setIsMobileSidebarOpen(true)}
+        className="p-3 rounded-full border border-gray-200 bg-yellow-500 text-white relative left-5 hover:bg-yellow-600 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
+        aria-label="Open filters"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
 
       {/* Main layout */}
       <div className="flex">
         <Sidebar
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          industryFilter={industryFilter}
-          onIndustryChange={setIndustryFilter}
           sortBy={sortBy}
           onSortChange={setSortBy}
-          industries={industries}
           isMobileSidebarOpen={isMobileSidebarOpen}
           onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
+          statusFilter={statusFilter}
+          onStatusChange={setStatusFilter}
         />
 
-        <div className="flex-1 p-4 md:p-8">
-          {/* Recent Companies Section */}
-          {/* Recent Companies Section */}
-          {!debouncedSearchTerm && (
+        <div className="flex-1 p-4 md:p-8 bg-orange-50">
+          {/* Recent Companies Section - Updated condition to hide when status filter is not "all" */}
+          {!debouncedSearchTerm && statusFilter === "all" && (
             <RecentCompaniesSection
               recentCompanies={recentCompanies}
               onCredentials={handleCredentials}
-              onPreview={handlePreview}
               onApprove={handleApprove}
               onReject={handleReject}
               onDelete={handleDelete}
@@ -1336,13 +1384,12 @@ const AdminDashboard: React.FC = () => {
             <div className="flex gap-2 items-center">
               <Building2 className="w-6 h-6 text-yellow-600" />
               <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
-                All Companies
+                {statusFilter === "all" ? "All Companies" : statusFilter === "under_review" ? "Needs Review Companies" : statusFilter === "approved" ? "Approved Companies" : "Rejected Companies"}
               </h2>
             </div>
             <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
               {sortedCompanies.length}{" "}
               {sortedCompanies.length === 1 ? "company" : "companies"}
-              {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
             </span>
           </div>
 
@@ -1351,54 +1398,55 @@ const AdminDashboard: React.FC = () => {
           ) : error ? (
             <ErrorMessage error={error} onRetry={handleRetry} />
           ) : sortedCompanies.length === 0 ? (
-            <div className="py-16 text-center">
-              <div className="mb-4 text-6xl">🏢</div>
-              <p className="mb-2 text-xl text-gray-600">No companies found</p>
-              <p className="text-gray-500">
-                Try adjusting your search or filters
+            <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
+              <Building2 className="w-24 h-24 text-gray-400" />
+              <p className="text-sm font-semibold text-gray-400">
+                Oops looks like there is no companies!
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 md:gap-6">
-              {paginatedCompanies.map((company) => (
-                <div key={company.publishedId} className="animate-fadeIn">
-                  <CompanyCard
-                    company={company}
-                    onCredentials={handleCredentials}
-                    onApprove={handleApprove}
-                    onReject={handleReject}
-                    onDelete={handleDelete}
-                    onEdit={handleEdit}
-                    disabled={isMutating}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+            <>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 md:gap-6">
+                {paginatedCompanies.map((company) => (
+                  <div key={company.publishedId} className="animate-fadeIn">
+                    <CompanyCard
+                      company={company}
+                      onCredentials={handleCredentials}
+                      onApprove={handleApprove}
+                      onReject={handleReject}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
+                      disabled={isMutating}
+                    />
+                  </div>
+                ))}
+              </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center mt-8">
-              <button
-                onClick={handlePrevPage}
-                className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={currentPage <= 1}
-              >
-                <ArrowRight className="w-4 h-4 rotate-180" />
-                Previous
-              </button>
-              <span className="mx-4 text-sm text-gray-600">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={handleNextPage}
-                className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={currentPage >= totalPages}
-              >
-                Next
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-8">
+                  <button
+                    onClick={handlePrevPage}
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={currentPage <= 1}
+                  >
+                    <ArrowRight className="w-4 h-4 rotate-180" />
+                    Previous
+                  </button>
+                  <span className="mx-4 text-sm text-gray-600">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={handleNextPage}
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={currentPage >= totalPages}
+                  >
+                    Next
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

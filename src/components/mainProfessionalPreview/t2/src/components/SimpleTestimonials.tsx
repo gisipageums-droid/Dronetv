@@ -1,5 +1,7 @@
 import { Quote, Star } from "lucide-react";
 import { motion } from "motion/react";
+import maleAvatar from "/logos/maleAvatar.png";
+import femaleAvatar from "/logos/femaleAvatar.png";
 
 export function SimpleTestimonials({ testimonialData }) {
   // If no testimonialData provided, return loading state
@@ -59,19 +61,11 @@ export function SimpleTestimonials({ testimonialData }) {
       review: testimonial.content,
       project: testimonial.project,
       date: testimonial.date,
+      gender: testimonial.gender,
     }));
   };
 
   const testimonials = processTestimonialsData();
-
-  // Dynamic CTA data
-  const ctaData = testimonialData.cta || {
-    title: "Ready to be the next success story?",
-    description:
-      "Join the growing list of satisfied clients who have transformed their businesses with innovative digital solutions.",
-    buttonText: "Start Your Success Story",
-    buttonLink: "#contact",
-  };
 
   return (
     <section className="py-20 bg-white text-justify dark:bg-yellow-900/20">
@@ -139,12 +133,13 @@ export function SimpleTestimonials({ testimonialData }) {
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
                     <div className="text-gray-900 text-lg w-full h-full rounded-full border border-gray-400 overflow-hidden">
                       <img
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s"
+                        src={`${testimonial.gender === "male" ? maleAvatar : femaleAvatar}`}
                         alt={testimonial.name}
                         className="w-full h-full object-cover rounded-full"
                       />
                     </div>
                   </div>
+
                   <div className="flex-1 min-w-0">
                     <h4 className="text-foreground mb-1 truncate">
                       {testimonial.name}
@@ -178,32 +173,6 @@ export function SimpleTestimonials({ testimonialData }) {
             </p>
           </div>
         )}
-
-        {/* Bottom CTA - Fully Dynamic */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <div className="bg-card rounded-2xl p-8 shadow-lg">
-            <h3 className="text-2xl text-foreground mb-4">
-              {ctaData.title}
-            </h3>
-            <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-              {ctaData.description}
-            </p>
-            <motion.a
-              href={ctaData.buttonLink}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              {ctaData.buttonText}
-            </motion.a>
-          </div>
-        </motion.div> */}
       </div>
     </section>
   );

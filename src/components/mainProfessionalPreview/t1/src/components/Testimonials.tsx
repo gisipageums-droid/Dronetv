@@ -2,6 +2,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
+import maleAvatar from "/logos/maleAvatar.png";
+import femaleAvatar from "/logos/femaleAvatar.png";
 
 export interface Testimonial {
   id: number;
@@ -13,6 +15,7 @@ export interface Testimonial {
   rating: number;
   project: string;
   date?: string;
+  gender: "male" | "female";
 }
 
 export interface TestimonialContent {
@@ -37,7 +40,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({ content }) => {
   const testimonialContent = content || defaultContent;
 
   return (
-    <section id="testimonials" className="py-20 text-justify bg-white dark:bg-gray-900">
+    <section
+      id="testimonials"
+      className="py-20 text-justify bg-white dark:bg-gray-900"
+    >
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -101,12 +107,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({ content }) => {
                     alt={testimonial.name}
                     className="object-cover w-12 h-12 rounded-full"
                     onError={(e) => {
-                      // Fallback for broken images
-                      (
-                        e.target as HTMLImageElement
-                      ).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        testimonial.name
-                      )}&background=random`;
+                      (e.target as HTMLImageElement).src = `${
+                        testimonial.gender === "male"
+                          ? maleAvatar
+                          : femaleAvatar
+                      }`;
                     }}
                   />
                   <div className="flex-1">

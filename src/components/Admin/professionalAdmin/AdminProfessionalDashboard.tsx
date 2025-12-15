@@ -14,6 +14,7 @@ import {
   AlertCircle,
   ArrowRight,
   Edit,
+  Calendar,
 } from "lucide-react";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -75,13 +76,12 @@ interface DropdownProps {
 interface SidebarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  categoryFilter: string;
-  onCategoryChange: (value: string) => void;
   sortBy: string;
   onSortChange: (value: string) => void;
-  categories: string[];
   isMobileSidebarOpen: boolean;
   onCloseMobileSidebar: () => void;
+  statusFilter: string;
+  onStatusChange: (value: string) => void;
 }
 
 interface ProfessionalCardProps {
@@ -111,8 +111,8 @@ interface MainContentProps {
   onApprove: (professionalId: string) => void;
   onReject: (professionalId: string) => void;
   searchTerm: string;
-  categoryFilter: string;
   sortBy: string;
+  statusFilter: string;
   onClearFilters: () => void;
   onDelete: (professionalId: string) => void;
   onEdit: (professionalId: string, templateSelection: string) => void;
@@ -213,34 +213,33 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   );
 };
 
-// Header Component
+// Header Component - Updated to match EventAdminDashboard
 const Header: React.FC = () => {
   return (
-    <div className="h-[40vh] md:h-[60vh] bg-orange-50 flex items-center justify-center px-4 sm:px-6">
-      <div className="text-center max-w-3xl relative w-full">
-        {/* Geometric Elements */}
-        <div className="absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-yellow-200 rounded-full opacity-40"></div>
-        <div className="absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-yellow-200 opacity-30 rounded-2xl"></div>
+    <div className="relative h-[40vh] bg-amber-50 flex items-center justify-center px-4 sm:px-6 overflow-hidden">
+      {/* Geometric Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+      </div>
 
-        <div className="relative z-10">
-          <div className="flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-8">
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-amber-400 rounded-full"></div>
-            <div className="w-4 h-4 md:w-6 md:h-6 border-2 border-amber-400"></div>
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-amber-600 rotate-45"></div>
-          </div>
-
-          <h1 className="text-3xl md:text-5xl font-light text-yellow-900 mb-4 md:mb-6">
+      <div className="relative w-full max-w-3xl text-center z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="mb-4 text-3xl font-extrabold text-yellow-900 md:text-5xl md:mb-6 tracking-tight">
             Admin Dashboard
-            <span className="block text-xl md:text-3xl font-extralight text-yellow-600 mt-1 md:mt-2">
+            <span className="block mt-2 text-transparent bg-clip-text bg-amber-600 ">
               Professional Management
             </span>
           </h1>
 
-          <p className="text-base md:text-lg text-yellow-700 mb-6 md:mb-10 max-w-xl mx-auto font-light">
-            Review and manage all professional profiles, credentials, and
-            approvals.
+          <p className="mx-auto mb-8 max-w-xl text-base font-medium text-yellow-800/80 md:text-lg leading-relaxed">
+            Review and manage all professional profiles, credentials, and approvals with ease.
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -280,10 +279,11 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
                 onChange(option);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
-                ? "bg-gray-50 text-gray-900 font-medium"
-                : "text-gray-700 hover:bg-gray-50"
-                }`}
+              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                value === option
+                  ? "bg-gray-50 text-gray-900 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
             >
               {option}
             </button>
@@ -294,17 +294,16 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
   );
 };
 
-/* Sidebar Filters Component */
+/* Sidebar Filters Component - Updated to match EventAdminDashboard */
 const Sidebar: React.FC<SidebarProps> = ({
   searchTerm,
   onSearchChange,
-  categoryFilter,
-  onCategoryChange,
   sortBy,
   onSortChange,
-  categories,
   isMobileSidebarOpen,
   onCloseMobileSidebar,
+  statusFilter,
+  onStatusChange,
 }) => {
   const sortOptions: string[] = [
     "Sort by Name",
@@ -313,13 +312,22 @@ const Sidebar: React.FC<SidebarProps> = ({
     "Sort by Category",
   ];
 
+  // Status filter options - Updated to match EventAdminDashboard
+  const statusOptions = [
+    { value: "all", label: "All Professionals", color: "text-yellow-900" },
+    { value: "under_review", label: "Needs Review", color: "text-yellow-600" },
+    { value: "approved", label: "Approved", color: "text-green-600" },
+    { value: "rejected", label: "Rejected", color: "text-red-600" },
+  ];
+
   return (
     <div
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
-      ${isMobileSidebarOpen
+      ${
+        isMobileSidebarOpen
           ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
-        }`}
+      }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
@@ -334,6 +342,45 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <div className="space-y-6 md:space-y-8">
+        {/* Status Filter Section - Updated to match EventAdminDashboard */}
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-yellow-900 block">
+            Filter by Status
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {statusOptions.map((option) => (
+              <motion.button
+                key={option.value}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onStatusChange(option.value)}
+                className={`px-3 py-2 text-xs font-medium rounded-lg border transition-colors flex items-center justify-center gap-1 ${
+                  statusFilter === option.value
+                    ? option.value === "under_review"
+                      ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                      : option.value === "approved"
+                      ? "bg-green-100 border-green-300 text-green-800"
+                      : option.value === "rejected"
+                      ? "bg-red-100 border-red-300 text-red-800"
+                      : "bg-gray-100 border-gray-300 text-gray-800"
+                    : "bg-white/50 border-yellow-200/50 hover:bg-gray-50 text-gray-700"
+                }`}
+              >
+                {option.label === "Needs Review" && (
+                  <Clock className="w-3 h-3" />
+                )}
+                {option.label === "Approved" && (
+                  <CheckCircle className="w-3 h-3" />
+                )}
+                {option.label === "Rejected" && <XCircle className="w-3 h-3" />}
+                {option.label === "All Professionals" && (
+                  <User className="w-3 h-3" />
+                )}
+                <span>{option.label}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
         {/* Search Section */}
         <div className="space-y-3">
           <label className="text-sm font-medium text-yellow-900 block">
@@ -353,7 +400,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-
         {/* Sort Filter */}
         <div className="space-y-3">
           <label className="text-sm font-medium text-yellow-900 block">
@@ -371,8 +417,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={() => {
             onSearchChange("");
-            onCategoryChange("All Categories");
             onSortChange("Sort by Name");
+            onStatusChange("all");
           }}
           className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
         >
@@ -381,32 +427,34 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Divider */}
         <div className="border-t border-yellow-200/50"></div>
-      </div>
-      <div className="flex gap-2 flex-col mt-6">
-        <motion.button
-          whileTap={{ scale: [0.9, 1] }}
-          className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
-        >
-          <Link to={"/admin/company/dashboard"} className="w-full text-left">
-            Companies{" "}
-          </Link>
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: [0.9, 1] }}
-          className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
-        >
-          <Link to={"/admin/event/dashboard"} className="w-full text-left">
-            Events{" "}
-          </Link>
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: [0.9, 1] }}
-          className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
-        >
-          <Link to={"/admin/plans"} className="w-full text-left">
-            Admin Plans{" "}
-          </Link>
-        </motion.button>
+
+        {/* Navigation Links */}
+        <div className="flex gap-2 flex-col mt-6">
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
+          >
+            <Link to={"/admin/company/dashboard"} className="w-full text-left">
+              Companies{" "}
+            </Link>
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
+          >
+            <Link to={"/admin/event/dashboard"} className="w-full text-left">
+              Events{" "}
+            </Link>
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: [0.9, 1] }}
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
+          >
+            <Link to={"/admin/plans"} className="w-full text-left">
+              Admin Plans{" "}
+            </Link>
+          </motion.button>
+        </div>
       </div>
     </div>
   );
@@ -424,8 +472,9 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   disabled = false,
 }) => {
   // Create a placeholder image using professional name
-  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${professional.professionalName?.charAt(0) || "P"
-    }%3C/text%3E%3C/svg%3E`;
+  const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
+    professional.professionalName?.charAt(0) || "P"
+  }%3C/text%3E%3C/svg%3E`;
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -441,9 +490,9 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
     }
   };
 
-  // Status badge styling based on status
+  // Status badge styling based on status - Updated to match new status values
   const getStatusBadge = (reviewStatus: string) => {
-    if (reviewStatus === "active") {
+    if (reviewStatus === "active" || reviewStatus === "under_review") {
       return {
         bg: "bg-yellow-100",
         text: "text-yellow-800",
@@ -695,7 +744,7 @@ const RecentProfessionalsSection: React.FC<{
     );
   };
 
-// Main Content Area Component
+// Main Content Area Component - Updated to match EventAdminDashboard
 const MainContent: React.FC<MainContentProps> = ({
   professionals,
   recentProfessionals,
@@ -712,8 +761,8 @@ const MainContent: React.FC<MainContentProps> = ({
   onApprove,
   onReject,
   searchTerm,
-  categoryFilter,
   sortBy,
+  statusFilter,
   onClearFilters,
   onDelete,
   onEdit,
@@ -723,31 +772,30 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
   if (loading)
     return (
-      <div className="flex-1 bg-orange-50 px-4 md:px-8 py-8">
+      <div className="flex-1 p-4 md:p-8 bg-orange-50">
         <LoadingSpinner />
       </div>
     );
   if (error)
     return (
-      <div className="flex-1 bg-orange-50 px-4 md:px-8 py-8">
+      <div className="flex-1 p-4 md:p-8 bg-orange-50">
         <ErrorMessage error={error} onRetry={onRetry} />
       </div>
     );
 
   return (
-    <div className="flex-1 bg-orange-50 px-4 md:px-8 py-8">
-      {/* Mobile filter button */}
+    <div className="flex-1 p-4 md:p-8 bg-orange-50">
+      {/* Mobile sidebar toggle */}
       <button
         onClick={onOpenMobileSidebar}
-        className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-yellow-200"
+        className="p-3 rounded-full border border-gray-200 bg-yellow-500 text-white relative left-5 hover:bg-yellow-600 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
+        aria-label="Open filters"
       >
-        <Menu className="w-4 h-4 text-yellow-800" />
-        <span className="text-yellow-900">Filters</span>
+        <Menu className="w-6 h-6" />
       </button>
 
-      {/* Recent Professionals Section */}
-      {/* Recent Professionals Section */}
-      {!searchTerm && (
+      {/* Recent Professionals Section - Updated condition to hide when status filter is not "all" */}
+      {!searchTerm && statusFilter === "all" && (
         <RecentProfessionalsSection
           recentProfessionals={recentProfessionals}
           onCredentials={onCredentials}
@@ -760,24 +808,18 @@ const MainContent: React.FC<MainContentProps> = ({
         />
       )}
 
-      {/* Results Header */}
-      <div className="flex items-center justify-between mb-6 md:mb-8 flex-wrap gap-3 md:gap-4">
+      {/* All Professionals Section */}
+      <div className="flex gap-3 items-center mb-6">
         <div className="flex gap-2 items-center">
           <User className="w-6 h-6 text-yellow-600" />
-          <h2 className="text-xl md:text-2xl font-bold text-yellow-900">
-            All Professionals ({totalCount || professionals.length})
+          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
+            {statusFilter === "all" ? "All Professionals" : statusFilter === "under_review" ? "Needs Review Professionals" : statusFilter === "approved" ? "Approved Professionals" : "Rejected Professionals"}
           </h2>
         </div>
-        <div className="flex items-center gap-2 md:gap-4">
-          <span className="text-yellow-900 font-medium text-sm md:text-base">
-            Page {currentPage} of {totalPages}
-          </span>
-          {hasMore && (
-            <span className="text-xs md:text-sm text-yellow-800 bg-yellow-100 px-2 py-1 md:px-3 md:py-1 rounded-full">
-              More available
-            </span>
-          )}
-        </div>
+        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
+          {totalCount}{" "}
+          {totalCount === 1 ? "professional" : "professionals"}
+        </span>
       </div>
 
       {/* Professionals Grid */}
@@ -802,40 +844,12 @@ const MainContent: React.FC<MainContentProps> = ({
           ))}
         </div>
       ) : (
-        <>
-          {/* Check if filters are applied */}
-          {searchTerm ||
-            categoryFilter !== "All Categories" ||
-            sortBy !== "Sort by Name" ? (
-            // Empty State with Filters Applied
-            <div className="text-center py-12 md:py-16">
-              <div className="text-6xl mb-4">🔍</div>
-              <p className="text-xl text-yellow-800 mb-2">
-                No professionals match your filters
-              </p>
-              <p className="text-yellow-600 mb-6">
-                Try adjusting your search criteria or clear all filters
-              </p>
-              <button
-                onClick={onClearFilters}
-                className="bg-amber-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-amber-600 transition-colors"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          ) : (
-            // Empty State - No professionals at all
-            <div className="text-center py-12 md:py-16">
-              <div className="text-6xl mb-4">👨‍💼</div>
-              <p className="text-xl text-yellow-800 mb-2">
-                No professionals found
-              </p>
-              <p className="text-yellow-600 mb-6">
-                There are no professional profiles in the system yet.
-              </p>
-            </div>
-          )}
-        </>
+        <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
+          <User className="w-24 h-24 text-gray-400" />
+          <p className="text-sm font-semibold text-gray-400">
+            Oops looks like there is no professionals!
+          </p>
+        </div>
       )}
 
       {/* Pagination */}
@@ -843,18 +857,18 @@ const MainContent: React.FC<MainContentProps> = ({
         <div className="flex justify-center items-center mt-8">
           <button
             onClick={onPrevPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-800 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage <= 1}
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
             Previous
           </button>
-          <span className="mx-4 text-sm text-yellow-900">
+          <span className="mx-4 text-sm text-gray-600">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={onNextPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-800 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage >= totalPages}
           >
             Next
@@ -1008,8 +1022,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   const [isMutating, setIsMutating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [categoryFilter, setCategoryFilter] =
-    useState<string>("All Categories");
+  const [statusFilter, setStatusFilter] = useState<string>("all"); // Changed from "All Statuses"
   const [sortBy, setSortBy] = useState<string>("Sort by Name");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(12);
@@ -1206,7 +1219,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   // Clear filters function
   const handleClearFilters = (): void => {
     setSearchTerm("");
-    setCategoryFilter("All Categories");
+    setStatusFilter("all");
     setSortBy("Sort by Name");
     setCurrentPage(1);
   };
@@ -1240,7 +1253,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, categoryFilter, sortBy]);
+  }, [searchTerm, statusFilter, sortBy]);
 
   // Get unique categories from professionals
   const categories: string[] = [
@@ -1250,7 +1263,7 @@ const AdminProfessionalDashboard: React.FC = () => {
     ).sort(),
   ];
 
-  // Filter and sort professionals
+  // Filter and sort professionals - Updated status filter logic
   const filteredProfessionals = professionals.filter(
     (professional: Professional) => {
       const matchesSearch =
@@ -1268,12 +1281,15 @@ const AdminProfessionalDashboard: React.FC = () => {
             category.toLowerCase().includes(searchTerm.toLowerCase())
           ));
 
-      const matchesCategory =
-        categoryFilter === "All Categories" ||
-        (professional.categories &&
-          professional.categories.includes(categoryFilter));
+      // Status filter logic - Updated to match EventAdminDashboard
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "under_review" && 
+         (professional.reviewStatus === "active" || professional.reviewStatus === "under_review")) ||
+        (statusFilter === "approved" && professional.reviewStatus === "approved") ||
+        (statusFilter === "rejected" && professional.reviewStatus === "rejected");
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesStatus;
     }
   );
 
@@ -1385,7 +1401,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   const modalConfig = getModalConfig();
 
   return (
-    <div className="min-h-screen bg-blue-100">
+    <div className="w-full min-h-screen h-full bg-orange-50">
       <Header />
 
       {/* Universal Confirmation Modal */}
@@ -1417,34 +1433,18 @@ const AdminProfessionalDashboard: React.FC = () => {
         }
       />
 
-      {/* Mobile sidebar toggle */}
-      <div className="flex sticky top-0 z-40 justify-between items-center p-4 bg-white border-b border-gray-200 md:hidden">
-        <button
-          onClick={() => setIsMobileSidebarOpen(true)}
-          className="p-2 rounded-lg border border-gray-200"
-          aria-label="Open filters"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-        <span className="text-sm font-medium text-gray-700">
-          {sortedProfessionals.length}{" "}
-          {sortedProfessionals.length === 1 ? "professional" : "professionals"}
-        </span>
-      </div>
-
       {/* Main Layout Container */}
-      <div className="flex flex-col md:flex-row bg-gray-50 min-h-screen">
+      <div className="flex">
         {/* Left Sidebar */}
         <Sidebar
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          categoryFilter={categoryFilter}
-          onCategoryChange={setCategoryFilter}
           sortBy={sortBy}
           onSortChange={setSortBy}
-          categories={categories}
           isMobileSidebarOpen={isMobileSidebarOpen}
           onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
+          statusFilter={statusFilter}
+          onStatusChange={setStatusFilter}
         />
 
         {/* Main Content Area */}
@@ -1464,8 +1464,8 @@ const AdminProfessionalDashboard: React.FC = () => {
           onApprove={handleApprove}
           onReject={handleReject}
           searchTerm={searchTerm}
-          categoryFilter={categoryFilter}
           sortBy={sortBy}
+          statusFilter={statusFilter}
           onClearFilters={handleClearFilters}
           onDelete={handleDelete}
           onEdit={handleEdit}

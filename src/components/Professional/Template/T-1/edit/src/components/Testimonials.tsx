@@ -1131,6 +1131,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import maleAvatar from "/logos/maleAvatar.png";
+import femaleAvatar from "/logos/femaleAvatar.png";
 
 export interface Testimonial {
   id: number;
@@ -1142,6 +1144,7 @@ export interface Testimonial {
   rating: number;
   project: string;
   date?: string;
+  gender: "male" | "female";
 }
 
 export interface TestimonialContent {
@@ -1626,6 +1629,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       rating: testimonial.rating,
       project: testimonial.project,
       date: testimonial.date ?? new Date().getFullYear().toString(),
+      gender: testimonial.gender,
     });
     setEditingId(testimonial.id);
     setIsAddingNew(false);
@@ -1687,6 +1691,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
       rating: 5,
       project: "",
       date: new Date().getFullYear().toString(),
+      gender: "male",
     });
   };
 
@@ -1879,6 +1884,19 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                 onChange={handleImageUpload}
               />
             </label>
+          </div>
+        </div>
+
+        <div className="grid items-center grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-1">
+            <select
+              value={formData.gender}
+              onChange={(e) => setFormField("gender", e.target.value)}
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            >
+              <option value={"male"}>Male</option>
+              <option value={"female"}>Female</option>
+            </select>
           </div>
         </div>
 
@@ -2199,12 +2217,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
                           alt={testimonial.name}
                           className="object-cover w-12 h-12 rounded-full"
                           onError={(e) => {
-                            // Fallback for broken images
-                            (
-                              e.target as HTMLImageElement
-                            ).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              testimonial.name
-                            )}&background=random`;
+                            (e.target as HTMLImageElement).src = `${
+                              testimonial.gender === "male"
+                                ? maleAvatar
+                                : femaleAvatar
+                            }`;
                           }}
                         />
                         <div className="flex-1">

@@ -1143,6 +1143,8 @@ import {
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import maleAvatar from "/logos/maleAvatar.png";
+import femaleAvatar from "/logos/femaleAvatar.png";
 
 // Text limits
 const TEXT_LIMITS = {
@@ -1207,6 +1209,7 @@ interface Testimonial {
   rating: number;
   project: string;
   date: string;
+  gender: "male" | "female";
 }
 
 interface TestimonialsData {
@@ -1414,6 +1417,7 @@ export function Testimonials({
       rating: 5,
       project: "Project Type",
       date: "2024",
+      gender: "male",
     };
     setTempData((prevData) => {
       const updated = {
@@ -1754,7 +1758,15 @@ export function Testimonials({
                 <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
                     <div className="text-gray-900 text-lg w-full h-full rounded-full border border-gray-400 overflow-hidden">
-                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s" alt={testimonial.name} className="w-full h-full object-cover rounded-full" />
+                      <img
+                        src={
+                          testimonial.gender === "male"
+                            ? maleAvatar
+                            : femaleAvatar
+                        }
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -1775,7 +1787,8 @@ export function Testimonials({
                             {testimonial.name.length}/{TEXT_LIMITS.CLIENT_NAME}
                           </div>
                         </div>
-                        <div className="relative">
+
+                        <div className="relative mb-1">
                           <input
                             type="text"
                             value={testimonial.position}
@@ -1794,6 +1807,19 @@ export function Testimonials({
                             {testimonial.position.length}/
                             {TEXT_LIMITS.CLIENT_POSITION}
                           </div>
+                        </div>
+
+                        <div className="relative">
+                          <select
+                            value={testimonial.gender}
+                            onChange={(e) =>
+                              updateTestimonial(index, "gender", e.target.value)
+                            }
+                            className="text-sm text-muted-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+                          >
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                          </select>
                         </div>
                       </>
                     ) : (
