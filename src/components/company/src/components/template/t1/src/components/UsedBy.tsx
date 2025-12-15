@@ -57,7 +57,15 @@ export default function UsedBy() {
                   <img
                     src={c.image}
                     alt={c.name}
-                    className='h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300'
+                    className='h-12 w-auto max-w-[120px] object-contain opacity-80 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300'
+                    loading='lazy'
+                    width={120}
+                    height={48}
+                    style={{
+                      imageRendering: '-webkit-optimize-contrast',
+                      backfaceVisibility: 'hidden',
+                      transform: 'translateZ(0)'
+                    }}
                   />
                 </motion.div>
               ))}
