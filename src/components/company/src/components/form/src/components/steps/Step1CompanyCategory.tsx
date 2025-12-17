@@ -201,7 +201,7 @@
 //     scrollToSelected(dayRef.current, selectedDate.day);
 //     scrollToSelected(monthRef.current, selectedDate.month);
 //     scrollToSelected(yearRef.current, selectedDate.year);
-    
+
 //     // REMOVED 'isScrolling' from this dependency array
 //   }, [selectedDate.day, selectedDate.month, selectedDate.year]);
 
@@ -563,7 +563,7 @@
 //                       </p>
 //                     )}
 //                   </div>
-                  
+
 //                   <FormInput
 //                     label="Director LinkedIn"
 //                     type="url"
@@ -1011,10 +1011,9 @@ const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
             key={item.value}
             data-value={item.value}
             className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
-              ${
-                selectedValue === item.value
-                  ? "text-amber-600 font-bold text-lg scale-105 rounded-lg mx-1"
-                  : "text-gray-500 hover:text-gray-700"
+              ${selectedValue === item.value
+                ? "text-amber-600 font-bold text-lg scale-105 rounded-lg mx-1"
+                : "text-gray-500 hover:text-gray-700"
               }`}
             onClick={() => handleClick(item.value)}
           >
@@ -1162,7 +1161,7 @@ const ScrollDatePicker: React.FC<{
     scrollToSelected(dayRef.current, selectedDate.day);
     scrollToSelected(monthRef.current, selectedDate.month);
     scrollToSelected(yearRef.current, selectedDate.year);
-    
+
     // REMOVED 'isScrolling' from this dependency array
   }, [selectedDate.day, selectedDate.month, selectedDate.year]);
 
@@ -1344,9 +1343,9 @@ const NameWithTitle: React.FC<NameWithTitleProps> = ({
           {/* Vertical divider */}
 
           {/* <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-px h-5 bg-gray-300"></div> */}
-           <div className="absolute right-0 top-0 bottom-0 w-px bg-gray-300 group-hover:bg-gray-400 transition-colors"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-px bg-gray-300 group-hover:bg-gray-400 transition-colors"></div>
         </div>
-        
+
         {/* Name Input */}
         <div className="flex-1">
           <input
@@ -1510,11 +1509,10 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               {categoryOptions.map(({ value, description }) => (
                 <label
                   key={value}
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${
-                    formData.companyCategory.includes(value)
-                      ? "border-amber-500 bg-yellow-50 shadow-md"
-                      : "border-amber-300 hover:border-amber-400"
-                  }`}
+                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${formData.companyCategory.includes(value)
+                    ? "border-amber-500 bg-yellow-50 shadow-md"
+                    : "border-amber-300 hover:border-amber-400"
+                    }`}
                 >
                   <input
                     type="checkbox"
@@ -1528,14 +1526,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     }}
                     className="sr-only"
                   />
-                  <h3 className={`text-lg font-bold mb-2 ${
-                    formData.companyCategory.includes(value) ? "text-amber-900" : "text-gray-700"
-                  }`}>
+                  <h3 className={`text-lg font-bold mb-2 ${formData.companyCategory.includes(value) ? "text-amber-900" : "text-gray-700"
+                    }`}>
                     {value}
                   </h3>
-                  <p className={`text-xs text-center ${
-                    formData.companyCategory.includes(value) ? "text-amber-700" : "text-gray-500"
-                  }`}>
+                  <p className={`text-xs text-center ${formData.companyCategory.includes(value) ? "text-amber-700" : "text-gray-500"
+                    }`}>
                     {description}
                   </p>
                 </label>
@@ -1571,8 +1567,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     label="Director Name"
                     titleValue={formData.directorPrefix || ''}
                     nameValue={formData.directorName}
-                    onTitleChange={(value) => updateFormData({ 
-                      directorPrefix: value as 'Mr' | 'Mrs' | 'Ms' 
+                    onTitleChange={(value) => updateFormData({
+                      directorPrefix: value as 'Mr' | 'Mrs' | 'Ms'
                     })}
                     onNameChange={(value) => updateFormData({ directorName: value })}
                     required
@@ -1603,7 +1599,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                       </p>
                     )}
                   </div>
-                  
+
                   <FormInput
                     label="Director LinkedIn"
                     type="url"
@@ -1754,8 +1750,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                     label="Contact Person Name"
                     titleValue={formData.altContactGender || ''}
                     nameValue={formData.altContactName}
-                    onTitleChange={(value) => updateFormData({ 
-                      altContactGender: value as 'Mr' | 'Mrs' | 'Ms' 
+                    onTitleChange={(value) => updateFormData({
+                      altContactGender: value as 'Mr' | 'Mrs' | 'Ms'
                     })}
                     onNameChange={(value) => updateFormData({ altContactName: value })}
                     required
@@ -1943,16 +1939,13 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               />
 
               {emailCheckResult && (
-                <div className={`mt-3 p-3 rounded-lg flex items-start ${
-                  emailCheckResult.exists ? "bg-green-50 border border-green-200" : "bg-blue-50 border border-blue-200"
-                }`}>
-                  <AlertCircle className={`w-4 h-4 mt-0.5 mr-2 ${
-                    emailCheckResult.exists ? "text-green-600" : "text-blue-600"
-                  }`} />
+                <div className={`mt-3 p-3 rounded-lg flex items-start ${emailCheckResult.exists ? "bg-green-50 border border-green-200" : "bg-blue-50 border border-blue-200"
+                  }`}>
+                  <AlertCircle className={`w-4 h-4 mt-0.5 mr-2 ${emailCheckResult.exists ? "text-green-600" : "text-blue-600"
+                    }`} />
                   <div>
-                    <p className={`text-sm font-medium ${
-                      emailCheckResult.exists ? "text-green-800" : "text-blue-800"
-                    }`}>
+                    <p className={`text-sm font-medium ${emailCheckResult.exists ? "text-green-800" : "text-blue-800"
+                      }`}>
                       {emailCheckResult.message}
                     </p>
                     {emailCheckResult.exists && (
