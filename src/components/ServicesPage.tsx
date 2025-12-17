@@ -336,7 +336,7 @@ const ServicesPage = () => {
             </div>
           </div>
 
-          {/* Active Filters Display */}
+          {/* Active Filters Displays */}
           <div className="flex flex-wrap gap-2 mt-2">
             {selectedCategory !== 'All' && (
               <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
@@ -380,9 +380,11 @@ const ServicesPage = () => {
                 const IconComponent = getCategoryIcon(service.category);
 
                 return (
-                  <div
+                  <Link
+                    to={`/service/${service.publishedId}`}
+                    state={{ service }}
                     key={service.id}
-                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 border-2 border-black/10 hover:border-black"
+                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 border-2 border-black/10 hover:border-black block"
                     style={{
                       animationDelay: `${index * 100}ms`,
                     }}
@@ -400,15 +402,7 @@ const ServicesPage = () => {
 
                         <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
 
-                        <div className="flex absolute inset-0 justify-center items-center opacity-0 transition-all duration-500 group-hover:opacity-100">
-                          <Link
-                            to={`/service/${service.publishedId}`}
-                            state={{ service }}
-                            className="px-4 py-2 font-bold text-black bg-yellow-400 rounded-full shadow-2xl transition-all duration-500 transform scale-0 group-hover:scale-100 hover:bg-yellow-300"
-                          >
-                            View Details
-                          </Link>
-                        </div>
+
 
                         <div className={`absolute top-3 right-3 ${getCategoryColor(service.category)} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
                           <IconComponent className="w-3 h-3" />
@@ -470,7 +464,7 @@ const ServicesPage = () => {
                         )}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

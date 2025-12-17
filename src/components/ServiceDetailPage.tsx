@@ -43,6 +43,8 @@ export default function ServiceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [service, setService] = useState<Service | null>(null);
   const [companyName, setCompanyName] = useState<string>("");
+  const [template, setTemplate] = useState<string>("");
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -73,9 +75,11 @@ export default function ServiceDetailPage() {
         }
 
         const apiData = responseData.data;
+        console.log("apiData", apiData.template)
 
         // Extract company name
         setCompanyName(apiData?.companyName || "");
+        setTemplate(apiData?.template || "");
 
         // Access nested services array
         const serviceArray: ServiceAPIItem[] =
@@ -291,7 +295,7 @@ export default function ServiceDetailPage() {
           </div>
         </div>
 
-        {/* Detailed Description */}
+        {/* Detailed Descriptionsgit */}
         <div className="p-4 rounded-2xl shadow shadow-black mt-[5px] bg-white">
           <h4 className="font-semibold mb-3">Description</h4>
           <ul className="grid grid-cols-1 text-justify">
@@ -299,7 +303,9 @@ export default function ServiceDetailPage() {
           </ul>
         </div>
         <div className="mt-8 flex justify-center">
-          <Link to={`/companies/${companyName}`}>
+
+
+          <Link to={template === "template-1" ? `/company/${companyName}` : `/companies/${companyName}`}>
             <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
               Contact us
             </button>
