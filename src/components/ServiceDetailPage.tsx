@@ -295,7 +295,7 @@ export default function ServiceDetailPage() {
           </div>
         </div>
 
-        {/* Detailed Description */}
+        {/* Detailed Descriptionsgit */}
         <div className="p-4 rounded-2xl shadow shadow-black mt-[5px] bg-white">
           <h4 className="font-semibold mb-3">Description</h4>
           <ul className="grid grid-cols-1 text-justify">

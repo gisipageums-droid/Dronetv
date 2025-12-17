@@ -396,7 +396,7 @@ const ProductsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Products Grid Section */}
+      {/* Products Grid Sections */}
       <section className="py-16 bg-yellow-400">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">

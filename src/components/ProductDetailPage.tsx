@@ -268,7 +268,7 @@ export default function ProductDetailPage() {
                       ))}
                     </ul>
 
-                    {/* If there's a longer description (optional), show it below */}
+                    {/* If there's as longer description (optional), show it below */}
 
                   </div>
                 )}

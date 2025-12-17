@@ -336,7 +336,7 @@ const ServicesPage = () => {
             </div>
           </div>
 
-          {/* Active Filters Display */}
+          {/* Active Filters Displays */}
           <div className="flex flex-wrap gap-2 mt-2">
             {selectedCategory !== 'All' && (
               <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
