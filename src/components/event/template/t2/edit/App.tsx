@@ -222,7 +222,7 @@ export default function Edit_event_t2() {
       {/* Navigation */}
       <Navigation
         activeSection={activeSection}
-        navigationData={componentStates.navigationContent}
+        navigationData={componentStates?.navigationContent}
         onStateChange={createStateChangeHandler('navigationContent')}
       />
 
@@ -230,7 +230,7 @@ export default function Edit_event_t2() {
         {/* Hero Section */}
         <section id="home">
           <HeroSection
-            heroData={componentStates.heroContent}
+            heroData={componentStates?.heroContent}
             onStateChange={createStateChangeHandler('heroContent')}
           />
         </section>
@@ -238,7 +238,7 @@ export default function Edit_event_t2() {
         {/* Events Section */}
         <section id="events">
           <EventsSection
-            eventsData={componentStates.eventsContent}
+            eventsData={componentStates?.eventsContent}
             onStateChange={createStateChangeHandler('eventsContent')}
           />
         </section>
@@ -246,7 +246,7 @@ export default function Edit_event_t2() {
         {/* Highlights Section */}
         <section id="highlights">
           <HighlightsSection
-            highlightsData={componentStates.highlightsContent}
+            highlightsData={componentStates?.highlightsContent}
             onStateChange={createStateChangeHandler('highlightsContent')}
           />
         </section>
@@ -254,7 +254,7 @@ export default function Edit_event_t2() {
         {/* Speakers Section */}
         <section id="speakers">
           <SpeakersSection
-            speakersData={componentStates.speakersContent}
+            speakersData={componentStates?.speakersContent}
             onStateChange={createStateChangeHandler('speakersContent')}
             userId={AIGenData.userId}
           />
@@ -263,7 +263,7 @@ export default function Edit_event_t2() {
         {/* Schedule Section */}
         <section id="schedule">
           <ScheduleSection
-            scheduleData={componentStates.scheduleContent}
+            scheduleData={componentStates?.scheduleContent}
             onStateChange={createStateChangeHandler('scheduleContent')}
           />
         </section>
@@ -271,7 +271,7 @@ export default function Edit_event_t2() {
         {/* Exhibitors Section*/}
         <section id="exhibitors">
           <ExhibitorsSection
-            exhibitorsData={componentStates.exhibitorsContent}
+            exhibitorsData={componentStates?.exhibitorsContent}
             onStateChange={createStateChangeHandler('exhibitorsContent')}
             userId={AIGenData.userId}
           />
@@ -280,7 +280,7 @@ export default function Edit_event_t2() {
         {/* Gallery Section */}
         <section id="gallery">
           <GallerySection
-            galleryData={componentStates.galleryContent}
+            galleryData={componentStates?.galleryContent}
             onStateChange={createStateChangeHandler('galleryContent')}
             userId={AIGenData.userId}
           />
@@ -292,7 +292,7 @@ export default function Edit_event_t2() {
         </section>
 
         <Footer
-          footerData={componentStates.footerContent}
+          footerData={componentStates?.footerContent}
           onStateChange={createStateChangeHandler('footerContent')} />
 
       </main>
