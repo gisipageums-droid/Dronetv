@@ -395,7 +395,7 @@ const EventsPage = () => {
 
         <button
           onClick={handleAddEventClick}
-          className="px-6 h-12 text-sm font-semibold text-white bg-black rounded-lg transition duration-300 hover:bg-gray-800"
+          className="relative px-6 h-12 z-50 text-sm font-semibold text-white bg-black rounded-lg transition duration-300 hover:bg-gray-800"
         >
           List your Event
         </button>
