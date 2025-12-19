@@ -47,6 +47,7 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [companyName, setCompanyName] = useState<string>("");
+  const [template, setTemplate] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -74,6 +75,7 @@ export default function ProductDetailPage() {
 
         // Extract company name
         setCompanyName(apiData?.companyName || "");
+        setTemplate(apiData?.template || "");
 
         // Prefer products -> products array, fallback to services
         const productArray: ProductAPIItem[] =
@@ -266,7 +268,7 @@ export default function ProductDetailPage() {
                       ))}
                     </ul>
 
-                    {/* If there's a longer description (optional), show it below */}
+                    {/* If there's as longer description (optional), show it below */}
 
                   </div>
                 )}
@@ -298,7 +300,7 @@ export default function ProductDetailPage() {
           </ul>
         </div>
         <div className="mt-8 flex justify-center">
-          <Link to={`/companies/${companyName}`}>
+          <Link to={template === "template-1" ? `/company/${companyName}` : `/companies/${companyName}`}>
             <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
               Contact us
             </button>
