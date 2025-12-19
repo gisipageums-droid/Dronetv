@@ -192,34 +192,33 @@ const CompaniesPage: React.FC = () => {
   return (
     <div className="pt-16 min-h-screen bg-yellow-400">
       {/* Hero Section */}
-      <section className="overflow-hidden relative py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500">
+      <section className="mx-auto max-w-7xl overflow-hidden relative sm:px-6 lg:px-8 py-8 flex md:flex-row flex-col justify-between items-center md:items-start">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-11 left-10 w-32 h-32 rounded-full blur-2xl animate-pulse bg-yellow-200/30"></div>
           <div className="absolute right-10 bottom-10 w-40 h-40 rounded-full blur-2xl animate-pulse bg-yellow-600/20" style={{ animationDelay: '2s' }}></div>
         </div>
-        <div className="relative z-10 px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
-          <h1 className="mb-2 text-2xl mt-[40px] sm:mt-[0px] font-black tracking-tight text-black md:text-5xl">
+
+        <div className="text-center md:text-left">
+          <h1 className="mb-2 text-3xl mt-[40px] sm:mt-[0px] font-black tracking-tight text-black md:text-5xl">
             Companies Directory
           </h1>
-          <p className="mx-auto mb-4 max-w-2xl mt-[15px] text-xl text-black/80">
+          <p className="mb-4 max-w-2xl mt-[15px] text-sm md:text-xl text-black/80">
             Explore top companies leading drone, AI, and geospatial tech.
           </p>
-          <div className="mx-auto w-24 h-1 bg-black rounded-full"></div>
         </div>
-        <div className="absolute top-4 right-10 z-10 pointer-events-auto">
+
           <button
             onClick={() => navigate('/companies')}
-            className="px-6 py-3 text-white bg-black rounded-lg transition duration-300 hover:bg-red-600"
+            className="px-6 h-12 text-sm font-semibold text-white bg-black rounded-lg transition duration-300 hover:bg-gray-800"
           >
             List your Company
           </button>
-        </div>
       </section>
 
       {/* Filter Section */}
       <section className="sticky top-16 z-40 py-3 bg-yellow-400 border-b border-black/10">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
+          <div className="flex flex-col gap-2 justify-between items-center md:flex-row">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-xs">
               <Search className="absolute left-3 top-1/2 w-4 h-4 transform -translate-y-1/2 text-black/60" />

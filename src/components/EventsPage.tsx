@@ -1,16 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, ChevronDown, Calendar, MapPin, Clock, Users, ArrowRight, Star } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import {
+  Search,
+  Filter,
+  ChevronDown,
+  Calendar,
+  MapPin,
+  Clock,
+  Users,
+  ArrowRight,
+  Star,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // Countdown component for event cards
-const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime: string }) => {
+const EventCountdown = ({
+  eventDate,
+  eventTime,
+}: {
+  eventDate: string;
+  eventTime: string;
+}) => {
   const [countdown, setCountdown] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
     isEventStarted: false,
-    isEventExpired: false
+    isEventExpired: false,
   });
 
   useEffect(() => {
@@ -19,25 +35,29 @@ const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime
 
       try {
         // Parse dates
-        const eventDateParts = eventDate.split(' to ');
+        const eventDateParts = eventDate.split(" to ");
         const startDateStr = eventDateParts[0].trim();
-        const endDateStr = eventDateParts[1] ? eventDateParts[1].trim() : startDateStr;
+        const endDateStr = eventDateParts[1]
+          ? eventDateParts[1].trim()
+          : startDateStr;
 
         // Parse times
-        const eventTimeParts = eventTime.split(' - ');
+        const eventTimeParts = eventTime.split(" - ");
         const startTimeStr = eventTimeParts[0].trim();
-        const endTimeStr = eventTimeParts[1] ? eventTimeParts[1].trim() : startTimeStr;
+        const endTimeStr = eventTimeParts[1]
+          ? eventTimeParts[1].trim()
+          : startTimeStr;
 
         // Helper to convert time string to 24h format HH:mm
         const convertTo24Hour = (timeStr: string) => {
           if (!timeStr) return "00:00";
           const cleanStr = timeStr.trim().toUpperCase();
 
-          const isPM = cleanStr.includes('PM');
-          const isAM = cleanStr.includes('AM');
+          const isPM = cleanStr.includes("PM");
+          const isAM = cleanStr.includes("AM");
 
-          let timeOnly = cleanStr.replace('AM', '').replace('PM', '').trim();
-          let [hours, minutes] = timeOnly.split(':');
+          let timeOnly = cleanStr.replace("AM", "").replace("PM", "").trim();
+          let [hours, minutes] = timeOnly.split(":");
 
           if (!hours) return "00:00";
           if (!minutes) minutes = "00";
@@ -47,13 +67,17 @@ const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime
           if (isPM && hoursInt < 12) hoursInt += 12;
           if (isAM && hoursInt === 12) hoursInt = 0;
 
-          return `${hoursInt.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+          return `${hoursInt.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}`;
         };
 
         const startTime24 = convertTo24Hour(startTimeStr);
         const endTime24 = convertTo24Hour(endTimeStr);
 
-        const startDateTime = new Date(`${startDateStr}T${startTime24}:00`).getTime();
+        const startDateTime = new Date(
+          `${startDateStr}T${startTime24}:00`
+        ).getTime();
         let endDateTime = new Date(`${endDateStr}T${endTime24}:00`).getTime();
 
         // If endDateTime < startDateTime, it might be next day (e.g. 10 PM to 2 AM)
@@ -69,18 +93,28 @@ const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime
         const now = new Date().getTime();
 
         if (now > endDateTime) {
-          setCountdown(prev => ({ ...prev, isEventExpired: true, isEventStarted: false }));
+          setCountdown((prev) => ({
+            ...prev,
+            isEventExpired: true,
+            isEventStarted: false,
+          }));
         } else if (now >= startDateTime && now <= endDateTime) {
-          setCountdown(prev => ({ ...prev, isEventStarted: true, isEventExpired: false }));
+          setCountdown((prev) => ({
+            ...prev,
+            isEventStarted: true,
+            isEventExpired: false,
+          }));
         } else {
           const distance = startDateTime - now;
           setCountdown({
             days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-            hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            hours: Math.floor(
+              (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            ),
             minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
             seconds: Math.floor((distance % (1000 * 60)) / 1000),
             isEventStarted: false,
-            isEventExpired: false
+            isEventExpired: false,
           });
         }
       } catch (e) {
@@ -113,16 +147,16 @@ const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime
   return (
     <div className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded flex items-center gap-1">
       <Clock className="h-3 w-3" />
-      {countdown.days > 0 ? `${countdown.days}d ` : ''}
+      {countdown.days > 0 ? `${countdown.days}d ` : ""}
       {countdown.hours}h {countdown.minutes}m {countdown.seconds}s
     </div>
   );
 };
 
 const EventsPage = () => {
-  const [selectedType, setSelectedType] = useState('All');
-  const [sortBy, setSortBy] = useState('upcoming');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState("All");
+  const [sortBy, setSortBy] = useState("upcoming");
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [allEvents, setAllEvents] = useState([]);
@@ -136,17 +170,19 @@ const EventsPage = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main');
+        const response = await fetch(
+          "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main"
+        );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch events');
+          throw new Error("Failed to fetch events");
         }
 
         const data = await response.json();
 
         if (data.success && data.cards) {
           // Transform API data to match our event structure
-          const transformedEvents = data.cards.map(card => ({
+          const transformedEvents = data.cards.map((card) => ({
             id: card.eventId,
             name: card.eventName,
             description: card.shortDescription,
@@ -154,7 +190,10 @@ const EventsPage = () => {
             location: card.location,
             time: card.eventTime,
             attendees: "Not specified", // Default since API doesn't provide
-            image: card.heroBannerImage || card.previewImage || "/images/default-event-image.png",
+            image:
+              card.heroBannerImage ||
+              card.previewImage ||
+              "/images/default-event-image.png",
             type: card.category || "General",
             status: card.isApproved ? "upcoming" : "pending",
             price: "Free", // Default since API doesn't provide
@@ -171,7 +210,7 @@ const EventsPage = () => {
         }
       } catch (err) {
         setError(err.message);
-        console.error('Error fetching events:', err);
+        console.error("Error fetching events:", err);
       } finally {
         setLoading(false);
       }
@@ -181,23 +220,32 @@ const EventsPage = () => {
   }, []);
 
   const handleAddEventClick = () => {
-    navigate('/event/select');
+    navigate("/event/select");
   };
 
   const handleCardClick = (event) => {
-    if (event.templateSelection === '1') {
+    if (event.templateSelection === "1") {
       navigate(`/event/${event.name}`);
     } else {
       navigate(`/events/${event.name}`);
     }
   };
 
-  const eventTypes = ['All', 'Expo', 'Webinar', 'Conference', 'Workshop', 'Summit', 'Trade Show', 'General'];
+  const eventTypes = [
+    "All",
+    "Expo",
+    "Webinar",
+    "Conference",
+    "Workshop",
+    "Summit",
+    "Trade Show",
+    "General",
+  ];
   const sortOptions = [
-    { value: 'upcoming', label: 'Sort by Upcoming' },
-    { value: 'past', label: 'Sort by Past Events' },
-    { value: 'name', label: 'Sort by Name' },
-    { value: 'date', label: 'Sort by Date' }
+    { value: "upcoming", label: "Sort by Upcoming" },
+    { value: "past", label: "Sort by Past Events" },
+    { value: "name", label: "Sort by Name" },
+    { value: "date", label: "Sort by Date" },
   ];
 
   // Filter and sort events
@@ -205,35 +253,36 @@ const EventsPage = () => {
     let filtered = allEvents;
 
     // Filter by event type
-    if (selectedType !== 'All') {
-      filtered = filtered.filter(event => event.type === selectedType);
+    if (selectedType !== "All") {
+      filtered = filtered.filter((event) => event.type === selectedType);
     }
 
     // Filter by search query
     if (searchQuery) {
-      filtered = filtered.filter(event =>
-        event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.location.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (event) =>
+          event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.location.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // Sort events
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'upcoming':
+        case "upcoming":
           if (a.status !== b.status) {
-            return a.status === 'upcoming' ? -1 : 1;
+            return a.status === "upcoming" ? -1 : 1;
           }
           return a.name.localeCompare(b.name);
-        case 'past':
+        case "past":
           if (a.status !== b.status) {
-            return a.status === 'past' ? -1 : 1;
+            return a.status === "past" ? -1 : 1;
           }
           return b.name.localeCompare(a.name);
-        case 'name':
+        case "name":
           return a.name.localeCompare(b.name);
-        case 'date':
+        case "date":
           return a.name.localeCompare(b.name);
         default:
           return 0;
@@ -244,36 +293,51 @@ const EventsPage = () => {
     setCurrentPage(1);
   }, [selectedType, sortBy, searchQuery, allEvents]);
 
-  const featuredEvents = allEvents.filter(event => event.featured);
+  const featuredEvents = allEvents.filter((event) => event.featured);
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+  const currentEvents = filteredEvents.slice(
+    indexOfFirstEvent,
+    indexOfLastEvent
+  );
   const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'Conference': return 'bg-black';
-      case 'Summit': return 'bg-gray-900';
-      case 'Workshop': return 'bg-gray-800';
-      case 'Expo': return 'bg-gray-700';
-      case 'Webinar': return 'bg-gray-600';
-      case 'Trade Show': return 'bg-black';
-      case 'General': return 'bg-blue-500';
-      default: return 'bg-gray-800';
+      case "Conference":
+        return "bg-black";
+      case "Summit":
+        return "bg-gray-900";
+      case "Workshop":
+        return "bg-gray-800";
+      case "Expo":
+        return "bg-gray-700";
+      case "Webinar":
+        return "bg-gray-600";
+      case "Trade Show":
+        return "bg-black";
+      case "General":
+        return "bg-blue-500";
+      default:
+        return "bg-gray-800";
     }
   };
 
   const getPriceColor = (price) => {
     switch (price) {
-      case 'Free': return 'bg-green-500';
-      case 'Paid': return 'bg-blue-500';
-      case 'Premium': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
+      case "Free":
+        return "bg-green-500";
+      case "Paid":
+        return "bg-blue-500";
+      case "Premium":
+        return "bg-yellow-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getStatusColor = (status) => {
-    return status === 'upcoming' ? 'bg-green-500' : 'bg-gray-500';
+    return status === "upcoming" ? "bg-green-500" : "bg-gray-500";
   };
 
   if (loading) {
@@ -292,7 +356,9 @@ const EventsPage = () => {
       <div className="min-h-screen bg-yellow-400 pt-16 flex items-center justify-center">
         <div className="text-center">
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 max-w-md mx-auto">
-            <h3 className="text-2xl font-bold text-black mb-2">Error Loading Events</h3>
+            <h3 className="text-2xl font-bold text-black mb-2">
+              Error Loading Events
+            </h3>
             <p className="text-black/60 mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
@@ -309,31 +375,30 @@ const EventsPage = () => {
   return (
     <div className="min-h-screen bg-yellow-400 pt-16">
       {/* Hero Section */}
-      <section className="py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 relative overflow-hidden">
+      <section className="mx-auto max-w-7xl overflow-hidden relative sm:px-6 lg:px-8 py-8 flex md:flex-row flex-col justify-between items-center md:items-start">
         <div className="absolute inset-0">
           <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200/30 rounded-full animate-pulse blur-2xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-600/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
+          <div
+            className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-600/20 rounded-full animate-pulse blur-2xl"
+            style={{ animationDelay: "2s" }}
+          ></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div className="text-center md:text-left">
           <h1 className="text-2xl md:text-5xl font-black text-black mb-2 tracking-tight">
             Events Calendar
           </h1>
-          <p className="text-xl text-black/80 max-w-2xl mx-auto mb-4">
+          <p className="mb-4 max-w-2xl mt-[15px] text-sm md:text-xl text-black/80">
             Discover amazing events from our community
           </p>
-          <div className="w-24 h-1 bg-black mx-auto rounded-full mb-6"></div>
         </div>
 
-        {/* "List your Event" button */}
-        <div className="absolute top-4 right-10 z-10 pointer-events-auto">
-          <button
-            onClick={handleAddEventClick}
-            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-red-600 transition duration-300"
-          >
-            List your Event
-          </button>
-        </div>
+        <button
+          onClick={handleAddEventClick}
+          className="px-6 h-12 text-sm font-semibold text-white bg-black rounded-lg transition duration-300 hover:bg-gray-800"
+        >
+          List your Event
+        </button>
       </section>
 
       {/* Filter Section */}
@@ -353,44 +418,49 @@ const EventsPage = () => {
             </div>
 
             {/* Event Type Filter */}
-            <div className="relative">
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="w-48 appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-yellow-400 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300"
-              >
-                {eventTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type === 'All' ? 'All Event Types' : type}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-yellow-60 pointer-events-none" />
-            </div>
+            <div className="flex gap-3">
+              <div className="relative">
+                <select
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="w-48 appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-yellow-400 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300"
+                >
+                  {eventTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type === "All" ? "All Event Types" : type}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-yellow-60 pointer-events-none" />
+              </div>
 
-            {/* Sort Options */}
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/yellow-400 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-72"
-              >
-                {sortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
+              {/* Sort Options */}
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/yellow-400 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-72"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
+              </div>
             </div>
           </div>
 
           {/* Active Filters Display */}
           <div className="mt-2 flex flex-wrap gap-2">
-            {selectedType !== 'All' && (
+            {selectedType !== "All" && (
               <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
                 Type: {selectedType}
-                <button onClick={() => setSelectedType('All')} className="hover:text-white transition-colors duration-200 text-sm">
+                <button
+                  onClick={() => setSelectedType("All")}
+                  className="hover:text-white transition-colors duration-200 text-sm"
+                >
                   ×
                 </button>
               </span>
@@ -398,7 +468,10 @@ const EventsPage = () => {
             {searchQuery && (
               <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
                 Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="hover:text-white transition-colors duration-200 text-sm">
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="hover:text-white transition-colors duration-200 text-sm"
+                >
                   ×
                 </button>
               </span>
@@ -422,7 +495,7 @@ const EventsPage = () => {
                   className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 border-2 border-black/20 hover:border-black/40"
                   style={{
                     animationDelay: `${index * 200}ms`,
-                    animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`
+                    animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`,
                   }}
                 >
                   <div className="relative overflow-hidden">
@@ -432,13 +505,20 @@ const EventsPage = () => {
                       className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110 border-b-2 border-black/10"
                     />
 
-                    <div className={`absolute top-4 right-4 ${getTypeColor(event.type)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg`}>
+                    <div
+                      className={`absolute top-4 right-4 ${getTypeColor(
+                        event.type
+                      )} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg`}
+                    >
                       {event.type}
                     </div>
 
                     {/* Countdown Timer - Bottom Right */}
                     <div className="absolute bottom-4 right-4">
-                      <EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} />
+                      <EventCountdown
+                        eventDate={event.eventDate}
+                        eventTime={event.eventTime}
+                      />
                     </div>
 
                     {event.featured && (
@@ -448,7 +528,11 @@ const EventsPage = () => {
                       </div>
                     )}
 
-                    <div className={`absolute bottom-4 left-4 ${getPriceColor(event.price)} text-white px-2 py-1 rounded-lg text-xs font-medium`}>
+                    <div
+                      className={`absolute bottom-4 left-4 ${getPriceColor(
+                        event.price
+                      )} text-white px-2 py-1 rounded-lg text-xs font-medium`}
+                    >
                       {event.price}
                     </div>
                   </div>
@@ -457,7 +541,9 @@ const EventsPage = () => {
                     <h3 className="text-xl font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300">
                       {event.name}
                     </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+                    <p className="text-gray-600 mb-4 line-clamp-2">
+                      {event.description}
+                    </p>
 
                     <div className="space-y-2">
                       <div className="flex items-center text-gray-600 text-sm">
@@ -497,8 +583,12 @@ const EventsPage = () => {
             <div className="text-center py-16">
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto">
                 <Search className="h-16 w-16 text-black/40 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-black mb-2">No events found</h3>
-                <p className="text-black/60">Try adjusting your filters or search terms</p>
+                <h3 className="text-2xl font-bold text-black mb-2">
+                  No events found
+                </h3>
+                <p className="text-black/60">
+                  Try adjusting your filters or search terms
+                </p>
               </div>
             </div>
           ) : (
@@ -510,7 +600,7 @@ const EventsPage = () => {
                   className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 border-2 border-black/20 hover:border-black/40"
                   style={{
                     animationDelay: `${index * 100}ms`,
-                    animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
+                    animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`,
                   }}
                 >
                   <div className="p-3">
@@ -521,11 +611,19 @@ const EventsPage = () => {
                         className="w-full h-40 object-cover transition-all duration-700 group-hover:scale-110"
                       />
 
-                      <div className={`absolute top-3 right-3 ${getTypeColor(event.type)} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg`}>
+                      <div
+                        className={`absolute top-3 right-3 ${getTypeColor(
+                          event.type
+                        )} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg`}
+                      >
                         {event.type}
                       </div>
 
-                      <div className={`absolute bottom-3 left-3 ${getPriceColor(event.price)} text-white px-2 py-1 rounded-lg text-xs font-medium`}>
+                      <div
+                        className={`absolute bottom-3 left-3 ${getPriceColor(
+                          event.price
+                        )} text-white px-2 py-1 rounded-lg text-xs font-medium`}
+                      >
                         {event.price}
                       </div>
                     </div>
@@ -535,7 +633,9 @@ const EventsPage = () => {
                     <h3 className="text-lg font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2">
                       {event.name}
                     </h3>
-                    <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{event.description}</p>
+                    <p className="text-gray-600 mb-3 line-clamp-2 text-sm">
+                      {event.description}
+                    </p>
 
                     <div className="space-y-1 text-xs">
                       <div className="flex items-center text-gray-600">
@@ -552,7 +652,10 @@ const EventsPage = () => {
                       </div>
                       {/* Countdown Timer - Bottom Right */}
                       <div className="absolute bottom-3 right-3">
-                        <EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} />
+                        <EventCountdown
+                          eventDate={event.eventDate}
+                          eventTime={event.eventTime}
+                        />
                       </div>
                     </div>
                   </div>
@@ -566,7 +669,9 @@ const EventsPage = () => {
             <div className="flex justify-center mt-12">
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                   className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >
@@ -575,27 +680,42 @@ const EventsPage = () => {
 
                 {[...Array(totalPages)].map((_, index) => {
                   const page = index + 1;
-                  if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                  if (
+                    page === currentPage ||
+                    page === 1 ||
+                    page === totalPages ||
+                    (page >= currentPage - 1 && page <= currentPage + 1)
+                  ) {
                     return (
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${page === currentPage
-                          ? 'bg-black text-yellow-400 border-2 border-black'
-                          : 'bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40'
-                          }`}
+                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                          page === currentPage
+                            ? "bg-black text-yellow-400 border-2 border-black"
+                            : "bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40"
+                        }`}
                       >
                         {page}
                       </button>
                     );
-                  } else if (page === currentPage - 2 || page === currentPage + 2) {
-                    return <span key={page} className="px-2 text-black/60">...</span>;
+                  } else if (
+                    page === currentPage - 2 ||
+                    page === currentPage + 2
+                  ) {
+                    return (
+                      <span key={page} className="px-2 text-black/60">
+                        ...
+                      </span>
+                    );
                   }
                   return null;
                 })}
 
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   disabled={currentPage === totalPages}
                   className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >
