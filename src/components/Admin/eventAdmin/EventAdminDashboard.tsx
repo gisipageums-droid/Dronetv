@@ -707,14 +707,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onStatusFilterChange(option.value)}
                 className={`px-3 py-2 text-xs font-medium rounded-lg border transition-colors flex items-center justify-center gap-1 ${statusFilter === option.value
-                    ? option.value === "under_review"
-                      ? "bg-yellow-100 border-yellow-300 text-yellow-800"
-                      : option.value === "approved"
-                        ? "bg-green-100 border-green-300 text-green-800"
-                        : option.value === "rejected"
-                          ? "bg-red-100 border-red-300 text-red-800"
-                          : "bg-gray-100 border-gray-300 text-gray-800"
-                    : "bg-white/50 border-yellow-200/50 hover:bg-gray-50 text-gray-700"
+                  ? option.value === "under_review"
+                    ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                    : option.value === "approved"
+                      ? "bg-green-100 border-green-300 text-green-800"
+                      : option.value === "rejected"
+                        ? "bg-red-100 border-red-300 text-red-800"
+                        : "bg-gray-100 border-gray-300 text-gray-800"
+                  : "bg-white/50 border-yellow-200/50 hover:bg-gray-50 text-gray-700"
                   }`}
               >
                 {option.label === "Needs Review" && (
@@ -1199,8 +1199,15 @@ const EventAdminDashboard: React.FC = () => {
         "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
       );
       const data = await response.json();
-      setEvents(data?.cards || []);
-      setRecentEvents(data?.cards.sort((a, b) => a.createdAt - b.createdAt).slice(0, 6));
+      const fetchedEvents = data?.cards || [];
+      setEvents(fetchedEvents);
+
+      // Sort by creation date descending (latest first)
+      const sortedByDate = [...fetchedEvents].sort((a: Event, b: Event) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+
+      setRecentEvents(sortedByDate.slice(0, 6));
     } catch (error) {
       console.error("Error fetching events:", error);
     } finally {
