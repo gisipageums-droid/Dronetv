@@ -2301,6 +2301,7 @@ export default function EditableFooter({
   userId,
   publishedId,
   templateSelection,
+  footersData,
 }) {
   // Character limits - applied from your requirements
   const CHAR_LIMITS = {
@@ -2336,15 +2337,20 @@ export default function EditableFooter({
         title: "Company",
         links: [
           { id: 1, text: "About Us", href: "#about" },
-          { id: 2, text: "Our Team", href: "#team" },
-          { id: 3, text: "Careers", href: "#careers" },
-          { id: 4, text: "News & Press", href: "#news" },
+          { id: 2, text: "Profile", href: "#profile" },
+          { id: 3, text: "Blog", href: "#blog" },
+          { id: 4, text: "Gallery", href: "#gallery" },
         ],
       },
       {
         id: 2,
         title: "Services",
-        links: [
+        links: footersData?.services
+          ? footersData.services.map((service, index) => ({
+              id: index + 1,
+              text: service.title,
+              href: "#services",
+            })): [
           { id: 1, text: "Consulting", href: "#consulting" },
           { id: 2, text: "Development", href: "#development" },
           { id: 3, text: "Support & Maintenance", href: "#support" },

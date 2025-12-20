@@ -224,6 +224,7 @@ export default function App() {
         userId={AIGenData?.userId}
         publishedId={AIGenData?.publishedId}
         templateSelection={AIGenData?.templateSelection}
+        footersData={AIGenData?.content?.services}
       />
     </div>
   );
