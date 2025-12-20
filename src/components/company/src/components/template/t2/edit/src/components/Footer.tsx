@@ -124,8 +124,7 @@ export default function Footer({
         links: [
           { id: 1, text: "About Us", href: "#about" },
           { id: 2, text: "Our Team", href: "#team" },
-          { id: 3, text: "Careers", href: "#careers" },
-          { id: 4, text: "News & Press", href: "#news" },
+          { id: 3, text: "Products", href: "#product" },
         ],
       },
       {
