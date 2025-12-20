@@ -346,11 +346,12 @@ const EventTemplate1: React.FC = () => {
         }
 
         const data = await response.json();
-
+                
         // Set both AIGenData and finalTemplate similar to App.tsx
         setFinalTemplate(data.data);
         setAIGenData(data.data);
-
+        console.log(data.data);
+        
         // Initialize component states with fetched data or default values
         if (data.data.content) {
           setComponentStates({

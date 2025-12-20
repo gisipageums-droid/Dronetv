@@ -1300,7 +1300,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
         <div className="opacity-0 animate-[fadeIn_1s_ease-out_0.2s_forwards]">
           {/* Header */}
           <div className="text-center mb-16 relative transform translate-y-12 animate-[slideUp_0.8s_ease-out_0.4s_forwards]">
-            <div className="absolute top-0 right-0 px-4 py-2 flex items-center gap-2">
+            <div className="absolute -top-16 lg:top-0 right-0 px-4 py-2 flex items-center gap-2">
               {isEditing ? (
                 <>
                   {/* Auto-save indicator */}

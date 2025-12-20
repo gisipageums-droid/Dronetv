@@ -2963,15 +2963,15 @@ export default function EditableFooter({
               <div className="flex items-center justify-start md:justify-start space-x-3 mb-4">
                 <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400 ">
                   <div className="relative">
-                    <img
+                    {/* <img
                       src={isEditing ? tempData.brand.logoUrl : footerData.brand.logoUrl}
                       alt="Logo"
                       className="w-[40px] h-[40px] rounded-xl scale-110"
                       style={{
                         filter: isEditing ? "brightness(0.7)" : "none",
                       }}
-                    />
-                    {isEditing && (
+                    /> */}
+                    {/* {isEditing && (
                       <div className="mt-2 flex items-center gap-2">
                         <Button
                           size="sm"
@@ -2987,7 +2987,7 @@ export default function EditableFooter({
                           </span>
                         )}
                       </div>
-                    )}
+                    )} */}
                     <input
                       type="file"
                       ref={fileInputRef}

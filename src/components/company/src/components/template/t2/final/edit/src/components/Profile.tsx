@@ -1585,13 +1585,13 @@ const Profile = ({
           )}
 
           {/* Director Prefix Info (Non-edit mode) */}
-          {!isEditing && directorPrefix && (
+          {/* {!isEditing && directorPrefix && (
             <div className="text-center mb-6">
               <p className="text-sm text-gray-500">
                 Director: {getPrefixDisplayName(directorPrefix)}
               </p>
             </div>
-          )}
+          )} */}
 
           <div className="text-center mb-16">
             {isEditing ? (

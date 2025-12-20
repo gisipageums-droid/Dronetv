@@ -497,7 +497,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         submissionId: AIGenData.eventId,
       };
       const response = await fetch(
-        `https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/prod/events-publish/${AIGenData.userId}/${AIGenData.eventId}`,
+        // `https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/prod/events-publish/${AIGenData.userId}/${AIGenData.eventId}`,
+        "https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/dev/events-publish/event-publish",
         {
           method: "POST",
           headers: {

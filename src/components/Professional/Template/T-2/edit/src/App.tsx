@@ -145,7 +145,7 @@ console.log("user name", AIGenData.user_name);
   console.log('Clients content in App.tsx:', componentStates.clientsContent); // Specific debug for clients
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 overflow-hidden">
       <Header
         onDarkModeToggle={handleDarkModeToggle}
         headerData={componentStates.headerContent}

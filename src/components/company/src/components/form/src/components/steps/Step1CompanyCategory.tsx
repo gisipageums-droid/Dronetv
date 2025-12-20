@@ -1908,7 +1908,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         </div>
       </FormStep>
 
-      {/* Email Verification Modal */}
+      {/* Email Verification Modal
       {showEmailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
           <div className="w-full max-w-md p-6 bg-white rounded-lg">
@@ -1988,7 +1988,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

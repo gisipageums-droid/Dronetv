@@ -75,11 +75,11 @@ export default function Footer({ content }) {
           >
             <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
               <span className="flex flex-row items-center gap-2 text-xl font-bold text-yellow-400">
-                <img
+                {/* <img
                   src={footerData.brand.logoUrl || logo}
                   alt="Logo"
                   className="w-[50px] h-[50px] rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
-                />
+                /> */}
                 {footerData.brand.name}
               </span>
             </div>
