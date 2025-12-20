@@ -99,7 +99,7 @@ export default function Contact({ content, publishedId }) {
         </div>
 
         {/* Main Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1  gap-8">
           {/* Left: Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -254,7 +254,7 @@ export default function Contact({ content, publishedId }) {
             </div> */}
 
             {/* Consultation Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 text-center">
+            {/* <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 text-center">
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Ready to Get Started?
               </h4>
@@ -264,7 +264,7 @@ export default function Contact({ content, publishedId }) {
               <Button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-300">
                 Book Free Consultation
               </Button>
-            </div>
+            </div> */}
           </motion.div>
         </div>
       </div>

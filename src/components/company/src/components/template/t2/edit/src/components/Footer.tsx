@@ -150,8 +150,7 @@ export default function Footer({
         links: [
           { id: 1, text: "Blog", href: "#blog" },
           { id: 2, text: "Gallery", href: "#gallery" },
-          { id: 3, text: "Privacy Policy", href: "#privacy" },
-          { id: 4, text: "Terms of Service", href: "#terms" },
+
         ],
       },
     ],

@@ -41,6 +41,7 @@ export default function Header({
       "Gallery",
       "Blog",
       "Testimonials",
+      "Contact",
     ],
   });
 
