@@ -1994,7 +1994,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   return (
     <section id="testimonials" className="py-20 bg-white dark:bg-gray-900">
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="absolute top-0 right-0 px-4 py-2 flex items-center gap-2">
+        <div className="absolute -top-16 lg:top-0 right-0 px-4 py-2 flex items-center gap-2">
           {isEditMode ? (
             <>
               {/* Auto-save indicator */}

@@ -1223,7 +1223,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
     >
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Edit Mode Toggle */}
-        <div className="absolute top-0 right-0 flex items-center gap-2">
+        <div className="absolute -top-16 lg:top-0 right-0 flex items-center gap-2">
           {isEditMode ? (
             <>
               {/* Auto-save indicator */}

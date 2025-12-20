@@ -1251,9 +1251,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
         // Check if this project already exists (by title to prevent duplicates)
         const projectExists = projectContent.projects.some(
-          (p) =>
-            p.title.trim().toLowerCase() ===
-            currentProject.title.trim().toLowerCase()
+          (p) => p.title.trim().toLowerCase() === currentProject.title.trim().toLowerCase()
         );
 
         if (!projectExists) {
@@ -1554,9 +1552,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
     // Check if project with same title already exists
     const projectExists = projectContent.projects.some(
-      (p) =>
-        p.title.trim().toLowerCase() ===
-        currentProject.title.trim().toLowerCase()
+      (p) => p.title.trim().toLowerCase() === currentProject.title.trim().toLowerCase()
     );
 
     if (projectExists) {
@@ -1834,7 +1830,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
             variants={itemVariants}
             className="relative mb-16 text-center"
           >
-            <div className="flex absolute top-0 right-0 gap-2 items-center">
+            <div className="flex absolute -top-16 lg:top-0 right-0 gap-2 items-center">
               {isEditing ? (
                 <>
                   {/* Auto-save indicator */}
@@ -1886,7 +1882,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
             {isEditing && (
               <button
                 onClick={startAddingProject}
-                className="absolute top-0 right-28 p-3 text-white bg-blue-500 rounded-full transition-colors hover:bg-blue-600"
+                className="absolute -top-16 lg:top-0 right-28 p-3 text-white bg-blue-500 rounded-full transition-colors hover:bg-blue-600"
                 title="Add New Project"
               >
                 <Plus className="w-6 h-6" />
