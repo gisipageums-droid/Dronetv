@@ -48,7 +48,7 @@ const defaultSpeakersData: SpeakersDataContent = {
           "id": 1,
           "avatar": "",
           "title": "Designation",
-          "prefix": "mr"
+          "prefix": "Mr."
         }
       ]
     },
@@ -74,9 +74,9 @@ const AVATAR_DIMENSIONS = { width: 200, height: 200 }; // Fixed size for speaker
 // Helper function to get prefix display text - MOVED TO MODULE SCOPE
 const getPrefixDisplay = (prefix: string | undefined): string => {
   switch (prefix) {
-    case 'mr': return 'Mr.';
-    case 'mrs': return 'Mrs.';
-    case 'ms': return 'Ms.';
+    case 'Mr.': return 'Mr.';
+    case 'Mrs.': return 'Mrs.';
+    case 'Ms.': return 'Ms.';
     default: return '';
   }
 };
@@ -187,13 +187,13 @@ const SpeakerCard = memo(
               {/* Prefix Dropdown */}
               <div>
                 <select
-                  value={editForm.prefix || speaker.prefix || 'mr'}
+                  value={editForm.prefix || speaker.prefix || 'Mr.'}
                   onChange={(e) => onFormChange({ ...editForm, prefix: e.target.value })}
                   className="w-full px-3 py-2 text-sm md:text-base border rounded-lg bg-white"
                 >
-                  <option value="mr">Mr.</option>
-                  <option value="mrs">Mrs.</option>
-                  <option value="ms">Ms.</option>
+                  <option value="Mr.">Mr.</option>
+                  <option value="Mrs.">Mrs.</option>
+                  <option value="Ms.">Ms.</option>
                 </select>
               </div>
 
@@ -757,7 +757,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                 ? { 
                     ...editForm, 
                     avatar: editForm.avatar || sp.avatar,
-                    prefix: editForm.prefix || sp.prefix || 'mr'
+                    prefix: editForm.prefix || sp.prefix || 'Mr.'
                   } as Speaker
                 : sp
             )
@@ -809,7 +809,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
       title: '',
       company: '',
       avatar: '',
-      prefix: 'mr'
+      prefix: 'Mr.'
     };
 
     const updatedSpeakers = speakers.map((day, dIndex) =>

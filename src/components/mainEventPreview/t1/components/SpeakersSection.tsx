@@ -44,7 +44,7 @@ const defaultSpeakersData: SpeakersDataContent = {
           "id": 1,
           "avatar": "",
           "title": "Designation",
-          "prefix": "mr"
+          "prefix": "Mr."
         }
       ]
     },
@@ -67,9 +67,9 @@ const defaultSpeakersData: SpeakersDataContent = {
 // Helper function to get prefix display text
 const getPrefixDisplay = (prefix: string | undefined): string => {
   switch (prefix) {
-    case 'mr': return 'Mr.';
-    case 'mrs': return 'Mrs.';
-    case 'ms': return 'Ms.';
+    case 'Mr.': return 'Mr.';
+    case 'Mrs.': return 'Mrs.';
+    case 'Ms.': return 'Ms.';
     default: return '';
   }
 };
