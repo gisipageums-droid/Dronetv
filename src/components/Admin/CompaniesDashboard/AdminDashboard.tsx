@@ -235,7 +235,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
       ${
         isMobileSidebarOpen
-          ? "fixed inset-0 z-50 w-full overflow-y-auto bg-orange-50"
+          ? "fixed top-11 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
       }`}
     >
