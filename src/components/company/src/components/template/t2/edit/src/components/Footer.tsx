@@ -123,7 +123,7 @@ export default function Footer({
         title: "Company",
         links: [
           { id: 1, text: "About Us", href: "#about" },
-          { id: 2, text: "Our Team", href: "#team" },
+          { id: 2, text: "Our Team", href: "#our-team" },
           { id: 3, text: "Products", href: "#product" },
         ],
       },
