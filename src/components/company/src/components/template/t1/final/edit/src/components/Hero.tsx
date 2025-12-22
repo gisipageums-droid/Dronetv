@@ -492,7 +492,7 @@ export default function EditableHero({
             />
           )}
           {maxLength && (
-            <div className="absolute top-full left-0 mt-1 text-xs text-gray-300 whitespace-nowrap">
+            <div className=" mt-1 text-xs text-gray-300 whitespace-nowrap">
               {(value?.length ?? 0)}/{maxLength}
             </div>
           )}
