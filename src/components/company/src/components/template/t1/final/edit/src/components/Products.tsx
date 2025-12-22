@@ -928,7 +928,7 @@ export default function EditableProducts({
                 onChange={(val) => updateSectionField("sectionTitle", val)}
                 className="text-4xl font-bold mb-2"
                 placeholder="Section Title"
-                maxLength={35}
+                maxLength={100}
               />
             ) : (
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
