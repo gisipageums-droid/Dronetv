@@ -741,10 +741,10 @@ const apiService = {
     }
   },
 
-  async fetchCompanyCredentials(publishedId: string): Promise<any> {
+  async fetchCompanyCredentials(draftId: string, userId: string): Promise<any> {
     try {
       const response = await fetch(
-        `https://xe9l3knwqi.execute-api.ap-south-1.amazonaws.com/prod/admin/form-details/${publishedId}`
+        `https://xe9l3knwqi.execute-api.ap-south-1.amazonaws.com/dev/js?draftId=${draftId}&userId=${userId}`
       );
 
       if (!response.ok) {
@@ -1217,7 +1217,7 @@ const AdminDashboard: React.FC = () => {
         return;
       }
       setIsMutating(true);
-      const credentials = await apiService.fetchCompanyCredentials(publishedId);
+      const credentials = await apiService.fetchCompanyCredentials(company.draftId, company.userId);
       setCredentialsModal({ isOpen: true, data: credentials, company });
     } catch (err) {
       console.error("Error fetching company credentials:", err);

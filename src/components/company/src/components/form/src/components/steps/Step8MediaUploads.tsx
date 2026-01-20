@@ -980,7 +980,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
   }>();
 
   // ✅ Move useUserAuth to component level
-  const { user, isLogin, accountEmail } = useUserAuth();
+  const { user, isLogin, accountEmail, isAdminLogin } = useUserAuth();
 
   const location = useLocation();
 
@@ -990,7 +990,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
   const publicId = isDraftLink ? pathParts[1] : null;
   const userIdFromUrl = isDraftLink ? pathParts[2] : null;
   const draftId = isDraftLink ? pathParts[3] : null;
-  const useremail = user?.userData?.email;
+  const useremail = user?.email || user?.userData?.email;
 
   // ✅ Handle individual file upload (immediate upload on file selection)
   const handleFileUpload = async (file: File, fieldName: string) => {
@@ -1043,6 +1043,11 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
     try {
       setUploadStatus("Validating user tokens...");
+
+      if (isAdminLogin) {
+        return true;
+      }
+
       const tokenResult = await validateUserTokens(userEmail);
 
       if (!tokenResult.success || tokenResult.tokenBalance < 100) {
@@ -1169,11 +1174,16 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       setUploadStatus("Form submitted successfully!");
       setUploadProgress(100);
 
-      // Clear any locally saved draft now that submission succeeded
+      // Clear all locally saved data now that submission succeeded
       try {
         localStorage.removeItem("companyFormDraft");
+        localStorage.removeItem("verifiedGSTData");
+        localStorage.removeItem("gstSectionData");
+        localStorage.removeItem("digi_client_token");
+        localStorage.removeItem("digi_state");
+        console.log("✅ All form data cleared from localStorage after successful submission");
       } catch (e) {
-        console.error("Failed to clear local draft after submit", e);
+        console.error("Failed to clear local data after submit", e);
       }
 
       setTimeout(() => {
@@ -1200,9 +1210,8 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         if (data?.error?.includes("DynamoDB")) {
           errorMessage += `Database Error: ${data.error}`;
         } else {
-          errorMessage += `Server error (${status}): ${
-            data?.message || data?.error || "Unknown error"
-          }`;
+          errorMessage += `Server error (${status}): ${data?.message || data?.error || "Unknown error"
+            }`;
         }
       } else if (error.request) {
         console.error("No response received:", error.request);
@@ -1344,9 +1353,8 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           onDragOver={handleDragOver}
           onDragEnter={handleDragOver}
           onDragLeave={handleDragLeave}
-          className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-slate-400 transition-colors ${getStatusColor()} ${
-            isDragging ? "border-blue-400 bg-blue-50" : ""
-          }`}
+          className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-slate-400 transition-colors ${getStatusColor()} ${isDragging ? "border-blue-400 bg-blue-50" : ""
+            }`}
           aria-label={`${label} upload dropzone`}
         >
           <Upload className="w-8 h-8 mx-auto mb-2 text-slate-400" />
@@ -1354,8 +1362,8 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             {isDragging
               ? "Drop file here to upload"
               : isUploaded
-              ? `File uploaded: ${uploadedFile.fileName} (${uploadedFile.sizeMB}MB)`
-              : "Click to upload or drag and drop"}
+                ? `File uploaded: ${uploadedFile.fileName} (${uploadedFile.sizeMB}MB)`
+                : "Click to upload or drag and drop"}
           </p>
           <p className="mb-3 text-xs text-slate-500">{accept}</p>
 
@@ -1397,22 +1405,21 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           />
           <label
             htmlFor={`upload-${label.replace(/\s+/g, "-").toLowerCase()}`}
-            className={`inline-block px-4 py-2 rounded-lg cursor-pointer transition-colors ${
-              isUploading || status === "uploading"
-                ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                : isUploaded
+            className={`inline-block px-4 py-2 rounded-lg cursor-pointer transition-colors ${isUploading || status === "uploading"
+              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+              : isUploaded
                 ? "bg-green-600 text-white hover:bg-green-700"
                 : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+              }`}
           >
             {status === "uploading"
               ? "Uploading..."
               : isUploaded
-              ? "Re-upload File"
-              : "Choose File"}
+                ? "Re-upload File"
+                : "Choose File"}
           </label>
         </div>
-      </div>
+      </div >
     );
   };
 

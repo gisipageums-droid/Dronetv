@@ -122,9 +122,10 @@ export default function Footer({
         id: 1,
         title: "Company",
         links: [
-          { id: 1, text: "About Us", href: "#about" },
-          { id: 2, text: "Our Team", href: "#our-team" },
-          { id: 3, text: "Products", href: "#product" },
+          { id: 1, text: "Home", href: "#home" },
+          { id: 2, text: "About Us", href: "#about" },
+          { id: 3, text: "Our Team", href: "#our-team" },
+          { id: 4, text: "Products", href: "#product" },
         ],
       },
       {
@@ -132,16 +133,16 @@ export default function Footer({
         title: "Services",
         links: footerData?.services
           ? footerData.services.map((service, index) => ({
-              id: index + 1,
-              text: service.title,
-              href: "#services",
-            }))
+            id: index + 1,
+            text: service.title,
+            href: "#services",
+          }))
           : [
-              { id: 1, text: "Consulting", href: "#consulting" },
-              { id: 2, text: "Development", href: "#development" },
-              { id: 3, text: "Support & Maintenance", href: "#support" },
-              { id: 4, text: "Training", href: "#training" },
-            ],
+            { id: 1, text: "Consulting", href: "#consulting" },
+            { id: 2, text: "Development", href: "#development" },
+            { id: 3, text: "Support & Maintenance", href: "#support" },
+            { id: 4, text: "Training", href: "#training" },
+          ],
       },
       {
         id: 3,
@@ -149,6 +150,8 @@ export default function Footer({
         links: [
           { id: 1, text: "Blog", href: "#blog" },
           { id: 2, text: "Gallery", href: "#gallery" },
+          { id: 3, text: "testimonials", href: "#testimonial" },
+          { id: 4, text: "Our clients", href: "#clients" },
 
         ],
       },
@@ -362,7 +365,7 @@ export default function Footer({
         if (s3Url) {
           // Update with actual S3 URL
           updateBrand("logoUrl", s3Url);
-          
+
           // Update main content as well
           setFooterContent((prev) => ({
             ...prev,
@@ -410,10 +413,10 @@ export default function Footer({
 
     try {
       setIsAutoSaving(true);
-      
+
       // Upload pending logo first if exists
       let finalLogoUrl = tempContent.brand.logoUrl;
-      
+
       if (pendingLogoRef.current?.file) {
         try {
           const s3Url = await uploadImageToS3(pendingLogoRef.current.file);
@@ -652,7 +655,7 @@ export default function Footer({
                   <span className="text-xs text-gray-600">Unsaved changes</span>
                 )}
               </div>
-              
+
               {/* Manual Save button from Footer1.tsx */}
               <Button
                 onClick={handleSave}
@@ -770,7 +773,7 @@ export default function Footer({
                 </p>
               )}
 
-           
+
             </motion.div>
 
             {/* Dynamic Sections - From Footer1.tsx */}

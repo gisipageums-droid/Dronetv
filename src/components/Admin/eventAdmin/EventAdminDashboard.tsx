@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from "motion/react";
 // -------------------- Types --------------------
 interface Event {
   heroBannerImage: string | undefined;
+  draftId: string;
   eventId: string;
   userId: string;
   submissionId: string;
@@ -56,72 +57,107 @@ interface Event {
 
 interface EventCredentialsData {
   success: boolean;
-  eventId: string;
-  draftId: string;
-  debug: {
-    message: string;
-    draftRecordKeys: string[];
-    publishedRecordKeys: string[];
-    draftRecordRaw: {
-      publishedEventId: string;
-      updatedAt: string;
-      userId: string;
-      status: string;
-      submissionId: string;
+  submissionId: string;
+  data: {
+    basicEventInformation: {
+      eventDetails: {
+        eventTitle: string;
+        eventTagline: string;
+        eventDescription: string;
+      };
+      dateAndTime: {
+        startDate: string;
+        endDate: string;
+        startTime: string;
+        endTime: string;
+      };
+      venueInformation: {
+        venueName: string;
+        venueAddress: string;
+      };
+      organizer: string;
+      countdownSettings: {
+        countdownEnabled: boolean;
+        countdownTargetDate: string;
+      };
     };
-    publishedRecordRaw: {
-      content: {
-        heroContent: {
-          eventTime: string;
-          eventName: string;
-          tagline: string;
-          location: string;
-          heroImage: string;
-          category: string;
-          eventDate: string;
+    highlightsAndCTAs: {
+      highlights: { highlightText: string }[];
+      ctaButtons: any[];
+    };
+    sectionsAndZones: {
+      sections: { title: string; description: string }[];
+      zones: { description: string; zoneTitle: string }[];
+    };
+    speakersThemesAndPartners: {
+      speakers: {
+        name: string;
+        sequence: number;
+        designation: string;
+        day: string;
+        prefix: string;
+        organization: string;
+      }[];
+      themes: {
+        day: string;
+        details: string;
+        themeTitle: string;
+      }[];
+      partners: {
+        partnerName: string;
+        logo: string;
+        organization: string;
+      }[];
+    };
+    mediaContactsAndPublishing: {
+      media: {
+        heroBanner: {
+          uploaded: boolean;
+          mediaType: string;
+          fileName: string;
+          uploading: boolean;
+          mediaUrl: string;
+          error: string;
         };
+        backgroundVideoUrl: string;
+        mediaGallery: {
+          uploaded: boolean;
+          mediaType: string;
+          fileName: string;
+          uploading: boolean;
+          mediaUrl: string;
+          error: string;
+        }[];
+        exhibitorInterviews: {
+          videoTitle: string;
+          videoUrl: string;
+        }[];
       };
-      metadata: {
-        adminNotes: string;
-        urlSlug: string;
-        reviewedAt: string;
-        isVisible: boolean;
-        shortDescription: string;
-        approvedAt: string;
-        lastUpdated: string;
-        createdAt: string;
-        needsAdminAction: boolean;
-        rejectedAt: string;
-        eventTime: string;
-        eventName: string;
-        location: string;
-        category: string;
-        rejectionReason: string;
-        status: string;
-        eventDate: string;
-        thumbnailUrl: string;
+      contacts: {
+        email: string;
+        phone: { phoneNumber: string }[];
+        address: string;
+        internationalContacts: any[];
       };
-      eventId: string;
-      urlSlug: string;
-      publishedAt: string;
-      templateSelection: string;
-      userId: string;
-      editHistory: {
-        createdAt: string;
-        lastModified: string;
-        lastEditBy: string;
-        version: number;
-        editCount: number;
+      socialLinks: {
+        facebook: string;
+        linkedin: string;
+        instagram: string;
       };
-      lastModified: string;
-      createdAt: string;
-      adminReview: {
-        reviewedAt: string;
-        notes: string;
-        reviewedBy: string;
-        status: string;
+      publishing: {
+        published: boolean;
+        tags: any[];
       };
+    };
+    metadata: {
       submissionId: string;
+      draftId: string;
+      userId: string;
+      eventType: string;
+      status: string;
+      createdAt: string;
+      updatedAt: string;
+      version: string;
     };
   };
 }
@@ -182,7 +218,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed top-0 left-0 right-0 bottom-0 z-[999999999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -253,9 +289,19 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
   onClose,
   data,
 }) => {
-  if (!isOpen || !data) return null;
+  if (!isOpen || !data || !data.data) return null;
+
+  const {
+    basicEventInformation,
+    highlightsAndCTAs,
+    sectionsAndZones,
+    speakersThemesAndPartners,
+    mediaContactsAndPublishing,
+    metadata,
+  } = data.data;
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
     try {
       return new Date(dateString).toLocaleDateString("en-US", {
         year: "numeric",
@@ -265,11 +311,36 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
         minute: "2-digit",
       });
     } catch {
-      return "Invalid Date";
+      return dateString;
     }
   };
 
-  const publishedData = data.debug.publishedRecordRaw;
+  const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+    <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2 mb-4 mt-2">
+      {children}
+    </h3>
+  );
+
+  const InfoField = ({
+    label,
+    value,
+    isLong = false,
+  }: {
+    label: string;
+    value: string | number | undefined | null | boolean;
+    isLong?: boolean;
+  }) => (
+    <div className={`mb-3 ${isLong ? "col-span-full" : ""}`}>
+      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+        {label}
+      </label>
+      <div className="text-sm text-gray-900 bg-gray-50 p-2.5 rounded-lg border border-gray-200 break-words">
+        {value?.toString() || (
+          <span className="text-gray-400 italic">Not provided</span>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <AnimatePresence>
@@ -282,268 +353,243 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
           onClick={onClose}
         >
           <motion.div
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50/50">
               <div className="flex items-center gap-3">
-                <Key className="w-6 h-6 text-purple-600" />
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Event Credentials & Details
-                </h2>
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Key className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Event Details & Credentials
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Viewing details for {basicEventInformation.eventDetails.eventTitle}
+                  </p>
+                </div>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                aria-label="Close modal"
+                className="p-2 rounded-lg hover:bg-gray-200/80 transition-colors text-gray-500 hover:text-gray-700"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Content */}
-            <div className="p-6 space-y-6">
-              {/* Basic Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                    Basic Information
-                  </h3>
+            {/* Modal Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+              {/* 1. Basic Information */}
+              <div className="mb-8">
+                <SectionTitle>Basic Information</SectionTitle>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <InfoField
+                    label="Event Title"
+                    value={basicEventInformation.eventDetails.eventTitle}
+                  />
+                  <InfoField
+                    label="Organizer"
+                    value={basicEventInformation.organizer}
+                  />
+                  <InfoField
+                    label="Submission ID"
+                    value={data.submissionId}
+                  />
+                  <InfoField
+                    label="Tagline"
+                    value={basicEventInformation.eventDetails.eventTagline}
+                    isLong
+                  />
+                  <InfoField
+                    label="Description"
+                    value={basicEventInformation.eventDetails.eventDescription}
+                    isLong
+                  />
+                </div>
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Event Name
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                      {publishedData.metadata.eventName}
-                    </p>
-                  </div>
+              {/* 2. Date, Time & Venue */}
+              <div className="mb-8">
+                <SectionTitle>Date, Time & Venue</SectionTitle>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <InfoField
+                    label="Start Date"
+                    value={basicEventInformation.dateAndTime.startDate}
+                  />
+                  <InfoField
+                    label="End Date"
+                    value={basicEventInformation.dateAndTime.endDate}
+                  />
+                  <InfoField
+                    label="Start Time"
+                    value={basicEventInformation.dateAndTime.startTime}
+                  />
+                  <InfoField
+                    label="End Time"
+                    value={basicEventInformation.dateAndTime.endTime}
+                  />
+                  <InfoField
+                    label="Venue Name"
+                    value={basicEventInformation.venueInformation.venueName}
+                  />
+                  <InfoField
+                    label="Venue Address"
+                    value={basicEventInformation.venueInformation.venueAddress}
+                    isLong
+                  />
+                  <InfoField
+                    label="Countdown Target"
+                    value={basicEventInformation.countdownSettings.countdownTargetDate?.replace("T", " ")}
+                  />
+                </div>
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Event Date & Time
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                      {formatDate(publishedData.metadata.eventDate)} at{" "}
-                      {publishedData.metadata.eventTime}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Location
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                      {publishedData.metadata.location}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Category
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                      {publishedData.metadata.category}
-                    </p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                {/* 3. Sections */}
+                <div>
+                  <SectionTitle>Sections</SectionTitle>
+                  <div className="space-y-3">
+                    {sectionsAndZones.sections.map((section, idx) => (
+                      <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <h4 className="font-semibold text-gray-800 text-sm">{section.title}</h4>
+                        <p className="text-xs text-gray-600 mt-1 whitespace-pre-wrap">{section.description}</p>
+                      </div>
+                    ))}
+                    {sectionsAndZones.sections.length === 0 && <p className="text-sm text-gray-500 italic">No sections added.</p>}
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                    Technical Details
-                  </h3>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Event ID
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border font-mono">
-                      {data.eventId}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      User ID
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border font-mono">
-                      {publishedData.userId}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Submission ID
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border font-mono">
-                      {publishedData.submissionId}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Template
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                      {publishedData.templateSelection}
-                    </p>
+                {/* 4. Zones */}
+                <div>
+                  <SectionTitle>Zones</SectionTitle>
+                  <div className="space-y-3">
+                    {sectionsAndZones.zones.map((zone, idx) => (
+                      <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <h4 className="font-semibold text-gray-800 text-sm">{zone.zoneTitle}</h4>
+                        <p className="text-xs text-gray-600 mt-1 whitespace-pre-wrap">{zone.description}</p>
+                      </div>
+                    ))}
+                    {sectionsAndZones.zones.length === 0 && <p className="text-sm text-gray-500 italic">No zones added.</p>}
                   </div>
                 </div>
               </div>
 
-              {/* Timeline Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                    Timeline
-                  </h3>
-
+              {/* 5. Speakers & Themes */}
+              <div className="mb-8">
+                <SectionTitle>Speakers & Partners</SectionTitle>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Speakers */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Created At
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                      {formatDate(publishedData.createdAt)}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Last Modified
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                      {formatDate(publishedData.lastModified)}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Published At
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                      {formatDate(publishedData.publishedAt)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                    Review Status
-                  </h3>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Current Status
-                    </label>
-                    <p
-                      className={`text-sm font-medium p-2 rounded border ${publishedData.metadata.status === "approved"
-                        ? "text-green-800 bg-green-100 border-green-200"
-                        : publishedData.metadata.status === "rejected"
-                          ? "text-red-800 bg-red-100 border-red-200"
-                          : "text-yellow-800 bg-yellow-100 border-yellow-200"
-                        }`}
-                    >
-                      {publishedData.metadata.status?.toUpperCase() ||
-                        "UNDER REVIEW"}
-                    </p>
-                  </div>
-
-                  {publishedData.metadata.adminNotes && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Admin Notes
-                      </label>
-                      <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border">
-                        {publishedData.metadata.adminNotes}
-                      </p>
+                    <h4 className="text-sm font-semibold text-gray-700 uppercase mb-3">Speakers</h4>
+                    <div className="space-y-3">
+                      {speakersThemesAndPartners.speakers.map((speaker, idx) => (
+                        <div key={idx} className="flex gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                          <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold shrink-0">
+                            {speaker.name[0]?.toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-gray-900">{speaker.prefix} {speaker.name}</p>
+                            <p className="text-xs text-gray-600">{speaker.designation} at {speaker.organization}</p>
+                            <span className="inline-block mt-1 px-2 py-0.5 bg-gray-200 text-gray-700 text-[10px] rounded-full">Day {speaker.day}</span>
+                          </div>
+                        </div>
+                      ))}
+                      {speakersThemesAndPartners.speakers.length === 0 && <p className="text-sm text-gray-500 italic">No speakers added.</p>}
                     </div>
-                  )}
+                  </div>
 
-                  {publishedData.metadata.rejectionReason && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Rejection Reason
-                      </label>
-                      <p className="text-sm text-red-700 bg-red-50 p-2 rounded border">
-                        {publishedData.metadata.rejectionReason}
-                      </p>
+                  {/* Partners */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 uppercase mb-3">Partners</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {speakersThemesAndPartners.partners.map((partner, idx) => (
+                        <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-100 flex flex-col items-center text-center">
+                          {partner.logo && (
+                            <img src={partner.logo} alt={partner.partnerName} className="w-12 h-12 object-contain mb-2 rounded-md" />
+                          )}
+                          <p className="text-sm font-bold text-gray-900">{partner.partnerName}</p>
+                          <p className="text-xs text-gray-600 truncate w-full">{partner.organization}</p>
+                        </div>
+                      ))}
+                      {speakersThemesAndPartners.partners.length === 0 && <p className="text-sm text-gray-500 italic">No partners added.</p>}
                     </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Edit History */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                  Edit History
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Version
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border text-center">
-                      v{publishedData.editHistory.version}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Edit Count
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border text-center">
-                      {publishedData.editHistory.editCount}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Last Edited By
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border text-center">
-                      {publishedData.editHistory.lastEditBy}
-                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* URLs */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                  URLs & Media
-                </h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      URL Slug
-                    </label>
-                    <p className="text-sm text-gray-900 bg-gray-50 p-2 rounded border font-mono">
-                      {publishedData.urlSlug}
-                    </p>
+
+              {/* 6. Media & Contact */}
+              <div className="mb-8">
+                <SectionTitle>Media & Contact</SectionTitle>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <InfoField
+                      label="Contact Email"
+                      value={mediaContactsAndPublishing.contacts.email}
+                    />
+                    <InfoField
+                      label="Contact Address"
+                      value={mediaContactsAndPublishing.contacts.address}
+                      isLong
+                    />
+                    {mediaContactsAndPublishing.contacts.phone.map((p, i) => (
+                      <InfoField key={i} label={`Phone ${i + 1}`} value={p.phoneNumber} />
+                    ))}
                   </div>
-                  {publishedData.metadata.thumbnailUrl && (
+                  <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Thumbnail URL
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Hero Banner
                       </label>
-                      <p className="text-sm text-blue-600 bg-gray-50 p-2 rounded border font-mono truncate">
-                        {publishedData.metadata.thumbnailUrl}
-                      </p>
+                      {mediaContactsAndPublishing.media.heroBanner.mediaUrl ? (
+                        <a href={mediaContactsAndPublishing.media.heroBanner.mediaUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-32 rounded-lg bg-gray-100 overflow-hidden relative group">
+                          <img src={mediaContactsAndPublishing.media.heroBanner.mediaUrl} alt="Hero Banner" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <Eye className="text-white drop-shadow-md" />
+                          </div>
+                        </a>
+                      ) : (
+                        <div className="w-full h-24 bg-gray-50 border border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm">
+                          No Hero Banner
+                        </div>
+                      )}
                     </div>
-                  )}
+                    {/* Social Links */}
+                    <div className="grid grid-cols-3 gap-2">
+                      <InfoField label="Facebook" value={mediaContactsAndPublishing.socialLinks.facebook || "-"} />
+                      <InfoField label="LinkedIn" value={mediaContactsAndPublishing.socialLinks.linkedin || "-"} />
+                      <InfoField label="Instagram" value={mediaContactsAndPublishing.socialLinks.instagram || "-"} />
+                    </div>
+                  </div>
                 </div>
               </div>
+
+
+              {/* 7. Metadata */}
+              <div className="mb-4">
+                <SectionTitle>System Metadata</SectionTitle>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                  <InfoField label="Created At" value={formatDate(metadata.createdAt)} />
+                  <InfoField label="Updated At" value={formatDate(metadata.updatedAt)} />
+                  <InfoField label="Status" value={metadata.status} />
+                  <InfoField label="Draft ID" value={metadata.draftId} />
+                </div>
+              </div>
+
             </div>
 
             {/* Modal Footer */}
-            <div className="flex justify-end items-center p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end">
               <button
                 onClick={onClose}
-                className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
               >
-                Close
+                Close Details
               </button>
             </div>
           </motion.div>
@@ -928,7 +974,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
             </button>
 
             <button
-              onClick={() => onCredentials(event.eventId)}
+              onClick={() => onCredentials(event.draftId)}
               className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg transition-colors hover:bg-purple-200 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
               aria-label={`Credentials ${event.eventName}`}
               disabled={disabled}

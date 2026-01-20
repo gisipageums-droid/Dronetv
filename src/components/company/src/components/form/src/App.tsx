@@ -13,48 +13,102 @@ import { toast } from "react-toastify";
 
 // ---- initial form state ----
 const initialFormData: FormData = {
+  // Company Information
   companyCategory: [],
   companyName: "",
   yearEstablished: "",
-  //  directorGender: "",
-  directorPrefix:"",
-  altContactGender: "",
+  websiteUrl: "",
+  promoCode: "",
+
+  // Basic Information (from Aadhar verification)
+  fullName: "",
+  dateOfBirth: "",
+  gender: "",
+  relationshipType: "",
+  relationshipName: "",
+  basicAddress: "",
+  basicCity: "",
+  basicPostalCode: "",
+  basicCountry: "",
+  basicState: "",
+
+  // Aadhar Verification
+  aadharNumber: "",
+  aadharVerified: false,
+  aadharConsentAccepted: false,
+
+  // PAN Information
+  panNumber: "",
+
+  // GST Verification
+  legalName: "",
+  gstin: "",
+  gstAddress: "",
+  communicationAddress: "",
+  sameAsRegisteredAddress: false,
+  businessField: "",
+  natureOfBusiness: "",
+  cin: "",
+  udyamRegistrationNumber: "",
+
+  // Director/MD Information
+  directorPrefix: undefined,
   directorName: "",
+  directorAddress: "",
   directorPhone: "",
   directorEmail: "",
+
+  // Alternative Contact
+  altContactGender: undefined,
   altContactName: "",
   altContactPhone: "",
   altContactEmail: "",
-  websiteUrl: "",
-  companyProfileLink: "",
-  promoVideoFiveMinUrl: "",
-  promoVideoOneMinUrl: "",
-  officeAddress: "",
-  city: "",
-  state: "",
-  country: "",
-  postalCode: "",
-  legalName: "",
-  gstin: "",
-  cinOrUdyamOrPan: "",
+
+  // Support Information
   supportEmail: "",
   supportContactNumber: "",
-  whatsappNumber: "",
+
+  // Social Media Links
   socialLinks: {
     linkedin: "",
     facebook: "",
     instagram: "",
     youtube: "",
     website: "",
+    pan: "",
+    twitter: "",
   },
+
+  // Address Information
+  officeAddress: "",
+  city: "",
+  state: "",
+  country: "India",
+  postalCode: "",
+
+  // Other fields
+  companyProfileLink: "",
+  promoVideoFiveMinUrl: "",
+  promoVideoOneMinUrl: "",
+  whatsappNumber: "",
   operatingHours: "",
-  promoCode: "",
-  sectorsServed: [],
-  sectorsOther: "",
+
+  sectorsServed: {
+    Drone: [],
+    AI: [],
+    GIS: []
+  },
+  sectorsOther: {
+    Drone: "",
+    AI: "",
+    GIS: ""
+  },
   mainCategories: [],
   otherMainCategories: "",
   geographyOfOperations: [],
   coverageType: "",
+
+  // Drone Categories
   manufacturingSubcategories: [],
   manufOther: "",
   dgcaTypeCertificateUrl: "",
@@ -65,6 +119,8 @@ const initialFormData: FormData = {
   rptoAuthorisationCertificateUrl: "",
   photoVideoSubcategories: [],
   photoVideoOther: "",
+
+  // AI Categories
   softwareSubcategories: [],
   softwareOther: "",
   aiSolutions: [],
@@ -73,12 +129,16 @@ const initialFormData: FormData = {
   aiProductsOther: "",
   aiServices: [],
   aiServicesOther: "",
+
+  // GIS Categories
   gnssSolutions: [],
   gnssSolutionsOther: "",
   gnssProducts: [],
   gnssProductsOther: "",
   gnssServices: [],
   gnssServicesOther: "",
+
+  // Template Content
   heroBackgroundUrl: "",
   primaryCtaText: "",
   primaryCtaLink: "",
@@ -115,6 +175,8 @@ const initialFormData: FormData = {
   footerNavLinks: [],
   newsletterEnabled: false,
   newsletterDescription: "",
+
+  // Promotion & Billing
   promoFormats: [],
   billingContactName: "",
   billingContactEmail: "",
@@ -123,11 +185,15 @@ const initialFormData: FormData = {
   paymentMethod: "",
   acceptTerms: false,
   acceptPrivacy: false,
+
+  // Media Uploads
   companyLogoUrl: "",
   brochurePdfUrl: "",
   cataloguePdfUrl: "",
   caseStudiesUrl: "",
   brandGuidelinesUrl: "",
+
+  // Template Selection
   templateId: "",
 };
 
@@ -267,14 +333,13 @@ function App() {
   function handleClick() {
     console.log("draft Details:", draftDetails);
     navigate(
-      `/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}/${
-        draftDetails.draftId
+      `/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}/${draftDetails.draftId
       }/${draftDetails.userId}`
     );
   }
 
   const templateId = location.state?.templateId;
-  initialFormData.templateSelection = templateId || "";
+  initialFormData.templateId = templateId || "";
 
   const [draftId, setDraftId] = useState<string | undefined>(undefined);
   const [selectedTemplateId, setSelectedTemplateId] =
@@ -318,40 +383,11 @@ function App() {
       toast.error("Director Email is required.");
       return false;
     }
-    // Alternative Contact required
-    if (!formData.altContactName || formData.altContactName.trim() === "") {
-      toast.error("Alternative Contact Name is required.");
-      return false;
-    }
-    if (!formData.altContactPhone || formData.altContactPhone.trim() === "") {
-      toast.error("Alternative Contact Phone is required.");
-      return false;
-    }
-    if (!formData.altContactEmail || formData.altContactEmail.trim() === "") {
-      toast.error("Alternative Contact Email is required.");
-      return false;
-    }
-    // Address Information required
-    if (!formData.officeAddress || formData.officeAddress.trim() === "") {
-      toast.error("Office Address is required.");
-      return false;
-    }
-    if (!formData.country || formData.country.trim() === "") {
-      toast.error("Country is required.");
-      return false;
-    }
-    if (!formData.state || formData.state.trim() === "") {
-      toast.error("State is required.");
-      return false;
-    }
-    if (!formData.city || formData.city.trim() === "") {
-      toast.error("City is required.");
-      return false;
-    }
-    if (!formData.postalCode || formData.postalCode.trim() === "") {
-      toast.error("Postal Code is required.");
-      return false;
-    }
+    // Alternative Contact is optional
+    // Note: Address validation removed as the form uses Communication Address in GST section
+    // and Director Address which are collected separately
+    // Country field removed - defaulting to India
+    // State, City, and Postal Code are collected from Aadhar/GST verification
     // All other fields in Company Information are optional
     // Legal Information is optional
     return true;

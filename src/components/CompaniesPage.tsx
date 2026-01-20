@@ -207,12 +207,12 @@ const CompaniesPage: React.FC = () => {
           </p>
         </div>
 
-          <button
-            onClick={() => navigate('/companies')}
-            className="px-6 h-12 text-sm font-semibold text-white bg-black rounded-lg transition duration-300 hover:bg-gray-800"
-          >
-            List your Company
-          </button>
+        <button
+          onClick={() => navigate('/companies')}
+          className="px-6 h-12 text-sm font-semibold text-white bg-black rounded-lg transition duration-300 hover:bg-gray-800"
+        >
+          List your Company
+        </button>
       </section>
 
       {/* Filter Section */}

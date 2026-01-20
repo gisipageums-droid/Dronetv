@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import React, { useState } from "react";
 import Template1 from '../Images/Template1.png';
 import Template2 from '../Images/Template2.png';
 
@@ -12,9 +12,11 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
+// Terms Modal Component
+
 export default function ProfessionalTemplateSelector() {
-    const [selectedTemplate, setSelectedTemplate] = useState(null);
-    const [hoveredTemplate, setHoveredTemplate] = useState(null);
+    const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
+    const [hoveredTemplate, setHoveredTemplate] = useState<number | null>(null);
     const navigate = useNavigate();
 
     const templates = [
@@ -52,12 +54,13 @@ export default function ProfessionalTemplateSelector() {
         },
     ];
 
-    const handleSelect = (id) => {
+    const handleSelect = (id: number) => {
         setSelectedTemplate(id);
         navigate("/professional/form", { state: { templateId: id } });
     };
 
-    const handlePreview = (path, e) => {
+
+    const handlePreview = (path: string, e: React.MouseEvent) => {
         e.stopPropagation();
         navigate(path);
     };

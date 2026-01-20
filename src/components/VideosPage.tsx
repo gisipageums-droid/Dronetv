@@ -206,7 +206,7 @@ const VideosPage = () => {
 
   // Initialize localStorage with a unique key and robust data handling
   const STORAGE_KEY = 'droneTV_videos_v2';
-  
+
   // Load videos from localStorage on component mount
   useEffect(() => {
     try {
@@ -256,26 +256,26 @@ const VideosPage = () => {
     if (url.includes('embed/')) {
       return url;
     }
-    
+
     // Handle watch URLs
     if (url.includes('watch?v=')) {
       const videoId = url.split('watch?v=')[1].split('&')[0];
       return `https://www.youtube.com/embed/${videoId}`;
     }
-    
+
     // Handle youtu.be URLs
     if (url.includes('youtu.be/')) {
       const videoId = url.split('youtu.be/')[1].split('?')[0];
       return `https://www.youtube.com/embed/${videoId}`;
     }
-    
+
     return url;
   };
 
   // Handle form submission
   const handleSubmitVideo = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!newVideo.title || !newVideo.description || !newVideo.videoUrl) {
       alert('Please fill in all required fields');
       return;
@@ -295,7 +295,7 @@ const VideosPage = () => {
     };
 
     setAllVideos(prev => [videoToAdd, ...prev]);
-    
+
     // Reset form
     setNewVideo({
       title: '',
@@ -304,7 +304,7 @@ const VideosPage = () => {
       category: 'Drone',
       featured: false
     });
-    
+
     setShowAddVideoForm(false);
   };
 
@@ -414,7 +414,7 @@ const VideosPage = () => {
                 <X className="h-6 w-6" />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmitVideo} className="p-6 space-y-6">
               {/* Title */}
               <div>
