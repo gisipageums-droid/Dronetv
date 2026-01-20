@@ -9,9 +9,11 @@ import {
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 
+// Terms Modal Component
+
 export default function TemplateSelector() {
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [hoveredTemplate, setHoveredTemplate] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
+  const [hoveredTemplate, setHoveredTemplate] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const templates = [
@@ -49,10 +51,11 @@ export default function TemplateSelector() {
     },
   ];
 
-  const handleSelect = (id) => {
+  const handleSelect = (id: number) => {
     setSelectedTemplate(id);
     navigate("/form", { state: { templateId: id } });
   };
+
 
   const handlePreview = (path, e) => {
     e.stopPropagation();
@@ -96,10 +99,9 @@ export default function TemplateSelector() {
                 relative flex flex-col group
                 border-2 rounded-xl p-6 cursor-pointer
                 transition-all duration-300
-                ${
-                  isActive
-                    ? "border-yellow-400 bg-yellow-50/50 shadow-lg"
-                    : "border-gray-200 hover:border-yellow-300 hover:shadow-xl"
+                ${isActive
+                  ? "border-yellow-400 bg-yellow-50/50 shadow-lg"
+                  : "border-gray-200 hover:border-yellow-300 hover:shadow-xl"
                 }
                 overflow-hidden
               `}
@@ -200,10 +202,9 @@ export default function TemplateSelector() {
                   className={`
                     flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium 
                     transition-all duration-200 flex-1
-                    ${
-                      isActive
-                        ? "bg-yellow-500 text-white shadow-md"
-                        : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                    ${isActive
+                      ? "bg-yellow-500 text-white shadow-md"
+                      : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
                     }
                   `}
                   onClick={(e) => {
@@ -213,9 +214,8 @@ export default function TemplateSelector() {
                 >
                   {isActive ? "Selected" : "Select Template"}
                   <FiArrowRight
-                    className={`w-4 h-4 transition-transform ${
-                      isActive ? "transform group-hover:translate-x-1" : ""
-                    }`}
+                    className={`w-4 h-4 transition-transform ${isActive ? "transform group-hover:translate-x-1" : ""
+                      }`}
                   />
                 </motion.button>
 
@@ -226,10 +226,9 @@ export default function TemplateSelector() {
                   className={`
                     flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium 
                     border transition-all duration-200
-                    ${
-                      isActive
-                        ? "border-yellow-400 text-yellow-600"
-                        : "border-gray-300 text-gray-600 hover:border-yellow-300 hover:text-yellow-600"
+                    ${isActive
+                      ? "border-yellow-400 text-yellow-600"
+                      : "border-gray-300 text-gray-600 hover:border-yellow-300 hover:text-yellow-600"
                     }
                   `}
                   onClick={(e) => handlePreview(tpl.path, e)}
@@ -267,6 +266,6 @@ export default function TemplateSelector() {
           selection!
         </p>
       </motion.div>
-    </div>
+    </div >
   );
 }

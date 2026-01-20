@@ -4,15 +4,33 @@ export interface FormData {
   // directorGender?: 'Mr' | 'Mrs' | 'Ms';
   directorPrefix?: 'Mr' | 'Mrs' | 'Ms';
   altContactGender?: 'Mr' | 'Mrs' | 'Ms';
-  
+
   companyCategory: string[];
+
+  // A1. Personal Information (DigiLocker)
+  aadharNumber?: string;
+  aadharVerified?: boolean;
+  panNumber?: string;
+  fullName?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  relationshipType?: string;
+  relationshipName?: string;
+  basicAddress?: string;
+  basicCity?: string;
+  basicPostalCode?: string;
+  basicState?: string;
+  basicCountry?: string;
 
   // A. Company Identity & Contacts
   companyName: string;
   yearEstablished: string;
   directorName: string;
+  directorAddress: string;
   directorPhone: string;
   directorEmail: string;
+  directorLinkedin?: string;
+  directorTwitter?: string;
   altContactName: string;
   altContactPhone: string;
   altContactEmail: string;
@@ -31,6 +49,22 @@ export interface FormData {
   supportEmail?: string;
   supportContactNumber?: string;
   whatsappNumber?: string;
+
+  // GST Verification fields
+  gstVerified?: boolean;
+  gstCompanyName?: string;
+  gstLegalName?: string;
+  gstAddress?: string;
+  gstState?: string;
+  gstPincode?: string;
+  gstRegistrationDate?: string;
+  gstBusinessType?: string;
+  gstPan?: string;
+  communicationAddress?: string;
+  sameAsRegisteredAddress?: boolean;
+  cin?: string;
+  udyamRegistrationNumber?: string;
+
   socialLinks: {
     linkedin?: string;
     facebook?: string;
@@ -47,15 +81,15 @@ export interface FormData {
 
   // B. Sectors Served
   sectorsServed: {
-  Drone: [],
-  AI: [],
-  GIS: []
-}
-sectorsOther: {
-  Drone: "",
-  AI: "",
-  GIS: ""
-}
+    Drone: [],
+    AI: [],
+    GIS: []
+  }
+  sectorsOther: {
+    Drone: "",
+    AI: "",
+    GIS: ""
+  }
 
   // C. Business Categories & Coverage
   mainCategories: string[];
@@ -65,9 +99,9 @@ sectorsOther: {
 
   // edtemporarily
   // subCategories:string[];
-  subCategories?: { [key: string]: string[] }; 
+  subCategories?: { [key: string]: string[] };
   // subSubCategories:string[]
-subSubCategories?: { [subCategory: string]: string[] };
+  subSubCategories?: { [subCategory: string]: string[] };
 
 
 

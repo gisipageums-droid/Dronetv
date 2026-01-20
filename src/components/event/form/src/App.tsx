@@ -470,7 +470,7 @@
 //       console.log("Template from prefill:", data.templateSelection);
 //       console.log("Template from state:", templateIdFromState);
 //       console.log("Final template id:", templateId);
-      
+
 //       navigate(
 //         `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
 //       );
@@ -852,7 +852,7 @@
 //           );
 //           const eventData = await res.json();
 //           setFormLoader(false);
-          
+
 //           // Store submission ID for updates
 //           if (eventData.submissionId || eventData.draftId) {
 //             localStorage.setItem(
@@ -1360,7 +1360,7 @@
 //           );
 //           const eventData = await res.json();
 //           setFormLoader(false);
-          
+
 //           // Store submission ID for updates
 //           if (eventData.submissionId || eventData.draftId) {
 //             localStorage.setItem(
@@ -1830,7 +1830,7 @@ function EventsForm() {
   const admin = true;
 
   const location = useLocation();
-  
+
   const navigate = useNavigate();
   const [formLoader, setFormLoader] = useState(true);
 
@@ -1851,7 +1851,7 @@ function EventsForm() {
           );
           const eventData = await res.json();
           setFormLoader(false);
-          
+
           // Store submission ID for updates
           if (eventData.submissionId || eventData.draftId) {
             localStorage.setItem(
@@ -1888,7 +1888,7 @@ function EventsForm() {
   // Token validation before submission - FIXED VERSION
   const validateBeforeSubmit = async (): Promise<boolean> => {
     // Get email from proper source based on login status
-    const userEmail = isLogin ? user?.userData?.email : data.contactInfo?.email;
+    const userEmail = isLogin ? (user?.email || user?.userData?.email) : data.contactInfo?.email;
 
     // If user is not logged in AND no email in form data, don't validate tokens
     if (!isLogin && !data.contactInfo?.email) {
@@ -1900,6 +1900,9 @@ function EventsForm() {
 
     // If we have an email (either from logged in user or form data), validate tokens
     if (userEmail) {
+      if (isAdminLogin) {
+        return true;
+      }
       try {
         const tokenResult = await validateUserTokens(userEmail);
 
@@ -1941,7 +1944,7 @@ function EventsForm() {
 
     setLoading(true);
     setSuccess(false);
-    
+
     // Get email for submission - same logic as validation
     const email = isLogin ? user?.userData?.email : data.contactInfo?.email;
 
@@ -1974,31 +1977,31 @@ function EventsForm() {
     //   };
 
     try {
-  // Use existing submissionId (if editing) or generate a new one
-  const finalSubmissionId = submissionId || Date.now();
-  
-  // Generate unique eventId starting with "event-"
-  const eventId = `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  
-  // Generate unique draftId starting with "draft-"
-  const draftId = `draft-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // Use existing submissionId (if editing) or generate a new one
+      const finalSubmissionId = submissionId || Date.now();
 
-  const payload = {
-    userId: email,
-    eventId: eventId,
-    submissionId: finalSubmissionId,
-    draftId: draftId,
-    aiTriggeredAt: Date.now(),
-    formData: data,
-    mediaLinks: {},
-    uploadedFiles: {},
-    processingMethod: "separate_upload",
-    status: "ai_processing",
-    updatedAt: Date.now(),
-    templateSelection: location.state?.templateId,
-    version: "1.0",
-    eventType: "conference",
-  };
+      // Generate unique eventId starting with "event-"
+      const eventId = `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      // Generate unique draftId starting with "draft-"
+      const draftId = `draft-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      const payload = {
+        userId: email,
+        eventId: eventId,
+        submissionId: finalSubmissionId,
+        draftId: draftId,
+        aiTriggeredAt: Date.now(),
+        formData: data,
+        mediaLinks: {},
+        uploadedFiles: {},
+        processingMethod: "separate_upload",
+        status: "ai_processing",
+        updatedAt: Date.now(),
+        templateSelection: location.state?.templateId,
+        version: "1.0",
+        eventType: "conference",
+      };
 
       console.log("Event submission payload:", payload);
 
@@ -2032,7 +2035,7 @@ function EventsForm() {
       // Navigate to event preview/edit page
       setTimeout(() => {
         // navigate(`/event/edit/${finalSubmissionId}/${emil}`);
-        navigate(`/edit/event/${response.details.templateSelection==1?"t1":"t2"}/AIgen/${response.draftId}/${response.userId}`);
+        navigate(`/edit/event/${response.details.templateSelection == 1 ? "t1" : "t2"}/AIgen/${response.draftId}/${response.userId}`);
       }, 30000);
     } catch (err) {
       console.error(err);
@@ -2090,22 +2093,20 @@ function EventsForm() {
               <div key={s.id} className="flex items-center">
                 <button
                   onClick={() => goTo(index)}
-                  className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-                    index === current
-                      ? "bg-black text-yellow-200 shadow"
-                      : index < current
+                  className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${index === current
+                    ? "bg-black text-yellow-200 shadow"
+                    : index < current
                       ? "bg-yellow-200 text-black hover:bg-black-300"
                       : "bg-yellow-100 text-gray-600 hover:bg-yellow-300"
-                  }`}
+                    }`}
                 >
                   <div
-                    className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${
-                      index === current
-                        ? "bg-yellow-400 text-black"
-                        : index < current
+                    className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${index === current
+                      ? "bg-yellow-400 text-black"
+                      : index < current
                         ? "bg-yellow-400 text-white"
                         : "bg-gray-300 text-black"
-                    }`}
+                      }`}
                   >
                     {index + 1}
                   </div>
@@ -2136,8 +2137,8 @@ function EventsForm() {
               </div>
             </div>
           )}
-        </div>
-      </div>
+        </div >
+      </div >
 
       <div className="max-w-4xl mx-auto p-6 space-y-6 relative">
         {/* Admin Button */}

@@ -1301,7 +1301,7 @@
 //         // For now, we'll just update the local state
 //         setFooterData(data);
 //         setHasUnsavedChanges(false);
-        
+
 //         // Show auto-save notification
 //         toast.success("Changes saved automatically", {
 //           position: "bottom-right",
@@ -1429,7 +1429,7 @@
 //       setCropModalOpen(false);
 //       setImageToCrop(null);
 //       setOriginalFile(null);
-      
+
 //       toast.success("Logo uploaded successfully");
 //     } catch (error) {
 //       console.error("Error uploading image:", error);
@@ -2336,10 +2336,10 @@ export default function EditableFooter({
         id: 1,
         title: "Company",
         links: [
+          { id: 0, text: "Home", href: "#home" },
           { id: 1, text: "About Us", href: "#about" },
           { id: 2, text: "Profile", href: "#profile" },
-          { id: 3, text: "Blog", href: "#blog" },
-          { id: 4, text: "Gallery", href: "#gallery" },
+          { id: 5, text: "Product", href: "#Product" },
         ],
       },
       {
@@ -2347,14 +2347,25 @@ export default function EditableFooter({
         title: "Services",
         links: footersData?.services
           ? footersData.services.map((service, index) => ({
-              id: index + 1,
-              text: service.title,
-              href: "#services",
-            })): [
-          { id: 1, text: "Consulting", href: "#consulting" },
-          { id: 2, text: "Development", href: "#development" },
-          { id: 3, text: "Support & Maintenance", href: "#support" },
-          { id: 4, text: "Training", href: "#training" },
+            id: index + 1,
+            text: service.title,
+            href: "#services",
+          })) : [
+            { id: 1, text: "Consulting", href: "#consulting" },
+            { id: 2, text: "Development", href: "#development" },
+            { id: 3, text: "Support & Maintenance", href: "#support" },
+            { id: 4, text: "Training", href: "#training" },
+          ],
+      },
+      {
+        id: 3,
+        title: "Resources",
+        links: [
+          { id: 0, text: "Gallery", href: "#Gallery" },
+          { id: 1, text: "Blog", href: "#Blog" },
+          { id: 2, text: "Testimonials", href: "#Testimonials" },
+          { id: 3, text: "Contact", href: "#Contact" },
+
         ],
       },
     ],
@@ -2567,7 +2578,7 @@ export default function EditableFooter({
         if (s3Url) {
           // Update with actual S3 URL
           updateBrand("logoUrl", s3Url);
-          
+
           // Update main content as well
           setFooterData((prev) => ({
             ...prev,
@@ -2629,10 +2640,10 @@ export default function EditableFooter({
 
     try {
       setIsAutoSaving(true);
-      
+
       // Upload pending logo first if exists
       let finalLogoUrl = tempData.brand.logoUrl;
-      
+
       if (pendingLogoRef.current?.file) {
         try {
           const s3Url = await uploadImageToS3(pendingLogoRef.current.file);
@@ -2924,7 +2935,7 @@ export default function EditableFooter({
                   <span className="text-xs text-gray-600">Unsaved changes</span>
                 )}
               </div>
-              
+
               {/* Manual Save button */}
               <Button
                 onClick={handleSave}
@@ -2955,7 +2966,7 @@ export default function EditableFooter({
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-12 relative">
           {/* Main Footer Content */}
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 text-left"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-left"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"

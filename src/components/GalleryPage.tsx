@@ -11,7 +11,7 @@ const GalleryPage = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [showAddImageModal, setShowAddImageModal] = useState(false);
   const isInitialLoad = useRef(true);
-  
+
   // Form state
   const [formData, setFormData] = useState({
     title: '',
@@ -26,10 +26,10 @@ const GalleryPage = () => {
 
   const imagesPerPage = 24;
   const categories = ['All', 'Events', 'Collaborations', 'Conferences', 'Interviews', 'Product Launches', 'Team Photos'];
-  
+
   // Default images - these are the initial images
   const defaultImages = [
-     {
+    {
       id: 1,
       src: "/images/1.jpg",
       title: "Tech Innovations Showcase",
@@ -557,16 +557,16 @@ const GalleryPage = () => {
 
   // localStorage management
   const STORAGE_KEY = 'droneTV_gallery_images_v3';
-  
+
   // Load images from localStorage on component mount
   useEffect(() => {
     const loadImagesFromStorage = () => {
       try {
         const savedImages = localStorage.getItem(STORAGE_KEY);
-        
+
         if (savedImages) {
           const parsedImages = JSON.parse(savedImages);
-          
+
           if (Array.isArray(parsedImages) && parsedImages.length > 0) {
             // Use saved images if they exist
             setAllImages(parsedImages);
@@ -583,7 +583,7 @@ const GalleryPage = () => {
         // On error, fall back to default images
         setAllImages(defaultImages);
       }
-      
+
       // Set initial load flag to false after loading
       isInitialLoad.current = false;
     };
@@ -607,10 +607,10 @@ const GalleryPage = () => {
   // Get current date in readable format
   const getCurrentDate = () => {
     const now = new Date();
-    return now.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return now.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -697,7 +697,7 @@ const GalleryPage = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    
+
     // Validate required fields
     if (!formData.title.trim() || !formData.description.trim() || !formData.imagePreview) {
       alert('Please fill in all required fields (Title, Description) and upload an image.');
@@ -851,7 +851,7 @@ const GalleryPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {currentImages.map((image, index) => {
                   const globalIndex = indexOfFirstImage + index;
-                  
+
                   return (
                     <div
                       key={image.id}

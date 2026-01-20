@@ -10,7 +10,8 @@ interface SubCategory {
 interface FormStore {
   basicInfo: Record<string, any>;
   addressInformation: Record<string, any>;
-  alternateContact: Record<string, any>;  
+  communicationAddress: Record<string, any>; // Add this
+  alternateContact: Record<string, any>;
   socialMediaLinks: Record<string, any>;
   categories: string[];
   // subcategories: string[];
@@ -22,10 +23,10 @@ interface FormStore {
   media: any[];
   // resume: string | null;
   resume: any[]; // array of documents
-   templateSelection: string | number; // <-- add this
+  templateSelection: string | number; // <-- add this
   //  templateSelection: string // <-- add this
 
-  
+
 }
 
 
@@ -33,9 +34,9 @@ interface FormStore {
 interface FormContextType {
   data: FormStore;
 
-   setData: React.Dispatch<React.SetStateAction<FormStore>>;
-  
-   updateField: (key: keyof FormStore, value: any) => void;
+  setData: React.Dispatch<React.SetStateAction<FormStore>>;
+
+  updateField: (key: keyof FormStore, value: any) => void;
   addArrayItem: (key: 'projects' | 'services', item: any) => void;
   removeArrayItem: (key: 'projects' | 'services', index: number) => void;
 
@@ -48,8 +49,9 @@ const FormContext = createContext<FormContextType | undefined>(undefined);
 const initialFormData: FormStore = {
   basicInfo: {},
   addressInformation: {},
-  alternateContact: {},   
-  socialMediaLinks: {},   
+  communicationAddress: {}, // Add this
+  alternateContact: {},
+  socialMediaLinks: {},
   categories: [],
   subcategories: [],
   skills: [],
@@ -104,10 +106,10 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
   // const resetForm = () => setData(initialFormData); // 👈 resets all fields
 
   console.log("Form Data:", data);
- 
+
 
   return (
-    <FormContext.Provider value={{ data,setData, updateField, addArrayItem, removeArrayItem }}>
+    <FormContext.Provider value={{ data, setData, updateField, addArrayItem, removeArrayItem }}>
       {children}
     </FormContext.Provider>
   );

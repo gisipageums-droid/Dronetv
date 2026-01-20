@@ -572,7 +572,7 @@ const EventsPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl md:text-4xl font-black text-black">
-              All Events 
+              All Events
             </h2>
             <div className="text-black/60">
               Page {currentPage} of {totalPages}
@@ -690,11 +690,10 @@ const EventsPage = () => {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                          page === currentPage
+                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${page === currentPage
                             ? "bg-black text-yellow-400 border-2 border-black"
                             : "bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40"
-                        }`}
+                          }`}
                       >
                         {page}
                       </button>

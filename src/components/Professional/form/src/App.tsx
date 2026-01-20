@@ -138,7 +138,7 @@ const TokenValidationModal: React.FC<{
 
 function AppInner() {
   const { isLogin, user, isAdminLogin } = useUserAuth();
-  const { current, next, prev, goTo } = useFormSteps(7); // 6 steps + summary
+  const { current, next, prev } = useFormSteps(7); // 6 steps + summary
   const [steps, setSteps] = useState<any[]>([]);
   const [resumeData, setResumeData] = useState(null);
   const { data, setData, updateField } = useForm(); //update field ive added for prefill
@@ -164,7 +164,7 @@ function AppInner() {
   const location = useLocation();
   const navigate = useNavigate();
   const templateIdFromState = location.state?.templateId;
-
+  console.log("templateIdFromState", templateIdFromState);
   const [formLoader, setFormLoader] = useState(true);
 
   useEffect(() => {
@@ -238,13 +238,15 @@ function AppInner() {
     loadForm();
   }, [userId, professionalId, setData]);
 
-  const draftId = `draft-${Date.now()}`;
 
   // ================== Token validation before submission =================
   const validateBeforeSubmit = async (): Promise<boolean> => {
-    const userEmail = isLogin ? user?.userData?.email : data.basicInfo?.email;
+    const userEmail = isLogin ? (user?.email || user?.userData?.email) : (data.addressInformation?.email || data.basicInfo?.email);
 
     try {
+      if (isAdminLogin) {
+        return true;
+      }
       const tokenResult = await validateUserTokens(userEmail);
 
       if (!tokenResult.success || tokenResult.tokenBalance < 100) {
@@ -279,7 +281,7 @@ function AppInner() {
 
     setLoading(true);
     setSuccess(false);
-    const email = isLogin ? user?.userData?.email : data.basicInfo?.email;
+    const email = isLogin ? user?.userData?.email : (data.addressInformation?.email || data.basicInfo?.email);
 
     try {
       const finalSubmissionId = submissionId || `draft-${Date.now()}`;
@@ -386,12 +388,12 @@ function AppInner() {
             {steps.slice(0, 6).map((s: any, index: number) => (
               <div key={s.id} className="flex items-center">
                 <button
-                  onClick={() => goTo(index)}
+                  // onClick={() => goTo(index)}
                   className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${index === current
-                    ? "bg-black text-yellow-200 shadow"
+                    ? "bg-black text-yellow-200 shadow hover:cursor-default"
                     : index < current
-                      ? "bg-yellow-200 text-black hover:bg-black-300"
-                      : "bg-yellow-100 text-gray-600 hover:bg-yellow-300"
+                      ? "bg-yellow-200 text-black hover:bg-black-300 hover:cursor-default"
+                      : "bg-yellow-100 text-gray-600 hover:bg-yellow-300 hover:cursor-default"
                     }`}
                 >
                   <div
