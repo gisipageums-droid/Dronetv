@@ -1058,7 +1058,6 @@ const GSTVerificationSection: React.FC<{
   panNumber, onPanChange, panName, onPanNameChange, panDob, onPanDobChange, onVerifyPAN, isVerifyingPAN, isPANVerified
 }) => {
     const [localConsent, setLocalConsent] = useState(false);
-    const [showGSTField, setShowGSTField] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
 
     const formatGSTNumber = (value: string) => {
@@ -1076,14 +1075,7 @@ const GSTVerificationSection: React.FC<{
     const handleConsentChange = (checked: boolean) => {
       setLocalConsent(checked);
       if (!checked) {
-        setShowGSTField(false);
         setShowConsentDetails(false);
-      }
-    };
-
-    const handleFillDetailsClick = () => {
-      if (localConsent) {
-        setShowGSTField(true);
       }
     };
 
@@ -1215,43 +1207,29 @@ const GSTVerificationSection: React.FC<{
               <p className="text-slate-600 text-sm mt-0.5">Automatically fill your company details using GST Portal</p>
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <div className="flex items-start space-x-2">
-                <div className="flex items-center h-5 mt-0.5">
-                  <input
-                    id="gst-consent-checkbox"
-                    type="checkbox"
-                    checked={localConsent}
-                    onChange={(e) => handleConsentChange(e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label htmlFor="gst-consent-checkbox" className="text-sm text-slate-800 cursor-pointer">
-                    I consent to GST verification
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowConsentDetails(true)}
-                    className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center mt-1 text-left"
-                  >
-                    View consent details
-                    <ChevronDown className="w-3 h-3 ml-1" />
-                  </button>
-                </div>
+            <div className="flex items-start space-x-2">
+              <div className="flex items-center h-5 mt-0.5">
+                <input
+                  id="gst-consent-checkbox"
+                  type="checkbox"
+                  checked={localConsent}
+                  onChange={(e) => handleConsentChange(e.target.checked)}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer"
+                />
               </div>
-
-              <button
-                onClick={handleFillDetailsClick}
-                type="button"
-                disabled={!localConsent || isVerified}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap ${localConsent && !isVerified
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-                  : 'bg-blue-300 text-white cursor-not-allowed'
-                  }`}
-              >
-                Fill GST Details
-              </button>
+              <div className="flex flex-col">
+                <label htmlFor="gst-consent-checkbox" className="text-sm text-slate-800 cursor-pointer">
+                  I consent to GST verification
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowConsentDetails(true)}
+                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center mt-1 text-left"
+                >
+                  View consent details
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </button>
+              </div>
             </div>
 
             {/* Consent Details Modal */}
@@ -1261,7 +1239,7 @@ const GSTVerificationSection: React.FC<{
             />
           </div>
 
-          {(showGSTField || isVerified) && (
+          {(localConsent || isVerified) && (
             <div className="flex-1 md:max-w-xs">
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-slate-700">
