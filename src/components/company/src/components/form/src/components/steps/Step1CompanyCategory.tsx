@@ -914,8 +914,8 @@ const CombinedAadharSection: React.FC<{
           />
         </div>
 
-        {/* RIGHT SIDE: Aadhar Number Input - Only shown when DigiLocker button is clicked and not verified */}
-        {showAadharField && !isVerified && (
+        {/* COMMENTED OUT: Aadhar Number Input - User requested to remove input field but keep button for DigiLocker redirect */}
+        {/* {showAadharField && !isVerified && (
           <div className="flex-1 md:max-w-xs">
             <div className="space-y-2">
               <label className="block text-xs font-medium text-slate-700">
@@ -934,7 +934,7 @@ const CombinedAadharSection: React.FC<{
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Show Aadhar number display when verified */}
         {isVerified && (
