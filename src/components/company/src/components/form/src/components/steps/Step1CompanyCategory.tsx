@@ -907,6 +907,22 @@ const CombinedAadharSection: React.FC<{
             </button>
           </div>
 
+          {/* Helper text for Aadhar verification */}
+          {!isVerified && localConsent && (
+            <div className="mt-3">
+              <p className="text-[10px] text-blue-600">
+                Click "Fill Aadhar Details" to redirect to DigiLocker for secure verification.
+              </p>
+            </div>
+          )}
+          {!isVerified && !localConsent && (
+            <div className="mt-3">
+              <p className="text-[10px] text-blue-600">
+                Please select the consent checkbox to enable Aadhar verification.
+              </p>
+            </div>
+          )}
+
           {/* Consent Details Modal */}
           <ConsentModal
             isOpen={showConsentDetails}
@@ -1080,6 +1096,8 @@ const GSTVerificationSection: React.FC<{
     };
 
     const isValidFormat = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gstNumber);
+    const isValidLength = gstNumber.length === 15;
+    const isValidGST = isValidFormat && isValidLength;
 
     // Load verified GST data from localStorage on component mount (excluding GST number)
     React.useEffect(() => {
@@ -1200,14 +1218,65 @@ const GSTVerificationSection: React.FC<{
           )}
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-6">
-          <div className="flex-1">
-            <div className="mb-3">
-              <h3 className="font-semibold text-slate-900 text-base">Verify Through GST</h3>
-              <p className="text-slate-600 text-sm mt-0.5">Automatically fill your company details using GST Portal</p>
+        <div className="space-y-6">
+          <div className="mb-4">
+            <h3 className="font-semibold text-slate-900 text-base">Verify Through GST</h3>
+            <p className="text-slate-600 text-sm mt-0.5">Automatically fill your company details using GST Portal</p>
+          </div>
+
+          {/* GST Input Section */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="block text-xs font-medium text-slate-700">
+                GST Number {isVerified ? <span className="text-green-600">✓</span> : <span className="text-red-500">*</span>}
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={gstNumber}
+                  onChange={(e) => handleChange(e.target.value)}
+                  placeholder="22AAAAA0000A1Z5"
+                  disabled={isVerified}
+                  className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
+                    ? 'border-green-300 bg-green-50'
+                    : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
+                    }`}
+                  maxLength={15}
+                />
+                {!isVerified && (
+                  <button
+                    type="button"
+                    onClick={handleVerifyClick}
+                    disabled={isVerifying || !isValidGST || !localConsent}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center ${
+                      isValidGST && localConsent && !isVerifying
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-blue-300 text-white cursor-not-allowed'
+                    }`}
+                  >
+                    {isVerifying ? (
+                      <>
+                        <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                        Verifying...
+                      </>
+                    ) : (
+                      "Verify"
+                    )}
+                  </button>
+                )}
+              </div>
+              {!isVerified && !isValidFormat && gstNumber.length > 0 && (
+                <p className="text-[10px] text-red-500">Invalid GST format</p>
+              )}
+              {!isVerified && isValidGST && !localConsent && (
+                <p className="text-[10px] text-blue-600 mt-1">
+                  Please select the below consent checkbox to enable verification.
+                </p>
+              )}
             </div>
 
-            <div className="flex items-start space-x-2">
+            {/* Consent Section - Now directly below the input */}
+            <div className="flex items-start space-x-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
               <div className="flex items-center h-5 mt-0.5">
                 <input
                   id="gst-consent-checkbox"
@@ -1231,57 +1300,13 @@ const GSTVerificationSection: React.FC<{
                 </button>
               </div>
             </div>
-
-            {/* Consent Details Modal */}
-            <ConsentModal
-              isOpen={showConsentDetails}
-              onClose={() => setShowConsentDetails(false)}
-            />
           </div>
 
-          {(localConsent || isVerified) && (
-            <div className="flex-1 md:max-w-xs">
-              <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-700">
-                  GST Number {isVerified ? <span className="text-green-600">✓</span> : <span className="text-red-500">*</span>}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={gstNumber}
-                    onChange={(e) => handleChange(e.target.value)}
-                    placeholder="22AAAAA0000A1Z5"
-                    disabled={isVerified}
-                    className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
-                      ? 'border-green-300 bg-green-50'
-                      : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
-                      }`}
-                    maxLength={15}
-                  />
-                  {!isVerified && (
-                    <button
-                      type="button"
-                      onClick={handleVerifyClick}
-                      disabled={isVerifying || !isValidFormat}
-                      className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center"
-                    >
-                      {isVerifying ? (
-                        <>
-                          <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
-                          Verifying...
-                        </>
-                      ) : (
-                        "Verify"
-                      )}
-                    </button>
-                  )}
-                </div>
-                {!isVerified && !isValidFormat && gstNumber.length > 0 && (
-                  <p className="text-[10px] text-red-500">Invalid GST format</p>
-                )}
-              </div>
-            </div>
-          )}
+          {/* Consent Details Modal */}
+          <ConsentModal
+            isOpen={showConsentDetails}
+            onClose={() => setShowConsentDetails(false)}
+          />
         </div>
 
         {isVerified && (
