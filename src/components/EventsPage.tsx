@@ -196,7 +196,7 @@ const EventsPage = () => {
               "/images/default-event-image.png",
             type: card.category || "General",
             status: card.isApproved ? "upcoming" : "pending",
-            price: "Free", // Default since API doesn't provide
+            price: "paid", // Default since API doesn't provide
             featured: false, // Default since API doesn't provide
             cleanUrl: card.cleanUrl,
             templateSelection: card.templateSelection,
