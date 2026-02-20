@@ -10,7 +10,7 @@ const HeroSection: React.FC = () => {
   });
 
   useEffect(() => {
-    const eventDate = new Date('2025-09-25T09:00:00').getTime();
+    const eventDate = new Date('2026-04-17T09:00:00').getTime();
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const distance = eventDate - now;
@@ -57,8 +57,15 @@ const HeroSection: React.FC = () => {
             data-aos-delay="300"
             className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
           >
-            Drone <span className="text-[#FFD400]">Expo 2025</span>
+            Drone <span className="text-[#FFD400]">Expo 2026</span>
           </h1>
+
+          {/* Paid Event Badge */}
+          <div data-aos="fade-up" data-aos-delay="400" className="flex justify-center mb-4">
+            <span className="bg-[#FF0000] text-white text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest shadow-lg">
+              Paid Event
+            </span>
+          </div>
 
           <div
             data-aos="fade-up"
@@ -67,7 +74,7 @@ const HeroSection: React.FC = () => {
           >
             <div className="flex items-center gap-2">
               <Calendar size={20} className="text-[#FFD400]" />
-              <span>25th – 27th September 2025</span>
+              <span>17th – 18th April 2026</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock size={20} className="text-[#FFD400]" />
@@ -75,7 +82,7 @@ const HeroSection: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <MapPin size={20} className="text-[#FFD400]" />
-              <span>Bombay Exhibition Centre, NESCO, Mumbai</span>
+              <span>Bangalore International Exhibition Centre, Bengaluru</span>
             </div>
           </div>
 
@@ -114,15 +121,25 @@ const HeroSection: React.FC = () => {
             data-aos-delay="1200"
             className="flex flex-col sm:flex-row gap-6 justify-center"
           >
-            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            <a
+              href="https://www.droneexpo.in/visitor-registration"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
               <span>Register to Visit</span>
               <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
-            </button>
+            </a>
 
-            <button className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105">
+            <a
+              href="https://www.droneexpo.in/exhibitor-registration"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105"
+            >
               <span>Exhibitor Enquiry</span>
               <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
-            </button>
+            </a>
           </div>
         </div>
       </div>

@@ -8,12 +8,12 @@ import Navigation from "./components/Navigation";
 import HeroSection from "./components/HeroSection";
 import AboutSection from "./components/AboutSection";
 import SpeakersSection from "./components/SpeakersSection";
-import AgendaSection from "./components/AgendaSection";
 import SponsorsSection from "./components/SponsorsSection";
 import GallerySection from "./components/GallerySection";
 import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
 import Back from "./components/Back";
+import CurtainRaiserSection from "./components/CurtainRaiserSection";
 
 const EventTemplate1: React.FC = () => {
   useEffect(() => {
@@ -29,9 +29,9 @@ const EventTemplate1: React.FC = () => {
     <div className="bg-white">
       <Navigation />
       <HeroSection />
+      <CurtainRaiserSection />
       <AboutSection />
       <SpeakersSection />
-      <AgendaSection />
       <SponsorsSection />
       <GallerySection />
       <ContactSection />
