@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail, Phone, MapPin, User } from "lucide-react";
+import { Mail, Phone, MapPin, User, ExternalLink } from "lucide-react";
 
 const contactInfo = {
   company: "Services International",
@@ -23,6 +23,7 @@ const contactInfo = {
 };
 
 const ContactSection: React.FC = () => {
+  /* ORIGINAL FORM STATE — commented out as per MOU (redirect to droneexpo.in)
   const [formData, setFormData] = useState({
     companyName: "",
     fullName: "",
@@ -40,6 +41,7 @@ const ContactSection: React.FC = () => {
     e.preventDefault();
     console.log("Submitted:", formData);
   };
+  */
 
   return (
     <section id="contact" className="py-20 bg-gray-50">
@@ -61,8 +63,7 @@ const ContactSection: React.FC = () => {
           data-aos-delay="400"
           className="text-gray-600 text-lg max-w-2xl mx-auto"
         >
-          Ready to join us? Register now or get in touch for more information
-          about the summit.
+          All visitor registrations and exhibitor enquiries are handled exclusively through the official Drone Expo website.
         </p>
       </div>
 
@@ -74,7 +75,6 @@ const ContactSection: React.FC = () => {
             <h2 className="text-2xl font-bold">{contactInfo.company}</h2>
           </div>
 
-          {/* Contact Info */}
           <div className="space-y-3 text-sm text-gray-700">
             <p>
               <Phone className="inline-block mr-2 text-blue-600" size={16} />
@@ -92,7 +92,6 @@ const ContactSection: React.FC = () => {
 
           <hr className="my-6" />
 
-          {/* China Contacts */}
           <h3 className="text-md font-semibold mb-2">For China Enquiries</h3>
           <div className="space-y-3 text-sm text-gray-700">
             {contactInfo.chinaContacts.map((c, i) => (
@@ -108,7 +107,8 @@ const ContactSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Card - Form */}
+        {/* Right Card — Redirect to Official Drone Expo Website (MOU requirement) */}
+        {/* ORIGINAL FORM — commented out, redirect now active as per MOU
         <form
           onSubmit={handleSubmit}
           className="bg-white rounded-2xl shadow-lg p-8 space-y-6"
@@ -201,6 +201,50 @@ const ContactSection: React.FC = () => {
             Submit
           </button>
         </form>
+        */}
+
+        <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center text-center space-y-6">
+          <div className="w-16 h-16 bg-[#FF0000]/10 rounded-full flex items-center justify-center">
+            <ExternalLink size={32} className="text-[#FF0000]" />
+          </div>
+          <h3 className="text-2xl font-bold text-black">
+            Register on the Official Drone Expo Website
+          </h3>
+          <p className="text-gray-600 text-base max-w-sm">
+            As per the MOU, all exhibitor queries and registration forms are redirected to the official Drone Expo website. Please use the links below to register or submit your enquiry.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+            <a
+              href="https://www.droneexpo.in/visitor-registration"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#FF0000] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#cc0000] transition-all flex items-center justify-center gap-2"
+            >
+              Visitor Registration <ExternalLink size={16} />
+            </a>
+            <a
+              href="https://www.droneexpo.in/exhibitor-registration"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-2 border-[#FF0000] text-[#FF0000] px-6 py-3 rounded-full font-semibold hover:bg-[#FF0000] hover:text-white transition-all flex items-center justify-center gap-2"
+            >
+              Exhibitor Enquiry <ExternalLink size={16} />
+            </a>
+          </div>
+
+          <p className="text-sm text-gray-400">
+            You will be redirected to{" "}
+            <a
+              href="https://www.droneexpo.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#FF0000] underline"
+            >
+              www.droneexpo.in
+            </a>
+          </p>
+        </div>
       </div>
     </section>
   );

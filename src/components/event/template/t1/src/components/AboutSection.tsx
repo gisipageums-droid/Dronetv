@@ -3,7 +3,7 @@ import { Target, Users, Lightbulb, Award } from "lucide-react";
 
 const AboutSection: React.FC = () => {
   const aboutContent = {
-    heading: "Drone Expo & Conference 2025",
+    heading: "Drone Expo & Conference 2026",
     subText:
       "Join us in Mumbai for the premier Drone Expo & Conference where technology, innovation, and opportunity converge. Explore industry advancements across UAVs, Robotics, AR/VR, Geospatial, and more.",
     features: [
@@ -34,24 +34,9 @@ const AboutSection: React.FC = () => {
     ],
     zones: [
       {
-        title: "Start-up Zone",
+        title: "Young Innovators Zone",
         description:
-          "Platform for emerging companies in the drone sector to network, gain insights, and seek investments.",
-      },
-      {
-        title: "Education Zone",
-        description:
-          "Showcase for institutions offering Remote Pilot Training and drone tech courses to engage potential students.",
-      },
-      {
-        title: "Student Zone",
-        description:
-          "A space for students to present ideas, learn about the drone industry, and connect with professionals.",
-      },
-      {
-        title: "Innovation Zone",
-        description:
-          "Hub for groundbreaking drone technologies and concepts, ideal for new product showcases.",
+          "A dedicated space for young minds, students, and emerging innovators to showcase ideas, explore drone technology, and connect with industry leaders shaping the future of UAVs.",
       },
     ],
   };
@@ -92,11 +77,11 @@ const AboutSection: React.FC = () => {
             <span className="text-[#FFD400]">Specialized Zones</span> to Explore
           </h3>
           <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-            Discover dynamic pavilions focused on start-ups, education, students, and innovation.
+            Discover our dedicated zone for young innovators and future leaders in drone technology.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-10">
+        <div className="grid md:grid-cols-1 max-w-2xl mx-auto gap-10">
           {aboutContent.zones.map((zone, index) => (
             <div
               key={index}
