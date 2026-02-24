@@ -1,417 +1,133 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
-import Navigation from "./components/Navigation";
-import Hero from "./components/Hero";
-import PopularVideos from "./components/PopularVideos";
-import BrowseByTopic from "./components/BrowseByTopic";
-import FeaturedCompanies from "./components/FeaturedCompanies";
-import UpcomingEvents from "./components/UpcomingEvents";
-import Newsletter from "./components/Newsletter";
-import Footer from "./components/Footer";
-import VideosPage from "./components/VideosPage";
-import CompaniesPage from "./components/CompaniesPage";
-import ProductsPage from "./components/ProductsPage";
-import EventsPage from "./components/EventsPage";
-import NewsPage from "./components/NewsPage";
-import AboutPage from "./components/AboutPage";
-import PartnerPage from "./components/PartnerPage";
-import ContactPage from "./components/ContactPage";
-import SearchPage from "./components/SearchPage";
-import TermsAndConditionsPage from "./components/TermsAndConditionsPage";
-import PrivacyPolicyPage from "./components/PrivacyPolicyPage";
-import ProductDetailPage from "./components/ProductDetailPage";
-import ProfessionalsPage from "./components/ProfessionalsPage";
-import ServicesPage from "./components/ServicesPage";
-import ServiceDetailPage from "./components/ServiceDetailPage";
-import ScrollingFooter from "./components/ScrollingFooter";
-import GalleryPage from "./components/GalleryPage";
-import GalleryGlimpse from "./components/GalleryGlimpse";
-import SubApp from "./components/webbuilder/src/App";
-import OurPartners from "./components/Ourpartners";
-import Select from "./components/company/src/components/select-template/Select";
-import Template2 from "./components/company/src/components/template/t2/src/main";
-import Form from "./components/company/src/components/form/src/main";
-import EditTemp2 from "./components/company/src/components/template/t2/edit/src/main";
-import EditTemp1 from "./components/company/src/components/template/t1/edit/src/main";
-import Template1 from "./components/company/src/components/template/t1/src/main";
-import DashboardPreview1 from "./components/company/src/components/template/t1/final/preview/src/main";
-import DashboardPreview2 from "./components/company/src/components/template/t2/final/preview/src/main";
-import DashboardEdit1 from "./components/company/src/components/template/t1/final/edit/src/main";
-import DashboardEdit2 from "./components/company/src/components/template/t2/final/edit/src/main";
-import { CombinedProviders } from "./components/context/context";
-// import CompanyDirectory from "./components/CompanyDirectory";
-import Login from "./components/Login";
-import ForgotPassword from "./components/ForgotPassword";
-import Logout from "./components/Logout";
-import ResetPassword from "./components/ResetPassword";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminProtectedRoute from "./components/adminProtectedRoute";
-import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
-import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
-import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
-import ProfessionalForm from "./components/Professional/form/src/App";
-import EventsForm from "./components/event/form/src/App";
-import ProfessionalTemplateSelector from "./components/Professional/Select-Template/select";
-import ProTemp2 from "./components/Professional/Template/T-2/src/App";
-import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App";
-// import SignupConfirmation from "./components/Professional/form/form/greeting/greeting";
-import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
-import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main";
-import NotFound from "./components/company/src/components/form/src/Notfound";
-import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboard";
-import UserEvent from "./components/UserEvent";
-import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard";
-import UserProfessional from "./components/profissionalDirectory";
-
-import ExcelDataProcessor from "./components/excelextraction/excel";
-import DocumentTextExtractor from "./components/excelextraction/extracttext";
-// import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/"
-import FinaleProfessionalTemp2 from "./components/Professional/Template/T-2/final/preview/src/App";
-import FinalEditTemp_2 from "./components/Professional/Template/T-2/final/edit/src/App";
-import MainProTemp2 from "./components/mainProfessionalPreview/t2/src/App";
-
-import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/final/preview/src/App";
-import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/final/edit/src/App";
-// import MainProTemp1 from "./components/mainProfessinalPreview/T-1/preview/src/App";
-
-
-
-import UserDashboard from "./components/UserDashboard/pages/AdminDashboard";
-import UserCompany from "./components/UserDashboard/pages/Company";
-import Professinal from "./components/UserDashboard/pages/Professinal";
-import Event from "./components/UserDashboard/pages/Event";
-import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
-import ContactedPeople from "./components/UserDashboard/pages/ContactedPeople";
-import CompanyLeads from "./components/UserDashboard/components/common/CompanyLeads";
-import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
-import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
-import AdminCompanyForm from "./components/AdminCompanyForm";
-import FinalT1 from "./components/mainProfessionalPreview/t1/src/App";
-import Event_T1 from "./components/event/template/t1/src/EventTemplate1"
-import Event_T2 from "./components/event/template/t2/src/App";
-import Edit_event_t1 from "./components/event/template/t1/edit/EventTemplate1";
-
-import Edit_event_t2 from "./components/event/template/t2/edit/App";
-import EventSelect from "./components/event/select-template/Event-select";
-import EventLeads from "./components/UserDashboard/components/common/EventLeads";
-import MainEvent1 from "./components/mainEventPreview/t1/EventTemplate1"
-//main App.tsx
-import BuyTokenPage from "./components/UserDashboard/pages/Buy";
-import TransactionHistory from "./components/UserDashboard/pages/transaction";
-import RechargePlans from "./components/UserDashboard/pages/Plans";
-import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
-import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
-import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
-import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
-
-
-const HomePage = () => (
-  <>
-    <Hero />
-    <PopularVideos />
-    <UpcomingEvents />
-    <BrowseByTopic />
-    <FeaturedCompanies />
-    <OurPartners />
-    <GalleryGlimpse />
-    <Newsletter />
-  </>
-);
-
-const AppContent = () => {
-  const location = useLocation();
-  const hideFooter = location.pathname.startsWith("/company");
-
-  return (
-    <div className="min-h-screen">
-      <CombinedProviders>
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/videos" element={<VideosPage />} />
-          <Route path="/professionals" element={<ProfessionalsPage />} />
-          <Route path="/listed-companies" element={<CompaniesPage />} />
-
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/news" element={<NewsPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/partner" element={<PartnerPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/product/:id" element={<ProductDetailPage />} />
-          <Route path="/service/:id" element={<ServiceDetailPage />} />
-          <Route path="/event/*" element={<SubApp />} />
-          <Route
-            path="/user/companies/template-selection"
-            element={<Select />}
-          />
-          <Route path="/companies" element={<Select />} />
-          <Route path="/template/t1" element={<Template1 />} />
-          <Route path="/template/t2" element={<Template2 />} />
-          <Route path="/form" element={<Form />} />
-          <Route path="/form/:publicId/:userId/:draftId" element={<Form />} />
-          {/* AI get not found */}
-          <Route path="/form/notfound" element={<NotFound />} />
-
-          <Route path="/edit/template/t1/:draftId/:userId" element={<EditTemp1 />} />
-          <Route path="/edit/template/t2/:draftId/:userId" element={<EditTemp2 />} />
-          <Route
-            path="/user/companies/preview/1/:publishedId/:userId"
-            element={<DashboardPreview1 />}
-          />
-          <Route
-            path="/user/companies/preview/2/:publishedId/:userId"
-            element={<DashboardPreview2 />}
-          />
-          <Route
-            path="/user/companies/edit/1/:pub/:userId"
-            element={<DashboardEdit1 />}
-          />
-          <Route
-            path="/user/companies/edit/2/:pub/:userId"
-            element={<DashboardEdit2 />}
-          />
-          {/* // company form admin route */}
-          <Route path="/admin-dashboard/company-form" element={<AdminCompanyForm />} />
-
-          {/* login functionality */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="reset-password/:id" element={<ResetPassword />} />
-          {/* admin dashboard */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/plans" element={
-            <AdminProtectedRoute>
-              <AdminTokenPlan />
-            </AdminProtectedRoute>} />
-          <Route path="/admin/company/dashboard" element={
-            <AdminProtectedRoute>
-              <AdminDashboard />
-            </AdminProtectedRoute>} />
-          <Route
-            path="/admin/companies/preview/1/:publishedId/:userId"
-            element={<DashboardPreview1 />}
-          />
-          <Route
-            path="/admin/companies/preview/2/:publishedId/:userId"
-            element={<DashboardPreview2 />}
-          />
-          <Route
-            path="/admin/companies/edit/1/:pub/:userId"
-            element={<DashboardEdit1 />}
-          />
-          <Route
-            path="/admin/companies/edit/2/:pub/:userId"
-            element={<DashboardEdit2 />}
-          />
-          {/* main preview routes */}
-          <Route path="/company/:urlSlug" element={<MainCompPreviewT1 />} />
-          <Route path="/companies/:urlSlug" element={<MainCompPreviewT2 />} />
-
-          {/* professionals route */}
-          <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalForm />} />
-          <Route path="/professional/form" element={<ProfessionalForm />} />
-          <Route path="/events/form" element={<EventsForm />} />
-          <Route
-            path="/professional/select"
-            element={<ProfessionalTemplateSelector />}
-          />
-          <Route path="/professional/t2" element={<ProTemp2 />} />
-          <Route path="/professional/t1" element={<ProTemp1 />} />
-          <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
-          <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
-
-          {/* <Route path='/professional/Greeting' element={<SignupConfirmation/>} /> */}
-          <Route
-            path="/professional/edit/:draftId/:userId/template=2"
-            element={<EditTemp_2 />}
-          />
-          <Route
-            path="/professional/edit/:draftId/:userId/template=1"
-            element={<EditTemp_1 />}
-          />
-          <Route path="/user/professional" element={<UserProfessional />} />
-          <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminProfessional /></AdminProtectedRoute>} />
-          <Route
-            path="/user/professionals/preview/2/:professionalId/:userId"
-            element={<FinaleProfessionalTemp2 />}
-          />
-          <Route
-            path="/user/professionals/edit/2/:professionalId/:userId"
-            element={<FinalEditTemp_2 />}
-          />
-          <Route path="/professionals/:urlSlug" element={<MainProTemp2 />} />
-
-          <Route
-            path="/user/professionals/preview/1/:professionalId/:userId"
-            element={<FinaleProfessionalTemp1 />}
-          />
-          <Route
-            path="/user/professionals/edit/1/:professionalId/:userId"
-            element={<FinaleProfessionalTemp1Edit />}
-          />
-          {/* <Route path="/professional/:urlSlug" element={<MainProTemp1 />} /> */}
-
-          {/* event routes */}
-          <Route
-            path="/admin/event/dashboard"
-            element={
-              <AdminProtectedRoute>
-                <EventAdminDashboard />
-              </AdminProtectedRoute>}
-          />
-          <Route path="/user/event" element={<UserEvent />} />
-
-          {/* <Route path='/user/event/preview/1/:eventId/:userId' element={<EventPreview1 />} /> */}
-          {/* <Route path="/user/event/edit/1/" element={<EventTemplateEdit1 />} />  */}
-          {/* <Route path="/user/event/edit/2/" element={<EventTemplateEdit2 />} />  */}
-          <Route path="/preview/event/t1" element={<Event_T1 />} />
-          <Route path="/preview/event/t2" element={<Event_T2 />} />
-          <Route path="/edit/event/t1/:isAIgen/:draftId/:userId" element={<Edit_event_t1 />} />
-          <Route path="/edit/event/t2/:isAIgen/:draftId/:userId" element={<Edit_event_t2 />} />
-          <Route path="/event/:eventName" element={<MainEvent1 />} />
-          <Route path="/event/select" element={<EventSelect />} />
-          <Route path="/event/leads/:eventName/:eventId" element={
-
-            <UserDashboardLayout>
-              <EventLeads />
-            </UserDashboardLayout>
-          } />
-
-
-
-
-          {/* excel extraction route */}
-          <Route path="/excel" element={<ExcelDataProcessor />} />
-          <Route path="/extract-text" element={<DocumentTextExtractor />} />
-
-          {/* User dashboard routes */}
-          <Route
-            path="/user-professionals"
-            element={
-              <UserDashboardLayout>
-                <Professinal />
-              </UserDashboardLayout>
-            }
-          />
-          <Route
-            path="/user-events"
-            element={
-              <UserDashboardLayout>
-                <Event />
-              </UserDashboardLayout>
-            }
-          />
-          <Route
-            path="/user-companies"
-            element={
-              <ProtectedRoute>
-                <UserDashboardLayout>
-                  <UserCompany />
-                </UserDashboardLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/user-dashboard"
-            element={
-              <ProtectedRoute>
-                <UserDashboardLayout>
-                  <UserDashboard />
-                </UserDashboardLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/user-profile"
-            element={
-              <UserDashboardLayout>
-                <ProfilePage />
-              </UserDashboardLayout>
-            }
-          />
-
-          <Route
-            path="/user-recharge"
-            element={
-              <ProtectedRoute>
-                <UserDashboardLayout>
-                  <RechargePlans />
-                </UserDashboardLayout>
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/user-buy"
-            element={
-              <ProtectedRoute>
-                <UserDashboardLayout>
-                  <BuyTokenPage />
-                </UserDashboardLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/user-transactions"
-            element={
-              <ProtectedRoute>
-                <UserDashboardLayout>
-                  <TransactionHistory />
-                </UserDashboardLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/user-company/leads/:companyName"
-            element={
-              <UserDashboardLayout>
-                <CompanyLeads />
-              </UserDashboardLayout>
-            }
-          />
-          <Route
-            path="/user-professional/leads/:ProfessionalName/:professionalId"
-            element={
-              <UserDashboardLayout>
-                <ProfessionalLeads />
-              </UserDashboardLayout>
-            }
-          />
-          <Route
-            path="/user-contacted"
-            element={
-              <UserDashboardLayout>
-                <ContactedPeople />
-              </UserDashboardLayout>
-            }
-          />
-        <Route path="/eventsexcel" element={<EventsExcelDataProcessor />} />
-        <Route path="/professionalsexcel" element={<ProfessionalsDocumentTextExtractor />} />
-        </Routes>
-
-        {!hideFooter && <Footer />}
-        <ScrollingFooter />
-      </CombinedProviders>
-    </div>
-  );
-};
-
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        padding: "20px",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background animated gradient overlay */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background:
+            "radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Logo */}
+      <img
+        src="/images/Drone tv .in.png"
+        alt="Drone TV Logo"
+        style={{
+          width: "140px",
+          height: "140px",
+          objectFit: "contain",
+          marginBottom: "32px",
+          filter: "drop-shadow(0 0 30px rgba(59, 130, 246, 0.3))",
+          position: "relative",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Coming Soon */}
+      <h1
+        style={{
+          fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
+          fontWeight: 800,
+          margin: "0 0 16px 0",
+          letterSpacing: "-1px",
+          background: "linear-gradient(90deg, #ffffff, #93c5fd, #c4b5fd)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        Coming Soon
+      </h1>
+
+      {/* Tagline */}
+      <p
+        style={{
+          fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
+          color: "#94a3b8",
+          maxWidth: "500px",
+          lineHeight: 1.6,
+          margin: "0 0 48px 0",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        We're working on something exciting. Stay tuned for the all-new Drone TV
+        experience.
+      </p>
+
+      {/* YouTube Button */}
+      <a
+        href="https://www.youtube.com/@indiadronetv"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "12px",
+          padding: "16px 36px",
+          background: "#FF0000",
+          color: "#ffffff",
+          fontSize: "1.1rem",
+          fontWeight: 600,
+          borderRadius: "50px",
+          textDecoration: "none",
+          transition: "all 0.3s ease",
+          boxShadow: "0 4px 24px rgba(255, 0, 0, 0.3)",
+          position: "relative",
+          zIndex: 1,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow = "0 8px 32px rgba(255, 0, 0, 0.4)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 4px 24px rgba(255, 0, 0, 0.3)";
+        }}
+      >
+        {/* YouTube Icon */}
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+        </svg>
+        Watch on YouTube
+      </a>
+
+      {/* Footer */}
+      <p
+        style={{
+          position: "absolute",
+          bottom: "24px",
+          color: "#475569",
+          fontSize: "0.85rem",
+          zIndex: 1,
+        }}
+      >
+        Drone TV &copy; {new Date().getFullYear()}
+      </p>
+    </div>
   );
 }
 
