@@ -13,6 +13,8 @@ interface FormStepProps {
   isLastStep?: boolean;
   currentStep: number;
   totalSteps?: number;
+  nextButtonText?: string;
+  isSubmitting?: boolean;
 }
 
 export const FormStep: React.FC<FormStepProps> = ({
@@ -27,6 +29,8 @@ export const FormStep: React.FC<FormStepProps> = ({
   isLastStep = false,
   currentStep,
   totalSteps = 7,
+  nextButtonText,
+  isSubmitting = false,
 }) => {
   const stepTitles = [
     'Company Info',
@@ -55,65 +59,67 @@ export const FormStep: React.FC<FormStepProps> = ({
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="bg-yellow-100 shadow-sm border-b border-amber-200">
-        <div className="max-w-4xl mx-auto px-6 py-3">
-          {/* Step Navigation */}
-          <div className="flex items-center justify-between mb-3 overflow-x-auto pb-2">
-            {stepTitles.map((stepTitle, index) => {
-              const stepNumber = index + 1;
-              const isActive = stepNumber === currentStep;
-              const isCompleted = stepNumber < currentStep;
-              
-              return (
-                <div key={stepNumber} className="flex items-center">
-                  <button
-                    onClick={() => onStepClick ? onStepClick(stepNumber) : null}
-                    className={`flex items-center px-2 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
-                      isActive
-                        ? 'bg-black text-yellow-400 shadow-md'
-                        : isCompleted
-                        ? 'bg-amber-200 text-amber-900 hover:bg-amber-300 cursor-pointer'
-                        : 'bg-yellow-200 text-gray-700 hover:bg-yellow-300 cursor-pointer'
-                    }`}
-                  >
-                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-xs mr-1 ${
-                      isActive
-                        ? 'bg-yellow-400 text-black'
-                        : isCompleted
-                        ? 'bg-amber-600 text-white'
-                        : 'bg-gray-300 text-gray-600'
-                    }`}>
-                      {isCompleted ? '✓' : stepNumber}
-                    </span>
-                    {stepTitle}
-                  </button>
-                  {index < stepTitles.length - 1 && (
-                    <div className={`w-4 h-0.5 mx-1 ${
-                      isCompleted ? 'bg-amber-400' : 'bg-yellow-300'
-                    }`} />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-800">
-              Step {currentStep} of {totalSteps}
-            </span>
-            <span className="text-sm text-gray-600">
-              {Math.round((currentStep / totalSteps) * 100)}% Complete
-            </span>
-          </div>
-          <div className="w-full bg-yellow-200 rounded-full h-2">
-            <div
-              className="bg-gradient-to-r from-amber-500 to-yellow-500 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-            />
+      {/* Progress Bar (Only shown if more than 1 step) */}
+      {totalSteps > 1 && (
+        <div className="bg-yellow-100 shadow-sm border-b border-amber-200">
+          <div className="max-w-4xl mx-auto px-6 py-3">
+            {/* Step Navigation */}
+            <div className="flex items-center justify-between mb-3 overflow-x-auto pb-2">
+              {stepTitles.map((stepTitle, index) => {
+                const stepNumber = index + 1;
+                const isActive = stepNumber === currentStep;
+                const isCompleted = stepNumber < currentStep;
+                
+                return (
+                  <div key={stepNumber} className="flex items-center">
+                    <button
+                      onClick={() => onStepClick ? onStepClick(stepNumber) : null}
+                      className={`flex items-center px-2 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+                        isActive
+                          ? 'bg-black text-yellow-400 shadow-md'
+                          : isCompleted
+                          ? 'bg-amber-200 text-amber-900 hover:bg-amber-300 cursor-pointer'
+                          : 'bg-yellow-200 text-gray-700 hover:bg-yellow-300 cursor-pointer'
+                      }`}
+                    >
+                      <span className={`w-4 h-4 rounded-full flex items-center justify-center text-xs mr-1 ${
+                        isActive
+                          ? 'bg-yellow-400 text-black'
+                          : isCompleted
+                          ? 'bg-amber-600 text-white'
+                          : 'bg-gray-300 text-gray-600'
+                      }`}>
+                        {isCompleted ? '✓' : stepNumber}
+                      </span>
+                      {stepTitle}
+                    </button>
+                    {index < stepTitles.length - 1 && (
+                      <div className={`w-4 h-0.5 mx-1 ${
+                        isCompleted ? 'bg-amber-400' : 'bg-yellow-300'
+                      }`} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-800">
+                Step {currentStep} of {totalSteps}
+              </span>
+              <span className="text-sm text-gray-600">
+                {Math.round((currentStep / totalSteps) * 100)}% Complete
+              </span>
+            </div>
+            <div className="w-full bg-yellow-200 rounded-full h-2">
+              <div
+                className="bg-gradient-to-r from-amber-500 to-yellow-500 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="max-w-4xl mx-auto px-6 py-6">
         {/* Page Title */}
@@ -146,17 +152,26 @@ export const FormStep: React.FC<FormStepProps> = ({
 
           <button
             onClick={onNext}
-            disabled={!isValid}
-            className={`flex items-center px-6 py-2 rounded-md bg-black font-medium transition-all ${
-              !isValid
-                ? 'bg-yellow-100 text-gray-400 cursor-not-allowed'
-                : isLastStep
-                ? 'bg-gradient-to-r from-amber-600 to-yellow-600 text-white hover:from-amber-700 hover:to-yellow-700 hover:shadow-md'
-                : 'bg-gradient-to-r from-black to-gray-800 text-yellow-400 hover:from-gray-800 hover:to-black hover:shadow-md'
+            disabled={!isValid || isSubmitting}
+            className={`flex items-center px-6 py-2 rounded-md font-medium transition-all ${
+              !isValid || isSubmitting
+                ? "bg-yellow-100 text-gray-400 cursor-not-allowed"
+                : isLastStep || totalSteps === 1
+                ? "bg-gradient-to-r from-amber-600 to-yellow-600 text-white hover:from-amber-700 hover:to-yellow-700 hover:shadow-md"
+                : "bg-gradient-to-r from-black to-gray-800 text-yellow-400 hover:from-gray-800 hover:to-black hover:shadow-md"
             }`}
           >
-            {isLastStep ? 'Submit Form' : 'Next Step'}
-            {!isLastStep && <ChevronRight className="w-4  h-4 ml-1" />}
+            {isSubmitting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                Submitting...
+              </>
+            ) : (
+              nextButtonText || (isLastStep ? "Submit Form" : "Next Step")
+            )}
+            {!isLastStep && totalSteps > 1 && !isSubmitting && (
+              <ChevronRight className="w-4  h-4 ml-1" />
+            )}
           </button>
         </div>
       </div>

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import { FormData } from "./types/form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Step1CompanyCategory from "./components/steps/Step1CompanyCategory";
@@ -7,7 +8,6 @@ import Step4BusinessCategories from "./components/steps/Step4BusinessCategories"
 import Step5ProductsServices from "./components/steps/Step5ProductsServices";
 import Step7PromotionBilling from "./components/steps/Step7PromotionBilling";
 import Step8MediaUploads from "./components/steps/Step8MediaUploads";
-import { AIGenerationLoader } from "./components/AIGenerationLoader";
 import { useTemplate } from "../../../../../context/context";
 import { toast } from "react-toastify";
 
@@ -204,22 +204,10 @@ function App() {
     message: string;
   }>(null);
   const [isCheckingName, setIsCheckingName] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize from localStorage synchronously so values are present on first render
-  const [currentStep, setCurrentStep] = useState<number>(() => {
-    try {
-      const saved = localStorage.getItem("companyFormDraft");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed?.step && Number.isInteger(parsed.step)) {
-          return parsed.step as number;
-        }
-      }
-    } catch (e) {
-      console.error("Failed to read step from localStorage on init", e);
-    }
-    return 1;
-  });
+  // Consolidated to Step 1 only
+  const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>(() => {
     try {
       const saved = localStorage.getItem("companyFormDraft");
@@ -235,7 +223,7 @@ function App() {
     return initialFormData;
   });
 
-  const { draftDetails, setAIGenData, AIGenData } = useTemplate();
+  const { draftDetails, setDraftDetails, setAIGenData, AIGenData } = useTemplate();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -346,12 +334,9 @@ function App() {
     useState<string>(templateId);
   const [userId] = useState<string>("user-123");
 
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-
-  const updateFormData = (data: Partial<FormData>) => {
+  const updateFormData = useCallback((data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
-  };
+  }, []);
 
   // Step 1 validation logic
   const validateStep1 = () => {
@@ -365,11 +350,13 @@ function App() {
       toast.error("Company Name is required.");
       return false;
     }
-    // Website URL: required
+    // Website URL is now optional
+    /*
     if (!formData.websiteUrl || formData.websiteUrl.trim() === "") {
       toast.error("Website URL is required.");
       return false;
     }
+    */
     // Director/MD Information required
     if (!formData.directorName || formData.directorName.trim() === "") {
       toast.error("Director Name is required.");
@@ -455,36 +442,76 @@ function App() {
     return true;
   };
 
+  // ── Submit Step 1 data → list the company immediately
+  const handleStep1Submit = useCallback(async () => {
+    if (!validateStep1()) return;
+
+    setIsSubmitting(true);
+    try {
+      const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+      
+      const finalTemplateId = formData.templateId || templateId || "1";
+
+      const payload = {
+        userId: formData.directorEmail,
+        directorEmail: formData.directorEmail,
+        templateSelection: finalTemplateId,
+        templateDetails: {
+          id: null,
+          name: "",
+          value: finalTemplateId,
+        },
+        formData: {
+          ...formData,
+          templateId: finalTemplateId,
+          submittedAt: new Date().toISOString(),
+        },
+        uploadedFiles: {},
+        batchInfo: {
+          isLastBatch: true,
+          timestamp: Date.now(),
+          processingMethod: "step1_immediate_submit",
+        },
+      };
+
+      console.log("📤 Submitting Step 1 Payload via Axios:", payload);
+
+      const response = await axios.post(FORM_SUBMIT_API_URL, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        timeout: 60000,
+      });
+
+      // Store draft details in context
+      setDraftDetails(response.data);
+
+      toast.success("🎉 Company listed successfully! You will receive a confirmation email shortly.", {
+        toastId: "company-listed",
+        autoClose: 5000,
+      });
+
+      // Clear local draft after successful submission
+      localStorage.removeItem("companyFormDraft");
+
+      // Navigate back to the companies listing page or dashboard
+      setTimeout(() => {
+        navigate("/listed-companies");
+      }, 2000);
+
+    } catch (error: any) {
+      console.error("❌ Step 1 submission failed:", error);
+      const errorMsg = error.response?.data?.message || error.response?.data?.error || error.message || "Unknown error";
+      toast.error(`Failed to list your company: ${errorMsg}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [formData, templateId, navigate, setDraftDetails]);
+
   const nextStep = () => {
-    // Only validate on step 1, 3, 4, 7, and 8
     if (currentStep === 1) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep1()) return;
-    }
-    if (currentStep === 2) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep3()) return;
-    }
-    if (currentStep === 3) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep4()) return;
-    }
-    if (currentStep === 4) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep5()) return;
-    }
-    if (currentStep === 5) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep7()) return;
-    }
-    if (currentStep === 6) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep8()) return;
-    }
-    if (currentStep < 6) {
-      setCurrentStep(currentStep + 1);
-    } else if (currentStep === 6) {
-      setIsGenerating(true);
+      handleStep1Submit();
     }
   };
 
@@ -512,50 +539,23 @@ function App() {
     const stepProps = {
       formData,
       updateFormData,
-      onNext: nextStep,
+      onNext: handleStep1Submit,
       onPrev: prevStep,
-      onSkip: skipStep, // Add skip handler
+      onSkip: skipStep,
       onStepClick: (step: number) => setCurrentStep(step),
-      isValid: true,
-      showSkip: currentStep >= 2 && currentStep <= 5, // Show skip for steps 2-5 only
+      isValid: !isSubmitting,
+      showSkip: false,
     };
 
-    switch (currentStep) {
-      case 1:
-        return (
-          <Step1CompanyCategory
-            {...stepProps}
-            checkCompanyName={checkCompanyName}
-            companyNameStatus={companyNameStatus}
-            isCheckingName={isCheckingName}
-          />
-        );
-      case 2:
-        return <Step3SectorsServed {...stepProps} />;
-      case 3:
-        return <Step4BusinessCategories {...stepProps} />;
-      case 4:
-        return <Step5ProductsServices {...stepProps} />;
-      case 5:
-        return <Step7PromotionBilling {...stepProps} />;
-      case 6:
-        return (
-          <Step8MediaUploads
-            formData={formData}
-            updateFormData={updateFormData}
-            userId={userId}
-            draftId={draftId}
-            selectedTemplateId={selectedTemplateId}
-            onNext={nextStep}
-            onPrev={prevStep}
-            onSaveSuccess={(newDraftId) => setDraftId(newDraftId)}
-            isValid={true}
-            showSkip={false} // Explicitly hide skip for last step
-          />
-        );
-      default:
-        return <Step1CompanyCategory {...stepProps} />;
-    }
+    return (
+      <Step1CompanyCategory
+        {...stepProps}
+        checkCompanyName={checkCompanyName}
+        companyNameStatus={companyNameStatus}
+        isCheckingName={isCheckingName}
+        isSubmitting={isSubmitting}
+      />
+    );
   };
 
   if (isApiLoading) {
@@ -571,15 +571,6 @@ function App() {
         </div>
       </div>
     );
-  }
-
-  if (isGenerating) {
-    return <AIGenerationLoader onComplete={handleGenerationComplete} />;
-  }
-
-  if (isComplete) {
-    handleClick();
-    return null;
   }
 
   return <div>{renderStep()}</div>;
