@@ -1244,62 +1244,69 @@ const GSTVerificationSection: React.FC<{
                     }`}
                   maxLength={15}
                 />
-                {!isVerified && (
-                  <button
-                    type="button"
-                    onClick={handleVerifyClick}
-                    disabled={isVerifying || !isValidGST || !localConsent}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center ${
-                      isValidGST && localConsent && !isVerifying
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                        : 'bg-blue-300 text-white cursor-not-allowed'
-                    }`}
-                  >
-                    {isVerifying ? (
-                      <>
-                        <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
-                        Verifying...
-                      </>
-                    ) : (
-                      "Verify"
-                    )}
-                  </button>
-                )}
               </div>
               {!isVerified && !isValidFormat && gstNumber.length > 0 && (
                 <p className="text-[10px] text-red-500">Invalid GST format</p>
               )}
-              {!isVerified && isValidGST && !localConsent && (
-                <p className="text-[10px] text-blue-600 mt-1">
-                  Please select the below consent checkbox to enable verification.
-                </p>
-              )}
             </div>
 
-            {/* Consent Section - Now directly below the input */}
-            <div className="flex items-start space-x-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex items-center h-5 mt-0.5">
-                <input
-                  id="gst-consent-checkbox"
-                  type="checkbox"
-                  checked={localConsent}
-                  onChange={(e) => handleConsentChange(e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer"
-                />
+            {/* Consent Section - With Verify Button beside it */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 transition-all duration-300">
+              <div className="flex items-start space-x-3">
+                <div className="flex items-center h-5 mt-0.5">
+                  <input
+                    id="gst-consent-checkbox"
+                    type="checkbox"
+                    checked={localConsent}
+                    onChange={(e) => handleConsentChange(e.target.checked)}
+                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer transition-all"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor="gst-consent-checkbox" className="text-sm font-medium text-slate-800 cursor-pointer select-none">
+                    I consent to GST verification
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowConsentDetails(true)}
+                    className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center mt-1 text-left w-fit group"
+                  >
+                    View consent details
+                    <ChevronDown className="w-3 h-3 ml-1 group-hover:translate-y-0.5 transition-transform" />
+                  </button>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <label htmlFor="gst-consent-checkbox" className="text-sm text-slate-800 cursor-pointer">
-                  I consent to GST verification
-                </label>
+
+              {/* Verify Button moved here - beside the checkbox section */}
+              {!isVerified && (
                 <button
                   type="button"
-                  onClick={() => setShowConsentDetails(true)}
-                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center mt-1 text-left"
+                  onClick={handleVerifyClick}
+                  disabled={isVerifying || !isValidGST || !localConsent}
+                  className={`px-8 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
+                    ${isValidGST && localConsent && !isVerifying
+                      ? 'bg-[#4F9CF9] text-white hover:bg-blue-600 shadow-lg shadow-blue-100'
+                      : 'bg-blue-300 text-white cursor-not-allowed opacity-70'
+                    }`}
                 >
-                  View consent details
-                  <ChevronDown className="w-3 h-3 ml-1" />
+                  {isVerifying ? (
+                    <>
+                      <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                      Verifying...
+                    </>
+                  ) : (
+                    "Verify"
+                  )}
                 </button>
-              </div>
+              )}
+
+              {/* Verified Badge */}
+              {isVerified && (
+                <div className="flex items-center text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 animate-fade-in shrink-0">
+                  <CheckCircle className="w-4 h-4 mr-1.5" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Verified</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -2034,7 +2041,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       try {
         // SUREPASS GST ADVANCED API
         const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTU0NjEwNiwianRpIjoiNTNkODRmMTMtNTNjYS00MzhiLWFhZTItMjM0OTE1OGY4N2I0IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU1NDYxMDYsImV4cCI6MTc3ODEzODEwNiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.e1702x4ik39KgVqIB0kEjM5BjXuIH0uU34UMlgZsHcY"; // Updated with correct token provided by user
-        
+
         const response = await axios.post(
           "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
           { "id_number": gstNumber },
@@ -2051,7 +2058,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
         if (response.data.success && response.data.data) {
           const apiData = response.data.data;
-          
+
           // Map Surepass fields to our verifiedData structure as per user's JSON response
           const companyName = apiData.business_name || apiData.legal_name || "";
           const legalName = apiData.legal_name || "";
@@ -2060,20 +2067,20 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           const businessEntityType = apiData.constitution_of_business || "";
           const natureOfBusinessList = apiData.nature_bus_activities || [];
           const natureOfBusinessJoined = natureOfBusinessList.join(", ");
-          
+
           // Contact details
           const principalContact = apiData.contact_details?.principal || {};
           const fullAddress = principalContact.address || "";
           const email = principalContact.email || "";
           const mobile = principalContact.mobile || "";
-          
+
           // Promoters
           const mainPromoter = (apiData.promoters && apiData.promoters[0]) || "";
-          
+
           // Parse address components (e.g., "5th Floor, ..., Telangana, 500008")
           let extractedState = "";
           let extractedPincode = "";
-          
+
           if (fullAddress) {
             const parts = fullAddress.split(",").map((s: string) => s.trim());
             if (parts.length >= 1) {
@@ -2082,7 +2089,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               if (pincodeMatch) {
                 extractedPincode = pincodeMatch[0];
               }
-              
+
               if (parts.length >= 2) {
                 extractedState = parts[parts.length - 2];
                 // If the second to last part is also just a city or if it contains the state
@@ -2102,15 +2109,15 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             businessType: apiData.taxpayer_type || "",
             businessEntityType: businessEntityType,
             natureOfBusiness: natureOfBusinessJoined,
-            cin: "", 
-            udyamRegistrationNumber: "", 
+            cin: "",
+            udyamRegistrationNumber: "",
             pan: panNumber
           };
 
           setVerifiedGSTData(verifiedData);
           setGSTVerified(true);
           setGstAddress(fullAddress); // Auto-fill address in GST section
-          
+
           // Sync with Company Information and Director information
           const updates: any = {};
 
@@ -2134,7 +2141,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           if (verifiedData.natureOfBusiness) {
             updates.natureOfBusiness = verifiedData.natureOfBusiness;
           }
-          
+
           // Auto-fill Director Info from Promoters and Contact Details
           if (mainPromoter) {
             updates.directorName = mainPromoter;
@@ -2165,7 +2172,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           if (Object.keys(updates).length > 0) {
             updateFormData(updates);
           }
-          
+
           toast.success("GST verified successfully! Company details auto-filled.");
         } else {
           console.error("GST API verification failed:", response.data.message);
@@ -2934,17 +2941,17 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   return (
     <>
       <FormStep
-      title="Company Information"
-      description="Select your company category and provide basic details"
-      onNext={onNext}
-      onPrev={onPrev}
-      isValid={isValid}
-      isFirstStep={true}
-      currentStep={1}
-      totalSteps={1}
-      nextButtonText={isSubmitting ? "Submitting..." : "Submit & List My Company"}
-      isSubmitting={isSubmitting}
-    >
+        title="Company Information"
+        description="Select your company category and provide basic details"
+        onNext={onNext}
+        onPrev={onPrev}
+        isValid={isValid}
+        isFirstStep={true}
+        currentStep={1}
+        totalSteps={1}
+        nextButtonText={isSubmitting ? "Submitting..." : "Submit & List My Company"}
+        isSubmitting={isSubmitting}
+      >
         <div className="space-y-12 pb-10">
           {/* Company Category */}
           <div className="space-y-4">
@@ -3019,7 +3026,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           />
 
           {/* Social Media Links */}
-          <div className="p-3 border rounded-lg bg-amber-200 border-amber-200">
+          {/* <div className="p-3 border rounded-lg bg-amber-200 border-amber-200">
             <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
               <Globe className="w-5 h-5 mr-2" />
               Social Media Links (Optional)
@@ -3095,7 +3102,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                 />
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Director/MD Details Section */}
           <div className="space-y-4">
@@ -3109,8 +3116,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             </div>
 
             <div className="space-y-10">
-              {/* UPDATED: Combined Aadhar Section with SINGLE LINE HORIZONTAL LAYOUT */}
-              <CombinedAadharSection
+              {/* Aadhar Verification Section - HIDDEN */}
+              {/* <CombinedAadharSection
                 aadharNumber={formData.aadharNumber || ""}
                 onAadharChange={handleAadharChange}
                 onVerifyAadhar={handleVerifyAadhar}
@@ -3120,7 +3127,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                 onConsentChange={(checked) => setAadharConsentAccepted(checked)}
                 consentAccepted={aadharConsentAccepted}
                 onDigiLockerLogin={handleDigiLockerLogin}
-              />
+              /> */}
 
               {/* Director/MD Information - Updated layout with phone below address */}
               <div className="p-3 bg-yellow-100 border rounded-lg border-amber-200">
