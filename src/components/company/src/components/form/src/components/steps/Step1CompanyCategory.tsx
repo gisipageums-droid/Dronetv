@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { StepProps } from "../../types/form";
 import { Building2, User, Phone, Globe, Mail, AlertCircle, ChevronDown, CheckCircle, Calendar, Upload, Lock, MapPin, Briefcase, FileText, X, Edit2, ExternalLink } from "lucide-react";
 import { FormInput } from "../FormInput";
@@ -17,6 +17,7 @@ interface Step1CompanyCategoryProps extends StepProps {
     message: string;
   } | null;
   isCheckingName: boolean;
+  isSubmitting?: boolean;
 }
 
 // Custom Date Picker Component
@@ -1172,7 +1173,7 @@ const GSTVerificationSection: React.FC<{
     const StatePincodeInput = React.useMemo(() => (
       <div className="space-y-1">
         <div className="text-xs text-slate-500 font-medium">
-          State & Pincode<span className="text-red-500">*</span>
+          State & Pincode
         </div>
         <input
           type="text"
@@ -1228,7 +1229,7 @@ const GSTVerificationSection: React.FC<{
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="block text-xs font-medium text-slate-700">
-                GST Number {isVerified ? <span className="text-green-600">✓</span> : <span className="text-red-500">*</span>}
+                GST Number {isVerified && <span className="text-green-600">✓</span>}
               </label>
               <div className="flex gap-2">
                 <input
@@ -1334,7 +1335,7 @@ const GSTVerificationSection: React.FC<{
             {/* Company Name */}
             <div className="space-y-1">
               <div className="flex items-center text-xs text-slate-500 font-medium">
-                Company Name (Trade Name)<span className="text-red-500">*</span>
+                Company Name (Trade Name)
               </div>
               <input
                 type="text"
@@ -1348,7 +1349,7 @@ const GSTVerificationSection: React.FC<{
 
             <div className="space-y-1">
               <div className="text-xs text-slate-500 font-medium">
-                Legal Name <span className="text-red-500">*</span>
+                Legal Name
               </div>
               <input
                 type="text"
@@ -1364,7 +1365,7 @@ const GSTVerificationSection: React.FC<{
               <div className="flex items-center text-xs text-slate-500 font-medium w-full">
                 <div className="flex items-center">
                   <MapPin className="w-3 h-3 mr-1 text-blue-600" />
-                  Registered Address <span className="text-red-500">*</span>
+                  Registered Address
                 </div>
               </div>
               <textarea
@@ -1390,7 +1391,7 @@ const GSTVerificationSection: React.FC<{
             {/* Registration Date */}
             <div className="space-y-1">
               <div className="text-xs text-slate-500 font-medium">
-                Date of Incorporation<span className="text-red-500">*</span>
+                Date of Incorporation
               </div>
               <input
                 type="text"
@@ -1908,6 +1909,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   checkCompanyName,
   companyNameStatus,
   isCheckingName,
+  isSubmitting,
 }) => {
   // DigiLocker State
   const [digiToken, setDigiToken] = useState<string | null>(null);
@@ -2030,145 +2032,149 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       setVerifyingGST(true);
 
       try {
-        // 1. Get Access Token with CORS headers
-        const tokenResponse = await axios.post(
-          "https://ocr.meon.co.in/get_token",
-          {
-            "company_id": "67132",
-            "email": "dev@ipageums.com",
-            "password": "dev@ipageums.com"
-          },
+        // SUREPASS GST ADVANCED API
+        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTU0NjEwNiwianRpIjoiNTNkODRmMTMtNTNjYS00MzhiLWFhZTItMjM0OTE1OGY4N2I0IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU1NDYxMDYsImV4cCI6MTc3ODEzODEwNiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.e1702x4ik39KgVqIB0kEjM5BjXuIH0uU34UMlgZsHcY"; // Updated with correct token provided by user
+        
+        const response = await axios.post(
+          "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
+          { "id_number": gstNumber },
           {
             headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'Access-Control-Allow-Origin': '*'
+              "Authorization": `Bearer ${SUREPASS_TOKEN}`,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
             }
           }
         );
 
-        if (tokenResponse.data.success) {
-          const token = tokenResponse.data.token;
+        console.log("Surepass GST API Response:", response.data);
 
-          // 2. Search Business Name by GST using the obtained token
-          const gstResponse = await axios.post(
-            "https://ocr.meon.co.in/gst/search_business_name",
-            { "gst_number": gstNumber },
-            {
-              headers: {
-                "Authorization": `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+        if (response.data.success && response.data.data) {
+          const apiData = response.data.data;
+          
+          // Map Surepass fields to our verifiedData structure as per user's JSON response
+          const companyName = apiData.business_name || apiData.legal_name || "";
+          const legalName = apiData.legal_name || "";
+          const panNumber = apiData.pan_number || "";
+          const registrationDate = apiData.date_of_registration || "";
+          const businessEntityType = apiData.constitution_of_business || "";
+          const natureOfBusinessList = apiData.nature_bus_activities || [];
+          const natureOfBusinessJoined = natureOfBusinessList.join(", ");
+          
+          // Contact details
+          const principalContact = apiData.contact_details?.principal || {};
+          const fullAddress = principalContact.address || "";
+          const email = principalContact.email || "";
+          const mobile = principalContact.mobile || "";
+          
+          // Promoters
+          const mainPromoter = (apiData.promoters && apiData.promoters[0]) || "";
+          
+          // Parse address components (e.g., "5th Floor, ..., Telangana, 500008")
+          let extractedState = "";
+          let extractedPincode = "";
+          
+          if (fullAddress) {
+            const parts = fullAddress.split(",").map((s: string) => s.trim());
+            if (parts.length >= 1) {
+              const lastPart = parts[parts.length - 1];
+              const pincodeMatch = lastPart.match(/\d{6}/);
+              if (pincodeMatch) {
+                extractedPincode = pincodeMatch[0];
+              }
+              
+              if (parts.length >= 2) {
+                extractedState = parts[parts.length - 2];
+                // If the second to last part is also just a city or if it contains the state
+                // This is a simple heuristic; can be improved
               }
             }
-          );
-
-          console.log("GST API Response:", gstResponse.data);
-
-          const apiData = gstResponse.data?.data?.[0] || gstResponse.data?.data || gstResponse.data;
-
-          if (apiData) {
-            const companyName = apiData.business_name || "";
-            const legalName = ""; // Keep legal name empty for manual entry
-            const panNumber = apiData.business_pan || "";
-
-            // Parse address to extract state and pincode
-            let extractedState = "";
-            let extractedPincode = "";
-
-            if (apiData.business_address) {
-              const addressParts = apiData.business_address.split(", ");
-              if (addressParts.length >= 2) {
-                // Last part should contain pincode
-                const lastPart = addressParts[addressParts.length - 1];
-                const pincodeMatch = lastPart.match(/\d{6}/);
-                if (pincodeMatch) {
-                  extractedPincode = pincodeMatch[0];
-                }
-
-                // First part should be state
-                extractedState = addressParts[0] || "";
-              }
-            }
-
-            // Extract ONLY state and pincode from API
-            // DO NOT populate the address field
-            const verifiedData = {
-              companyName: companyName,
-              legalName: "", // Keep legal name empty for manual entry
-              gstNumber: apiData.gst_number || gstNumber,
-              companyAddress: "", // EMPTY - for manual entry
-              state: extractedState,
-              pincode: extractedPincode,
-              registrationDate: apiData.business_registration_date || "",
-              businessType: apiData.nature_of_business || apiData.business_entity_type || "",
-              businessEntityType: apiData.business_entity_type || "",
-              natureOfBusiness: apiData.nature_of_business || "",
-              cin: "", // Will be filled manually
-              udyamRegistrationNumber: "", // Will be filled manually
-              pan: panNumber
-            };
-
-            setVerifiedGSTData(verifiedData);
-            setGSTVerified(true);
-
-            // Keep address field empty for manual entry
-            setGstAddress("");
-
-            // Sync with Company Information section
-            const updates: any = {};
-
-            if (verifiedData.companyName) {
-              updates.companyName = verifiedData.companyName;
-            }
-
-            // Update PAN number from GST API response
-            if (verifiedData.pan) {
-              updates.panNumber = verifiedData.pan;
-              setPanNumber(verifiedData.pan);
-              // Also update social links PAN
-              updates.socialLinks = {
-                ...formData.socialLinks,
-                pan: verifiedData.pan
-              };
-            }
-
-            // Update Business Entity Type from GST API response
-            if (verifiedData.businessEntityType) {
-              updates.businessField = verifiedData.businessEntityType;
-            }
-
-            // Update Nature of Business from GST API response
-            if (verifiedData.natureOfBusiness) {
-              updates.natureOfBusiness = verifiedData.natureOfBusiness;
-            }
-
-            // Parse and sync Year Established (Date of Incorporation)
-            if (verifiedData.registrationDate && verifiedData.registrationDate.includes('/')) {
-              const [d, m, y] = verifiedData.registrationDate.split('/');
-              if (d && m && y) {
-                // Convert DD/MM/YYYY to YYYY-MM-DD for ScrollDatePicker
-                updates.yearEstablished = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-              }
-            } else if (verifiedData.registrationDate && verifiedData.registrationDate.includes('-')) {
-              // Handle YYYY-MM-DD if that's what API sends
-              updates.yearEstablished = verifiedData.registrationDate;
-            }
-
-            if (Object.keys(updates).length > 0) {
-              updateFormData(updates);
-            }
-          } else {
-            console.error("No data found for this GST number");
           }
+
+          const verifiedData = {
+            companyName: companyName,
+            legalName: legalName,
+            gstNumber: apiData.gstin || gstNumber,
+            companyAddress: fullAddress, // Auto-fill the address
+            state: extractedState,
+            pincode: extractedPincode,
+            registrationDate: registrationDate,
+            businessType: apiData.taxpayer_type || "",
+            businessEntityType: businessEntityType,
+            natureOfBusiness: natureOfBusinessJoined,
+            cin: "", 
+            udyamRegistrationNumber: "", 
+            pan: panNumber
+          };
+
+          setVerifiedGSTData(verifiedData);
+          setGSTVerified(true);
+          setGstAddress(fullAddress); // Auto-fill address in GST section
+          
+          // Sync with Company Information and Director information
+          const updates: any = {};
+
+          if (verifiedData.companyName) {
+            updates.companyName = verifiedData.companyName;
+          }
+
+          if (verifiedData.pan) {
+            updates.panNumber = verifiedData.pan;
+            setPanNumber(verifiedData.pan);
+            updates.socialLinks = {
+              ...formData.socialLinks,
+              pan: verifiedData.pan
+            };
+          }
+
+          if (verifiedData.businessEntityType) {
+            updates.businessField = verifiedData.businessEntityType;
+          }
+
+          if (verifiedData.natureOfBusiness) {
+            updates.natureOfBusiness = verifiedData.natureOfBusiness;
+          }
+          
+          // Auto-fill Director Info from Promoters and Contact Details
+          if (mainPromoter) {
+            updates.directorName = mainPromoter;
+          }
+          if (email) {
+            updates.directorEmail = email;
+            setTempDirectorEmail(email);
+          }
+          if (mobile) {
+            // Ensure phone has +91 prefix if missing
+            const formattedMobile = mobile.startsWith('+') ? mobile : `+91 ${mobile}`;
+            updates.directorPhone = formattedMobile;
+          }
+          if (fullAddress) {
+            updates.directorAddress = fullAddress;
+          }
+
+          // Handle registration date format (YYYY-MM-DD from user JSON)
+          if (verifiedData.registrationDate) {
+            updates.yearEstablished = verifiedData.registrationDate;
+          }
+
+          // Address updates for general location
+          if (extractedState) updates.state = extractedState;
+          if (extractedPincode) updates.postalCode = extractedPincode;
+          if (fullAddress) updates.officeAddress = fullAddress;
+
+          if (Object.keys(updates).length > 0) {
+            updateFormData(updates);
+          }
+          
+          toast.success("GST verified successfully! Company details auto-filled.");
         } else {
-          console.error("Token generation failed:", tokenResponse.data);
+          console.error("GST API verification failed:", response.data.message);
+          toast.error(response.data.message || "Could not verify GST details");
         }
-      } catch (error) {
-        console.error("Error verifying GST:", error);
+      } catch (error: any) {
+        console.error("Error verifying GST with Surepass:", error);
+        const errorMsg = error.response?.data?.message || "Error connecting to verification service";
+        toast.error(errorMsg);
       } finally {
         setVerifyingGST(false);
       }
@@ -2918,18 +2924,27 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     );
   };
 
+  const handleGSTVerifiedDataChange = useCallback((data: any) => {
+    setVerifiedGSTData(data);
+    if (data.companyName) {
+      updateFormData({ companyName: data.companyName });
+    }
+  }, [updateFormData]);
+
   return (
     <>
       <FormStep
-        title="Company Information"
-        description="Select your company category and provide basic details"
-        onNext={onNext}
-        onPrev={onPrev}
-        isValid={isValid}
-        isFirstStep={true}
-        currentStep={1}
-        totalSteps={6}
-      >
+      title="Company Information"
+      description="Select your company category and provide basic details"
+      onNext={onNext}
+      onPrev={onPrev}
+      isValid={isValid}
+      isFirstStep={true}
+      currentStep={1}
+      totalSteps={1}
+      nextButtonText={isSubmitting ? "Submitting..." : "Submit & List My Company"}
+      isSubmitting={isSubmitting}
+    >
         <div className="space-y-12 pb-10">
           {/* Company Category */}
           <div className="space-y-4">
@@ -2989,7 +3004,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             verifiedData={verifiedGSTData || undefined}
             address={gstAddress}
             onAddressChange={handleGstAddressChange}
-            onVerifiedDataChange={(data) => setVerifiedGSTData(data)}
+            onVerifiedDataChange={handleGSTVerifiedDataChange}
             formData={formData}
             updateFormData={updateFormData}
             panNumber={panNumber}

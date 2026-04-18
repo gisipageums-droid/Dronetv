@@ -127,190 +127,124 @@ const initialFormData: FormData = {
   templateId: "",
 };
 
+// ── Form submission API
+const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+
 function App() {
-const [companyNameStatus, setCompanyNameStatus] = useState<null | { available: boolean; suggestions?: string[]; message: string }>(null);
-const [isCheckingName, setIsCheckingName] = useState(false);
+  const [companyNameStatus, setCompanyNameStatus] = useState<null | { available: boolean; suggestions?: string[]; message: string }>(null);
+  const [isCheckingName, setIsCheckingName] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [currentStep, setCurrentStep] = useState(1);
- 
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const { draftDetails, setAIGenData, AIGenData } = useTemplate();
-    
-  const navigate = useNavigate(); // Use the useNavigate hook
+  const { setDraftDetails } = useTemplate();
 
-//function to check company name availability
-
-const checkCompanyName = async (name: string) => {
-  if (!name || name.length < 2) {
-    setCompanyNameStatus(null);
-    return;
-  }
-  setIsCheckingName(true);
-  try {
-    const res = await fetch(`https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(name)}`);
-    const data = await res.json();
-    setCompanyNameStatus(data);
-    
-  } catch (err) {
-    setCompanyNameStatus({ available: false, message: "Error checking name" });
-  } finally {
-    setIsCheckingName(false);
-  }
-};
-
-
-  const API = "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft";
-  //  const Dummyapi = "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/alok-12345/draft-alok-aerospace-2025-002?template=template-2";
-
-  console.log("draftDetails:",draftDetails);
-    // Add a state for API call loading
-  const [isApiLoading, setIsApiLoading] = useState(false);
-
-    async function handleClick() {
-      try {
-        setIsApiLoading(true);
-        const response = await fetch(`${API}/${draftDetails.userId}/${draftDetails.draftId}?template=template-${draftDetails.templateSelection}`);
-        // const response = await fetch(`${Dummyapi}`);
-        
-        const data = await response.json();
-        if (response.ok) {
-          
-          toast.success("AI generates the data successfully",{toastId: "ai-success"})          
-          // Use navigate function instead of Navigate component
-          // console.log("data:",data);
-          
-            setAIGenData(data);
-            // console.log("AIgen:", AIGenData);
-            navigate(`/edit/template/${draftDetails.templateSelection ===1?"t1":"t2"}`);
-          
-  
-          
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-  
+  const navigate = useNavigate();
 
   // Get templateId from navigation state
   const location = useLocation();
   const templateId = location.state?.templateId;
-  // console.log(templateId);
   initialFormData.templateSelection = templateId || "";
-  // console.log("templateSelection: ", initialFormData.templateSelection);
 
-  // ✅ new: track draftId & selectedTemplate
-  const [draftId, setDraftId] = useState<string | undefined>(undefined);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(templateId); // this comes from your template selection UI
-  const [userId] = useState<string>("user-123"); // replace with real auth/user context
-
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+  // ── Check company name availability
+  const checkCompanyName = async (name: string) => {
+    if (!name || name.length < 2) {
+      setCompanyNameStatus(null);
+      return;
+    }
+    setIsCheckingName(true);
+    try {
+      const res = await fetch(`https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(name)}`);
+      const data = await res.json();
+      setCompanyNameStatus(data);
+    } catch (err) {
+      setCompanyNameStatus({ available: false, message: "Error checking name" });
+    } finally {
+      setIsCheckingName(false);
+    }
+  };
 
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
 
-  const nextStep = () => {
-    if (currentStep < 6) {
-      setCurrentStep(currentStep + 1);
-    } else if (currentStep === 6) {
-      setIsGenerating(true);
+  // ── Submit Step 1 data → list the company immediately
+  const handleStep1Submit = async () => {
+    if (!formData.companyName || !formData.directorEmail) {
+      toast.error("Please fill Company Name and Director Email before submitting.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        userId: formData.directorEmail,
+        templateSelection: formData.templateSelection || templateId || "",
+        templateDetails: {
+          id: null,
+          name: "",
+          value: formData.templateSelection || templateId || "",
+        },
+        formData: {
+          ...formData,
+          submittedAt: new Date().toISOString(),
+        },
+        uploadedFiles: {},
+        batchInfo: {
+          isLastBatch: true,
+          timestamp: Date.now(),
+          processingMethod: "step1_immediate_submit",
+        },
+      };
+
+      const response = await fetch(FORM_SUBMIT_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // Store draft details in context so downstream pages can use them
+      setDraftDetails(data);
+
+      toast.success("🎉 Company listed successfully! You will receive a confirmation email shortly.", {
+        toastId: "company-listed",
+        autoClose: 5000,
+      });
+
+      // Navigate back to the companies listing page
+      setTimeout(() => {
+        navigate("/companies");
+      }, 2000);
+
+    } catch (error: any) {
+      console.error("❌ Step 1 submission failed:", error);
+      toast.error("Failed to list your company. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleGenerationComplete = () => {
-    setIsGenerating(false);
-    setIsComplete(true);
-  };
-
-  const renderStep = () => {
-    const stepProps = {
-      formData,
-      updateFormData,
-      onNext: nextStep,
-      onPrev: prevStep,
-      onStepClick: (step: number) => setCurrentStep(step),
-      isValid: true,
-    };
-
-    switch (currentStep) {
-      case 1:
-        return <Step1CompanyCategory 
-        {...stepProps} 
-         checkCompanyName={checkCompanyName}
-        companyNameStatus={companyNameStatus}
-        isCheckingName={isCheckingName}
-        />;
-      case 2:
-        return <Step3SectorsServed {...stepProps} />;
-      case 3:
-        return <Step4BusinessCategories {...stepProps} />;
-      case 4:
-        return <Step5ProductsServices {...stepProps} />;
-      case 5:
-        return <Step7PromotionBilling {...stepProps} />;
-      case 6:
-        return (
-          <Step8MediaUploads
-            formData={formData} // ✅ pass current form data
-            updateFormData={updateFormData} // ✅ so uploads update state
-            userId={userId}
-            draftId={draftId}
-            selectedTemplateId={selectedTemplateId}
-            onNext={nextStep} // ✅ prevent "onNext is not a function"
-            onPrev={prevStep} // ✅ allow going back if needed
-            onSaveSuccess={(newDraftId) => setDraftId(newDraftId)} // ✅ store draftId
-            isValid={true} // ✅ for consistency with other steps
-          />
-        );
-      default:
-        return <Step1CompanyCategory {...stepProps} />;
-    }
-  };
-
-  if (isGenerating) {
-    return <AIGenerationLoader onComplete={handleGenerationComplete} />;
-  }
-
-  if (isComplete) {
-    // Show loading indicator while API call is in progress
-    if (isApiLoading) {
-      return (
-        <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
-          <div className="text-center">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse mb-6">
-              <svg className="w-12 h-12 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Loading Your Website
-            </h1>
-            <p className="text-blue-200 text-lg">
-              Please wait while we prepare your website data
-            </p>
-          </div>
-        </div>
-      );
-    }
-    
-    // Call handleClick after a short delay when isComplete becomes true
-      handleClick();
-    
-    return null;
-  }
-
-  return <div>{renderStep()}</div>;
+  return (
+    <Step1CompanyCategory
+      formData={formData}
+      updateFormData={updateFormData}
+      onNext={handleStep1Submit}
+      onPrev={() => navigate(-1)}
+      isValid={!isSubmitting}
+      isFirstStep={true}
+      checkCompanyName={checkCompanyName}
+      companyNameStatus={companyNameStatus}
+      isCheckingName={isCheckingName}
+      isSubmitting={isSubmitting}
+    />
+  );
 }
 
 export default App;
