@@ -1,0 +1,647 @@
+import { useState, useEffect } from "react";
+import { FormData } from "./types/form";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import Step1CompanyCategory from "./components/steps/Step1CompanyCategory";
+import Step3SectorsServed from "./components/steps/Step3SectorsServed";
+import Step4BusinessCategories from "./components/steps/Step4BusinessCategories";
+import Step5ProductsServices from "./components/steps/Step5ProductsServices";
+import Step7PromotionBilling from "./components/steps/Step7PromotionBilling";
+import Step8MediaUploads from "./components/steps/Step8MediaUploads";
+import { AIGenerationLoader } from "./components/AIGenerationLoader";
+import { useTemplate, useUserAuth } from "../../../../../context/context";
+import { toast } from "react-toastify";
+
+// ---- initial form state ----
+const initialFormData: FormData = {
+  // Company Information
+  companyCategory: [],
+  companyName: "",
+  yearEstablished: "",
+  websiteUrl: "",
+  promoCode: "",
+
+  // Basic Information (from Aadhar verification)
+  fullName: "",
+  dateOfBirth: "",
+  gender: "",
+  relationshipType: "",
+  relationshipName: "",
+  basicAddress: "",
+  basicCity: "",
+  basicPostalCode: "",
+  basicCountry: "",
+  basicState: "",
+
+  // Aadhar Verification
+  aadharNumber: "",
+  aadharVerified: false,
+  aadharConsentAccepted: false,
+
+  // PAN Information
+  panNumber: "",
+
+  // GST Verification
+  legalName: "",
+  gstin: "",
+  gstAddress: "",
+  communicationAddress: "",
+  sameAsRegisteredAddress: false,
+  businessField: "",
+  natureOfBusiness: "",
+  cin: "",
+  udyamRegistrationNumber: "",
+
+  // Director/MD Information
+  directorPrefix: undefined,
+  directorName: "",
+  directorAddress: "",
+  directorPhone: "",
+  directorEmail: "",
+
+  // Alternative Contact
+  altContactGender: undefined,
+  altContactName: "",
+  altContactPhone: "",
+  altContactEmail: "",
+
+  // Support Information
+  supportEmail: "",
+  supportContactNumber: "",
+
+  // Social Media Links
+  socialLinks: {
+    linkedin: "",
+    facebook: "",
+    instagram: "",
+    youtube: "",
+    website: "",
+    pan: "",
+    twitter: "",
+  },
+
+  // Address Information
+  officeAddress: "",
+  city: "",
+  state: "",
+  country: "India",
+  postalCode: "",
+
+  // Other fields
+  companyProfileLink: "",
+  promoVideoFiveMinUrl: "",
+  promoVideoOneMinUrl: "",
+  whatsappNumber: "",
+  operatingHours: "",
+
+  sectorsServed: {
+    Drone: [],
+    AI: [],
+    GIS: []
+  },
+  sectorsOther: {
+    Drone: "",
+    AI: "",
+    GIS: ""
+  },
+  mainCategories: [],
+  otherMainCategories: "",
+  geographyOfOperations: [],
+  coverageType: "",
+
+  // Drone Categories
+  manufacturingSubcategories: [],
+  manufOther: "",
+  dgcaTypeCertificateUrl: "",
+  serviceSubcategories: [],
+  servicesOther: "",
+  trainingTypes: [],
+  trainingOther: "",
+  rptoAuthorisationCertificateUrl: "",
+  photoVideoSubcategories: [],
+  photoVideoOther: "",
+
+  // AI Categories
+  softwareSubcategories: [],
+  softwareOther: "",
+  aiSolutions: [],
+  aiSolutionsOther: "",
+  aiProducts: [],
+  aiProductsOther: "",
+  aiServices: [],
+  aiServicesOther: "",
+
+  // GIS Categories
+  gnssSolutions: [],
+  gnssSolutionsOther: "",
+  gnssProducts: [],
+  gnssProductsOther: "",
+  gnssServices: [],
+  gnssServicesOther: "",
+
+  // Template Content
+  heroBackgroundUrl: "",
+  primaryCtaText: "",
+  primaryCtaLink: "",
+  secondaryCtaText: "",
+  secondaryCtaLink: "",
+  aboutTitle: "",
+  aboutImageUrl: "",
+  aboutExperienceYears: 0,
+  aboutTeamExperience: "",
+  companyValuesSelection: [],
+  servicesTitle: "",
+  servicesDescription: "",
+  services: [],
+  productsTitle: "",
+  productCategories: "",
+  products: [],
+  clientsTitle: "",
+  clients: [],
+  testimonials: [],
+  contactTitle: "",
+  contactEmail: "",
+  contactPhone: "",
+  addressLine: "",
+  pinCode: "",
+  mapEmbedUrl: "",
+  contactFormText: "",
+  submitButtonText: "",
+  footerLogoUrl: "",
+  footerDescriptionDraft: "",
+  footerText: "",
+  footerEmail: "",
+  footerPhone: "",
+  footerAddress: "",
+  footerNavLinks: [],
+  newsletterEnabled: false,
+  newsletterDescription: "",
+
+  // Promotion & Billing
+  promoFormats: [],
+  billingContactName: "",
+  billingContactEmail: "",
+  billingGstDetails: "",
+  billingAddress: "",
+  paymentMethod: "",
+  acceptTerms: false,
+  acceptPrivacy: false,
+
+  // Media Uploads
+  companyLogoUrl: "",
+  brochurePdfUrl: "",
+  cataloguePdfUrl: "",
+  caseStudiesUrl: "",
+  brandGuidelinesUrl: "",
+
+  // Template Selection
+  templateId: "",
+};
+
+function App() {
+  const { isLogin, isAdminLogin } = useUserAuth();
+  const [companyNameStatus, setCompanyNameStatus] = useState<null | {
+    available: boolean;
+    suggestions?: string[];
+    message: string;
+  }>(null);
+  const [isCheckingName, setIsCheckingName] = useState(false);
+
+  // Initialize from localStorage synchronously so values are present on first render
+  const [currentStep, setCurrentStep] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem("companyFormDraft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.step && Number.isInteger(parsed.step)) {
+          // If not logged in, always start at step 1
+          if (!isLogin && !isAdminLogin) return 1;
+          return parsed.step as number;
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read step from localStorage on init", e);
+    }
+    return 1;
+  });
+
+  // Ensure currentStep is 1 if user is not logged in
+  useEffect(() => {
+    if (!isLogin && !isAdminLogin && currentStep > 1) {
+      setCurrentStep(1);
+    }
+  }, [isLogin, isAdminLogin, currentStep]);
+
+  const [formData, setFormData] = useState<FormData>(() => {
+    try {
+      const saved = localStorage.getItem("companyFormDraft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.formData && typeof parsed.formData === "object") {
+          return { ...initialFormData, ...parsed.formData } as FormData;
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read formData from localStorage on init", e);
+    }
+    return initialFormData;
+  });
+
+  const { draftDetails, setAIGenData, AIGenData } = useTemplate();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // ✅ extract params for prefill
+  const params = useParams<{
+    publicId?: string;
+    userId?: string;
+    draftId?: string;
+  }>();
+  const { publicId, userId: urlUserId, draftId: urlDraftId } = params;
+
+  // ✅ loading state for prefill
+  const [isApiLoading, setIsApiLoading] = useState(false);
+
+  // ✅ prefill form logic
+  useEffect(() => {
+    const fetchDraftData = async () => {
+      if (publicId && urlUserId && urlDraftId) {
+        try {
+          setIsApiLoading(true);
+          const API_URL = `https://l0jg1d9hnc.execute-api.ap-south-1.amazonaws.com/dev/${publicId}/${urlUserId}/${urlDraftId}`;
+          const response = await fetch(API_URL);
+          const data = await response.json();
+
+          if (data?.formData) {
+            console.log("Fetched formData:", data.formData);
+            setFormData((prev) => ({ ...prev, ...data.formData }));
+            setAIGenData(data);
+          } else {
+            console.error("API returned invalid data:", data);
+          }
+        } catch (error) {
+          console.error("Error fetching draft data:", error);
+        } finally {
+          setIsApiLoading(false);
+        }
+      }
+    };
+
+    fetchDraftData();
+  }, [publicId, urlUserId, urlDraftId, setAIGenData]);
+
+  // Persist form data and step to localStorage so data survives refresh until submission
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("companyFormDraft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.formData && typeof parsed.formData === "object") {
+          setFormData((prev) => ({ ...prev, ...parsed.formData }));
+        }
+        if (parsed?.step && Number.isInteger(parsed.step)) {
+          // If not logged in, don't restore steps beyond 1
+          if (!isLogin && !isAdminLogin) {
+            setCurrentStep(1);
+          } else {
+            setCurrentStep(parsed.step);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load saved draft from localStorage", e);
+    }
+  }, [isLogin, isAdminLogin]);
+
+  useEffect(() => {
+    try {
+      const payload = JSON.stringify({ formData, step: currentStep });
+      localStorage.setItem("companyFormDraft", payload);
+    } catch (e) {
+      console.error("Failed to save draft to localStorage", e);
+    }
+  }, [formData, currentStep]);
+
+  // function to check company name availability
+  const checkCompanyName = async (name: string) => {
+    if (!name || name.length < 2) {
+      setCompanyNameStatus(null);
+      return;
+    }
+    setIsCheckingName(true);
+    try {
+      const res = await fetch(
+        `https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(
+          name
+        )}`
+      );
+      const data = await res.json();
+      setCompanyNameStatus(data);
+    } catch (err) {
+      setCompanyNameStatus({
+        available: false,
+        message: "Error checking name",
+      });
+    } finally {
+      setIsCheckingName(false);
+    }
+  };
+
+  function handleClick() {
+    console.log("draft Details:", draftDetails);
+    navigate(
+      `/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}/${draftDetails.draftId
+      }/${draftDetails.userId}`
+    );
+  }
+
+  const templateId = location.state?.templateId;
+  initialFormData.templateId = templateId || "";
+
+  const [draftId, setDraftId] = useState<string | undefined>(undefined);
+  const [selectedTemplateId, setSelectedTemplateId] =
+    useState<string>(templateId);
+  const [userId] = useState<string>("user-123");
+
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+
+  const updateFormData = (data: Partial<FormData>) => {
+    setFormData((prev) => ({ ...prev, ...data }));
+  };
+
+  // Step 1 validation logic
+  const validateStep1 = () => {
+    // Company Category: at least 1
+    if (!formData.companyCategory || formData.companyCategory.length === 0) {
+      toast.error("Please select at least one Company Category.");
+      return false;
+    }
+    // Company Name: required
+    if (!formData.companyName || formData.companyName.trim() === "") {
+      toast.error("Company Name is required.");
+      return false;
+    }
+    // Website URL: required
+    if (!formData.websiteUrl || formData.websiteUrl.trim() === "") {
+      toast.error("Website URL is required.");
+      return false;
+    }
+    // Director/MD Information required
+    if (!formData.directorName || formData.directorName.trim() === "") {
+      toast.error("Director Name is required.");
+      return false;
+    }
+    if (!formData.directorPhone || formData.directorPhone.trim() === "") {
+      toast.error("Director Phone is required.");
+      return false;
+    }
+    if (!formData.directorEmail || formData.directorEmail.trim() === "") {
+      toast.error("Director Email is required.");
+      return false;
+    }
+    // Alternative Contact is optional
+    // Note: Address validation removed as the form uses Communication Address in GST section
+    // and Director Address which are collected separately
+    // Country field removed - defaulting to India
+    // State, City, and Postal Code are collected from Aadhar/GST verification
+    // All other fields in Company Information are optional
+    // Legal Information is optional
+    return true;
+  };
+
+  // Step 3 validation logic
+  const validateStep3 = () => {
+    if (!formData.sectorsServed || typeof formData.sectorsServed !== "object") {
+      toast.error("Please select at least one sector.");
+      return false;
+    }
+    // Check if at least one selected category has at least one sector selected
+    const hasAny = formData.companyCategory.some(
+      (cat) =>
+        Array.isArray(formData.sectorsServed[cat]) &&
+        formData.sectorsServed[cat].length > 0
+    );
+    if (!hasAny) {
+      toast.error(
+        "Please select at least one sector for your company category."
+      );
+      return false;
+    }
+    return true;
+  };
+
+  // Step 4 validation logic
+  const validateStep4 = () => {
+    if (!formData.mainCategories || formData.mainCategories.length === 0) {
+      toast.error("Please select at least one Main Business Category.");
+      return false;
+    }
+    if (
+      !formData.geographyOfOperations ||
+      formData.geographyOfOperations.length === 0
+    ) {
+      toast.error("Please select at least one Geography of Operations.");
+      return false;
+    }
+    return true;
+  };
+
+  // Step 5 validation logic
+  const validateStep5 = () => {
+    return true;
+  };
+
+  // Step 7 validation logic
+  const validateStep7 = () => {
+    if (!formData.promoFormats || formData.promoFormats.length === 0) {
+      toast.error("Please select at least one Promotion Preference.");
+      return false;
+    }
+    if (!formData.acceptTerms || !formData.acceptPrivacy) {
+      toast.error(
+        "Please accept Terms & Conditions and Privacy Policy to continue."
+      );
+      return false;
+    }
+    return true;
+  };
+
+  // Step 8 validation logic
+  const validateStep8 = () => {
+    return true;
+  };
+
+  // NEW: Save initial step data to DB for non-logged-in users
+  const saveInitialData = async () => {
+    try {
+      const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+      const payload = {
+        userId: formData.directorEmail || "anonymous",
+        directorEmail: formData.directorEmail,
+        formData: formData,
+        isInitialSave: true,
+        timestamp: Date.now()
+      };
+
+      const response = await fetch(FORM_SUBMIT_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        toast.success("Details saved successfully! Please login to complete your listing.");
+        // Store a flag to indicate we just saved initial data
+        localStorage.setItem("pendingCompanyListing", "true");
+        // Redirect to login
+        setTimeout(() => navigate("/login"), 2000);
+      } else {
+        throw new Error("Failed to save data");
+      }
+    } catch (error) {
+      console.error("Error saving initial data:", error);
+      toast.error("Failed to save initial data. Please try again or login first.");
+    }
+  };
+
+  const nextStep = () => {
+    // Only validate on step 1, 3, 4, 7, and 8
+    if (currentStep === 1) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!validateStep1()) return;
+
+      // If not logged in, stop at step 1 and save data
+      if (!isLogin && !isAdminLogin) {
+        saveInitialData();
+        return;
+      }
+    }
+    if (currentStep === 2) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!validateStep3()) return;
+    }
+    if (currentStep === 3) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!validateStep4()) return;
+    }
+    if (currentStep === 4) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!validateStep5()) return;
+    }
+    if (currentStep === 5) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!validateStep7()) return;
+    }
+    if (currentStep === 6) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!validateStep8()) return;
+    }
+    if (currentStep < 6) {
+      setCurrentStep(currentStep + 1);
+    } else if (currentStep === 6) {
+      setIsGenerating(true);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleGenerationComplete = () => {
+    setIsGenerating(false);
+    setIsComplete(true);
+  };
+
+  // Add skip step function
+  const skipStep = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (currentStep < 6) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const renderStep = () => {
+    const stepProps = {
+      formData,
+      updateFormData,
+      onNext: nextStep,
+      onPrev: prevStep,
+      onSkip: skipStep, // Add skip handler
+      onStepClick: (step: number) => setCurrentStep(step),
+      isValid: true,
+      showSkip: currentStep >= 2 && currentStep <= 5, // Show skip for steps 2-5 only
+      nextButtonText: (currentStep === 1 && !isLogin && !isAdminLogin) ? "Save & Continue to Login" : undefined
+    };
+
+    switch (currentStep) {
+      case 1:
+        return (
+          <Step1CompanyCategory
+            {...stepProps}
+            checkCompanyName={checkCompanyName}
+            companyNameStatus={companyNameStatus}
+            isCheckingName={isCheckingName}
+          />
+        );
+      case 2:
+        return <Step3SectorsServed {...stepProps} />;
+      case 3:
+        return <Step4BusinessCategories {...stepProps} />;
+      case 4:
+        return <Step5ProductsServices {...stepProps} />;
+      case 5:
+        return <Step7PromotionBilling {...stepProps} />;
+      case 6:
+        return (
+          <Step8MediaUploads
+            formData={formData}
+            updateFormData={updateFormData}
+            userId={userId}
+            draftId={draftId}
+            selectedTemplateId={selectedTemplateId}
+            onNext={nextStep}
+            onPrev={prevStep}
+            onSaveSuccess={(newDraftId) => setDraftId(newDraftId)}
+            isValid={true}
+            showSkip={false} // Explicitly hide skip for last step
+          />
+        );
+      default:
+        return <Step1CompanyCategory {...stepProps} />;
+    }
+  };
+
+  if (isApiLoading) {
+    return (
+      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Loading form data...
+          </h1>
+          <p className="text-blue-200 text-lg">
+            Please wait while we prefill your form
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isGenerating) {
+    return <AIGenerationLoader onComplete={handleGenerationComplete} />;
+  }
+
+  if (isComplete) {
+    handleClick();
+    return null;
+  }
+
+  return <div>{renderStep()}</div>;
+}
+
+export default App;

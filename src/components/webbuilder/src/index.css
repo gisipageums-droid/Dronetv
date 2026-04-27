@@ -1,0 +1,206 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFD400;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF0000;
+}
+
+/* Swiper Pagination Styles */
+.testimonials-swiper .swiper-pagination-bullet {
+  background: #FFD400;
+  opacity: 0.5;
+}
+
+.testimonials-swiper .swiper-pagination-bullet-active {
+  background: #FF0000;
+  opacity: 1;
+}
+
+.testimonials-swiper .swiper-button-next,
+.testimonials-swiper .swiper-button-prev {
+  color: #FF0000;
+}
+
+/* Animation Keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 212, 0, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(255, 212, 0, 0.6); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Custom Animations */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background: linear-gradient(-45deg, #FFD400, #FF0000, #FFD400, #FF0000);
+  background-size: 400% 400%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Template 2 Specific Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Swiper Pagination Styles for Template 2 */
+.testimonials-swiper-2 .swiper-pagination {
+  bottom: 0 !important;
+}
+
+.testimonials-swiper-2 .swiper-pagination-bullet {
+  background: #FFD400 !important;
+  opacity: 0.5 !important;
+  width: 12px !important;
+  height: 12px !important;
+  margin: 0 6px !important;
+}
+
+.testimonials-swiper-2 .swiper-pagination-bullet-active {
+  background: #FF0000 !important;
+  opacity: 1 !important;
+  transform: scale(1.3) !important;
+}
+
+/* Form Focus Animations */
+.group input:focus ~ label,
+.group textarea:focus ~ label {
+  transform: translateY(-12px);
+  font-size: 0.75rem;
+  color: #FF0000;
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+}
+
+/* Dark Mode Transitions */
+.dark * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  background: linear-gradient(135deg, #FF0000 0%, #FFD400 100%);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 0, 0, 0.3);
+}
+
+/* Loading Animation */
+.loading-spinner {
+  border: 3px solid rgba(255, 212, 0, 0.3);
+  border-top: 3px solid #FFD400;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
