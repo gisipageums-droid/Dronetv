@@ -471,8 +471,11 @@ function App() {
     return true;
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // NEW: Save initial step data to DB for non-logged-in users
   const saveInitialData = async () => {
+    setIsSubmitting(true);
     try {
       const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
       const payload = {
@@ -497,13 +500,19 @@ function App() {
         // Store a flag to indicate we just saved initial data
         localStorage.setItem("pendingCompanyListing", "true");
         // Redirect to login
-        setTimeout(() => navigate("/login"), 2000);
+        setTimeout(() => navigate("/login"), 1500);
       } else {
-        throw new Error("Failed to save data");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to save data");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving initial data:", error);
-      toast.error("Failed to save initial data. Please try again or login first.");
+      toast.error(error.message || "Failed to save initial data. Please try again or login first.");
+    } finally {
+      // Don't set isSubmitting to false if we are redirecting anyway, 
+      // but if there's an error we must.
+      // Actually, setting it to false after a delay or on error is safer.
+      setTimeout(() => setIsSubmitting(false), 2000);
     }
   };
 
@@ -641,7 +650,31 @@ function App() {
     return null;
   }
 
-  return <div>{renderStep()}</div>;
+  return (
+    <div className="relative min-h-screen">
+      {isSubmitting && (
+        <div className="fixed inset-0 bg-white/90 backdrop-blur-md z-[9999] flex flex-col items-center justify-center transition-all duration-500">
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-amber-100 rounded-full"></div>
+            <div className="absolute top-0 left-0 w-20 h-20 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-10 h-10 bg-amber-500 rounded-lg animate-pulse"></div>
+            </div>
+          </div>
+          <div className="mt-8 text-center animate-bounce">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">SAVING YOUR LISTING</h2>
+            <div className="flex gap-1 justify-center mt-1">
+              <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce delay-100"></div>
+              <div className="w-2 h-2 bg-amber-500 rounded-full animate-bounce delay-200"></div>
+              <div className="w-2 h-2 bg-amber-600 rounded-full animate-bounce delay-300"></div>
+            </div>
+          </div>
+          <p className="text-slate-500 mt-4 font-medium italic">Almost there! Redirecting you to login...</p>
+        </div>
+      )}
+      {renderStep()}
+    </div>
+  );
 }
 
 export default App;
