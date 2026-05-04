@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { StepProps } from "../../types/form";
-import { Building2, User, Phone, Globe, Mail, AlertCircle, ChevronDown, CheckCircle, Calendar, Upload, Lock, MapPin, Briefcase, FileText, X, Edit2, ExternalLink } from "lucide-react";
+import { Building2, User, Phone, Globe, Mail, AlertCircle, ChevronDown, CheckCircle, Calendar, Upload, Lock, MapPin, Briefcase, FileText, X, Edit2, ExternalLink, ShieldCheck } from "lucide-react";
 import { FormInput } from "../FormInput";
 import { PhoneInput } from "../PhoneInput";
 import { CountryStateSelect } from "../CountryStateSelect";
@@ -1084,6 +1084,7 @@ const GSTVerificationSection: React.FC<{
 }) => {
     const [localConsent, setLocalConsent] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
+    const [verificationMethod, setVerificationMethod] = useState<'GST' | 'CIN' | 'PAN' | 'UDYAM'>('GST');
 
     const formatGSTNumber = (value: string) => {
       // Remove all non-alphanumeric characters
@@ -1216,103 +1217,235 @@ const GSTVerificationSection: React.FC<{
     return (
       <div className="bg-[#F0F8FF] border border-blue-200 rounded-xl p-6 shadow-sm">
         <div className="border-b border-blue-200 pb-3 mb-4 flex justify-between items-center">
-          <h3 className="text-slate-900 font-semibold select-none">
-            Verify GST
-          </h3>
-          {isVerified && (
-            <div className="flex items-center text-green-600">
+          <div className="flex items-center space-x-2">
+            <ShieldCheck className="w-5 h-5 text-blue-600" />
+            <h3 className="text-slate-900 font-semibold select-none">
+              Identity & Business Verification
+            </h3>
+          </div>
+          {(isVerified || isPANVerified || isCINVerified || isUDYAMVerified) && (
+            <div className="flex items-center text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-200">
               <CheckCircle className="w-4 h-4 mr-1" />
-              <span className="text-xs font-medium">Verified</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">Verified</span>
             </div>
           )}
         </div>
 
         <div className="space-y-6">
           <div className="mb-4">
-            <h3 className="font-semibold text-slate-900 text-base">Verify Through GST</h3>
-            <p className="text-slate-600 text-sm mt-0.5">Automatically fill your company details using GST Portal</p>
+            <h3 className="font-semibold text-slate-900 text-base">Select Verification Method</h3>
+            <p className="text-slate-600 text-sm mt-0.5">Choose how you want to verify your business</p>
           </div>
 
-          {/* GST Input Section */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="block text-xs font-medium text-slate-700">
-                GST Number {isVerified ? <span className="text-green-600">✓</span> : <span className="text-red-500">*</span>}
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={gstNumber}
-                  onChange={(e) => handleChange(e.target.value)}
-                  placeholder="22AAAAA0000A1Z5"
-                  disabled={isVerified}
-                  className={`w-full h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
-                    }`}
-                  maxLength={15}
-                />
+          {/* Verification Method Dropdown */}
+          <div className="space-y-2">
+            <label className="block text-xs font-medium text-slate-700">Verification Type</label>
+            <div className="relative">
+              <select
+                value={verificationMethod}
+                onChange={(e) => setVerificationMethod(e.target.value as any)}
+                className="w-full h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-slate-800 appearance-none"
+              >
+                <option value="GST">GST Verification (Recommended)</option>
+                <option value="CIN">Corporate CIN Verification</option>
+                <option value="PAN">PAN Comprehensive Verification</option>
+                <option value="UDYAM">UDYAM Registration Verification</option>
+              </select>
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                <ChevronDown className="w-4 h-4 text-slate-400" />
               </div>
-              {!isVerified && !isValidFormat && gstNumber.length > 0 && (
-                <p className="text-[10px] text-red-500">Invalid GST format</p>
-              )}
-              {!isVerified && isValidGST && !localConsent && (
-                <p className="text-[10px] text-blue-600 mt-1">
-                  Please select the below consent checkbox to enable verification.
-                </p>
-              )}
             </div>
+          </div>
 
-            {/* Consent Section - Now with Verify button beside it */}
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex items-start space-x-2">
-                <div className="flex items-center h-5 mt-0.5">
+          {/* Conditional Rendering based on Method */}
+          {verificationMethod === 'GST' && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="space-y-2">
+                <label className="block text-xs font-medium text-slate-700">
+                  GST Number {isVerified ? <span className="text-green-600">✓</span> : <span className="text-red-500">*</span>}
+                </label>
+                <div className="flex gap-2">
                   <input
-                    id="gst-consent-checkbox"
-                    type="checkbox"
-                    checked={localConsent}
-                    onChange={(e) => handleConsentChange(e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer"
+                    type="text"
+                    value={gstNumber}
+                    onChange={(e) => handleChange(e.target.value)}
+                    placeholder="22AAAAA0000A1Z5"
+                    disabled={isVerified}
+                    className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
+                      ? 'border-green-300 bg-green-50'
+                      : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
+                      }`}
+                    maxLength={15}
+                  />
+                  {!isVerified && (
+                    <button
+                      type="button"
+                      onClick={handleVerifyClick}
+                      disabled={isVerifying || !isValidGST || !localConsent}
+                      className={`px-6 py-2 text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center transition-all ${isValidGST && localConsent && !isVerifying
+                        ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md active:scale-95'
+                        : 'bg-blue-300 text-white cursor-not-allowed'
+                        }`}
+                    >
+                      {isVerifying ? (
+                        <>
+                          <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                          Verifying...
+                        </>
+                      ) : (
+                        "Verify"
+                      )}
+                    </button>
+                  )}
+                </div>
+                {!isVerified && !isValidFormat && gstNumber.length > 0 && (
+                  <p className="text-[10px] text-red-500">Invalid GST format</p>
+                )}
+              </div>
+
+              {/* Consent Section */}
+              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <div className="flex items-start space-x-2">
+                  <div className="flex items-center h-5 mt-0.5">
+                    <input
+                      id="gst-consent-checkbox"
+                      type="checkbox"
+                      checked={localConsent}
+                      onChange={(e) => handleConsentChange(e.target.checked)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label htmlFor="gst-consent-checkbox" className="text-xs text-slate-800 cursor-pointer font-medium">
+                      I consent to GST verification
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowConsentDetails(true)}
+                      className="text-[10px] text-blue-600 hover:text-blue-800 hover:underline flex items-center mt-0.5 text-left"
+                    >
+                      View consent details
+                      <ChevronDown className="w-2 h-2 ml-1" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {verificationMethod === 'CIN' && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="space-y-2">
+                <label className="block text-xs font-medium text-slate-700">
+                  Corporate Identity Number (CIN) {isCINVerified ? <span className="text-green-600">✓</span> : <span className="text-red-500">*</span>}
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={verifiedData?.cin || ""}
+                    onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), cin: e.target.value.toUpperCase() })}
+                    placeholder="Enter 21-digit CIN"
+                    maxLength={21}
+                    disabled={isCINVerified}
+                    className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 ${isCINVerified
+                      ? 'border-green-300 bg-green-50 text-slate-700'
+                      : 'border-blue-300 bg-white text-slate-800 focus:ring-blue-400 focus:border-blue-400'
+                      }`}
+                  />
+                  {!isCINVerified && (
+                    <button
+                      type="button"
+                      onClick={onVerifyCIN}
+                      disabled={isVerifyingCIN || !verifiedData?.cin || verifiedData.cin.length < 21}
+                      className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-300 transition-all shadow-md active:scale-95"
+                    >
+                      {isVerifyingCIN ? "Verifying..." : "Verify"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {verificationMethod === 'PAN' && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-slate-700">PAN Number</label>
+                  <input
+                    type="text"
+                    value={panNumber}
+                    onChange={(e) => onPanChange(e.target.value.toUpperCase())}
+                    placeholder="ABCDE1234F"
+                    maxLength={10}
+                    disabled={isPANVerified}
+                    className="w-full h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                 </div>
-                <div className="flex flex-col">
-                  <label htmlFor="gst-consent-checkbox" className="text-sm text-slate-800 cursor-pointer">
-                    I consent to GST verification
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowConsentDetails(true)}
-                    className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center mt-1 text-left"
-                  >
-                    View consent details
-                    <ChevronDown className="w-3 h-3 ml-1" />
-                  </button>
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-slate-700">Date of Birth</label>
+                  <input
+                    type="date"
+                    value={panDob}
+                    onChange={(e) => onPanDobChange(e.target.value)}
+                    disabled={isPANVerified}
+                    className="w-full h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
                 </div>
               </div>
-
-              {!isVerified && (
-                <button
-                  type="button"
-                  onClick={handleVerifyClick}
-                  disabled={isVerifying || !isValidGST || !localConsent}
-                  className={`px-6 py-2 text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center ${
-                    isValidGST && localConsent && !isVerifying
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-blue-300 text-white cursor-not-allowed'
-                  }`}
-                >
-                  {isVerifying ? (
-                    <>
-                      <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
-                      Verifying...
-                    </>
-                  ) : (
-                    "Verify"
+              <div className="space-y-2">
+                <label className="block text-xs font-medium text-slate-700">Full Name (as on PAN)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={panName}
+                    onChange={(e) => onPanNameChange(e.target.value)}
+                    placeholder="Enter full name"
+                    disabled={isPANVerified}
+                    className="flex-1 h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  {!isPANVerified && (
+                    <button
+                      type="button"
+                      onClick={onVerifyPAN}
+                      disabled={isVerifyingPAN || !panNumber || !panName || !panDob}
+                      className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-300 transition-all shadow-md active:scale-95"
+                    >
+                      {isVerifyingPAN ? "Verifying..." : "Verify"}
+                    </button>
                   )}
-                </button>
-              )}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
+          {verificationMethod === 'UDYAM' && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="space-y-2">
+                <label className="block text-xs font-medium text-slate-700">UDYAM Number</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={verifiedData?.udyamRegistrationNumber || ""}
+                    onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), udyamRegistrationNumber: e.target.value.toUpperCase() })}
+                    placeholder="UDYAM-XX-00-0000000"
+                    disabled={isUDYAMVerified}
+                    className="flex-1 h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  {!isUDYAMVerified && (
+                    <button
+                      type="button"
+                      onClick={onVerifyUDYAM}
+                      disabled={isVerifyingUDYAM || !verifiedData?.udyamRegistrationNumber}
+                      className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-300 transition-all shadow-md active:scale-95"
+                    >
+                      {isVerifyingUDYAM ? "Verifying..." : "Verify"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Consent Details Modal */}
           <ConsentModal
@@ -1513,59 +1646,10 @@ const GSTVerificationSection: React.FC<{
           />
         </div>
 
-        {/* Corporate Identity Number (CIN) */}
-        <div className="space-y-1 mt-4">
-          <div className="text-xs text-slate-500 font-medium">
-            Corporate Identity Number (CIN) {isCINVerified && <span className="text-green-600">✓</span>}
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={verifiedData?.cin || ""}
-              onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), cin: e.target.value.toUpperCase() })}
-              placeholder="Enter 21-digit CIN"
-              maxLength={21}
-              disabled={isCINVerified}
-              className={`flex-1 h-10 px-3 text-sm border rounded bg-white text-slate-700 focus:outline-none focus:ring-2 ${isCINVerified ? 'border-green-300 bg-green-50' : 'border-gray-200 focus:ring-blue-400 focus:border-blue-400'}`}
-            />
-            {!isCINVerified && onVerifyCIN && (
-              <button
-                type="button"
-                onClick={onVerifyCIN}
-                disabled={isVerifyingCIN || !verifiedData?.cin || verifiedData.cin.length < 21}
-                className="px-4 py-2 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
-              >
-                {isVerifyingCIN ? "Verifying..." : "Verify CIN"}
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/*UDYAM Registration Number*/}
-        <div className="space-y-1 mt-4">
-          <div className="text-xs text-slate-500 font-medium">
-            UDYAM Registration Number {isUDYAMVerified && <span className="text-green-600">✓</span>}
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={verifiedData?.udyamRegistrationNumber || ""}
-              onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), udyamRegistrationNumber: e.target.value.toUpperCase() })}
-              placeholder="Enter UDYAM Number"
-              disabled={isUDYAMVerified}
-              className={`flex-1 h-10 px-3 text-sm border rounded bg-white text-slate-700 focus:outline-none focus:ring-2 ${isUDYAMVerified ? 'border-green-300 bg-green-50' : 'border-gray-200 focus:ring-blue-400 focus:border-blue-400'}`}
-            />
-            {!isUDYAMVerified && onVerifyUDYAM && (
-              <button
-                type="button"
-                onClick={onVerifyUDYAM}
-                disabled={isVerifyingUDYAM || !verifiedData?.udyamRegistrationNumber}
-                className="px-4 py-2 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
-              >
-                {isVerifyingUDYAM ? "Verifying..." : "Verify UDYAM"}
-              </button>
-            )}
-          </div>
+        <div className="mt-4">
+          <p className="text-xs text-slate-500 italic">
+            Note: All business identification details provided will be used for official records.
+          </p>
         </div>
 
         <div className="mt-4">
