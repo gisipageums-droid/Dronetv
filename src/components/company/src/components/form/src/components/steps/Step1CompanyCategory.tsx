@@ -1061,6 +1061,13 @@ const GSTVerificationSection: React.FC<{
   address: string;
   onAddressChange: (value: string) => void;
   onVerifiedDataChange?: (data: any) => void;
+  // CIN & UDYAM Verification
+  onVerifyCIN?: () => void;
+  isVerifyingCIN?: boolean;
+  isCINVerified?: boolean;
+  onVerifyUDYAM?: () => void;
+  isVerifyingUDYAM?: boolean;
+  isUDYAMVerified?: boolean;
   // PAN Props
   panNumber: string;
   onPanChange: (value: string) => void;
@@ -1072,6 +1079,7 @@ const GSTVerificationSection: React.FC<{
   isVerifyingPAN: boolean;
   isPANVerified: boolean;
 }> = ({ gstNumber, onGSTChange, onVerifyGST, isVerified, isVerifying, verifiedData, address, onAddressChange, onVerifiedDataChange, formData, updateFormData,
+  onVerifyCIN, isVerifyingCIN, isCINVerified, onVerifyUDYAM, isVerifyingUDYAM, isUDYAMVerified,
   panNumber, onPanChange, panName, onPanNameChange, panDob, onPanDobChange, onVerifyPAN, isVerifyingPAN, isPANVerified
 }) => {
     const [localConsent, setLocalConsent] = useState(false);
@@ -1508,29 +1516,56 @@ const GSTVerificationSection: React.FC<{
         {/* Corporate Identity Number (CIN) */}
         <div className="space-y-1 mt-4">
           <div className="text-xs text-slate-500 font-medium">
-            Corporate Identity Number (CIN)
+            Corporate Identity Number (CIN) {isCINVerified && <span className="text-green-600">✓</span>}
           </div>
-          <input
-            type="text"
-            value={verifiedData?.cin || ""}
-            onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), cin: e.target.value })}
-            placeholder="Enter CIN"
-            className="w-full h-10 px-3 text-sm border border-gray-200 rounded bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={verifiedData?.cin || ""}
+              onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), cin: e.target.value.toUpperCase() })}
+              placeholder="Enter 21-digit CIN"
+              maxLength={21}
+              disabled={isCINVerified}
+              className={`flex-1 h-10 px-3 text-sm border rounded bg-white text-slate-700 focus:outline-none focus:ring-2 ${isCINVerified ? 'border-green-300 bg-green-50' : 'border-gray-200 focus:ring-blue-400 focus:border-blue-400'}`}
+            />
+            {!isCINVerified && onVerifyCIN && (
+              <button
+                type="button"
+                onClick={onVerifyCIN}
+                disabled={isVerifyingCIN || !verifiedData?.cin || verifiedData.cin.length < 21}
+                className="px-4 py-2 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+              >
+                {isVerifyingCIN ? "Verifying..." : "Verify CIN"}
+              </button>
+            )}
+          </div>
         </div>
 
         {/*UDYAM Registration Number*/}
         <div className="space-y-1 mt-4">
           <div className="text-xs text-slate-500 font-medium">
-            UDYAM Registration Number
+            UDYAM Registration Number {isUDYAMVerified && <span className="text-green-600">✓</span>}
           </div>
-          <input
-            type="text"
-            value={verifiedData?.udyamRegistrationNumber || ""}
-            onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), udyamRegistrationNumber: e.target.value })}
-            placeholder="Enter UDYAM Registration Number"
-            className="w-full h-10 px-3 text-sm border border-gray-200 rounded bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={verifiedData?.udyamRegistrationNumber || ""}
+              onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), udyamRegistrationNumber: e.target.value.toUpperCase() })}
+              placeholder="Enter UDYAM Number"
+              disabled={isUDYAMVerified}
+              className={`flex-1 h-10 px-3 text-sm border rounded bg-white text-slate-700 focus:outline-none focus:ring-2 ${isUDYAMVerified ? 'border-green-300 bg-green-50' : 'border-gray-200 focus:ring-blue-400 focus:border-blue-400'}`}
+            />
+            {!isUDYAMVerified && onVerifyUDYAM && (
+              <button
+                type="button"
+                onClick={onVerifyUDYAM}
+                disabled={isVerifyingUDYAM || !verifiedData?.udyamRegistrationNumber}
+                className="px-4 py-2 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+              >
+                {isVerifyingUDYAM ? "Verifying..." : "Verify UDYAM"}
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="mt-4">
@@ -1914,6 +1949,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   isCheckingName,
   nextButtonText, // Add this
 }) => {
+  const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
+  const SUREPASS_BASE_URL = "https://kyc-api.surepass.io/api/v1";
+
   const { isLogin, isAdminLogin } = useUserAuth();
   // DigiLocker State
   const [digiToken, setDigiToken] = useState<string | null>(null);
@@ -1929,20 +1967,49 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   const [verifyingPan, setVerifyingPan] = useState(false);
   const [panVerified, setPanVerified] = useState(false);
 
-  const handleVerifyPAN = () => {
+  const handleVerifyPAN = async () => {
+    if (!panNumber || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(panNumber)) {
+      toast.error("Please enter a valid PAN number");
+      return;
+    }
+
     setVerifyingPan(true);
-    // Simulate API call
-    setTimeout(() => {
-      setVerifyingPan(false);
-      setPanVerified(true);
-      // Update form data
-      updateFormData({
-        socialLinks: {
-          ...formData.socialLinks,
-          pan: panNumber
+    try {
+      const response = await axios.post(
+        `${SUREPASS_BASE_URL}/identity/pan-comprehensive`,
+        { 
+          "id_number": panNumber,
+          "dob": panDob,
+          "full_name": panName
+        },
+        {
+          headers: {
+            "Authorization": `Bearer ${SUREPASS_TOKEN}`,
+            'Content-Type': 'application/json'
+          }
         }
-      });
-    }, 1500);
+      );
+
+      if (response.data.success) {
+        setPanVerified(true);
+        toast.success("PAN Verified successfully!");
+        // Update form data
+        updateFormData({
+          socialLinks: {
+            ...formData.socialLinks,
+            pan: panNumber
+          },
+          fullName: response.data.data?.full_name || panName,
+        });
+      } else {
+        toast.error(response.data.message || "PAN verification failed");
+      }
+    } catch (error: any) {
+      console.error("Error verifying PAN:", error);
+      toast.error(error.response?.data?.message || "Error connecting to PAN verification service");
+    } finally {
+      setVerifyingPan(false);
+    }
   };
 
   // NEW: State for GST Verification - Restore only if verified
@@ -2022,6 +2089,93 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     setGstAddress(value);
   };
 
+  // NEW: State for CIN Verification
+  const [verifyingCIN, setVerifyingCIN] = useState(false);
+  const [cinVerified, setCINVerified] = useState(false);
+
+  // NEW: State for UDYAM Verification
+  const [verifyingUDYAM, setVerifyingUDYAM] = useState(false);
+  const [udyamVerified, setUDYAMVerified] = useState(false);
+
+  // NEW: Handle UDYAM verification
+  const handleVerifyUDYAM = async () => {
+    const udyam = verifiedGSTData?.udyamRegistrationNumber || formData.udyamRegistrationNumber;
+    if (!udyam) {
+      toast.error("Please enter a UDYAM registration number");
+      return;
+    }
+
+    setVerifyingUDYAM(true);
+    try {
+      const response = await axios.post(
+        `${SUREPASS_BASE_URL}/corporate/udyog-aadhaar`,
+        { "id_number": udyam },
+        {
+          headers: {
+            "Authorization": `Bearer ${SUREPASS_TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setUDYAMVerified(true);
+        toast.success("UDYAM Verified successfully!");
+      } else {
+        toast.error(response.data.message || "UDYAM verification failed");
+      }
+    } catch (error: any) {
+      console.error("Error verifying UDYAM:", error);
+      toast.error(error.response?.data?.message || "Error connecting to UDYAM verification service");
+    } finally {
+      setVerifyingUDYAM(false);
+    }
+  };
+
+  // NEW: Handle CIN verification
+  const handleVerifyCIN = async () => {
+    const cin = verifiedGSTData?.cin || formData.cin;
+    if (!cin || cin.length < 21) {
+      toast.error("Please enter a valid 21-digit CIN");
+      return;
+    }
+
+    setVerifyingCIN(true);
+    try {
+      const response = await axios.post(
+        `${SUREPASS_BASE_URL}/corporate/cin`,
+        { "id_number": cin },
+        {
+          headers: {
+            "Authorization": `Bearer ${SUREPASS_TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setCINVerified(true);
+        toast.success("CIN Verified successfully!");
+        
+        const apiData = response.data.data;
+        // Update form data with CIN details if needed
+        if (apiData.company_name) {
+          updateFormData({
+            companyName: apiData.company_name,
+            gstCompanyName: apiData.company_name
+          });
+        }
+      } else {
+        toast.error(response.data.message || "CIN verification failed");
+      }
+    } catch (error: any) {
+      console.error("Error verifying CIN:", error);
+      toast.error(error.response?.data?.message || "Error connecting to CIN verification service");
+    } finally {
+      setVerifyingCIN(false);
+    }
+  };
+
   // NEW: Handle GST verification - Updated to use Surepass Advanced GSTIN API
   const handleVerifyGST = async () => {
     // Regex for GSTIN: 2 digits(State) + 5 chars(PAN) + 4 digits(PAN) + 1 char(PAN) + 1 digit(Entity) + Z + 1 char(Check)
@@ -2036,14 +2190,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       setVerifyingGST(true);
 
       try {
-        const token = "SUREPASS_TOKEN_REMOVED";
-
         const gstResponse = await axios.post(
-          "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
+          `${SUREPASS_BASE_URL}/corporate/gstin-advanced`,
           { "id_number": gstNumber },
           {
             headers: {
-              "Authorization": `Bearer ${token}`,
+              "Authorization": `Bearer ${SUREPASS_TOKEN}`,
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             }
@@ -3045,6 +3197,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             onVerifiedDataChange={(data) => setVerifiedGSTData(data)}
             formData={formData}
             updateFormData={updateFormData}
+            onVerifyCIN={handleVerifyCIN}
+            isVerifyingCIN={verifyingCIN}
+            isCINVerified={cinVerified}
+            onVerifyUDYAM={handleVerifyUDYAM}
+            isVerifyingUDYAM={verifyingUDYAM}
+            isUDYAMVerified={udyamVerified}
             panNumber={panNumber}
             onPanChange={setPanNumber}
             panName={panName}
