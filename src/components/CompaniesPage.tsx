@@ -221,7 +221,9 @@ const CompaniesPage: React.FC = () => {
           <div className="flex flex-col gap-2 justify-between items-center md:flex-row">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 w-4 h-4 transform -translate-y-1/2 text-black/60" />
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <Search className="h-4 w-4 text-black/60" />
+              </div>
               <input
                 type="text"
                 placeholder="Search companies..."

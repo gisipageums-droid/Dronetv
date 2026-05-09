@@ -2,7 +2,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, SkipForward } from 'lucide-react';
 import { motion } from "motion/react";
-import { useUserAuth } from "../../../../../../context/context";
 
 interface FormStepProps {
   title: string;
@@ -18,7 +17,8 @@ interface FormStepProps {
   showSkip?: boolean; // New prop to control skip button visibility
   currentStep: number;
   totalSteps?: number;
-  nextButtonText?: string; // New prop for custom button text
+  nextButtonText?: string;
+  isSubmitting?: boolean;
 }
 
 export const FormStep: React.FC<FormStepProps> = ({
@@ -36,8 +36,8 @@ export const FormStep: React.FC<FormStepProps> = ({
   currentStep,
   totalSteps = 6,
   nextButtonText,
+  isSubmitting = false,
 }) => {
-  const { isLogin, isAdminLogin } = useUserAuth();
   const stepTitles = [
     'Company Info',
     'Sectors Served',
@@ -65,8 +65,8 @@ export const FormStep: React.FC<FormStepProps> = ({
         </div>
       </div>
 
-      {/* Progress Bar - Only visible when logged in */}
-      {(isLogin || isAdminLogin) && (
+      {/* Progress Bar (Only shown if more than 1 step) */}
+      {totalSteps > 1 && (
         <div className="bg-yellow-100 shadow-sm border-b border-amber-200">
           <div className="max-w-4xl mx-auto px-6 py-3">
             <div className="flex items-center justify-between mb-3 overflow-x-auto pb-2">
@@ -179,17 +179,24 @@ export const FormStep: React.FC<FormStepProps> = ({
                whileHover={{y:[0,-2]}}
                whileTap={{scale:[1,0.9]}}
               onClick={onNext}
-              disabled={!isValid}
+              disabled={!isValid || isSubmitting}
               className={`flex items-center px-6 py-2 rounded-md font-medium transition-all ${
-                !isValid
+                !isValid || isSubmitting
                   ? 'bg-yellow-100 text-gray-400 cursor-not-allowed'
-                  : isLastStep
+                  : isLastStep || totalSteps === 1
                   ? 'bg-black text-white hover:bg-amber-700  hover:shadow-md'
                   : 'bg-black text-yellow-400 hover:gt-gray-800  hover:shadow-md'
               }`}
             >
-              {nextButtonText || (isLastStep ? 'Submit Form' : 'Next Step')}
-              {(!isLastStep && !nextButtonText) && <ChevronRight className="w-4 h-4 ml-1" />}
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Submitting...
+                </>
+              ) : (
+                nextButtonText || (isLastStep ? 'Submit Form' : 'Next Step')
+              )}
+              {!isLastStep && totalSteps > 1 && !isSubmitting && <ChevronRight className="w-4 h-4 ml-1" />}
             </motion.button>
           </div>
         </div>

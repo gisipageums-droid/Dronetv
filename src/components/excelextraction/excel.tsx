@@ -732,7 +732,9 @@ const ExcelDataProcessor = () => {
             <div className="p-4 bg-yellow-50 border-b-2 border-yellow-200">
               <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-4">
                 <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-yellow-600 w-5 h-5" />
+                  <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <Search className="h-5 w-5 text-yellow-600" />
+                  </div>
                   <input
                     type="text"
                     placeholder="Search data..."

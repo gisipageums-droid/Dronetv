@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import { FormData } from "./types/form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Step1CompanyCategory from "./components/steps/Step1CompanyCategory";
@@ -7,8 +8,7 @@ import Step4BusinessCategories from "./components/steps/Step4BusinessCategories"
 import Step5ProductsServices from "./components/steps/Step5ProductsServices";
 import Step7PromotionBilling from "./components/steps/Step7PromotionBilling";
 import Step8MediaUploads from "./components/steps/Step8MediaUploads";
-import { AIGenerationLoader } from "./components/AIGenerationLoader";
-import { useTemplate, useUserAuth } from "../../../../../context/context";
+import { useTemplate } from "../../../../../context/context";
 import { toast } from "react-toastify";
 
 // ---- initial form state ----
@@ -198,39 +198,16 @@ const initialFormData: FormData = {
 };
 
 function App() {
-  const { isLogin, isAdminLogin } = useUserAuth();
   const [companyNameStatus, setCompanyNameStatus] = useState<null | {
     available: boolean;
     suggestions?: string[];
     message: string;
   }>(null);
   const [isCheckingName, setIsCheckingName] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize from localStorage synchronously so values are present on first render
-  const [currentStep, setCurrentStep] = useState<number>(() => {
-    try {
-      const saved = localStorage.getItem("companyFormDraft");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed?.step && Number.isInteger(parsed.step)) {
-          // If not logged in, always start at step 1
-          if (!isLogin && !isAdminLogin) return 1;
-          return parsed.step as number;
-        }
-      }
-    } catch (e) {
-      console.error("Failed to read step from localStorage on init", e);
-    }
-    return 1;
-  });
-
-  // Ensure currentStep is 1 if user is not logged in
-  useEffect(() => {
-    if (!isLogin && !isAdminLogin && currentStep > 1) {
-      setCurrentStep(1);
-    }
-  }, [isLogin, isAdminLogin, currentStep]);
-
+  // Consolidated to Step 1 only
+  const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>(() => {
     try {
       const saved = localStorage.getItem("companyFormDraft");
@@ -246,7 +223,7 @@ function App() {
     return initialFormData;
   });
 
-  const { draftDetails, setAIGenData, AIGenData } = useTemplate();
+  const { draftDetails, setDraftDetails, setAIGenData, AIGenData } = useTemplate();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -299,18 +276,13 @@ function App() {
           setFormData((prev) => ({ ...prev, ...parsed.formData }));
         }
         if (parsed?.step && Number.isInteger(parsed.step)) {
-          // If not logged in, don't restore steps beyond 1
-          if (!isLogin && !isAdminLogin) {
-            setCurrentStep(1);
-          } else {
-            setCurrentStep(parsed.step);
-          }
+          setCurrentStep(parsed.step);
         }
       }
     } catch (e) {
       console.error("Failed to load saved draft from localStorage", e);
     }
-  }, [isLogin, isAdminLogin]);
+  }, []);
 
   useEffect(() => {
     try {
@@ -362,12 +334,9 @@ function App() {
     useState<string>(templateId);
   const [userId] = useState<string>("user-123");
 
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-
-  const updateFormData = (data: Partial<FormData>) => {
+  const updateFormData = useCallback((data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
-  };
+  }, []);
 
   // Step 1 validation logic
   const validateStep1 = () => {
@@ -381,11 +350,13 @@ function App() {
       toast.error("Company Name is required.");
       return false;
     }
-    // Website URL: required
+    // Website URL is now optional
+    /*
     if (!formData.websiteUrl || formData.websiteUrl.trim() === "") {
       toast.error("Website URL is required.");
       return false;
     }
+    */
     // Director/MD Information required
     if (!formData.directorName || formData.directorName.trim() === "") {
       toast.error("Director Name is required.");
@@ -471,87 +442,76 @@ function App() {
     return true;
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // ── Submit Step 1 data → list the company immediately
+  const handleStep1Submit = useCallback(async () => {
+    if (!validateStep1()) return;
 
-  // NEW: Save initial step data to DB for non-logged-in users
-  const saveInitialData = async () => {
     setIsSubmitting(true);
     try {
       const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+      
+      const finalTemplateId = formData.templateId || templateId || "1";
+
       const payload = {
-        userId: formData.directorEmail || "anonymous",
+        userId: formData.directorEmail,
         directorEmail: formData.directorEmail,
-        formData: formData,
-        isInitialSave: true,
-        timestamp: Date.now()
+        templateSelection: finalTemplateId,
+        templateDetails: {
+          id: null,
+          name: "",
+          value: finalTemplateId,
+        },
+        formData: {
+          ...formData,
+          templateId: finalTemplateId,
+          submittedAt: new Date().toISOString(),
+        },
+        uploadedFiles: {},
+        batchInfo: {
+          isLastBatch: true,
+          timestamp: Date.now(),
+          processingMethod: "step1_immediate_submit",
+        },
       };
 
-      const response = await fetch(FORM_SUBMIT_API_URL, {
-        method: "POST",
+      console.log("📤 Submitting Step 1 Payload via Axios:", payload);
+
+      const response = await axios.post(FORM_SUBMIT_API_URL, payload, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify(payload),
+        timeout: 60000,
       });
 
-      if (response.ok) {
-        toast.success("Details saved successfully! Please login to complete your listing.");
-        // Store a flag to indicate we just saved initial data
-        localStorage.setItem("pendingCompanyListing", "true");
-        // Redirect to login
-        setTimeout(() => navigate("/login"), 1500);
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to save data");
-      }
+      // Store draft details in context
+      setDraftDetails(response.data);
+
+      toast.success("🎉 Company listed successfully! You will receive a confirmation email shortly.", {
+        toastId: "company-listed",
+        autoClose: 5000,
+      });
+
+      // Clear local draft after successful submission
+      localStorage.removeItem("companyFormDraft");
+
+      // Navigate back to the companies listing page or dashboard
+      setTimeout(() => {
+        navigate("/listed-companies");
+      }, 2000);
+
     } catch (error: any) {
-      console.error("Error saving initial data:", error);
-      toast.error(error.message || "Failed to save initial data. Please try again or login first.");
+      console.error("❌ Step 1 submission failed:", error);
+      const errorMsg = error.response?.data?.message || error.response?.data?.error || error.message || "Unknown error";
+      toast.error(`Failed to list your company: ${errorMsg}`);
     } finally {
-      // Don't set isSubmitting to false if we are redirecting anyway, 
-      // but if there's an error we must.
-      // Actually, setting it to false after a delay or on error is safer.
-      setTimeout(() => setIsSubmitting(false), 2000);
+      setIsSubmitting(false);
     }
-  };
+  }, [formData, templateId, navigate, setDraftDetails]);
 
   const nextStep = () => {
-    // Only validate on step 1, 3, 4, 7, and 8
     if (currentStep === 1) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep1()) return;
-
-      // If not logged in, stop at step 1 and save data
-      if (!isLogin && !isAdminLogin) {
-        saveInitialData();
-        return;
-      }
-    }
-    if (currentStep === 2) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep3()) return;
-    }
-    if (currentStep === 3) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep4()) return;
-    }
-    if (currentStep === 4) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep5()) return;
-    }
-    if (currentStep === 5) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep7()) return;
-    }
-    if (currentStep === 6) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (!validateStep8()) return;
-    }
-    if (currentStep < 6) {
-      setCurrentStep(currentStep + 1);
-    } else if (currentStep === 6) {
-      setIsGenerating(true);
+      handleStep1Submit();
     }
   };
 
@@ -579,51 +539,23 @@ function App() {
     const stepProps = {
       formData,
       updateFormData,
-      onNext: nextStep,
+      onNext: handleStep1Submit,
       onPrev: prevStep,
-      onSkip: skipStep, // Add skip handler
+      onSkip: skipStep,
       onStepClick: (step: number) => setCurrentStep(step),
-      isValid: true,
-      showSkip: currentStep >= 2 && currentStep <= 5, // Show skip for steps 2-5 only
-      nextButtonText: (currentStep === 1 && !isLogin && !isAdminLogin) ? "Save & Continue to Login" : undefined
+      isValid: !isSubmitting,
+      showSkip: false,
     };
 
-    switch (currentStep) {
-      case 1:
-        return (
-          <Step1CompanyCategory
-            {...stepProps}
-            checkCompanyName={checkCompanyName}
-            companyNameStatus={companyNameStatus}
-            isCheckingName={isCheckingName}
-          />
-        );
-      case 2:
-        return <Step3SectorsServed {...stepProps} />;
-      case 3:
-        return <Step4BusinessCategories {...stepProps} />;
-      case 4:
-        return <Step5ProductsServices {...stepProps} />;
-      case 5:
-        return <Step7PromotionBilling {...stepProps} />;
-      case 6:
-        return (
-          <Step8MediaUploads
-            formData={formData}
-            updateFormData={updateFormData}
-            userId={userId}
-            draftId={draftId}
-            selectedTemplateId={selectedTemplateId}
-            onNext={nextStep}
-            onPrev={prevStep}
-            onSaveSuccess={(newDraftId) => setDraftId(newDraftId)}
-            isValid={true}
-            showSkip={false} // Explicitly hide skip for last step
-          />
-        );
-      default:
-        return <Step1CompanyCategory {...stepProps} />;
-    }
+    return (
+      <Step1CompanyCategory
+        {...stepProps}
+        checkCompanyName={checkCompanyName}
+        companyNameStatus={companyNameStatus}
+        isCheckingName={isCheckingName}
+        isSubmitting={isSubmitting}
+      />
+    );
   };
 
   if (isApiLoading) {
@@ -641,40 +573,7 @@ function App() {
     );
   }
 
-  if (isGenerating) {
-    return <AIGenerationLoader onComplete={handleGenerationComplete} />;
-  }
-
-  if (isComplete) {
-    handleClick();
-    return null;
-  }
-
-  return (
-    <div className="relative min-h-screen">
-      {isSubmitting && (
-        <div className="fixed inset-0 bg-white/90 backdrop-blur-md z-[9999] flex flex-col items-center justify-center transition-all duration-500">
-          <div className="relative">
-            <div className="w-20 h-20 border-4 border-amber-100 rounded-full"></div>
-            <div className="absolute top-0 left-0 w-20 h-20 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 bg-amber-500 rounded-lg animate-pulse"></div>
-            </div>
-          </div>
-          <div className="mt-8 text-center animate-bounce">
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight">SAVING YOUR LISTING</h2>
-            <div className="flex gap-1 justify-center mt-1">
-              <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce delay-100"></div>
-              <div className="w-2 h-2 bg-amber-500 rounded-full animate-bounce delay-200"></div>
-              <div className="w-2 h-2 bg-amber-600 rounded-full animate-bounce delay-300"></div>
-            </div>
-          </div>
-          <p className="text-slate-500 mt-4 font-medium italic">Almost there! Redirecting you to login...</p>
-        </div>
-      )}
-      {renderStep()}
-    </div>
-  );
+  return <div>{renderStep()}</div>;
 }
 
 export default App;

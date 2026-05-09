@@ -213,7 +213,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                         Search
                     </label>
                     <div className='relative'>
-                        <Search className='absolute left-3 top-1/2 w-4 h-4 text-gray-400 transform -translate-y-1/2' />
+                        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                          <Search className="h-4 w-4 text-gray-400" />
+                        </div>
                         <input
                             type='text'
                             placeholder='Search events...'

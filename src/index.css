@@ -121,6 +121,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
- 
+
+}
+
+.top-1\/2 {
+  top: 70%;
 }
 

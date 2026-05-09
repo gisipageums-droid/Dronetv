@@ -10,7 +10,7 @@ import {
   Receipt,
   Clock1,
   MessageSquare,
-
+  Brain,
   LogOut,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -32,6 +32,7 @@ const navLinks = [
     { icon: Clock1, label: "Transaction History", href: "/user-transactions" },
 
     { icon: MessageSquare, label: "Contacted People", href: "/user-contacted" },
+    { icon: Brain, label: "AI", href: "/user-ai" },
   ];
   return (
     <aside className="flex h-screen rounded-lg shadow-lg overflow-hidden">

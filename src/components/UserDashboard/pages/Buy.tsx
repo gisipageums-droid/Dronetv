@@ -181,7 +181,7 @@ const BuyTokenPage: React.FC = () => {
                 Enter Amount (₹)
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-2/3 transform -translate-y-1/2 text-amber-500 font-bold">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500 font-bold">
                   ₹
                 </span>
                 <input

@@ -183,7 +183,9 @@ const NewsPage = () => {
           <div className="flex flex-col lg:flex-row gap-1 items-center justify-between">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60" />
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <Search className="h-4 w-4 text-black/60" />
+              </div>
               <input
                 type="text"
                 placeholder="Search articles..."

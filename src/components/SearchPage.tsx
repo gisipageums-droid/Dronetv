@@ -458,7 +458,9 @@ const SearchPage = () => {
           {/* Search and Filter Controls */}
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-center max-w-4xl mx-auto">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-black/60" />
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <Search className="h-5 w-5 text-black/60" />
+              </div>
               <input
                 type="text"
                 placeholder="Search for videos, companies, products..."
