@@ -1,13 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { StepProps } from "../../types/form";
-import { Building2, User, Phone, Globe, Mail, AlertCircle, ChevronDown, CheckCircle, Calendar, Upload, Lock, MapPin, Briefcase, FileText, X, Edit2, ExternalLink, ShieldCheck } from "lucide-react";
+import { Building2, User, Phone, Globe, Mail, AlertCircle, ChevronDown, CheckCircle, Calendar, Upload, Lock, MapPin, Briefcase, FileText, X, Edit2, ExternalLink } from "lucide-react";
 import { FormInput } from "../FormInput";
 import { PhoneInput } from "../PhoneInput";
 import { CountryStateSelect } from "../CountryStateSelect";
 import { FormStep } from "../FormStep";
 import { useUserAuth } from "../../../../../../../context/context";
 import axios from "axios";
-import { toast } from "react-toastify";
 import "./step1.css";
 
 interface Step1CompanyCategoryProps extends StepProps {
@@ -18,6 +17,7 @@ interface Step1CompanyCategoryProps extends StepProps {
     message: string;
   } | null;
   isCheckingName: boolean;
+  isSubmitting?: boolean;
 }
 
 // Custom Date Picker Component
@@ -1061,13 +1061,6 @@ const GSTVerificationSection: React.FC<{
   address: string;
   onAddressChange: (value: string) => void;
   onVerifiedDataChange?: (data: any) => void;
-  // CIN & UDYAM Verification
-  onVerifyCIN?: () => void;
-  isVerifyingCIN?: boolean;
-  isCINVerified?: boolean;
-  onVerifyUDYAM?: () => void;
-  isVerifyingUDYAM?: boolean;
-  isUDYAMVerified?: boolean;
   // PAN Props
   panNumber: string;
   onPanChange: (value: string) => void;
@@ -1079,12 +1072,10 @@ const GSTVerificationSection: React.FC<{
   isVerifyingPAN: boolean;
   isPANVerified: boolean;
 }> = ({ gstNumber, onGSTChange, onVerifyGST, isVerified, isVerifying, verifiedData, address, onAddressChange, onVerifiedDataChange, formData, updateFormData,
-  onVerifyCIN, isVerifyingCIN, isCINVerified, onVerifyUDYAM, isVerifyingUDYAM, isUDYAMVerified,
   panNumber, onPanChange, panName, onPanNameChange, panDob, onPanDobChange, onVerifyPAN, isVerifyingPAN, isPANVerified
 }) => {
     const [localConsent, setLocalConsent] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
-    const [verificationMethod, setVerificationMethod] = useState<'GST' | 'CIN' | 'PAN' | 'UDYAM'>('GST');
 
     const formatGSTNumber = (value: string) => {
       // Remove all non-alphanumeric characters
@@ -1182,7 +1173,7 @@ const GSTVerificationSection: React.FC<{
     const StatePincodeInput = React.useMemo(() => (
       <div className="space-y-1">
         <div className="text-xs text-slate-500 font-medium">
-          State & Pincode<span className="text-red-500">*</span>
+          State & Pincode
         </div>
         <input
           type="text"
@@ -1217,235 +1208,107 @@ const GSTVerificationSection: React.FC<{
     return (
       <div className="bg-[#F0F8FF] border border-blue-200 rounded-xl p-6 shadow-sm">
         <div className="border-b border-blue-200 pb-3 mb-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <ShieldCheck className="w-5 h-5 text-blue-600" />
-            <h3 className="text-slate-900 font-semibold select-none">
-              Identity & Business Verification
-            </h3>
-          </div>
-          {(isVerified || isPANVerified || isCINVerified || isUDYAMVerified) && (
-            <div className="flex items-center text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-200">
+          <h3 className="text-slate-900 font-semibold select-none">
+            Verify GST
+          </h3>
+          {isVerified && (
+            <div className="flex items-center text-green-600">
               <CheckCircle className="w-4 h-4 mr-1" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Verified</span>
+              <span className="text-xs font-medium">Verified</span>
             </div>
           )}
         </div>
 
         <div className="space-y-6">
           <div className="mb-4">
-            <h3 className="font-semibold text-slate-900 text-base">Select Verification Method</h3>
-            <p className="text-slate-600 text-sm mt-0.5">Choose how you want to verify your business</p>
+            <h3 className="font-semibold text-slate-900 text-base">Verify Through GST</h3>
+            <p className="text-slate-600 text-sm mt-0.5">Automatically fill your company details using GST Portal</p>
           </div>
 
-          {/* Verification Method Dropdown */}
-          <div className="space-y-2">
-            <label className="block text-xs font-medium text-slate-700">Verification Type</label>
-            <div className="relative">
-              <select
-                value={verificationMethod}
-                onChange={(e) => setVerificationMethod(e.target.value as any)}
-                className="w-full h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-slate-800 appearance-none"
-              >
-                <option value="GST">GST Verification (Recommended)</option>
-                <option value="CIN">Corporate CIN Verification</option>
-                <option value="PAN">PAN Comprehensive Verification</option>
-                <option value="UDYAM">UDYAM Registration Verification</option>
-              </select>
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <ChevronDown className="w-4 h-4 text-slate-400" />
+          {/* GST Input Section */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="block text-xs font-medium text-slate-700">
+                GST Number {isVerified && <span className="text-green-600">✓</span>}
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={gstNumber}
+                  onChange={(e) => handleChange(e.target.value)}
+                  placeholder="22AAAAA0000A1Z5"
+                  disabled={isVerified}
+                  className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
+                    ? 'border-green-300 bg-green-50'
+                    : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
+                    }`}
+                  maxLength={15}
+                />
               </div>
+              {!isVerified && !isValidFormat && gstNumber.length > 0 && (
+                <p className="text-[10px] text-red-500">Invalid GST format</p>
+              )}
+            </div>
+
+            {/* Consent Section - With Verify Button beside it */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 transition-all duration-300">
+              <div className="flex items-start space-x-3">
+                <div className="flex items-center h-5 mt-0.5">
+                  <input
+                    id="gst-consent-checkbox"
+                    type="checkbox"
+                    checked={localConsent}
+                    onChange={(e) => handleConsentChange(e.target.checked)}
+                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer transition-all"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor="gst-consent-checkbox" className="text-sm font-medium text-slate-800 cursor-pointer select-none">
+                    I consent to GST verification
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowConsentDetails(true)}
+                    className="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center mt-1 text-left w-fit group"
+                  >
+                    View consent details
+                    <ChevronDown className="w-3 h-3 ml-1 group-hover:translate-y-0.5 transition-transform" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Verify Button moved here - beside the checkbox section */}
+              {!isVerified && (
+                <button
+                  type="button"
+                  onClick={handleVerifyClick}
+                  disabled={isVerifying || !isValidGST || !localConsent}
+                  className={`px-8 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
+                    ${isValidGST && localConsent && !isVerifying
+                      ? 'bg-[#4F9CF9] text-white hover:bg-blue-600 shadow-lg shadow-blue-100'
+                      : 'bg-blue-300 text-white cursor-not-allowed opacity-70'
+                    }`}
+                >
+                  {isVerifying ? (
+                    <>
+                      <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                      Verifying...
+                    </>
+                  ) : (
+                    "Verify"
+                  )}
+                </button>
+              )}
+
+              {/* Verified Badge */}
+              {isVerified && (
+                <div className="flex items-center text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 animate-fade-in shrink-0">
+                  <CheckCircle className="w-4 h-4 mr-1.5" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Verified</span>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Conditional Rendering based on Method */}
-          {verificationMethod === 'GST' && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-700">
-                  GST Number {isVerified ? <span className="text-green-600">✓</span> : <span className="text-red-500">*</span>}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={gstNumber}
-                    onChange={(e) => handleChange(e.target.value)}
-                    placeholder="22AAAAA0000A1Z5"
-                    disabled={isVerified}
-                    className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
-                      ? 'border-green-300 bg-green-50'
-                      : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
-                      }`}
-                    maxLength={15}
-                  />
-                  {!isVerified && (
-                    <button
-                      type="button"
-                      onClick={handleVerifyClick}
-                      disabled={isVerifying || !isValidGST || !localConsent}
-                      className={`px-6 py-2 text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center transition-all ${isValidGST && localConsent && !isVerifying
-                        ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md active:scale-95'
-                        : 'bg-blue-300 text-white cursor-not-allowed'
-                        }`}
-                    >
-                      {isVerifying ? (
-                        <>
-                          <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
-                          Verifying...
-                        </>
-                      ) : (
-                        "Verify"
-                      )}
-                    </button>
-                  )}
-                </div>
-                {!isVerified && !isValidFormat && gstNumber.length > 0 && (
-                  <p className="text-[10px] text-red-500">Invalid GST format</p>
-                )}
-              </div>
-
-              {/* Consent Section */}
-              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
-                <div className="flex items-start space-x-2">
-                  <div className="flex items-center h-5 mt-0.5">
-                    <input
-                      id="gst-consent-checkbox"
-                      type="checkbox"
-                      checked={localConsent}
-                      onChange={(e) => handleConsentChange(e.target.checked)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="gst-consent-checkbox" className="text-xs text-slate-800 cursor-pointer font-medium">
-                      I consent to GST verification
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowConsentDetails(true)}
-                      className="text-[10px] text-blue-600 hover:text-blue-800 hover:underline flex items-center mt-0.5 text-left"
-                    >
-                      View consent details
-                      <ChevronDown className="w-2 h-2 ml-1" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {verificationMethod === 'CIN' && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-700">
-                  Corporate Identity Number (CIN) {isCINVerified ? <span className="text-green-600">✓</span> : <span className="text-red-500">*</span>}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={verifiedData?.cin || ""}
-                    onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), cin: e.target.value.toUpperCase() })}
-                    placeholder="Enter 21-digit CIN"
-                    maxLength={21}
-                    disabled={isCINVerified}
-                    className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 ${isCINVerified
-                      ? 'border-green-300 bg-green-50 text-slate-700'
-                      : 'border-blue-300 bg-white text-slate-800 focus:ring-blue-400 focus:border-blue-400'
-                      }`}
-                  />
-                  {!isCINVerified && (
-                    <button
-                      type="button"
-                      onClick={onVerifyCIN}
-                      disabled={isVerifyingCIN || !verifiedData?.cin || verifiedData.cin.length < 21}
-                      className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-300 transition-all shadow-md active:scale-95"
-                    >
-                      {isVerifyingCIN ? "Verifying..." : "Verify"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {verificationMethod === 'PAN' && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="block text-xs font-medium text-slate-700">PAN Number</label>
-                  <input
-                    type="text"
-                    value={panNumber}
-                    onChange={(e) => onPanChange(e.target.value.toUpperCase())}
-                    placeholder="ABCDE1234F"
-                    maxLength={10}
-                    disabled={isPANVerified}
-                    className="w-full h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-xs font-medium text-slate-700">Date of Birth</label>
-                  <input
-                    type="date"
-                    value={panDob}
-                    onChange={(e) => onPanDobChange(e.target.value)}
-                    disabled={isPANVerified}
-                    className="w-full h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-700">Full Name (as on PAN)</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={panName}
-                    onChange={(e) => onPanNameChange(e.target.value)}
-                    placeholder="Enter full name"
-                    disabled={isPANVerified}
-                    className="flex-1 h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  {!isPANVerified && (
-                    <button
-                      type="button"
-                      onClick={onVerifyPAN}
-                      disabled={isVerifyingPAN || !panNumber || !panName || !panDob}
-                      className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-300 transition-all shadow-md active:scale-95"
-                    >
-                      {isVerifyingPAN ? "Verifying..." : "Verify"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {verificationMethod === 'UDYAM' && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-700">UDYAM Number</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={verifiedData?.udyamRegistrationNumber || ""}
-                    onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), udyamRegistrationNumber: e.target.value.toUpperCase() })}
-                    placeholder="UDYAM-XX-00-0000000"
-                    disabled={isUDYAMVerified}
-                    className="flex-1 h-10 px-3 text-sm border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  {!isUDYAMVerified && (
-                    <button
-                      type="button"
-                      onClick={onVerifyUDYAM}
-                      disabled={isVerifyingUDYAM || !verifiedData?.udyamRegistrationNumber}
-                      className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-blue-300 transition-all shadow-md active:scale-95"
-                    >
-                      {isVerifyingUDYAM ? "Verifying..." : "Verify"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Consent Details Modal */}
           <ConsentModal
@@ -1479,7 +1342,7 @@ const GSTVerificationSection: React.FC<{
             {/* Company Name */}
             <div className="space-y-1">
               <div className="flex items-center text-xs text-slate-500 font-medium">
-                Company Name (Trade Name)<span className="text-red-500">*</span>
+                Company Name (Trade Name)
               </div>
               <input
                 type="text"
@@ -1493,7 +1356,7 @@ const GSTVerificationSection: React.FC<{
 
             <div className="space-y-1">
               <div className="text-xs text-slate-500 font-medium">
-                Legal Name <span className="text-red-500">*</span>
+                Legal Name
               </div>
               <input
                 type="text"
@@ -1509,7 +1372,7 @@ const GSTVerificationSection: React.FC<{
               <div className="flex items-center text-xs text-slate-500 font-medium w-full">
                 <div className="flex items-center">
                   <MapPin className="w-3 h-3 mr-1 text-blue-600" />
-                  Registered Address <span className="text-red-500">*</span>
+                  Registered Address
                 </div>
               </div>
               <textarea
@@ -1535,7 +1398,7 @@ const GSTVerificationSection: React.FC<{
             {/* Registration Date */}
             <div className="space-y-1">
               <div className="text-xs text-slate-500 font-medium">
-                Date of Incorporation<span className="text-red-500">*</span>
+                Date of Incorporation
               </div>
               <input
                 type="text"
@@ -1646,10 +1509,32 @@ const GSTVerificationSection: React.FC<{
           />
         </div>
 
-        <div className="mt-4">
-          <p className="text-xs text-slate-500 italic">
-            Note: All business identification details provided will be used for official records.
-          </p>
+        {/* Corporate Identity Number (CIN) */}
+        <div className="space-y-1 mt-4">
+          <div className="text-xs text-slate-500 font-medium">
+            Corporate Identity Number (CIN)
+          </div>
+          <input
+            type="text"
+            value={verifiedData?.cin || ""}
+            onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), cin: e.target.value })}
+            placeholder="Enter CIN"
+            className="w-full h-10 px-3 text-sm border border-gray-200 rounded bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+          />
+        </div>
+
+        {/*UDYAM Registration Number*/}
+        <div className="space-y-1 mt-4">
+          <div className="text-xs text-slate-500 font-medium">
+            UDYAM Registration Number
+          </div>
+          <input
+            type="text"
+            value={verifiedData?.udyamRegistrationNumber || ""}
+            onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), udyamRegistrationNumber: e.target.value })}
+            placeholder="Enter UDYAM Registration Number"
+            className="w-full h-10 px-3 text-sm border border-gray-200 rounded bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+          />
         </div>
 
         <div className="mt-4">
@@ -2031,12 +1916,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   checkCompanyName,
   companyNameStatus,
   isCheckingName,
-  nextButtonText, // Add this
+  isSubmitting,
 }) => {
-  const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
-  const SUREPASS_BASE_URL = "https://kyc-api.surepass.io/api/v1";
-
-  const { isLogin, isAdminLogin } = useUserAuth();
   // DigiLocker State
   const [digiToken, setDigiToken] = useState<string | null>(null);
   const [digiState, setDigiState] = useState<string | null>(null);
@@ -2051,49 +1932,20 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   const [verifyingPan, setVerifyingPan] = useState(false);
   const [panVerified, setPanVerified] = useState(false);
 
-  const handleVerifyPAN = async () => {
-    if (!panNumber || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(panNumber)) {
-      toast.error("Please enter a valid PAN number");
-      return;
-    }
-
+  const handleVerifyPAN = () => {
     setVerifyingPan(true);
-    try {
-      const response = await axios.post(
-        `${SUREPASS_BASE_URL}/identity/pan-comprehensive`,
-        { 
-          "id_number": panNumber,
-          "dob": panDob,
-          "full_name": panName
-        },
-        {
-          headers: {
-            "Authorization": `Bearer ${SUREPASS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      if (response.data.success) {
-        setPanVerified(true);
-        toast.success("PAN Verified successfully!");
-        // Update form data
-        updateFormData({
-          socialLinks: {
-            ...formData.socialLinks,
-            pan: panNumber
-          },
-          fullName: response.data.data?.full_name || panName,
-        });
-      } else {
-        toast.error(response.data.message || "PAN verification failed");
-      }
-    } catch (error: any) {
-      console.error("Error verifying PAN:", error);
-      toast.error(error.response?.data?.message || "Error connecting to PAN verification service");
-    } finally {
+    // Simulate API call
+    setTimeout(() => {
       setVerifyingPan(false);
-    }
+      setPanVerified(true);
+      // Update form data
+      updateFormData({
+        socialLinks: {
+          ...formData.socialLinks,
+          pan: panNumber
+        }
+      });
+    }, 1500);
   };
 
   // NEW: State for GST Verification - Restore only if verified
@@ -2173,94 +2025,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     setGstAddress(value);
   };
 
-  // NEW: State for CIN Verification
-  const [verifyingCIN, setVerifyingCIN] = useState(false);
-  const [cinVerified, setCINVerified] = useState(false);
-
-  // NEW: State for UDYAM Verification
-  const [verifyingUDYAM, setVerifyingUDYAM] = useState(false);
-  const [udyamVerified, setUDYAMVerified] = useState(false);
-
-  // NEW: Handle UDYAM verification
-  const handleVerifyUDYAM = async () => {
-    const udyam = verifiedGSTData?.udyamRegistrationNumber || formData.udyamRegistrationNumber;
-    if (!udyam) {
-      toast.error("Please enter a UDYAM registration number");
-      return;
-    }
-
-    setVerifyingUDYAM(true);
-    try {
-      const response = await axios.post(
-        `${SUREPASS_BASE_URL}/corporate/udyog-aadhaar`,
-        { "id_number": udyam },
-        {
-          headers: {
-            "Authorization": `Bearer ${SUREPASS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      if (response.data.success) {
-        setUDYAMVerified(true);
-        toast.success("UDYAM Verified successfully!");
-      } else {
-        toast.error(response.data.message || "UDYAM verification failed");
-      }
-    } catch (error: any) {
-      console.error("Error verifying UDYAM:", error);
-      toast.error(error.response?.data?.message || "Error connecting to UDYAM verification service");
-    } finally {
-      setVerifyingUDYAM(false);
-    }
-  };
-
-  // NEW: Handle CIN verification
-  const handleVerifyCIN = async () => {
-    const cin = verifiedGSTData?.cin || formData.cin;
-    if (!cin || cin.length < 21) {
-      toast.error("Please enter a valid 21-digit CIN");
-      return;
-    }
-
-    setVerifyingCIN(true);
-    try {
-      const response = await axios.post(
-        `${SUREPASS_BASE_URL}/corporate/cin`,
-        { "id_number": cin },
-        {
-          headers: {
-            "Authorization": `Bearer ${SUREPASS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      if (response.data.success) {
-        setCINVerified(true);
-        toast.success("CIN Verified successfully!");
-        
-        const apiData = response.data.data;
-        // Update form data with CIN details if needed
-        if (apiData.company_name) {
-          updateFormData({
-            companyName: apiData.company_name,
-            gstCompanyName: apiData.company_name
-          });
-        }
-      } else {
-        toast.error(response.data.message || "CIN verification failed");
-      }
-    } catch (error: any) {
-      console.error("Error verifying CIN:", error);
-      toast.error(error.response?.data?.message || "Error connecting to CIN verification service");
-    } finally {
-      setVerifyingCIN(false);
-    }
-  };
-
-  // NEW: Handle GST verification - Updated to use Surepass Advanced GSTIN API
+  // NEW: Handle GST verification - Extract ONLY state and pincode from API
   const handleVerifyGST = async () => {
     // Regex for GSTIN: 2 digits(State) + 5 chars(PAN) + 4 digits(PAN) + 1 char(PAN) + 1 digit(Entity) + Z + 1 char(Check)
     const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
@@ -2274,54 +2039,62 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       setVerifyingGST(true);
 
       try {
-        const gstResponse = await axios.post(
-          `${SUREPASS_BASE_URL}/corporate/gstin-advanced`,
+        // SUREPASS GST ADVANCED API
+        const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED"; // Updated with correct token provided by user
+
+        const response = await axios.post(
+          "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
           { "id_number": gstNumber },
           {
             headers: {
               "Authorization": `Bearer ${SUREPASS_TOKEN}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
+              "Content-Type": "application/json",
+              "Accept": "application/json"
             }
           }
         );
 
-        console.log("Surepass GST API Response:", gstResponse.data);
+        console.log("Surepass GST API Response:", response.data);
 
-        if (gstResponse.data.success && gstResponse.data.data) {
-          const apiData = gstResponse.data.data;
-          
-          const companyName = apiData.business_name || "";
+        if (response.data.success && response.data.data) {
+          const apiData = response.data.data;
+
+          // Map Surepass fields to our verifiedData structure as per user's JSON response
+          const companyName = apiData.business_name || apiData.legal_name || "";
           const legalName = apiData.legal_name || "";
           const panNumber = apiData.pan_number || "";
-          const fullAddress = apiData.contact_details?.principal?.address || "";
+          const registrationDate = apiData.date_of_registration || "";
+          const businessEntityType = apiData.constitution_of_business || "";
+          const natureOfBusinessList = apiData.nature_bus_activities || [];
+          const natureOfBusinessJoined = natureOfBusinessList.join(", ");
 
-          // Parse address to extract state and pincode
+          // Contact details
+          const principalContact = apiData.contact_details?.principal || {};
+          const fullAddress = principalContact.address || "";
+          const email = principalContact.email || "";
+          const mobile = principalContact.mobile || "";
+
+          // Promoters
+          const mainPromoter = (apiData.promoters && apiData.promoters[0]) || "";
+
+          // Parse address components (e.g., "5th Floor, ..., Telangana, 500008")
           let extractedState = "";
           let extractedPincode = "";
 
           if (fullAddress) {
-            const addressParts = fullAddress.split(",").map((part: string) => part.trim());
-            if (addressParts.length > 0) {
-              // Last part often contains pincode
-              const lastPart = addressParts[addressParts.length - 1];
+            const parts = fullAddress.split(",").map((s: string) => s.trim());
+            if (parts.length >= 1) {
+              const lastPart = parts[parts.length - 1];
               const pincodeMatch = lastPart.match(/\d{6}/);
               if (pincodeMatch) {
                 extractedPincode = pincodeMatch[0];
               }
 
-              // Try to find state - usually before pincode or the second to last part
-              if (addressParts.length >= 2) {
-                extractedState = addressParts[addressParts.length - 2];
+              if (parts.length >= 2) {
+                extractedState = parts[parts.length - 2];
+                // If the second to last part is also just a city or if it contains the state
+                // This is a simple heuristic; can be improved
               }
-            }
-          }
-
-          // If state not found in address, try state_jurisdiction
-          if (!extractedState && apiData.state_jurisdiction) {
-            const stateMatch = apiData.state_jurisdiction.match(/State - ([^,]+)/);
-            if (stateMatch) {
-              extractedState = stateMatch[1];
             }
           }
 
@@ -2329,133 +2102,85 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             companyName: companyName,
             legalName: legalName,
             gstNumber: apiData.gstin || gstNumber,
-            companyAddress: fullAddress,
+            companyAddress: fullAddress, // Auto-fill the address
             state: extractedState,
             pincode: extractedPincode,
-            registrationDate: apiData.date_of_registration || "",
+            registrationDate: registrationDate,
             businessType: apiData.taxpayer_type || "",
-            businessEntityType: apiData.constitution_of_business || "",
-            natureOfBusiness: Array.isArray(apiData.nature_bus_activities) 
-              ? apiData.nature_bus_activities.join(", ") 
-              : (apiData.nature_bus_activities || ""),
-            cin: "", // Will be filled manually
-            udyamRegistrationNumber: "", // Will be filled manually
+            businessEntityType: businessEntityType,
+            natureOfBusiness: natureOfBusinessJoined,
+            cin: "",
+            udyamRegistrationNumber: "",
             pan: panNumber
           };
 
           setVerifiedGSTData(verifiedData);
           setGSTVerified(true);
+          setGstAddress(fullAddress); // Auto-fill address in GST section
 
-          // Update registered address display
-          setGstAddress(fullAddress);
-
-          // Sync with Company Information section
+          // Sync with Company Information and Director information
           const updates: any = {};
 
           if (verifiedData.companyName) {
             updates.companyName = verifiedData.companyName;
-            updates.gstCompanyName = verifiedData.companyName;
           }
 
-          if (verifiedData.legalName) {
-            updates.legalName = verifiedData.legalName;
-            updates.gstLegalName = verifiedData.legalName;
-          }
-
-          // Update PAN number from GST API response
           if (verifiedData.pan) {
             updates.panNumber = verifiedData.pan;
-            updates.gstPan = verifiedData.pan;
             setPanNumber(verifiedData.pan);
-            // Also update social links PAN
             updates.socialLinks = {
               ...formData.socialLinks,
               pan: verifiedData.pan
             };
           }
 
-          // Update Business Entity Type
           if (verifiedData.businessEntityType) {
             updates.businessField = verifiedData.businessEntityType;
-            updates.gstBusinessType = verifiedData.businessEntityType;
           }
 
-          // Update Nature of Business
           if (verifiedData.natureOfBusiness) {
             updates.natureOfBusiness = verifiedData.natureOfBusiness;
           }
 
-          // Parse and sync Year Established (Date of Incorporation)
-          if (verifiedData.registrationDate) {
-            updates.yearEstablished = verifiedData.registrationDate;
-            updates.gstRegistrationDate = verifiedData.registrationDate;
+          // Auto-fill Director Info from Promoters and Contact Details
+          if (mainPromoter) {
+            updates.directorName = mainPromoter;
           }
-
-          // NEW: Map additional fields from Surepass Response
+          if (email) {
+            updates.directorEmail = email;
+            setTempDirectorEmail(email);
+          }
+          if (mobile) {
+            // Ensure phone has +91 prefix if missing
+            const formattedMobile = mobile.startsWith('+') ? mobile : `+91 ${mobile}`;
+            updates.directorPhone = formattedMobile;
+          }
           if (fullAddress) {
-            updates.officeAddress = fullAddress;
-            updates.gstAddress = fullAddress;
             updates.directorAddress = fullAddress;
           }
 
-          if (extractedState) {
-            updates.state = extractedState;
-            updates.gstState = extractedState;
-            updates.country = "India"; // Default to India if we have a state from GST
+          // Handle registration date format (YYYY-MM-DD from user JSON)
+          if (verifiedData.registrationDate) {
+            updates.yearEstablished = verifiedData.registrationDate;
           }
 
-          if (extractedPincode) {
-            updates.postalCode = extractedPincode;
-            updates.gstPincode = extractedPincode;
-          }
-
-          // Try to extract city from address parts
-          if (fullAddress) {
-            const parts = fullAddress.split(",").map(p => p.trim());
-            // Usually city is 3rd from last (Pincode, State, City)
-            if (parts.length >= 3) {
-              const city = parts[parts.length - 3];
-              if (city && !city.match(/\d/)) { // Ensure it's not a number/pincode
-                updates.city = city;
-              }
-            }
-          }
-
-          // Map contact details to Support and Director fields
-          if (apiData.contact_details?.principal?.email) {
-            updates.supportEmail = apiData.contact_details.principal.email;
-            updates.directorEmail = apiData.contact_details.principal.email;
-          }
-          if (apiData.contact_details?.principal?.mobile) {
-            updates.supportContactNumber = apiData.contact_details.principal.mobile;
-            updates.directorPhone = apiData.contact_details.principal.mobile;
-          }
-
-          // Map first promoter to Director Name
-          if (Array.isArray(apiData.promoters) && apiData.promoters.length > 0) {
-            const firstPromoter = apiData.promoters[0];
-            if (firstPromoter) {
-              // Clean extra spaces and title case if it's all caps
-              let cleanName = firstPromoter.replace(/\s+/g, ' ').trim();
-              if (cleanName === cleanName.toUpperCase()) {
-                cleanName = cleanName.toLowerCase().split(' ').map(word => 
-                  word.charAt(0).toUpperCase() + word.slice(1)
-                ).join(' ');
-              }
-              updates.directorName = cleanName;
-            }
-          }
+          // Address updates for general location
+          if (extractedState) updates.state = extractedState;
+          if (extractedPincode) updates.postalCode = extractedPincode;
+          if (fullAddress) updates.officeAddress = fullAddress;
 
           if (Object.keys(updates).length > 0) {
             updateFormData(updates);
           }
+
+          toast.success("GST verified successfully! Company details auto-filled.");
         } else {
-          console.error("GST API Error:", gstResponse.data.message || "Unknown error");
-          toast.error(gstResponse.data.message || "Invalid GST number or verification failed.");
+          console.error("GST API verification failed:", response.data.message);
+          toast.error(response.data.message || "Could not verify GST details");
         }
       } catch (error: any) {
-        console.error("Error verifying GST:", error);
-        const errorMsg = error.response?.data?.message || "Error connecting to GST verification service.";
+        console.error("Error verifying GST with Surepass:", error);
+        const errorMsg = error.response?.data?.message || "Error connecting to verification service";
         toast.error(errorMsg);
       } finally {
         setVerifyingGST(false);
@@ -3206,6 +2931,13 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     );
   };
 
+  const handleGSTVerifiedDataChange = useCallback((data: any) => {
+    setVerifiedGSTData(data);
+    if (data.companyName) {
+      updateFormData({ companyName: data.companyName });
+    }
+  }, [updateFormData]);
+
   return (
     <>
       <FormStep
@@ -3216,8 +2948,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         isValid={isValid}
         isFirstStep={true}
         currentStep={1}
-        totalSteps={6}
-        nextButtonText={nextButtonText}
+        totalSteps={1}
+        nextButtonText={isSubmitting ? "Submitting..." : "Submit & List My Company"}
+        isSubmitting={isSubmitting}
       >
         <div className="space-y-12 pb-10">
           {/* Company Category */}
@@ -3278,15 +3011,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             verifiedData={verifiedGSTData || undefined}
             address={gstAddress}
             onAddressChange={handleGstAddressChange}
-            onVerifiedDataChange={(data) => setVerifiedGSTData(data)}
+            onVerifiedDataChange={handleGSTVerifiedDataChange}
             formData={formData}
             updateFormData={updateFormData}
-            onVerifyCIN={handleVerifyCIN}
-            isVerifyingCIN={verifyingCIN}
-            isCINVerified={cinVerified}
-            onVerifyUDYAM={handleVerifyUDYAM}
-            isVerifyingUDYAM={verifyingUDYAM}
-            isUDYAMVerified={udyamVerified}
             panNumber={panNumber}
             onPanChange={setPanNumber}
             panName={panName}
@@ -3298,86 +3025,84 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             isPANVerified={panVerified}
           />
 
-          {/* Social Media Links - Only visible when logged in */}
-          {(isLogin || isAdminLogin) && (
-            <div className="p-3 border rounded-lg bg-amber-200 border-amber-200">
-              <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
-                <Globe className="w-5 h-5 mr-2" />
-                Social Media Links (Optional)
-              </h3>
-              <div className="space-y-2">
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <FormInput
-                    label="LinkedIn Profile"
-                    type="url"
-                    value={formData.socialLinks?.linkedin || ""}
-                    onChange={(value) =>
-                      updateFormData({ socialLinks: { ...formData.socialLinks, linkedin: value } })
-                    }
-                    placeholder="https://linkedin.com/company/yourcompany"
-                  />
-                  <FormInput
-                    label="Facebook Page"
-                    type="url"
-                    value={formData.socialLinks?.facebook || ""}
-                    onChange={(value) =>
-                      updateFormData({ socialLinks: { ...formData.socialLinks, facebook: value } })
-                    }
-                    placeholder="https://facebook.com/yourcompany"
-                  />
-                </div>
+          {/* Social Media Links */}
+          {/* <div className="p-3 border rounded-lg bg-amber-200 border-amber-200">
+            <h3 className="flex items-center mb-2 text-sm font-bold text-amber-900">
+              <Globe className="w-5 h-5 mr-2" />
+              Social Media Links (Optional)
+            </h3>
+            <div className="space-y-2">
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <FormInput
+                  label="LinkedIn Profile"
+                  type="url"
+                  value={formData.socialLinks?.linkedin || ""}
+                  onChange={(value) =>
+                    updateFormData({ socialLinks: { ...formData.socialLinks, linkedin: value } })
+                  }
+                  placeholder="https://linkedin.com/company/yourcompany"
+                />
+                <FormInput
+                  label="Facebook Page"
+                  type="url"
+                  value={formData.socialLinks?.facebook || ""}
+                  onChange={(value) =>
+                    updateFormData({ socialLinks: { ...formData.socialLinks, facebook: value } })
+                  }
+                  placeholder="https://facebook.com/yourcompany"
+                />
+              </div>
 
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <FormInput
-                    label="Instagram Profile"
-                    type="url"
-                    value={formData.socialLinks?.instagram || ""}
-                    onChange={(value) =>
-                      updateFormData({ socialLinks: { ...formData.socialLinks, instagram: value } })
-                    }
-                    placeholder="https://instagram.com/yourcompany"
-                  />
-                  <FormInput
-                    label="Twitter/X Profile"
-                    type="url"
-                    value={formData.socialLinks?.twitter || ""}
-                    onChange={(value) =>
-                      updateFormData({ socialLinks: { ...formData.socialLinks, twitter: value } })
-                    }
-                    placeholder="https://twitter.com/yourcompany"
-                  />
-                </div>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <FormInput
+                  label="Instagram Profile"
+                  type="url"
+                  value={formData.socialLinks?.instagram || ""}
+                  onChange={(value) =>
+                    updateFormData({ socialLinks: { ...formData.socialLinks, instagram: value } })
+                  }
+                  placeholder="https://instagram.com/yourcompany"
+                />
+                <FormInput
+                  label="Twitter/X Profile"
+                  type="url"
+                  value={formData.socialLinks?.twitter || ""}
+                  onChange={(value) =>
+                    updateFormData({ socialLinks: { ...formData.socialLinks, twitter: value } })
+                  }
+                  placeholder="https://twitter.com/yourcompany"
+                />
+              </div>
 
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <FormInput
-                    label="YouTube Channel"
-                    type="url"
-                    value={formData.socialLinks?.youtube || ""}
-                    onChange={(value) =>
-                      updateFormData({ socialLinks: { ...formData.socialLinks, youtube: value } })
-                    }
-                    placeholder="https://youtube.com/@yourcompany"
-                  />
-                  <FormInput
-                    label="Support Email"
-                    type="email"
-                    value={formData.supportEmail || ""}
-                    onChange={(value) => updateFormData({ supportEmail: value })}
-                    placeholder="support@company.com"
-                  />
-                </div>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <FormInput
+                  label="YouTube Channel"
+                  type="url"
+                  value={formData.socialLinks?.youtube || ""}
+                  onChange={(value) =>
+                    updateFormData({ socialLinks: { ...formData.socialLinks, youtube: value } })
+                  }
+                  placeholder="https://youtube.com/@yourcompany"
+                />
+                <FormInput
+                  label="Support Email"
+                  type="email"
+                  value={formData.supportEmail || ""}
+                  onChange={(value) => updateFormData({ supportEmail: value })}
+                  placeholder="support@company.com"
+                />
+              </div>
 
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <PhoneInput
-                    label="Support Contact Number"
-                    value={formData.supportContactNumber || ""}
-                    onChange={(value) => updateFormData({ supportContactNumber: value })}
-                    placeholder="Enter phone number"
-                  />
-                </div>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <PhoneInput
+                  label="Support Contact Number"
+                  value={formData.supportContactNumber || ""}
+                  onChange={(value) => updateFormData({ supportContactNumber: value })}
+                  placeholder="Enter phone number"
+                />
               </div>
             </div>
-          )}
+          </div> */}
 
           {/* Director/MD Details Section */}
           <div className="space-y-4">
@@ -3391,7 +3116,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             </div>
 
             <div className="space-y-10">
-              {/* UPDATED: Combined Aadhar Section with SINGLE LINE HORIZONTAL LAYOUT */}
+              {/* Aadhar Verification Section - HIDDEN */}
               {/* <CombinedAadharSection
                 aadharNumber={formData.aadharNumber || ""}
                 onAadharChange={handleAadharChange}

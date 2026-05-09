@@ -13,6 +13,7 @@ interface Step1CompanyCategoryProps extends StepProps {
     message: string;
   } | null;
   isCheckingName: boolean;
+  isSubmitting?: boolean;
 }
 const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   formData,
@@ -23,6 +24,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   checkCompanyName,
   companyNameStatus,
   isCheckingName,
+  isSubmitting,
 }) => {
   const categoryOptions = [
     {
@@ -52,7 +54,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
       isValid={isValid}
       isFirstStep={true}
       currentStep={1}
-      totalSteps={7}
+      totalSteps={1}
+      nextButtonText={isSubmitting ? "Submitting..." : "Submit & List My Company"}
+      isSubmitting={isSubmitting}
     >
       <div className="space-y-6">
         {/* Company Category */}

@@ -411,7 +411,9 @@ const Events: React.FC = () => {
       </div>
 
       <div className="mb-8 relative">
-        <Search className="absolute left-4 top-4 text-yellow-500 w-5 h-5" />
+        <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
+          <Search className="h-5 w-5 text-yellow-500" />
+        </div>
         <input
           type="text"
           placeholder="Search by event name, location, or category..."

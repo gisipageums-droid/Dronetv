@@ -218,5 +218,4 @@ export interface StepProps {
   onStepClick?: (step: number) => void;
   isValid?: boolean;
   showSkip?: boolean; // Add this;
-  nextButtonText?: string; // Add this
 }

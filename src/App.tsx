@@ -82,6 +82,7 @@ import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/
 
 import UserDashboard from "./components/UserDashboard/pages/AdminDashboard";
 import UserCompany from "./components/UserDashboard/pages/Company";
+import AiDashboard from "./components/UserDashboard/pages/AiDashboard";
 import Professinal from "./components/UserDashboard/pages/Professinal";
 import Event from "./components/UserDashboard/pages/Event";
 import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
@@ -394,6 +395,16 @@ const AppContent = () => {
               <UserDashboardLayout>
                 <ContactedPeople />
               </UserDashboardLayout>
+            }
+          />
+          <Route
+            path="/user-ai"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <AiDashboard />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
         <Route path="/eventsexcel" element={<EventsExcelDataProcessor />} />

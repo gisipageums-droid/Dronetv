@@ -396,7 +396,9 @@ const LeadsPage: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <i className="fas fa-search absolute left-3 top-2.5 text-amber-500"></i>
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <i className="fas fa-search text-amber-500"></i>
+            </div>
           </div>
 
           <select

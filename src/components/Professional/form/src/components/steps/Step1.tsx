@@ -2403,7 +2403,7 @@ export const Step1 = ({
       )}
 
       {/* Aadhar Verification Section inspired by Image 0 */}
-      <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6 transition-all duration-300">
+      {/* <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6 transition-all duration-300">
         <h3 className="text-lg font-semibold text-slate-900">
           Aadhar Verification
         </h3>
@@ -2469,7 +2469,7 @@ export const Step1 = ({
             </div>
           </div>
         ) : (
-          /* Verified State - Sleek and premium looking */
+          Verified State - Sleek and premium looking 
           <div className="pt-2 animate-fade-in">
             <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200 shadow-sm gap-6">
               <div className="flex items-center gap-4">
@@ -2502,7 +2502,7 @@ export const Step1 = ({
             </div>
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* Render All Sections in Correct Order */}
       {step.sections ? (
