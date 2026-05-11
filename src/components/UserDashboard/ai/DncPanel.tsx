@@ -41,16 +41,23 @@ function RemovalStatusBadge({ status }: { status?: string }) {
 
 // ---------- Add Numbers Modal ----------
 function AddNumbersModal({ onClose, onAdded }: { onClose: () => void; onAdded: () => void }) {
-  const [text, setText] = useState("");
+  const [mode, setMode] = useState<"single" | "bulk">("single");
+  const [single, setSingle] = useState("");
+  const [bulk, setBulk] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ added: number; skipped: number } | null>(null);
   const [error, setError] = useState("");
 
-  async function submit() {
-    const phones = text
-      .split("\n")
+  function parsePhones(): string[] {
+    const raw = mode === "single" ? single : bulk;
+    return raw
+      .split(/[\n,\s]+/)
       .map((p) => p.trim())
       .filter(Boolean);
+  }
+
+  async function submit() {
+    const phones = parsePhones();
     if (phones.length === 0) { setError("Enter at least one phone number."); return; }
     setLoading(true);
     setError("");
@@ -72,7 +79,7 @@ function AddNumbersModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <PhoneOff size={18} className="text-red-500" />
-            <h3 className="text-base font-bold text-gray-900">Add DNC Numbers</h3>
+            <h3 className="text-base font-bold text-gray-900">Add DNC Number</h3>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X size={20} />
@@ -80,6 +87,26 @@ function AddNumbersModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
         </div>
 
         <div className="px-6 py-5 space-y-4">
+          {/* Mode toggle */}
+          <div>
+            <p className="text-xs font-semibold text-gray-600 mb-2">Add Mode</p>
+            <div className="flex gap-2">
+              {(["single", "bulk"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => { setMode(m); setError(""); setResult(null); }}
+                  className={`px-4 py-1.5 text-sm font-semibold rounded-lg border transition-all ${
+                    mode === m
+                      ? "bg-amber-400 border-amber-400 text-white"
+                      : "bg-white border-gray-200 text-gray-600 hover:border-amber-300"
+                  }`}
+                >
+                  {m === "single" ? "Single Number" : "Bulk Add"}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {error && (
             <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
               <AlertTriangle size={15} className="shrink-0" />
@@ -92,18 +119,31 @@ function AddNumbersModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
               Added {result.added}, skipped {result.skipped}
             </div>
           )}
-          <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">
-              Phone Numbers (one per line)
-            </label>
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              rows={6}
-              placeholder={"+1 555 000 0001\n+1 555 000 0002"}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none font-mono"
-            />
-          </div>
+
+          {mode === "single" ? (
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Phone Number</label>
+              <input
+                value={single}
+                onChange={(e) => setSingle(e.target.value)}
+                placeholder="Enter phone number (e.g., 1234567890)"
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 font-mono"
+              />
+              <p className="text-xs text-gray-400 mt-1">Enter a single phone number (digits only)</p>
+            </div>
+          ) : (
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Phone Numbers</label>
+              <textarea
+                value={bulk}
+                onChange={(e) => setBulk(e.target.value)}
+                rows={6}
+                placeholder={"Enter phone numbers separated by commas, spaces, or new lines\nExample: 1234567890, 9876543210\nOr:\n1234567890\n9876543210"}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none font-mono"
+              />
+              <p className="text-xs text-gray-400 mt-1">You can enter multiple phone numbers separated by commas, spaces, or new lines</p>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
@@ -120,7 +160,7 @@ function AddNumbersModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
               className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
             >
               {loading ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
-              Add Numbers
+              {mode === "single" ? "Add Number" : "Add Numbers"}
             </button>
           )}
         </div>
