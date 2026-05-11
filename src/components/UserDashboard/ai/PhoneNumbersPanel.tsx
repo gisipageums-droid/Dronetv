@@ -148,7 +148,7 @@ interface SearchForm {
 }
 
 function SearchAvailableTab() {
-  const [form, setForm] = useState<SearchForm>({ country: "US", area_code: "", search_query: "", region: "" });
+  const [form, setForm] = useState<SearchForm>({ country: "+1", area_code: "", search_query: "", region: "" });
   const [results, setResults] = useState<PhoneNumberResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -166,7 +166,7 @@ function SearchAvailableTab() {
       const payload: { country: string; area_code?: string; search_query?: string; region?: string } = {
         country: form.country,
       };
-      if (form.country === "US") {
+      if (form.country === "+1") {
         if (form.area_code.trim()) payload.area_code = form.area_code.trim();
         if (form.search_query.trim()) payload.search_query = form.search_query.trim();
       } else {
@@ -192,12 +192,12 @@ function SearchAvailableTab() {
             onChange={(e) => set("country", e.target.value)}
             className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
           >
-            <option value="US">+1 United States</option>
-            <option value="IN">+91 India</option>
+            <option value="+1">+1 United States</option>
+            <option value="+91">+91 India</option>
           </select>
         </div>
 
-        {form.country === "US" && (
+        {form.country === "+1" && (
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Area Code</label>
@@ -220,7 +220,7 @@ function SearchAvailableTab() {
           </div>
         )}
 
-        {form.country === "IN" && (
+        {form.country === "+91" && (
           <div>
             <label className="block text-xs font-semibold text-gray-600 mb-1">Region</label>
             <select
