@@ -188,7 +188,7 @@ export default function WaLiveChatPanel() {
     setLoadingMessages(true);
     setMessages([]);
     try {
-      const res = await waLiveChatApi.getConversation(conv.uid);
+      const res = await waLiveChatApi.getConversation(conv.id);
       setMessages(res.data.messages ?? []);
     } finally {
       setLoadingMessages(false);
