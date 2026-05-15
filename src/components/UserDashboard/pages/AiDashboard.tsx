@@ -1,24 +1,21 @@
-import React, { useState, Suspense, lazy } from "react";
+import React, { useState, Suspense, lazy, useEffect } from "react";
 import {
-  ShieldCheck, Bot, Megaphone, Users, Wrench, Server, Filter,
-  PhoneCall, PhoneOff, Phone, CalendarCheck, CreditCard,
-  MessageCircle, Clock, CheckCircle2, AlertCircle,
+  Bot, Megaphone, Users, Filter,
+  PhoneCall, PhoneOff, Phone, CalendarCheck,
+  MessageCircle, Clock,
   LayoutTemplate, UsersRound, Headphones, Loader2,
-  Camera, ChevronDown,
+  Camera, ChevronDown, Crown, User,
 } from "lucide-react";
+import { useAiRole } from "../ai/useAiRole";
 
 const AgentsPanel       = lazy(() => import("../ai/AgentsPanel"));
-const AuthPanel         = lazy(() => import("../ai/AuthPanel"));
 const CampaignsPanel    = lazy(() => import("../ai/CampaignsPanel"));
 const ContactsPanel     = lazy(() => import("../ai/ContactsPanel"));
-const ToolsPanel        = lazy(() => import("../ai/ToolsPanel"));
-const ProvidersPanel    = lazy(() => import("../ai/ProvidersPanel"));
 const FunnelPanel       = lazy(() => import("../ai/FunnelPanel"));
 const CallLogsPanel     = lazy(() => import("../ai/CallLogsPanel"));
 const DncPanel          = lazy(() => import("../ai/DncPanel"));
 const PhoneNumbersPanel = lazy(() => import("../ai/PhoneNumbersPanel"));
 const CalendarPanel     = lazy(() => import("../ai/CalendarPanel"));
-const PaygPanel         = lazy(() => import("../ai/PaygPanel"));
 const WaTemplatesPanel     = lazy(() => import("../ai/WaTemplatesPanel"));
 const WaContactGroupsPanel = lazy(() => import("../ai/WaContactGroupsPanel"));
 const WaCampaignsPanel     = lazy(() => import("../ai/WaCampaignsPanel"));
@@ -36,7 +33,6 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { id: "authentication",   label: "Authentication",   icon: ShieldCheck,   status: "active" },
   {
     id: "ai-caller", label: "AI Caller Agents", icon: PhoneCall, status: "active",
     children: [
@@ -59,11 +55,8 @@ const navItems: NavItem[] = [
   },
   { id: "instagram-agents", label: "Instagram Agents", icon: Camera,        status: "active" },
   { id: "contacts",         label: "Contacts",         icon: Users,         status: "active" },
-  { id: "tools",            label: "Tools",            icon: Wrench,        status: "active" },
-  { id: "providers",        label: "Providers",        icon: Server,        status: "active" },
   { id: "funnel",           label: "Funnel",           icon: Filter,        status: "active" },
   { id: "calendar",         label: "Calendar Booking", icon: CalendarCheck, status: "active" },
-  { id: "payg",             label: "Pay As You Go",    icon: CreditCard,    status: "active" },
 ];
 
 const statusConfig: Record<TabStatus, { label: string; color: string; bg: string }> = {
@@ -94,14 +87,10 @@ function PanelLoader() {
 
 function renderPanel(panelId: string) {
   switch (panelId) {
-    case "authentication":    return <AuthPanel />;
     case "instagram-agents":  return <AgentsPanel />;
     case "contacts":          return <ContactsPanel />;
-    case "tools":             return <ToolsPanel />;
-    case "providers":         return <ProvidersPanel />;
     case "funnel":            return <FunnelPanel />;
     case "calendar":          return <CalendarPanel />;
-    case "payg":              return <PaygPanel />;
     case "caller-agents":     return <AgentsPanel />;
     case "caller-campaigns":  return <CampaignsPanel />;
     case "phone-numbers":     return <PhoneNumbersPanel />;
@@ -117,8 +106,21 @@ function renderPanel(panelId: string) {
 }
 
 const AiDashboard: React.FC = () => {
-  const [activePanel, setActivePanel]     = useState("authentication");
-  const [expanded, setExpanded]           = useState<Set<string>>(new Set());
+  const { role, allowedPanels, displayName } = useAiRole();
+  const [activePanel, setActivePanel]     = useState(role === "admin" ? "caller-agents" : "wa-templates");
+  const [expanded, setExpanded]           = useState<Set<string>>(() =>
+    role === "admin" ? new Set(["ai-caller", "whatsapp"]) : new Set(["whatsapp"])
+  );
+
+  useEffect(() => {
+    const key = import.meta.env.VITE_ECHOLEADS_API_KEY;
+    if (key) localStorage.setItem("echoleads_api_key", key);
+  }, []);
+
+  const visibleNav = navItems.filter((item) => {
+    if (item.children) return allowedPanels.has(item.id);
+    return allowedPanels.has(item.id);
+  });
 
   function toggleGroup(groupId: string, firstChildId: string) {
     setExpanded((prev) => {
@@ -140,12 +142,24 @@ const AiDashboard: React.FC = () => {
   return (
     <div className="flex h-full bg-white rounded-lg overflow-hidden">
       {/* ── Sidebar ── */}
-      <aside className="w-56 shrink-0 bg-amber-50 border-r border-amber-100 overflow-y-auto">
-        <div className="px-4 py-4 border-b border-amber-200">
-          <h2 className="text-xs font-bold text-amber-800 uppercase tracking-widest">AI Suite</h2>
+      <aside className="w-56 shrink-0 bg-amber-50 border-r border-amber-100 overflow-y-auto flex flex-col">
+        <div className="px-4 py-3 border-b border-amber-200">
+          <h2 className="text-xs font-bold text-amber-800 uppercase tracking-widest mb-2">AI Suite</h2>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-amber-200 rounded-lg flex items-center justify-center shrink-0">
+              {role === "admin" ? <Crown size={14} className="text-amber-700" /> : <User size={14} className="text-amber-700" />}
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-gray-800 truncate">{displayName}</p>
+              {role === "admin"
+                ? <span className="text-[10px] font-bold text-amber-700">Admin</span>
+                : <span className="text-[10px] text-gray-400">User</span>
+              }
+            </div>
+          </div>
         </div>
-        <nav className="py-2">
-          {navItems.map((item) => {
+        <nav className="py-2 flex-1">
+          {visibleNav.map((item) => {
             const isGroupExpanded = expanded.has(item.id);
             const isLeafActive    = activePanel === item.id;
             const isGroupActive   = item.children?.some((c) => c.id === activePanel) ?? false;

@@ -50,6 +50,7 @@ import Logout from "./components/Logout";
 import ResetPassword from "./components/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminProtectedRoute from "./components/adminProtectedRoute";
+import AiProtectedRoute from "./components/AiProtectedRoute";
 import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
@@ -400,11 +401,11 @@ const AppContent = () => {
           <Route
             path="/user-ai"
             element={
-              <ProtectedRoute>
+              <AiProtectedRoute>
                 <UserDashboardLayout>
                   <AiDashboard />
                 </UserDashboardLayout>
-              </ProtectedRoute>
+              </AiProtectedRoute>
             }
           />
         <Route path="/eventsexcel" element={<EventsExcelDataProcessor />} />
