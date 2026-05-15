@@ -2,15 +2,11 @@ import axios from "axios";
 
 const BASE = "https://dashboardapi.echoleads.ai/api/v1";
 
-function authHeaders() {
-  const key = localStorage.getItem("echoleads_api_key") || "";
-  return { Authorization: key, "Content-Type": "application/json" };
-}
-
-const api = axios.create({ baseURL: BASE });
+const api = axios.create({ baseURL: BASE, headers: { "Content-Type": "application/json" } });
 
 api.interceptors.request.use((config) => {
-  config.headers = { ...config.headers, ...authHeaders() };
+  const key = localStorage.getItem("echoleads_api_key");
+  if (key) config.headers["Authorization"] = key;
   return config;
 });
 
