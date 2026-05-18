@@ -2043,7 +2043,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODkxNTkxMiwianRpIjoiOGJiZDczNTktNjYwMC00YjQwLWE0MDctNGQ3NGIzN2E2MTk3IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3Nzg5MTU5MTIsImV4cCI6MTc4MDIxMTkxMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.sgqmhPe-7_YL8bDb8tefIBLJLPMmy45CrQB-3FpaEIo"; // Updated with active token
 
         const response = await axios.post(
-          "https://app.surepass.io/api/v1/corporate/gstin-advanced",
+          "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
           { "id_number": gstNumber },
           {
             headers: {
