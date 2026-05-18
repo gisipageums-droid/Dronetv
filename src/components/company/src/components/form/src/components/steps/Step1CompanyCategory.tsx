@@ -2040,10 +2040,10 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
       try {
         // SUREPASS GST ADVANCED API
-        const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED"; // Updated with correct token provided by user
+        const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED"; // Updated with active token
 
         const response = await axios.post(
-          "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
+          "https://app.surepass.io/api/v1/corporate/gstin-advanced",
           { "id_number": gstNumber },
           {
             headers: {
