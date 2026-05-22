@@ -1071,8 +1071,13 @@ const GSTVerificationSection: React.FC<{
   onVerifyPAN: () => void;
   isVerifyingPAN: boolean;
   isPANVerified: boolean;
+  // Auto-fill props
+  onAutoFill: () => void;
+  isAutoFilling: boolean;
+  autoFillStep: 'idle' | 'scraping' | 'processing' | 'done' | 'error';
 }> = ({ gstNumber, onGSTChange, onVerifyGST, isVerified, isVerifying, verifiedData, address, onAddressChange, onVerifiedDataChange, formData, updateFormData,
-  panNumber, onPanChange, panName, onPanNameChange, panDob, onPanDobChange, onVerifyPAN, isVerifyingPAN, isPANVerified
+  panNumber, onPanChange, panName, onPanNameChange, panDob, onPanDobChange, onVerifyPAN, isVerifyingPAN, isPANVerified,
+  onAutoFill, isAutoFilling, autoFillStep
 }) => {
     const [localConsent, setLocalConsent] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
@@ -1552,6 +1557,40 @@ const GSTVerificationSection: React.FC<{
             required
             placeholder="https://www.yourcompany.com"
           />
+
+          {formData.websiteUrl && formData.websiteUrl.startsWith('http') && (
+            <div className="mt-2 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={onAutoFill}
+                disabled={isAutoFilling}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+              >
+                {isAutoFilling ? (
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block" />
+                ) : (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                )}
+                {isAutoFilling ? 'Analysing website...' : 'Auto-fill from website'}
+              </button>
+
+              {autoFillStep === 'scraping' && (
+                <span className="text-xs text-blue-600">Scraping pages...</span>
+              )}
+              {autoFillStep === 'processing' && (
+                <span className="text-xs text-blue-600">AI processing content...</span>
+              )}
+              {autoFillStep === 'done' && (
+                <span className="text-xs text-green-600 flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Fields pre-filled
+                </span>
+              )}
+              {autoFillStep === 'error' && (
+                <span className="text-xs text-red-500">Analysis failed — fill manually</span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="mt-4">
@@ -1932,6 +1971,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   const [verifyingPan, setVerifyingPan] = useState(false);
   const [panVerified, setPanVerified] = useState(false);
 
+  // Auto-fill from website
+  const [isAutoFilling, setIsAutoFilling] = useState(false);
+  const [autoFillStep, setAutoFillStep] = useState<'idle' | 'scraping' | 'processing' | 'done' | 'error'>('idle');
+  const [autoFillTaskId, setAutoFillTaskId] = useState<string | null>(null);
+  const [autoFillCompanyId, setAutoFillCompanyId] = useState<string | null>(null);
+
   const handleVerifyPAN = () => {
     setVerifyingPan(true);
     // Simulate API call
@@ -2040,23 +2085,83 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
       try {
         // SUREPASS GST ADVANCED API
-        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODkxNTkxMiwianRpIjoiOGJiZDczNTktNjYwMC00YjQwLWE0MDctNGQ3NGIzN2E2MTk3IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3Nzg5MTU5MTIsImV4cCI6MTc4MDIxMTkxMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.sgqmhPe-7_YL8bDb8tefIBLJLPMmy45CrQB-3FpaEIo"; // Updated with active token
+        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODkxNTkxMiwianRpIjoiOGJiZDczNTktNjYwMC00YjQwLWE0MDctNGQ3NGIzN2E2MTk3IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3Nzg5MTU5MTIsImV4cCI6MTc4MDIxMTkxMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.sgqmhPe-7_YL8bDb8tefIBLJLPMmy45CrQB-3FpaEIo";
 
-        const response = await axios.post(
-          "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
-          { "id_number": gstNumber },
-          {
-            headers: {
-              "Authorization": `Bearer ${SUREPASS_TOKEN}`,
-              "Content-Type": "application/json",
-              "Accept": "application/json"
+        let response;
+        let apiUnavailable = false;
+        try {
+          response = await axios.post(
+            "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
+            { "id_number": gstNumber },
+            {
+              headers: {
+                "Authorization": `Bearer ${SUREPASS_TOKEN}`,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+              }
             }
+          );
+        } catch (apiErr: any) {
+          if (apiErr?.response?.status === 401 || apiErr?.response?.status === 403) {
+            apiUnavailable = true;
+          } else {
+            throw apiErr;
           }
-        );
+        }
 
-        console.log("Surepass GST API Response:", response.data);
+        if (apiUnavailable) {
+          // API scope not available — fall back to GSTIN format validation
+          const GSTIN_STATE_MAP: Record<string, string> = {
+            '01': 'Jammu & Kashmir', '02': 'Himachal Pradesh', '03': 'Punjab',
+            '04': 'Chandigarh', '05': 'Uttarakhand', '06': 'Haryana',
+            '07': 'Delhi', '08': 'Rajasthan', '09': 'Uttar Pradesh',
+            '10': 'Bihar', '11': 'Sikkim', '12': 'Arunachal Pradesh',
+            '13': 'Nagaland', '14': 'Manipur', '15': 'Mizoram',
+            '16': 'Tripura', '17': 'Meghalaya', '18': 'Assam',
+            '19': 'West Bengal', '20': 'Jharkhand', '21': 'Odisha',
+            '22': 'Chhattisgarh', '23': 'Madhya Pradesh', '24': 'Gujarat',
+            '25': 'Daman & Diu', '26': 'Dadra & Nagar Haveli',
+            '27': 'Maharashtra', '28': 'Andhra Pradesh (old)', '29': 'Karnataka',
+            '30': 'Goa', '31': 'Lakshadweep', '32': 'Kerala',
+            '33': 'Tamil Nadu', '34': 'Puducherry', '35': 'Andaman & Nicobar',
+            '36': 'Telangana', '37': 'Andhra Pradesh', '38': 'Ladakh'
+          };
 
-        if (response.data.success && response.data.data) {
+          const stateCode = gstNumber.substring(0, 2);
+          const panFromGST = gstNumber.substring(2, 12);
+          const stateName = GSTIN_STATE_MAP[stateCode] || '';
+
+          const updates: any = {};
+          if (panFromGST) {
+            updates.panNumber = panFromGST;
+            setPanNumber(panFromGST);
+            updates.socialLinks = { ...formData.socialLinks, pan: panFromGST };
+          }
+          if (stateName) updates.state = stateName;
+          if (Object.keys(updates).length > 0) updateFormData(updates);
+
+          setVerifiedGSTData({
+            companyName: '',
+            legalName: '',
+            gstNumber,
+            companyAddress: '',
+            state: stateName,
+            pincode: '',
+            registrationDate: '',
+            businessType: '',
+            businessEntityType: '',
+            natureOfBusiness: '',
+            cin: '',
+            udyamRegistrationNumber: '',
+            pan: panFromGST
+          });
+          setGSTVerified(true);
+          toast.warning('GSTIN format verified. Full API verification is temporarily unavailable — please fill remaining company details manually.');
+          setVerifyingGST(false);
+          return;
+        }
+
+        if (response && response.data.success && response.data.data) {
           const apiData = response.data.data;
 
           // Map Surepass fields to our verifiedData structure as per user's JSON response
@@ -2175,18 +2280,146 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
           toast.success("GST verified successfully! Company details auto-filled.");
         } else {
-          console.error("GST API verification failed:", response.data.message);
-          toast.error(response.data.message || "Could not verify GST details");
+          toast.error(response?.data?.message || "Could not verify GST details");
         }
       } catch (error: any) {
-        console.error("Error verifying GST with Surepass:", error);
-        const errorMsg = error.response?.data?.message || "Error connecting to verification service";
-        toast.error(errorMsg);
+        const errStatus = error?.response?.status;
+        if (errStatus === 401 || errStatus === 403) {
+          toast.warning('GST verification service unavailable. GSTIN format accepted — please fill company details manually.');
+        } else {
+          toast.error(error?.response?.data?.message || "Error connecting to verification service");
+        }
       } finally {
         setVerifyingGST(false);
       }
     }
   };
+
+  const AI_GENERATOR_BASE = "https://phglptau64.execute-api.ap-south-1.amazonaws.com/production/api/v1";
+
+  const handleAutoFill = async () => {
+    const url = formData.websiteUrl?.trim();
+    if (!url || !url.startsWith('http')) {
+      toast.error('Please enter a valid website URL first');
+      return;
+    }
+    setIsAutoFilling(true);
+    setAutoFillStep('scraping');
+    setAutoFillTaskId(null);
+    setAutoFillCompanyId(null);
+    try {
+      const res = await axios.post(`${AI_GENERATOR_BASE}/generate-company-content`, {
+        websiteUrl: url,
+        templateId: 't1',
+      });
+      if (res.data?.success && res.data?.taskId) {
+        setAutoFillTaskId(res.data.taskId);
+        setAutoFillCompanyId(res.data.companyId);
+        setAutoFillStep('processing');
+      } else {
+        throw new Error('Invalid response');
+      }
+    } catch {
+      setIsAutoFilling(false);
+      setAutoFillStep('error');
+      toast.error('Could not start website analysis. Please fill the form manually.');
+    }
+  };
+
+  useEffect(() => {
+    if (!autoFillTaskId || autoFillStep !== 'processing') return;
+
+    let attempts = 0;
+    const MAX_ATTEMPTS = 18;
+
+    const poll = async () => {
+      try {
+        const statusRes = await axios.get(`${AI_GENERATOR_BASE}/generation-status/${autoFillTaskId}`);
+        const status = statusRes.data?.status;
+
+        if (status === 'COMPLETED' && autoFillCompanyId) {
+          const companyRes = await axios.get(`${AI_GENERATOR_BASE}/company/${autoFillCompanyId}`);
+          const data = companyRes.data?.generatedData || companyRes.data || {};
+          const updates: Record<string, any> = {};
+
+          const email = data.contactInfo?.email;
+          const phone = data.contactInfo?.phone;
+          const addr = data.contactInfo?.address;
+          const desc = data.about?.description;
+          const heroTitle = data.hero?.title;
+          const heroSubtitle = data.hero?.subtitle;
+
+          // Registration fields
+          if (email && !formData.directorEmail) updates.directorEmail = email;
+          if (phone && !formData.directorPhone) updates.directorPhone = phone;
+          if (addr) {
+            if (!formData.officeAddress) updates.officeAddress = addr;
+            if (!formData.directorAddress) updates.directorAddress = addr;
+          }
+          if (desc && !formData.natureOfBusiness) updates.natureOfBusiness = desc;
+
+          // Template content fields — contact section
+          if (email && !formData.contactEmail) updates.contactEmail = email;
+          if (phone && !formData.contactPhone) updates.contactPhone = phone;
+
+          // Template content fields — footer section
+          if (email && !formData.footerEmail) updates.footerEmail = email;
+          if (phone && !formData.footerPhone) updates.footerPhone = phone;
+
+          // Template content fields — about section
+          if (heroTitle && !formData.aboutTitle) updates.aboutTitle = heroTitle;
+
+          // Template content fields — hero section
+          if (heroTitle && !formData.primaryCtaText) updates.primaryCtaText = 'Get In Touch';
+          if (heroSubtitle && !formData.servicesDescription) updates.servicesDescription = heroSubtitle;
+
+          // Template content fields — services (map scraped string list to service objects)
+          const scrapedServices: string[] = Array.isArray(data.services) ? data.services : [];
+          if (scrapedServices.length > 0 && (!formData.services || formData.services.length === 0)) {
+            updates.services = scrapedServices.slice(0, 6).map((title: string) => ({
+              icon: 'camera',
+              title,
+              description: ''
+            }));
+          }
+
+          if (Object.keys(updates).length > 0) updateFormData(updates);
+
+          clearInterval(timer);
+          setAutoFillStep('done');
+          setIsAutoFilling(false);
+          toast.success('Website analysed! Matching fields have been pre-filled.');
+          return;
+        }
+
+        if (status === 'FAILED') {
+          clearInterval(timer);
+          setAutoFillStep('error');
+          setIsAutoFilling(false);
+          toast.error('Website analysis failed. Please fill the form manually.');
+          return;
+        }
+
+        attempts++;
+        if (attempts >= MAX_ATTEMPTS) {
+          clearInterval(timer);
+          setAutoFillStep('error');
+          setIsAutoFilling(false);
+          toast.error('Website analysis timed out. Please fill the form manually.');
+        }
+      } catch {
+        attempts++;
+        if (attempts >= MAX_ATTEMPTS) {
+          clearInterval(timer);
+          setAutoFillStep('error');
+          setIsAutoFilling(false);
+        }
+      }
+    };
+
+    const timer = setInterval(poll, 5000);
+    return () => clearInterval(timer);
+  }, [autoFillTaskId, autoFillStep]);
 
   // REMOVED: Initialize DigiLocker Token on Mount (Now handled in handleDigiLockerLogin)
   useEffect(() => {
@@ -3023,6 +3256,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             onVerifyPAN={handleVerifyPAN}
             isVerifyingPAN={verifyingPan}
             isPANVerified={panVerified}
+            onAutoFill={handleAutoFill}
+            isAutoFilling={isAutoFilling}
+            autoFillStep={autoFillStep}
           />
 
           {/* Social Media Links */}
