@@ -1,82 +1,113 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { CheckCircle, X, Upload, AlertCircle, Shield, Loader2 } from "lucide-react";
+import { CheckCircle, X, Upload, AlertCircle, Shield, Loader2, RefreshCw } from "lucide-react";
 import { useTemplate } from "../../../../../../../../context/context";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
+const SDK_URL = "https://cdn.jsdelivr.net/gh/surepassio/surepass-digiboost-web-sdk@latest/src/index.min.js";
 
-type VerifyStep = 'idle' | 'sending' | 'otp_sent' | 'verifying' | 'verified' | 'error';
+type DigiStatus = 'idle' | 'loading' | 'ready' | 'verified' | 'error';
+
+declare global {
+  interface Window {
+    DigiboostSdk: (options: any) => void;
+  }
+}
 
 export default function Publish() {
   const [model, setModel] = useState(false);
   const [termsModel, setTermsModel] = useState(false);
-  const [aadhaarNumber, setAadhaarNumber] = useState('');
-  const [otp, setOtp] = useState('');
-  const [clientId, setClientId] = useState('');
-  const [verifyStep, setVerifyStep] = useState<VerifyStep>('idle');
-  const [verifyError, setVerifyError] = useState('');
+  const [digiStatus, setDigiStatus] = useState<DigiStatus>('idle');
   const [isPublishing, setIsPublishing] = useState(false);
+  const sdkLoadedRef = useRef(false);
+  const initAttemptRef = useRef(0);
 
   const { publishTemplate, navigatemodel, navModel, draftDetails } = useTemplate();
+  const aadharVerified = digiStatus === 'verified';
 
-  const aadharVerified = verifyStep === 'verified';
-
-  const handleSendOtp = async () => {
-    const cleaned = aadhaarNumber.replace(/\s/g, '');
-    if (cleaned.length !== 12 || !/^\d+$/.test(cleaned)) {
-      setVerifyError('Please enter a valid 12-digit Aadhaar number.');
+  // Load DigiBoost SDK script once
+  useEffect(() => {
+    if (sdkLoadedRef.current || document.querySelector(`script[src="${SDK_URL}"]`)) {
+      sdkLoadedRef.current = true;
       return;
     }
-    setVerifyStep('sending');
-    setVerifyError('');
+    const script = document.createElement('script');
+    script.src = SDK_URL;
+    script.async = true;
+    script.onload = () => { sdkLoadedRef.current = true; };
+    document.body.appendChild(script);
+  }, []);
+
+  // Initialize DigiBoost when modal opens (and not yet verified)
+  useEffect(() => {
+    if (!model || aadharVerified) return;
+    const attempt = ++initAttemptRef.current;
+    initDigiBoost(attempt);
+  }, [model]);
+
+  const initDigiBoost = async (attempt: number) => {
+    setDigiStatus('loading');
     try {
       const res = await axios.post(
-        'https://sandbox.surepass.app/api/v1/aadhaar-v2/generate-otp',
-        { id_number: cleaned },
+        'https://sandbox.surepass.app/api/v1/digilocker/initialize',
+        { data: { signup_flow: true } },
         { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json' } }
       );
-      if (res.data?.success && res.data?.data?.client_id) {
-        setClientId(res.data.data.client_id);
-        setVerifyStep('otp_sent');
-        toast.success('OTP sent to your Aadhaar-linked mobile number.');
-      } else {
-        setVerifyError(res.data?.message || 'Failed to send OTP. Please try again.');
-        setVerifyStep('error');
+
+      if (!res.data?.success || !res.data?.data?.token) {
+        throw new Error('Invalid init response');
       }
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || 'Failed to send OTP. Please try again.';
-      setVerifyError(msg);
-      setVerifyStep('error');
+
+      const sdkToken = res.data.data.token;
+
+      // Wait for SDK script + DOM element to be ready
+      const tryMount = (retries = 20) => {
+        if (attempt !== initAttemptRef.current) return; // stale attempt
+        const el = document.getElementById('digiboost-btn-container');
+        if (!el || !window.DigiboostSdk) {
+          if (retries > 0) setTimeout(() => tryMount(retries - 1), 300);
+          else { setDigiStatus('error'); }
+          return;
+        }
+        // Clear previous SDK button if any
+        el.innerHTML = '';
+        window.DigiboostSdk({
+          gateway: 'sandbox',
+          token: sdkToken,
+          selector: '#digiboost-btn-container',
+          style: {
+            backgroundColor: '#4F46E5',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '600',
+            width: '100%',
+            cursor: 'pointer',
+          },
+          onSuccess: (_data: any) => {
+            setDigiStatus('verified');
+            toast.success('Aadhaar verified successfully!');
+          },
+          onFailure: (_error: any) => {
+            setDigiStatus('error');
+            toast.error('Verification cancelled or failed. Please try again.');
+          },
+        });
+        setDigiStatus('ready');
+      };
+
+      tryMount();
+    } catch {
+      setDigiStatus('error');
     }
   };
 
-  const handleVerifyOtp = async () => {
-    if (otp.length !== 6 || !/^\d+$/.test(otp)) {
-      setVerifyError('Please enter the 6-digit OTP.');
-      return;
-    }
-    setVerifyStep('verifying');
-    setVerifyError('');
-    try {
-      const res = await axios.post(
-        'https://sandbox.surepass.app/api/v1/aadhaar-v2/submit-otp',
-        { client_id: clientId, otp },
-        { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json' } }
-      );
-      if (res.data?.success) {
-        setVerifyStep('verified');
-        toast.success('Aadhaar verified successfully!');
-      } else {
-        setVerifyError(res.data?.message || 'Invalid OTP. Please try again.');
-        setVerifyStep('otp_sent');
-      }
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || 'OTP verification failed. Please try again.';
-      setVerifyError(msg);
-      setVerifyStep('otp_sent');
-    }
+  const handleRetry = () => {
+    const attempt = ++initAttemptRef.current;
+    initDigiBoost(attempt);
   };
 
   const handleConfirmPublish = async () => {
@@ -104,6 +135,12 @@ export default function Publish() {
     } finally {
       setIsPublishing(false);
     }
+  };
+
+  const handleOpenModal = () => {
+    setDigiStatus('idle');
+    initAttemptRef.current = 0;
+    setModel(true);
   };
 
   const termsContent = `Last Updated: 24th September, 2025
@@ -170,7 +207,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
     <>
       <motion.div className="fixed bottom-20 right-10 z-50">
         <motion.button
-          onClick={() => setModel(true)}
+          onClick={handleOpenModal}
           className="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
@@ -180,11 +217,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
         </motion.button>
       </motion.div>
 
-      {navModel && (
-        <div className="">
-          {navigatemodel()}
-        </div>
-      )}
+      {navModel && <div>{navigatemodel()}</div>}
 
       {/* Publish Modal */}
       <AnimatePresence>
@@ -203,7 +236,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
+              {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Shield className="text-indigo-600" size={24} />
@@ -214,92 +247,59 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                 </button>
               </div>
 
-              {/* Info banner */}
+              {/* Info */}
               <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg mb-4">
                 <AlertCircle size={18} className="text-blue-600 mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-blue-800">
-                  Verify your Aadhaar before publishing. Your login credentials will be sent to your registered email. Review our{" "}
+                  Verify your Aadhaar via DigiLocker before publishing. Your login credentials will be sent to your registered email. Review our{" "}
                   <button onClick={() => setTermsModel(true)} className="text-red-800 underline font-medium hover:text-red-900">
                     terms and conditions
                   </button>.
                 </p>
               </div>
 
-              {/* Aadhaar Verification */}
-              {!aadharVerified ? (
-                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mb-5">
-                  <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <Shield size={16} className="text-indigo-500" />
-                    Aadhaar Verification
-                  </h4>
+              {/* Verification Section */}
+              <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mb-5">
+                <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <Shield size={16} className="text-indigo-500" />
+                  Aadhaar Verification via DigiLocker
+                </h4>
 
-                  {verifyStep !== 'otp_sent' && verifyStep !== 'verifying' ? (
-                    <>
-                      <label className="block text-xs text-gray-600 mb-1">Aadhaar Number</label>
-                      <input
-                        type="text"
-                        maxLength={12}
-                        value={aadhaarNumber}
-                        onChange={(e) => setAadhaarNumber(e.target.value.replace(/\D/g, ''))}
-                        placeholder="Enter 12-digit Aadhaar number"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                        disabled={verifyStep === 'sending'}
-                      />
-                      {verifyError && <p className="text-xs text-red-600 mb-2">{verifyError}</p>}
-                      <button
-                        onClick={handleSendOtp}
-                        disabled={verifyStep === 'sending'}
-                        className="w-full py-2 px-4 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                      >
-                        {verifyStep === 'sending' ? (
-                          <><Loader2 size={16} className="animate-spin" /> Sending OTP...</>
-                        ) : (
-                          'Send OTP'
-                        )}
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-xs text-green-700 bg-green-50 rounded px-2 py-1 mb-3">OTP sent to your Aadhaar-linked mobile number.</p>
-                      <label className="block text-xs text-gray-600 mb-1">Enter OTP</label>
-                      <input
-                        type="text"
-                        maxLength={6}
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                        placeholder="6-digit OTP"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                        disabled={verifyStep === 'verifying'}
-                      />
-                      {verifyError && <p className="text-xs text-red-600 mb-2">{verifyError}</p>}
-                      <div className="flex gap-2">
+                {!aadharVerified ? (
+                  <>
+                    {digiStatus === 'loading' && (
+                      <div className="flex items-center gap-2 text-indigo-600 text-sm mb-3">
+                        <Loader2 size={16} className="animate-spin" />
+                        Initializing secure verification...
+                      </div>
+                    )}
+
+                    {digiStatus === 'error' && (
+                      <div className="mb-3">
+                        <p className="text-xs text-red-600 mb-2">Verification initialization failed.</p>
                         <button
-                          onClick={() => { setVerifyStep('idle'); setOtp(''); setVerifyError(''); }}
-                          className="flex-1 py-2 px-3 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50"
+                          onClick={handleRetry}
+                          className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
                         >
-                          Change Number
-                        </button>
-                        <button
-                          onClick={handleVerifyOtp}
-                          disabled={verifyStep === 'verifying'}
-                          className="flex-1 py-2 px-3 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center gap-2"
-                        >
-                          {verifyStep === 'verifying' ? (
-                            <><Loader2 size={14} className="animate-spin" /> Verifying...</>
-                          ) : (
-                            'Verify OTP'
-                          )}
+                          <RefreshCw size={12} /> Retry
                         </button>
                       </div>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg mb-5">
-                  <CheckCircle size={18} className="text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Aadhaar Verified Successfully</span>
-                </div>
-              )}
+                    )}
+
+                    {digiStatus === 'ready' && (
+                      <p className="text-xs text-gray-500 mb-3">Click the button below to verify your Aadhaar via DigiLocker.</p>
+                    )}
+
+                    {/* DigiBoost SDK mounts here */}
+                    <div id="digiboost-btn-container" className="w-full min-h-[40px]" />
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                    <CheckCircle size={18} className="text-green-600" />
+                    <span className="text-sm font-medium text-green-700">Aadhaar Verified Successfully</span>
+                  </div>
+                )}
+              </div>
 
               {/* Footer */}
               <div className="flex gap-3 justify-end">
@@ -311,7 +311,6 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                   Cancel
                 </motion.button>
                 <motion.button
-                  whileTap={{ scale: aadharVerified ? 0.9 : 1 }}
                   onClick={handleConfirmPublish}
                   disabled={!aadharVerified || isPublishing}
                   className={`px-4 py-2 font-medium rounded-lg transition-colors shadow-md flex items-center gap-2 ${
