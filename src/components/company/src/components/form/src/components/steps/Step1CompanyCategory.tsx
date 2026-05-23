@@ -3182,7 +3182,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         isFirstStep={true}
         currentStep={1}
         totalSteps={1}
-        nextButtonText={isSubmitting ? "Submitting..." : "Submit & List My Company"}
+        nextButtonText="Preview & Publish"
         isSubmitting={isSubmitting}
       >
         <div className="space-y-12 pb-10">
