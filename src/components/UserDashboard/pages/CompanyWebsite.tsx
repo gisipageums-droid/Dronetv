@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   Shield, CheckCircle, AlertCircle, Loader2, ExternalLink,
-  RefreshCw, Edit, Globe, Plus, BadgeCheck,
+  RefreshCw, Globe, Plus, BadgeCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
@@ -58,12 +58,6 @@ const CompanyWebsite: React.FC = () => {
     ? company.templateSelection === "template-1"
       ? `/user/companies/preview/1/${company.publishedId}/${userId}`
       : `/user/companies/preview/2/${company.publishedId}/${userId}`
-    : "";
-
-  const editUrl = company
-    ? company.templateSelection === "template-1"
-      ? `/user/companies/edit/1/${company.publishedId}/${userId}`
-      : `/user/companies/edit/2/${company.publishedId}/${userId}`
     : "";
 
   // ---- Aadhaar flow ----
@@ -196,13 +190,6 @@ const CompanyWebsite: React.FC = () => {
           </div>
           <p className="text-sm text-gray-500 mt-0.5">{company.location}</p>
         </div>
-        <button
-          onClick={() => navigate(editUrl)}
-          className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-yellow-900 font-semibold rounded-lg hover:bg-yellow-500 transition-colors border border-yellow-500"
-        >
-          <Edit className="w-4 h-4" />
-          Edit Website
-        </button>
       </div>
 
       {/* Status Banner */}
