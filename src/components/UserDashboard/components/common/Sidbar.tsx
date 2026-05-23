@@ -30,9 +30,10 @@ const navLinks = [
     { icon: Calendar, label: "Events", href: "/user-events" },
     { icon: Wallet, label: "Recharge", href: "/user-recharge" },
     { icon: Clock1, label: "Transaction History", href: "/user-transactions" },
-
     { icon: MessageSquare, label: "Contacted People", href: "/user-contacted" },
-    { icon: Brain, label: "AI", href: "/user-ai" },
+    ...(user?.email === 'dronesimulatorpro@gmail.com'
+      ? [{ icon: Brain, label: "AI", href: "/user-ai" }]
+      : []),
   ];
   return (
     <aside className="flex h-screen rounded-lg shadow-lg overflow-hidden">
