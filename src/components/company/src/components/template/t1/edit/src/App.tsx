@@ -37,16 +37,22 @@ export default function App() {
     if (!userId || !draftId || loadedRef.current) return;
     loadedRef.current = true;
 
-    // Form passed data directly via navigation state — use immediately
+    const API_URL = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${userId}/${draftId}?template=template-1`;
+
+    // Form passed data directly via navigation state — use immediately, then fetch publishedId
     if (location.state?.aiGenData) {
       setAIGenData(location.state.aiGenData);
       setIsLoading(false);
+      // Fetch publishedId in background — needed for the publish PUT call
+      fetch(API_URL)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => { if (data?.publishedId) setAIGenData(prev => ({ ...prev, publishedId: data.publishedId })); })
+        .catch(() => {});
       return;
     }
 
     // Fallback: poll the AI generation API
     let cancelled = false;
-    const API_URL = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${userId}/${draftId}?template=template-1`;
     const MAX = 12;
 
     const poll = async () => {
