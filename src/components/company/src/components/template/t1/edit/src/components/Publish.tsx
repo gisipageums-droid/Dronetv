@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CheckCircle, X, Upload, AlertCircle, Loader2 } from "lucide-react";
 import { useTemplate } from "../../../../../../../../context/context";
-import axios from "axios";
 import { toast } from "react-toastify";
 
 export default function Publish() {
@@ -10,38 +9,11 @@ export default function Publish() {
   const [termsModel, setTermsModel] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
 
-  const { publishTemplate, navigatemodel, navModel, draftDetails, AIGenData } = useTemplate();
+  const { publishTemplate, navigatemodel, navModel } = useTemplate();
 
   const handlePublish = async () => {
     setIsPublishing(true);
     try {
-      const email =
-        draftDetails?.directorEmail ||
-        draftDetails?.userId ||
-        draftDetails?.formData?.directorEmail ||
-        AIGenData?.content?.company?.email ||
-        AIGenData?.content?.contact?.email ||
-        '';
-      if (email) {
-        const rand = () => Math.random().toString(36).slice(2);
-        const password = rand().slice(0, 6) + rand().slice(0, 4).toUpperCase() + '@1';
-        const companyName =
-          AIGenData?.content?.company?.name ||
-          draftDetails?.formData?.companyName ||
-          draftDetails?.companyName ||
-          '';
-        try {
-          await axios.post('https://rnpcnionle.execute-api.ap-south-1.amazonaws.com/user_register_post', {
-            email,
-            password,
-            fullName:
-              draftDetails?.formData?.directorName ||
-              draftDetails?.directorName ||
-              companyName,
-            companyName,
-          });
-        } catch { /* user may already exist */ }
-      }
       publishTemplate();
       setModel(false);
     } catch {
