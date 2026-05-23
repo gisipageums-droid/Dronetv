@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Menu, X } from "lucide-react";
 import { useUserAuth } from "./context/context";
-import { FaSmileBeam } from "react-icons/fa";
 import { motion } from "motion/react";
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -108,7 +107,6 @@ const Navigation = () => {
                       onMouseEnter={() => setIsAccountOpen(true)}
                       className="relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap text-black hover:text-gray-800 flex items-center gap-2"
                     >
-                      <FaSmileBeam className="w-4 h-4" />
                       <span className="relative z-10">{item.name}</span>
                       <svg className="relative z-10 w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
                         <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" />
