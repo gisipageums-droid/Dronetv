@@ -27,7 +27,7 @@ const CompaniesPage: React.FC = () => {
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [filteredCompanies, setFilteredCompanies] = useState<Company[]>([]);
   const [selectedIndustry, setSelectedIndustry] = useState('All');
-  const [sortBy, setSortBy] = useState('companyName');
+  const [sortBy, setSortBy] = useState('createdAt');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const companiesPerPage = 12;
