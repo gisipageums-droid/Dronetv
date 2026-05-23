@@ -208,7 +208,7 @@ const CompaniesPage: React.FC = () => {
         </div>
 
         <button
-          onClick={() => navigate('/companies')}
+          onClick={() => navigate('/form', { state: { templateId: 1 } })}
           className="px-6 h-12 text-sm font-semibold text-white bg-black rounded-lg transition duration-300 hover:bg-gray-800"
         >
           List your Company

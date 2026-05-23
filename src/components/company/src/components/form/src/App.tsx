@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import { FormData } from "./types/form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -8,8 +8,11 @@ import Step4BusinessCategories from "./components/steps/Step4BusinessCategories"
 import Step5ProductsServices from "./components/steps/Step5ProductsServices";
 import Step7PromotionBilling from "./components/steps/Step7PromotionBilling";
 import Step8MediaUploads from "./components/steps/Step8MediaUploads";
+import PreviewPublish from "./components/PreviewPublish";
 import { useTemplate } from "../../../../../context/context";
 import { toast } from "react-toastify";
+
+type DigiStatus = 'idle' | 'loading' | 'polling' | 'verified' | 'error';
 
 // ---- initial form state ----
 const initialFormData: FormData = {
@@ -206,6 +209,19 @@ function App() {
   const [isCheckingName, setIsCheckingName] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Preview & publish flow
+  const [showPreview, setShowPreview] = useState(false);
+
+  // DigiLocker / Aadhaar verification
+  const [digiToken, setDigiToken] = useState('');
+  const [digiState, setDigiState] = useState('');
+  const [startPolling, setStartPolling] = useState(false);
+  const [aadharVerified, setAadharVerified] = useState(false);
+  const [digiStatus, setDigiStatus] = useState<DigiStatus>('idle');
+  const [digiConsent, setDigiConsent] = useState(false);
+  const digiTokenRef = useRef('');
+  const digiStateRef = useRef('');
+
   // Consolidated to Step 1 only
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>(() => {
@@ -292,6 +308,126 @@ function App() {
       console.error("Failed to save draft to localStorage", e);
     }
   }, [formData, currentStep]);
+
+  // Detect DigiLocker callback after redirect
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('digi_callback')) {
+      const storedToken = localStorage.getItem('digi_client_token');
+      const storedState = localStorage.getItem('digi_state');
+      const wasInPreview = localStorage.getItem('digi_preview_mode') === 'true';
+
+      if (storedToken && storedState) {
+        setDigiToken(storedToken);
+        setDigiState(storedState);
+        digiTokenRef.current = storedToken;
+        digiStateRef.current = storedState;
+        setStartPolling(true);
+        setDigiStatus('polling');
+        setDigiConsent(true);
+      }
+      if (wasInPreview) setShowPreview(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // DigiLocker polling
+  useEffect(() => {
+    digiTokenRef.current = digiToken;
+    digiStateRef.current = digiState;
+  }, [digiToken, digiState]);
+
+  useEffect(() => {
+    if (!startPolling) return;
+
+    let attempts = 0;
+    const MAX = 40;
+
+    const timer = setInterval(async () => {
+      const token = digiTokenRef.current;
+      const state = digiStateRef.current;
+      if (!token || !state) return;
+
+      try {
+        const res = await axios.post('https://digilocker.meon.co.in/v2/send_entire_data', {
+          client_token: token,
+          state,
+        });
+
+        if (res.data.success && res.data.status === 'success') {
+          clearInterval(timer);
+          setStartPolling(false);
+          setAadharVerified(true);
+          setDigiStatus('verified');
+          localStorage.removeItem('digi_client_token');
+          localStorage.removeItem('digi_state');
+          localStorage.removeItem('digi_preview_mode');
+          toast.success('Aadhaar verification successful!');
+          return;
+        }
+      } catch {
+        // continue polling
+      }
+
+      attempts++;
+      if (attempts >= MAX) {
+        clearInterval(timer);
+        setStartPolling(false);
+        setDigiStatus('error');
+        toast.error('Verification timed out. Please try again.');
+      }
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [startPolling]);
+
+  // DigiLocker login handler
+  const handleDigiLockerLogin = async () => {
+    if (!digiConsent) {
+      toast.error('Please accept the consent checkbox first.');
+      return;
+    }
+    setDigiStatus('loading');
+    try {
+      const tokenRes = await axios.post('https://digilocker.meon.co.in/get_access_token', {
+        company_name: 'ipage',
+        secret_token: 'lwHaBrdbfda67P3uO5jbC7HElp6cpBQb',
+      });
+
+      if (tokenRes.data.status) {
+        const { client_token, state } = tokenRes.data;
+        localStorage.setItem('digi_client_token', client_token);
+        localStorage.setItem('digi_state', state);
+        localStorage.setItem('digi_preview_mode', 'true');
+
+        const currentUrl = window.location.origin + window.location.pathname;
+        const redirectUrl = `${currentUrl}?digi_callback=true`;
+
+        const urlRes = await axios.post('https://digilocker.meon.co.in/digi_url', {
+          client_token,
+          redirect_url: redirectUrl,
+          company_name: 'ipage',
+          documents: 'aadhaar,pan',
+          pan_name: 'RAHUL KUMAR',
+          pan_no: 'CAPUD4335K',
+          other_documents: [],
+        });
+
+        if (urlRes.data.status === 'success' && urlRes.data.url) {
+          window.location.href = urlRes.data.url;
+        } else {
+          setDigiStatus('error');
+          toast.error('Unable to start DigiLocker. Please try again.');
+        }
+      } else {
+        setDigiStatus('error');
+        toast.error('DigiLocker initialization failed.');
+      }
+    } catch {
+      setDigiStatus('error');
+      toast.error('Error starting DigiLocker. Please try again.');
+    }
+  };
 
   // function to check company name availability
   const checkCompanyName = async (name: string) => {
@@ -474,8 +610,6 @@ function App() {
         },
       };
 
-      console.log("📤 Submitting Step 1 Payload via Axios:", payload);
-
       const response = await axios.post(FORM_SUBMIT_API_URL, payload, {
         headers: {
           "Content-Type": "application/json",
@@ -484,24 +618,21 @@ function App() {
         timeout: 60000,
       });
 
-      // Store draft details in context
       setDraftDetails(response.data);
 
-      toast.success("🎉 Company listed successfully! You will receive a confirmation email shortly.", {
+      toast.success("Your company is now live! Redirecting to the directory…", {
         toastId: "company-listed",
-        autoClose: 5000,
+        autoClose: 4000,
       });
 
-      // Clear local draft after successful submission
       localStorage.removeItem("companyFormDraft");
+      localStorage.removeItem("digi_preview_mode");
 
-      // Navigate back to the companies listing page or dashboard
       setTimeout(() => {
         navigate("/listed-companies");
       }, 2000);
 
     } catch (error: any) {
-      console.error("❌ Step 1 submission failed:", error);
       const errorMsg = error.response?.data?.message || error.response?.data?.error || error.message || "Unknown error";
       toast.error(`Failed to list your company: ${errorMsg}`);
     } finally {
@@ -509,9 +640,16 @@ function App() {
     }
   }, [formData, templateId, navigate, setDraftDetails]);
 
+  const handlePreview = () => {
+    if (validateStep1()) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setShowPreview(true);
+    }
+  };
+
   const nextStep = () => {
     if (currentStep === 1) {
-      handleStep1Submit();
+      handlePreview();
     }
   };
 
@@ -520,11 +658,6 @@ function App() {
       window.scrollTo({ top: 0, behavior: "smooth" });
       setCurrentStep(currentStep - 1);
     }
-  };
-
-  const handleGenerationComplete = () => {
-    setIsGenerating(false);
-    setIsComplete(true);
   };
 
   // Add skip step function
@@ -570,6 +703,22 @@ function App() {
           </p>
         </div>
       </div>
+    );
+  }
+
+  if (showPreview) {
+    return (
+      <PreviewPublish
+        formData={formData}
+        onBack={() => setShowPreview(false)}
+        onPublish={handleStep1Submit}
+        isPublishing={isSubmitting}
+        aadharVerified={aadharVerified}
+        digiStatus={digiStatus}
+        consent={digiConsent}
+        onConsentChange={setDigiConsent}
+        onStartDigiLocker={handleDigiLockerLogin}
+      />
     );
   }
 
