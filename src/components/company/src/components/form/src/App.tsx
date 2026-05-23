@@ -14,6 +14,141 @@ import { toast } from "react-toastify";
 
 type DigiStatus = 'idle' | 'loading' | 'polling' | 'verified' | 'error';
 
+function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: string) {
+  const companyName = fd.companyName || '';
+  const industry = fd.companyCategory?.[0] || 'Drone Technology';
+  const established = fd.yearEstablished || '';
+  const location = [fd.city, fd.state, fd.country].filter(Boolean).join(', ') || 'India';
+  const heroImage = fd.heroBackgroundUrl || 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=1080&q=80';
+  const address = [fd.addressLine || fd.officeAddress, fd.city, fd.state, fd.postalCode || fd.pinCode].filter(Boolean).join(', ');
+  const yearsExp = established ? `${new Date().getFullYear() - parseInt(established)}+` : '5+';
+
+  return {
+    publishedId: '',
+    userId,
+    draftId,
+    templateSelection: 'template-1',
+    isEdited: false,
+    content: {
+      company: {
+        name: companyName,
+        logo: fd.companyLogoUrl || '',
+        industry,
+        established,
+        location,
+        metrics: { yearsInBusiness: yearsExp, projectsCompleted: '30+', clientsSatisfied: '10+' }
+      },
+      hero: {
+        heading: `${companyName} - Professional ${industry} Solutions`,
+        subheading: `Leading ${industry} company delivering innovative solutions`,
+        description: fd.footerDescriptionDraft || `${companyName} delivers solutions that blend technology, creativity, and purpose.`,
+        mainHeroImage: heroImage,
+        secHeroImage: heroImage,
+        numberOfClients: '500',
+        clientImage1: heroImage, clientImage2: heroImage, clientImage3: heroImage,
+        clientImage4: heroImage, clientImage5: heroImage, clientImage6: heroImage,
+        primaryAction: { type: 'primary', text: fd.primaryCtaText || 'Get Quote' },
+        secondaryAction: { type: 'secondary', text: fd.secondaryCtaText || 'View Services' }
+      },
+      about: {
+        companyName,
+        industry,
+        established,
+        headquarters: location,
+        description1: fd.aboutTeamExperience || `${companyName} was founded with a vision to deliver professional ${industry} solutions.`,
+        description2: `${companyName} is committed to delivering excellence and innovation in the ${industry} sector.`,
+        mission: `To deliver exceptional ${industry} solutions that drive business success`,
+        vision: `To be the leading ${industry} company known for innovation and quality`,
+        officeImage: fd.aboutImageUrl || '',
+        certifications: [],
+        achievements: []
+      },
+      services: {
+        heading: { head: fd.servicesTitle || 'Our Services', desc: fd.servicesDescription || 'Professional services tailored to your needs' },
+        services: (fd.services || []).map(s => ({ icon: s.icon || '', title: s.title || '', description: s.description || '' })),
+        categories: ['All']
+      },
+      products: {
+        heading: { title: fd.productsTitle || 'Professional Products', heading: 'Innovative Solutions', description: 'Quality solutions.', trust: 'for your business.' },
+        products: (fd.products || []).map(p => ({ title: p.title || '', description: p.description || '' })),
+        benefits: [
+          { icon: '30', color: 'red-accent', title: '30-Day Money Back', desc: 'Try our solutions risk-free.' },
+          { icon: '99%', color: 'primary', title: '99% Success Rate', desc: 'Industry-leading success rate.' },
+          { icon: '∞', color: 'gradient', title: 'Unlimited Support', desc: 'Comprehensive support included.' }
+        ]
+      },
+      blog: {
+        header: { title: `${industry} Blog`, badge: 'Latest Insights', desc: `Expert insights from ${companyName}` },
+        posts: []
+      },
+      clients: {
+        headline: { title: fd.clientsTitle || 'Trusted by Leading Organizations', description: `${companyName} serves clients across ${location}` },
+        clients: (fd.clients || []).map(c => ({ logo: c.logo || '', name: c.name || '', image: c.logo || '' })),
+        stats: [
+          { value: '30+', label: 'Projects Completed' },
+          { value: '10+', label: 'Happy Clients' },
+          { value: yearsExp, label: 'Years Experience' },
+          { value: '95%', label: 'Success Rate' }
+        ]
+      },
+      testimonials: {
+        headline: { title: 'What Our Clients Say', description: `Success stories from clients of ${companyName}` },
+        testimonials: (fd.testimonials || []).map(t => ({ name: t.name || '', gender: 'male', role: t.role || '', image: t.photo || '', quote: t.quoteSeed || '', rating: t.rating || 5 })),
+        stats: []
+      },
+      contact: {
+        title: fd.contactTitle || `Get In Touch with ${companyName}`,
+        description: `Contact us for professional ${industry} consultation`,
+        ctaButton: 'Get Free Consultation',
+        backgroundImage: heroImage,
+        benefits: [`Free ${industry} consultation`, 'Expert guidance', 'Competitive pricing', 'Fast response'],
+        contactInfo: {
+          phone: fd.contactPhone || fd.directorPhone || '',
+          email: fd.contactEmail || fd.directorEmail || '',
+          address,
+          website: fd.websiteUrl || '',
+          companyName,
+          supportPhone: fd.supportContactNumber || '',
+          supportEmail: fd.supportEmail || '',
+          whatsappLink: fd.whatsappNumber || '',
+          gstin: fd.gstin || '',
+          directorName: fd.directorName || '',
+          directorPrefix: fd.directorPrefix || '',
+          legalName: fd.legalName || ''
+        },
+        businessHours: fd.operatingHours || 'Mon-Fri: 9:00 AM - 6:00 PM',
+        mapEmbedUrl: fd.mapEmbedUrl || '',
+        socialMedia: {
+          linkedin: fd.socialLinks?.linkedin || '',
+          twitter: fd.socialLinks?.twitter || '',
+          facebook: fd.socialLinks?.facebook || '',
+          instagram: fd.socialLinks?.instagram || '',
+          youtube: fd.socialLinks?.youtube || '',
+          website: fd.socialLinks?.website || ''
+        },
+        alternateContact: { name: fd.altContactName || '', email: fd.altContactEmail || '', phone: fd.altContactPhone || '' },
+        billingContact: { name: '', email: '', address: '', gstin: '' }
+      },
+      profile: {
+        companyName,
+        establishedYear: parseInt(established) || new Date().getFullYear() - 5,
+        growthThisYear: 18,
+        satisfiedCustomers: 10,
+        teamSize: 15,
+        projectsDelivered: 30,
+        imageUrl: fd.aboutImageUrl || heroImage,
+        description: fd.footerDescriptionDraft || `Leading ${industry} company delivering innovative solutions`,
+        coreValues: fd.companyValuesSelection?.length ? fd.companyValuesSelection : ['Innovation', 'Quality', 'Client Focus', 'Integrity']
+      },
+      gallery: {
+        heading: { title: `${companyName} Portfolio`, description: `Showcasing our ${industry} expertise` },
+        categories: ['All', 'Portfolio', 'Projects'],
+        images: []
+      }
+    }
+  };
+}
+
 // ---- initial form state ----
 const initialFormData: FormData = {
   // Company Information
@@ -634,7 +769,8 @@ function App() {
 
       const draftId = response.data?.draftId;
       const userId = response.data?.userId;
-      navigate(`/edit/template/t1/${draftId}/${userId}`);
+      const aiGenData = mapFormDataToAIGenData(formData, draftId, userId);
+      navigate(`/edit/template/t1/${draftId}/${userId}`, { state: { aiGenData } });
 
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || error.response?.data?.error || error.message || "Unknown error";
