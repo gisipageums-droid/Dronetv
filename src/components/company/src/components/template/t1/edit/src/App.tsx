@@ -39,26 +39,11 @@ export default function App() {
 
     const API_URL = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${userId}/${draftId}?template=template-1`;
 
-    // Form passed data directly — show template immediately, poll in background for publishedId
+    // Form passed data directly — show template immediately
     if (location.state?.aiGenData) {
       setAIGenData(location.state.aiGenData);
       setIsLoading(false);
-      let attempts = 0;
-      // Wait 8s before first poll — AI generation takes ~10-20s
-      const bgPoll = setTimeout(function poll() {
-        attempts++;
-        fetch(API_URL)
-          .then(r => r.ok ? r.json() : null)
-          .then(data => {
-            if (data?.publishedId) {
-              setAIGenData(prev => ({ ...prev, publishedId: data.publishedId }));
-            } else if (attempts < 15) {
-              setTimeout(poll, 5000);
-            }
-          })
-          .catch(() => { if (attempts < 15) setTimeout(poll, 5000); });
-      }, 8000);
-      return () => clearTimeout(bgPoll);
+      return;
     }
 
     // Fallback: poll until AI generation is done
