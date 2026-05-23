@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useTemplate } from "../../../../../../../context/context";
 import About from "./components/About";
 import Blog from "./components/Blog";
@@ -19,9 +20,10 @@ import EditableCompanyProfile from "./components/Profile";
 export default function App() {
   const [componentStates, setComponentStates] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const { AIGenData, setFinalTemplate, getAIgenData } = useTemplate();
+  const [loadingMessage, setLoadingMessage] = useState("Generating your company template...");
+  const { AIGenData, setFinalTemplate, setAIGenData } = useTemplate();
   const { userId, draftId } = useParams();
-  // Memoize the collectComponentState function
+
   const collectComponentState = useCallback((componentName, state) => {
     setComponentStates((prev) => ({
       ...prev,
@@ -30,21 +32,41 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (userId && draftId) {
+    if (!userId || !draftId) { setIsLoading(false); return; }
+
+    let cancelled = false;
+    const API_URL = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${userId}/${draftId}?template=template-1`;
+    const MAX = 12;
+
+    const poll = async () => {
+      for (let i = 0; i < MAX; i++) {
+        if (cancelled) return;
         try {
-          setIsLoading(true);
-          await getAIgenData(userId, draftId, "template-1");
-        } catch (error) {
-          console.error("Failed to load data:", error);
-        } finally {
-          setIsLoading(false);
+          const res = await fetch(API_URL);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.content || data?.publishedId) {
+              if (!cancelled) {
+                setAIGenData(data);
+                setIsLoading(false);
+              }
+              return;
+            }
+          }
+        } catch { /* keep polling */ }
+        if (i < MAX - 1) {
+          if (i === 3) setLoadingMessage("Almost ready, applying AI content...");
+          await new Promise(r => setTimeout(r, 2500));
         }
-      } else {
+      }
+      if (!cancelled) {
+        toast.error("Failed to load template data. Please try again.");
         setIsLoading(false);
       }
     };
-    fetchData();
+
+    poll();
+    return () => { cancelled = true; };
   }, [userId, draftId]);
 
   // Update finalTemplate whenever componentStates changes
@@ -119,10 +141,11 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-lg">Loading template data...</p>
+          <div className="animate-spin rounded-full h-14 w-14 border-4 border-indigo-500 border-t-transparent mx-auto mb-4"></div>
+          <p className="text-white text-lg font-semibold">{loadingMessage}</p>
+          <p className="text-gray-400 text-sm mt-1">This may take a few seconds</p>
         </div>
       </div>
     );
