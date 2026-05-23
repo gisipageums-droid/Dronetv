@@ -44,22 +44,21 @@ export default function App() {
       setAIGenData(location.state.aiGenData);
       setIsLoading(false);
       let attempts = 0;
-      const bgPoll = setInterval(async () => {
+      // Wait 8s before first poll — AI generation takes ~10-20s
+      const bgPoll = setTimeout(function poll() {
         attempts++;
-        try {
-          const res = await fetch(API_URL);
-          if (res.ok) {
-            const data = await res.json();
+        fetch(API_URL)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => {
             if (data?.publishedId) {
-              clearInterval(bgPoll);
               setAIGenData(prev => ({ ...prev, publishedId: data.publishedId }));
-              return;
+            } else if (attempts < 15) {
+              setTimeout(poll, 5000);
             }
-          }
-        } catch { /* keep polling */ }
-        if (attempts >= 20) clearInterval(bgPoll);
-      }, 3000);
-      return;
+          })
+          .catch(() => { if (attempts < 15) setTimeout(poll, 5000); });
+      }, 8000);
+      return () => clearTimeout(bgPoll);
     }
 
     // Fallback: poll until AI generation is done
