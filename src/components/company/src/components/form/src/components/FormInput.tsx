@@ -26,7 +26,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   rows,
   disabled = false,
 }) => {
-  const inputClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed ${error
+  const inputClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm text-gray-900 placeholder-gray-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed ${error
     ? 'border-red-300 bg-red-50'
     : 'border-amber-300 bg-white hover:border-amber-400'
     } ${className}`;
@@ -93,7 +93,7 @@ export const Select: React.FC<SelectProps> = ({
   className = '',
   disabled = false,
 }) => {
-  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed ${error
+  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm text-gray-900 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed ${error
     ? 'border-red-300 bg-red-50'
     : 'border-amber-300 bg-white hover:border-amber-400'
     } ${className}`;
