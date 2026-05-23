@@ -83,6 +83,7 @@ import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/
 
 import UserDashboard from "./components/UserDashboard/pages/AdminDashboard";
 import UserCompany from "./components/UserDashboard/pages/Company";
+import CompanyWebsite from "./components/UserDashboard/pages/CompanyWebsite";
 import AiDashboard from "./components/UserDashboard/pages/AiDashboard";
 import Professinal from "./components/UserDashboard/pages/Professinal";
 import Event from "./components/UserDashboard/pages/Event";
@@ -320,6 +321,16 @@ const AppContent = () => {
               <ProtectedRoute>
                 <UserDashboardLayout>
                   <UserCompany />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-website"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <CompanyWebsite />
                 </UserDashboardLayout>
               </ProtectedRoute>
             }
