@@ -1560,35 +1560,27 @@ const GSTVerificationSection: React.FC<{
           />
 
           {formData.websiteUrl && formData.websiteUrl.startsWith('http') && (
-            <div className="mt-2 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={onAutoFill}
-                disabled={isAutoFilling}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-              >
-                {isAutoFilling ? (
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block" />
-                ) : (
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                )}
-                {isAutoFilling ? 'Analysing website...' : 'Auto-fill from website'}
-              </button>
-
+            <div className="mt-1">
               {autoFillStep === 'scraping' && (
-                <span className="text-xs text-blue-600">Scraping pages...</span>
+                <span className="text-xs text-blue-600 flex items-center gap-1">
+                  <span className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin inline-block" />
+                  Analysing website...
+                </span>
               )}
               {autoFillStep === 'processing' && (
-                <span className="text-xs text-blue-600">AI processing content...</span>
+                <span className="text-xs text-blue-600 flex items-center gap-1">
+                  <span className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin inline-block" />
+                  Filling form fields...
+                </span>
               )}
               {autoFillStep === 'done' && (
                 <span className="text-xs text-green-600 flex items-center gap-1">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  Fields pre-filled
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Fields pre-filled from website
                 </span>
               )}
               {autoFillStep === 'error' && (
-                <span className="text-xs text-red-500">Analysis failed — fill manually</span>
+                <span className="text-xs text-amber-600">Could not auto-fill — please fill manually</span>
               )}
             </div>
           )}
@@ -2421,6 +2413,17 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     const timer = setInterval(poll, 5000);
     return () => clearInterval(timer);
   }, [autoFillTaskId, autoFillStep]);
+
+  // Auto-trigger scraping when a valid URL is entered
+  useEffect(() => {
+    const url = formData.websiteUrl?.trim();
+    if (!url || !url.startsWith('http')) return;
+    if (autoFillStep !== 'idle' && autoFillStep !== 'error') return;
+    const t = setTimeout(() => {
+      handleAutoFill();
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [formData.websiteUrl]);
 
   // REMOVED: Initialize DigiLocker Token on Mount (Now handled in handleDigiLockerLogin)
   useEffect(() => {

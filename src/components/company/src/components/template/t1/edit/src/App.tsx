@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useTemplate } from "../../../../../../../context/context";
 import About from "./components/About";
@@ -12,7 +12,7 @@ import Publish from "./components/Publish";
 import Services from "./components/Services";
 import Testimonials from "./components/Testimonials";
 import UsedBy from "./components/UsedBy";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 // Import the new editable components
 import EditableGallerySection from "./components/Gallery";
 import EditableCompanyProfile from "./components/Profile";
@@ -20,9 +20,11 @@ import EditableCompanyProfile from "./components/Profile";
 export default function App() {
   const [componentStates, setComponentStates] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState("Generating your company template...");
+  const [loadingMessage, setLoadingMessage] = useState("Loading your company template...");
   const { AIGenData, setFinalTemplate, setAIGenData } = useTemplate();
   const { userId, draftId } = useParams();
+  const location = useLocation();
+  const loadedRef = useRef(false);
 
   const collectComponentState = useCallback((componentName, state) => {
     setComponentStates((prev) => ({
@@ -32,8 +34,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!userId || !draftId) { setIsLoading(false); return; }
+    if (!userId || !draftId || loadedRef.current) return;
+    loadedRef.current = true;
 
+    // Form passed data directly via navigation state — use immediately
+    if (location.state?.aiGenData) {
+      setAIGenData(location.state.aiGenData);
+      setIsLoading(false);
+      return;
+    }
+
+    // Fallback: poll the AI generation API
     let cancelled = false;
     const API_URL = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${userId}/${draftId}?template=template-1`;
     const MAX = 12;
@@ -46,16 +57,13 @@ export default function App() {
           if (res.ok) {
             const data = await res.json();
             if (data?.content || data?.publishedId) {
-              if (!cancelled) {
-                setAIGenData(data);
-                setIsLoading(false);
-              }
+              if (!cancelled) { setAIGenData(data); setIsLoading(false); }
               return;
             }
           }
         } catch { /* keep polling */ }
         if (i < MAX - 1) {
-          if (i === 3) setLoadingMessage("Almost ready, applying AI content...");
+          if (i === 3) setLoadingMessage("Almost ready, applying content...");
           await new Promise(r => setTimeout(r, 2500));
         }
       }
