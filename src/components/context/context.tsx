@@ -352,7 +352,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         }
       }else{
 
-          navigate("/user-companies");
+          navigate("/listed-companies");
           setNavModel(false);
         }
 
@@ -403,7 +403,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         }
       }else{
 
-          navigate("/user-companies");
+          navigate("/listed-companies");
           setNavModel(false);
         }
       setFinaleDataReview({});

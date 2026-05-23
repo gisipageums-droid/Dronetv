@@ -1,133 +1,146 @@
-// import  { useState } from "react";
-// import { motion, AnimatePresence } from "motion/react";
-// import { CheckCircle, X, Upload, AlertCircle } from "lucide-react";
-// import { useTemplate } from "../../../../../../../../context/context"; // Adjust path as needed
-// export default function Publish() {
-//   const [model, setModel] = useState(false);
-//   const { publishTemplate,navigatemodel,navModel } = useTemplate(); // Get the publish function from context
-  
-//   return (
-
-
-//     <>
-//       <motion.div className="fixed bottom-20 right-10 z-50">
-//         <motion.button
-//           onClick={() => setModel(true)}
-//           className="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
-//           whileHover={{ scale: 1.05, y: -2 }}
-//           whileTap={{ scale: 0.95 }}
-//         >
-//           <Upload size={18} />
-//           Publish Site
-//         </motion.button>
-//       </motion.div>
-
-//     {/* Show pop-up only if not logged in */}
-//    {navModel &&(
-//     <div className="">
-//      {navigatemodel()}
-//     </div>
-//    )}
-
-//       {/* Confirmation Modal */}
-//       <AnimatePresence>
-//         {model && (
-//           <motion.div
-//             className="fixed top-[8rem] right-0 bottom-0 left-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-//             initial={{ opacity: 0 }}
-//             animate={{ opacity: 1 }}
-//             exit={{ opacity: 0 }}
-//             onClick={() => setModel(false)}
-//           >
-//             <motion.div
-//               className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
-//               initial={{ scale: 0.9, opacity: 0 }}
-//               animate={{ scale: 1, opacity: 1 }}
-//               exit={{ scale: 0.9, opacity: 0 }}
-//               onClick={(e) => e.stopPropagation()}
-//             >
-//               {/* Modal Header */}
-//               <div className="flex items-center justify-between mb-4">
-//                 <div className="flex items-center gap-2">
-//                   <CheckCircle className="text-green-600" size={24} />
-//                   <h3 className="text-xl font-semibold text-gray-900">
-//                     Confirm Publication
-//                   </h3>
-//                 </div>
-//                 <button
-//                   onClick={() => setModel(false)}
-//                   className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-//                 >
-//                   <X size={20} className="text-gray-500" />
-//                 </button>
-//               </div>
-
-//               {/* Modal Body */}
-//               <div className="mb-6">
-//                 <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg mb-4">
-//                   <AlertCircle
-//                     size={18}
-//                     className="text-blue-600 mt-0.5 flex-shrink-0"
-//                   />
-//                   <p className="text-sm text-blue-800">
-//                     Thank You for completing your listing! Your listing will be reviewed and will go live as soon as possible if your information aligns with our terms and conditions.
-//                     You'll recieve an email notification once it's published.Please make sure all the content provided is correct before submitting.This action cannot be undone.
-//                   </p>
-//                 </div>
-//                 <p className="text-gray-600">
-//                   Are you sure you want to submit your listing for review?
-//                 </p>
-//               </div>
-
-//               {/* Modal Footer */}
-//               <div className="flex gap-3 justify-end">
-//                 <motion.button
-//                   whileTap={{ scale: 0.9 }}
-//                   whileHover={{ scale: 1.1 }}
-//                   onClick={() => setModel(false)}
-//                   className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
-//                 >
-//                   Cancel
-//                 </motion.button>
-//                 <motion.button
-//                   whileTap={{ scale: 0.9 }}
-//                   whileHover={{ scale: 1.1 }}
-//                   onClick={() => {
-//                     // Add your publish logic here
-//                     publishTemplate(); // Call the publish function
-//                     setModel(false);
-                    
-//                   }}
-//                   className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
-//                 >
-//                   Confirm & Publish
-//                 </motion.button>
-//               </div>
-//             </motion.div>
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-
-
-
-//     </>
-//   );
-// }
-
-
-
-
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { CheckCircle, X, Upload, AlertCircle } from "lucide-react";
-import { useTemplate } from "../../../../../../../../context/context"; // Adjust path as needed
+import { CheckCircle, X, Upload, AlertCircle, Shield, Loader2 } from "lucide-react";
+import { useTemplate } from "../../../../../../../../context/context";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+type DigiStatus = 'idle' | 'loading' | 'polling' | 'verified' | 'error';
 
 export default function Publish() {
   const [model, setModel] = useState(false);
   const [termsModel, setTermsModel] = useState(false);
-  const { publishTemplate, navigatemodel, navModel } = useTemplate(); // Get the publish function from context
+  const [digiStatus, setDigiStatus] = useState<DigiStatus>('idle');
+  const [digiConsent, setDigiConsent] = useState(false);
+  const [aadharVerified, setAadharVerified] = useState(false);
+  const [startPolling, setStartPolling] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const digiTokenRef = useRef('');
+  const digiStateRef = useRef('');
 
-  // Terms and Conditions Content
+  const { publishTemplate, navigatemodel, navModel, draftDetails } = useTemplate();
+
+  // Restore Aadhaar polling if returning from DigiLocker redirect
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('digi_callback')) {
+      const storedToken = localStorage.getItem('digi_client_token');
+      const storedState = localStorage.getItem('digi_state');
+      if (storedToken && storedState) {
+        digiTokenRef.current = storedToken;
+        digiStateRef.current = storedState;
+        setStartPolling(true);
+        setDigiStatus('polling');
+        setDigiConsent(true);
+      }
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // DigiLocker polling
+  useEffect(() => {
+    if (!startPolling) return;
+    let attempts = 0;
+    const MAX = 40;
+    const timer = setInterval(async () => {
+      const token = digiTokenRef.current;
+      const state = digiStateRef.current;
+      if (!token || !state) return;
+      try {
+        const res = await axios.post('https://digilocker.meon.co.in/v2/send_entire_data', {
+          client_token: token,
+          state,
+        });
+        if (res.data.success && res.data.status === 'success') {
+          clearInterval(timer);
+          setStartPolling(false);
+          setAadharVerified(true);
+          setDigiStatus('verified');
+          localStorage.removeItem('digi_client_token');
+          localStorage.removeItem('digi_state');
+          toast.success('Aadhaar verification successful!');
+          return;
+        }
+      } catch { /* continue polling */ }
+      attempts++;
+      if (attempts >= MAX) {
+        clearInterval(timer);
+        setStartPolling(false);
+        setDigiStatus('error');
+        toast.error('Verification timed out. Please try again.');
+      }
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [startPolling]);
+
+  const handleDigiLockerLogin = async () => {
+    if (!digiConsent) {
+      toast.error('Please accept the consent checkbox first.');
+      return;
+    }
+    setDigiStatus('loading');
+    try {
+      const tokenRes = await axios.post('https://digilocker.meon.co.in/get_access_token', {
+        company_name: 'ipage',
+        secret_token: 'lwHaBrdbfda67P3uO5jbC7HElp6cpBQb',
+      });
+      if (tokenRes.data.status) {
+        const { client_token, state } = tokenRes.data;
+        localStorage.setItem('digi_client_token', client_token);
+        localStorage.setItem('digi_state', state);
+        const redirectUrl = window.location.origin + window.location.pathname + '?digi_callback=true';
+        const urlRes = await axios.post('https://digilocker.meon.co.in/digi_url', {
+          client_token,
+          redirect_url: redirectUrl,
+          company_name: 'ipage',
+          documents: 'aadhaar,pan',
+          pan_name: 'RAHUL KUMAR',
+          pan_no: 'CAPUD4335K',
+          other_documents: [],
+        });
+        if (urlRes.data.status === 'success' && urlRes.data.url) {
+          window.location.href = urlRes.data.url;
+        } else {
+          setDigiStatus('error');
+          toast.error('Unable to start DigiLocker. Please try again.');
+        }
+      } else {
+        setDigiStatus('error');
+        toast.error('DigiLocker initialization failed.');
+      }
+    } catch {
+      setDigiStatus('error');
+      toast.error('Error starting DigiLocker. Please try again.');
+    }
+  };
+
+  const handleConfirmPublish = async () => {
+    if (!aadharVerified) return;
+    setIsPublishing(true);
+    try {
+      const email = draftDetails?.directorEmail || draftDetails?.userId || draftDetails?.formData?.directorEmail || '';
+      if (email) {
+        const rand = () => Math.random().toString(36).slice(2);
+        const password = rand().slice(0, 6) + rand().slice(0, 4).toUpperCase() + '@1';
+        try {
+          await axios.post('https://rnpcnionle.execute-api.ap-south-1.amazonaws.com/user_register_post', {
+            email,
+            password,
+            fullName: draftDetails?.formData?.directorName || draftDetails?.directorName || '',
+          });
+        } catch {
+          // User may already exist — proceed with publish anyway
+        }
+      }
+      publishTemplate();
+      setModel(false);
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   const termsContent = `Last Updated: 24th September, 2025
 These terms and conditions ("Terms") govern the use of services made available on or through https://www.dronetv.in and/or the DroneTV mobile app (collectively, the "Platform", and together with the services made available on or through the Platform, the "Services"). These Terms also include our privacy policy, available at https://www.dronetv.in/privacy-policy  ("Privacy Policy"), and any guidelines, additional, or supplemental terms, policies, and disclaimers made available or issued by us from time to time ("Supplemental Terms"). The Privacy Policy and the Supplemental Terms form an integral part of these Terms. In the event of a conflict between these Terms and the Supplemental Terms with respect to applicable Services, the Supplemental Terms will prevail.
 The Terms constitute a binding and enforceable legal contract between Drone Academy Pvt ltd (Drone TV) (a company incorporated under the laws of India with its registered office at 5A/6B, White Waters, Timberlake Colony, Shaikpet, Hyderabad – 500008, India) and you, a user of the Services, or any legal entity that avails Services (defined below) on behalf of end-users ("you" or "Customer"). By using the Services, you represent and warrant that you have full legal capacity and authority to agree to and bind yourself to these Terms. If you represent any other person, you confirm and represent that you have the necessary power and authority to bind such person to these Terms.
@@ -202,14 +215,13 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
         </motion.button>
       </motion.div>
 
-      {/* Show pop-up only if not logged in */}
       {navModel && (
         <div className="">
           {navigatemodel()}
         </div>
       )}
 
-      {/* Confirmation Modal */}
+      {/* Publish Modal */}
       <AnimatePresence>
         {model && (
           <motion.div
@@ -229,9 +241,9 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
               {/* Modal Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="text-green-600" size={24} />
+                  <Shield className="text-indigo-600" size={24} />
                   <h3 className="text-xl font-semibold text-gray-900">
-                    Confirm Publication
+                    Verify & Publish
                   </h3>
                 </div>
                 <button
@@ -243,48 +255,101 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
               </div>
 
               {/* Modal Body */}
-              <div className="mb-6">
+              <div className="mb-5">
                 <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg mb-4">
-                  <AlertCircle
-                    size={18}
-                    className="text-blue-600 mt-0.5 flex-shrink-0"
-                  />
+                  <AlertCircle size={18} className="text-blue-600 mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-blue-800">
-                    Thank You for completing your listing! Your listing will be reviewed and will go live as soon as possible if your information aligns with our{" "}
-                    <button 
+                    Please verify your Aadhaar identity before publishing. Your login credentials will be sent to your registered email once published. Please review the{" "}
+                    <button
                       onClick={() => setTermsModel(true)}
                       className="text-red-800 underline font-medium hover:text-red-900 transition-colors"
                     >
                       terms and conditions
                     </button>
-                    . You'll receive an email notification once it's published. Please make sure all the content provided is correct before submitting. This action cannot be undone.
+                    .
                   </p>
                 </div>
-                <p className="text-gray-600">
-                  Are you sure you want to submit your listing for review?
-                </p>
+
+                {/* Aadhaar Verification Section */}
+                {!aadharVerified ? (
+                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <Shield size={16} className="text-indigo-500" />
+                      Aadhaar Verification Required
+                    </h4>
+
+                    <label className="flex items-start gap-2 cursor-pointer mb-3">
+                      <input
+                        type="checkbox"
+                        checked={digiConsent}
+                        onChange={(e) => setDigiConsent(e.target.checked)}
+                        disabled={digiStatus === 'loading' || digiStatus === 'polling'}
+                        className="mt-0.5 accent-indigo-600"
+                      />
+                      <span className="text-xs text-gray-600">
+                        I consent to verify my Aadhaar identity via DigiLocker for publishing this listing.
+                      </span>
+                    </label>
+
+                    {digiStatus === 'polling' && (
+                      <div className="flex items-center gap-2 text-indigo-600 text-sm mb-3">
+                        <Loader2 size={16} className="animate-spin" />
+                        Waiting for DigiLocker verification...
+                      </div>
+                    )}
+
+                    {digiStatus === 'error' && (
+                      <p className="text-xs text-red-600 mb-3">Verification failed. Please try again.</p>
+                    )}
+
+                    <button
+                      onClick={handleDigiLockerLogin}
+                      disabled={!digiConsent || digiStatus === 'loading' || digiStatus === 'polling'}
+                      className="w-full py-2 px-4 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {digiStatus === 'loading' ? (
+                        <><Loader2 size={16} className="animate-spin" /> Starting DigiLocker...</>
+                      ) : digiStatus === 'polling' ? (
+                        <><Loader2 size={16} className="animate-spin" /> Verifying...</>
+                      ) : (
+                        <><Shield size={16} /> Verify via DigiLocker</>
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <CheckCircle size={18} className="text-green-600" />
+                    <span className="text-sm font-medium text-green-700">Aadhaar Verified Successfully</span>
+                  </div>
+                )}
               </div>
 
               {/* Modal Footer */}
               <div className="flex gap-3 justify-end">
                 <motion.button
                   whileTap={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.05 }}
                   onClick={() => setModel(false)}
                   className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
                 >
                   Cancel
                 </motion.button>
                 <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.1 }}
-                  onClick={() => {
-                    publishTemplate(); // Call the publish function
-                    setModel(false);
-                  }}
-                  className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
+                  whileTap={{ scale: aadharVerified ? 0.9 : 1 }}
+                  whileHover={{ scale: aadharVerified ? 1.1 : 1 }}
+                  onClick={handleConfirmPublish}
+                  disabled={!aadharVerified || isPublishing}
+                  className={`px-4 py-2 font-medium rounded-lg transition-colors shadow-md flex items-center gap-2 ${
+                    aadharVerified && !isPublishing
+                      ? 'bg-green-600 text-white hover:bg-green-700 cursor-pointer'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
                 >
-                  Confirm & Publish
+                  {isPublishing ? (
+                    <><Loader2 size={16} className="animate-spin" /> Publishing...</>
+                  ) : (
+                    'Confirm & Publish'
+                  )}
                 </motion.button>
               </div>
             </motion.div>
@@ -309,11 +374,8 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white sticky top-0 z-10">
-                <h3 className="text-2xl font-bold text-gray-900">
-                  Terms and Conditions
-                </h3>
+                <h3 className="text-2xl font-bold text-gray-900">Terms and Conditions</h3>
                 <button
                   onClick={() => setTermsModel(false)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -321,8 +383,6 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                   <X size={24} className="text-gray-500" />
                 </button>
               </div>
-
-              {/* Modal Body - Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-6">
                 <div className="prose prose-lg max-w-none">
                   <pre className="whitespace-pre-wrap font-sans text-gray-700 text-sm leading-relaxed">
@@ -330,8 +390,6 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                   </pre>
                 </div>
               </div>
-
-              {/* Modal Footer */}
               <div className="flex justify-end p-6 border-t border-gray-200 bg-gray-50 sticky bottom-0">
                 <motion.button
                   whileTap={{ scale: 0.95 }}
