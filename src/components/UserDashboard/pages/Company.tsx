@@ -285,12 +285,13 @@ const CompanyPage: React.FC = () => {
 
   const handleEdit = async (publishedId: string): Promise<void> => {
     try {
-      if (user?.email || !user?.userData?.email) throw new Error("User not authenticated");
-      const details = await fetchPublishedCompanyDetails(publishedId, user.email || user.userData.email, setFinaleDataReview);
+      const userId = user?.email || user?.userData?.email || '';
+      if (!userId) throw new Error("User not authenticated");
+      const details = await fetchPublishedCompanyDetails(publishedId, userId, setFinaleDataReview);
       if (details.templateSelection === "template-1") {
-        navigate(`/user/companies/edit/1/${publishedId}/${user.userData.email}`);
+        navigate(`/user/companies/edit/1/${publishedId}/${userId}`);
       } else if (details.templateSelection === "template-2") {
-        navigate(`/user/companies/edit/2/${publishedId}/${user.userData.email}`);
+        navigate(`/user/companies/edit/2/${publishedId}/${userId}`);
       }
     } catch (error) {
       console.error("Error loading template for editing:", error);
@@ -300,12 +301,13 @@ const CompanyPage: React.FC = () => {
 
   const handlePreview = async (publishedId: string): Promise<void> => {
     try {
-      if (user?.email || !user?.userData?.email) throw new Error("User not authenticated");
-      const details = await fetchPublishedCompanyDetails(publishedId, user.email || user.userData.email, setFinaleDataReview);
+      const userId = user?.email || user?.userData?.email || '';
+      if (!userId) throw new Error("User not authenticated");
+      const details = await fetchPublishedCompanyDetails(publishedId, userId, setFinaleDataReview);
       if (details.templateSelection === "template-1") {
-        navigate(`/user/companies/preview/1/${publishedId}/${user.userData.email}`);
+        navigate(`/user/companies/preview/1/${publishedId}/${userId}`);
       } else if (details.templateSelection === "template-2") {
-        navigate(`/user/companies/preview/2/${publishedId}/${user.userData.email}`);
+        navigate(`/user/companies/preview/2/${publishedId}/${userId}`);
       }
     } catch (error) {
       console.error("Error loading template for preview:", error);
@@ -406,32 +408,11 @@ const CompanyPage: React.FC = () => {
     setIsPublishing(true);
     try {
       const userId = user?.email || user?.userData?.email || '';
-      let details: PublishedDetailsResponse | null = null;
-      try {
-        details = await fetchPublishedCompanyDetails(publishingCompany.publishedId, userId, () => {});
-      } catch { /* use minimal body */ }
-
-      const body = details
-        ? {
-            publishedId: details.publishedId,
-            userId,
-            draftId: publishingCompany.draftId,
-            templateSelection: details.templateSelection,
-            content: {
-              ...details.websiteContent,
-              company: { ...details.companyInfo, name: details.companyInfo?.name || publishingCompany.companyName },
-            },
-          }
-        : {
-            publishedId: publishingCompany.publishedId,
-            userId,
-            draftId: publishingCompany.draftId,
-          };
-
-      await axios.put('https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update', body, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
+      await axios.post(
+        'https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review',
+        { publishedId: publishingCompany.publishedId, action: 'approve' },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       toast.success('Your listing is now live!');
       handleClosePublishModal();
       await fetchCompanies(userId);
@@ -490,7 +471,7 @@ const CompanyPage: React.FC = () => {
       <div className="flex items-center gap-4 justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-            <Building2 w-6 h-6 />
+            <Building2 className="w-6 h-6" />
             Company Directory
           </h1>
           <p className="text-gray-600 mb-8">Browse and manage company submissions</p>
