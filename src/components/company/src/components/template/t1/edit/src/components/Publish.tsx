@@ -25,6 +25,11 @@ export default function Publish() {
       if (email) {
         const rand = () => Math.random().toString(36).slice(2);
         const password = rand().slice(0, 6) + rand().slice(0, 4).toUpperCase() + '@1';
+        const companyName =
+          AIGenData?.content?.company?.name ||
+          draftDetails?.formData?.companyName ||
+          draftDetails?.companyName ||
+          '';
         try {
           await axios.post('https://rnpcnionle.execute-api.ap-south-1.amazonaws.com/user_register_post', {
             email,
@@ -32,8 +37,8 @@ export default function Publish() {
             fullName:
               draftDetails?.formData?.directorName ||
               draftDetails?.directorName ||
-              AIGenData?.content?.company?.name ||
-              '',
+              companyName,
+            companyName,
           });
         } catch { /* user may already exist */ }
       }
@@ -80,7 +85,7 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
           whileTap={{ scale: 0.95 }}
         >
           <Upload size={18} />
-          Publish Site
+          Submit Listing
         </motion.button>
       </motion.div>
 
@@ -106,7 +111,7 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="text-indigo-600" size={24} />
-                  <h3 className="text-xl font-semibold text-gray-900">Publish Your Site</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">Submit Your Listing</h3>
                 </div>
                 <button onClick={() => setModel(false)} className="p-1 rounded-full hover:bg-gray-100">
                   <X size={20} className="text-gray-500" />
@@ -116,7 +121,7 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
               <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg mb-5">
                 <AlertCircle size={18} className="text-blue-600 mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-blue-800">
-                  Your company listing will go live. Your login credentials will be sent to your registered email. Please review our{" "}
+                  Your website preview is ready. Submit to save your listing and receive login credentials on your registered email. You can <strong>publish it live</strong> from your dashboard after Aadhaar verification. Review our{" "}
                   <button onClick={() => setTermsModel(true)} className="text-red-800 underline font-medium hover:text-red-900">
                     terms and conditions
                   </button>{" "}
@@ -142,9 +147,9 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
                   }`}
                 >
                   {isPublishing ? (
-                    <><Loader2 size={16} className="animate-spin" /> Publishing...</>
+                    <><Loader2 size={16} className="animate-spin" /> Submitting...</>
                   ) : (
-                    'Confirm & Publish'
+                    'Confirm & Submit'
                   )}
                 </motion.button>
               </div>
