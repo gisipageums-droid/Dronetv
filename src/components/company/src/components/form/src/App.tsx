@@ -328,6 +328,13 @@ function App() {
       }
       if (wasInPreview) setShowPreview(true);
       window.history.replaceState({}, document.title, window.location.pathname);
+    } else {
+      // Fresh form load (not a DigiLocker return) — clear stale GST data from previous sessions
+      const hasDraft = !!localStorage.getItem('companyFormDraft');
+      if (!hasDraft) {
+        localStorage.removeItem('gstSectionData');
+        localStorage.removeItem('verifiedGSTData');
+      }
     }
   }, []);
 
@@ -627,6 +634,8 @@ function App() {
 
       localStorage.removeItem("companyFormDraft");
       localStorage.removeItem("digi_preview_mode");
+      localStorage.removeItem("gstSectionData");
+      localStorage.removeItem("verifiedGSTData");
 
       setTimeout(() => {
         navigate("/listed-companies");
