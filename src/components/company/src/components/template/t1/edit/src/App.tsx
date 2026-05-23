@@ -39,19 +39,30 @@ export default function App() {
 
     const API_URL = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${userId}/${draftId}?template=template-1`;
 
-    // Form passed data directly via navigation state — use immediately, then fetch publishedId
+    // Form passed data directly — show template immediately, poll in background for publishedId
     if (location.state?.aiGenData) {
       setAIGenData(location.state.aiGenData);
       setIsLoading(false);
-      // Fetch publishedId in background — needed for the publish PUT call
-      fetch(API_URL)
-        .then(r => r.ok ? r.json() : null)
-        .then(data => { if (data?.publishedId) setAIGenData(prev => ({ ...prev, publishedId: data.publishedId })); })
-        .catch(() => {});
+      let attempts = 0;
+      const bgPoll = setInterval(async () => {
+        attempts++;
+        try {
+          const res = await fetch(API_URL);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.publishedId) {
+              clearInterval(bgPoll);
+              setAIGenData(prev => ({ ...prev, publishedId: data.publishedId }));
+              return;
+            }
+          }
+        } catch { /* keep polling */ }
+        if (attempts >= 20) clearInterval(bgPoll);
+      }, 3000);
       return;
     }
 
-    // Fallback: poll the AI generation API
+    // Fallback: poll until AI generation is done
     let cancelled = false;
     const MAX = 12;
 
