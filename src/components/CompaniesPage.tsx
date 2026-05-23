@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, MapPin, ExternalLink } from 'lucide-react';
+import { Search, ChevronDown, MapPin, BadgeCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 
@@ -18,6 +18,7 @@ interface Company {
   servicesCount?: number;
   productsCount?: number;
   companyDescription?: string;
+  reviewStatus?: string;
   [key: string]: any;
 }
 
@@ -148,9 +149,14 @@ const CompaniesPage: React.FC = () => {
 
         {/* Info Section */}
         <div className="flex flex-col items-center px-4 pt-4 pb-2 text-center">
-          <h3 className="mb-1 text-lg font-bold text-black transition-colors group-hover:text-gray-800 line-clamp-1">
-            {company.companyName}
-          </h3>
+          <div className="flex items-center gap-1 mb-1">
+            <h3 className="text-lg font-bold text-black transition-colors group-hover:text-gray-800 line-clamp-1">
+              {company.companyName}
+            </h3>
+            {company.reviewStatus === 'approved' && (
+              <BadgeCheck className="w-5 h-5 text-green-600 flex-shrink-0" title="Verified" />
+            )}
+          </div>
           {company.location && (
             <div className="flex gap-1 justify-center items-center text-xs text-gray-600">
               <MapPin className="w-3 h-3" />

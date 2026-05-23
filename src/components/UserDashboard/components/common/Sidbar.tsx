@@ -7,11 +7,11 @@ import {
   X,
   User,
   Wallet,
-  Receipt,
   Clock1,
   MessageSquare,
   Brain,
   LogOut,
+  Globe,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
@@ -22,6 +22,7 @@ const Sidebar: React.FC = () => {
 const navLinks = [
     { icon: User, label: "Dashboard", href: "/user-dashboard" },
     { icon: Building2, label: "Companies", href: "/user-companies" },
+    { icon: Globe, label: "Website", href: "/user-website" },
     {
       icon: Users,
       label: "Professionals",
