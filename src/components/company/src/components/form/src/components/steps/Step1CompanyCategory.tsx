@@ -877,7 +877,7 @@ const CombinedAadharSection: React.FC<{
                   type="checkbox"
                   checked={localConsent}
                   onChange={(e) => handleConsentChange(e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer"
+                  className="h-4 w-4 accent-yellow-400 cursor-pointer rounded"
                 />
               </div>
               <div className="flex flex-col">
@@ -1262,9 +1262,10 @@ const GSTVerificationSection: React.FC<{
                   <input
                     id="gst-consent-checkbox"
                     type="checkbox"
-                    checked={localConsent}
-                    onChange={(e) => handleConsentChange(e.target.checked)}
-                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-blue-300 rounded cursor-pointer transition-all"
+                    checked={localConsent || isVerified}
+                    onChange={(e) => !isVerified && handleConsentChange(e.target.checked)}
+                    disabled={isVerified}
+                    className={`h-5 w-5 accent-yellow-400 rounded ${isVerified ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`}
                   />
                 </div>
                 <div className="flex flex-col">
@@ -1435,7 +1436,7 @@ const GSTVerificationSection: React.FC<{
                         : ''
                     });
                   }}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 accent-yellow-400 rounded"
                 />
                 <span>Same as Registered Address</span>
               </label>
@@ -3124,7 +3125,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                 onChange={(e) => {
                   setAadharConsentAccepted(e.target.checked);
                 }}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                className="h-4 w-4 accent-yellow-400 cursor-pointer rounded"
               />
             </div>
             <label
