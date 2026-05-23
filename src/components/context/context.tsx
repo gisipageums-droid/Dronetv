@@ -245,7 +245,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           </div>
           <div className="mb-6">
             <p className="text-gray-600">
-              You have successfully published your template.
+              Your company listing is now live! Your login credentials have been sent to your registered email address.
             </p>
           </div>
           <div className="flex gap-3 justify-end">
