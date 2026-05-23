@@ -337,10 +337,10 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       }
 
       const result = await response.json();
-      console.log("Upload successful:", result);
-      toast.success(
-        "Your site is successfully published and now it is under review"
-      );
+      if (result.publishedId) {
+        setAIGenData(prev => ({ ...prev, publishedId: result.publishedId }));
+      }
+      toast.success("Your company is now live!");
 
       if (isLogin=== false) {
         if(isAdminLogin){
@@ -351,7 +351,6 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           setNavModel(true);
         }
       }else{
-
           navigate("/listed-companies");
           setNavModel(false);
         }
@@ -359,7 +358,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
-      toast.error("Something went wrong...");
+      toast.error("Failed to publish. Please try again.");
     }
   }
 
@@ -389,10 +388,10 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       }
 
       const result = await response.json();
-      console.log("Upload successful:", result);
-      toast.success(
-        "Your site is successfully published and now it is under review"
-      );
+      if (result.publishedId) {
+        setAIGenData(prev => ({ ...prev, publishedId: result.publishedId }));
+      }
+      toast.success("Your company is now live!");
       if (isLogin=== false) {
         if(isAdminLogin){
           navigate("/admin/company/dashboard");
@@ -402,14 +401,13 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           setNavModel(true);
         }
       }else{
-
           navigate("/listed-companies");
           setNavModel(false);
         }
       setFinaleDataReview({});
     } catch (error) {
       console.error("Upload failed:", error);
-      toast.error("Something went wrong...");
+      toast.error("Failed to publish. Please try again.");
     }
   }
 
@@ -427,14 +425,6 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       editFetchAPI();
     }, 100);
   }
-
-  useEffect(() => {
-    console.log("finalData:", finalTemplate);
-  }, [finalTemplate]);
-
-  useEffect(() => {
-    console.log("final preview data:", finaleDataReview);
-  }, [finaleDataReview]);
 
   async function publishProfessionalTemplate() {
     if (Object.keys(finalTemplate).length === 0) {
