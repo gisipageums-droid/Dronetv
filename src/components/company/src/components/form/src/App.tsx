@@ -627,19 +627,14 @@ function App() {
 
       setDraftDetails(response.data);
 
-      toast.success("Your company is now live! Redirecting to the directory…", {
-        toastId: "company-listed",
-        autoClose: 4000,
-      });
-
       localStorage.removeItem("companyFormDraft");
       localStorage.removeItem("digi_preview_mode");
       localStorage.removeItem("gstSectionData");
       localStorage.removeItem("verifiedGSTData");
 
-      setTimeout(() => {
-        navigate("/listed-companies");
-      }, 2000);
+      const draftId = response.data?.draftId;
+      const userId = response.data?.userId;
+      navigate(`/edit/template/t1/${draftId}/${userId}`);
 
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || error.response?.data?.error || error.message || "Unknown error";
