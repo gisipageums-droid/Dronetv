@@ -2332,7 +2332,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
         if (status === 'COMPLETED' && autoFillCompanyId) {
           const companyRes = await axios.get(`${AI_GENERATOR_BASE}/company/${autoFillCompanyId}`);
-          const data = companyRes.data?.generatedData || companyRes.data || {};
+          const data = companyRes.data?.company?.generatedData || companyRes.data?.generatedData || companyRes.data || {};
           const updates: Record<string, any> = {};
 
           const email = data.contactInfo?.email;
