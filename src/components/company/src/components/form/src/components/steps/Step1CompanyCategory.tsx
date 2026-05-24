@@ -1586,6 +1586,56 @@ const GSTVerificationSection: React.FC<{
           )}
         </div>
 
+        {/* Company Logo Upload */}
+        <div className="mt-4">
+          <label className="block text-xs font-medium text-gray-700 mb-1">
+            Company Logo <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <div className="flex items-center gap-3">
+            {formData.companyLogoUrl ? (
+              <div className="relative w-16 h-16 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex-shrink-0">
+                <img
+                  src={formData.companyLogoUrl}
+                  alt="Logo"
+                  className="w-full h-full object-contain"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+                <button
+                  type="button"
+                  onClick={() => updateFormData({ companyLogoUrl: '' })}
+                  className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs leading-none hover:bg-red-600"
+                >×</button>
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center text-gray-400 text-xs flex-shrink-0">
+                Logo
+              </div>
+            )}
+            <div className="flex-1">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                {formData.companyLogoUrl ? 'Change Logo' : 'Upload Logo'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      updateFormData({ companyLogoUrl: ev.target?.result as string });
+                    };
+                    reader.readAsDataURL(file);
+                    e.target.value = '';
+                  }}
+                />
+              </label>
+              <p className="text-xs text-gray-400 mt-1">PNG, JPG, SVG — shown in your website header</p>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-4">
           <FormInput
             label="Promotional Code"
