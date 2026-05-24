@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   Shield, CheckCircle, AlertCircle, Loader2, ExternalLink,
-  RefreshCw, Globe, Plus, BadgeCheck,
+  RefreshCw, Globe, Plus, BadgeCheck, Upload,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
@@ -33,8 +33,11 @@ const CompanyWebsite: React.FC = () => {
   const [digiUrl, setDigiUrl] = useState("");
   const [digiClientId, setDigiClientId] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [currentLogo, setCurrentLogo] = useState<string>("");
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const popupRef = useRef<Window | null>(null);
+  const logoInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
 
@@ -53,6 +56,59 @@ const CompanyWebsite: React.FC = () => {
   }, [userId]);
 
   const isVerified = company?.reviewStatus === "approved";
+
+  const handleLogoUpload = async (file: File) => {
+    if (!company) return;
+    setLogoUploading(true);
+    try {
+      // 1. Upload file to S3
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("sectionName", "header");
+      fd.append("imageField", `logoSrc_${Date.now()}`);
+      fd.append("templateSelection", company.templateSelection);
+
+      const uploadRes = await fetch(
+        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${company.publishedId}`,
+        { method: "POST", body: fd }
+      );
+      if (!uploadRes.ok) throw new Error("Upload failed");
+      const { imageUrl } = await uploadRes.json();
+
+      // 2. Fetch current company content
+      const detailsRes = await fetch(
+        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${company.publishedId}`,
+        { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
+      );
+      const details = await detailsRes.json();
+      const content = details?.content || {};
+
+      // 3. Merge new logo and PUT update
+      const updatedContent = {
+        ...content,
+        company: { ...content.company, logo: imageUrl },
+        header: { ...content.header, logoSrc: imageUrl },
+      };
+      await fetch("https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          publishedId: company.publishedId,
+          userId,
+          draftId: company.draftId,
+          templateSelection: company.templateSelection,
+          content: updatedContent,
+        }),
+      });
+
+      setCurrentLogo(imageUrl);
+      toast.success("Logo updated successfully!");
+    } catch {
+      toast.error("Failed to upload logo. Please try again.");
+    } finally {
+      setLogoUploading(false);
+    }
+  };
 
   const previewUrl = company
     ? company.templateSelection === "template-1"
@@ -212,6 +268,43 @@ const CompanyWebsite: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Logo Upload */}
+      <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex items-center gap-5">
+        <div className="w-16 h-16 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+          {currentLogo ? (
+            <img src={currentLogo} alt="Logo" className="w-full h-full object-contain" />
+          ) : (
+            <span className="text-xs text-gray-400 text-center px-1">No Logo</span>
+          )}
+        </div>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-gray-800">Company Logo</p>
+          <p className="text-xs text-gray-400 mt-0.5">Shown in your website header. PNG, JPG, or SVG.</p>
+        </div>
+        <button
+          onClick={() => logoInputRef.current?.click()}
+          disabled={logoUploading}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {logoUploading ? (
+            <><Loader2 className="w-4 h-4 animate-spin" />Uploading...</>
+          ) : (
+            <><Upload className="w-4 h-4" />{currentLogo ? "Change Logo" : "Upload Logo"}</>
+          )}
+        </button>
+        <input
+          ref={logoInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleLogoUpload(file);
+            e.target.value = "";
+          }}
+        />
+      </div>
 
       {/* Website Preview */}
       <div className="rounded-xl overflow-hidden border border-yellow-200 shadow-lg bg-white">
