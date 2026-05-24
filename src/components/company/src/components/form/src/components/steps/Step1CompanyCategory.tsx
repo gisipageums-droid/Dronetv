@@ -2341,6 +2341,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           const desc = data.about?.description;
           const heroTitle = data.hero?.title;
           const heroSubtitle = data.hero?.subtitle;
+          const logoUrl = data.logoUrl;
 
           // Registration fields
           if (email && !formData.directorEmail) updates.directorEmail = email;
@@ -2350,6 +2351,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             if (!formData.directorAddress) updates.directorAddress = addr;
           }
           if (desc && !formData.natureOfBusiness) updates.natureOfBusiness = desc;
+
+          // Logo — set companyLogoUrl if not already set
+          if (logoUrl && !formData.companyLogoUrl) updates.companyLogoUrl = logoUrl;
 
           // Template content fields — contact section
           if (email && !formData.contactEmail) updates.contactEmail = email;
