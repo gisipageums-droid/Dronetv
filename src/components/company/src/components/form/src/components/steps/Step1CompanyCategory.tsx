@@ -1360,7 +1360,7 @@ const GSTVerificationSection: React.FC<{
                 className={`w-full h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 bg-white ${isVerified ? 'border-green-300 bg-green-50 cursor-not-allowed' : 'border-blue-300 focus:ring-blue-400 focus:border-blue-400'}`}
               >
                 <option value="">Select verification type</option>
-                <option value="GSTIN">GSTIN</option>
+                <option value="GSTIN">GST</option>
                 <option value="CIN">CIN</option>
                 <option value="LLPIN">LLPIN</option>
               </select>
