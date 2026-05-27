@@ -1435,8 +1435,39 @@ const GSTVerificationSection: React.FC<{
             </div>
             )}
 
-            {/* Consent Section - With Verify Button beside it */}
-            {verificationType && <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 transition-all duration-300">
+            {/* LLPIN — DigiLocker button directly, no checkbox */}
+            {verificationType === 'LLPIN' && !isVerified && (
+              <div className="flex flex-col items-start gap-2 mt-4">
+                <div id="digiboost-llpin-container"></div>
+                <button
+                  type="button"
+                  onClick={handleLLPINDigiBoost}
+                  disabled={isInitializingDigiBoost}
+                  className={`px-6 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98]
+                    ${!isInitializingDigiBoost
+                      ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-100'
+                      : 'bg-green-300 text-white cursor-not-allowed opacity-70'
+                    }`}
+                >
+                  {isInitializingDigiBoost ? (
+                    <>
+                      <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                      Initializing...
+                    </>
+                  ) : llpinDigiVerified ? (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Connected
+                    </>
+                  ) : (
+                    'Verify with DigiLocker'
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Consent + Verify — GST / GSTIN / CIN */}
+            {verificationType && verificationType !== 'LLPIN' && <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 transition-all duration-300">
               <div className="flex items-start space-x-3">
                 <div className="flex items-center h-5 mt-0.5">
                   <input
@@ -1450,7 +1481,7 @@ const GSTVerificationSection: React.FC<{
                 </div>
                 <div className="flex flex-col">
                   <label htmlFor="gst-consent-checkbox" className="text-sm font-medium text-slate-800 cursor-pointer select-none">
-                    I consent to {(verificationType === 'GST' || verificationType === 'GSTIN') ? 'GST' : verificationType === 'CIN' ? 'CIN' : 'DigiLocker'} verification
+                    I consent to {verificationType} verification
                   </label>
                   <button
                     type="button"
@@ -1463,8 +1494,7 @@ const GSTVerificationSection: React.FC<{
                 </div>
               </div>
 
-              {/* Verify Button — GSTIN / CIN */}
-              {!isVerified && verificationType !== 'LLPIN' && (
+              {!isVerified && (
                 <button
                   type="button"
                   onClick={handleVerifyClick}
@@ -1486,38 +1516,6 @@ const GSTVerificationSection: React.FC<{
                 </button>
               )}
 
-              {/* DigiBoost Button — LLPIN */}
-              {!isVerified && verificationType === 'LLPIN' && (
-                <div className="flex flex-col items-center gap-2 shrink-0">
-                  <div id="digiboost-llpin-container"></div>
-                  <button
-                    type="button"
-                    onClick={handleLLPINDigiBoost}
-                    disabled={isInitializingDigiBoost || !localConsent}
-                    className={`px-6 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
-                      ${localConsent && !isInitializingDigiBoost
-                        ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-100'
-                        : 'bg-green-300 text-white cursor-not-allowed opacity-70'
-                      }`}
-                  >
-                    {isInitializingDigiBoost ? (
-                      <>
-                        <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
-                        Initializing...
-                      </>
-                    ) : llpinDigiVerified ? (
-                      <>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Connected
-                      </>
-                    ) : (
-                      'Connect DigiLocker'
-                    )}
-                  </button>
-                </div>
-              )}
-
-              {/* Verified Badge */}
               {isVerified && (
                 <div className="flex items-center text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 animate-fade-in shrink-0">
                   <CheckCircle className="w-4 h-4 mr-1.5" />
