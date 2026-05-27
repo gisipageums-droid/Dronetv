@@ -1436,7 +1436,7 @@ const GSTVerificationSection: React.FC<{
             )}
 
             {/* Consent Section - With Verify Button beside it */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 transition-all duration-300">
+            {verificationType && <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 transition-all duration-300">
               <div className="flex items-start space-x-3">
                 <div className="flex items-center h-5 mt-0.5">
                   <input
@@ -1524,7 +1524,7 @@ const GSTVerificationSection: React.FC<{
                   <span className="text-xs font-bold uppercase tracking-wider">Verified</span>
                 </div>
               )}
-            </div>
+            </div>}
           </div>
 
           {/* Consent Details Modal */}
