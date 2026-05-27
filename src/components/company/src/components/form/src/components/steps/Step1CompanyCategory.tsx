@@ -1081,6 +1081,7 @@ const GSTVerificationSection: React.FC<{
 }) => {
     const [localConsent, setLocalConsent] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
+    const [verificationType, setVerificationType] = useState('GSTIN');
 
     const formatGSTNumber = (value: string) => {
       // Remove all non-alphanumeric characters
@@ -1226,34 +1227,53 @@ const GSTVerificationSection: React.FC<{
 
         <div className="space-y-6">
           <div className="mb-4">
-            <h3 className="font-semibold text-slate-900 text-base">Verify Through GST</h3>
-            <p className="text-slate-600 text-sm mt-0.5">Automatically fill your company details using GST Portal</p>
+            <h3 className="font-semibold text-slate-900 text-base">Verify Your Company</h3>
+            <p className="text-slate-600 text-sm mt-0.5">Automatically fill your company details using government portal</p>
           </div>
 
-          {/* GST Input Section */}
+          {/* Verification Type Dropdown + Input */}
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="block text-xs font-medium text-slate-700">
-                GST Number {isVerified && <span className="text-green-600">✓</span>}
+                Verification Type
+              </label>
+              <select
+                value={verificationType}
+                onChange={(e) => { setVerificationType(e.target.value); onGSTChange(''); }}
+                disabled={isVerified}
+                className={`w-full h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 bg-white ${isVerified ? 'border-green-300 bg-green-50 cursor-not-allowed' : 'border-blue-300 focus:ring-blue-400 focus:border-blue-400'}`}
+              >
+                <option value="">Select verification type</option>
+                <option value="GSTIN">GSTIN</option>
+                <option value="CIN">CIN</option>
+                <option value="LLPIN">LLPIN</option>
+              </select>
+            </div>
+
+            {verificationType && (
+            <div className="space-y-2">
+              <label className="block text-xs font-medium text-slate-700">
+                {verificationType} Number {isVerified && <span className="text-green-600">✓</span>}
               </label>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={gstNumber}
                   onChange={(e) => handleChange(e.target.value)}
-                  placeholder="22AAAAA0000A1Z5"
+                  placeholder={verificationType === 'GSTIN' ? '22AAAAA0000A1Z5' : verificationType === 'CIN' ? 'U12345MH2020PTC123456' : 'AAA-1234'}
                   disabled={isVerified}
                   className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
                     ? 'border-green-300 bg-green-50'
                     : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
                     }`}
-                  maxLength={15}
+                  maxLength={verificationType === 'GSTIN' ? 15 : 21}
                 />
               </div>
-              {!isVerified && !isValidFormat && gstNumber.length > 0 && (
+              {!isVerified && verificationType === 'GSTIN' && !isValidFormat && gstNumber.length > 0 && (
                 <p className="text-[10px] text-red-500">Invalid GST format</p>
               )}
             </div>
+            )}
 
             {/* Consent Section - With Verify Button beside it */}
             <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 transition-all duration-300">
