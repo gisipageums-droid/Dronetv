@@ -323,7 +323,7 @@ const CompanyPage: React.FC = () => {
     setDigiClientId('');
     try {
       const res = await axios.post(
-        'https://sandbox.surepass.app/api/v1/digilocker/initialize',
+        'https://kyc-api.surepass.app/api/v1/digilocker/initialize',
         { data: { signup_flow: true } },
         { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json' } }
       );
@@ -344,7 +344,7 @@ const CompanyPage: React.FC = () => {
       attempts++;
       try {
         const res = await axios.get(
-          `https://sandbox.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
+          `https://kyc-api.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
           { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}` } }
         );
         if (res.data?.success) {
@@ -360,7 +360,7 @@ const CompanyPage: React.FC = () => {
         clearInterval(pollRef.current!);
         try {
           const finalRes = await axios.get(
-            `https://sandbox.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
+            `https://kyc-api.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
             { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}` } }
           );
           if (finalRes.data?.success) {
