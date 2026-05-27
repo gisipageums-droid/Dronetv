@@ -1133,12 +1133,26 @@ const GSTVerificationSection: React.FC<{
             gateway: 'production',
             token,
             selector: '#digiboost-llpin-container',
-            onSuccess: (_data: any) => {
+            onSuccess: (data: any) => {
               setLlpinDigiVerified(true);
-              onVerifyGST();
+              onVerifySuccess({
+                companyName: data?.name || data?.full_name || '',
+                legalName: data?.name || data?.full_name || '',
+                companyAddress: data?.address || '',
+                state: data?.state || '',
+                pincode: data?.pincode || '',
+                gstNumber: '',
+                registrationDate: '',
+                businessType: 'LLPIN',
+                verificationType: 'LLPIN',
+              });
             },
-            onFailure: (_err: any) => {}
+            onFailure: (_err: any) => {
+              toast.error('DigiLocker verification failed. Please try again.');
+            }
           });
+        } else if (token && !(window as any).DigiboostSdk) {
+          toast.error('DigiLocker SDK not loaded yet. Please wait a moment and try again.');
         }
       } catch {
         // silent — state stays isInitializingDigiBoost=false
@@ -1435,38 +1449,8 @@ const GSTVerificationSection: React.FC<{
             )}
 
             {/* LLPIN — DigiLocker button directly, no checkbox */}
-            {verificationType === 'LLPIN' && !isVerified && (
-              <div className="flex flex-col items-start gap-2 mt-4 mb-4">
-                <div id="digiboost-llpin-container"></div>
-                <button
-                  type="button"
-                  onClick={handleLLPINDigiBoost}
-                  disabled={isInitializingDigiBoost}
-                  className={`px-6 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98]
-                    ${!isInitializingDigiBoost
-                      ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-100'
-                      : 'bg-green-300 text-white cursor-not-allowed opacity-70'
-                    }`}
-                >
-                  {isInitializingDigiBoost ? (
-                    <>
-                      <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
-                      Initializing...
-                    </>
-                  ) : llpinDigiVerified ? (
-                    <>
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      Connected
-                    </>
-                  ) : (
-                    'Verify with DigiLocker'
-                  )}
-                </button>
-              </div>
-            )}
-
-            {/* Consent + Verify — GST / GSTIN / CIN */}
-            {verificationType && verificationType !== 'LLPIN' && <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 transition-all duration-300">
+            {/* Consent + Action — all types */}
+            {verificationType && <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 mb-2 transition-all duration-300">
               <div className="flex items-start space-x-3">
                 <div className="flex items-center h-5 mt-0.5">
                   <input
@@ -1493,7 +1477,8 @@ const GSTVerificationSection: React.FC<{
                 </div>
               </div>
 
-              {!isVerified && (
+              {/* Verify — GST / GSTIN / CIN */}
+              {!isVerified && verificationType !== 'LLPIN' && (
                 <button
                   type="button"
                   onClick={handleVerifyClick}
@@ -1513,6 +1498,37 @@ const GSTVerificationSection: React.FC<{
                     "Verify"
                   )}
                 </button>
+              )}
+
+              {/* Connect DigiLocker — LLPIN */}
+              {!isVerified && verificationType === 'LLPIN' && (
+                <div className="flex flex-col items-end gap-2 shrink-0">
+                  <div id="digiboost-llpin-container"></div>
+                  <button
+                    type="button"
+                    onClick={handleLLPINDigiBoost}
+                    disabled={isInitializingDigiBoost || !localConsent}
+                    className={`px-6 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
+                      ${localConsent && !isInitializingDigiBoost
+                        ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-100'
+                        : 'bg-green-300 text-white cursor-not-allowed opacity-70'
+                      }`}
+                  >
+                    {isInitializingDigiBoost ? (
+                      <>
+                        <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                        Initializing...
+                      </>
+                    ) : llpinDigiVerified ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Connected
+                      </>
+                    ) : (
+                      'Connect DigiLocker'
+                    )}
+                  </button>
+                </div>
               )}
 
               {isVerified && (
@@ -3453,7 +3469,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     if (data.natureOfBusiness) updates.natureOfBusiness = data.natureOfBusiness;
     if (data.cin) { updates.cin = data.cin; }
     if (Object.keys(updates).length > 0) updateFormData(updates);
-    toast.success('CIN verified successfully! Company details auto-filled.');
+    toast.success(data.verificationType === 'LLPIN' ? 'DigiLocker verified successfully!' : 'Verified successfully! Company details auto-filled.');
   }, [updateFormData]);
 
   return (
