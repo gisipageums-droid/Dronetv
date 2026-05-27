@@ -1082,6 +1082,8 @@ const GSTVerificationSection: React.FC<{
     const [localConsent, setLocalConsent] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
     const [verificationType, setVerificationType] = useState('GSTIN');
+    const [isInitializingDigiBoost, setIsInitializingDigiBoost] = useState(false);
+    const [llpinDigiVerified, setLlpinDigiVerified] = useState(false);
 
     const formatGSTNumber = (value: string) => {
       // Remove all non-alphanumeric characters
@@ -1102,9 +1104,52 @@ const GSTVerificationSection: React.FC<{
       }
     };
 
+    useEffect(() => {
+      if (verificationType !== 'LLPIN') return;
+      if (document.getElementById('digiboost-sdk-script')) return;
+      const script = document.createElement('script');
+      script.id = 'digiboost-sdk-script';
+      script.src = 'https://cdn.jsdelivr.net/gh/surepassio/surepass-digiboost-web-sdk@latest/index.min.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }, [verificationType]);
+
+    const handleLLPINDigiBoost = async () => {
+      if (!localConsent || !gstNumber) return;
+      setIsInitializingDigiBoost(true);
+      try {
+        const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
+        const res = await axios.post(
+          'https://sandbox.surepass.app/api/v1/digilocker/initialize',
+          {},
+          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json' } }
+        );
+        const token = res.data?.data?.token || res.data?.token;
+        if (token && (window as any).DigiboostSdk) {
+          (window as any).DigiboostSdk({
+            gateway: 'sandbox',
+            token,
+            selector: '#digiboost-llpin-container',
+            onSuccess: (_data: any) => {
+              setLlpinDigiVerified(true);
+              onVerifyGST();
+            },
+            onFailure: (_err: any) => {}
+          });
+        }
+      } catch {
+        // silent — state stays isInitializingDigiBoost=false
+      } finally {
+        setIsInitializingDigiBoost(false);
+      }
+    };
+
     const isValidFormat = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gstNumber);
     const isValidLength = gstNumber.length === 15;
     const isValidGST = isValidFormat && isValidLength;
+    const isValidInput = verificationType === 'GSTIN' ? isValidGST
+      : verificationType === 'CIN' ? gstNumber.length >= 21
+      : gstNumber.length >= 3;
 
     // Load verified GST data from localStorage on component mount (excluding GST number)
     React.useEffect(() => {
@@ -1290,7 +1335,7 @@ const GSTVerificationSection: React.FC<{
                 </div>
                 <div className="flex flex-col">
                   <label htmlFor="gst-consent-checkbox" className="text-sm font-medium text-slate-800 cursor-pointer select-none">
-                    I consent to GST verification
+                    I consent to {verificationType === 'GSTIN' ? 'GST' : verificationType === 'CIN' ? 'CIN' : 'DigiLocker'} verification
                   </label>
                   <button
                     type="button"
@@ -1303,14 +1348,14 @@ const GSTVerificationSection: React.FC<{
                 </div>
               </div>
 
-              {/* Verify Button moved here - beside the checkbox section */}
-              {!isVerified && (
+              {/* Verify Button — GST / CIN */}
+              {!isVerified && verificationType !== 'LLPIN' && (
                 <button
                   type="button"
                   onClick={handleVerifyClick}
-                  disabled={isVerifying || !isValidGST || !localConsent}
+                  disabled={isVerifying || !isValidInput || !localConsent}
                   className={`px-8 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
-                    ${isValidGST && localConsent && !isVerifying
+                    ${isValidInput && localConsent && !isVerifying
                       ? 'bg-[#4F9CF9] text-white hover:bg-blue-600 shadow-lg shadow-blue-100'
                       : 'bg-blue-300 text-white cursor-not-allowed opacity-70'
                     }`}
@@ -1324,6 +1369,37 @@ const GSTVerificationSection: React.FC<{
                     "Verify"
                   )}
                 </button>
+              )}
+
+              {/* DigiBoost Button — LLPIN */}
+              {!isVerified && verificationType === 'LLPIN' && (
+                <div className="flex flex-col items-center gap-2 shrink-0">
+                  <div id="digiboost-llpin-container"></div>
+                  <button
+                    type="button"
+                    onClick={handleLLPINDigiBoost}
+                    disabled={isInitializingDigiBoost || !localConsent || !gstNumber}
+                    className={`px-6 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
+                      ${localConsent && gstNumber && !isInitializingDigiBoost
+                        ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-100'
+                        : 'bg-green-300 text-white cursor-not-allowed opacity-70'
+                      }`}
+                  >
+                    {isInitializingDigiBoost ? (
+                      <>
+                        <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                        Initializing...
+                      </>
+                    ) : llpinDigiVerified ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Connected
+                      </>
+                    ) : (
+                      'Connect DigiLocker'
+                    )}
+                  </button>
+                </div>
               )}
 
               {/* Verified Badge */}
