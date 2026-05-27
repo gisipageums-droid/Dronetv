@@ -1121,7 +1121,7 @@ const GSTVerificationSection: React.FC<{
       if (!localConsent || !gstNumber) return;
       setIsInitializingDigiBoost(true);
       try {
-        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODkxNTkxMiwianRpIjoiOGJiZDczNTktNjYwMC00YjQwLWE0MDctNGQ3NGIzN2E2MTk3IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3Nzg5MTU5MTIsImV4cCI6MTc4MDIxMTkxMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.sgqmhPe-7_YL8bDb8tefIBLJLPMmy45CrQB-3FpaEIo";
+        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTY0NzYxNywianRpIjoiNTNiZjhhODMtMDZlZS00Y2QyLTgxNDYtZDQ0MjAyN2M1NmE5IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU2NDc2MTcsImV4cCI6MjQwNjM2NzYxNywiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.GgTCyK0v20-XH3eq39Y31La05PBX7cBonsq7grngi1M";
         const res = await axios.post(
           'https://sandbox.surepass.app/api/v1/digilocker/initialize',
           {},
@@ -1151,7 +1151,7 @@ const GSTVerificationSection: React.FC<{
       if (!gstNumber || gstNumber.length < 10) return;
       setIsVerifyingCIN(true);
       try {
-        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODkxNTkxMiwianRpIjoiOGJiZDczNTktNjYwMC00YjQwLWE0MDctNGQ3NGIzN2E2MTk3IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3Nzg5MTU5MTIsImV4cCI6MTc4MDIxMTkxMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.sgqmhPe-7_YL8bDb8tefIBLJLPMmy45CrQB-3FpaEIo";
+        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTY0NzYxNywianRpIjoiNTNiZjhhODMtMDZlZS00Y2QyLTgxNDYtZDQ0MjAyN2M1NmE5IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU2NDc2MTcsImV4cCI6MjQwNjM2NzYxNywiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.GgTCyK0v20-XH3eq39Y31La05PBX7cBonsq7grngi1M";
         const response = await axios.post(
           'https://kyc-api.surepass.io/api/v1/corporate/company-details',
           { id_number: gstNumber },
@@ -2295,7 +2295,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
       try {
         // SUREPASS GST ADVANCED API
-        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODkxNTkxMiwianRpIjoiOGJiZDczNTktNjYwMC00YjQwLWE0MDctNGQ3NGIzN2E2MTk3IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3Nzg5MTU5MTIsImV4cCI6MTc4MDIxMTkxMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.sgqmhPe-7_YL8bDb8tefIBLJLPMmy45CrQB-3FpaEIo";
+        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTY0NzYxNywianRpIjoiNTNiZjhhODMtMDZlZS00Y2QyLTgxNDYtZDQ0MjAyN2M1NmE5IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU2NDc2MTcsImV4cCI6MjQwNjM2NzYxNywiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.GgTCyK0v20-XH3eq39Y31La05PBX7cBonsq7grngi1M";
 
         let response;
         let apiUnavailable = false;
