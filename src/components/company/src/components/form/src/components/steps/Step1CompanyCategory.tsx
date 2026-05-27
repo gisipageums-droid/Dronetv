@@ -1119,7 +1119,6 @@ const GSTVerificationSection: React.FC<{
     }, [verificationType]);
 
     const handleLLPINDigiBoost = async () => {
-      if (!localConsent) return;
       setIsInitializingDigiBoost(true);
       try {
         const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
@@ -1437,7 +1436,7 @@ const GSTVerificationSection: React.FC<{
 
             {/* LLPIN — DigiLocker button directly, no checkbox */}
             {verificationType === 'LLPIN' && !isVerified && (
-              <div className="flex flex-col items-start gap-2 mt-4">
+              <div className="flex flex-col items-start gap-2 mt-4 mb-4">
                 <div id="digiboost-llpin-container"></div>
                 <button
                   type="button"
