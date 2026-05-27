@@ -1118,7 +1118,7 @@ const GSTVerificationSection: React.FC<{
     }, [verificationType]);
 
     const handleLLPINDigiBoost = async () => {
-      if (!localConsent || !gstNumber) return;
+      if (!localConsent) return;
       setIsInitializingDigiBoost(true);
       try {
         const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTY0NzYxNywianRpIjoiNTNiZjhhODMtMDZlZS00Y2QyLTgxNDYtZDQ0MjAyN2M1NmE5IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU2NDc2MTcsImV4cCI6MjQwNjM2NzYxNywiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.GgTCyK0v20-XH3eq39Y31La05PBX7cBonsq7grngi1M";
@@ -1366,7 +1366,7 @@ const GSTVerificationSection: React.FC<{
               </select>
             </div>
 
-            {verificationType && (
+            {verificationType && verificationType !== 'LLPIN' && (
             <div className="space-y-2">
               <label className="block text-xs font-medium text-slate-700">
                 {verificationType} Number {isVerified && <span className="text-green-600">✓</span>}
@@ -1376,7 +1376,7 @@ const GSTVerificationSection: React.FC<{
                   type="text"
                   value={gstNumber}
                   onChange={(e) => handleChange(e.target.value)}
-                  placeholder={verificationType === 'GSTIN' ? '22AAAAA0000A1Z5' : verificationType === 'CIN' ? 'U12345MH2020PTC123456' : 'AAA-1234'}
+                  placeholder={verificationType === 'GSTIN' ? '22AAAAA0000A1Z5' : 'U12345MH2020PTC123456'}
                   disabled={isVerified}
                   className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
                     ? 'border-green-300 bg-green-50'
@@ -1449,9 +1449,9 @@ const GSTVerificationSection: React.FC<{
                   <button
                     type="button"
                     onClick={handleLLPINDigiBoost}
-                    disabled={isInitializingDigiBoost || !localConsent || !gstNumber}
+                    disabled={isInitializingDigiBoost || !localConsent}
                     className={`px-6 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
-                      ${localConsent && gstNumber && !isInitializingDigiBoost
+                      ${localConsent && !isInitializingDigiBoost
                         ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-100'
                         : 'bg-green-300 text-white cursor-not-allowed opacity-70'
                       }`}
