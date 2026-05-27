@@ -8,6 +8,7 @@ import { FormStep } from "../FormStep";
 import { useUserAuth } from "../../../../../../../context/context";
 import axios from "axios";
 import "./step1.css";
+import { toast } from "react-toastify";
 
 interface Step1CompanyCategoryProps extends StepProps {
   checkCompanyName: (name: string) => void;
@@ -1075,15 +1076,17 @@ const GSTVerificationSection: React.FC<{
   onAutoFill: () => void;
   isAutoFilling: boolean;
   autoFillStep: 'idle' | 'scraping' | 'processing' | 'done' | 'error';
+  onVerifySuccess: (data: any) => void;
 }> = ({ gstNumber, onGSTChange, onVerifyGST, isVerified, isVerifying, verifiedData, address, onAddressChange, onVerifiedDataChange, formData, updateFormData,
   panNumber, onPanChange, panName, onPanNameChange, panDob, onPanDobChange, onVerifyPAN, isVerifyingPAN, isPANVerified,
-  onAutoFill, isAutoFilling, autoFillStep
+  onAutoFill, isAutoFilling, autoFillStep, onVerifySuccess
 }) => {
     const [localConsent, setLocalConsent] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
     const [verificationType, setVerificationType] = useState('GSTIN');
     const [isInitializingDigiBoost, setIsInitializingDigiBoost] = useState(false);
     const [llpinDigiVerified, setLlpinDigiVerified] = useState(false);
+    const [isVerifyingCIN, setIsVerifyingCIN] = useState(false);
 
     const formatGSTNumber = (value: string) => {
       // Remove all non-alphanumeric characters
@@ -1144,6 +1147,72 @@ const GSTVerificationSection: React.FC<{
       }
     };
 
+    const handleVerifyCIN = async () => {
+      if (!gstNumber || gstNumber.length < 10) return;
+      setIsVerifyingCIN(true);
+      try {
+        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3ODkxNTkxMiwianRpIjoiOGJiZDczNTktNjYwMC00YjQwLWE0MDctNGQ3NGIzN2E2MTk3IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3Nzg5MTU5MTIsImV4cCI6MTc4MDIxMTkxMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.sgqmhPe-7_YL8bDb8tefIBLJLPMmy45CrQB-3FpaEIo";
+        const response = await axios.post(
+          'https://kyc-api.surepass.io/api/v1/corporate/company-details',
+          { id_number: gstNumber },
+          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json', Accept: 'application/json' } }
+        );
+        if (response.data?.success && response.data?.data) {
+          const d = response.data.data;
+          const info = d.details?.company_info || {};
+          const directors: any[] = d.details?.directors || [];
+
+          const regAddress = info.registered_address || '';
+          const pincodeMatch = regAddress.match(/\b(\d{6})\b/);
+          const pincode = pincodeMatch ? pincodeMatch[1] : '';
+
+          const stateCodeMatch = regAddress.match(/\b([A-Z]{2})\s+\d{6}\b/);
+          const stateCode = stateCodeMatch ? stateCodeMatch[1] : '';
+          const STATE_CODES: Record<string, string> = {
+            MH: 'Maharashtra', DL: 'Delhi', KA: 'Karnataka', TN: 'Tamil Nadu',
+            AP: 'Andhra Pradesh', TS: 'Telangana', GJ: 'Gujarat', RJ: 'Rajasthan',
+            UP: 'Uttar Pradesh', WB: 'West Bengal', MP: 'Madhya Pradesh', PB: 'Punjab',
+            HR: 'Haryana', OR: 'Odisha', KL: 'Kerala', JH: 'Jharkhand',
+            AS: 'Assam', CH: 'Chandigarh', HP: 'Himachal Pradesh', BR: 'Bihar',
+            UK: 'Uttarakhand', GA: 'Goa', CG: 'Chhattisgarh', JK: 'Jammu & Kashmir',
+            MN: 'Manipur', ML: 'Meghalaya', MZ: 'Mizoram', NL: 'Nagaland',
+            SK: 'Sikkim', TR: 'Tripura', AR: 'Arunachal Pradesh', DN: 'Dadra & Nagar Haveli',
+            DD: 'Daman & Diu', LA: 'Ladakh', PY: 'Puducherry', AN: 'Andaman & Nicobar'
+          };
+          const state = STATE_CODES[stateCode] || '';
+
+          const mainDirector = directors[0]?.director_name || '';
+          const businessEntityType = [info.class_of_company, info.company_category].filter(Boolean).join(' — ');
+
+          const mappedData = {
+            companyName: d.company_name || '',
+            legalName: d.company_name || '',
+            gstNumber: gstNumber,
+            companyAddress: regAddress,
+            state,
+            pincode,
+            registrationDate: info.date_of_incorporation || '',
+            businessType: info.class_of_company || '',
+            businessEntityType,
+            natureOfBusiness: info.company_sub_category || '',
+            cin: info.cin || gstNumber,
+            directorName: mainDirector,
+            directorEmail: info.email_id || '',
+            pan: ''
+          };
+
+          onVerifySuccess(mappedData);
+          if (regAddress) onAddressChange(regAddress);
+        } else {
+          // silent — no toast in child component
+        }
+      } catch {
+        // silent
+      } finally {
+        setIsVerifyingCIN(false);
+      }
+    };
+
     const isValidFormat = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gstNumber);
     const isValidLength = gstNumber.length === 15;
     const isValidGST = isValidFormat && isValidLength;
@@ -1174,7 +1243,9 @@ const GSTVerificationSection: React.FC<{
     }, [gstNumber]);
 
     const handleVerifyClick = () => {
-      if (isValidFormat) {
+      if (verificationType === 'CIN') {
+        handleVerifyCIN();
+      } else if (isValidFormat) {
         onVerifyGST();
       }
     };
@@ -1348,19 +1419,19 @@ const GSTVerificationSection: React.FC<{
                 </div>
               </div>
 
-              {/* Verify Button — GST / CIN */}
+              {/* Verify Button — GSTIN / CIN */}
               {!isVerified && verificationType !== 'LLPIN' && (
                 <button
                   type="button"
                   onClick={handleVerifyClick}
-                  disabled={isVerifying || !isValidInput || !localConsent}
+                  disabled={isVerifying || isVerifyingCIN || !isValidInput || !localConsent}
                   className={`px-8 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
-                    ${isValidInput && localConsent && !isVerifying
+                    ${isValidInput && localConsent && !isVerifying && !isVerifyingCIN
                       ? 'bg-[#4F9CF9] text-white hover:bg-blue-600 shadow-lg shadow-blue-100'
                       : 'bg-blue-300 text-white cursor-not-allowed opacity-70'
                     }`}
                 >
-                  {isVerifying ? (
+                  {(isVerifying || isVerifyingCIN) ? (
                     <>
                       <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
                       Verifying...
@@ -2230,7 +2301,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         let apiUnavailable = false;
         try {
           response = await axios.post(
-            "https://sandbox.surepass.app/api/v1/corporate/gstin-advanced",
+            "https://kyc-api.surepass.io/api/v1/corporate/gstin-advanced",
             { "id_number": gstNumber },
             {
               headers: {
@@ -3325,6 +3396,25 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     }
   }, [updateFormData]);
 
+  const handleCINVerifySuccess = useCallback((data: any) => {
+    setVerifiedGSTData(data);
+    setGSTVerified(true);
+    if (data.companyAddress) setGstAddress(data.companyAddress);
+    const updates: any = {};
+    if (data.companyName) updates.companyName = data.companyName;
+    if (data.registrationDate) updates.yearEstablished = data.registrationDate;
+    if (data.directorEmail) { updates.directorEmail = data.directorEmail; setTempDirectorEmail(data.directorEmail); }
+    if (data.directorName) updates.directorName = data.directorName;
+    if (data.state) updates.state = data.state;
+    if (data.pincode) updates.postalCode = data.pincode;
+    if (data.companyAddress) updates.officeAddress = data.companyAddress;
+    if (data.businessEntityType) updates.businessField = data.businessEntityType;
+    if (data.natureOfBusiness) updates.natureOfBusiness = data.natureOfBusiness;
+    if (data.cin) { updates.cin = data.cin; }
+    if (Object.keys(updates).length > 0) updateFormData(updates);
+    toast.success('CIN verified successfully! Company details auto-filled.');
+  }, [updateFormData]);
+
   return (
     <>
       <FormStep
@@ -3413,6 +3503,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             onAutoFill={handleAutoFill}
             isAutoFilling={isAutoFilling}
             autoFillStep={autoFillStep}
+            onVerifySuccess={handleCINVerifySuccess}
           />
 
           {/* Social Media Links */}
