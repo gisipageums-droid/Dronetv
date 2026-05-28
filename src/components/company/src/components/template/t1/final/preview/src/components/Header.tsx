@@ -107,7 +107,7 @@ export default function Header({ headerData }) {
                   whileTap={{ scale: 0.9 }}
                 >
                   <motion.img
-                    src={headerData?.logoSrc}
+                    src={headerData?.logoSrc || headerData?.logoUrl}
                     alt="Logo"
                     className="object-contain w-[40px] h-[40px] "
                     animate={{

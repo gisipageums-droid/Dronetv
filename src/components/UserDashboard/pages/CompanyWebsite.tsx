@@ -88,7 +88,7 @@ const CompanyWebsite: React.FC = () => {
       const updatedContent = {
         ...content,
         company: { ...content.company, logo: imageUrl },
-        header: { ...content.header, logoUrl: imageUrl },
+        header: { ...content.header, logoUrl: imageUrl, logoSrc: imageUrl },
       };
       await fetch("https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update", {
         method: "PUT",
@@ -114,8 +114,8 @@ const CompanyWebsite: React.FC = () => {
 
   const previewUrl = company
     ? company.templateSelection === "template-1"
-      ? `/user/companies/preview/1/${company.publishedId}/${userId}`
-      : `/user/companies/preview/2/${company.publishedId}/${userId}`
+      ? `/user/companies/preview/1/${company.publishedId}/${company.userId}`
+      : `/user/companies/preview/2/${company.publishedId}/${company.userId}`
     : "";
 
   // ---- Aadhaar flow ----
