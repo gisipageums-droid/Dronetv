@@ -123,7 +123,7 @@ const FeaturedCompanies: React.FC = () => {
                     ).toFixed(1)
                     : '5.0';
                 const companySlug =
-                  (company as any).urlSlug || (company as any).cleanUrl || company.publishedId || encodeURIComponent(company.companyName || `company-${index}`);
+                  ((company as any).urlSlug || (company as any).cleanUrl || company.companyName || `company-${index}`).replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 
                 return (
                   <div
@@ -135,7 +135,7 @@ const FeaturedCompanies: React.FC = () => {
                     }}
                     onMouseEnter={() => setHoveredCard(company.companyName)}
                     onMouseLeave={() => setHoveredCard(null)}
-                    onClick={() => navigate(`${company.templateSelection=="template-1"?`/company/${company.companyName || companySlug}`:`/companies/${company.companyName || companySlug}`}`)}
+                    onClick={() => navigate(company.templateSelection === "template-1" ? `/company/${companySlug}` : `/companies/${companySlug}`)}
                     role="button"
                     tabIndex={0}
                   >
@@ -291,7 +291,7 @@ const FeaturedCompanies: React.FC = () => {
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            navigate(`/company/${(company as any).urlSlug || companySlug}`);
+                            navigate(company.templateSelection === "template-1" ? `/company/${companySlug}` : `/companies/${companySlug}`);
                           }}
                           className="group/btn bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-6 py-3 rounded-xl font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg"
                         >
