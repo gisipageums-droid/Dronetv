@@ -137,14 +137,22 @@ const CompaniesPage: React.FC = () => {
               src={company.previewImage}
               alt={company.companyName}
               className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-110"
+              onError={(e) => {
+                const target = e.currentTarget;
+                target.style.display = 'none';
+                const fallback = target.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'flex';
+              }}
             />
-          ) : (
-            <div className="flex justify-center items-center w-full h-full bg-yellow-200">
-              <span className="text-5xl font-bold text-gray-700 uppercase">
-                {company.companyName[0]}
-              </span>
-            </div>
-          )}
+          ) : null}
+          <div
+            className="justify-center items-center w-full h-full bg-yellow-200"
+            style={{ display: company.previewImage ? 'none' : 'flex' }}
+          >
+            <span className="text-5xl font-bold text-gray-700 uppercase">
+              {company.companyName[0]}
+            </span>
+          </div>
         </div>
 
         {/* Info Section */}
