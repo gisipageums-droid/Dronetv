@@ -146,9 +146,13 @@ const FeaturedCompanies: React.FC = () => {
                           src={imgSrc}
                           alt={company.companyName}
                           className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
-                      ) : (
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">No image</div>
+                      ) : null}
+                      {!imgSrc && (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-4xl font-bold text-gray-600 uppercase">{company.companyName?.[0] ?? '?'}</span>
+                        </div>
                       )}
 
                       {/* Black overlay */}
@@ -162,10 +166,16 @@ const FeaturedCompanies: React.FC = () => {
                               src={(company as any).companyLogo || (company as any).heroImage}
                               alt={company.companyName}
                               className="h-8 w-8 object-contain bg-white"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const span = e.currentTarget.nextElementSibling as HTMLElement;
+                                if (span) span.style.display = 'inline';
+                              }}
                             />
-                          ) : (
-                            <span className="text-yellow-500 font-black text-xl">?</span>
-                          )}
+                          ) : null}
+                          <span className="text-yellow-500 font-black text-xl" style={{ display: (company as any).companyLogo || (company as any).heroImage ? 'none' : 'inline' }}>
+                            {company.companyName?.[0] ?? '?'}
+                          </span>
                         </div>
                       </div>
 
