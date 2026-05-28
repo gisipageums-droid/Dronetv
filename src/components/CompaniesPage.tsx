@@ -146,12 +146,15 @@ const CompaniesPage: React.FC = () => {
             />
           ) : null}
           <div
-            className="justify-center items-center w-full h-full bg-yellow-200"
+            className="flex-col justify-center items-center w-full h-full bg-gradient-to-br from-yellow-300 to-yellow-400 px-4 gap-2"
             style={{ display: company.previewImage ? 'none' : 'flex' }}
           >
-            <span className="text-5xl font-bold text-gray-700 uppercase">
-              {company.companyName[0]}
-            </span>
+            <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center mb-1">
+              <span className="text-lg font-black text-gray-800 uppercase">{company.companyName[0]}</span>
+            </div>
+            <p className="text-sm font-bold text-gray-800 text-center uppercase leading-snug line-clamp-3 tracking-wide">
+              {company.companyName}
+            </p>
           </div>
         </div>
 
