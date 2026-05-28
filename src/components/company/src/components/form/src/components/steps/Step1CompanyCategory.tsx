@@ -1084,8 +1084,6 @@ const GSTVerificationSection: React.FC<{
     const [localConsent, setLocalConsent] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
     const [verificationType, setVerificationType] = useState('GST');
-    const [isInitializingDigiBoost, setIsInitializingDigiBoost] = useState(false);
-    const [llpinDigiVerified, setLlpinDigiVerified] = useState(false);
     const [isVerifyingCIN, setIsVerifyingCIN] = useState(false);
 
     const formatGSTNumber = (value: string) => {
@@ -1096,8 +1094,12 @@ const GSTVerificationSection: React.FC<{
     };
 
     const handleChange = (value: string) => {
-      const formatted = formatGSTNumber(value);
-      onGSTChange(formatted);
+      if (verificationType === 'LLPIN') {
+        const cleaned = value.replace(/[^a-zA-Z0-9-]/g, '').toUpperCase();
+        onGSTChange(cleaned);
+      } else {
+        onGSTChange(formatGSTNumber(value));
+      }
     };
 
     const handleConsentChange = (checked: boolean) => {
@@ -1107,61 +1109,8 @@ const GSTVerificationSection: React.FC<{
       }
     };
 
-    useEffect(() => {
-      if (verificationType !== 'LLPIN') return;
-      if (document.getElementById('digiboost-sdk-script')) return;
-      const script = document.createElement('script');
-      script.id = 'digiboost-sdk-script';
-      script.src = 'https://cdn.jsdelivr.net/gh/surepassio/surepass-digiboost-web-sdk@latest/index.min.js';
-      script.async = true;
-      document.body.appendChild(script);
-    }, [verificationType]);
-
-    const handleLLPINDigiBoost = async () => {
-      setIsInitializingDigiBoost(true);
-      try {
-        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTY0NzYxNywianRpIjoiNTNiZjhhODMtMDZlZS00Y2QyLTgxNDYtZDQ0MjAyN2M1NmE5IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU2NDc2MTcsImV4cCI6MjQwNjM2NzYxNywiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.GgTCyK0v20-XH3eq39Y31La05PBX7cBonsq7grngi1M";
-        const res = await axios.post(
-          'https://kyc-api.surepass.app/api/v1/digilocker/initialize',
-          { data: { signup_flow: true } },
-          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json' } }
-        );
-        const token = res.data?.data?.token || res.data?.token;
-        if (token && (window as any).DigiboostSdk) {
-          (window as any).DigiboostSdk({
-            gateway: 'production',
-            token,
-            selector: '#digiboost-llpin-container',
-            onSuccess: (data: any) => {
-              setLlpinDigiVerified(true);
-              onVerifySuccess({
-                companyName: data?.name || data?.full_name || '',
-                legalName: data?.name || data?.full_name || '',
-                companyAddress: data?.address || '',
-                state: data?.state || '',
-                pincode: data?.pincode || '',
-                gstNumber: '',
-                registrationDate: '',
-                businessType: 'LLPIN',
-                verificationType: 'LLPIN',
-              });
-            },
-            onFailure: (_err: any) => {
-              toast.error('DigiLocker verification failed. Please try again.');
-            }
-          });
-        } else if (token && !(window as any).DigiboostSdk) {
-          toast.error('DigiLocker SDK not loaded yet. Please wait a moment and try again.');
-        }
-      } catch {
-        // silent — state stays isInitializingDigiBoost=false
-      } finally {
-        setIsInitializingDigiBoost(false);
-      }
-    };
-
     const handleVerifyCIN = async () => {
-      if (!gstNumber || gstNumber.length < 10) return;
+      if (!gstNumber || gstNumber.length < 4) return;
       setIsVerifyingCIN(true);
       try {
         const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTY0NzYxNywianRpIjoiNTNiZjhhODMtMDZlZS00Y2QyLTgxNDYtZDQ0MjAyN2M1NmE5IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU2NDc2MTcsImV4cCI6MjQwNjM2NzYxNywiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.GgTCyK0v20-XH3eq39Y31La05PBX7cBonsq7grngi1M";
@@ -1230,9 +1179,10 @@ const GSTVerificationSection: React.FC<{
     const isValidFormat = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gstNumber);
     const isValidLength = gstNumber.length === 15;
     const isValidGST = isValidFormat && isValidLength;
+    const isValidLLPIN = /^[A-Z]{3}-\d{4}$/.test(gstNumber);
     const isValidInput = verificationType === 'GST' ? isValidGST
       : verificationType === 'CIN' ? gstNumber.length >= 21
-      : gstNumber.length >= 3;
+      : isValidLLPIN;
 
     // Load verified GST data from localStorage on component mount (excluding GST number)
     React.useEffect(() => {
@@ -1257,7 +1207,7 @@ const GSTVerificationSection: React.FC<{
     }, [gstNumber]);
 
     const handleVerifyClick = () => {
-      if (verificationType === 'CIN') {
+      if (verificationType === 'CIN' || verificationType === 'LLPIN') {
         handleVerifyCIN();
       } else if (verificationType === 'GST' && isValidFormat) {
         onVerifyGST();
@@ -1380,39 +1330,37 @@ const GSTVerificationSection: React.FC<{
               </select>
             </div>
 
-            {verificationType && verificationType !== 'LLPIN' && (
+            {verificationType && (
             <div className="space-y-2">
               <label className="block text-xs font-medium text-slate-700">
-                {verificationType} Number {isVerified && <span className="text-green-600">✓</span>}
+                {verificationType === 'LLPIN' ? 'Enter LLPIN Number' : verificationType === 'CIN' ? 'Enter CIN Number' : `${verificationType} Number`}
+                {isVerified && <span className="text-green-600 ml-1">✓</span>}
               </label>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={gstNumber}
                   onChange={(e) => handleChange(e.target.value)}
-                  placeholder={verificationType === 'GST' ? '22AAAAA0000A1Z5' : 'U12345MH2020PTC123456'}
+                  placeholder={
+                    verificationType === 'GST' ? '22AAAAA0000A1Z5'
+                    : verificationType === 'LLPIN' ? 'AAB-1234'
+                    : 'U74999TG2020PTC123456'
+                  }
                   disabled={isVerified}
                   className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
                     ? 'border-green-300 bg-green-50'
                     : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
                     }`}
-                  maxLength={verificationType === 'GST' ? 15 : 21}
+                  maxLength={verificationType === 'GST' ? 15 : verificationType === 'LLPIN' ? 8 : 21}
                 />
               </div>
               {!isVerified && verificationType === 'GST' && !isValidFormat && gstNumber.length > 0 && (
                 <p className="text-[10px] text-red-500">Invalid GST format</p>
               )}
+              {!isVerified && verificationType === 'LLPIN' && gstNumber.length > 0 && !isValidLLPIN && (
+                <p className="text-[10px] text-red-500">Format: AAB-1234</p>
+              )}
             </div>
-            )}
-
-            {/* LLPIN — info hint */}
-            {verificationType === 'LLPIN' && !isVerified && (
-              <div className="flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl mt-2">
-                <span className="text-amber-500 text-base leading-none mt-0.5">ℹ️</span>
-                <p className="text-xs text-amber-800 leading-relaxed">
-                  To verify your LLPIN, please <strong>check the consent checkbox</strong> below and then click <strong>"Connect DigiLocker"</strong> to verify your identity via Aadhaar through DigiLocker.
-                </p>
-              </div>
             )}
 
             {/* Consent + Action — all types */}
@@ -1443,8 +1391,8 @@ const GSTVerificationSection: React.FC<{
                 </div>
               </div>
 
-              {/* Verify — GST / GSTIN / CIN */}
-              {!isVerified && verificationType !== 'LLPIN' && (
+              {/* Verify — GST / CIN / LLPIN */}
+              {!isVerified && (
                 <button
                   type="button"
                   onClick={handleVerifyClick}
@@ -1464,37 +1412,6 @@ const GSTVerificationSection: React.FC<{
                     "Verify"
                   )}
                 </button>
-              )}
-
-              {/* Connect DigiLocker — LLPIN */}
-              {!isVerified && verificationType === 'LLPIN' && (
-                <div className="flex flex-col items-end gap-2 shrink-0">
-                  <div id="digiboost-llpin-container"></div>
-                  <button
-                    type="button"
-                    onClick={handleLLPINDigiBoost}
-                    disabled={isInitializingDigiBoost || !localConsent}
-                    className={`px-6 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
-                      ${localConsent && !isInitializingDigiBoost
-                        ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-100'
-                        : 'bg-green-300 text-white cursor-not-allowed opacity-70'
-                      }`}
-                  >
-                    {isInitializingDigiBoost ? (
-                      <>
-                        <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
-                        Initializing...
-                      </>
-                    ) : llpinDigiVerified ? (
-                      <>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Connected
-                      </>
-                    ) : (
-                      'Connect DigiLocker'
-                    )}
-                  </button>
-                </div>
               )}
 
               {isVerified && (
