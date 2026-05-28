@@ -151,10 +151,10 @@ const FeaturedCompanies: React.FC = () => {
                       ) : null}
                       {!imgSrc && (
                         <div className="w-full h-full bg-gradient-to-br from-yellow-300 to-yellow-400 flex flex-col items-center justify-center gap-2 px-4">
-                          <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center">
-                            <span className="text-lg font-black text-gray-800 uppercase">{company.companyName?.[0] ?? '?'}</span>
-                          </div>
-                          <p className="text-sm font-bold text-gray-800 text-center uppercase leading-snug line-clamp-3 tracking-wide">
+                          <p className="text-2xl font-black text-gray-800 text-center uppercase leading-snug tracking-wide">
+                            {(company.companyName ?? '?').split(' ')[0]}
+                          </p>
+                          <p className="text-xs font-semibold text-gray-700 text-center uppercase tracking-widest opacity-70">
                             {company.companyName}
                           </p>
                         </div>

@@ -113,10 +113,11 @@ const CompaniesPage: React.FC = () => {
 
   // 7. Handle card click
   const handleCardClick = (company: Company) => {
+    const slug = (company as any).urlSlug || company.companyName.replace(/[^a-zA-Z0-9]/g, '');
     if (company.templateSelection === 'template-1') {
-      navigate(`/company/${company.companyName}`);
+      navigate(`/company/${slug}`);
     } else if (company.templateSelection === 'template-2') {
-      navigate(`/companies/${company.companyName}`);
+      navigate(`/companies/${slug}`);
     }
   };
 
@@ -149,10 +150,10 @@ const CompaniesPage: React.FC = () => {
             className="flex-col justify-center items-center w-full h-full bg-gradient-to-br from-yellow-300 to-yellow-400 px-4 gap-2"
             style={{ display: company.previewImage ? 'none' : 'flex' }}
           >
-            <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center mb-1">
-              <span className="text-lg font-black text-gray-800 uppercase">{company.companyName[0]}</span>
-            </div>
-            <p className="text-sm font-bold text-gray-800 text-center uppercase leading-snug line-clamp-3 tracking-wide">
+            <p className="text-2xl font-black text-gray-800 text-center uppercase leading-snug tracking-wide">
+              {company.companyName.split(' ')[0]}
+            </p>
+            <p className="text-xs font-semibold text-gray-700 text-center uppercase tracking-widest opacity-70">
               {company.companyName}
             </p>
           </div>
