@@ -35,6 +35,7 @@ const CompanyWebsite: React.FC = () => {
   const [isPublishing, setIsPublishing] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
   const [currentLogo, setCurrentLogo] = useState<string>("");
+  const [iframeKey, setIframeKey] = useState(0);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const popupRef = useRef<Window | null>(null);
   const logoInputRef = useRef<HTMLInputElement | null>(null);
@@ -94,7 +95,7 @@ const CompanyWebsite: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           publishedId: company.publishedId,
-          userId,
+          userId: company.userId,
           draftId: company.draftId,
           templateSelection: company.templateSelection,
           content: updatedContent,
@@ -102,6 +103,7 @@ const CompanyWebsite: React.FC = () => {
       });
 
       setCurrentLogo(imageUrl);
+      setIframeKey(k => k + 1);
       toast.success("Logo updated successfully!");
     } catch {
       toast.error("Failed to upload logo. Please try again.");
@@ -326,6 +328,7 @@ const CompanyWebsite: React.FC = () => {
           </a>
         </div>
         <iframe
+          key={iframeKey}
           src={previewUrl}
           title="Company Website Preview"
           className="w-full border-0"
