@@ -144,6 +144,12 @@ function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: string) {
         heading: { title: `${companyName} Portfolio`, description: `Showcasing our ${industry} expertise` },
         categories: ['All', 'Portfolio', 'Projects'],
         images: []
+      },
+      header: {
+        logoSrc: fd.companyLogoUrl || '',
+        logoUrl: fd.companyLogoUrl || '',
+        companyName,
+        navItems: ['Home', 'About', 'Services', 'Products', 'Contact']
       }
     }
   };
