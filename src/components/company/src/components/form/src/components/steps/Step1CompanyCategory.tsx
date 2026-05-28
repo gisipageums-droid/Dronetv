@@ -1083,11 +1083,10 @@ const GSTVerificationSection: React.FC<{
 }) => {
     const [localConsent, setLocalConsent] = useState(false);
     const [showConsentDetails, setShowConsentDetails] = useState(false);
-    const [verificationType, setVerificationType] = useState('GSTIN');
+    const [verificationType, setVerificationType] = useState('GST');
     const [isInitializingDigiBoost, setIsInitializingDigiBoost] = useState(false);
     const [llpinDigiVerified, setLlpinDigiVerified] = useState(false);
     const [isVerifyingCIN, setIsVerifyingCIN] = useState(false);
-    const [isVerifyingGSTIN, setIsVerifyingGSTIN] = useState(false);
 
     const formatGSTNumber = (value: string) => {
       // Remove all non-alphanumeric characters
@@ -1227,50 +1226,11 @@ const GSTVerificationSection: React.FC<{
       }
     };
 
-    const handleVerifyGSTBasic = async () => {
-      if (!gstNumber) return;
-      setIsVerifyingGSTIN(true);
-      try {
-        const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
-        const response = await axios.post(
-          'https://kyc-api.surepass.io/api/v1/corporate/gstin',
-          { id_number: gstNumber },
-          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json', Accept: 'application/json' } }
-        );
-        if (response.data?.success && response.data?.data) {
-          const d = response.data.data;
-          const stateMatch = (d.state_jurisdiction || '').match(/State\s*-\s*([^,]+)/);
-          const state = stateMatch ? stateMatch[1].trim() : '';
-          const pincodeMatch = (d.address || '').match(/\b(\d{6})\b/);
-          const pincode = pincodeMatch ? pincodeMatch[1] : '';
-          const mappedData = {
-            companyName: d.business_name || '',
-            legalName: d.legal_name || '',
-            gstNumber: d.gstin || gstNumber,
-            companyAddress: d.address || '',
-            state,
-            pincode,
-            registrationDate: d.date_of_registration || '',
-            businessType: d.taxpayer_type || '',
-            businessEntityType: d.constitution_of_business || '',
-            natureOfBusiness: (d.nature_bus_activities || []).join(', '),
-            cin: '',
-            pan: d.pan_number || ''
-          };
-          onVerifySuccess(mappedData);
-          if (d.address) onAddressChange(d.address);
-        }
-      } catch {
-        // silent
-      } finally {
-        setIsVerifyingGSTIN(false);
-      }
-    };
 
     const isValidFormat = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gstNumber);
     const isValidLength = gstNumber.length === 15;
     const isValidGST = isValidFormat && isValidLength;
-    const isValidInput = (verificationType === 'GST' || verificationType === 'GSTIN') ? isValidGST
+    const isValidInput = verificationType === 'GST' ? isValidGST
       : verificationType === 'CIN' ? gstNumber.length >= 21
       : gstNumber.length >= 3;
 
@@ -1299,8 +1259,6 @@ const GSTVerificationSection: React.FC<{
     const handleVerifyClick = () => {
       if (verificationType === 'CIN') {
         handleVerifyCIN();
-      } else if (verificationType === 'GSTIN') {
-        handleVerifyGSTBasic();
       } else if (verificationType === 'GST' && isValidFormat) {
         onVerifyGST();
       }
@@ -1417,7 +1375,6 @@ const GSTVerificationSection: React.FC<{
               >
                 <option value="">Select verification type</option>
                 <option value="GST">GST</option>
-                <option value="GSTIN">GSTIN</option>
                 <option value="CIN">CIN</option>
                 <option value="LLPIN">LLPIN</option>
               </select>
@@ -1433,16 +1390,16 @@ const GSTVerificationSection: React.FC<{
                   type="text"
                   value={gstNumber}
                   onChange={(e) => handleChange(e.target.value)}
-                  placeholder={(verificationType === 'GST' || verificationType === 'GSTIN') ? '22AAAAA0000A1Z5' : 'U12345MH2020PTC123456'}
+                  placeholder={verificationType === 'GST' ? '22AAAAA0000A1Z5' : 'U12345MH2020PTC123456'}
                   disabled={isVerified}
                   className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 ${isVerified
                     ? 'border-green-300 bg-green-50'
                     : 'border-blue-300 bg-white focus:ring-blue-400 focus:border-blue-400'
                     }`}
-                  maxLength={(verificationType === 'GST' || verificationType === 'GSTIN') ? 15 : 21}
+                  maxLength={verificationType === 'GST' ? 15 : 21}
                 />
               </div>
-              {!isVerified && (verificationType === 'GST' || verificationType === 'GSTIN') && !isValidFormat && gstNumber.length > 0 && (
+              {!isVerified && verificationType === 'GST' && !isValidFormat && gstNumber.length > 0 && (
                 <p className="text-[10px] text-red-500">Invalid GST format</p>
               )}
             </div>
@@ -1482,14 +1439,14 @@ const GSTVerificationSection: React.FC<{
                 <button
                   type="button"
                   onClick={handleVerifyClick}
-                  disabled={isVerifying || isVerifyingCIN || isVerifyingGSTIN || !isValidInput || !localConsent}
+                  disabled={isVerifying || isVerifyingCIN || !isValidInput || !localConsent}
                   className={`px-8 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
-                    ${isValidInput && localConsent && !isVerifying && !isVerifyingCIN && !isVerifyingGSTIN
+                    ${isValidInput && localConsent && !isVerifying && !isVerifyingCIN
                       ? 'bg-[#4F9CF9] text-white hover:bg-blue-600 shadow-lg shadow-blue-100'
                       : 'bg-blue-300 text-white cursor-not-allowed opacity-70'
                     }`}
                 >
-                  {(isVerifying || isVerifyingCIN || isVerifyingGSTIN) ? (
+                  {(isVerifying || isVerifyingCIN) ? (
                     <>
                       <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
                       Verifying...
