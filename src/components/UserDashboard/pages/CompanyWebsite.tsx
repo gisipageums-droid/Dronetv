@@ -87,7 +87,7 @@ const CompanyWebsite: React.FC = () => {
       const updatedContent = {
         ...content,
         company: { ...content.company, logo: imageUrl },
-        header: { ...content.header, logoSrc: imageUrl },
+        header: { ...content.header, logoUrl: imageUrl },
       };
       await fetch("https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update", {
         method: "PUT",
