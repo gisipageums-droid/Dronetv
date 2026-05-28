@@ -252,10 +252,10 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
             <motion.button
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/companies")}
               className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
             >
-              Go to Home
+              Go to Companies List
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.9 }}
