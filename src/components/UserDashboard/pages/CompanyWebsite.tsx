@@ -79,7 +79,7 @@ const CompanyWebsite: React.FC = () => {
       // 2. Fetch current company content
       const detailsRes = await fetch(
         `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${company.publishedId}`,
-        { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
+        { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
       );
       const details = await detailsRes.json();
       const content = details?.content || {};
