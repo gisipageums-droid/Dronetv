@@ -1405,7 +1405,16 @@ const GSTVerificationSection: React.FC<{
             </div>
             )}
 
-            {/* LLPIN — DigiLocker button directly, no checkbox */}
+            {/* LLPIN — info hint */}
+            {verificationType === 'LLPIN' && !isVerified && (
+              <div className="flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl mt-2">
+                <span className="text-amber-500 text-base leading-none mt-0.5">ℹ️</span>
+                <p className="text-xs text-amber-800 leading-relaxed">
+                  To verify your LLPIN, please <strong>check the consent checkbox</strong> below and then click <strong>"Connect DigiLocker"</strong> to verify your identity via Aadhaar through DigiLocker.
+                </p>
+              </div>
+            )}
+
             {/* Consent + Action — all types */}
             {verificationType && <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-200 gap-4 mt-4 mb-2 transition-all duration-300">
               <div className="flex items-start space-x-3">
