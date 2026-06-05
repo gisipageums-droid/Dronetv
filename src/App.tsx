@@ -140,7 +140,7 @@ const AppContent = () => {
   return (
     <div className="min-h-screen">
       <CombinedProviders>
-        {!hideNavigation && <Navigation />
+        {!hideNavigation && <Navigation />}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/videos" element={<VideosPage />} />
