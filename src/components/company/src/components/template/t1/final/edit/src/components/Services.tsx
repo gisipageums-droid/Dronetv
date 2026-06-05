@@ -18,6 +18,55 @@ import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
 
+function withDefaultServices(data: any) {
+  if (data?.services?.length > 0) return data;
+  return {
+    heading: {
+      head: data?.heading?.head || "Our Services",
+      desc: data?.heading?.desc || "Professional services tailored to your needs.",
+    },
+    categories: data?.categories?.length ? data.categories : ["All", "Core", "Support"],
+    services: [
+      {
+        title: "Consultation & Advisory",
+        category: "Core",
+        image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80",
+        description: "Expert guidance tailored to your specific business needs and goals.",
+        features: ["1-on-1 sessions", "Strategic roadmap", "Industry insights"],
+        detailedDescription: "Our advisory team works closely with you to identify opportunities and craft solutions that drive measurable results.",
+        benefits: ["Clarity on direction", "Reduced business risk", "Faster decision-making"],
+        process: ["Initial assessment", "Strategy session", "Action plan delivery"],
+        pricing: "Contact us",
+        timeline: "1–2 weeks",
+      },
+      {
+        title: "Project Execution",
+        category: "Core",
+        image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80",
+        description: "End-to-end delivery from planning through to successful completion.",
+        features: ["Dedicated team", "Progress tracking", "Quality assurance"],
+        detailedDescription: "We take full ownership of project delivery so you can focus on what matters most — growing your business.",
+        benefits: ["On-time delivery", "Transparent reporting", "Cost control"],
+        process: ["Kick-off meeting", "Execution phase", "Review & handover"],
+        pricing: "Custom quote",
+        timeline: "4–12 weeks",
+      },
+      {
+        title: "Ongoing Support",
+        category: "Support",
+        image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80",
+        description: "Reliable post-delivery support, maintenance, and continuous improvement.",
+        features: ["Priority response", "Regular check-ins", "Issue resolution"],
+        detailedDescription: "Our support packages ensure your operations run smoothly long after the initial engagement.",
+        benefits: ["Peace of mind", "Rapid issue resolution", "Continuous improvement"],
+        process: ["Onboarding", "Ongoing monitoring", "Monthly review"],
+        pricing: "Monthly retainer",
+        timeline: "Ongoing",
+      },
+    ],
+  };
+}
+
 export default function Services({
   serviceData,
   onStateChange,
@@ -46,8 +95,8 @@ export default function Services({
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   // Auto-save state
-  const [servicesSection, setServicesSection] = useState(serviceData);
-  const [tempServicesSection, setTempServicesSection] = useState(serviceData);
+  const [servicesSection, setServicesSection] = useState(() => withDefaultServices(serviceData));
+  const [tempServicesSection, setTempServicesSection] = useState(() => withDefaultServices(serviceData));
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -64,8 +113,9 @@ export default function Services({
   // Update content when serviceData changes
   useEffect(() => {
     if (serviceData) {
-      setServicesSection(serviceData);
-      setTempServicesSection(serviceData);
+      const filled = withDefaultServices(serviceData);
+      setServicesSection(filled);
+      setTempServicesSection(filled);
     }
   }, [serviceData]);
 

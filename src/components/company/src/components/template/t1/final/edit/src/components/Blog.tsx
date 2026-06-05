@@ -271,36 +271,58 @@ export default function Blog({
   publishedId?: string;
   templateSelection?: string;
 }) {
+  const fallbackPosts: BlogPost[] = [
+    {
+      id: 1,
+      title: "How We Deliver Excellence on Every Project",
+      excerpt: "A look at our process, values, and commitment to quality that sets us apart from the rest.",
+      content: "Excellence isn't a one-time achievement — it's a consistent standard we uphold across every project and every client interaction. From the first meeting to the final delivery, our team follows a structured process that ensures nothing falls through the cracks.",
+      image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&q=80",
+      category: "Company", date: "Jan 15, 2025", author: "Team", readTime: "3 min read",
+      outline: ["Our process", "Quality standards", "Client focus"], keywords: ["quality", "excellence", "process"],
+    },
+    {
+      id: 2,
+      title: "Industry Trends Every Business Owner Should Know",
+      excerpt: "Key developments shaping the market and how forward-thinking businesses are staying ahead.",
+      content: "Staying informed about industry trends is no longer optional for businesses that want to grow. This article breaks down the most significant shifts happening right now and what they mean for your business strategy.",
+      image: "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=800&q=80",
+      category: "Insights", date: "Feb 10, 2025", author: "Team", readTime: "4 min read",
+      outline: ["Top trends", "Business impact", "How to prepare"], keywords: ["trends", "industry", "growth"],
+    },
+    {
+      id: 3,
+      title: "Building Long-Term Client Relationships That Last",
+      excerpt: "Lessons from years of successful partnerships — trust, communication, and shared goals.",
+      content: "The best business relationships are built on more than contracts. Trust, transparency, and a genuine commitment to each other's success are what turn a one-time engagement into a lasting partnership.",
+      image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80",
+      category: "Tips", date: "Mar 5, 2025", author: "Team", readTime: "3 min read",
+      outline: ["Building trust", "Communication", "Long-term value"], keywords: ["partnership", "clients", "relationships"],
+    },
+  ];
+
   // Extract data from blogData prop or use defaults
+  const sourcePosts = blogData?.posts?.length > 0 ? blogData.posts : fallbackPosts;
   const defaultContent: BlogContent = {
     header: {
       title: blogData?.header?.title || "Latest Blog Posts",
       desc: blogData?.header?.desc || "Stay updated with our latest insights and news",
     },
-    posts:
-      blogData?.posts?.map((post: any, index: number) => ({
-        id: post.id || index + 1,
-        title: post.title || `Blog Post ${index + 1}`,
-        excerpt: post.excerpt || "This is a short excerpt about the blog post...",
-        content: post.content || "",
-        image: post.image || [blog1, blog2, blog3][index % 3],
-        category: post.category || "General",
-        date: post.date
-          ? new Date(post.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })
-          : new Date().toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          }),
-        author: post.author || "Admin",
-        readTime: post.readTime || "5 min read",
-        outline: post.outline || [],
-        keywords: post.keywords || [],
-      })) || [],
+    posts: sourcePosts.map((post: any, index: number) => ({
+      id: post.id || index + 1,
+      title: post.title || `Blog Post ${index + 1}`,
+      excerpt: post.excerpt || "This is a short excerpt about the blog post...",
+      content: post.content || "",
+      image: post.image || [blog1, blog2, blog3][index % 3],
+      category: post.category || "General",
+      date: post.date
+        ? new Date(post.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+        : new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+      author: post.author || "Admin",
+      readTime: post.readTime || "5 min read",
+      outline: post.outline || [],
+      keywords: post.keywords || [],
+    })),
   };
 
   const [content, setContent] = useState<BlogContent>(defaultContent);
