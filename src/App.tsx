@@ -90,6 +90,7 @@ import Event from "./components/UserDashboard/pages/Event";
 import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
 import ContactedPeople from "./components/UserDashboard/pages/ContactedPeople";
 import CompanyLeads from "./components/UserDashboard/components/common/CompanyLeads";
+import CompanyLeadsPage from "./components/UserDashboard/pages/CompanyLeadsPage";
 import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
 import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
 import AdminCompanyForm from "./components/AdminCompanyForm";
@@ -401,6 +402,7 @@ const AppContent = () => {
               </UserDashboardLayout>
             }
           />
+          <Route path="/user-leads" element={<CompanyLeadsPage />} />
           <Route
             path="/user-professional/leads/:ProfessionalName/:professionalId"
             element={

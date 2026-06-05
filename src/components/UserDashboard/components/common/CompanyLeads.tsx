@@ -33,12 +33,17 @@ interface ChatMessage {
   sender?: "user" | "lead";
 }
 
-const LeadsPage: React.FC = () => {
+interface LeadsPageProps {
+  overrideCompanyName?: string;
+  overridePublishedId?: string;
+}
+
+const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePublishedId }) => {
   const { user } = useUserAuth();
   const userId = user?.email || user?.userData?.email;
-  const companyName = useParams().companyName || "";
+  const companyName = overrideCompanyName || useParams().companyName || "";
   const location = useLocation();
-  const publishedId = location.state?.publishedId;
+  const publishedId = overridePublishedId || location.state?.publishedId;
 
   const [leads, setLeads] = useState<Lead[]>([]);
   const [totalTokens, setTotalTokens] = useState(0);
