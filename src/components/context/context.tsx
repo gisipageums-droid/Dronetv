@@ -8,7 +8,7 @@ import React, {
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, X } from "lucide-react";
 
 // User Authentication Types and Context
 interface User {
@@ -192,6 +192,7 @@ interface TemplateContextType {
   publishProfessionalTemplate: () => void;
   publishEventsTemplate: () => void;
   navModel: boolean;
+  setNavModel: React.Dispatch<React.SetStateAction<boolean>>;
   navigatemodel: () => JSX.Element;
   getAIgenData: (
     userId: string,
@@ -242,6 +243,12 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
                 Successfully Published!
               </h3>
             </div>
+            <button
+              onClick={() => setNavModel(false)}
+              className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <X size={20} className="text-gray-500" />
+            </button>
           </div>
           <div className="mb-6">
             <p className="text-gray-600">
@@ -544,6 +551,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         finaleDataReview,
         editPublishTemplate,
         navModel,
+        setNavModel,
         navigatemodel,
         getAIgenData,
         publishEventsTemplate,

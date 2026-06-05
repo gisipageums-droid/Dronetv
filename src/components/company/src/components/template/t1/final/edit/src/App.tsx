@@ -208,7 +208,12 @@ function fillSectionDefaults(content: any, companyName: string) {
 }
 
 export default function App() {
-  const { finaleDataReview, setFinalTemplate, setFinaleDataReview } = useTemplate();
+  const { finaleDataReview, setFinalTemplate, setFinaleDataReview, setNavModel } = useTemplate();
+
+  // Reset post-publish modal on edit page mount
+  useEffect(() => {
+    setNavModel(false);
+  }, []);
 
   // console.log("finaleDataReview",finaleDataReview.content.company.name)
   const [componentStates, setComponentStates] = useState({});
