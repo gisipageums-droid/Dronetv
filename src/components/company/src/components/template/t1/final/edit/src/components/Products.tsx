@@ -65,12 +65,39 @@ export default function EditableProducts({
   const MIN_CHANGES_FOR_AUTO_SAVE = 1;
 
   // Extract data from productData prop or use defaults
+  const dummyProducts = [
+    {
+      id: 1, image: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=600&q=80",
+      title: "Starter Package", description: "Everything you need to get started quickly and confidently.",
+      detailedDescription: "Our Starter Package includes all core features to help your business launch with confidence. Ideal for small teams and new ventures.",
+      category: "Essential", features: ["Core features included", "Email support", "1 user licence"],
+      isPopular: true, categoryColor: "bg-blue-100 text-blue-800",
+      pricing: "₹999/month", timeline: "Immediate access",
+    },
+    {
+      id: 2, image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&q=80",
+      title: "Professional Plan", description: "Advanced capabilities for growing businesses that need more.",
+      detailedDescription: "The Professional Plan unlocks advanced features, priority support, and team collaboration tools — everything a growing business demands.",
+      category: "Professional", features: ["All Starter features", "Priority support", "5 user licences", "Analytics dashboard"],
+      isPopular: false, categoryColor: "bg-purple-100 text-purple-800",
+      pricing: "₹2,499/month", timeline: "Immediate access",
+    },
+    {
+      id: 3, image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80",
+      title: "Enterprise Solution", description: "Fully tailored for large-scale operations and enterprise needs.",
+      detailedDescription: "Our Enterprise Solution is built for scale — unlimited users, dedicated account management, custom integrations, and a guaranteed SLA.",
+      category: "Enterprise", features: ["Unlimited users", "Dedicated account manager", "Custom integrations", "SLA guarantee"],
+      isPopular: false, categoryColor: "bg-orange-100 text-orange-800",
+      pricing: "Custom pricing", timeline: "Onboarding in 2 weeks",
+    },
+  ];
+
   const defaultContent = useMemo(() => {
     if (productData) {
-      // Get unique categories from products
+      const sourceProducts = productData.products?.length > 0 ? productData.products : dummyProducts;
       const categories = [
         "All",
-        ...new Set(productData.products.map((p) => p.category)),
+        ...new Set(sourceProducts.map((p: any) => p.category)),
       ];
 
       return {
@@ -78,7 +105,7 @@ export default function EditableProducts({
         sectionSubtitle: productData.sectionSubtitle || "Our Products",
         sectionDescription: productData.sectionDescription || "Discover our suite of innovative products.",
         trustText: productData.trustText || "",
-        products: productData.products.map((product, index) => ({
+        products: sourceProducts.map((product: any, index: number) => ({
           id: index + 1,
           image: product.image,
           title: product.title,
@@ -102,8 +129,8 @@ export default function EditableProducts({
       sectionSubtitle: "Our Products",
       sectionDescription: "Discover our suite of innovative products.",
       trustText: "",
-      products: [],
-      categories: ["All"],
+      products: dummyProducts,
+      categories: ["All", "Essential", "Professional", "Enterprise"],
       benefits: [],
     };
   }, [productData]);

@@ -65,10 +65,21 @@ export default function EditableTestimonials({
   const AUTO_SAVE_DELAY = 2000; // 2 seconds delay for auto-save
   const MIN_CHANGES_FOR_AUTO_SAVE = 1; // Minimum changes before auto-save
 
-  const initialData: TestimonialsContent = content ?? {
-    headline: { title: "", description: "" },
-    testimonials: [],
-  };
+  const dummyTestimonials: Testimonial[] = [
+    { name: "Ravi Sharma", role: "Business Owner", quote: "Absolutely professional team. They delivered beyond our expectations and kept us informed every step of the way.", rating: 5, gender: "male" },
+    { name: "Priya Nair", role: "Operations Manager", quote: "The quality of service was outstanding. We saw real results within weeks of engaging with them. Highly recommend.", rating: 5, gender: "female" },
+    { name: "Arjun Mehta", role: "Startup Founder", quote: "Reliable, transparent, and genuinely committed to client success. We've continued working with them for over a year now.", rating: 4, gender: "male" },
+  ];
+
+  const initialData: TestimonialsContent = content
+    ? {
+        ...content,
+        testimonials: content.testimonials?.length > 0 ? content.testimonials : dummyTestimonials,
+      }
+    : {
+        headline: { title: "What Our Clients Say", description: "Real feedback from people who work with us." },
+        testimonials: dummyTestimonials,
+      };
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -106,8 +117,12 @@ export default function EditableTestimonials({
 
   useEffect(() => {
     if (content) {
-      setTestimonialsData(content);
-      setTempData(content);
+      const filled = {
+        ...content,
+        testimonials: content.testimonials?.length > 0 ? content.testimonials : dummyTestimonials,
+      };
+      setTestimonialsData(filled);
+      setTempData(filled);
       setAutoSaveEnabled(true);
     }
   }, [content]);
