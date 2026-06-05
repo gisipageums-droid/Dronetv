@@ -2351,8 +2351,16 @@ export default function EditableGallerySection({
   const pendingImagesRef = useRef({});
   const isEditingRef = useRef(isEditing);
 
-  // Default galleryData structure matching Gallery2.tsx
-  const defaultgalleryData = galleryData;
+  const GALLERY_FALLBACK = {
+    heading: { title: "Our Gallery", description: "A showcase of our work and achievements." },
+    images: [
+      { id: 1, url: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&q=80", title: "Our Work", category: "Portfolio", description: "Excellence in every project.", isPopular: true },
+      { id: 2, url: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=800&q=80", title: "Our Office", category: "Workspace", description: "Where ideas come to life.", isPopular: false },
+      { id: 3, url: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&q=80", title: "Our Team", category: "Team", description: "Dedicated professionals.", isPopular: false },
+    ],
+  };
+
+  const defaultgalleryData = galleryData?.images?.length ? galleryData : GALLERY_FALLBACK;
 
   // Consolidated state
   const [galleryState, setGalleryState] = useState(defaultgalleryData);
@@ -2372,11 +2380,12 @@ export default function EditableGallerySection({
     }
   }, [galleryState, onStateChange]);
 
-  // Initialize with galleryData if provided
+  // Initialize with galleryData if provided (skip reset when user is editing)
   useEffect(() => {
-    if (galleryData) {
-      setGalleryState(galleryData);
-      setTempGalleryState(galleryData);
+    if (!isEditing) {
+      const data = galleryData?.images?.length ? galleryData : GALLERY_FALLBACK;
+      setGalleryState(data);
+      setTempGalleryState(data);
       setDataLoaded(true);
     }
   }, [galleryData]);

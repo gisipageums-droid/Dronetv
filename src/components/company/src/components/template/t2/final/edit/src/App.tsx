@@ -11,7 +11,7 @@ import Footer from "./components/Footer";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useTemplate } from "../../../../../../../../context/context";
 import { useParams } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import Publish from "./components/Publish";
 import Profile from "./components/Profile";
 import Gallery from "./components/Gallery";
@@ -237,6 +237,12 @@ export default function App() {
   const contactStateChange = useCallback((s) => collectComponentState("contact", s), [collectComponentState]);
   const footerStateChange = useCallback((s) => collectComponentState("footer", s), [collectComponentState]);
 
+  // ✅ Memoize content so prop references stay stable during editing (prevents section state resets)
+  const content = useMemo(
+    () => fillSectionDefaults(finaleDataReview?.content, finaleDataReview?.content?.company?.name),
+    [finaleDataReview]
+  );
+
   // ✅ Return happens last
   if (isLoading || !finaleDataReview?.content) {
     return (
@@ -264,9 +270,6 @@ export default function App() {
       </div>
     );
   }
-
-  // ✅ Fill empty sections with dummy data before rendering
-  const content = fillSectionDefaults(finaleDataReview.content, finaleDataReview.content?.company?.name);
 
   // ✅ Stable render path
   return (

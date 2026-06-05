@@ -10,7 +10,7 @@ const itemVariants = {
 };
 
 // Default placeholder image or use an empty string
-const DEFAULT_PLACEHOLDER_IMAGE = "/placeholder-company-logo.png";
+const DEFAULT_PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='60'%3E%3Crect width='150' height='60' rx='6' fill='%23f3f4f6'/%3E%3Ctext x='75' y='38' font-family='sans-serif' font-size='13' fill='%239ca3af' text-anchor='middle'%3ELogo%3C/text%3E%3C/svg%3E";
 
 interface Company {
   id: number;

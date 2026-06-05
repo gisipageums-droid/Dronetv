@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTemplate } from "../../../../../../../../context/context";
 import About from "./components/About";
 import Blog from "./components/Blog";
@@ -307,6 +307,12 @@ export default function App() {
   const contactStateChange = useCallback((state) => collectComponentState("contact", state), [collectComponentState]);
   const footerStateChange = useCallback((state) => collectComponentState("footer", state), [collectComponentState]);
 
+  // ✅ Memoize content so prop references stay stable during editing (prevents section state resets)
+  const content = useMemo(
+    () => fillSectionDefaults(finaleDataReview?.content, finaleDataReview?.content?.company?.name),
+    [finaleDataReview]
+  );
+
   // ✅ Conditional rendering after all hooks
   if (isLoading || !finaleDataReview?.content) {
     return (
@@ -323,9 +329,6 @@ export default function App() {
       </div>
     );
   }
-
-  // ✅ Final render — fill empty sections with dummy data before rendering
-  const content = fillSectionDefaults(finaleDataReview.content, finaleDataReview.content?.company?.name);
 
   return (
     <div>
