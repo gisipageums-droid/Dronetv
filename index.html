@@ -11,9 +11,25 @@
   <link rel="apple-touch-icon" href="/images/image1.png" />
   <link rel="shortcut icon" href="/images/image1.png" />
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,hi,bn,te,ta,kn,or,as,ne,es,fr,zh-CN',
+        autoDisplay: false,
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <style>
+    .goog-te-banner-frame, .skiptranslate { display: none !important; }
+    body { top: 0 !important; }
+    .goog-te-gadget { display: none !important; }
+  </style>
 </head>
 
 <body>
+  <div id="google_translate_element" style="display:none"></div>
   <div id="root" class="bg-gray-50"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>

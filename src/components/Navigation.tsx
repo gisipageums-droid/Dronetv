@@ -47,6 +47,32 @@ const Navigation = () => {
   }, []);
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [selectedLang, setSelectedLang] = useState("English");
+
+  const languages = [
+    { label: "English",   code: "en" },
+    { label: "Hindi",     code: "hi" },
+    { label: "Bengali",   code: "bn" },
+    { label: "Telugu",    code: "te" },
+    { label: "Tamil",     code: "ta" },
+    { label: "Kannada",   code: "kn" },
+    { label: "Odia",      code: "or" },
+    { label: "Assamese",  code: "as" },
+    { label: "Nepali",    code: "ne" },
+    { label: "Spanish",   code: "es" },
+    { label: "French",    code: "fr" },
+    { label: "Chinese",   code: "zh-CN" },
+  ];
+
+  const handleLanguageChange = (label: string, code: string) => {
+    setSelectedLang(label);
+    setIsLanguageOpen(false);
+    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
+    if (select) {
+      select.value = code;
+      select.dispatchEvent(new Event("change"));
+    }
+  };
 
   const handleNavigation = (path: string) => {
     setIsMenuOpen(false);
@@ -230,31 +256,19 @@ const Navigation = () => {
                   alt="Language"
                   className="w-6 h-6 rounded-full"
                 />
-                <span className="text-sm">Language</span>
+                <span className="text-sm">{selectedLang}</span>
               </button>
               {isLanguageOpen && (
-                <div className="absolute right-0 z-50 mt-2 bg-yellow-300 border-2 border-yellow-400 rounded-lg shadow-lg">
+                <div className="absolute right-0 z-50 mt-2 bg-yellow-300 border-2 border-yellow-400 rounded-lg shadow-lg max-h-72 overflow-y-auto">
                   <div className="p-2">
                     <ul className="text-sm text-black">
-                      {[
-                        "English",
-                        "Hindi",
-                        "Bengali",
-                        "Telugu",
-                        "Tamil",
-                        "Kannada",
-                        "Odia",
-                        "Assamese",
-                        "Nepali",
-                        "Spanish",
-                        "French",
-                        "Chinese",
-                      ].map((lang) => (
+                      {languages.map(({ label, code }) => (
                         <li
-                          key={lang}
-                          className="px-4 py-2 rounded cursor-pointer hover:bg-yellow-200"
+                          key={code}
+                          onClick={() => handleLanguageChange(label, code)}
+                          className={`px-4 py-2 rounded cursor-pointer hover:bg-yellow-200 ${selectedLang === label ? "font-semibold bg-yellow-100" : ""}`}
                         >
-                          {lang}
+                          {label}
                         </li>
                       ))}
                     </ul>
