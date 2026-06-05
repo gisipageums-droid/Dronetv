@@ -252,25 +252,25 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           </div>
           <div className="mb-6">
             <p className="text-gray-600">
-              Your company listing is now live! Your login credentials have been sent to your registered email address.
+              Your company listing is now live! Your login credentials have been sent to your registered email address. You can log in to manage your listing anytime.
             </p>
           </div>
           <div className="flex gap-3 justify-end">
             <motion.button
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
-              onClick={() => navigate("/listed-companies")}
+              onClick={() => { setNavModel(false); navigate("/listed-companies"); }}
               className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
             >
-              Go to Companies List
+              View Companies
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
-              onClick={() => navigate("/login")}
+              onClick={() => { setNavModel(false); navigate("/login"); }}
               className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
             >
-              Go to Login
+              Log In
             </motion.button>
           </div>
         </motion.div>
@@ -358,7 +358,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           setNavModel(true);
         }
       }else{
-          navigate("/listed-companies");
+          navigate("/user-website");
           setNavModel(false);
         }
 
@@ -408,7 +408,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           setNavModel(true);
         }
       }else{
-          navigate("/listed-companies");
+          navigate("/user-website");
           setNavModel(false);
         }
       setFinaleDataReview({});
