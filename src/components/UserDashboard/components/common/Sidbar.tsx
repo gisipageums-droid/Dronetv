@@ -12,6 +12,7 @@ import {
   Brain,
   LogOut,
   Globe,
+  FileText,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
@@ -22,6 +23,7 @@ const Sidebar: React.FC = () => {
 const navLinks = [
     { icon: User, label: "Dashboard", href: "/user-dashboard" },
     { icon: Building2, label: "Companies", href: "/user-companies" },
+    { icon: FileText, label: "Leads", href: "/user-leads" },
     { icon: Globe, label: "Website", href: "/user-website" },
     {
       icon: Users,
