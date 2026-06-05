@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   Shield, CheckCircle, AlertCircle, Loader2, ExternalLink,
-  RefreshCw, Globe, Plus, BadgeCheck, Upload,
+  RefreshCw, Globe, Plus, BadgeCheck, Upload, Edit, X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useUserAuth } from "../../context/context";
+import { useUserAuth, useTemplate } from "../../context/context";
 import { toast } from "sonner";
 import axios from "axios";
+import { AnimatePresence, motion } from "motion/react";
 
 const SUREPASS_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTY0NzYxNywianRpIjoiNTNiZjhhODMtMDZlZS00Y2QyLTgxNDYtZDQ0MjAyN2M1NmE5IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU2NDc2MTcsImV4cCI6MjQwNjM2NzYxNywiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.GgTCyK0v20-XH3eq39Y31La05PBX7cBonsq7grngi1M";
@@ -33,6 +34,7 @@ const CompanyWebsite: React.FC = () => {
   const [digiUrl, setDigiUrl] = useState("");
   const [digiClientId, setDigiClientId] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
   const [currentLogo, setCurrentLogo] = useState<string>("");
   const [iframeKey, setIframeKey] = useState(0);
@@ -209,6 +211,16 @@ const CompanyWebsite: React.FC = () => {
     }
   };
 
+  const handleConfirmEdit = () => {
+    if (!company) return;
+    setShowEditModal(false);
+    if (company.templateSelection === "template-2") {
+      navigate(`/user/companies/edit/2/${company.publishedId}/${company.userId}`);
+    } else {
+      navigate(`/user/companies/edit/1/${company.publishedId}/${company.userId}`);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-amber-50 flex items-center justify-center">
@@ -239,6 +251,57 @@ const CompanyWebsite: React.FC = () => {
   return (
     <div className="min-h-screen bg-amber-50 p-6 flex flex-col gap-6">
 
+      {/* Edit Confirmation Modal */}
+      <AnimatePresence>
+        {showEditModal && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowEditModal(false)}
+          >
+            <motion.div
+              className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Edit className="text-amber-600 w-6 h-6" />
+                  <h3 className="text-xl font-semibold text-gray-900">Edit Website</h3>
+                </div>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
+              <p className="text-gray-600 mb-6">
+                You'll be redirected to the editor where you can update your website content and publish the changes.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmEdit}
+                  className="px-4 py-2 text-white font-medium rounded-lg bg-amber-600 hover:bg-amber-700 transition-colors shadow-md"
+                >
+                  Edit Website
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -248,6 +311,13 @@ const CompanyWebsite: React.FC = () => {
           </div>
           <p className="text-sm text-gray-500 mt-0.5">{company.location}</p>
         </div>
+        <button
+          onClick={() => setShowEditModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors shadow-sm"
+        >
+          <Edit className="w-4 h-4" />
+          Edit Website
+        </button>
       </div>
 
       {/* Status Banner */}
