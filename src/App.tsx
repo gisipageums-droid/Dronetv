@@ -128,11 +128,19 @@ const HomePage = () => (
 const AppContent = () => {
   const location = useLocation();
   const hideFooter = location.pathname.startsWith("/company");
+  const hideNavigation =
+    location.pathname.startsWith("/user/companies/edit") ||
+    location.pathname.startsWith("/admin/companies/edit") ||
+    location.pathname.startsWith("/user/professionals/edit") ||
+    location.pathname.startsWith("/admin/professionals/edit") ||
+    location.pathname.startsWith("/edit/template") ||
+    location.pathname.startsWith("/professional/edit") ||
+    location.pathname.startsWith("/edit/event");
 
   return (
     <div className="min-h-screen">
       <CombinedProviders>
-        <Navigation />
+        {!hideNavigation && <Navigation />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/videos" element={<VideosPage />} />
