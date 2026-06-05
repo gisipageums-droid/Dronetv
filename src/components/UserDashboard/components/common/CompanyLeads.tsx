@@ -64,13 +64,10 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
   const fetchUserTokens = useCallback(async () => {
     if (!userId) return;
     try {
-      console.log("Fetching tokens for userId:", userId);
       const res = await fetch(
         `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile?userId=${userId}`
       );
-      console.log("Tokens API response status:", res.status);
       const data = await res.json();
-      console.log("Tokens API response data:", data);
       setTotalTokens(data.profile?.tokenBalance || 0);
     } catch (error) {
       console.error("Error fetching user tokens:", error);
@@ -80,22 +77,12 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
   const fetchLeads = useCallback(async () => {
     if (!userId) return;
     try {
-      console.log("Calling leads API with:", { userId, publishedId });
-
-      // Try with publishedId first, if not available, try without it
       let apiUrl = `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all`;
-      if (publishedId) {
-        apiUrl += `&publishedId=${publishedId}`;
-      }
-
-      console.log("Final API URL:", apiUrl);
+      if (publishedId) apiUrl += `&publishedId=${publishedId}`;
       const res = await fetch(apiUrl);
-      console.log("Leads API response status:", res.status);
       const data = await res.json();
-      console.log("Leads API response data:", data);
-
       if (data.success && Array.isArray(data.leads)) {
-        const formattedLeads = data.leads.map((lead: any) => ({
+        setLeads(data.leads.map((lead: any) => ({
           leadId: lead.leadId,
           company: lead.company,
           category: lead.category,
@@ -109,11 +96,8 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
           companyName: lead.companyName,
           submittedAt: lead.submittedAt,
           viewedAt: lead.viewedAt,
-        }));
-        console.log("Formatted leads:", formattedLeads);
-        setLeads(formattedLeads);
+        })));
       } else {
-        console.log("No leads found or invalid response format");
         setLeads([]);
       }
     } catch (error) {
@@ -123,30 +107,9 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
   }, [publishedId, userId]);
 
   useEffect(() => {
-    const fetchAll = async () => {
-      if (!userId) {
-        console.log("No userId found, skipping API calls");
-        setLoading(false);
-        return;
-      }
-
-      if (!publishedId) {
-        console.warn(
-          "Warning: No publishedId found. Will try to fetch all leads for user."
-        );
-      }
-
-      try {
-        setLoading(true);
-        await Promise.all([fetchUserTokens(), fetchLeads()]);
-      } catch (error) {
-        console.error("Error in fetchAll:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAll();
+    if (!userId) { setLoading(false); return; }
+    setLoading(true);
+    Promise.all([fetchUserTokens(), fetchLeads()]).finally(() => setLoading(false));
   }, [userId, publishedId, fetchLeads, fetchUserTokens]);
 
   const handleViewClick = async (leadId: string) => {
@@ -195,53 +158,44 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
     if (intervalId.current) clearInterval(intervalId.current);
   };
 
-  // gel all conversetions
+  const fetchChatMessages = useCallback(async (lead: Lead) => {
+    try {
+      const response = await fetch(
+        `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`,
+        { headers: { "Content-Type": "application/json", "X-User-Email": userId } }
+      );
+      const data = await response.json();
+      if (data?.messages && Array.isArray(data.messages)) {
+        setChatMessages(data.messages.map((msg: any) => ({
+          id: msg.messageId || msg.id || `${msg.timestamp}-${Math.random()}`,
+          isRead: msg.isRead || false,
+          messageId: msg.messageId || msg.id || `${msg.timestamp}-${Math.random()}`,
+          senderType: msg.senderType === "user" ? "user" : "lead",
+          senderName: msg.senderName || msg.sender,
+          message: msg.message,
+          timestamp: new Date(msg.timestamp),
+          delivered: msg.delivered !== false,
+          seen: msg.seen || false,
+          sender: msg.senderType === "user" ? "user" : "lead",
+        })));
+      }
+    } catch (error) {
+      console.error("Error fetching chat messages:", error);
+    }
+  }, [userId]);
+
   const handleChatWithLead = (lead: Lead) => {
     setSelectedLead(lead);
     setShowChatModal(true);
     setChatMessages([]);
     lastMessageIdRef.current = "";
 
-    // message pooling in 1s
-    const id = setInterval(async () => {
-      try {
-        const response = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`,{
-            headers: {
-            "Content-Type": "application/json",
-            "X-User-Email": userId,
-          },
-          }
-        );
-        const data = await response.json();
+    // Clear any existing poll before starting a new one
+    if (intervalId.current) clearInterval(intervalId.current);
 
-        if (data?.messages && Array.isArray(data.messages)) {
-          // Transform messages to ensure consistent structure
-          const transformedMessages: ChatMessage[] = data.messages.map(
-            (msg: any) => ({
-              id:
-                msg.messageId || msg.id || `${msg.timestamp}-${Math.random()}`,
-              isRead: msg.isRead || false,
-              messageId:
-                msg.messageId || msg.id || `${msg.timestamp}-${Math.random()}`,
-              senderType: msg.senderType === "user" ? "user" : "lead",
-              senderName: msg.senderName || msg.sender,
-              message: msg.message,
-              timestamp: new Date(msg.timestamp),
-              delivered: msg.delivered !== false,
-              seen: msg.seen || false,
-              sender: msg.senderType === "user" ? "user" : "lead",
-            })
-          );
-
-          setChatMessages(transformedMessages);
-        }
-      } catch (error) {
-        console.error("Error fetching chat messages:", error);
-      }
-    }, 1000);
-
-    intervalId.current = id;
+    // Fetch immediately, then poll every 8 seconds
+    fetchChatMessages(lead);
+    intervalId.current = setInterval(() => fetchChatMessages(lead), 8000);
   };
 
   // Send message to User
@@ -279,6 +233,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
           body: JSON.stringify({
             leadId: selectedLead.leadId,
             message: messageToSend,
+            leadEmail: selectedLead.email,
           }),
         }
       );
