@@ -2101,7 +2101,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   updateFormData,
   onNext,
   onPrev,
-  onStepClick,
   isValid,
   checkCompanyName,
   companyNameStatus,
@@ -3363,11 +3362,11 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         description="Select your company category and provide basic details"
         onNext={onNext}
         onPrev={onPrev}
-        onStepClick={onStepClick}
         isValid={isValid}
         isFirstStep={true}
         currentStep={1}
-        totalSteps={6}
+        totalSteps={1}
+        nextButtonText="Preview & Publish"
         isSubmitting={isSubmitting}
       >
         <div className="space-y-12 pb-10">

@@ -793,29 +793,16 @@ function App() {
     }
   };
 
-  const handleStepNext = useCallback(() => {
-    let valid = true;
-    switch (currentStep) {
-      case 1: valid = validateStep1(); break;
-      case 2: valid = validateStep3(); break;
-      case 3: valid = validateStep4(); break;
-      case 4: valid = validateStep5(); break;
-      case 5: valid = validateStep7(); break;
-      case 6: valid = validateStep8(); break;
+  const nextStep = () => {
+    if (currentStep === 1) {
+      handlePreview();
     }
-    if (!valid) return;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    if (currentStep < 6) {
-      setCurrentStep((s) => s + 1);
-    } else {
-      setShowPreview(true);
-    }
-  }, [currentStep, formData]);
+  };
 
   const prevStep = () => {
     if (currentStep > 1) {
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setCurrentStep((s) => s - 1);
+      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -828,10 +815,10 @@ function App() {
   };
 
   const renderStep = () => {
-    const commonProps = {
+    const stepProps = {
       formData,
       updateFormData,
-      onNext: handleStepNext,
+      onNext: handleStep1Submit,
       onPrev: prevStep,
       onSkip: skipStep,
       onStepClick: (step: number) => setCurrentStep(step),
@@ -839,28 +826,15 @@ function App() {
       showSkip: false,
     };
 
-    switch (currentStep) {
-      case 2:
-        return <Step3SectorsServed {...commonProps} />;
-      case 3:
-        return <Step4BusinessCategories {...commonProps} />;
-      case 4:
-        return <Step5ProductsServices {...commonProps} />;
-      case 5:
-        return <Step7PromotionBilling {...commonProps} />;
-      case 6:
-        return <Step8MediaUploads {...commonProps} />;
-      default:
-        return (
-          <Step1CompanyCategory
-            {...commonProps}
-            checkCompanyName={checkCompanyName}
-            companyNameStatus={companyNameStatus}
-            isCheckingName={isCheckingName}
-            isSubmitting={isSubmitting}
-          />
-        );
-    }
+    return (
+      <Step1CompanyCategory
+        {...stepProps}
+        checkCompanyName={checkCompanyName}
+        companyNameStatus={companyNameStatus}
+        isCheckingName={isCheckingName}
+        isSubmitting={isSubmitting}
+      />
+    );
   };
 
   if (isApiLoading) {
