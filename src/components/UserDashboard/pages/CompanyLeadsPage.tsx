@@ -19,7 +19,7 @@ const CompanyLeadsPage: React.FC = () => {
     fetch(`${API}?userId=${userId}`)
       .then((r) => r.json())
       .then((data) => {
-        const list: any[] = data?.companies || data?.data || [];
+        const list: any[] = data?.cards || data?.companies || data?.data || [];
         setCompanies(list);
         if (list.length === 1) setSelected(list[0]);
         setLoading(false);

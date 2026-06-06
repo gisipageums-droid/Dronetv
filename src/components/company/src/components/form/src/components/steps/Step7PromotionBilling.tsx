@@ -48,10 +48,12 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
   formData,
   updateFormData,
   onNext,
-    onSkip, // Add this line
-  showSkip, // Add this line
+  onSkip,
+  showSkip,
+  onStepClick,
   onPrev,
   isValid,
+  embedded,
 }) => {
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
@@ -242,10 +244,12 @@ Email: privacy@dronetv.in`;
         onNext={onNext}
         onPrev={onPrev}
         isValid={isValid}
-        currentStep={5}
-         onSkip={onSkip}
-  showSkip={showSkip}
-        totalSteps={6}
+        onSkip={onSkip}
+        showSkip={showSkip}
+        onStepClick={onStepClick}
+        currentStep={4}
+        totalSteps={5}
+        embedded={embedded}
       >
         <div className="space-y-8">
           <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6">

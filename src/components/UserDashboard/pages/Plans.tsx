@@ -95,6 +95,7 @@ const RechargePlans: React.FC = () => {
                         const confirmData = {
                             payment_id: response.razorpay_payment_id,
                             order_id: response.razorpay_order_id,
+                            signature: response.razorpay_signature,
                             transactionId: transactionId
                         };
 

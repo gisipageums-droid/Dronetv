@@ -19,6 +19,7 @@ interface FormStepProps {
   totalSteps?: number;
   nextButtonText?: string;
   isSubmitting?: boolean;
+  embedded?: boolean;
 }
 
 export const FormStep: React.FC<FormStepProps> = ({
@@ -37,9 +38,9 @@ export const FormStep: React.FC<FormStepProps> = ({
   totalSteps = 6,
   nextButtonText,
   isSubmitting = false,
+  embedded = false,
 }) => {
   const stepTitles = [
-    'Company Info',
     'Sectors Served',
     'Business Categories',
     'Products & Services',
@@ -48,22 +49,7 @@ export const FormStep: React.FC<FormStepProps> = ({
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100">
-      {/* Header - unchanged */}
-      <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-black">DroneTV</h1>
-              <p className="text-sm text-gray-800">AI-Powered Website Generator</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-gray-700">Drone • AI • GIS</p>
-              <p className="text-xs text-gray-600">One form, instant website</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className={embedded ? "bg-gradient-to-br from-yellow-50 to-amber-100" : "min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100 pt-16"}>
 
       {/* Progress Bar (Only shown if more than 1 step) */}
       {totalSteps > 1 && (
@@ -74,20 +60,20 @@ export const FormStep: React.FC<FormStepProps> = ({
                 const stepNumber = index + 1;
                 const isActive = stepNumber === currentStep;
                 const isCompleted = stepNumber < currentStep;
-                
+
                 return (
                   <div key={stepNumber} className="flex items-center">
                     <button
-                      onClick={() => onStepClick ? onStepClick(stepNumber) : null}
-                      className={`flex items-center px-2 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+                      onClick={() => onStepClick && onStepClick(stepNumber)}
+                      className={`flex items-center px-2 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                         isActive
                           ? 'bg-black text-yellow-400 shadow-md'
                           : isCompleted
-                          ? 'bg-amber-200 text-amber-900 hover:bg-amber-300 cursor-pointer'
-                          : 'bg-yellow-200 text-gray-700 hover:bg-yellow-300 cursor-pointer'
+                          ? 'bg-amber-200 text-amber-900 hover:bg-amber-300'
+                          : 'bg-yellow-200 text-gray-700 hover:bg-yellow-300'
                       }`}
                     >
-                      <span className={`w-4 h-4 rounded-full flex items-center justify-center text-xs mr-1 ${
+                      <span className={`w-4 h-4 rounded-full flex items-center justify-center text-xs ${stepTitle ? 'mr-1' : ''} ${
                         isActive
                           ? 'bg-yellow-400 text-black'
                           : isCompleted

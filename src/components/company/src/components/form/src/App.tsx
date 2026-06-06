@@ -65,12 +65,12 @@ function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: string) {
       },
       services: {
         heading: { head: fd.servicesTitle || 'Our Services', desc: fd.servicesDescription || 'Professional services tailored to your needs' },
-        services: (fd.services || []).map(s => ({ icon: s.icon || '', title: s.title || '', description: s.description || '' })),
+        services: (fd.services || []).filter(s => s.title?.trim()).map(s => ({ icon: s.icon || '', title: s.title.trim(), description: s.description || '' })),
         categories: ['All']
       },
       products: {
         heading: { title: fd.productsTitle || 'Professional Products', heading: 'Innovative Solutions', description: 'Quality solutions.', trust: 'for your business.' },
-        products: (fd.products || []).map(p => ({ title: p.title || '', description: p.description || '' })),
+        products: (fd.products || []).filter(p => p.title?.trim()).map(p => ({ title: p.title.trim(), description: p.description || '' })),
         benefits: [
           { icon: '30', color: 'red-accent', title: '30-Day Money Back', desc: 'Try our solutions risk-free.' },
           { icon: '99%', color: 'primary', title: '99% Success Rate', desc: 'Industry-leading success rate.' },
@@ -341,7 +341,14 @@ const initialFormData: FormData = {
   templateId: "",
 };
 
-function App() {
+interface CompanyData {
+  publishedId: string;
+  userId: string;
+  draftId: string;
+  templateSelection: string;
+}
+
+function App({ embedded = false, initialCompanyCategory, companyData, onEmbeddedSubmit, initialTemplateId }: { embedded?: boolean; initialCompanyCategory?: string[]; companyData?: CompanyData; onEmbeddedSubmit?: (aiGenData: any) => void; initialTemplateId?: string }) {
   const [companyNameStatus, setCompanyNameStatus] = useState<null | {
     available: boolean;
     suggestions?: string[];
@@ -363,15 +370,22 @@ function App() {
   const digiTokenRef = useRef('');
   const digiStateRef = useRef('');
 
+  const [isDraftLoading, setIsDraftLoading] = useState(embedded && !!companyData?.draftId);
+
   // Consolidated to Step 1 only
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>(() => {
+    if (embedded) return initialFormData; // embedded form loads from draft API, not localStorage
     try {
       const saved = localStorage.getItem("companyFormDraft");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed?.formData && typeof parsed.formData === "object") {
-          return { ...initialFormData, ...parsed.formData } as FormData;
+          const merged = { ...initialFormData, ...parsed.formData } as FormData;
+          if (!merged.companyCategory) {
+            merged.companyCategory = [];
+          }
+          return merged;
         }
       }
     } catch (e) {
@@ -383,6 +397,59 @@ function App() {
   const { draftDetails, setDraftDetails, setAIGenData, AIGenData } = useTemplate();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (initialCompanyCategory && initialCompanyCategory.length > 0) {
+      setFormData((prev) => ({ ...prev, companyCategory: initialCompanyCategory }));
+    }
+  }, [initialCompanyCategory?.join(",")]);
+
+  // When embedded with existing company, fetch and pre-populate full draft data
+  useEffect(() => {
+    if (!embedded || !companyData?.draftId || !companyData?.userId) return;
+    const template = companyData.templateSelection || 'template-1';
+    setIsDraftLoading(true);
+
+    const draftUrl = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
+    const publishedUrl = companyData.publishedId
+      ? `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${companyData.publishedId}`
+      : null;
+
+    Promise.all([
+      fetch(draftUrl).then(r => r.json()).catch(() => ({})),
+      publishedUrl
+        ? fetch(publishedUrl, { headers: { 'X-User-Id': companyData.userId } }).then(r => r.json()).catch(() => ({}))
+        : Promise.resolve({}),
+    ]).then(([draftData, publishedData]) => {
+      // Extract services & products from published template content (scraped at registration)
+      const publishedServices: any[] = publishedData?.content?.services?.services || [];
+      const publishedProducts: any[] = publishedData?.content?.products?.products || [];
+
+      const formDataFromDraft = draftData?.formData || {};
+
+      // Use scraped services/products as fallback when draft has none
+      const mergedFormData = {
+        ...formDataFromDraft,
+        services: formDataFromDraft.services?.length > 0
+          ? formDataFromDraft.services
+          : publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' })),
+        products: formDataFromDraft.products?.length > 0
+          ? formDataFromDraft.products
+          : publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' })),
+      };
+
+      if (Object.keys(mergedFormData).length > 0) {
+        setFormData(prev => ({ ...prev, ...mergedFormData }));
+      }
+    }).finally(() => setIsDraftLoading(false));
+  }, [embedded, companyData?.draftId, companyData?.userId, companyData?.publishedId]);
+
+  // Set selected template from parent when creating new company via dashboard
+  useEffect(() => {
+    if (initialTemplateId) {
+      setFormData(prev => ({ ...prev, templateId: initialTemplateId }));
+    }
+  }, [initialTemplateId]);
 
   // ✅ extract params for prefill
   const params = useParams<{
@@ -425,6 +492,7 @@ function App() {
 
   // Persist form data and step to localStorage so data survives refresh until submission
   useEffect(() => {
+    if (embedded) return; // embedded form loads from draft API
     try {
       const saved = localStorage.getItem("companyFormDraft");
       if (saved) {
@@ -442,6 +510,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (embedded) return; // don't pollute public form draft with embedded data
     try {
       const payload = JSON.stringify({ formData, step: currentStep });
       localStorage.setItem("companyFormDraft", payload);
@@ -726,7 +795,30 @@ function App() {
     return true;
   };
 
-  // ── Submit Step 1 data → list the company immediately
+  // ── Submit: update existing company website content
+  const handleEmbeddedSubmit = useCallback(async () => {
+    if (!companyData) return;
+    setIsSubmitting(true);
+    try {
+      const aiGenData = mapFormDataToAIGenData(formData, companyData.draftId, companyData.userId);
+      aiGenData.publishedId = companyData.publishedId;
+      aiGenData.templateSelection = companyData.templateSelection;
+      if (onEmbeddedSubmit) {
+        onEmbeddedSubmit(aiGenData);
+      } else {
+        const templateNum = companyData.templateSelection === 'template-2' ? '2' : '1';
+        navigate(
+          `/user/companies/edit/${templateNum}/${companyData.publishedId}/${companyData.userId}`,
+          { state: { aiGenData } }
+        );
+      }
+    } catch {
+      toast.error("Failed to update. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [formData, companyData, navigate, onEmbeddedSubmit]);
+
   const handleStep1Submit = useCallback(async () => {
     if (!validateStep1()) return;
 
@@ -776,7 +868,8 @@ function App() {
       const draftId = response.data?.draftId;
       const userId = response.data?.userId;
       const aiGenData = mapFormDataToAIGenData(formData, draftId, userId);
-      navigate(`/edit/template/t1/${draftId}/${userId}`, { state: { aiGenData } });
+      const templateSlug = finalTemplateId === "2" || finalTemplateId === "template-2" ? "t2" : "t1";
+      navigate(`/edit/template/${templateSlug}/${draftId}/${userId}`, { state: { aiGenData } });
 
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || error.response?.data?.error || error.message || "Unknown error";
@@ -787,54 +880,83 @@ function App() {
   }, [formData, templateId, navigate, setDraftDetails]);
 
   const handlePreview = () => {
-    if (validateStep1()) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setShowPreview(true);
-    }
+    if (!validateStep1()) return;
+    setShowPreview(true);
   };
 
   const nextStep = () => {
-    if (currentStep === 1) {
-      handlePreview();
+    let valid = true;
+    if (embedded) {
+      // Embedded: steps 1-5 (Sectors, Categories, Products, Promotion, Media)
+      switch (currentStep) {
+        case 1: valid = validateStep3(); break; // Sectors Served
+        case 2: valid = validateStep4(); break; // Business Categories
+        case 4: valid = validateStep7(); break; // Promotion & Billing
+      }
+    }
+    if (!valid) return;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (embedded) {
+      if (currentStep < 5) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        handleEmbeddedSubmit();
+      }
     }
   };
 
   const prevStep = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     if (currentStep > 1) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
       setCurrentStep(currentStep - 1);
     }
   };
 
-  // Add skip step function
   const skipStep = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    if (currentStep < 6) {
-      setCurrentStep(currentStep + 1);
-    }
+    if (embedded && currentStep < 5) setCurrentStep(currentStep + 1);
   };
 
   const renderStep = () => {
-    const stepProps = {
+    const commonProps = {
       formData,
       updateFormData,
-      onNext: handleStep1Submit,
+      onNext: nextStep,
       onPrev: prevStep,
       onSkip: skipStep,
       onStepClick: (step: number) => setCurrentStep(step),
-      isValid: !isSubmitting,
+      isValid: true,
       showSkip: false,
+      embedded,
     };
 
-    return (
-      <Step1CompanyCategory
-        {...stepProps}
-        checkCompanyName={checkCompanyName}
-        companyNameStatus={companyNameStatus}
-        isCheckingName={isCheckingName}
-        isSubmitting={isSubmitting}
-      />
-    );
+    // Public /form route — single step, "Preview & Publish" flow
+    if (!embedded) {
+      return (
+        <Step1CompanyCategory
+          {...commonProps}
+          onNext={handlePreview}
+          checkCompanyName={checkCompanyName}
+          companyNameStatus={companyNameStatus}
+          isCheckingName={isCheckingName}
+          isSubmitting={isSubmitting}
+        />
+      );
+    }
+
+    // Dashboard embedded — 5-step stepper (no company info step)
+    switch (currentStep) {
+      case 2:
+        return <Step4BusinessCategories {...commonProps} />;
+      case 3:
+        return <Step5ProductsServices {...commonProps} />;
+      case 4:
+        return <Step7PromotionBilling {...commonProps} />;
+      case 5:
+        return <Step8MediaUploads {...commonProps} />;
+      default: // step 1
+        return <Step3SectorsServed {...commonProps} />;
+    }
   };
 
   if (isApiLoading) {
@@ -852,6 +974,15 @@ function App() {
     );
   }
 
+  if (isDraftLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <span className="w-10 h-10 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-500 text-sm font-medium">Loading your company data…</p>
+      </div>
+    );
+  }
+
   if (showPreview) {
     return (
       <PreviewPublish
@@ -859,11 +990,12 @@ function App() {
         onBack={() => setShowPreview(false)}
         onPublish={handleStep1Submit}
         isPublishing={isSubmitting}
-        aadharVerified={aadharVerified}
+        aadharVerified={true}
         digiStatus={digiStatus}
         consent={digiConsent}
         onConsentChange={setDigiConsent}
         onStartDigiLocker={handleDigiLockerLogin}
+        embedded={embedded}
       />
     );
   }

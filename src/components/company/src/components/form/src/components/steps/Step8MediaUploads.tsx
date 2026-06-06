@@ -959,7 +959,9 @@ const Step8MediaUploads: React.FC<StepProps> = ({
   updateFormData,
   onNext,
   onPrev,
+  onStepClick,
   isValid,
+  embedded,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -1072,6 +1074,10 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
   // ✅ Enhanced Form Submit Handler with token validation
   const handleSubmit = async () => {
+    if (embedded) {
+      onNext?.();
+      return;
+    }
     // First validate tokens
     const canProceed = await validateBeforeSubmit();
     if (!canProceed) {
@@ -1430,10 +1436,12 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         description="Upload your company logo, certificates, and other media assets."
         onNext={handleSubmit}
         onPrev={onPrev}
+        onStepClick={onStepClick}
         isValid={isValid && !isUploading}
-        currentStep={6}
-        totalSteps={6}
+        currentStep={5}
+        totalSteps={5}
         isLastStep={true}
+        embedded={embedded}
       >
         <div className="space-y-8">
           {/* Upload Progress */}
@@ -1646,18 +1654,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
               </div>
             </div>
 
-            <div className="p-4 mt-6 border border-green-200 rounded-lg bg-green-50">
-              <h4 className="mb-2 font-semibold text-green-800">
-                🎉 Ready to Generate Your Website!
-              </h4>
-              <p className="text-sm text-green-700">
-                Files are uploaded individually for better performance. Once you
-                click "Submit Form", our AI will create a professional website
-                with all your information, generate additional content, optimize
-                for SEO, and create a beautiful design that matches your
-                industry.
-              </p>
-            </div>
           </div>
         </div>
       </FormStep>

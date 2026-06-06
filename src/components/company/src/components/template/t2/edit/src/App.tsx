@@ -127,7 +127,7 @@ export default function App() {
   // ✅ Use callbacks safely here
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-background text-foreground theme-transition">
+      <div className="min-h-screen bg-background text-foreground theme-transition pt-16">
         <Header
           headerData={AIGenData?.content?.company}
           onStateChange={handleHeaderChange}
