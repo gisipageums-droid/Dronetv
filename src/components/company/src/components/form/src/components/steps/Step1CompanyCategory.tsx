@@ -19,6 +19,7 @@ interface Step1CompanyCategoryProps extends StepProps {
   } | null;
   isCheckingName: boolean;
   isSubmitting?: boolean;
+  embedded?: boolean;
 }
 
 // Custom Date Picker Component
@@ -2106,6 +2107,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   companyNameStatus,
   isCheckingName,
   isSubmitting,
+  embedded = false,
 }) => {
   // DigiLocker State
   const [digiToken, setDigiToken] = useState<string | null>(null);
@@ -3365,9 +3367,10 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         isValid={isValid}
         isFirstStep={true}
         currentStep={1}
-        totalSteps={1}
-        nextButtonText="Preview & Publish"
+        totalSteps={embedded ? 6 : 1}
+        nextButtonText={embedded ? undefined : "Preview & Publish"}
         isSubmitting={isSubmitting}
+        embedded={embedded}
       >
         <div className="space-y-12 pb-10">
           {/* Company Category */}

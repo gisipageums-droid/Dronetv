@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield } from "lucide-react";
+import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import { toast } from "sonner";
@@ -27,6 +27,7 @@ interface CompanyCardProps {
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
   onPublish: (company: Company) => void;
+  isDetailsUpdated?: boolean;
 }
 
 interface PublishedDetailsResponse {
@@ -70,7 +71,7 @@ interface PublishedDetailsResponse {
 }
 
 // =================== Company card ==============================
-const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublish }) => {
+const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublish, isDetailsUpdated }) => {
   const placeholderImg =
     company.previewImage || company?.companyName?.charAt(0) || "C";
   const navigate = useNavigate();
@@ -181,6 +182,19 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
             </button>
           </div>
 
+          {!isDetailsUpdated && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/user-website?tab=details");
+              }}
+              className="w-full px-3 py-2 bg-amber-100 text-amber-800 rounded-lg hover:bg-amber-200 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-amber-300"
+            >
+              <Settings className="w-4 h-4" />
+              Update Details
+            </button>
+          )}
+
           {/* Publish Button — only shown if not yet approved */}
           {!isPublished && (
             <button
@@ -209,6 +223,8 @@ const CompanyPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { setFinaleDataReview, setFinalTemplate } = useTemplate();
   const navigate = useNavigate();
+
+  const [detailsUpdatedIds, setDetailsUpdatedIds] = useState<Set<string>>(new Set());
 
   // Aadhaar modal state
   const [publishingCompany, setPublishingCompany] = useState<Company | null>(null);
@@ -418,6 +434,31 @@ const CompanyPage: React.FC = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (companies.length === 0) return;
+    const userId = user?.email || user?.userData?.email || "";
+    companies.forEach((c) => {
+      // Fast path: localStorage
+      if (localStorage.getItem(`details_updated_${c.publishedId}`) === "true") {
+        setDetailsUpdatedIds((prev) => new Set(prev).add(c.publishedId));
+        return;
+      }
+      // Server-side check
+      fetch(
+        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${c.publishedId}`,
+        { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
+      )
+        .then((r) => r.json())
+        .then((data) => {
+          if (data?.content?._detailsUpdatedAt) {
+            localStorage.setItem(`details_updated_${c.publishedId}`, "true");
+            setDetailsUpdatedIds((prev) => new Set(prev).add(c.publishedId));
+          }
+        })
+        .catch(() => {});
+    });
+  }, [companies, user]);
+
   const filteredCompanies = useMemo(() => {
     return companies.filter(
       (company) =>
@@ -466,7 +507,7 @@ const CompanyPage: React.FC = () => {
           <p className="text-gray-600 mb-8">Browse and manage company submissions</p>
         </div>
         <button
-          onClick={() => navigate("/user/companies/template-selection")}
+          onClick={() => navigate("/form")}
           className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
         >
           <Plus className="w-5 h-5" />
@@ -500,6 +541,7 @@ const CompanyPage: React.FC = () => {
               onPreview={handlePreview}
               onEdit={handleEdit}
               onPublish={handleOpenPublishModal}
+              isDetailsUpdated={detailsUpdatedIds.has(company.publishedId)}
             />
           ))}
         </div>

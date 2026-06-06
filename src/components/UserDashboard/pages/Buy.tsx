@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
-import { useTemplate, useUserAuth } from "../../context/context";
+import { useUserAuth } from "../../context/context";
 import axios from 'axios';
 
 const BuyTokenPage: React.FC = () => {
-  const { error, isLoading, Razorpay } = useRazorpay();
+  const { Razorpay } = useRazorpay();
   const [amount, setAmount] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
@@ -91,21 +91,19 @@ const BuyTokenPage: React.FC = () => {
 
           // Step 2: Initialize Razorpay Payment
           const options: RazorpayOrderOptions = {
-            key: key || "rzp_test_sN9yGpladGdVuN", // Use key from API response
-            amount: order.amount, // Amount in paise from API
+            key: key,
+            amount: order.amount,
             currency: order.currency,
             name: "DRONETV",
             description: `Purchase of ${tokens} tokens`,
             image: "https://www.dronetv.in/images/Drone%20tv%20.in.png",
             order_id: razorpayOrderId,
             handler: async (response) => {
-              console.log('Payment Response:', response);
-
               try {
-                // Step 3: Confirm Order after successful payment
                 const confirmData = {
                   payment_id: response.razorpay_payment_id,
                   order_id: response.razorpay_order_id,
+                  signature: response.razorpay_signature,
                   transactionId: transactionId
                 };
 
@@ -114,17 +112,14 @@ const BuyTokenPage: React.FC = () => {
                     if (confirmResponse.success) {
                       setShowSuccess(true);
                       setAmount('');
-                      alert(`Payment Successful! ${tokens} tokens added to your account.`);
                     } else {
                       setErrorMessage(confirmResponse.message || 'Payment verification failed');
                     }
                   })
-                  .catch(error => {
-                    console.error('Confirm order error:', error);
+                  .catch(() => {
                     setErrorMessage('Payment verification failed. Please contact support.');
                   });
-              } catch (error) {
-                console.error('Payment handler error:', error);
+              } catch (error: any) {
                 setErrorMessage(error.message || 'Payment processing failed. Please contact support.');
               }
             },

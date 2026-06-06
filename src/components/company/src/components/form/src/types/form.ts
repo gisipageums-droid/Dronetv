@@ -214,8 +214,9 @@ export interface StepProps {
   updateFormData: (data: Partial<FormData>) => void;
   onNext?: () => void;
   onPrev?: () => void;
-  onSkip?: () => void; // Add this
+  onSkip?: () => void;
   onStepClick?: (step: number) => void;
   isValid?: boolean;
-  showSkip?: boolean; // Add this;
+  showSkip?: boolean;
+  embedded?: boolean;
 }

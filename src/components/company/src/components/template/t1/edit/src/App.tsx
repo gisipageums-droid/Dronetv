@@ -161,8 +161,7 @@ export default function App() {
   }
 
   return (
-    // The className here is no longer needed as the useEffect handles the root element
-    <div>
+    <div className="pt-16">
       <Header
         headerData={AIGenData?.content?.company}
         onStateChange={handleHeaderChange}

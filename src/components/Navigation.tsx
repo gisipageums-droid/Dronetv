@@ -41,13 +41,18 @@ const Navigation = () => {
       if (accountRef.current && !accountRef.current.contains(event.target as Node)) {
         setIsAccountOpen(false);
       }
+      if (mediaRef.current && !mediaRef.current.contains(event.target as Node)) {
+        setIsMediaOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [selectedLang, setSelectedLang] = useState("English");
+  const mediaRef = useRef<HTMLDivElement>(null);
 
   const languages = [
     { label: "English",   code: "en" },
@@ -79,6 +84,12 @@ const Navigation = () => {
     navigate(path);
   };
 
+  const closeAllDropdowns = () => {
+    setIsAccountOpen(false);
+    setIsAuthOpen(false);
+    setIsMediaOpen(false);
+  };
+
   const navItems = [
     { name: "Home", path: "/" },
     { name: "About Us", path: "/about" },
@@ -89,8 +100,7 @@ const Navigation = () => {
     { name: "Professionals", path: "/professionals" },
     { name: "Partner with us", path: "/partner" },
     //{ name: 'News', path: '/news' },
-    { name: "Videos", path: "/videos" },
-    { name: "Gallery", path: "/gallery" },
+    { name: "Media", path: "/media" },
     { name: "Contact", path: "/contact" },
     {
       name: (isLogin || isAdminLogin) ? "Account" : "Login",
@@ -127,10 +137,13 @@ const Navigation = () => {
               // Logged-in account dropdown: Dashboard + Logout
               if (item.path === "/user-dashboard" && (isLogin || isAdminLogin)) {
                 return (
-                  <div key={item.name} className="relative" ref={accountRef}>
+                  <div key={item.name} className="relative" ref={accountRef}
+                    onMouseEnter={() => { closeAllDropdowns(); setIsAccountOpen(true); }}
+                    onMouseLeave={() => setIsAccountOpen(false)}
+                  >
                     <motion.button
                       onClick={() => setIsAccountOpen((s) => !s)}
-                      onMouseEnter={() => setIsAccountOpen(true)}
+                      onMouseEnter={() => { closeAllDropdowns(); setIsAccountOpen(true); }}
                       className="relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap text-black hover:text-gray-800 flex items-center gap-2"
                     >
                       <span className="relative z-10">{item.name}</span>
@@ -172,11 +185,13 @@ const Navigation = () => {
               // If this is the login entry and user is not logged in, render a small dropdown with Register
               if (item.path === "/login" && !isLogin) {
                 return (
-                  <div key={item.name} className="relative" ref={authRef}>
+                  <div key={item.name} className="relative" ref={authRef}
+                    onMouseEnter={() => { closeAllDropdowns(); setIsAuthOpen(true); }}
+                    onMouseLeave={() => setIsAuthOpen(false)}
+                  >
                     <motion.button
-                     
                       onClick={() => setIsAuthOpen((s) => !s)}
-                      onMouseEnter={() => setIsAuthOpen(true)}
+                      onMouseEnter={() => { closeAllDropdowns(); setIsAuthOpen(true); }}
                       className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap text-black hover:text-gray-800 flex items-center gap-2`}
                     >
                       <span className="relative z-10">{item.name}</span>
@@ -221,6 +236,52 @@ const Navigation = () => {
                             className="px-3 py-2 rounded hover:bg-yellow-100"
                           >
                             Register
+                          </Link>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                );
+              }
+
+              // Media dropdown
+              if (item.name === "Media") {
+                return (
+                  <div key="media" className="relative" ref={mediaRef}
+                    onMouseEnter={() => { closeAllDropdowns(); setIsMediaOpen(true); }}
+                    onMouseLeave={() => setIsMediaOpen(false)}
+                  >
+                    <motion.button
+                      onClick={() => setIsMediaOpen((s) => !s)}
+                      onMouseEnter={() => { closeAllDropdowns(); setIsMediaOpen(true); }}
+                      className="relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap text-black hover:text-gray-800 flex items-center gap-1"
+                    >
+                      <span className="relative z-10">Media</span>
+                      <svg className="relative z-10 w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" />
+                      </svg>
+                      <div className="absolute inset-0 transition-transform duration-300 origin-left scale-x-0 rounded-lg bg-black/10 group-hover:scale-x-100"></div>
+                    </motion.button>
+                    {isMediaOpen && (
+                      <motion.div
+                        whileInView={{ y: [-10, 0] }}
+                        transition={{ type: "spring", duration: 0.5, stiffness: 50 }}
+                        className="absolute left-0 z-50 mt-2 font-medium bg-yellow-400 border border-yellow-200 rounded-lg shadow-lg"
+                      >
+                        <div className="p-2 flex flex-col min-w-[130px]">
+                          <Link
+                            to="/gallery"
+                            onClick={() => setIsMediaOpen(false)}
+                            className={`px-3 py-2 rounded hover:bg-yellow-100 ${location.pathname === "/gallery" ? "bg-black/10" : ""}`}
+                          >
+                            Gallery
+                          </Link>
+                          <Link
+                            to="/videos"
+                            onClick={() => setIsMediaOpen(false)}
+                            className={`px-3 py-2 rounded hover:bg-yellow-100 ${location.pathname === "/videos" ? "bg-black/10" : ""}`}
+                          >
+                            Videos
                           </Link>
                         </div>
                       </motion.div>
@@ -374,6 +435,27 @@ const Navigation = () => {
                       }}
                     >
                       Register
+                    </button>
+                  </div>
+                );
+              }
+
+              // Mobile: Media submenu
+              if (item.name === "Media") {
+                return (
+                  <div key="media" className="space-y-1">
+                    <div className="px-3 py-1 text-xs font-bold text-black/50 uppercase tracking-wider">Media</div>
+                    <button
+                      onClick={() => handleNavigation("/gallery")}
+                      className={`w-full text-left block px-5 py-2 rounded-md text-base font-medium transition-all duration-300 hover:bg-black/10 transform hover:translate-x-2 ${location.pathname === "/gallery" ? "text-gray-800 bg-black/10" : "text-black hover:text-gray-800"}`}
+                    >
+                      Gallery
+                    </button>
+                    <button
+                      onClick={() => handleNavigation("/videos")}
+                      className={`w-full text-left block px-5 py-2 rounded-md text-base font-medium transition-all duration-300 hover:bg-black/10 transform hover:translate-x-2 ${location.pathname === "/videos" ? "text-gray-800 bg-black/10" : "text-black hover:text-gray-800"}`}
+                    >
+                      Videos
                     </button>
                   </div>
                 );

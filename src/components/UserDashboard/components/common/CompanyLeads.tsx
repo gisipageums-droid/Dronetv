@@ -40,8 +40,9 @@ interface LeadsPageProps {
 const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePublishedId }) => {
   const { user } = useUserAuth();
   const userId = user?.email || user?.userData?.email;
-  const companyName = overrideCompanyName || useParams().companyName || "";
+  const params = useParams();
   const location = useLocation();
+  const companyName = overrideCompanyName || params.companyName || "";
   const publishedId = overridePublishedId || location.state?.publishedId;
 
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -760,7 +761,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
                               minute: "2-digit",
                             })}
                           </span>
-                          {msg.sender === "user" && (
+                          {msg.sender !== "user" && (
                             <span className="ml-1">
                               {!msg.delivered ? (
                                 <Clock className="w-3 h-3" />

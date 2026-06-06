@@ -8,9 +8,11 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   updateFormData,
   onNext,
   onPrev,
-  onSkip, // Add this line
-  showSkip, // Add this line
+  onSkip,
+  showSkip,
+  onStepClick,
   isValid,
+  embedded,
 }) => {
   const [selectedMainCategories, setSelectedMainCategories] = useState<
     string[]
@@ -619,11 +621,13 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       description="Select your main business categories and specific areas of operation"
       onNext={onNext}
       onPrev={onPrev}
-       onSkip={onSkip}
-       showSkip={showSkip}
+      onSkip={onSkip}
+      showSkip={showSkip}
+      onStepClick={onStepClick}
       isValid={isValid}
-      currentStep={3}
-      totalSteps={7}
+      currentStep={2}
+      totalSteps={5}
+      embedded={embedded}
     >
       <div className="space-y-6">
         {/* Main Business Categories */}

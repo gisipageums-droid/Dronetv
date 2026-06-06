@@ -1,4 +1,4 @@
-import { Globe, Phone, Mail, MapPin, CheckCircle, ArrowLeft, Upload, Shield } from 'lucide-react';
+import { Globe, Phone, Mail, MapPin, CheckCircle, ArrowLeft, Upload } from 'lucide-react';
 import { FormData } from '../types/form';
 
 type DigiStatus = 'idle' | 'loading' | 'polling' | 'verified' | 'error';
@@ -13,16 +13,18 @@ interface Props {
   consent: boolean;
   onConsentChange: (v: boolean) => void;
   onStartDigiLocker: () => void;
+  embedded?: boolean;
 }
 
 export default function PreviewPublish({
   formData, onBack, onPublish, isPublishing,
-  aadharVerified, digiStatus, consent, onConsentChange, onStartDigiLocker
+  aadharVerified, digiStatus, consent, onConsentChange, onStartDigiLocker,
+  embedded = false,
 }: Props) {
   const isBusy = digiStatus === 'loading' || digiStatus === 'polling';
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className={embedded ? "bg-gray-50 pb-8 px-4" : "min-h-screen bg-gray-50 pt-24 pb-8 px-4"}>
       <div className="max-w-5xl mx-auto">
 
         <button
@@ -108,88 +110,37 @@ export default function PreviewPublish({
             </div>
           </div>
 
-          {/* RIGHT: Verify & Publish */}
+          {/* RIGHT: Publish */}
           <div>
-            <h2 className="text-lg font-bold text-gray-800 mb-3">Verify & Publish</h2>
-            <p className="text-sm text-gray-500 mb-4">Complete Aadhaar verification to publish your listing instantly.</p>
+            <h2 className="text-lg font-bold text-gray-800 mb-3">Ready to Publish</h2>
+            <p className="text-sm text-gray-500 mb-4">Your listing is ready. Click below to submit and list your company instantly.</p>
 
             <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
 
-              {!aadharVerified ? (
-                <>
-                  <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg mb-5">
-                    <Shield size={18} className="text-blue-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-blue-800">
-                      Verify your identity with Aadhaar via DigiLocker. Your listing will go live <strong>immediately</strong> after verification — no admin review needed.
-                    </p>
-                  </div>
+              <div className="flex items-start gap-3 p-4 bg-yellow-50 rounded-lg mb-6">
+                <CheckCircle size={18} className="text-yellow-600 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-yellow-800">
+                  Your company details have been filled in. Once submitted, your listing will go live and you can customise your website in the editor.
+                </p>
+              </div>
 
-                  <label className="flex items-start gap-3 cursor-pointer mb-5">
-                    <input
-                      type="checkbox"
-                      checked={consent}
-                      onChange={e => onConsentChange(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 accent-yellow-500 cursor-pointer"
-                    />
-                    <span className="text-sm text-gray-700">
-                      I consent to verify my identity using Aadhaar/DigiLocker and agree to the{' '}
-                      <span className="text-blue-600 underline cursor-pointer">terms of service</span>.
-                    </span>
-                  </label>
-
-                  {digiStatus === 'polling' && (
-                    <div className="flex items-center gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
-                      <span className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                      <span className="text-sm text-yellow-800">Waiting for DigiLocker verification… please complete the process in the opened window.</span>
-                    </div>
-                  )}
-
-                  {digiStatus === 'error' && (
-                    <p className="text-sm text-red-500 mb-4">Verification failed or timed out. Please try again.</p>
-                  )}
-
-                  <button
-                    onClick={onStartDigiLocker}
-                    disabled={!consent || isBusy}
-                    className="w-full py-3 px-4 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-                  >
-                    {isBusy ? (
-                      <span className="w-5 h-5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <Shield size={18} />
-                    )}
-                    {digiStatus === 'polling' ? 'Verifying…' : digiStatus === 'loading' ? 'Starting…' : 'Verify with Aadhaar'}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg mb-5">
-                    <CheckCircle size={20} className="text-green-600 flex-shrink-0" />
-                    <div>
-                      <p className="font-semibold text-green-800">Identity Verified</p>
-                      <p className="text-sm text-green-600">Aadhaar verification was successful. You can now publish.</p>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={onPublish}
-                    disabled={isPublishing}
-                    className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-                  >
-                    {isPublishing ? (
-                      <>
-                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Publishing…
-                      </>
-                    ) : (
-                      <>
-                        <Upload size={18} />
-                        Publish & List My Company
-                      </>
-                    )}
-                  </button>
-                </>
-              )}
+              <button
+                onClick={onPublish}
+                disabled={isPublishing}
+                className="w-full py-3 px-4 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-60 disabled:cursor-not-allowed text-gray-900 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                {isPublishing ? (
+                  <>
+                    <span className="w-5 h-5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
+                    Submitting…
+                  </>
+                ) : (
+                  <>
+                    <Upload size={18} />
+                    Submit & List My Company
+                  </>
+                )}
+              </button>
 
             </div>
           </div>
