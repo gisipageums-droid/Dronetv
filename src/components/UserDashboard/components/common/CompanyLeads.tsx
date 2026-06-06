@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import emailjs from "@emailjs/browser";
 import { useUserAuth } from "../../../context/context";
 import { useLocation, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MessageCircle, Send, X, Check, CheckCheck, Clock } from "lucide-react";
-//changes2
+
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || "";
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "";
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "";
 interface Lead {
   leadId: string;
   company: string;
@@ -241,29 +245,38 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
       const data = await response.json();
 
       if (data.success) {
-        // Update message with delivered status
         setChatMessages((prev) =>
           prev.map((msg) =>
             msg.id === tempMessage.id
-              ? {
-                  ...msg,
-                  id: data.messageId,
-                  messageId: data.messageId,
-                  delivered: true,
-                }
+              ? { ...msg, id: data.messageId, messageId: data.messageId, delivered: true }
               : msg
           )
         );
+
+        if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY) {
+          emailjs
+            .send(
+              EMAILJS_SERVICE_ID,
+              EMAILJS_TEMPLATE_ID,
+              {
+                to_email: selectedLead.email,
+                to_name: `${selectedLead.firstName} ${selectedLead.lastName}`,
+                company_name: companyName,
+                reply_message: messageToSend,
+                lead_subject: selectedLead.subject,
+                from_name: companyName,
+              },
+              EMAILJS_PUBLIC_KEY
+            )
+            .catch(() => {});
+        }
       } else {
-        // Remove message if failed
         setChatMessages((prev) =>
           prev.filter((msg) => msg.id !== tempMessage.id)
         );
         toast.error("Failed to send message");
       }
     } catch (error) {
-      console.error("Error sending message:", error);
-      // Remove message if failed
       setChatMessages((prev) =>
         prev.filter((msg) => msg.id !== tempMessage.id)
       );
