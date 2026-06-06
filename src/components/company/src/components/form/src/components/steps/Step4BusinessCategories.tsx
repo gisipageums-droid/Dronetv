@@ -623,7 +623,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
        showSkip={showSkip}
       isValid={isValid}
       currentStep={3}
-      totalSteps={6}
+      totalSteps={7}
     >
       <div className="space-y-6">
         {/* Main Business Categories */}
