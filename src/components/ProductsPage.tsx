@@ -91,8 +91,12 @@ const ProductsPage: React.FC = () => {
           if (responseData.status && responseData.data && Array.isArray(responseData.data)) {
             const apiProducts: Product[] = [];
             const allCategories = new Set<string>(['All']);
+            const seenProductCompanyIds = new Set<string>();
 
             responseData.data.forEach((item: ApiResponseItem) => {
+              const pcid = (item.publishedId || '').trim();
+              if (pcid && seenProductCompanyIds.has(pcid)) return;
+              if (pcid) seenProductCompanyIds.add(pcid);
               // Check if products array exists and has at least one product
               if (item.products &&
                 item.products.products &&

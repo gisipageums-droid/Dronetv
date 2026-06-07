@@ -204,7 +204,18 @@ const EventsPage = () => {
             eventTime: card.eventTime, // Keep original for countdown
           }));
 
-          setAllEvents(transformedEvents);
+          const seenEIds = new Set<string>();
+          const seenENames = new Set<string>();
+          const uniqueEvents = transformedEvents.filter((e: any) => {
+            const id = (e.id || '').toLowerCase().trim();
+            const name = (e.name || '').toLowerCase().trim();
+            if (id && seenEIds.has(id)) return false;
+            if (name && seenENames.has(name)) return false;
+            if (id) seenEIds.add(id);
+            if (name) seenENames.add(name);
+            return true;
+          });
+          setAllEvents(uniqueEvents);
         } else {
           setAllEvents([]);
         }

@@ -27,8 +27,6 @@ interface Company {
 
 const FeaturedCompanies: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
-
-  console.log("companies", companies);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -36,11 +34,19 @@ const FeaturedCompanies: React.FC = () => {
 
     axios.get('https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=main')
       .then(response => {
-        console.log("response", response.data);
         if (response.data.success == true) {
-
-          setCompanies(response.data.cards.slice(0, 6)); // Top 6 featured
-
+          const seenFIds = new Set<string>();
+          const seenFNames = new Set<string>();
+          const unique = (response.data.cards as any[]).filter((c: any) => {
+            const id = (c.publishedId || '').toLowerCase().trim();
+            const name = (c.companyName || '').toLowerCase().trim();
+            if (id && seenFIds.has(id)) return false;
+            if (name && seenFNames.has(name)) return false;
+            if (id) seenFIds.add(id);
+            if (name) seenFNames.add(name);
+            return true;
+          });
+          setCompanies(unique.slice(0, 6));
         }
         else {
           setCompanies([]);
@@ -140,24 +146,20 @@ const FeaturedCompanies: React.FC = () => {
                     tabIndex={0}
                   >
                     {/* Company Image Header */}
-                    <div className="relative h-40 sm:h-48 overflow-hidden">
-                      {imgSrc ? (
+                    <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-yellow-300 to-yellow-400 flex flex-col items-center justify-center gap-2 px-4">
+                      <p className="text-2xl font-black text-gray-800 text-center uppercase leading-snug tracking-wide z-0">
+                        {(company.companyName ?? '?').split(' ')[0]}
+                      </p>
+                      <p className="text-xs font-semibold text-gray-700 text-center uppercase tracking-widest opacity-70 z-0">
+                        {company.companyName}
+                      </p>
+                      {imgSrc && (
                         <img
                           src={imgSrc}
                           alt={company.companyName}
-                          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                          className="absolute inset-0 w-full h-full object-contain transition-all duration-700 group-hover:scale-110"
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
-                      ) : null}
-                      {!imgSrc && (
-                        <div className="w-full h-full bg-gradient-to-br from-yellow-300 to-yellow-400 flex flex-col items-center justify-center gap-2 px-4">
-                          <p className="text-2xl font-black text-gray-800 text-center uppercase leading-snug tracking-wide">
-                            {(company.companyName ?? '?').split(' ')[0]}
-                          </p>
-                          <p className="text-xs font-semibold text-gray-700 text-center uppercase tracking-widest opacity-70">
-                            {company.companyName}
-                          </p>
-                        </div>
                       )}
 
                       {/* Black overlay */}

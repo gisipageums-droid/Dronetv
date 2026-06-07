@@ -48,9 +48,20 @@ const ProfessionalsPage: React.FC = () => {
         );
         const data = await res.json();
 
-        // Set professionals from `cards` array
+        // Set professionals from `cards` array, deduplicating by professionalId then by name
         const professionals = Array.isArray(data.cards) ? data.cards : [];
-        setAllProfessionals(professionals);
+        const seenPIds = new Set<string>();
+        const seenPNames = new Set<string>();
+        const uniqueProfessionals = professionals.filter((p: any) => {
+          const id = (p.professionalId || '').toLowerCase().trim();
+          const name = (p.fullName || p.professionalName || '').toLowerCase().trim();
+          if (id && seenPIds.has(id)) return false;
+          if (name && seenPNames.has(name)) return false;
+          if (id) seenPIds.add(id);
+          if (name) seenPNames.add(name);
+          return true;
+        });
+        setAllProfessionals(uniqueProfessionals);
       } catch (error) {
         console.error("Error fetching professionals:", error);
         setAllProfessionals([]);
