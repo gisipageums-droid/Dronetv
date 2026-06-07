@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Star, Plane, Clock, Tag, CheckCircle, Activity, Layers, ShieldCheck } from "lucide-react";
 import LoadingScreen from "./loadingscreen";
@@ -41,22 +41,42 @@ type Service = {
 
 export default function ServiceDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const navState = (location.state as any)?.service;
+
   const [service, setService] = useState<Service | null>(null);
   const [companyName, setCompanyName] = useState<string>("");
   const [template, setTemplate] = useState<string>("");
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!navState);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [showZoom, setShowZoom] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const [activeTab, setActiveTab] = useState<"features" | "benefits" | "process">("features");
 
-
-  const params = useParams()
-
-  console.log("params", params.id)
   useEffect(() => {
+    if (navState) {
+      setService({
+        id: navState.id || id || "unknown",
+        name: navState.title || "Untitled Service",
+        shortDescription: navState.description || "No description available",
+        price: navState.price || "Contact for pricing",
+        rating: navState.rating || 4.8,
+        reviewCount: 85,
+        images: navState.image ? [navState.image] : ["/images/service-placeholder.jpg"],
+        features: (navState.features || []).map((f: string) => ({ icon: <Activity className="w-4 h-4" />, text: f })),
+        benefits: navState.benefits || [],
+        process: navState.process || [],
+        detailedDescription: navState.detailedDescription || navState.description || "",
+        timeline: navState.timeline || "Flexible",
+        category: navState.category || "General",
+      });
+      setCompanyName(navState.company || "");
+      setLoading(false);
+      return;
+    }
+
     if (!id) return;
     setLoading(true);
     setError(null);

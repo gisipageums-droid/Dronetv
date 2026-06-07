@@ -134,7 +134,7 @@ const FeaturedCompanies: React.FC = () => {
                 return (
                   <div
                     key={company.publishedId || index}
-                    className={`group relative bg-[#f1ee8e] rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 opacity-100 translate-y-0`}
+                    className={`group relative bg-[#f1ee8e] rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 opacity-100 translate-y-0 flex flex-col h-full`}
                     style={{
                       transitionDelay: `${index * 150}ms`,
                       animation: `fadeInUp 0.8s ease-out ${index * 150}ms both`
@@ -146,24 +146,26 @@ const FeaturedCompanies: React.FC = () => {
                     tabIndex={0}
                   >
                     {/* Company Image Header */}
-                    <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-yellow-300 to-yellow-400 flex flex-col items-center justify-center gap-2 px-4">
-                      <p className="text-2xl font-black text-gray-800 text-center uppercase leading-snug tracking-wide z-0">
-                        {(company.companyName ?? '?').split(' ')[0]}
-                      </p>
-                      <p className="text-xs font-semibold text-gray-700 text-center uppercase tracking-widest opacity-70 z-0">
-                        {company.companyName}
-                      </p>
+                    <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-yellow-300 to-yellow-400 flex-shrink-0">
+                      {/* Fallback text shown when image fails or absent */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4">
+                        <p className="text-2xl font-black text-gray-800 text-center uppercase leading-snug tracking-wide">
+                          {(company.companyName ?? '?').split(' ')[0]}
+                        </p>
+                        <p className="text-xs font-semibold text-gray-700 text-center uppercase tracking-widest opacity-70">
+                          {company.companyName}
+                        </p>
+                      </div>
                       {imgSrc && (
                         <img
                           src={imgSrc}
                           alt={company.companyName}
-                          className="absolute inset-0 w-full h-full object-contain transition-all duration-700 group-hover:scale-110"
+                          className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
                       )}
-
-                      {/* Black overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/75 to-black/80 transition-all duration-500"></div>
+                      {/* Subtle bottom gradient for badge legibility */}
+                      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
 
                       {/* Logo Overlay */}
                       <div className="absolute top-4 left-4">
@@ -200,7 +202,7 @@ const FeaturedCompanies: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="p-4 sm:p-6">
+                    <div className="p-4 sm:p-6 flex flex-col flex-1">
                       {/* Company Header */}
                       <div className="mb-3 sm:mb-4">
                         <h3 className="text-lg sm:text-xl font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300">
@@ -289,7 +291,7 @@ const FeaturedCompanies: React.FC = () => {
                       </div>
 
                       {/* CTA Button */}
-                      <div className="flex justify-center pt-2">
+                      <div className="flex justify-center pt-2 mt-auto">
                         <button
                           onClick={e => {
                             e.stopPropagation();

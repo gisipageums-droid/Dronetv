@@ -132,7 +132,7 @@ const Navigation = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="items-center hidden space-x-1 xl:flex">
+          <div className="items-center hidden space-x-1 xl:flex overflow-hidden">
             {navItems.map((item) => {
               // Logged-in account dropdown: Dashboard + Logout
               if (item.path === "/user-dashboard" && (isLogin || isAdminLogin)) {
@@ -306,18 +306,21 @@ const Navigation = () => {
               );
             })}
 
-            {/* Language Selector */}
+          </div>
+
+          {/* Language Selector + Mobile hamburger — always visible on the right */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             <div className="relative" ref={languageRef}>
               <button
                 onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                className="flex items-center space-x-2 text-black hover:text-gray-800"
+                className="flex items-center space-x-1 text-black hover:text-gray-800"
               >
                 <img
                   src="/images/iconre.jpg"
                   alt="Language"
                   className="w-6 h-6 rounded-full"
                 />
-                <span className="text-sm notranslate" translate="no">{selectedLang}</span>
+                <span className="text-sm notranslate hidden sm:inline" translate="no">{selectedLang}</span>
               </button>
               {isLanguageOpen && (
                 <div className="absolute right-0 z-50 mt-2 bg-yellow-300 border-2 border-yellow-400 rounded-lg shadow-lg max-h-72 overflow-y-auto">
@@ -338,7 +341,6 @@ const Navigation = () => {
                 </div>
               )}
             </div>
-          </div>
 
           {/* Mobile menu button */}
           <div className="xl:hidden">
@@ -361,6 +363,7 @@ const Navigation = () => {
                 />
               </div>
             </button>
+          </div>
           </div>
         </div>
 
