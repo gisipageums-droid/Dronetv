@@ -8,7 +8,7 @@ import {
   Facebook,
   Instagram,
   Youtube,
-  X,
+  Twitter,
 } from "lucide-react";
 
 const ContactPage = () => {
@@ -75,10 +75,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     },
     {
       name: "Twitter",
-      icon: X,
+      icon: Twitter,
       href: "https://x.com/indiadronetv",
       color: "hover:text-blue-400",
-    }, // Updated with X
+    },
     {
       name: "YouTube",
       icon: Youtube,

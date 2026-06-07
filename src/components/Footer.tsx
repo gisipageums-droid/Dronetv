@@ -1,11 +1,11 @@
 import React from 'react';
-import { Facebook, Instagram, X, Youtube, Heart, ArrowUp } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Youtube, Heart, ArrowUp } from 'lucide-react';
 
 const Footer = () => {
   const socialLinks = [
     { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/dronetv.in', color: 'hover:text-blue-600' },
     { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/dronetv.in/', color: 'hover:text-pink-600' },
-    { name: 'Twitter', icon: X, href: 'https://x.com/indiadronetv', color: 'hover:text-blue-400' },  // Updated with X
+    { name: 'Twitter', icon: Twitter, href: 'https://x.com/indiadronetv', color: 'hover:text-blue-400' },
     { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@indiadronetv', color: 'hover:text-red-600' }
   ];
 
