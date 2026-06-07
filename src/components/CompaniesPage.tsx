@@ -41,9 +41,20 @@ const CompaniesPage: React.FC = () => {
       try {
         const res = await fetch('https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=main');
         const data = await res.json();
-        // Set companies from `cards` array
+        // Set companies from `cards` array, deduplicating by publishedId then by company name
         const companies = Array.isArray(data.cards) ? data.cards : [];
-        setAllCompanies(companies);
+        const seenIds = new Set<string>();
+        const seenNames = new Set<string>();
+        const unique = companies.filter((company: Company) => {
+          const id = (company.publishedId || '').toLowerCase().trim();
+          const name = (company.companyName || '').toLowerCase().trim();
+          if (id && seenIds.has(id)) return false;
+          if (name && seenNames.has(name)) return false;
+          if (id) seenIds.add(id);
+          if (name) seenNames.add(name);
+          return true;
+        });
+        setAllCompanies(unique);
       } catch (error) {
         console.error(error);
         setAllCompanies([]);
