@@ -106,7 +106,7 @@ const FeaturedCompanies: React.FC = () => {
             companies.length > 0
               ? companies.map((company, index) => {
                 const title = company.heroHeadline || company.companyName || 'Unnamed Company';
-                const imgSrc = (company as any).previewImage || (company as any).heroImage || company.companyLogo || '';
+                const imgSrc = company.heroBackground || company.aboutImage || (company as any).heroImage || company.companyLogo || (company as any).previewImage || '';
                 const desc =
                   company.aboutDescription ||
                   (company as any).companyDescription ||
@@ -160,7 +160,7 @@ const FeaturedCompanies: React.FC = () => {
                         <img
                           src={imgSrc}
                           alt={company.companyName}
-                          className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                          className="absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-110"
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
                       )}
