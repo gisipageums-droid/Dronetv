@@ -75,8 +75,12 @@ const ServicesPage = () => {
           if (responseData.status && responseData.data && Array.isArray(responseData.data)) {
             const apiServices: Service[] = [];
             const allCategories = new Set(['All']);
+            const seenCompanyIds = new Set<string>();
 
             responseData.data.forEach((item: any) => {
+              const cid = (item.publishedId || '').trim();
+              if (cid && seenCompanyIds.has(cid)) return;
+              if (cid) seenCompanyIds.add(cid);
               // Check if services array exists and has at least one service
               if (item.services &&
                 item.services.services &&
