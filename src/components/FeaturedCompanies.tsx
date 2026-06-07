@@ -106,7 +106,7 @@ const FeaturedCompanies: React.FC = () => {
             companies.length > 0
               ? companies.map((company, index) => {
                 const title = company.heroHeadline || company.companyName || 'Unnamed Company';
-                const logoSrc = company.companyLogo || '';
+                const logoSrc = (company as any).headerLogo || '';
                 const desc =
                   company.aboutDescription ||
                   (company as any).companyDescription ||
