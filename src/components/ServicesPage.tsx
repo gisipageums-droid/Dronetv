@@ -13,7 +13,7 @@ const decodeHTML = (str: string): string => {
 
 const isCleanTitle = (title: string): boolean => {
   if (!title?.trim()) return false;
-  return !/\$el\.|outerHTML|\.prop\s*\(|\.text\s*\(\)|'\s*\+\s*'|\beval\b|<script/i.test(title);
+  return !/^\s*'\s*\+|\+\s*'\s*$|\$el\.|outerHTML|\.prop\s*\(|\beval\b|<script/i.test(title);
 };
 import { Search, ChevronDown, Zap as Drone, Brain, Map, Star, Users, MapPin, Building2 } from 'lucide-react';
 import LoadingScreen from './loadingscreen';
