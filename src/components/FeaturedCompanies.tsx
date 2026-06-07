@@ -106,7 +106,7 @@ const FeaturedCompanies: React.FC = () => {
             companies.length > 0
               ? companies.map((company, index) => {
                 const title = company.heroHeadline || company.companyName || 'Unnamed Company';
-                const imgSrc = company.heroBackground || company.aboutImage || (company as any).heroImage || company.companyLogo || (company as any).previewImage || '';
+                const logoSrc = company.companyLogo || '';
                 const desc =
                   company.aboutDescription ||
                   (company as any).companyDescription ||
@@ -145,58 +145,41 @@ const FeaturedCompanies: React.FC = () => {
                     role="button"
                     tabIndex={0}
                   >
-                    {/* Company Image Header */}
-                    <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-yellow-300 to-yellow-400 flex-shrink-0">
-                      {/* Fallback text shown when image fails or absent */}
-                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4">
-                        <p className="text-2xl font-black text-gray-800 text-center uppercase leading-snug tracking-wide">
-                          {(company.companyName ?? '?').split(' ')[0]}
-                        </p>
-                        <p className="text-xs font-semibold text-gray-700 text-center uppercase tracking-widest opacity-70">
+                    {/* Company Card Header */}
+                    <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-yellow-200 to-yellow-400 flex-shrink-0 flex flex-col items-center justify-center px-4">
+                      {logoSrc ? (
+                        <img
+                          src={logoSrc}
+                          alt={company.companyName}
+                          className="max-h-24 max-w-[75%] object-contain drop-shadow-md"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        className="flex-col items-center justify-center gap-1 text-center"
+                        style={{ display: logoSrc ? 'none' : 'flex' }}
+                      >
+                        <span className="text-5xl font-black text-yellow-700 uppercase">
+                          {company.companyName?.[0] ?? '?'}
+                        </span>
+                        <p className="text-xs font-semibold text-gray-700 uppercase tracking-widest opacity-80 px-2">
                           {company.companyName}
                         </p>
                       </div>
-                      {imgSrc && (
-                        <img
-                          src={imgSrc}
-                          alt={company.companyName}
-                          className="absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-110"
-                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                        />
-                      )}
-                      {/* Subtle bottom gradient for badge legibility */}
-                      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
 
-                      {/* Logo Overlay */}
-                      <div className="absolute top-4 left-4">
-                        <div className="relative bg-yellow-400/20 backdrop-blur-sm rounded-2xl p-3 border border-yellow-400/30 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-yellow-400/30 transition-all duration-500">
-                          {(company as any).companyLogo || (company as any).heroImage ? (
-                            <img
-                              src={(company as any).companyLogo || (company as any).heroImage}
-                              alt={company.companyName}
-                              className="h-8 w-8 object-contain bg-white"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                                const span = e.currentTarget.nextElementSibling as HTMLElement;
-                                if (span) span.style.display = 'inline';
-                              }}
-                            />
-                          ) : null}
-                          <span className="text-yellow-500 font-black text-xl" style={{ display: (company as any).companyLogo || (company as any).heroImage ? 'none' : 'inline' }}>
-                            {company.companyName?.[0] ?? '?'}
-                          </span>
-                        </div>
+                      {/* Rating badge */}
+                      <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/70 backdrop-blur-sm px-2 py-1 rounded-full">
+                        <Star className="h-3 w-3 text-yellow-500 fill-current" />
+                        <span className="text-xs font-bold text-gray-800">{rating}</span>
                       </div>
 
-                      {/* Rating */}
-                      <div className="absolute top-4 right-4 flex items-center gap-1 bg-yellow-400/20 backdrop-blur-sm px-3 py-1 rounded-full border border-yellow-400/30">
-                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                        <span className="text-sm font-bold text-yellow-400">{rating}</span>
-                      </div>
-
-                      {/* Industry Badge */}
-                      <div className="absolute bottom-4 left-4">
-                        <span className="bg-yellow-400/20 backdrop-blur-sm text-yellow-400 px-3 py-1 rounded-full text-sm font-bold border border-yellow-400/30">
+                      {/* Industry badge */}
+                      <div className="absolute bottom-3 left-3">
+                        <span className="bg-black/70 text-yellow-300 px-2 py-1 rounded-full text-xs font-semibold">
                           {industry}
                         </span>
                       </div>
