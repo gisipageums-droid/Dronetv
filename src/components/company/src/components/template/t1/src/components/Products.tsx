@@ -2,8 +2,12 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "motion/react";
 import { Star, CheckCircle, X } from "lucide-react";
 
-const decodeHTML = (str: string): string =>
-  (str || "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+const decodeHTML = (str: string): string => {
+  if (!str) return '';
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+};
 
 // Custom Card Components
 const Card = ({ children, className = "" }) => (

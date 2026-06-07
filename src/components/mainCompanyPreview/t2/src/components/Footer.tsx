@@ -1,3 +1,13 @@
+const decodeHTML = (str: string): string => {
+  if (!str) return '';
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+};
+
+const isCleanTitle = (title: string): boolean =>
+  !!title?.trim() && !/\$el\.|outerHTML|\.prop\s*\(|\.text\s*\(\)|'\s*\+\s*'|\beval\b/i.test(title);
+
 import {
   Facebook,
   Twitter,
@@ -56,11 +66,13 @@ export default function Footer({
         id: 2,
         title: "Services",
         links: footerData?.services
-          ? footerData.services.map((service, index) => ({
-              id: index + 1,
-              text: service.title,
-              href: "#services",
-            }))
+          ? footerData.services
+              .filter((service) => isCleanTitle(service.title))
+              .map((service, index) => ({
+                id: index + 1,
+                text: decodeHTML(service.title),
+                href: "#services",
+              }))
           : [
               { id: 1, text: "Consulting", href: "#consulting" },
               { id: 2, text: "Development", href: "#development" },
