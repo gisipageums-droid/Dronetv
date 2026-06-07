@@ -2,6 +2,9 @@ import { useState, useRef } from "react";
 import { CheckCircle, X } from "lucide-react";
 import { motion, AnimatePresence, useInView } from "motion/react";
 
+const decodeHTML = (str: string): string =>
+  (str || "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+
 // Custom Card Components
 const Card = ({ children, className = "" }) => (
   <div className={`bg-white rounded-xl shadow-md overflow-hidden ${className}`}>
@@ -228,11 +231,12 @@ export default function Services() {
               transition={{ duration: 0.5, delay: 0.1 * index }}
             >
               <Card className="h-full flex flex-col hover:shadow-xl transition-shadow duration-300 group">
-                <div className="h-48 overflow-hidden relative">
+                <div className="h-48 overflow-hidden relative bg-gradient-to-br from-orange-50 to-orange-100">
                   <img
                     src={service.image}
                     alt={service.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                   />
                   <div className="absolute top-3 right-3">
                     <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full">
@@ -241,11 +245,11 @@ export default function Services() {
                   </div>
                 </div>
                 <CardHeader>
-                  <CardTitle>{service.title}</CardTitle>
+                  <CardTitle>{decodeHTML(service.title)}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
                   <p className="text-sm text-gray-600 mb-4 flex-1">
-                    {service.description}
+                    {decodeHTML(service.description)}
                   </p>
 
                   <Button

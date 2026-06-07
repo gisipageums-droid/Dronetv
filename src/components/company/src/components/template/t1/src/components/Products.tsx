@@ -2,6 +2,9 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "motion/react";
 import { Star, CheckCircle, X } from "lucide-react";
 
+const decodeHTML = (str: string): string =>
+  (str || "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+
 // Custom Card Components
 const Card = ({ children, className = "" }) => (
   <div className={`bg-white rounded-xl shadow-md overflow-hidden ${className}`}>
@@ -415,11 +418,12 @@ export default function Products() {
                 )}
 
                 <CardContent className="p-0 flex flex-col h-full">
-                  <div className="relative overflow-hidden">
+                  <div className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100">
                     <img
                       src={product.image}
                       alt={product.title}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />
                   </div>
 
@@ -428,16 +432,16 @@ export default function Products() {
                       <Badge
                         className={`${product.categoryColor || "bg-gray-100 text-gray-700"}`}
                       >
-                        {product.category}
+                        {decodeHTML(product.category)}
                       </Badge>
                     </div>
 
                     <h3 className="text-xl font-bold text-gray-900 mb-3">
-                      {product.title}
+                      {decodeHTML(product.title)}
                     </h3>
 
                     <p className="text-gray-600 text-sm mb-4 flex-1">
-                      {product.description.slice(0, 30) + "..."}
+                      {decodeHTML(product.description || "").slice(0, 30) + "..."}
                     </p>
 
                     {/* {product.features && product.features.length > 0 && (
