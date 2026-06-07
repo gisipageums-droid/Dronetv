@@ -47,21 +47,19 @@ const Footer = () => {
             </div>
 
             {/* Social Media Icons */}
-            <div className="flex space-x-6 mb-8">
-              {socialLinks.map((social, index) => {
+            <div className="flex items-center gap-6 mb-8">
+              {socialLinks.map((social) => {
                 const IconComponent = social.icon;
                 return (
                   <a
                     key={social.name}
                     href={social.href}
-                    target="_blank"  // Open link in a new tab
-                    rel="noopener noreferrer"  // For security reasons, use this in combination with target="_blank"
-                    className={`group relative text-black ${social.color} transition-all duration-300 transform hover:scale-125 hover:-translate-y-1`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`group text-black ${social.color} transition-all duration-300 transform hover:scale-125 hover:-translate-y-1`}
                     aria-label={social.name}
-                    style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className="absolute inset-0 bg-black/10 rounded-full scale-0 group-hover:scale-150 transition-all duration-300 blur-sm"></div>
-                    <div className="relative bg-white/20 backdrop-blur-sm rounded-full p-3 border border-white/30 group-hover:bg-white/30 transition-all duration-300">
+                    <div className="w-12 h-12 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-full border border-white/30 group-hover:bg-white/30 transition-all duration-300">
                       <IconComponent className="h-6 w-6" />
                     </div>
                   </a>
