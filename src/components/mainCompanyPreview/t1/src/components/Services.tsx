@@ -162,11 +162,11 @@ export default function Services({ serviceData }) {
                   </div>
                 </div>
                 <CardHeader>
-                  <CardTitle>{service.title}</CardTitle>
+                  <CardTitle>{decodeHTML(service.title)}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
                   <p className="text-sm text-gray-600 mb-4 flex-1 h-[70px] overflow-auto text-justify">
-                    {service.description}
+                    {decodeHTML(service.description)}
                   </p>
 
                   <Button

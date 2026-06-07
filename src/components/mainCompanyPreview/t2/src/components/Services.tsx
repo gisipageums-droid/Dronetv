@@ -1,3 +1,13 @@
+const decodeHTML = (str: string): string => {
+  if (!str) return '';
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+};
+
+const isCleanTitle = (title: string): boolean =>
+  !!title?.trim() && !/^\s*'\s*\+|\+\s*'\s*$|\$el\.|outerHTML|\.prop\s*\(|\beval\b/i.test(title);
+
 import { useState } from "react";
 import { Card, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -10,10 +20,11 @@ export default function Services({ serviceData }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
 
-  const filteredServices =
+  const filteredServices = (
     activeCategory === "All"
       ? serviceData.services
-      : serviceData.services.filter((s) => s.category === activeCategory);
+      : serviceData.services.filter((s) => s.category === activeCategory)
+  ).filter((s) => isCleanTitle(s.title));
 
   const visibleServices = filteredServices.slice(0, visibleCount);
 
@@ -90,11 +101,11 @@ export default function Services({ serviceData }) {
                     </div>
                     <div className="flex flex-col flex-grow p-6">
                       <div className="flex-shrink-0 mb-4">
-                        <CardTitle className="line-clamp-2 min-h-[3rem]">{service.title}</CardTitle>
+                        <CardTitle className="line-clamp-2 min-h-[3rem]">{decodeHTML(service.title)}</CardTitle>
                       </div>
                       <div className="flex-grow mb-4">
                         <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem] text-justify">
-                          {service.description}
+                          {decodeHTML(service.description)}
                         </p>
                         <p className="text-xs mt-1 italic text-gray-500">
                           Category: {service.category}
