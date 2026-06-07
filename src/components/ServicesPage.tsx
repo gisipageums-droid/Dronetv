@@ -404,13 +404,13 @@ const ServicesPage = () => {
                     }}
                   >
                     <div className="p-3">
-                      <div className="overflow-hidden relative rounded-2xl">
+                      <div className="overflow-hidden relative rounded-2xl bg-gradient-to-br from-yellow-50 to-yellow-100 h-48">
                         <img
                           src={service.image}
                           alt={service.title}
                           className="object-cover w-full h-48 transition-all duration-700 group-hover:scale-110"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/images/service-placeholder.jpg";
+                            (e.target as HTMLImageElement).style.display = "none";
                           }}
                         />
 

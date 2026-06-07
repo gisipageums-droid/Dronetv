@@ -1,3 +1,13 @@
+const decodeHTML = (str: string): string => {
+  if (!str) return '';
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+};
+
+const isCleanTitle = (title: string): boolean =>
+  !!title?.trim() && !/^\s*'\s*\+|\+\s*'\s*$|\$el\.|outerHTML|\.prop\s*\(|\beval\b/i.test(title);
+
 import {
   Facebook,
   Github,
@@ -101,13 +111,13 @@ export default function Footer({ content }) {
               </div>
 
               <ul className="space-y-3 text-sm">
-                {section.links.map((link) => (
+                {section.links.filter((link) => isCleanTitle(link.text)).map((link) => (
                   <li key={link.id}>
                     <a
                       href={link.href}
                       className="text-gray-300 hover:text-blue-400 transition-colors duration-200"
                     >
-                      {link.text}
+                      {decodeHTML(link.text)}
                     </a>
                   </li>
                 ))}
