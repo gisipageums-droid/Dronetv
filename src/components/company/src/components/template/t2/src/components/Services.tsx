@@ -4,8 +4,15 @@ import { Button } from "./ui/button";
 import { X, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-const decodeHTML = (str: string): string =>
-  (str || "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+const decodeHTML = (str: string): string => {
+  if (!str) return '';
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+};
+
+const isCleanTitle = (title: string): boolean =>
+  !!title?.trim() && !/\$el\.|outerHTML|\.prop\s*\(|\.text\s*\(\)|'\s*\+\s*'|\beval\b/i.test(title);
 
 export default function Services() {
   const [isEditing, setIsEditing] = useState(false);

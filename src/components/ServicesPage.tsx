@@ -3,6 +3,18 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+
+const decodeHTML = (str: string): string => {
+  if (!str) return '';
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+};
+
+const isCleanTitle = (title: string): boolean => {
+  if (!title?.trim()) return false;
+  return !/\$el\.|outerHTML|\.prop\s*\(|\.text\s*\(\)|'\s*\+\s*'|\beval\b|<script/i.test(title);
+};
 import { Search, ChevronDown, Zap as Drone, Brain, Map, Star, Users, MapPin, Building2 } from 'lucide-react';
 import LoadingScreen from './loadingscreen';
 
@@ -80,15 +92,15 @@ const ServicesPage = () => {
 
                 // Process each service in the services array
                 item.services.services.forEach((service: any, index: number) => {
-                  // Only process services that have at least a title
-                  if (service && service.title) {
+                  // Only process services that have a clean, non-code title
+                  if (service && service.title && isCleanTitle(service.title)) {
                     const mappedService: Service = {
                       id: `${item.publishedId}-${index}`, // Unique ID for each service
                       publishedId: item.publishedId,
                       userId: item.userId,
-                      title: service.title || "Untitled Service",
+                      title: decodeHTML(service.title),
                       company: item.companyName || (item.userId ? item.userId.split('@')[0] : "Unknown Company"),
-                      description: service.description || service.detailedDescription || "No description available",
+                      description: decodeHTML(service.description || service.detailedDescription || "No description available"),
                       image: service.image || "/images/service-placeholder.jpg",
                       category: service.category || "General",
                       price: service.pricing || "Contact for pricing",

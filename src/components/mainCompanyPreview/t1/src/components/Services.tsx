@@ -2,6 +2,16 @@ import { useState, useRef } from "react";
 import { CheckCircle, X } from "lucide-react";
 import { motion, AnimatePresence, useInView } from "motion/react";
 
+const decodeHTML = (str: string): string => {
+  if (!str) return '';
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+};
+
+const isCleanTitle = (title: string): boolean =>
+  !!title?.trim() && !/\$el\.|outerHTML|\.prop\s*\(|\.text\s*\(\)|'\s*\+\s*'|\beval\b/i.test(title);
+
 // Custom Card Components
 const Card = ({ children, className = "" }) => (
   <div className={`bg-white rounded-xl shadow-md overflow-hidden ${className}`}>
@@ -60,10 +70,11 @@ export default function Services({ serviceData }) {
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   // Filter services based on active category
-  const filteredServices =
+  const filteredServices = (
     activeCategory === "All"
       ? serviceData.services
-      : serviceData.services.filter((s) => s.category === activeCategory);
+      : serviceData.services.filter((s) => s.category === activeCategory)
+  ).filter((s) => isCleanTitle(s.title));
 
   const visibleServices = filteredServices.slice(0, visibleCount);
 

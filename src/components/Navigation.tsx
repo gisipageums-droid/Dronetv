@@ -317,7 +317,7 @@ const Navigation = () => {
                   alt="Language"
                   className="w-6 h-6 rounded-full"
                 />
-                <span className="text-sm">{selectedLang}</span>
+                <span className="text-sm notranslate" translate="no">{selectedLang}</span>
               </button>
               {isLanguageOpen && (
                 <div className="absolute right-0 z-50 mt-2 bg-yellow-300 border-2 border-yellow-400 rounded-lg shadow-lg max-h-72 overflow-y-auto">
@@ -327,7 +327,8 @@ const Navigation = () => {
                         <li
                           key={code}
                           onClick={() => handleLanguageChange(label, code)}
-                          className={`px-4 py-2 rounded cursor-pointer hover:bg-yellow-200 ${selectedLang === label ? "font-semibold bg-yellow-100" : ""}`}
+                          className={`notranslate px-4 py-2 rounded cursor-pointer hover:bg-yellow-200 ${selectedLang === label ? "font-semibold bg-yellow-100" : ""}`}
+                          translate="no"
                         >
                           {label}
                         </li>
