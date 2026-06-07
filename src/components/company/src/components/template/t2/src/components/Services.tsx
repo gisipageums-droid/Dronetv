@@ -12,7 +12,7 @@ const decodeHTML = (str: string): string => {
 };
 
 const isCleanTitle = (title: string): boolean =>
-  !!title?.trim() && !/\$el\.|outerHTML|\.prop\s*\(|\.text\s*\(\)|'\s*\+\s*'|\beval\b/i.test(title);
+  !!title?.trim() && !/^\s*'\s*\+|\+\s*'\s*$|\$el\.|outerHTML|\.prop\s*\(|\beval\b/i.test(title);
 
 export default function Services() {
   const [isEditing, setIsEditing] = useState(false);
