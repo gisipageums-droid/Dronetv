@@ -1118,7 +1118,7 @@ const GSTVerificationSection: React.FC<{
         const response = await axios.post(
           'https://kyc-api.surepass.io/api/v1/corporate/company-details',
           { id_number: gstNumber },
-          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json', Accept: 'application/json' } }
+          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json', Accept: 'application/json' }, timeout: 15000 }
         );
         if (response.data?.success && response.data?.data) {
           const d = response.data.data;
@@ -2250,12 +2250,17 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                 "Authorization": `Bearer ${SUREPASS_TOKEN}`,
                 "Content-Type": "application/json",
                 "Accept": "application/json"
-              }
+              },
+              timeout: 15000,
             }
           );
         } catch (apiErr: any) {
           if (apiErr?.response?.status === 401 || apiErr?.response?.status === 403) {
             apiUnavailable = true;
+          } else if (apiErr?.code === 'ECONNABORTED' || apiErr?.message?.includes('timeout')) {
+            toast.error('GST verification timed out. Please check your connection and try again.');
+            setVerifyingGST(false);
+            return;
           } else {
             throw apiErr;
           }

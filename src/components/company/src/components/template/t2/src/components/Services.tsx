@@ -4,6 +4,9 @@ import { Button } from "./ui/button";
 import { X, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
+const decodeHTML = (str: string): string =>
+  (str || "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+
 export default function Services() {
   const [isEditing, setIsEditing] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -327,11 +330,12 @@ export default function Services() {
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {visibleServices.map((service, index) => (
             <Card key={index} className='relative border-2 shadow-lg hover:shadow-xl  shadow-gray-500' >
-              <div className='h-40 overflow-hidden relative'>
+              <div className='h-40 overflow-hidden relative bg-gradient-to-br from-amber-50 to-amber-100'>
                 <img
                   src={service.image}
                   alt={service.title}
                   className='w-full h-full object-cover'
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                 />
                 {isEditing && (
                   <input
@@ -352,7 +356,7 @@ export default function Services() {
                     className='border-b w-full'
                   />
                 ) : (
-                  <CardTitle>{service.title}</CardTitle>
+                  <CardTitle>{decodeHTML(service.title)}</CardTitle>
                 )}
               </CardHeader>
               <CardContent>

@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+
+const decodeHTML = (str: string): string =>
+  (str || "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 import {
   Monitor,
   Smartphone,
@@ -391,7 +394,7 @@ export default function Product() {
                       className='border-b w-full'
                     />
                   ) : (
-                    <CardTitle>{product.title}</CardTitle>
+                    <CardTitle>{decodeHTML(product.title)}</CardTitle>
                   )}
                 </CardHeader>
                 <CardContent>
