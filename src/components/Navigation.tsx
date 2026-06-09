@@ -423,17 +423,11 @@ const Navigation = () => {
                     </button>
 
                     <button
-                      onClick={() => handleNavigation("/register")}
-                      className={`w-full text-left block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover:bg-black/10 transform hover:translate-x-2 ${
-                        location.pathname === "/register"
-                          ? "text-gray-800 bg-black/10"
-                          : "text-black hover:text-gray-800"
-                      }`}
+                      onClick={() => { setHaveAccount(false); handleNavigation("/login"); }}
+                      className={`w-full text-left block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover:bg-black/10 transform hover:translate-x-2 text-black hover:text-gray-800`}
                       style={{
                         animationDelay: `${index * 50}ms`,
-                        transform: isMenuOpen
-                          ? "translateY(0)"
-                          : "translateY(-20px)",
+                        transform: isMenuOpen ? "translateY(0)" : "translateY(-20px)",
                         opacity: isMenuOpen ? 1 : 0,
                         transition: `all 0.3s ease-out ${index * 50}ms`,
                       }}
@@ -448,7 +442,12 @@ const Navigation = () => {
               if (item.name === "Media") {
                 return (
                   <div key="media" className="space-y-1">
-                    <div className="px-3 py-1 text-xs font-bold text-black/50 uppercase tracking-wider">Media</div>
+                    <button
+                      onClick={() => handleNavigation("/gallery")}
+                      className="w-full text-left block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover:bg-black/10 text-black hover:text-gray-800 font-semibold"
+                    >
+                      Media
+                    </button>
                     <button
                       onClick={() => handleNavigation("/gallery")}
                       className={`w-full text-left block px-5 py-2 rounded-md text-base font-medium transition-all duration-300 hover:bg-black/10 transform hover:translate-x-2 ${location.pathname === "/gallery" ? "text-gray-800 bg-black/10" : "text-black hover:text-gray-800"}`}
