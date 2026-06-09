@@ -15,8 +15,8 @@ const CardTitle = ({ children }) => (
   <h3 className="text-xl font-bold text-gray-900">{children}</h3>
 );
 
-const CardContent = ({ children }) => (
-  <div className="px-6 pb-6">{children}</div>
+const CardContent = ({ children, className = "" }) => (
+  <div className={`px-6 pb-6 ${className}`}>{children}</div>
 );
 
 // Custom Button Component
@@ -162,7 +162,7 @@ export default function Services({ serviceData }) {
                   <CardTitle>{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
-                  <p className="text-sm text-gray-600 mb-4 flex-1">
+                  <p className="text-sm text-gray-600 mb-4 flex-1 line-clamp-3">
                     {service.description}
                   </p>
 
