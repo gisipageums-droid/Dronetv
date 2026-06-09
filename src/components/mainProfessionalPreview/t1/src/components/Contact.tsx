@@ -70,7 +70,6 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
       setSubmitStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "", phone: "" });
     } catch (error) {
-      console.log(error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);

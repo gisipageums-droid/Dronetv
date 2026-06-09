@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Edit2, Save, X, Loader2, Upload, RotateCw, ZoomIn } from "lucide-react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import HeroBackground from "../public/images/Hero/HeroBackground.jpg";
+const HeroBackground = "/images/hero/HeroBackground.jpg";
 
 // Sample images (replace with your actual imports)
 const Hero1 = "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800";

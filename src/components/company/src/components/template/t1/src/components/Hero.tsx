@@ -5,9 +5,9 @@ import Cust2 from "../public/images/customers/customer-3.jpg";
 import Cust3 from "../public/images/customers/customer-4.jpg";
 import Cust4 from "../public/images/customers/customer-5.jpg";
 import Cust5 from "../public/images/customers/customer-6.jpg";
-import Hero1 from "../public/images/Hero/Hero1.jpg";
-import Hero3 from "../public/images/Hero/Hero3.jpg";
-import HeroBackground from "../public/images/Hero/HeroBackground.jpg";
+const Hero1 = "/images/hero/HeroBackground.jpg";
+const Hero3 = "/images/hero/HeroBackground.jpg";
+const HeroBackground = "/images/hero/HeroBackground.jpg";
 
 const itemVariants = {
   hidden: { y: 50, opacity: 0 },

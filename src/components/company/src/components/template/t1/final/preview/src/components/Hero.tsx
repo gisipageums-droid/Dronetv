@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import HeroBackground from "../public/images/Hero/HeroBackground.jpg";
+const HeroBackground = "/images/hero/HeroBackground.jpg";
 
 const itemVariants = {
   hidden: { y: 50, opacity: 0 },

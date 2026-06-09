@@ -92,7 +92,6 @@ export default function MainProTemp2() {
       </div>
     );
   }
-  console.log("Finale Data Review:--------", finaleDataReview.content);
   if (!finaleDataReview || !finaleDataReview.content) {
     return (
       <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex items-center justify-center">

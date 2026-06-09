@@ -7,7 +7,6 @@ export default function Header({ headerData }) {
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  console.log("header data", headerData);
 
   // ✅ Desired navigation order
   const desiredOrder = [

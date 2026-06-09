@@ -48,7 +48,6 @@ const UpcomingEvents = () => {
 
   // 🔁 yahan change: events ko state se manage karenge
   const [events, setEvents] = useState<EventCard[]>([]);
-  console.log("events", events);
 
   useEffect(() => {
     axios
@@ -57,7 +56,6 @@ const UpcomingEvents = () => {
       )
       .then((res) => {
         if (res.data?.success && Array.isArray(res.data.cards)) {
-          console.log("res event", res.data);
 
           // 👇 API ke cards ko UI wale format me convert kar rahe hain
           const apiEvents: EventCard[] = res.data.cards.map((card: any) => ({

@@ -12,9 +12,9 @@ import {
   RotateCw,
   ZoomIn,
 } from "lucide-react";
-import blog1 from "../public/images/blog/blog1.jpg";
-import blog2 from "../public/images/blog/blog2.jpg";
-import blog3 from "../public/images/blog/blog3.jpg";
+const blog1 = "/images/blog/blog1.jpg";
+const blog2 = "/images/blog/blog2.jpg";
+const blog3 = "/images/blog/blog3.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";

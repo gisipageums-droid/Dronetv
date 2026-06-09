@@ -108,7 +108,6 @@ export default function FinalEdit_event_t2() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetched template data:', data.content);
           
           // Corrected data mapping - extract the nested content
           const templateContent = data.content;

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { useEffect, useState, useRef } from "react";
-import HeroBackground from "../public/images/Hero/HeroBackground.jpg";
+const HeroBackground = "/images/hero/HeroBackground.jpg";
 
 // Sample images (replace with your actual imports)
 const Hero1 = "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800";

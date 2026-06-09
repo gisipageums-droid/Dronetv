@@ -6,7 +6,6 @@ export default function CompanyProfile({ profileData }) {
   const useScrollAnimation = () => {
     const [ref, setRef] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
-    console.log("Profile Data:", profileData);
 
     useEffect(() => {
       if (!ref) return;

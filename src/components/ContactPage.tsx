@@ -42,7 +42,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     });
 
     const result = await res.json();
-    console.log("Lambda response:", result);
 
     if (res.ok) {
       setIsSubmitted(true);

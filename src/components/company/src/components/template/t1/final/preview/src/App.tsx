@@ -48,7 +48,6 @@ export default function App() {
       }
 
       const data = await response.json();
-      console.log("Fetched template data:", data);
       setFinaleDataReview(data.data);
       setIsLoading(false);
     } catch (error) {

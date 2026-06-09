@@ -16,7 +16,6 @@ export default function Clients({ clientData }) {
   const hasHeading = clientData.headline.title.length > 0 || clientData.headline.description.length > 0;
   const hasClients = clientData.clients.length > 0;
 
-  console.log(hasClients);
   const logoVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {

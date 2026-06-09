@@ -131,7 +131,6 @@ const ServicesPage = () => {
             });
 
             if (apiServices.length > 0) {
-              console.log("API Services mapped successfully:", apiServices.length, "services");
 
               // Sort by timestamp (newest first) initially
               const sortedServices = apiServices.sort((a, b) => {
