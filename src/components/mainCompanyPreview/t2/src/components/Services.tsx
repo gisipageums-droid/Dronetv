@@ -92,13 +92,15 @@ export default function Services({ serviceData }) {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {visibleServices.map((service, index) => (
                   <Card key={index} className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl shadow-gray-500">
-                    <div className="h-40 overflow-hidden relative flex-shrink-0 bg-gradient-to-br from-blue-100 to-blue-200">
-                      <img
-                        src={service.image}
-                        alt={service.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                      />
+                    <div className="h-40 overflow-hidden relative flex-shrink-0" style={{ background: '#dbeafe' }}>
+                      {service.image && /^https?:\/\//.test(service.image) && (
+                        <img
+                          src={service.image}
+                          alt={service.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                      )}
                     </div>
                     <div className="flex flex-col flex-grow p-6">
                       <div className="flex-shrink-0 mb-4">
