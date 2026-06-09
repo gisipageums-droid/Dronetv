@@ -132,7 +132,7 @@ const Navigation = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="items-center hidden space-x-1 xl:flex overflow-hidden">
+          <div className="items-center hidden space-x-1 xl:flex">
             {navItems.map((item) => {
               // Logged-in account dropdown: Dashboard + Logout
               if (item.path === "/user-dashboard" && (isLogin || isAdminLogin)) {
