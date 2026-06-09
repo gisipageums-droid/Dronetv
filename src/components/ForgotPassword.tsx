@@ -47,7 +47,6 @@ const ForgotPassword: React.FC = () => {
         throw new Error(errorData.error || 'Failed to send reset email')
       }
       const responseData = await response.json()
-      console.log("Response:", responseData)
       setIsSubmitted(true)
     } catch (error: any) {
       setErrors({ submit: error.message || 'Failed to send reset email. Please try again.' })

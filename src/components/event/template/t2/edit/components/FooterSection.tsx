@@ -104,7 +104,6 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
     const [isVisible, setIsVisible] = useState(false);
     const footerRef = useRef<HTMLDivElement>(null);
 
-    console.log('Footer component rendered with data:', footerData);
 
     const defaultFooterData: FooterData = {
         eventInfo: {

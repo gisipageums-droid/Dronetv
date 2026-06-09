@@ -70,7 +70,6 @@ export default function FinalPreview_event_t2() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetched template data:', data.items[0].content);
           setComponentStates(data.items[0].content);
         } else {
           toast.error('Failed to load template data');

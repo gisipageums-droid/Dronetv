@@ -9,7 +9,6 @@ export default function ResetPassword() {
   const { id: token } = useParams(); // Get token from URL params
 
   useEffect(() => {
-    console.log("Token from URL:", token);
   }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {

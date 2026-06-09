@@ -161,7 +161,6 @@ export default function Login() {
 
     setIsRegistering(true);
     const { confirmPassword, ...userData } = signUpData; // phone included in userData now
-    console.log("Sign up successful with data:", userData);
 
     try {
       const response = await fetch(
@@ -210,7 +209,6 @@ export default function Login() {
   const handleGoogleSuccess = async (credentialResponse: any) => {
     if (credentialResponse.credential) {
       const decoded = jwtDecode<GoogleUser>(credentialResponse.credential);
-      console.log("Google login successful:", decoded);
 
       try {
         // Send Google credential to your backend for verification

@@ -145,7 +145,6 @@ const ProductsPage: React.FC = () => {
             });
 
             if (apiProducts.length > 0) {
-              console.log("API Products mapped successfully:", apiProducts.length, "products");
 
               // Sort by timestamp (newest first) initially
               const sortedProducts = apiProducts.sort((a, b) => {

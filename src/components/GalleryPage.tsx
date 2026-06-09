@@ -596,7 +596,6 @@ const GalleryPage = () => {
     if (!isInitialLoad.current && allImages.length > 0) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(allImages));
-        console.log('Images saved to localStorage:', allImages.length, 'images');
       } catch (error) {
         console.error('Error saving images to localStorage:', error);
         alert('Unable to save images. Browser storage might be full.');

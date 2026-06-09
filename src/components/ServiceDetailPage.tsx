@@ -95,7 +95,6 @@ export default function ServiceDetailPage() {
         }
 
         const apiData = responseData.data;
-        console.log("apiData", apiData.template)
 
         // Extract company name
         setCompanyName(apiData?.companyName || "");

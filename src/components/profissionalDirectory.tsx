@@ -722,7 +722,6 @@ const apiService = {
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
-    console.log("userId", userId);
 
     try {
       const url = new URL(`https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=user&userId=${userId.trim()}`);
@@ -741,7 +740,6 @@ const apiService = {
       });
 
       clearTimeout(timeoutId);
-      console.log('Response status:', response.status);
 
       if (!response.ok) {
         let errorText = 'Unknown error occurred';
@@ -798,7 +796,6 @@ const apiService = {
         throw new Error("Invalid response format from server");
       }
 
-      console.log("API Response:", data);
 
       if (typeof data !== 'object' || data === null) {
         throw new Error("Invalid response format: expected object");
@@ -923,7 +920,6 @@ const ProfessionalDirectory: React.FC = () => {
       //   user.userData.email,
       //   setFinaleDataReview
       // );
-      console.log("template ID", templateSelection);
 
       if (templateSelection === "template-1") {
         navigate(`/user/professionals/preview/1/${professionalId}/${user.userData.email}`);
@@ -954,22 +950,10 @@ const ProfessionalDirectory: React.FC = () => {
         throw new Error("User ID is missing. Please log in again.");
       }
 
-      console.log('Fetching profiles for user:', {
-        userId: user.userData.email,
-        userType: typeof user.userData.email,
-        userExists: !!user
-      });
-
       setLoading(true);
       setError(null);
 
       const data = await apiService.fetchProfiles(user.userData.email);
-
-      console.log('Profiles fetch successful:', {
-        cardsCount: data.cards?.length || 0,
-        totalCount: data.totalCount,
-        hasMore: data.hasMore
-      });
 
       setProfiles(data.cards || []);
       setTotalCount(data.totalCount || 0);
@@ -984,7 +968,6 @@ const ProfessionalDirectory: React.FC = () => {
       if (errorMessage.includes("not authenticated") ||
         errorMessage.includes("User ID") ||
         errorMessage.includes("log in")) {
-        console.log('Authentication error detected');
       }
     } finally {
       setLoading(false);
@@ -993,20 +976,12 @@ const ProfessionalDirectory: React.FC = () => {
 
   // Load data on component mount
   useEffect(() => {
-    console.log('ProfessionalDirectory useEffect triggered:', {
-      user: !!user,
-      userId: user?.userData?.email,
-      timestamp: new Date().toISOString()
-    });
-
     const initializeData = async () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       if (user && user.userData?.email && user.userData.email.trim() !== '') {
-        console.log('User validated, fetching profiles...');
         fetchProfiles();
       } else if (user === null) {
-        console.log('No authenticated user found');
         setError("Please log in to view your profiles");
         setLoading(false);
       }
