@@ -21,12 +21,24 @@ interface UsedByProps {
   usedByData?: UsedByData;
 }
 
+// Map well-known company names to stable public logos
+const KNOWN_LOGOS: Record<string, string> = {
+  "Business Insider": "/logos/BusinessInsider.png",
+  "Forbes": "/logos/Forbes.png",
+  "TechCrunch": "/logos/TechCrunch.png",
+  "NY Times": "/logos/TheNewYorkTimes.png",
+  "The New York Times": "/logos/TheNewYorkTimes.png",
+  "USA Today": "/logos/USAToday.png",
+};
+
+const FALLBACK_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='48'%3E%3Crect width='120' height='48' rx='6' fill='%23f3f4f6'/%3E%3Ctext x='60' y='30' font-family='sans-serif' font-size='12' fill='%239ca3af' text-anchor='middle'%3ELogo%3C/text%3E%3C/svg%3E";
+
 const defaultCompanies: Company[] = [
-  { id: 1, name: "Company 1", image: "" },
-  { id: 2, name: "Company 2", image: "" },
-  { id: 3, name: "Company 3", image: "" },
-  { id: 4, name: "Company 4", image: "" },
-  { id: 5, name: "Company 5", image: "" },
+  { id: 1, name: "Business Insider", image: "" },
+  { id: 2, name: "Forbes", image: "" },
+  { id: 3, name: "TechCrunch", image: "" },
+  { id: 4, name: "NY Times", image: "" },
+  { id: 5, name: "USA Today", image: "" },
 ];
 
 const defaultContent: UsedByData = {
@@ -34,50 +46,32 @@ const defaultContent: UsedByData = {
   companies: defaultCompanies,
 };
 
-const LogoPlaceholder = ({ name }: { name: string }) => (
-  <div
-    style={{
-      height: 48,
-      minWidth: 100,
-      background: '#f3f4f6',
-      borderRadius: 8,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '0 16px',
-    }}
-  >
-    <span style={{ color: '#9ca3af', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
-      {name || 'Partner'}
-    </span>
-  </div>
-);
-
 const CompanyLogo = ({ company }: { company: Company }) => {
-  const hasValidUrl = company.image && /^https?:\/\//.test(company.image);
+  // Prefer known stable logo, then stored image if non-empty and not a stale /assets/ hash path
+  const stableUrl = KNOWN_LOGOS[company.name];
+  const storedIsStable = company.image && !company.image.startsWith('/assets/');
+  const src = stableUrl || (storedIsStable ? company.image : null);
 
-  if (hasValidUrl) {
+  if (src) {
     return (
-      <div style={{ position: 'relative' }}>
-        <img
-          src={company.image}
-          alt={company.name}
-          className="h-12 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300"
-          onError={(e) => {
-            const img = e.target as HTMLImageElement;
-            img.style.display = 'none';
-            const fallback = img.nextElementSibling as HTMLElement;
-            if (fallback) fallback.style.display = 'flex';
-          }}
-        />
-        <div style={{ display: 'none' }}>
-          <LogoPlaceholder name={company.name} />
-        </div>
-      </div>
+      <img
+        src={src}
+        alt={company.name}
+        className="h-12 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300"
+        onError={(e) => {
+          (e.target as HTMLImageElement).src = FALLBACK_SVG;
+        }}
+      />
     );
   }
 
-  return <LogoPlaceholder name={company.name} />;
+  return (
+    <img
+      src={FALLBACK_SVG}
+      alt={company.name}
+      className="h-12 opacity-60"
+    />
+  );
 };
 
 const UsedBy: React.FC<UsedByProps> = ({ usedByData }) => {

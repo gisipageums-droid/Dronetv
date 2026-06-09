@@ -1,50 +1,32 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
-const LogoPlaceholder = ({ name }: { name: string }) => (
-  <div
-    style={{
-      height: 40,
-      minWidth: 90,
-      background: '#f3f4f6',
-      borderRadius: 8,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '0 14px',
-    }}
-  >
-    <span style={{ color: '#9ca3af', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' }}>
-      {name || 'Partner'}
-    </span>
-  </div>
-);
+const KNOWN_LOGOS: Record<string, string> = {
+  "Business Insider": "/logos/BusinessInsider.png",
+  "Forbes": "/logos/Forbes.png",
+  "TechCrunch": "/logos/TechCrunch.png",
+  "NY Times": "/logos/TheNewYorkTimes.png",
+  "The New York Times": "/logos/TheNewYorkTimes.png",
+  "USA Today": "/logos/USAToday.png",
+};
+
+const FALLBACK_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='48'%3E%3Crect width='120' height='48' rx='6' fill='%23f3f4f6'/%3E%3Ctext x='60' y='30' font-family='sans-serif' font-size='12' fill='%239ca3af' text-anchor='middle'%3ELogo%3C/text%3E%3C/svg%3E";
 
 const CompanyLogo = ({ company }) => {
-  const hasValidUrl = company.image && /^https?:\/\//.test(company.image);
+  const stableUrl = KNOWN_LOGOS[company.name];
+  const storedIsStable = company.image && !company.image.startsWith('/assets/');
+  const src = stableUrl || (storedIsStable ? company.image : null);
 
-  if (hasValidUrl) {
-    return (
-      <div style={{ position: 'relative' }}>
-        <img
-          src={company.image}
-          alt={company.name}
-          className="h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300"
-          onError={(e) => {
-            const img = e.target as HTMLImageElement;
-            img.style.display = 'none';
-            const fallback = img.nextElementSibling as HTMLElement;
-            if (fallback) fallback.style.display = 'flex';
-          }}
-        />
-        <div style={{ display: 'none' }}>
-          <LogoPlaceholder name={company.name} />
-        </div>
-      </div>
-    );
-  }
-
-  return <LogoPlaceholder name={company.name} />;
+  return (
+    <img
+      src={src || FALLBACK_SVG}
+      alt={company.name}
+      className="h-8 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300"
+      onError={(e) => {
+        (e.target as HTMLImageElement).src = FALLBACK_SVG;
+      }}
+    />
+  );
 };
 
 export default function UsedBy({ usedByData }) {
