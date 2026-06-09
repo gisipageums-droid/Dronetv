@@ -415,9 +415,9 @@ const EventsPage = () => {
       {/* Filter Section */}
       <section className="py-3 bg-yellow-400 sticky top-16 z-40 border-b border-black/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 items-stretch sm:items-center justify-between">
             {/* Search Bar */}
-            <div className="relative flex-1 max-w-xs">
+            <div className="relative w-full sm:flex-1 sm:max-w-xs">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <Search className="h-4 w-4 text-black/60" />
               </div>
@@ -430,29 +430,30 @@ const EventsPage = () => {
               />
             </div>
 
-            {/* Event Type Filter */}
-            <div className="flex gap-3">
-              <div className="relative">
+            {/* Event Type + Sort Filters */}
+            <div className="flex gap-2 w-full sm:w-auto">
+              {/* Event Type Filter */}
+              <div className="relative flex-1 sm:flex-none">
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-48 appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-yellow-400 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300"
+                  className="w-full sm:w-44 appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-yellow-400 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300"
                 >
                   {eventTypes.map((type) => (
                     <option key={type} value={type}>
-                      {type === "All" ? "All Event Types" : type}
+                      {type === "All" ? "All Types" : type}
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-yellow-60 pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
               </div>
 
               {/* Sort Options */}
-              <div className="relative">
+              <div className="relative flex-1 sm:flex-none">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/yellow-400 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-72"
+                  className="w-full sm:w-48 appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-yellow-400 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300"
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -460,7 +461,7 @@ const EventsPage = () => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
               </div>
             </div>
           </div>
