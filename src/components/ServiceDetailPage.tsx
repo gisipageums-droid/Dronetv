@@ -139,7 +139,7 @@ export default function ServiceDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <LoadingScreen logoSrc="images/logo.png" loadingText="Loading service..." />;
+  if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading service..." />;
 
   if (error)
     return (

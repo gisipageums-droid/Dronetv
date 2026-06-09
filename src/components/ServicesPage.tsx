@@ -258,7 +258,7 @@ const ServicesPage = () => {
   if (loading) {
     return (
       <LoadingScreen
-        logoSrc="images/logo.png"
+        logoSrc="/images/logo.png"
         loadingText="Loading Services..."
       />
     );
