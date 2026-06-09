@@ -10,31 +10,38 @@ import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import { useTemplate } from "../../../context/context";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import GallerySection from "./components/Gallery";
 import CompanyProfile from "./components/Profile"
 import Back from "./components/Back"
-// import { useEffect } from "react";
 
 export default function App() {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
-  console.log("finaleDataReview", finaleDataReview.companyName)
-  const { urlSlug } = useParams(); // Get both parameters from URL
+  const { urlSlug } = useParams();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to fetch template data
-  async function fetchTemplateData(urlSlug: string) {
+  async function fetchTemplateData(slug: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://ykcimvca79.execute-api.ap-south-1.amazonaws.com/dev/template?companyName=${urlSlug}`);
+      const response = await fetch(`https://ykcimvca79.execute-api.ap-south-1.amazonaws.com/dev/template?companyName=${encodeURIComponent(slug)}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      setFinaleDataReview(data.data);
+      const company = data.data;
+
+      // If this is a template-2 company, redirect to the correct route
+      if (company?.templateSelection === 'template-2') {
+        const correctSlug = company.urlSlug || slug;
+        navigate(`/companies/${correctSlug}`, { replace: true });
+        return;
+      }
+
+      setFinaleDataReview(company);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching template data:", error);
@@ -44,7 +51,6 @@ export default function App() {
   }
 
   useEffect(() => {
-    // If we have both publishedId and userId from URL, fetch the data
     if (urlSlug) {
       fetchTemplateData(urlSlug);
     } else {

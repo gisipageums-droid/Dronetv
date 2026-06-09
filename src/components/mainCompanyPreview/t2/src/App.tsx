@@ -11,28 +11,37 @@ import Footer from "./components/Footer";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useTemplate } from "../../../context/context";
 import { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Profile from "./components/Profile";
 import Gallery from "./components/Gallery";
 import Back from "./components/Back";
 export default function App() {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
-  const { urlSlug } = useParams(); // Get both parameters from URL
+  const { urlSlug } = useParams();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to fetch template data
-  async function fetchTemplateData(urlSlug: string) {
+  async function fetchTemplateData(slug: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://ykcimvca79.execute-api.ap-south-1.amazonaws.com/dev/template?companyName=${urlSlug}`);
+      const response = await fetch(`https://ykcimvca79.execute-api.ap-south-1.amazonaws.com/dev/template?companyName=${encodeURIComponent(slug)}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      setFinaleDataReview(data.data);
+      const company = data.data;
+
+      // If this is a template-1 company, redirect to the correct route
+      if (company?.templateSelection === 'template-1') {
+        const correctSlug = company.urlSlug || slug;
+        navigate(`/company/${correctSlug}`, { replace: true });
+        return;
+      }
+
+      setFinaleDataReview(company);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching template data:", error);
@@ -42,7 +51,6 @@ export default function App() {
   }
 
   useEffect(() => {
-    // If we have both publishedId and userId from URL, fetch the data
     if (urlSlug) {
       fetchTemplateData(urlSlug);
     } else {
@@ -119,13 +127,15 @@ export default function App() {
           <Testimonials
             testimonialsData={finaleDataReview.content.testimonials}
           />
-          <Clients
-            clientData={finaleDataReview.content.clients}
-          />
-          <Contact
-            contactData={finaleDataReview.content.contact}
-            publishedId={finaleDataReview.publishedId}
-          />
+          {finaleDataReview.content.clients && (
+            <Clients clientData={finaleDataReview.content.clients} />
+          )}
+          {finaleDataReview.content.contact && (
+            <Contact
+              contactData={finaleDataReview.content.contact}
+              publishedId={finaleDataReview.publishedId}
+            />
+          )}
         </main>
         <Back />
         <Footer
