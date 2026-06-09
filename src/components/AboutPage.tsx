@@ -299,7 +299,36 @@ const AboutPage = () => {
         </p>
       </div>
 
-      <div className="relative">
+      {/* Mobile: single column stack */}
+      <div className="flex flex-col gap-6 sm:hidden">
+        {timelineEvents.map((event, index) => {
+          const IconComponent = event.icon;
+          const isVisible = visibleTimelineItems[index];
+          return (
+            <div
+              key={index}
+              className={`timeline-card ${isVisible ? 'animate-slide-in-left' : 'opacity-0'}`}
+              style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
+            >
+              <div className="bg-yellow-200 rounded-3xl p-5 shadow-lg">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-11 h-11 flex-shrink-0 bg-yellow-100 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow">
+                    <IconComponent className="h-5 w-5 text-black" />
+                  </div>
+                  <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold">
+                    {event.year}
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold text-black mb-2">{event.title}</h3>
+                <p className="text-gray-600 leading-relaxed text-sm">{event.description}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop: alternating left/right timeline */}
+      <div className="relative hidden sm:block">
         <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-black/20 rounded-full"></div>
         <div className="space-y-12">
           {timelineEvents.map((event, index) => {
@@ -319,10 +348,7 @@ const AboutPage = () => {
                       : 'animate-slide-in-right'
                     : 'opacity-0'
                 }`}
-                style={{
-                  animationDelay: `${index * 0.2}s`,
-                  animationFillMode: 'forwards',
-                }}
+                style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
               >
                 <div className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-yellow-100 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow-lg z-10">
                   <IconComponent className="h-8 w-8 text-black" />
