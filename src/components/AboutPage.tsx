@@ -310,29 +310,17 @@ const AboutPage = () => {
             const isVisible = visibleTimelineItems[index];
 
             return (
-              <div
-                key={index}
-                className={`relative flex items-center timeline-card ${
-                  isEven ? 'sm:justify-start' : 'sm:justify-end'
-                } ${
-                  isVisible
-                    ? isEven
-                      ? 'animate-slide-in-left'
-                      : 'animate-slide-in-right'
-                    : 'opacity-0'
-                }`}
-                style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
-              >
-                {/* Center icon — desktop only (absolute on timeline line) */}
-                <div className="hidden sm:flex absolute left-1/2 -translate-x-1/2 w-16 h-16 bg-yellow-100 rounded-full border-4 border-yellow-400 items-center justify-center shadow-lg z-10">
-                  <IconComponent className="h-8 w-8 text-black" />
-                </div>
+              <div key={index} className="timeline-card">
 
-                {/* Card — full width on mobile, half-width on desktop */}
-                <div className={`w-full sm:w-5/12 ${isEven ? 'sm:pr-8' : 'sm:pl-8'}`}>
-                  <div className="bg-yellow-200 rounded-3xl p-5 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500">
-                    {/* Mobile: icon + year badge in a row inside card */}
-                    <div className="flex items-center gap-3 mb-3 sm:hidden">
+                {/* Mobile: full-width card with icon inside */}
+                <div className="sm:hidden">
+                  <div
+                    className={`bg-yellow-200 rounded-3xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 ${
+                      isVisible ? 'animate-slide-in-left' : 'opacity-0'
+                    }`}
+                    style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 flex-shrink-0 bg-yellow-100 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow">
                         <IconComponent className="h-5 w-5 text-black" />
                       </div>
@@ -340,14 +328,57 @@ const AboutPage = () => {
                         {event.year}
                       </span>
                     </div>
-                    {/* Desktop: year badge only */}
-                    <div className="hidden sm:inline-block bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold mb-3">
-                      {event.year}
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-black mb-2">{event.title}</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{event.description}</p>
+                    <h3 className="text-lg font-bold text-black mb-2">{event.title}</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm">{event.description}</p>
                   </div>
                 </div>
+
+                {/* Desktop: 3-column grid — left card | center icon | right card */}
+                <div className="hidden sm:grid items-center" style={{ gridTemplateColumns: '1fr 80px 1fr' }}>
+                  {/* Left column */}
+                  <div className="pr-8">
+                    {isEven && (
+                      <div
+                        className={`bg-yellow-200 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 ${
+                          isVisible ? 'animate-slide-in-left' : 'opacity-0'
+                        }`}
+                        style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
+                      >
+                        <div className="inline-block bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold mb-3">
+                          {event.year}
+                        </div>
+                        <h3 className="text-xl font-bold text-black mb-2">{event.title}</h3>
+                        <p className="text-gray-600 leading-relaxed">{event.description}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Center column — icon, always on the line */}
+                  <div className="flex items-center justify-center relative z-10">
+                    <div className="w-16 h-16 bg-yellow-100 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow-lg">
+                      <IconComponent className="h-8 w-8 text-black" />
+                    </div>
+                  </div>
+
+                  {/* Right column */}
+                  <div className="pl-8">
+                    {!isEven && (
+                      <div
+                        className={`bg-yellow-200 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 ${
+                          isVisible ? 'animate-slide-in-right' : 'opacity-0'
+                        }`}
+                        style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
+                      >
+                        <div className="inline-block bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold mb-3">
+                          {event.year}
+                        </div>
+                        <h3 className="text-xl font-bold text-black mb-2">{event.title}</h3>
+                        <p className="text-gray-600 leading-relaxed">{event.description}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
               </div>
             );
           })}
