@@ -299,38 +299,11 @@ const AboutPage = () => {
         </p>
       </div>
 
-      {/* Mobile: single column stack */}
-      <div className="flex flex-col gap-6 sm:hidden">
-        {timelineEvents.map((event, index) => {
-          const IconComponent = event.icon;
-          const isVisible = visibleTimelineItems[index];
-          return (
-            <div
-              key={index}
-              className={`timeline-card ${isVisible ? 'animate-slide-in-left' : 'opacity-0'}`}
-              style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
-            >
-              <div className="bg-yellow-200 rounded-3xl p-5 shadow-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-11 h-11 flex-shrink-0 bg-yellow-100 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow">
-                    <IconComponent className="h-5 w-5 text-black" />
-                  </div>
-                  <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold">
-                    {event.year}
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold text-black mb-2">{event.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm">{event.description}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <div className="relative">
+        {/* Vertical center line — desktop only */}
+        <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-black/20 rounded-full"></div>
 
-      {/* Desktop: alternating left/right timeline */}
-      <div className="relative hidden sm:block">
-        <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-black/20 rounded-full"></div>
-        <div className="space-y-12">
+        <div className="space-y-6 sm:space-y-12">
           {timelineEvents.map((event, index) => {
             const isEven = index % 2 === 0;
             const IconComponent = event.icon;
@@ -340,7 +313,7 @@ const AboutPage = () => {
               <div
                 key={index}
                 className={`relative flex items-center timeline-card ${
-                  isEven ? 'justify-start' : 'justify-end'
+                  isEven ? 'sm:justify-start' : 'sm:justify-end'
                 } ${
                   isVisible
                     ? isEven
@@ -350,16 +323,29 @@ const AboutPage = () => {
                 }`}
                 style={{ animationDelay: `${index * 0.2}s`, animationFillMode: 'forwards' }}
               >
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-yellow-100 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow-lg z-10">
+                {/* Center icon — desktop only (absolute on timeline line) */}
+                <div className="hidden sm:flex absolute left-1/2 -translate-x-1/2 w-16 h-16 bg-yellow-100 rounded-full border-4 border-yellow-400 items-center justify-center shadow-lg z-10">
                   <IconComponent className="h-8 w-8 text-black" />
                 </div>
-                <div className={`w-5/12 ${isEven ? 'pr-8' : 'pl-8'}`}>
-                  <div className="bg-yellow-200 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105">
-                    <div className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold inline-block mb-3">
+
+                {/* Card — full width on mobile, half-width on desktop */}
+                <div className={`w-full sm:w-5/12 ${isEven ? 'sm:pr-8' : 'sm:pl-8'}`}>
+                  <div className="bg-yellow-200 rounded-3xl p-5 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500">
+                    {/* Mobile: icon + year badge in a row inside card */}
+                    <div className="flex items-center gap-3 mb-3 sm:hidden">
+                      <div className="w-10 h-10 flex-shrink-0 bg-yellow-100 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow">
+                        <IconComponent className="h-5 w-5 text-black" />
+                      </div>
+                      <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold">
+                        {event.year}
+                      </span>
+                    </div>
+                    {/* Desktop: year badge only */}
+                    <div className="hidden sm:inline-block bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold mb-3">
                       {event.year}
                     </div>
-                    <h3 className="text-xl font-bold text-black mb-2">{event.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{event.description}</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-black mb-2">{event.title}</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{event.description}</p>
                   </div>
                 </div>
               </div>
