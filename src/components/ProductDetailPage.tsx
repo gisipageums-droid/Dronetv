@@ -131,7 +131,7 @@ export default function ProductDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <LoadingScreen logoSrc="images/logo.png" loadingText="Loading product..." />;
+  if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading product..." />;
 
   if (error)
     return (

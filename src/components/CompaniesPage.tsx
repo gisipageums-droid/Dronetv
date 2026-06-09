@@ -212,7 +212,7 @@ const CompaniesPage: React.FC = () => {
   if (loading) {
     return (
       <LoadingScreen
-        logoSrc="images/logo.png"
+        logoSrc="/images/logo.png"
         loadingText="Loading Companies..."
       />
     );
