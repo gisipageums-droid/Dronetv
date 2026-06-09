@@ -64,7 +64,7 @@ export default function EditableHero({
     description:
       heroData?.description ||
       "The smart 365-days-per-year food subscription that will make you eat healthy again. Tailored to your personal tastes and nutritional needs.",
-    primaryBtn: heroData?.primaryBtn || "Start eating well",
+    primaryBtn: heroData?.primaryBtn || "Speak with Our Team",
     secondaryBtn: heroData?.secondaryBtn || "Learn more",
     primaryButtonLink: heroData?.primaryButtonLink || "#cta",
     secondaryButtonLink: heroData?.secondaryButtonLink || "#how",
