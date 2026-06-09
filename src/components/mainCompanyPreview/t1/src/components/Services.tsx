@@ -149,14 +149,23 @@ export default function Services({ serviceData }) {
               transition={{ duration: 0.5, delay: 0.1 * index }}
             >
               <Card className="h-full flex flex-col hover:shadow-xl transition-shadow duration-300 group">
-                <div className="h-48 overflow-hidden relative" style={{ background: '#dbeafe' }}>
-                  {service.image && /^https?:\/\//.test(service.image) && (
+                <div className="h-48 overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
+                  {service.image && /^https?:\/\//.test(service.image) ? (
                     <img
                       src={service.image}
                       alt={service.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+                      <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="1.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+                        </svg>
+                      </div>
+                      <span style={{ color: 'white', fontWeight: 600, fontSize: 13, textAlign: 'center', padding: '0 12px' }}>{service.category || 'Service'}</span>
+                    </div>
                   )}
                   <div className="absolute top-3 right-3">
                     <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full">
@@ -221,7 +230,7 @@ export default function Services({ serviceData }) {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header with Image */}
-              <div className="relative h-64 overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #1d4ed8, #1e3a8a)' }}>
+              <div className="relative h-64 overflow-hidden" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
                 {selectedService.image && /^https?:\/\//.test(selectedService.image) && (
                   <img
                     src={selectedService.image}
