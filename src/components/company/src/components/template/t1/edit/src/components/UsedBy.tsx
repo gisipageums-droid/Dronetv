@@ -970,11 +970,11 @@ import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import BusinessInsider from "../public/images/logos/BusinessInsider.png";
-import Forbes from "../public/images/logos/Forbes.png";
-import TechCrunch from "../public/images/logos/TechCrunch.png";
-import TheNewYorkTimes from "../public/images/logos/TheNewYorkTimes.png";
-import USAToday from "../public/images/logos/USAToday.png";
+const BusinessInsider = "/logos/BusinessInsider.png";
+const Forbes = "/logos/Forbes.png";
+const TechCrunch = "/logos/TechCrunch.png";
+const TheNewYorkTimes = "/logos/TheNewYorkTimes.png";
+const USAToday = "/logos/USAToday.png";
 
 const itemVariants = {
   hidden: { y: 50, opacity: 0 },
