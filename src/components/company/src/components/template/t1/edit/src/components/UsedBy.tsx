@@ -981,8 +981,7 @@ const itemVariants = {
   visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
 };
 
-// Default placeholder image
-const DEFAULT_PLACEHOLDER_IMAGE = "/placeholder-company-logo.png";
+const DEFAULT_PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='48'%3E%3Crect width='120' height='48' rx='6' fill='%23f3f4f6'/%3E%3Ctext x='60' y='30' font-family='sans-serif' font-size='12' fill='%239ca3af' text-anchor='middle'%3ELogo%3C/text%3E%3C/svg%3E";
 
 // Crop helper function
 const getCroppedImg = async (imageSrc, pixelCrop, rotation = 0) => {
