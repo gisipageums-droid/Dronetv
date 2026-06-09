@@ -15,9 +15,6 @@ export default function About({ aboutData }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  console.log("aboutData", aboutData)
-  console.log("aboutData", aboutData.officeImage)
-
   return (
     <section
       id="about"
@@ -152,14 +149,17 @@ export default function About({ aboutData }) {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-4"
           >
-            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-              <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent mix-blend-multiply"></div>
-              <img
-                src={aboutData.officeImage}
-                alt="Office"
-                className="w-full h-auto object-cover"
-              />
-            </div>
+            {aboutData.officeImage && (
+              <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent mix-blend-multiply"></div>
+                <img
+                  src={aboutData.officeImage.startsWith('/assets/') ? '/images/about-office.jpg' : aboutData.officeImage}
+                  alt="Office"
+                  className="w-full h-auto object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).src = '/images/about-office.jpg'; }}
+                />
+              </div>
+            )}
 
             {/* Certifications */}
             <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">

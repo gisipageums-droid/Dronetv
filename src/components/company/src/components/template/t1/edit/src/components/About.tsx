@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import img from "../public/images/About/About.jpg";
+const img = "/images/about-office.jpg";
 
 // Custom Button component
 const Button = ({
