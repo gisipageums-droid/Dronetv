@@ -149,11 +149,12 @@ export default function Services({ serviceData }) {
               transition={{ duration: 0.5, delay: 0.1 * index }}
             >
               <Card className="h-full flex flex-col hover:shadow-xl transition-shadow duration-300 group">
-                <div className="h-48 overflow-hidden relative">
+                <div className="h-48 overflow-hidden relative bg-gradient-to-br from-blue-100 to-blue-200">
                   <img
                     src={service.image}
                     alt={service.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                   <div className="absolute top-3 right-3">
                     <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full">
@@ -218,11 +219,12 @@ export default function Services({ serviceData }) {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header with Image */}
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-64 overflow-hidden bg-gradient-to-br from-blue-700 to-blue-900">
                 <img
                   src={selectedService.image}
-                  alt={selectedService.title}
+                  alt=""
                   className="w-full h-full object-cover"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <button
