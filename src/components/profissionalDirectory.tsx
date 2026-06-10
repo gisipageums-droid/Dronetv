@@ -458,7 +458,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
                 }}
               />
             </div>
-            <div className="max-w-[calc(100%-60px)] md:max-w-none">
+            <div className="min-w-0 flex-1">
               <h3 className='text-lg md:text-xl font-bold text-gray-900 line-clamp-2'>
                 {profile.professionalName || 'Unnamed Profile'}
               </h3>
@@ -474,10 +474,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
               )}
             </div>
           </div>
-          <div className='text-right hidden sm:block'>
-            <div className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 md:px-3 md:py-1 rounded-full text-xs font-medium`}>
+          <div className='text-right shrink-0'>
+            <div className={`inline-flex items-center gap-1 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs font-medium`}>
               <User className='w-3 h-3' />
-              {statusStyle.label}
+              <span className="whitespace-nowrap">{statusStyle.label}</span>
             </div>
           </div>
         </div>
@@ -529,7 +529,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
           </div>
 
           {/* Action Buttons */}
-          <div className='flex gap-2 justify-end'>
+          <div className='flex flex-wrap gap-2 justify-end'>
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();

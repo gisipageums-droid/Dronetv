@@ -277,7 +277,6 @@ function AppInner() {
   const handleNextWithValidation = () => {
     if (current === 0 && !step1Valid) {
       setShowStep1Error(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     setShowStep1Error(false);
