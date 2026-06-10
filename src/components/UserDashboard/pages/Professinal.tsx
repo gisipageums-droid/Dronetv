@@ -426,28 +426,28 @@ const Professinal: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-amber-50 p-8">
-      <div className="flex items-center gap-4 justify-between">
+    <div className="min-h-screen bg-amber-50 p-4 md:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between mb-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-            <Users className="w-6 h-6" />
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+            <Users className="w-6 h-6 shrink-0" />
             Professional Directory
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600">
             Browse and manage professional submissions
           </p>
         </div>
 
         <button
           onClick={() => navigate("/professional/select")}
-          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
+          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 hover:bg-yellow-600 hover:scale-110 transition-all duration-200 self-start sm:self-auto"
         >
           <Plus className="w-5 h-5" />
           Add New Professional
         </button>
       </div>
 
-      <div className="mb-8 relative">
+      <div className="mb-6 relative">
         <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
           <Search className="h-5 w-5 text-yellow-500" />
         </div>
