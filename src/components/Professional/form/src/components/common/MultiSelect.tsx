@@ -217,22 +217,22 @@ export const MultiSelect = ({
             className={`flex items-center justify-center rounded-xl border-2 transition-all ${
               variant === "categories"
                 ? "flex-col p-3 w-full min-h-[90px] gap-1"
-                : "p-2 h-8 w-40 text-xs gap-2"
+                : "px-3 py-1.5 h-auto text-xs gap-2"
             } ${
               selected.includes(name)
                 ? variant === "categories"
                   ? "bg-amber-100 border-amber-500 shadow-md"
-                  : "bg-blue-200 text-blue-800 border-blue-400 hover:bg-blue-100"
+                  : "bg-amber-100 text-amber-900 border-amber-500"
                 : variant === "categories"
                   ? "bg-white text-gray-700 border-amber-200 hover:bg-amber-50 hover:border-amber-400"
-                  : "bg-yellow-50 border-gray-200 text-black-800 hover:bg-blue-200"
+                  : "bg-white border-amber-200 text-slate-700 hover:bg-amber-50"
             }`}
           >
             {variant === "subcategories" && (
               selected.includes(name) ? (
-                <span className="w-4 h-4 flex items-center justify-center rounded-sm border border-blue-500 bg-blue-500">✓</span>
+                <span className="w-4 h-4 flex items-center justify-center rounded-sm border border-amber-500 bg-amber-500 text-white text-[10px]">✓</span>
               ) : (
-                <span className="w-4 h-4 border border-gray-400 rounded-sm"></span>
+                <span className="w-4 h-4 border border-amber-300 rounded-sm bg-white"></span>
               )
             )}
 
