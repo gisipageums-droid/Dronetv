@@ -1811,34 +1811,26 @@ export const Step1 = ({
           key={sectionId}
           className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6"
         >
-          {/* Header with checkbox at the right corner */}
-          <div className="flex justify-between items-center border-b border-amber-200 pb-2">
+          {/* Header with checkbox */}
+          <div className="flex flex-col gap-2 border-b border-amber-200 pb-3">
             <h3 className="text-lg font-semibold text-slate-900">
               Communication Address Information
             </h3>
-
-            <div className="flex items-center space-x-2">
-              {/* {!isBasicInfoFilled && !copyAddress && (
-                <div className="text-xs text-gray-500">
-                  Fill Basic Info first
-                </div>
-              )} */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="copyAddress"
-                  checked={copyAddress}
-                  onChange={(e) => handleCopyAddressChange(e.target.checked)}
-                  disabled={!isBasicInfoFilled && !copyAddress}
-                  className={`w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500 cursor-pointer`}
-                />
-                <label
-                  htmlFor="copyAddress"
-                  className={`ml-2 text-sm whitespace-nowrap text-slate-700 cursor-pointer`}
-                >
-                  Same as the above mentioned information
-                </label>
-              </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="copyAddress"
+                checked={copyAddress}
+                onChange={(e) => handleCopyAddressChange(e.target.checked)}
+                disabled={!isBasicInfoFilled && !copyAddress}
+                className="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500 cursor-pointer"
+              />
+              <label
+                htmlFor="copyAddress"
+                className="ml-2 text-sm text-slate-700 cursor-pointer"
+              >
+                Same as the above mentioned information
+              </label>
             </div>
           </div>
 
