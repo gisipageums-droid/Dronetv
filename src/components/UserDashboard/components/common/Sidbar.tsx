@@ -14,12 +14,18 @@ import {
   Globe,
   FileText,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
- const {user} = useUserAuth();
+  const { user, logout } = useUserAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 const navLinks = [
     { icon: User, label: "Dashboard", href: "/user-dashboard" },
     { icon: Building2, label: "Companies", href: "/user-companies" },
@@ -105,6 +111,7 @@ const navLinks = [
             {/* Logout Button */}
             {isOpen && (
               <button
+                onClick={handleLogout}
                 className="text-red-400 hover:text-red-500 hover:scale-110 cursor-pointer transition-all"
                 title="Logout"
               >
