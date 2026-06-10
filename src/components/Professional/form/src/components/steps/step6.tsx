@@ -61,7 +61,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
     // ✅ Update FormContext
     updateField('resume', documents);
 
-    console.log('Updated FormContext resume:', documents);
   }, [documents, showFullText, onSubmit, updateField]);
 
   const handleSubmit = () => {
@@ -76,8 +75,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
       })),
       showFullText,
     };
-
-    console.log("Submitting extracted data:", payload);
 
     if (onSubmit) {
       onSubmit(payload);
@@ -95,8 +92,7 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       try {
-        console.log(`Processing file: ${file.name} (${file.type})`);
-        const extractedText = await extractTextFromFile(file);
+          const extractedText = await extractTextFromFile(file);
         const document: ExtractedDocument = {
           id: Date.now().toString() + i,
           name: file.name,
@@ -106,10 +102,8 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
           uploadDate: new Date(),
         };
         newDocuments.push(document);
-        console.log(`Successfully processed: ${file.name}`);
       } catch (error) {
-        console.error(`Error processing file ${file.name}:`, error);
-        const document: ExtractedDocument = {
+          const document: ExtractedDocument = {
           id: Date.now().toString() + i,
           name: file.name,
           type: file.type || 'unknown',
@@ -123,7 +117,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
     }
 
     if (errors.length > 0) {
-      console.warn('File processing errors:', errors);
     }
 
     setDocuments(prev => [...prev, ...newDocuments]);
@@ -227,36 +220,36 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
   };
 
   return (
-    <div className={`min-h-screen bg-yellow-50 p-6 ${className}`}>
+    <div className={`bg-yellow-50 p-4 ${className}`}>
       <div className="max-w-7xl mx-auto">
-        <div className="bg-yellow-400 rounded-lg shadow-lg p-6 mb-6 border-2 border-red-500">
-          <h1 className="text-3xl font-bold text-black mb-2 flex items-center gap-3">
-            <FileText className="w-8 h-8 text-red-600" />
-            Document Text Extractor
+        <div className="mb-4">
+          <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-amber-600" />
+            Resume / Documents
           </h1>
-          <p className="text-gray-800">
-            Upload PDF, Word, or text documents to extract and view their content.
+          <p className="text-sm text-gray-600 mt-1">
+            Upload PDF, Word, or text documents to extract and include your content.
             {documents.length > 0 && (
-              <span className="ml-2 text-green-700 font-semibold">
+              <span className="ml-2 text-amber-700 font-semibold">
                 ({documents.length} document{documents.length > 1 ? 's' : ''} loaded)
               </span>
             )}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Upload Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg border-2 border-red-300 overflow-hidden">
-              <div className="bg-red-600 text-white p-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Upload className="w-5 h-5" /> Upload Documents
+            <div className="bg-white rounded-xl shadow-sm border border-amber-200 overflow-hidden">
+              <div className="bg-amber-500 text-white p-3">
+                <h2 className="text-base font-semibold flex items-center gap-2">
+                  <Upload className="w-4 h-4" /> Upload Documents
                 </h2>
               </div>
 
               <div
-                className={`p-6 border-2 border-dashed m-4 rounded-lg transition-all duration-200 ${
-                  dragActive ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-red-400 hover:bg-yellow-50'
+                className={`p-4 border-2 border-dashed m-3 rounded-lg transition-all duration-200 ${
+                  dragActive ? 'border-amber-500 bg-amber-50' : 'border-gray-300 hover:border-amber-400 hover:bg-amber-50'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -264,13 +257,13 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
                 onDrop={handleDrop}
               >
                 <div className="text-center">
-                  <Upload className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                  <p className="text-gray-700 mb-2">Drag & drop files here</p>
-                  <p className="text-sm text-gray-500 mb-4">or</p>
+                  <Upload className="w-10 h-10 text-amber-500 mx-auto mb-3" />
+                  <p className="text-gray-700 mb-1 text-sm">Drag & drop files here</p>
+                  <p className="text-xs text-gray-500 mb-3">or</p>
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isLoading}
-                    className="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                    className="bg-amber-500 hover:bg-amber-600 disabled:bg-gray-400 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
                   >
                     {isLoading ? 'Processing...' : 'Choose Files'}
                   </button>
@@ -294,7 +287,7 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
                         <div
                           key={doc.id}
                           className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
-                            selectedDocument?.id === doc.id ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-red-300 hover:bg-yellow-50'
+                            selectedDocument?.id === doc.id ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 hover:bg-amber-50'
                           }`}
                           onClick={() => setSelectedDocument(doc)}
                         >
@@ -340,8 +333,8 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
 
           {/* Text Display Section */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-lg border-2 border-red-300 overflow-hidden h-full">
-              <div className="bg-black text-white p-4 flex items-center justify-between">
+            <div className="bg-white rounded-xl shadow-sm border border-amber-200 overflow-hidden h-full">
+              <div className="bg-slate-800 text-white p-3 flex items-center justify-between">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <FileText className="w-5 h-5" /> Extracted Text
                   {selectedDocument && (
@@ -396,10 +389,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
                         <h3 className="font-semibold text-gray-800">Extracted Content</h3>
                         <p className="text-sm text-gray-600">{selectedDocument.extractedText.length} characters</p>
                       </div>
-
-                      <button onClick={() => console.log('FormContext data on next:', data)}>
-                        Check FormContext
-                      </button>
 
                       <div
                         className={`p-4 bg-white ${showFullText ? 'max-h-none' : 'max-h-96 overflow-y-auto'}`}
