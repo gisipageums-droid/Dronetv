@@ -346,12 +346,6 @@ const TransactionHistory: React.FC = () => {
         }
     };
 
-    // Debug logging - this will show the data
-    useEffect(() => {
-        console.log("transactionHistoryData:", transactionHistoryData);
-        console.log("transactions array:", transactions);
-        console.log("Filtered transactions:", filteredTransactions);
-    }, [transactionHistoryData, transactions, filteredTransactions]);
 
     if (loading) {
         return (
@@ -395,7 +389,7 @@ const TransactionHistory: React.FC = () => {
                         </div>
                         <div className="bg-white rounded-xl shadow-sm p-4 text-center border border-amber-200">
                             <div className="text-2xl font-bold text-emerald-700">
-                                {formatTokens(transactions.reduce((sum, tx) => sum + tx.amount, 0))}
+                                {formatTokens(transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').reduce((sum, tx) => sum + tx.amount, 0))}
                             </div>
                             <div className="text-amber-600 text-sm">Total Tokens</div>
                         </div>
@@ -482,18 +476,25 @@ const TransactionHistory: React.FC = () => {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start space-x-4">
                                                 <div
-                                                    className={`flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center ${transaction.type === 'credit'
-                                                        ? 'bg-emerald-100 text-emerald-800'
-                                                        : 'bg-amber-100 text-amber-800'
-                                                        }`}
+                                                    className={`flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center ${
+                                                        transaction.paymentStatus === 'CAPTURED' || transaction.paymentStatus === 'COMPLETED' || transaction.paymentStatus === 'SUCCESS'
+                                                            ? 'bg-emerald-100 text-emerald-800'
+                                                            : transaction.paymentStatus === 'FAILED' || transaction.paymentStatus === 'CANCELLED'
+                                                            ? 'bg-red-100 text-red-600'
+                                                            : 'bg-amber-100 text-amber-600'
+                                                    }`}
                                                 >
-                                                    {transaction.type === 'credit' ? (
+                                                    {transaction.paymentStatus === 'CAPTURED' || transaction.paymentStatus === 'COMPLETED' || transaction.paymentStatus === 'SUCCESS' ? (
                                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                         </svg>
-                                                    ) : (
+                                                    ) : transaction.paymentStatus === 'FAILED' || transaction.paymentStatus === 'CANCELLED' ? (
                                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    ) : (
+                                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                         </svg>
                                                     )}
                                                 </div>
@@ -542,8 +543,6 @@ const TransactionHistory: React.FC = () => {
                         </ul>
                     )}
                 </div>
-
-                {/* Debug Section - Remove in production */}
 
 
             </div>
