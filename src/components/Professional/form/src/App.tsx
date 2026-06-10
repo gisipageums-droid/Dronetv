@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchFormStructure, submitForm } from "./api/formApi";
 import { Step1 } from "./components/steps/Step1";
@@ -388,53 +388,50 @@ function AppInner() {
 
       {loading && <Loader />}
 
-      <div className="bg-yellow-100 w-full py-4 ">
-        <div className="bg-yellow-100 max-w-4xl mx-auto">
-          {/* --- Step Navigation Chips --- */}
-          <div className="flex flex-wrap items-center gap-2 mb-4 justify-center">
+      <div className="bg-yellow-100 w-full pt-3 pb-2">
+        <div className="bg-yellow-100 max-w-4xl mx-auto px-4">
+          {/* --- Stepper --- */}
+          <div className="flex items-center justify-between mb-3">
             {steps.slice(0, 6).map((s: any, index: number) => (
-              <div key={s.id} className="flex items-center">
-                <button
-                  // onClick={() => goTo(index)}
-                  className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${index === current
-                    ? "bg-black text-yellow-200 shadow hover:cursor-default"
-                    : index < current
-                      ? "bg-yellow-200 text-black hover:bg-black-300 hover:cursor-default"
-                      : "bg-yellow-100 text-gray-600 hover:bg-yellow-300 hover:cursor-default"
-                    }`}
-                >
-                  <div
-                    className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${index === current
-                      ? "bg-yellow-400 text-black"
-                      : index < current
-                        ? "bg-yellow-400 text-white"
-                        : "bg-gray-300 text-black"
-                      }`}
-                  >
-                    {index + 1}
+              <React.Fragment key={s.id}>
+                <div className="flex flex-col items-center">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 flex-shrink-0 ${
+                    index < current
+                      ? "bg-amber-400 border-amber-400 text-white"
+                      : index === current
+                      ? "bg-black border-black text-yellow-300"
+                      : "bg-white border-gray-300 text-gray-400"
+                  }`}>
+                    {index < current ? (
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      index + 1
+                    )}
                   </div>
-                  <span className="text-[10px]">
-                    {s.title || `Step ${index + 1}`}
+                  <span className={`text-[9px] mt-0.5 text-center leading-tight w-12 truncate ${
+                    index === current ? "font-semibold text-black" : "text-gray-400"
+                  }`}>
+                    {s.title?.split(' ')[0] || `Step ${index + 1}`}
                   </span>
-                </button>
-                {index < 4 && (
-                  <span className="mx-2 text-gray-500 font-bold select-none">
-                    -
-                  </span>
+                </div>
+                {index < 5 && (
+                  <div className={`flex-1 h-0.5 mx-1 mb-4 ${index < current ? "bg-amber-400" : "bg-gray-300"}`} />
                 )}
-              </div>
+              </React.Fragment>
             ))}
           </div>
 
-          {/* --- Progress Percentage and Bar --- */}
+          {/* --- Progress Bar --- */}
           {current < 6 && (
-            <div className="w-full mb-6">
-              <div className="flex justify-end mb-1 text-sm font-semibold text-gray-700">
+            <div className="w-full mb-2">
+              <div className="flex justify-end mb-0.5 text-xs font-semibold text-gray-600">
                 {progress}% complete
               </div>
-              <div className="w-full bg-gray-200 rounded-lg h-4">
+              <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-yellow-400 h-4 rounded-lg transition-all duration-300"
+                  className="bg-amber-400 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
@@ -443,7 +440,7 @@ function AppInner() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto p-6 space-y-6 relative">
+      <div className="max-w-4xl mx-auto px-4 py-4 space-y-4 relative">
         {/* --- Admin Button --- */}
         {isAdminLogin && current < 5 && (
           <div className="flex justify-end -mt-2">
