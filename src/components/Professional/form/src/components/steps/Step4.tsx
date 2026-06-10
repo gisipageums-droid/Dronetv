@@ -50,21 +50,19 @@ export const Step4 = ({ step }: { step: any }) => {
     const colorMap: any = { blue: "blue", green: "green" };
 
     return (
-      <div className={`bg-${colorMap[color]}-50 rounded-lg p-3`}>
+      <div className="bg-amber-50 rounded-xl border border-amber-200 p-4 mb-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-3">
-          <h3 className={`text-sm font-bold text-${colorMap[color]}-900 flex items-center`}>
-            {key === "services" && <Wrench className="w-5 h-5 mr-2" />}
-            {key === "projects" && <Briefcase className="w-5 h-5 mr-2" />}
+          <h3 className="text-sm font-bold text-slate-900 flex items-center">
+            {key === "services" && <Wrench className="w-4 h-4 mr-2 text-amber-600" />}
+            {key === "projects" && <Briefcase className="w-4 h-4 mr-2 text-amber-600" />}
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </h3>
 
           <button
             type="button"
             onClick={() => addArrayItem(key, {})}
-            className={`flex items-center px-3 py-1 text-white text-sm rounded-md ${
-              key === "projects" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"
-            }`}
+            className="flex items-center px-3 py-1 text-white text-sm rounded-lg bg-amber-500 hover:bg-amber-600"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add {key.slice(0, -1)}

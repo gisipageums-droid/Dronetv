@@ -18,7 +18,7 @@ interface SkillContainerProps {
 
 const containerClasses = (level: number) => {
   if (level === 0) return "bg-transparent border-0";
-  if (level === 1) return "bg-blue-50 border border-blue-200";
+  if (level === 1) return "bg-amber-50 border border-amber-200";
   return "bg-white border border-gray-200";
 };
 

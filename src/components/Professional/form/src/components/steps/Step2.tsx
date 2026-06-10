@@ -26,7 +26,7 @@ export const Step2 = ({ step, allSteps }: { step: any; allSteps: any[] }) => {
   };
 
   // Predefined colors for containers
-  const containerColors = ["bg-yellow-50 border-2 border-yellow-300 border-blue-200", "bg-yellow-50 border-2 border-yellow-300 border-green-200"];
+  const containerColors = ["bg-amber-50 border border-amber-300", "bg-amber-50 border border-amber-300"];
 
   return (
     <div className="space-y-6">

@@ -618,53 +618,22 @@ export const Step5 = ({ step }: { step: any }) => {
       {/* Full View Modal */}
       {renderFullViewModal()}
 
-      {/* Template Selection Summary */}
-      <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6'>
-        <h3 className='text-lg font-semibold text-yellow-800 mb-2'>
-          📋 Selected Template
-        </h3>
-        <div className='text-yellow-700'>
-          {templateSelection ? (
-            <>
-              <p>
-                <strong>Template:</strong>{" "}
-                {templateSelection === 1
-                  ? "Modern template"
-                  : templateSelection === 2
-                    ? "Professional template"
-                    : `Template ${templateSelection}`}
-              </p>
-              <p>
-                <strong>Template ID:</strong>{" "}
-                {templateSelection}
-              </p>
-              <p className="text-sm text-green-600 mt-1">
-                ✅ {data.templateSelection ? "From saved data" : "From URL selection"}
-              </p>
-            </>
-          ) : (
-            <p className='text-red-600'>
-              ⚠️ No template selected. Please go back and select a template.
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="bg-blue-50 px-10 py-5">
-        <h2 className="text-2xl font-bold text-xl">{step.title}</h2>
+      <div className="bg-amber-50 px-4 py-4 rounded-xl border border-amber-200">
+        <h2 className="text-lg font-bold text-slate-900 mb-1">{step.title}</h2>
+        <p className="text-sm text-gray-600 mb-4">Upload your media files below.</p>
 
         {/* Upload fields */}
-        <div className="grid gap-6 py-8">
+        <div className="grid gap-4">
           {step.media?.fields?.map((f: any) => {
             const existingFile = getExistingFile(f.id);
-            
+
             return (
               <div
                 key={f.id}
-                className="p-5 bg-green-50 rounded-2xl shadow-lg border-2 border-dashed border-green-400 space-y-3"
+                className="p-4 bg-white rounded-xl border border-amber-200 border-dashed space-y-3"
               >
                 <div className="flex justify-between items-center">
-                  <label className="block text-lg font-medium text-gray-700">
+                  <label className="block text-sm font-semibold text-gray-700">
                     {f.label}
                   </label>
                   {existingFile && (
@@ -710,15 +679,15 @@ export const Step5 = ({ step }: { step: any }) => {
           })}
         </div>
 
-        <p className='text-sm text-blue-700 mt-4'>
-          <strong>Note:</strong> Files are uploaded immediately when selected. Uploading a new file will replace the existing one. AI will generate additional images and design elements for your website automatically.
+        <p className='text-xs text-amber-700 mt-2'>
+          Files upload immediately when selected. Uploading a new file replaces the existing one.
         </p>
       </div>
 
       {/* Uploaded Files Summary */}
-      <div className="p-6 bg-blue-50 rounded-2xl shadow-inner space-y-4">
-        <h3 className="text-xl font-semibold">
-          Uploaded Files Summary
+      <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-3">
+        <h3 className="text-base font-semibold text-slate-900">
+          Uploaded Files
         </h3>
         {data.media.length === 0 ? (
           <p className="text-gray-500">No files uploaded yet.</p>
