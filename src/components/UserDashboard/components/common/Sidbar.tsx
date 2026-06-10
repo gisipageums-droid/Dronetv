@@ -18,7 +18,7 @@ import { NavLink } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
 
 const Sidebar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
  const {user} = useUserAuth();
 const navLinks = [
     { icon: User, label: "Dashboard", href: "/user-dashboard" },
