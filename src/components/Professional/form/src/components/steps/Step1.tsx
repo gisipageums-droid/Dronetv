@@ -761,9 +761,11 @@ const ReadOnlyTextArea: React.FC<{ label: string; value: string }> = ({ label, v
 export const Step1 = ({
   step,
   setStepValid,
+  showErrors,
 }: {
   step: any;
   setStepValid?: (valid: boolean) => void;
+  showErrors?: boolean;
 }) => {
   const { data, updateField } = useForm();
 
@@ -1581,6 +1583,7 @@ export const Step1 = ({
                     })
                   }
                 />
+                {showErrors && !data.basicInfo?.fullName && <p className="text-red-500 text-xs mt-1">Full name is required</p>}
               </div>
             )}
 
@@ -1609,6 +1612,7 @@ export const Step1 = ({
                     })
                   }
                 />
+                {showErrors && !data.basicInfo?.date_of_birth && <p className="text-red-500 text-xs mt-1">Date of birth is required</p>}
               </div>
             )}
 
@@ -1647,6 +1651,7 @@ export const Step1 = ({
                   <option value="non-binary">Non-binary</option>
                   <option value="prefer-not-to-say">Prefer not to say</option>
                 </select>
+                {showErrors && !data.basicInfo?.gender && <p className="text-red-500 text-xs mt-1">Gender is required</p>}
               </div>
             )}
 
@@ -1679,6 +1684,7 @@ export const Step1 = ({
                     <option value="S/o">S/o (Son of)</option>
                     <option value="D/o">D/o (Daughter of)</option>
                   </select>
+                  {showErrors && !data.basicInfo?.relationship_type && <p className="text-red-500 text-xs mt-1">This field is required</p>}
                 </div>
               )}
 
@@ -1707,6 +1713,7 @@ export const Step1 = ({
                       })
                     }
                   />
+                  {showErrors && !data.basicInfo?.relationship_name && <p className="text-red-500 text-xs mt-1">This field is required</p>}
                 </div>
               )}
             </div>
@@ -1735,6 +1742,7 @@ export const Step1 = ({
                     })
                   }
                 />
+                {showErrors && !data.basicInfo?.address && <p className="text-red-500 text-xs mt-1">Address is required</p>}
               </div>
             )}
 
@@ -1765,6 +1773,7 @@ export const Step1 = ({
                       })
                     }
                   />
+                  {showErrors && !data.basicInfo?.city_district && <p className="text-red-500 text-xs mt-1">City/District is required</p>}
                 </div>
               )}
 
@@ -1794,6 +1803,7 @@ export const Step1 = ({
                       })
                     }
                   />
+                  {showErrors && !data.basicInfo?.pincode && <p className="text-red-500 text-xs mt-1">Pin code is required</p>}
                 </div>
               )}
             </div>
@@ -1812,27 +1822,35 @@ export const Step1 = ({
                   />
                 </div>
               ) : (
-                <CountryStateSelect
-                  countryValue={data.basicInfo?.country || ""}
-                  stateValue={data.basicInfo?.state || ""}
-                  onCountryChange={(value) => {
-                    console.log("🟡 Step1 - Basic Info Country changed to:", value);
-                    updateField("basicInfo", {
-                      ...data.basicInfo,
-                      country: value,
-                      state: "",
-                    });
-                  }}
-                  onStateChange={(value) => {
-                    console.log("🟡 Step1 - Basic Info State changed to:", value);
-                    updateField("basicInfo", {
-                      ...data.basicInfo,
-                      state: value,
-                    });
-                  }}
-                  countryRequired={true}
-                  stateRequired={true}
-                />
+                <>
+                  <CountryStateSelect
+                    countryValue={data.basicInfo?.country || ""}
+                    stateValue={data.basicInfo?.state || ""}
+                    onCountryChange={(value) => {
+                      console.log("🟡 Step1 - Basic Info Country changed to:", value);
+                      updateField("basicInfo", {
+                        ...data.basicInfo,
+                        country: value,
+                        state: "",
+                      });
+                    }}
+                    onStateChange={(value) => {
+                      console.log("🟡 Step1 - Basic Info State changed to:", value);
+                      updateField("basicInfo", {
+                        ...data.basicInfo,
+                        state: value,
+                      });
+                    }}
+                    countryRequired={true}
+                    stateRequired={true}
+                  />
+                  {showErrors && (!data.basicInfo?.country || !data.basicInfo?.state) && (
+                    <div className="mt-1">
+                      {!data.basicInfo?.country && <p className="text-red-500 text-xs">Country is required</p>}
+                      {!data.basicInfo?.state && <p className="text-red-500 text-xs">State is required</p>}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -1902,6 +1920,7 @@ export const Step1 = ({
               // disabled={copyAddress}
               // readOnly={copyAddress}
               />
+              {showErrors && !data.communicationAddress?.address && <p className="text-red-500 text-xs mt-1">Address is required</p>}
               <div className="text-xs text-gray-500 mt-1">
                 Complete communication address with building details
               </div>
@@ -1977,6 +1996,7 @@ export const Step1 = ({
                 // disabled={copyAddress}
                 // readOnly={copyAddress}
                 />
+                {showErrors && !data.communicationAddress?.postalCode && <p className="text-red-500 text-xs mt-1">Postal code is required</p>}
                 <div className="text-xs text-gray-500 mt-1">
                   Postal code
                 </div>
@@ -2005,6 +2025,12 @@ export const Step1 = ({
                 stateRequired={true}
               // disabled={copyAddress}
               />
+              {showErrors && (!data.communicationAddress?.country || !data.communicationAddress?.state) && (
+                <div className="mt-1">
+                  {!data.communicationAddress?.country && <p className="text-red-500 text-xs">Country is required</p>}
+                  {!data.communicationAddress?.state && <p className="text-red-500 text-xs">State is required</p>}
+                </div>
+              )}
             </div>
 
             {/* Show success message when state is auto-detected or copied */}
@@ -2060,6 +2086,7 @@ export const Step1 = ({
                     });
                   }}
                 />
+                {showErrors && !data.basicInfo?.user_name && <p className="text-red-500 text-xs mt-1">Username is required</p>}
                 {data.basicInfo?.user_name && (
                   <span
                     className={`text-xs mt-1 ${usernameAvailable === false
@@ -2103,6 +2130,7 @@ export const Step1 = ({
                     })
                   }
                 />
+                {showErrors && !data.addressInformation?.email && <p className="text-red-500 text-xs mt-1">Email is required</p>}
               </div>
 
               {/* Phone Number */}
@@ -2123,6 +2151,7 @@ export const Step1 = ({
                   required={true}
                   className=""
                 />
+                {showErrors && !data.addressInformation?.phoneNumber && <p className="text-red-500 text-xs mt-1">Phone number is required</p>}
               </div>
             </div>
           </div>
@@ -2155,6 +2184,7 @@ export const Step1 = ({
                 <option value="chinese">Chinese</option>
                 <option value="other">Other</option>
               </select>
+              {showErrors && !data.addressInformation?.nationality && <p className="text-red-500 text-xs mt-1">Nationality is required</p>}
             </div>
 
             {/* Section 2: Professional Details */}
@@ -2184,6 +2214,7 @@ export const Step1 = ({
                     })
                   }
                 />
+                {showErrors && !data.addressInformation?.designation && <p className="text-red-500 text-xs mt-1">Designation is required</p>}
               </div>
 
               {/* Professional Tagline */}
@@ -2205,6 +2236,7 @@ export const Step1 = ({
                     })
                   }
                 />
+                {showErrors && !data.addressInformation?.tagline && <p className="text-red-500 text-xs mt-1">Tagline is required</p>}
                 <p className="text-xs text-gray-500 mt-1">
                   Example: "Transforming ideas into digital solutions" or "Building bridges between businesses and customers"
                 </p>

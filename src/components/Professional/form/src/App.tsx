@@ -274,37 +274,6 @@ function AppInner() {
     window.open("/pricing", "_blank");
   };
 
-  const getMissingStep1Fields = (): string[] => {
-    const missing: string[] = [];
-    const basic = data.basicInfo || {};
-    const comm = data.communicationAddress || {};
-    const info = data.addressInformation || {};
-
-    if (!basic.fullName) missing.push("Full Name");
-    if (!basic.date_of_birth) missing.push("Date of Birth");
-    if (!basic.gender) missing.push("Gender");
-    if (!basic.relationship_type) missing.push("Relationship Type");
-    if (!basic.relationship_name) missing.push("Relationship Name");
-    if (!basic.address) missing.push("Address");
-    if (!basic.city_district) missing.push("City / District");
-    if (!basic.pincode) missing.push("Pincode");
-    if (!basic.state) missing.push("State");
-    const aadharDigits = basic.aadhar_number?.replace(/\D/g, "") || "";
-    if (!basic.aadhar_number) missing.push("Aadhaar Number (DigiLocker verification required)");
-    else if (aadharDigits.length !== 12 && aadharDigits.length !== 4) missing.push("Aadhaar Number (must be fully verified)");
-    if (!comm.address) missing.push("Communication Address");
-    if (!comm.postalCode) missing.push("Communication Postal Code");
-    if (!comm.country) missing.push("Communication Country");
-    if (!comm.state) missing.push("Communication State");
-    if (!basic.user_name) missing.push("Username");
-    if (!info.email) missing.push("Email");
-    if (!info.phoneNumber) missing.push("Phone Number");
-    if (!info.nationality) missing.push("Nationality");
-    if (!info.designation) missing.push("Designation");
-    if (!info.tagline) missing.push("Tagline");
-    return missing;
-  };
-
   const handleNextWithValidation = () => {
     if (current === 0 && !step1Valid) {
       setShowStep1Error(true);
@@ -491,22 +460,10 @@ function AppInner() {
           </div>
         )}
 
-        {/* --- Step 1 Missing Fields Error Banner --- */}
-        {showStep1Error && current === 0 && !step1Valid && (
-          <div className="bg-red-50 border border-red-300 rounded-xl p-4 mb-2">
-            <p className="text-red-700 font-semibold mb-2">Please complete the following required fields before proceeding:</p>
-            <ul className="list-disc list-inside space-y-1">
-              {getMissingStep1Fields().map((field) => (
-                <li key={field} className="text-red-600 text-sm">{field}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         {/* --- Step Content Container --- */}
         <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
           {current === 0 ? (
-            <Step1 step={stepData} setStepValid={setStep1Valid} />
+            <Step1 step={stepData} setStepValid={setStep1Valid} showErrors={showStep1Error} />
           ) : current === 5 ? (
             <Step6
               step={stepData}
