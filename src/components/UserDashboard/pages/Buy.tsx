@@ -47,6 +47,15 @@ const BuyTokenPage: React.FC = () => {
       });
   };
 
+  // Fail Order API Call
+  const failOrder = (transactionId: string, reason: string, errorCode: string = '', status: 'FAILED' | 'CANCELLED' = 'FAILED') => {
+    return axios.post('https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/fail-order', {
+      transactionId, reason, errorCode, status
+    }, { headers: { 'Content-Type': 'application/json' } })
+      .then(r => r.data)
+      .catch(() => null); // silent — UI already shows error
+  };
+
   // Confirm Order API Call
   const confirmOrder = (paymentData: any) => {
     return axios.post('https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/confirm-order', paymentData, {
@@ -134,12 +143,21 @@ const BuyTokenPage: React.FC = () => {
             modal: {
               ondismiss: () => {
                 setIsProcessing(false);
-                console.log('Payment modal dismissed');
+                failOrder(transactionId, 'Payment cancelled by user', '', 'CANCELLED');
               }
             }
           };
 
           const razorpayInstance = new Razorpay(options);
+
+          razorpayInstance.on('payment.failed', (response: any) => {
+            const reason = response?.error?.description || response?.error?.reason || 'Payment failed';
+            const errorCode = response?.error?.code || '';
+            setErrorMessage(`Payment failed: ${reason}`);
+            setIsProcessing(false);
+            failOrder(transactionId, reason, errorCode, 'FAILED');
+          });
+
           razorpayInstance.open();
 
         })

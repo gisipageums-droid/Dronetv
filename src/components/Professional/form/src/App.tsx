@@ -144,7 +144,8 @@ function AppInner() {
   const { data, setData, updateField } = useForm(); //update field ive added for prefill
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [step1Valid, setStep1Valid] = useState(false); // ✅ Step1 validation state
+  const [step1Valid, setStep1Valid] = useState(false);
+  const [showStep1Error, setShowStep1Error] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null); // ✅ Add state for submissionId
   const [showTokenModal, setShowTokenModal] = useState(false);
   const [tokenValidation, setTokenValidation] = useState<{
@@ -271,6 +272,47 @@ function AppInner() {
   const handlePurchaseTokens = () => {
     setShowTokenModal(false);
     window.open("/pricing", "_blank");
+  };
+
+  const getMissingStep1Fields = (): string[] => {
+    const missing: string[] = [];
+    const basic = data.basicInfo || {};
+    const comm = data.communicationAddress || {};
+    const info = data.addressInformation || {};
+
+    if (!basic.fullName) missing.push("Full Name");
+    if (!basic.date_of_birth) missing.push("Date of Birth");
+    if (!basic.gender) missing.push("Gender");
+    if (!basic.relationship_type) missing.push("Relationship Type");
+    if (!basic.relationship_name) missing.push("Relationship Name");
+    if (!basic.address) missing.push("Address");
+    if (!basic.city_district) missing.push("City / District");
+    if (!basic.pincode) missing.push("Pincode");
+    if (!basic.state) missing.push("State");
+    const aadharDigits = basic.aadhar_number?.replace(/\D/g, "") || "";
+    if (!basic.aadhar_number) missing.push("Aadhaar Number (DigiLocker verification required)");
+    else if (aadharDigits.length !== 12 && aadharDigits.length !== 4) missing.push("Aadhaar Number (must be fully verified)");
+    if (!comm.address) missing.push("Communication Address");
+    if (!comm.postalCode) missing.push("Communication Postal Code");
+    if (!comm.country) missing.push("Communication Country");
+    if (!comm.state) missing.push("Communication State");
+    if (!basic.user_name) missing.push("Username");
+    if (!info.email) missing.push("Email");
+    if (!info.phoneNumber) missing.push("Phone Number");
+    if (!info.nationality) missing.push("Nationality");
+    if (!info.designation) missing.push("Designation");
+    if (!info.tagline) missing.push("Tagline");
+    return missing;
+  };
+
+  const handleNextWithValidation = () => {
+    if (current === 0 && !step1Valid) {
+      setShowStep1Error(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    setShowStep1Error(false);
+    next();
   };
 
   const handleSubmit = async () => {
@@ -449,6 +491,18 @@ function AppInner() {
           </div>
         )}
 
+        {/* --- Step 1 Missing Fields Error Banner --- */}
+        {showStep1Error && current === 0 && !step1Valid && (
+          <div className="bg-red-50 border border-red-300 rounded-xl p-4 mb-2">
+            <p className="text-red-700 font-semibold mb-2">Please complete the following required fields before proceeding:</p>
+            <ul className="list-disc list-inside space-y-1">
+              {getMissingStep1Fields().map((field) => (
+                <li key={field} className="text-red-600 text-sm">{field}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* --- Step Content Container --- */}
         <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
           {current === 0 ? (
@@ -476,9 +530,8 @@ function AppInner() {
 
           {current < 6 ? (
             <button
-              onClick={next}
-              disabled={current === 0 && !step1Valid} // ✅ disable Next only on Step1 if invalid
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded disabled:opacity-50"
+              onClick={handleNextWithValidation}
+              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
             >
               Next
             </button>

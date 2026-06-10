@@ -8,7 +8,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen py-20 flex bg-gray-50 text-gray-900 p-2 md:p-6">
+    <div className="min-h-screen pt-20 pb-4 px-2 md:px-6 flex bg-gray-50 text-gray-900">
       <main className="h-screen w-full flex gap-2">
         {/* Sidebar — desktop only */}
         <div className="hidden lg:block">
