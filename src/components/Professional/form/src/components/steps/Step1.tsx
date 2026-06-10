@@ -1864,9 +1864,6 @@ export const Step1 = ({
               // readOnly={copyAddress}
               />
               {showErrors && !data.communicationAddress?.address && <p className="text-red-500 text-xs mt-1">Address is required</p>}
-              <div className="text-xs text-gray-500 mt-1">
-                Complete communication address with building details
-              </div>
               {copyAddress && (
                 <div className="text-xs text-green-600 mt-1 flex items-center">
                   <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -1877,12 +1874,10 @@ export const Step1 = ({
               )}
             </div>
 
-            {/* City Section */}
-            <h3 className="text-md font-medium text-slate-800 -mb-2">City</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col">
                 <label className="mb-1 font-medium text-slate-800 text-sm">
-                  Your city
+                  City
                 </label>
                 <input
                   type="text"
@@ -1940,9 +1935,6 @@ export const Step1 = ({
                 // readOnly={copyAddress}
                 />
                 {showErrors && !data.communicationAddress?.postalCode && <p className="text-red-500 text-xs mt-1">Postal code is required</p>}
-                <div className="text-xs text-gray-500 mt-1">
-                  Postal code
-                </div>
               </div>
             </div>
 
