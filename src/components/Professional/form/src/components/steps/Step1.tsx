@@ -1104,10 +1104,7 @@ export const Step1 = ({
       basicInfo.city_district &&
       basicInfo.pincode &&
       basicInfo.country &&
-      basicInfo.state &&
-      basicInfo.aadhar_number &&
-      (basicInfo.aadhar_number.replace(/\D/g, '').length === 12 ||
-        (basicInfo.aadhar_number.includes('X') && basicInfo.aadhar_number.replace(/\D/g, '').length === 4)); // Allow 12 digits OR masked format
+      basicInfo.state;
 
     // 2. Communication Address Validation
     const commAddress = data.communicationAddress || {};
