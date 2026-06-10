@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Shield, CheckCircle, AlertCircle, Loader2, ExternalLink,
-  RefreshCw, BadgeCheck, Upload, Edit, X, Lock,
+  RefreshCw, BadgeCheck, Upload, Edit, X, Lock, Globe,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useUserAuth, useTemplate } from "../../context/context";
+import { useUserAuth } from "../../context/context";
 import { toast } from "sonner";
 import axios from "axios";
 import { AnimatePresence, motion } from "motion/react";
@@ -33,7 +33,6 @@ const CompanyWebsite: React.FC = () => {
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [companyCategory, setCompanyCategory] = useState<string[]>([]);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [isDetailsUpdated, setIsDetailsUpdated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "details">(
@@ -180,9 +179,8 @@ const CompanyWebsite: React.FC = () => {
       setIsDetailsUpdated(true);
       setIframeKey((k) => k + 1);
       toast.success("Details updated! Redirecting to editor...");
-      const templateNum = company.templateSelection === "template-2" ? "2" : "1";
       navigate(
-        `/user/companies/edit/${templateNum}/${company.publishedId}/${company.userId}`,
+        `/user/companies/edit/1/${company.publishedId}/${company.userId}`,
         { state: { aiGenData: { ...aiGenData, content: finalContent } } }
       );
     } catch {
@@ -249,9 +247,7 @@ const CompanyWebsite: React.FC = () => {
   };
 
   const previewUrl = company
-    ? company.templateSelection === "template-1"
-      ? `/user/companies/preview/1/${company.publishedId}/${company.userId}`
-      : `/user/companies/preview/2/${company.publishedId}/${company.userId}`
+    ? `/user/companies/preview/1/${company.publishedId}/${company.userId}`
     : "";
 
   // ---- Aadhaar flow ----
@@ -348,11 +344,7 @@ const CompanyWebsite: React.FC = () => {
   const handleConfirmEdit = () => {
     if (!company) return;
     setShowEditModal(false);
-    if (company.templateSelection === "template-2") {
-      navigate(`/user/companies/edit/2/${company.publishedId}/${company.userId}`);
-    } else {
-      navigate(`/user/companies/edit/1/${company.publishedId}/${company.userId}`);
-    }
+    navigate(`/user/companies/edit/1/${company.publishedId}/${company.userId}`);
   };
 
   if (loading) {
@@ -364,118 +356,22 @@ const CompanyWebsite: React.FC = () => {
   }
 
   if (!company) {
-    if (!selectedTemplate) {
-      return (
-        <div className="min-h-screen bg-amber-50 py-12 px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-10">
-              <h1 className="text-3xl font-bold text-gray-900 mb-3">Choose Your Website Template</h1>
-              <p className="text-gray-500 text-base">Pick a design for your company website. You can customise everything after.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Template 1 */}
-              <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex flex-col">
-                {/* Visual preview */}
-                <div className="h-48 bg-gray-900 relative overflow-hidden flex-shrink-0">
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" />
-                  <div className="absolute top-0 left-0 right-0 h-8 bg-gray-800 flex items-center px-3 gap-2">
-                    <div className="w-16 h-2 bg-yellow-400 rounded" />
-                    <div className="ml-auto flex gap-3">
-                      {['Home','About','Services','Contact'].map(n => (
-                        <div key={n} className="w-8 h-1.5 bg-gray-600 rounded" />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="absolute top-14 left-6 right-6">
-                    <div className="w-40 h-3 bg-yellow-400 rounded mb-2" />
-                    <div className="w-64 h-2 bg-gray-600 rounded mb-1" />
-                    <div className="w-48 h-2 bg-gray-600 rounded mb-4" />
-                    <div className="w-24 h-6 bg-yellow-400 rounded" />
-                  </div>
-                  <div className="absolute bottom-4 left-6 right-6 grid grid-cols-3 gap-2">
-                    {[1,2,3].map(i => (
-                      <div key={i} className="h-10 bg-gray-700 rounded-lg" />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">Template 1</span>
-                    <span className="text-xs text-gray-400">Dark Modern</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Bold & Professional</h3>
-                  <ul className="text-sm text-gray-500 space-y-1 mb-5 flex-1">
-                    <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Dark tech-focused design</li>
-                    <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Hero, Services, Products, Gallery</li>
-                    <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Testimonials & Contact sections</li>
-                    <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Best for Drone & AI companies</li>
-                  </ul>
-                  <button
-                    onClick={() => setSelectedTemplate("template-1")}
-                    className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors"
-                  >
-                    Select Template 1
-                  </button>
-                </div>
-              </div>
-
-              {/* Template 2 */}
-              <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex flex-col">
-                {/* Visual preview */}
-                <div className="h-48 bg-white relative overflow-hidden flex-shrink-0 border-b border-gray-100">
-                  <div className="absolute top-0 left-0 right-0 h-8 bg-white border-b border-gray-100 flex items-center px-3 gap-2 shadow-sm">
-                    <div className="w-16 h-2 bg-amber-500 rounded" />
-                    <div className="ml-auto flex gap-3">
-                      {['Home','About','Services','Contact'].map(n => (
-                        <div key={n} className="w-8 h-1.5 bg-gray-200 rounded" />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="absolute top-12 left-0 right-0 bottom-0 bg-gradient-to-b from-amber-50 to-orange-50 flex items-center justify-center">
-                    <div className="text-center px-6">
-                      <div className="w-48 h-3 bg-amber-400 rounded mb-2 mx-auto" />
-                      <div className="w-64 h-2 bg-gray-200 rounded mb-1 mx-auto" />
-                      <div className="w-40 h-2 bg-gray-200 rounded mb-4 mx-auto" />
-                      <div className="w-24 h-6 bg-amber-500 rounded mx-auto" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Template 2</span>
-                    <span className="text-xs text-gray-400">Clean Light</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Clean & Professional</h3>
-                  <ul className="text-sm text-gray-500 space-y-1 mb-5 flex-1">
-                    <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Light, clean professional design</li>
-                    <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Hero, Services, Products, Portfolio</li>
-                    <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Testimonials & Contact sections</li>
-                    <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Best for GIS & consulting firms</li>
-                  </ul>
-                  <button
-                    onClick={() => setSelectedTemplate("template-2")}
-                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-colors"
-                  >
-                    Select Template 2
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
     return (
-      <FormApp
-        embedded={true}
-        initialCompanyCategory={companyCategory}
-        companyData={undefined}
-        initialTemplateId={selectedTemplate}
-      />
+      <div className="min-h-screen bg-amber-50 flex flex-col items-center justify-center px-4 text-center">
+        <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mb-5">
+          <Globe className="w-10 h-10 text-amber-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">No Website Yet</h2>
+        <p className="text-gray-500 max-w-sm mb-6">
+          You haven't created your company website yet. Register your company to get a public listing page.
+        </p>
+        <button
+          onClick={() => navigate("/form")}
+          className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition-colors shadow-md"
+        >
+          Create Your Website
+        </button>
+      </div>
     );
   }
 
