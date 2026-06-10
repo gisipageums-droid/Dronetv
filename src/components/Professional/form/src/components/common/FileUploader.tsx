@@ -87,7 +87,7 @@ export const FileUploader = ({ userId, fieldName, maxSizeMB }: FileUploaderProps
     <div className="space-y-2">
       {/* Pretty upload button */}
       <p className=" text-xs">Click Below To Upload</p>
-      <label className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md shadow cursor-pointer hover:bg-blue-700 w-fit">
+      <label className="flex items-center justify-center px-4 py-2 bg-amber-500 text-white rounded-md shadow cursor-pointer hover:bg-amber-600 w-fit">
         {loading ? "Uploading..." : "Choose File"}
         <input
           type="file"
