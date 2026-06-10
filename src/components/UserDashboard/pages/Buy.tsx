@@ -98,6 +98,9 @@ const BuyTokenPage: React.FC = () => {
 
           const { transactionId, razorpayOrderId, key, order } = placeOrderResponse.data;
 
+          // Track whether payment was handled (success or failure) to guard ondismiss
+          let paymentHandled = false;
+
           // Step 2: Initialize Razorpay Payment
           const options: RazorpayOrderOptions = {
             key: key,
@@ -108,6 +111,7 @@ const BuyTokenPage: React.FC = () => {
             image: "https://www.dronetv.in/images/Drone%20tv%20.in.png",
             order_id: razorpayOrderId,
             handler: async (response) => {
+              paymentHandled = true;
               try {
                 const confirmData = {
                   payment_id: response.razorpay_payment_id,
@@ -135,15 +139,17 @@ const BuyTokenPage: React.FC = () => {
             prefill: {
               name: user?.userData?.fullName || 'Customer',
               email: user?.userData?.email || '',
-              contact: user?.userData?.phone || '9999999999' // Fallback phone number
+              contact: user?.userData?.phone || '9999999999'
             },
             theme: {
-              color: "#F59E0B", // Amber color to match your theme
+              color: "#F59E0B",
             },
             modal: {
               ondismiss: () => {
                 setIsProcessing(false);
-                failOrder(transactionId, 'Payment cancelled by user', '', 'CANCELLED');
+                if (!paymentHandled) {
+                  failOrder(transactionId, 'Payment cancelled by user', '', 'CANCELLED');
+                }
               }
             }
           };
@@ -151,6 +157,7 @@ const BuyTokenPage: React.FC = () => {
           const razorpayInstance = new Razorpay(options);
 
           razorpayInstance.on('payment.failed', (response: any) => {
+            paymentHandled = true;
             const reason = response?.error?.description || response?.error?.reason || 'Payment failed';
             const errorCode = response?.error?.code || '';
             setErrorMessage(`Payment failed: ${reason}`);
