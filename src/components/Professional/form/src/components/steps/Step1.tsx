@@ -1130,60 +1130,6 @@ export const Step1 = ({
     // Combined Validity
     const isValid = isBasicInfoValid && isCommAddressValid && isAddressInfoValid;
 
-    // Debugging Validation - helpful for identifying missing fields
-    console.log("📝 Step1 Validation Status:", {
-      isBasicInfoValid,
-      isCommAddressValid,
-      isAddressInfoValid,
-      details: {
-        aadharDigitCount: basicInfo.aadhar_number?.replace(/\D/g, '').length,
-        hasUsername: !!basicInfo.user_name,
-        isUsernameAvailable: usernameAvailable,
-        hasEmail: !!addressInfo.email,
-        hasPhone: !!addressInfo.phoneNumber,
-        totalValid: !!isValid
-      }
-    });
-
-    if (!isBasicInfoValid) {
-      const missing = [];
-      if (!basicInfo.fullName) missing.push("fullName");
-      if (!basicInfo.date_of_birth) missing.push("dob");
-      if (!basicInfo.gender) missing.push("gender");
-      if (!basicInfo.relationship_type) missing.push("relType");
-      if (!basicInfo.relationship_name) missing.push("relName");
-      if (!basicInfo.address) missing.push("address");
-      if (!basicInfo.city_district) missing.push("city");
-      if (!basicInfo.pincode) missing.push("pincode");
-      if (!basicInfo.state) missing.push("state");
-      if (!basicInfo.aadhar_number) missing.push("aadhar");
-      if (basicInfo.aadhar_number && (basicInfo.aadhar_number.replace(/\D/g, '').length !== 12 && basicInfo.aadhar_number.replace(/\D/g, '').length !== 4)) missing.push("aadhar_length_invalid");
-      console.log("❌ Missing Basic Info:", missing);
-    }
-
-    if (!isCommAddressValid) {
-      const missing = [];
-      const comm = data.communicationAddress || {};
-      if (!comm.address) missing.push("address");
-      if (!comm.postalCode) missing.push("postalCode");
-      if (!comm.country) missing.push("country");
-      if (!comm.state) missing.push("state");
-      console.log("❌ Missing Communication Address:", missing);
-    }
-
-    if (!isAddressInfoValid) {
-      const missing = [];
-      const info = data.addressInformation || {};
-      if (!basicInfo.user_name) missing.push("user_name");
-      if (!isUserAvailable) missing.push("username_taken_or_checking");
-      if (!info.email) missing.push("email");
-      if (!info.phoneNumber) missing.push("phoneNumber");
-      if (!info.nationality) missing.push("nationality");
-      if (!info.designation) missing.push("designation");
-      if (!info.tagline) missing.push("tagline");
-      console.log("❌ Missing Professional Information:", missing);
-    }
-
     // Update Step Validity
     setStepValid?.(!!isValid);
 

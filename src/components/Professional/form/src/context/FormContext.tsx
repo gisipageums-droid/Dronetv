@@ -93,19 +93,16 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
     setData(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== index) }));
   };
 
-  // Persist form data to localStorage whenever data changes
+  // Persist form data to localStorage — merge with existing to preserve the step key
   useEffect(() => {
     try {
-      const payload = JSON.stringify({ formData: data });
-      localStorage.setItem("professionalFormDraft", payload);
+      const saved = localStorage.getItem("professionalFormDraft");
+      const existing = saved ? JSON.parse(saved) : {};
+      localStorage.setItem("professionalFormDraft", JSON.stringify({ ...existing, formData: data }));
     } catch (e) {
       console.error("Failed to save draft to localStorage", e);
     }
   }, [data]);
-
-  // const resetForm = () => setData(initialFormData); // 👈 resets all fields
-
-  console.log("Form Data:", data);
 
 
   return (

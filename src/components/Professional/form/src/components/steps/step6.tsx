@@ -29,8 +29,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
   // ✅ Initialize with pre-filled resume data from context
   const [documents, setDocuments] = useState<ExtractedDocument[]>(() => {
     if (data.resume && Array.isArray(data.resume) && data.resume.length > 0) {
-      console.log('Loading pre-filled resume data:', data.resume);
-      // Convert any string dates back to Date objects and ensure proper typing
       return data.resume.map(doc => ({
         ...doc,
         uploadDate: doc.uploadDate instanceof Date ? doc.uploadDate : new Date(doc.uploadDate || Date.now())
