@@ -168,7 +168,7 @@ const Header: React.FC = () => {
   return (
     <div className='h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6  md:mt-4 pt-[120px] md:pt-[10px]'>
       {/* ===== Always Visible Popup ===== */}
-      <div className="fixed right-4 top-20 md:right-12 md:top-28 z-10 animate-bounce">
+      <div className="fixed right-4 bottom-24 md:right-12 md:bottom-auto md:top-28 z-10 animate-bounce">
         <div className="px-3 py-2 md:px-5 md:py-4 text-center bg-white rounded-xl border border-yellow-300 shadow-lg max-w-[280px] md:max-w-none">
           <h2 className="text-sm font-semibold text-amber-900 md:text-lg">
             🎉 Free Trial

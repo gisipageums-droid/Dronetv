@@ -142,6 +142,7 @@ const AppContent = () => {
     location.pathname.startsWith("/user/professionals/edit") ||
     location.pathname.startsWith("/admin/professionals/edit") ||
     location.pathname.startsWith("/professional/edit") ||
+    location.pathname.startsWith("/professional/form") ||
     location.pathname.startsWith("/edit/event");
 
   return (
