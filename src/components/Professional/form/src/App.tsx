@@ -165,7 +165,6 @@ function AppInner() {
   const location = useLocation();
   const navigate = useNavigate();
   const templateIdFromState = location.state?.templateId;
-  console.log("templateIdFromState", templateIdFromState);
   const [formLoader, setFormLoader] = useState(true);
 
   useEffect(() => {
@@ -176,7 +175,6 @@ function AppInner() {
       !professionalId
     ) {
       updateField("templateSelection", templateIdFromState);
-      console.log("✅ Saved template to form context:", templateIdFromState);
     }
   }, [
     templateIdFromState,
@@ -271,7 +269,7 @@ function AppInner() {
 
   const handlePurchaseTokens = () => {
     setShowTokenModal(false);
-    window.open("/pricing", "_blank");
+    window.open("/user-buy", "_blank");
   };
 
   const handleNextWithValidation = () => {
@@ -321,7 +319,6 @@ function AppInner() {
           `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
           payload
         );
-        console.log("Update response:", response.data);
       } else {
         response = await submitForm(payload);
       }

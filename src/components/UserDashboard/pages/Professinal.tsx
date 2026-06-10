@@ -244,13 +244,13 @@ const Card: React.FC<ProfessinalCardProps> = ({
           <button
             onClick={() =>
               navigate(
-                `/user-professional/leads/${professional.professionalName}/${professional.professionalId}`
+                `/professional/form/${professional.userId}/${professional.professionalId}`
               )
             }
             className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
           >
-            <Eye className="w-4 h-4" />
-            View leads
+            <Edit className="w-4 h-4" />
+            Edit Form
           </button>
         </div>
 
@@ -430,11 +430,11 @@ const Professinal: React.FC = () => {
       <div className="flex items-center gap-4 justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-            <Users w-6 h-6 />
-            Professinal Directory
+            <Users className="w-6 h-6" />
+            Professional Directory
           </h1>
           <p className="text-gray-600 mb-8">
-            Browse and manage professinal submissions
+            Browse and manage professional submissions
           </p>
         </div>
 
@@ -443,7 +443,7 @@ const Professinal: React.FC = () => {
           className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
         >
           <Plus className="w-5 h-5" />
-          Add New Professinal
+          Add New Professional
         </button>
       </div>
 
@@ -453,7 +453,7 @@ const Professinal: React.FC = () => {
         </div>
         <input
           type="text"
-          placeholder="Search by professinal name, location, or sector..."
+          placeholder="Search by professional name, location, or sector..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pl-12 pr-6 py-3 bg-white border-2 border-yellow-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
@@ -482,7 +482,10 @@ const Professinal: React.FC = () => {
       ) : (
         <div className="text-center py-20 text-gray-500">
           <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
-          No professional found matching “{searchTerm}”
+          {searchTerm
+            ? `No professionals found matching “${searchTerm}”`
+            : 'No professional profiles found. Click Add New Professional to create one.'
+          }
         </div>
       )}
     </div>
