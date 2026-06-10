@@ -1,4 +1,5 @@
 import Sidebar from "../common/Sidbar";
+import MobileBottomNav from "../common/MobileBottomNav";
 import React from "react";
 
 interface LayoutProps {
@@ -9,14 +10,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen py-20 flex bg-gray-50 text-gray-900 p-2 md:p-6">
       <main className="h-screen w-full flex gap-2">
-        {/* sidebar */}
-        <Sidebar />
+        {/* Sidebar — desktop only */}
+        <div className="hidden lg:block">
+          <Sidebar />
+        </div>
 
-        {/* content */}
-        <div className="flex-1 w-full overflow-y-auto rounded-lg shadow-lg border border-yellow-200">
+        {/* Content */}
+        <div className="flex-1 w-full overflow-y-auto rounded-lg shadow-lg border border-yellow-200 pb-20 lg:pb-0">
           {children}
         </div>
       </main>
+
+      {/* Mobile bottom nav */}
+      <MobileBottomNav />
     </div>
   );
 };
