@@ -362,42 +362,34 @@ const TransactionHistory: React.FC = () => {
         <div className="min-h-screen bg-amber-50 p-4 md:p-6">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-                <div className="mb-8 text-center">
-                    <h1 className="text-3xl md:text-4xl font-bold text-amber-900">Transaction History</h1>
-                    <p className="text-amber-700 mt-2">Review your token purchase history</p>
-
+                <div className="mb-6 text-center">
+                    <h1 className="text-2xl md:text-4xl font-bold text-amber-900">Transaction History</h1>
+                    <p className="text-amber-700 mt-1 text-sm md:text-base">Review your token purchase history</p>
                     {error && (
-                        <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg max-w-md mx-auto">
-                            <strong>Note:</strong> {error}
-                        </div>
-                    )}
-
-                    {/* Debug info - shows API data count */}
-                    {transactionHistoryData && (
-                        <div className="mt-2 text-sm text-amber-600">
-                            Loaded {transactionHistoryData.count} transactions from API
+                        <div className="mt-3 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg max-w-md mx-auto text-sm">
+                            {error}
                         </div>
                     )}
                 </div>
 
                 {/* Stats Summary */}
-                {transactionHistoryData && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div className="bg-white rounded-xl shadow-sm p-4 text-center border border-amber-200">
-                            <div className="text-2xl font-bold text-amber-700">{transactionHistoryData.count}</div>
-                            <div className="text-amber-600 text-sm">Total Transactions</div>
+                {transactions.length > 0 && (
+                    <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
+                        <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
+                            <div className="text-xl md:text-2xl font-bold text-amber-700">{transactions.length}</div>
+                            <div className="text-amber-600 text-xs md:text-sm">Total</div>
                         </div>
-                        <div className="bg-white rounded-xl shadow-sm p-4 text-center border border-amber-200">
-                            <div className="text-2xl font-bold text-emerald-700">
+                        <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
+                            <div className="text-xl md:text-2xl font-bold text-emerald-700">
                                 {formatTokens(transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').reduce((sum, tx) => sum + tx.amount, 0))}
                             </div>
-                            <div className="text-amber-600 text-sm">Total Tokens</div>
+                            <div className="text-amber-600 text-xs md:text-sm">Tokens</div>
                         </div>
-                        <div className="bg-white rounded-xl shadow-sm p-4 text-center border border-amber-200">
-                            <div className="text-2xl font-bold text-amber-700">
-                                {transactions.filter(tx => tx.paymentStatus === 'CAPTURED').length}
+                        <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
+                            <div className="text-xl md:text-2xl font-bold text-amber-700">
+                                {transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').length}
                             </div>
-                            <div className="text-amber-600 text-sm">Completed</div>
+                            <div className="text-amber-600 text-xs md:text-sm">Completed</div>
                         </div>
                     </div>
                 )}
@@ -470,72 +462,69 @@ const TransactionHistory: React.FC = () => {
                             {filteredTransactions.map((transaction) => (
                                 <li
                                     key={transaction.id}
-                                    className="p-4 md:p-6 hover:bg-amber-50 transition-colors duration-200"
+                                    className="p-3 md:p-5 hover:bg-amber-50 transition-colors duration-200"
                                 >
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-start space-x-4">
-                                                <div
-                                                    className={`flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center ${
-                                                        transaction.paymentStatus === 'CAPTURED' || transaction.paymentStatus === 'COMPLETED' || transaction.paymentStatus === 'SUCCESS'
-                                                            ? 'bg-emerald-100 text-emerald-800'
-                                                            : transaction.paymentStatus === 'FAILED' || transaction.paymentStatus === 'CANCELLED'
-                                                            ? 'bg-red-100 text-red-600'
-                                                            : 'bg-amber-100 text-amber-600'
-                                                    }`}
-                                                >
-                                                    {transaction.paymentStatus === 'CAPTURED' || transaction.paymentStatus === 'COMPLETED' || transaction.paymentStatus === 'SUCCESS' ? (
-                                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    ) : transaction.paymentStatus === 'FAILED' || transaction.paymentStatus === 'CANCELLED' ? (
-                                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                        </svg>
-                                                    ) : (
-                                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                    )}
-                                                </div>
-                                                <div className="min-w-0 flex-1">
-                                                    <h3 className="text-lg font-semibold text-amber-900 truncate">
-                                                        {transaction.description}
-                                                    </h3>
-                                                    <div className="flex items-center space-x-2 mt-1">
-                                                        <span className="text-sm text-amber-600 bg-amber-100 px-2 py-1 rounded">
-                                                            {transaction.category}
-                                                        </span>
-                                                        {transaction.paymentStatus && (
-                                                            <span className={`text-xs font-medium px-2 py-1 rounded ${getStatusColor(transaction.paymentStatus)}`}>
-                                                                {getStatusText(transaction.paymentStatus)}
-                                                            </span>
-                                                        )}
-                                                        {transaction.currency && (
-                                                            <span className="text-xs text-amber-500 bg-amber-50 px-2 py-1 rounded">
-                                                                {transaction.currency}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <p className="text-sm text-amber-500 mt-2">
-                                                        {formatDate(transaction.date)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="text-right ml-4">
-                                            <div className={`text-xl font-bold ${transaction.type === 'credit'
-                                                ? 'text-emerald-700'
-                                                : 'text-amber-800'
-                                                }`}>
-                                                {transaction.type === 'credit' ? '+' : '-'}
-                                                {formatTokens(Math.abs(transaction.amount))} tokens
-                                            </div>
-                                            {transaction.tokenCount && (
-                                                <p className="text-sm text-amber-600 mt-1">
-                                                    {transaction.tokenCount} tokens
-                                                </p>
+                                    <div className="flex items-start gap-3">
+                                        {/* Status icon */}
+                                        <div
+                                            className={`flex-shrink-0 h-9 w-9 md:h-11 md:w-11 rounded-full flex items-center justify-center mt-0.5 ${
+                                                transaction.paymentStatus === 'CAPTURED' || transaction.paymentStatus === 'COMPLETED' || transaction.paymentStatus === 'SUCCESS'
+                                                    ? 'bg-emerald-100 text-emerald-700'
+                                                    : transaction.paymentStatus === 'FAILED' || transaction.paymentStatus === 'CANCELLED'
+                                                    ? 'bg-red-100 text-red-600'
+                                                    : 'bg-amber-100 text-amber-600'
+                                            }`}
+                                        >
+                                            {transaction.paymentStatus === 'CAPTURED' || transaction.paymentStatus === 'COMPLETED' || transaction.paymentStatus === 'SUCCESS' ? (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            ) : transaction.paymentStatus === 'FAILED' || transaction.paymentStatus === 'CANCELLED' ? (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            ) : (
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
                                             )}
+                                        </div>
+
+                                        {/* Main content */}
+                                        <div className="flex-1 min-w-0">
+                                            {/* Description + Amount on same row */}
+                                            <div className="flex items-start justify-between gap-2">
+                                                <p className="text-sm md:text-base font-semibold text-amber-900 break-words leading-snug flex-1 min-w-0">
+                                                    {transaction.description}
+                                                </p>
+                                                <span className={`flex-shrink-0 text-sm md:text-base font-bold whitespace-nowrap ${
+                                                    transaction.type === 'credit' ? 'text-emerald-700' : 'text-amber-800'
+                                                }`}>
+                                                    {transaction.type === 'credit' ? '+' : '-'}{formatTokens(Math.abs(transaction.amount))} tokens
+                                                </span>
+                                            </div>
+
+                                            {/* Badges — wrap on mobile */}
+                                            <div className="flex flex-wrap items-center gap-1 mt-1.5">
+                                                <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded">
+                                                    {transaction.category}
+                                                </span>
+                                                {transaction.paymentStatus && (
+                                                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${getStatusColor(transaction.paymentStatus)}`}>
+                                                        {getStatusText(transaction.paymentStatus)}
+                                                    </span>
+                                                )}
+                                                {transaction.currency && (
+                                                    <span className="text-xs text-amber-500 bg-amber-50 px-2 py-0.5 rounded">
+                                                        {transaction.currency}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Date */}
+                                            <p className="text-xs text-amber-400 mt-1.5">
+                                                {formatDate(transaction.date)}
+                                            </p>
                                         </div>
                                     </div>
                                 </li>
