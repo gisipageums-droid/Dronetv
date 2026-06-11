@@ -1036,7 +1036,6 @@ export const Step1 = ({
 
   // Debug: Log form data changes
   useEffect(() => {
-    console.log("🔍 Step1 - Current form data:", {
       basicInfo: data.basicInfo,
       addressInformation: data.addressInformation,
       communicationAddress: data.communicationAddress,
@@ -1183,7 +1182,6 @@ export const Step1 = ({
 
   // Handle OTP verification
   const handleOtpVerify = (otp: string) => {
-    console.log("OTP Verified:", otp);
     setAadharVerified(true);
     setShowOtpModal(false);
     // Here you would typically make an API call to verify the OTP
@@ -1191,7 +1189,6 @@ export const Step1 = ({
 
   // Handle OTP resend
   const handleOtpResend = () => {
-    console.log("Resending OTP for Aadhar:", data.basicInfo?.aadhar_number);
     // Here you would typically make an API call to resend OTP
   };
 
@@ -1770,7 +1767,6 @@ export const Step1 = ({
                     countryValue={data.basicInfo?.country || ""}
                     stateValue={data.basicInfo?.state || ""}
                     onCountryChange={(value) => {
-                      console.log("🟡 Step1 - Basic Info Country changed to:", value);
                       updateField("basicInfo", {
                         ...data.basicInfo,
                         country: value,
@@ -1778,7 +1774,6 @@ export const Step1 = ({
                       });
                     }}
                     onStateChange={(value) => {
-                      console.log("🟡 Step1 - Basic Info State changed to:", value);
                       updateField("basicInfo", {
                         ...data.basicInfo,
                         state: value,
@@ -2220,7 +2215,6 @@ export const Step1 = ({
                     countryValue={currentSectionData.country || ""}
                     stateValue={currentSectionData.state || ""}
                     onCountryChange={(value) => {
-                      console.log("🟡 Step1 - Country changed to:", value);
                       updateField(sectionId, {
                         ...currentSectionData,
                         country: value,
@@ -2228,7 +2222,6 @@ export const Step1 = ({
                       });
                     }}
                     onStateChange={(value) => {
-                      console.log("🟡 Step1 - State changed to:", value);
                       updateField(sectionId, {
                         ...currentSectionData,
                         state: value,
@@ -2281,7 +2274,6 @@ export const Step1 = ({
                   countryValue={currentSectionData.country || ""}
                   stateValue={currentSectionData.state || ""}
                   onCountryChange={(value) => {
-                    console.log("🟡 Step1 - Country changed to:", value);
                     updateField(sectionId, {
                       ...currentSectionData,
                       country: value,
@@ -2289,7 +2281,6 @@ export const Step1 = ({
                     });
                   }}
                   onStateChange={(value) => {
-                    console.log("🟡 Step1 - State changed to:", value);
                     updateField(sectionId, {
                       ...currentSectionData,
                       state: value,
@@ -2640,7 +2631,6 @@ export const Step1 = ({
                 countryValue={data.basicInfo?.country || ""}
                 stateValue={data.basicInfo?.state || ""}
                 onCountryChange={(value) => {
-                  console.log("🟡 Step1 - Basic Info Country changed to:", value);
                   updateField("basicInfo", {
                     ...data.basicInfo,
                     country: value,
@@ -2648,7 +2638,6 @@ export const Step1 = ({
                   });
                 }}
                 onStateChange={(value) => {
-                  console.log("🟡 Step1 - Basic Info State changed to:", value);
                   updateField("basicInfo", {
                     ...data.basicInfo,
                     state: value,

@@ -129,7 +129,6 @@ export function Contact({ contactData }: ContactProps) {
       // Simulate API call to the submit endpoint
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log("Form submitted:", formData);
       toast.success(data.form.successMessage);
 
       // Reset form

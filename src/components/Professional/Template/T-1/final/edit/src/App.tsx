@@ -150,7 +150,6 @@ const App: React.FC = () => {
     );
   }
 
-  console.log(finalTemplate.content.footerContent);
 
   return (
     <DarkModeProvider>

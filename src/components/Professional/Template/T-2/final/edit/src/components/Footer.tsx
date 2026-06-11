@@ -784,7 +784,6 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
 
-      console.log("Footer auto-save completed:", dataToSave);
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Failed to auto-save changes");

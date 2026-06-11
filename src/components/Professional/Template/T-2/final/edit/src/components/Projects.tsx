@@ -1349,7 +1349,6 @@ export function Projects({
       // Upload any pending images first
       const uploadSuccess = await uploadPendingImages(dataToSave);
       if (!uploadSuccess) {
-        console.log("Auto-save skipped due to upload failure");
         return;
       }
 
@@ -1359,7 +1358,6 @@ export function Projects({
       setLastSavedTime(new Date());
       setHasUnsavedChanges(false);
 
-      console.log("Auto-save completed:", dataToSave);
       toast.success("Changes auto-saved successfully");
     } catch (error) {
       console.error("Auto-save failed:", error);

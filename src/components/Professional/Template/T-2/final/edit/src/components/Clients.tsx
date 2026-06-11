@@ -884,7 +884,6 @@ export function Clients({
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
 
-      console.log("Auto-save completed:", dataToSave);
     } catch (error) {
       console.error("Auto-save failed:", error);
       toast.error("Failed to auto-save changes");
@@ -922,7 +921,6 @@ export function Clients({
   // Initialize data from props when component mounts or props change
   useEffect(() => {
     if (clientsData && !dataLoaded) {
-      console.log("Initializing Clients data from props:", clientsData);
       const transformedData = transformBackendData(clientsData);
       setData(transformedData);
       setTempData(transformedData);
@@ -952,7 +950,6 @@ export function Clients({
   const transformBackendData = (backendData: any): ClientsData => {
     if (!backendData) return defaultData;
 
-    console.log("Transforming backend data for Clients:", backendData);
 
     return {
       subtitle: backendData.subtitle || "",
@@ -985,7 +982,6 @@ export function Clients({
       if (isVisible && !dataLoaded && !clientsData && !isLoading) {
         setIsLoading(true);
         try {
-          console.log("Loading default Clients data");
           // Use empty default data
           setData(defaultData);
           setTempData(defaultData);
@@ -1163,7 +1159,6 @@ export function Clients({
     Object.values(data.stats).some((value) => value && value.trim() !== "") ||
     Object.values(data.cta).some((value) => value && value.trim() !== "");
 
-  console.log("Clients component debug:", {
     dataLoaded,
     hasData,
     clientsDataFromProps: clientsData,

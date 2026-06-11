@@ -434,16 +434,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
   // Get all countries from the package
   const allCountries = Country.getAllCountries();
 
-  // Debug: Log when props change
-  useEffect(() => {
-    console.log("CountryStateSelect - Props updated:", {
-      countryValue,
-      stateValue,
-      onCountryChange: typeof onCountryChange,
-      onStateChange: typeof onStateChange
-    });
-  }, [countryValue, stateValue, onCountryChange, onStateChange]);
-
   // Update states when country changes
   useEffect(() => {
     if (countryValue) {
@@ -453,7 +443,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
       if (country) {
         const states = State.getStatesOfCountry(country.isoCode);
         setAvailableStates(states);
-        console.log(`Loaded ${states.length} states for ${countryValue}`);
       } else {
         setAvailableStates([]);
       }
@@ -505,23 +494,16 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
   // };
 
   const handleCountrySelect = (country: any) => {
-  console.log("🟢 Country selected:", country.name);
-  console.log("🟢 Calling onCountryChange with:", country.name);
-  
-  // Clear state first, then update country
   onStateChange("");
-  // Small delay to ensure state is cleared before country update
   setTimeout(() => {
     onCountryChange(country.name);
   }, 10);
-  
+
   setCountryDropdownOpen(false);
   setCountrySearchTerm("");
 };
 
 const handleStateSelect = (state: any) => {
-  console.log("🟢 State selected:", state.name);
-  console.log("🟢 Calling onStateChange with:", state.name);
   
   onStateChange(state.name);
   setStateDropdownOpen(false);
@@ -559,9 +541,8 @@ const handleStateSelect = (state: any) => {
           <button
             type="button"
             onClick={() => {
-              console.log("🟡 Country dropdown clicked");
               setCountryDropdownOpen(!countryDropdownOpen);
-              setStateDropdownOpen(false); // Close state dropdown
+              setStateDropdownOpen(false);
             }}
             className={`${getSelectClasses(
               countryError
@@ -599,10 +580,7 @@ const handleStateSelect = (state: any) => {
                     <button
                       key={country.isoCode}
                       type="button"
-                      onClick={() => {
-                        console.log("🔵 Country button clicked:", country.name);
-                        handleCountrySelect(country);
-                      }}
+                      onClick={() => handleCountrySelect(country)}
                       className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors border-b border-gray-100 last:border-b-0"
                     >
                       <div className="flex-1 min-w-0">

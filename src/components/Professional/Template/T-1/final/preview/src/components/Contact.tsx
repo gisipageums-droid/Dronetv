@@ -135,7 +135,6 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
       setSubmitStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
-      console.log(error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
