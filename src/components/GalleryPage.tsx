@@ -656,6 +656,41 @@ const GalleryPage = () => {
     setLightboxIndex(0);
   };
 
+  const handleDownload = async () => {
+    if (!selectedImage) return;
+    try {
+      const response = await fetch(selectedImage.src);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${selectedImage.title}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch {
+      window.open(selectedImage.src, '_blank');
+    }
+  };
+
+  const handleShare = async () => {
+    if (!selectedImage) return;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: selectedImage.title,
+          text: selectedImage.description,
+          url: window.location.href,
+        });
+      } catch { /* user cancelled */ }
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Link copied to clipboard!');
+      });
+    }
+  };
+
   const navigateLightbox = (direction) => {
     const newIndex = direction === 'next'
       ? (lightboxIndex + 1) % filteredImages.length
@@ -1138,7 +1173,7 @@ const GalleryPage = () => {
 
       {/* Lightbox Modal */}
       {selectedImage && (
-        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-2 sm:p-4">
+        <div className="fixed inset-0 bg-black/95 z-[99999999] flex items-center justify-center p-2 sm:p-4">
           <div className="relative max-w-6xl w-full h-full flex items-center justify-center">
             {/* Close Button */}
             <button
@@ -1218,10 +1253,10 @@ const GalleryPage = () => {
                     >
                       <Heart className={`h-4 sm:h-5 w-4 sm:w-5 ${isLiked ? 'fill-current' : ''}`} />
                     </button>
-                    <button className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
+                    <button onClick={handleShare} className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
                       <Share2 className="h-4 sm:h-5 w-4 sm:w-5" />
                     </button>
-                    <button className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
+                    <button onClick={handleDownload} className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
                       <Download className="h-4 sm:h-5 w-4 sm:w-5" />
                     </button>
                   </div>

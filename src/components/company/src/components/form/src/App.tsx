@@ -9,7 +9,7 @@ import Step5ProductsServices from "./components/steps/Step5ProductsServices";
 import Step7PromotionBilling from "./components/steps/Step7PromotionBilling";
 import Step8MediaUploads from "./components/steps/Step8MediaUploads";
 import PreviewPublish from "./components/PreviewPublish";
-import { useTemplate } from "../../../../../context/context";
+import { useTemplate, useUserAuth } from "../../../../../context/context";
 import { toast } from "react-toastify";
 
 type DigiStatus = 'idle' | 'loading' | 'polling' | 'verified' | 'error';
@@ -395,6 +395,8 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
   });
 
   const { draftDetails, setDraftDetails, setAIGenData, AIGenData } = useTemplate();
+  const { user: authUser } = useUserAuth();
+  const loggedInEmail = authUser?.email || authUser?.userData?.email || null;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -473,7 +475,6 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
           const data = await response.json();
 
           if (data?.formData) {
-            console.log("Fetched formData:", data.formData);
             setFormData((prev) => ({ ...prev, ...data.formData }));
             setAIGenData(data);
           } else {
@@ -672,7 +673,6 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
   };
 
   function handleClick() {
-    console.log("draft Details:", draftDetails);
     navigate(
       `/edit/template/${draftDetails.templateSelection === 1 ? "t1" : "t2"}/${draftDetails.draftId
       }/${draftDetails.userId}`
@@ -829,7 +829,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       const finalTemplateId = formData.templateId || templateId || "1";
 
       const payload = {
-        userId: formData.directorEmail,
+        userId: loggedInEmail || formData.directorEmail,
         directorEmail: formData.directorEmail,
         templateSelection: finalTemplateId,
         templateDetails: {
