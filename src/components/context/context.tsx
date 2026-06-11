@@ -309,7 +309,6 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           toastId: "ai-success2",
         });
         setAIGenData(data);
-        console.log("AI Data loaded successfully:", data);
       } else {
         throw new Error("Invalid data structure in response");
       }
@@ -456,7 +455,6 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       }
 
       const result = await response.json();
-      console.log("Upload successful:", result);
       toast.success(
         "Your template is successfully published and now it is under review"
       );
@@ -510,7 +508,6 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       }
 
       const result = await response.json();
-      console.log("Upload successful:", result);
       toast.success(
         "Your template is successfully published and now it is under review"
       );

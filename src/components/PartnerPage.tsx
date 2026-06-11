@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Handshake, Building2, Brain, Calendar, GraduationCap, Users, Eye, Award, TrendingUp, Mail, Phone, MapPin, CheckCircle, Send } from 'lucide-react';
 
 const PartnerPage = () => {
+const formRef = useRef<HTMLDivElement>(null);
 const [formData, setFormData] = useState({
   name: '',
   email: '',
@@ -163,7 +164,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </p>
               </div>
               <div className="mt-8">
-                <button className="bg-black text-[#f1ee8e] px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <button
+                  onClick={() => formRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  className="bg-black text-[#f1ee8e] px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
                   Become a Partner
                 </button>
               </div>
@@ -280,7 +284,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       </section>
 
       {/* Partnership Form Section */}
-      <section className="py-20 bg-yellow-400">
+      <section ref={formRef} className="py-20 bg-yellow-400">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black text-black mb-4">
