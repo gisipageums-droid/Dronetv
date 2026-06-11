@@ -59,7 +59,6 @@ export default function EditTemp_2() {
   const createStateChangeHandler = useCallback((componentName: keyof ComponentStates) => {
     return (state: any) => collectComponentState(componentName, state);
   }, [collectComponentState]);
-console.log("user name", AIGenData.user_name);
 
   // Update finalTemplate whenever componentStates changes
   useEffect(() => {
@@ -94,15 +93,12 @@ console.log("user name", AIGenData.user_name);
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetched template data:', data); // Debug log
-          console.log('Clients content from API:', data.content?.clientsContent); // Debug log for clients data
 
           // Your API returns a single object, not an array
           setFinalTemplate(data);
           setAIGenData(data);
 
           if (data.content) {
-            console.log('Setting component states:', data.content); // Debug log
             setComponentStates(data.content);
           } else {
             toast.error("No content found in response");
@@ -141,8 +137,6 @@ console.log("user name", AIGenData.user_name);
     );
   }
 
-  console.log('Current component states:', componentStates); // Debug log
-  console.log('Clients content in App.tsx:', componentStates.clientsContent); // Specific debug for clients
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 overflow-hidden">

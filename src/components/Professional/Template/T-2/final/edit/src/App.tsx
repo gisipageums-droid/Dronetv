@@ -113,7 +113,6 @@ export default function FinalEditTemp_2() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log("Response status:", data.data);
           setFinalTemplate(data.data);
           setAIGenData(data.data);
 
