@@ -67,6 +67,7 @@ export default function Services({ serviceData }) {
   const [visibleCount, setVisibleCount] = useState(6);
 
   const sectionRef = useRef(null);
+  const savedScrollY = useRef(0);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   // Filter services based on active category
@@ -79,16 +80,22 @@ export default function Services({ serviceData }) {
   const visibleServices = filteredServices.slice(0, visibleCount);
 
   const openModal = (service) => {
+    savedScrollY.current = window.scrollY;
     setSelectedService(service);
     setIsModalOpen(true);
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${savedScrollY.current}px`;
+    document.body.style.width = '100%';
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    document.documentElement.style.overflow = 'hidden';
     if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
   };
 
   const closeModal = () => {
-    document.documentElement.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
     document.body.style.paddingRight = '';
+    window.scrollTo(0, savedScrollY.current);
     setIsModalOpen(false);
     setSelectedService(null);
   };
