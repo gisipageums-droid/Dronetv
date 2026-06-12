@@ -36,7 +36,7 @@ export const PhoneInput = ({
   return (
     <div className={`flex ${baseClasses} ${className}`}>
       <span className="flex items-center px-3 py-2 border-r border-amber-300 bg-amber-50 text-sm font-medium text-gray-700 select-none">
-        🇮🇳 +91
+        +91
       </span>
       <input
         type="tel"
