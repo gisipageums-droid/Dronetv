@@ -80,19 +80,14 @@ export default function Products({ productData }) {
   const openModal = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
-    const scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-    document.body.dataset.scrollY = String(scrollY);
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.documentElement.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
   };
 
   const closeModal = () => {
-    const scrollY = parseInt(document.body.dataset.scrollY || '0');
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, scrollY);
+    document.documentElement.style.overflow = '';
+    document.body.style.paddingRight = '';
     setIsModalOpen(false);
     setSelectedProduct(null);
   };
@@ -259,6 +254,17 @@ export default function Products({ productData }) {
         transition={{ duration: 0.3 }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close button — outside overflow-hidden image div so it's never clipped */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); closeModal(); }}
+          className="absolute top-3 right-3 bg-white rounded-full p-2.5 shadow-lg z-20"
+          aria-label="Close modal"
+          style={{ minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <X className="w-5 h-5 text-gray-900" />
+        </button>
+
         {/* Modal Header with Image */}
         <div className="relative h-32 sm:h-36 overflow-hidden flex-shrink-0">
           <img
@@ -267,13 +273,6 @@ export default function Products({ productData }) {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-          <button
-            onClick={closeModal}
-            className="absolute top-2 right-2 bg-white/90 hover:bg-white rounded-full p-1.5 transition-colors shadow-sm"
-            aria-label="Close modal"
-          >
-            <X className="w-4 h-4 text-gray-900" />
-          </button>
           <div className="absolute bottom-2 left-3 right-3">
             <div className="flex items-center gap-1.5 mb-1 flex-wrap">
               <Badge

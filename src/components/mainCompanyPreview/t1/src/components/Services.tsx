@@ -81,19 +81,14 @@ export default function Services({ serviceData }) {
   const openModal = (service) => {
     setSelectedService(service);
     setIsModalOpen(true);
-    const scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-    document.body.dataset.scrollY = String(scrollY);
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.documentElement.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
   };
 
   const closeModal = () => {
-    const scrollY = parseInt(document.body.dataset.scrollY || '0');
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, scrollY);
+    document.documentElement.style.overflow = '';
+    document.body.style.paddingRight = '';
     setIsModalOpen(false);
     setSelectedService(null);
   };
@@ -230,15 +225,26 @@ export default function Services({ serviceData }) {
             onClick={closeModal}
           >
             <motion.div
-              className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl"
+              className="relative bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col"
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ duration: 0.3 }}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Close button — outside overflow-hidden image div so it's never clipped */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); closeModal(); }}
+                className="absolute top-3 right-3 bg-white rounded-full p-2.5 shadow-lg z-20"
+                aria-label="Close modal"
+                style={{ minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <X className="w-5 h-5 text-gray-900" />
+              </button>
+
               {/* Modal Header with Image */}
-              <div className="relative h-64 overflow-hidden" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
+              <div className="relative h-32 sm:h-44 md:h-64 overflow-hidden flex-shrink-0" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
                 {selectedService.image && /^https?:\/\//.test(selectedService.image) && (
                   <img
                     src={selectedService.image}
@@ -248,25 +254,18 @@ export default function Services({ serviceData }) {
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <button
-                  onClick={closeModal}
-                  className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors shadow-lg"
-                  aria-label="Close modal"
-                >
-                  <X className="w-5 h-5 text-gray-900" />
-                </button>
-                <div className="absolute bottom-6 left-6 right-6">
-                  <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full mb-3">
+                <div className="absolute bottom-3 left-4 right-12 sm:bottom-6 sm:left-6 sm:right-6">
+                  <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full mb-1 sm:mb-3">
                     {selectedService.category}
                   </span>
-                  <h2 className="text-3xl font-bold text-white">
+                  <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-white leading-tight line-clamp-2">
                     {selectedService.title}
                   </h2>
                 </div>
               </div>
 
               {/* Modal Content */}
-              <div className="overflow-y-auto max-h-[calc(90vh-16rem)] p-8">
+              <div className="overflow-y-auto flex-1 p-4 sm:p-6 md:p-8">
                 {/* Description */}
                 <div className="mb-8">
                   <p className="text-gray-700 text-lg leading-relaxed text-justify">

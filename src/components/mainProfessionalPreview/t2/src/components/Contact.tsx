@@ -170,8 +170,8 @@ export function Contact({ contactData, professionalId }: ContactProps) {
 
           {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
             className="bg-card rounded-2xl p-8 shadow-lg border-2 border-white"
