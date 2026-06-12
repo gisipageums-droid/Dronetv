@@ -85,9 +85,13 @@ const defaultFooterContent: FooterContent = {
   },
 };
 
+const POLL_INTERVAL = 8000;   // 8 seconds between retries
+const POLL_MAX_WAIT = 300000; // 5 minutes total
+
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pollElapsed, setPollElapsed] = useState(0);
   const { userId, draftId } = useParams<{ userId: string; draftId: string }>();
   const { setFinalTemplate, AIGenData, setAIGenData } = useTemplate();
 
@@ -120,28 +124,35 @@ const App: React.FC = () => {
   );
 
   useEffect(() => {
-    async function fetchData() {
-      if (!draftId || !userId) {
-        setError("Missing required parameters");
-        setLoading(false);
-        return;
-      }
+    if (!draftId || !userId) {
+      setError("Missing required parameters");
+      setLoading(false);
+      return;
+    }
 
+    let elapsed = 0;
+    let cancelled = false;
+
+    const tryFetch = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
         const response = await fetch(
           `https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod/api/professional/${userId}/${draftId}?template=template-1`
         );
 
         if (!response.ok) {
+          // AI not ready yet — keep polling if within time limit
+          if (response.status === 404 && elapsed < POLL_MAX_WAIT) {
+            if (!cancelled) {
+              elapsed += POLL_INTERVAL;
+              setPollElapsed(elapsed);
+              setTimeout(tryFetch, POLL_INTERVAL);
+            }
+            return;
+          }
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data: AIResponse = await response.json();
-
-        // Ensure footerContent exists with default values if not provided
         const updatedData = {
           ...data,
           content: {
@@ -154,31 +165,67 @@ const App: React.FC = () => {
           },
         };
 
-        setFinalTemplate(updatedData);
-        setAIGenData(updatedData);
+        if (!cancelled) {
+          setFinalTemplate(updatedData);
+          setAIGenData(updatedData);
+          setLoading(false);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setError(error instanceof Error ? error.message : "An error occurred");
-      } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setError(error instanceof Error ? error.message : "An error occurred");
+          setLoading(false);
+        }
       }
-    }
+    };
 
-    fetchData();
+    tryFetch();
+    return () => { cancelled = true; };
   }, [draftId, userId, setAIGenData, setFinalTemplate]);
 
   if (loading) {
+    const minutes = Math.floor(pollElapsed / 60000);
+    const seconds = Math.floor((pollElapsed % 60000) / 1000);
+    const isPolling = pollElapsed > 0;
     return (
-      <div className="flex items-center justify-center w-full h-screen">
-        <div className="text-lg">Loading...</div>
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-gradient-to-br from-yellow-50 to-amber-50 px-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 mx-auto mb-6 border-4 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            {isPolling ? "AI is building your website..." : "Loading your profile..."}
+          </h2>
+          <p className="text-gray-500 text-sm mb-4">
+            {isPolling
+              ? "Our AI is generating your professional website. This usually takes 1-3 minutes. Please stay on this page."
+              : "Fetching your data, please wait."}
+          </p>
+          {isPolling && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <p className="text-amber-700 text-xs font-medium">
+                Time elapsed: {minutes > 0 ? `${minutes}m ` : ""}{seconds}s &nbsp;•&nbsp; Checking every 8 seconds...
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center w-full h-screen">
-        <div className="text-red-500">Error: {error}</div>
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-50 px-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+            <span className="text-red-500 text-2xl">!</span>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
+          <p className="text-gray-500 text-sm mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2.5 bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold rounded-lg transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
