@@ -1083,45 +1083,20 @@ export const Step1 = ({
 
   // COMPREHENSIVE FORM VALIDATION
   useEffect(() => {
-    // 1. Basic Info Validation
     const basicInfo = data.basicInfo || {};
-    const isBasicInfoValid =
-      basicInfo.fullName &&
-      basicInfo.date_of_birth &&
-      basicInfo.gender &&
-      basicInfo.relationship_type &&
-      basicInfo.relationship_name &&
-      basicInfo.address &&
-      basicInfo.city_district &&
-      basicInfo.pincode &&
-      basicInfo.country &&
-      basicInfo.state;
-
-    // 2. Communication Address Validation
-    const commAddress = data.communicationAddress || {};
-    const isCommAddressValid =
-      commAddress.address &&
-      commAddress.postalCode &&
-      commAddress.country &&
-      commAddress.state;
-
-    // 3. Address Information (Contact Info) Validation
     const addressInfo = data.addressInformation || {};
     const isUserAvailable = usernameAvailable === true || (originalUsername && basicInfo.user_name === originalUsername);
 
-    const isAddressInfoValid =
+    const isValid =
+      basicInfo.fullName &&
       basicInfo.user_name &&
-      isUserAvailable && // Username must be available
+      isUserAvailable &&
       addressInfo.email &&
       addressInfo.phoneNumber &&
       addressInfo.nationality &&
       addressInfo.designation &&
       addressInfo.tagline;
 
-    // Combined Validity
-    const isValid = isBasicInfoValid && isCommAddressValid && isAddressInfoValid;
-
-    // Update Step Validity
     setStepValid?.(!!isValid);
 
   }, [

@@ -470,13 +470,16 @@ function AppInner() {
 
         {/* --- Navigation Buttons --- */}
         <div className="flex justify-between mt-6">
-          <button
-            onClick={prev}
-            disabled={current === 0}
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
-          >
-            Back
-          </button>
+          {current > 0 ? (
+            <button
+              onClick={prev}
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+            >
+              Back
+            </button>
+          ) : (
+            <div />
+          )}
 
           {current < 6 ? (
             <button
