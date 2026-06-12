@@ -149,63 +149,86 @@ export default function EditTemp_2() {
     ];
     const activeStep = isPolling ? Math.min(Math.floor((pollElapsed / 300000) * steps.length), steps.length - 1) : 0;
     return (
-      <div className="fixed inset-0 bg-gray-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full">
+      <div className="fixed inset-0 flex items-center justify-center px-4 overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #0a0a14 0%, #12122a 50%, #0a0a14 100%)' }}>
+        <div className="absolute inset-0 opacity-[0.07]"
+          style={{ backgroundImage: 'radial-gradient(circle, #FFEB3B 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, #FFEB3B 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
+        <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full opacity-10 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, #FFEB3B 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
+
+        <div className="max-w-md w-full relative z-10">
           <div className="text-center mb-8">
             <div className="relative inline-block mb-6">
-              <div className="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center">
+              <div className="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center"
+                style={{ boxShadow: '0 0 48px rgba(251,191,36,0.45), 0 0 16px rgba(251,191,36,0.3)' }}>
                 <svg className="w-12 h-12 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                 </svg>
               </div>
-              <div className="absolute -top-1 -right-1 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center animate-bounce">
-                <svg className="w-4 h-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3l14 9-14 9V3z" />
+              <div className="absolute -top-1 -right-1 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce"
+                style={{ boxShadow: '0 0 12px rgba(251,191,36,0.6)' }}>
+                <svg className="w-4 h-4 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               {isPolling ? "AI is Building Your Website" : "Loading Your Profile..."}
             </h1>
-            <p className="text-gray-500">
-              {isPolling ? "Please stay on this page while we create your digital presence" : "Fetching your data, please wait."}
+            <p className="text-gray-400 text-sm sm:text-base">
+              {isPolling ? "Please stay on this page while we craft your digital presence" : "Fetching your data, please wait."}
             </p>
           </div>
 
           {isPolling && (
             <>
               <div className="mb-6">
-                <div className="flex justify-between text-sm text-gray-500 mb-2">
-                  <span>Progress</span>
-                  <span>{minutes > 0 ? `${minutes}m ` : ""}{seconds}s elapsed</span>
+                <div className="flex justify-between text-xs mb-2">
+                  <span className="text-gray-400 font-medium">Progress</span>
+                  <span className="text-yellow-400 font-semibold">{minutes > 0 ? `${minutes}m ` : ""}{seconds}s elapsed</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className="bg-yellow-400 h-3 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${Math.min(95, (pollElapsed / 300000) * 100)}%` }}
-                  />
+                <div className="w-full rounded-full h-2" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                  <div className="h-2 rounded-full transition-all duration-1000 ease-out"
+                    style={{
+                      width: `${Math.min(95, (pollElapsed / 300000) * 100)}%`,
+                      background: 'linear-gradient(90deg, #FFEB3B, #FFA000)',
+                      boxShadow: '0 0 10px rgba(251,191,36,0.6)'
+                    }} />
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {steps.map((step, index) => {
                   const isActive = index === activeStep;
                   const isCompleted = index < activeStep;
                   return (
-                    <div key={index} className={`flex items-center p-3 rounded-lg border transition-all duration-500 ${isActive ? "bg-yellow-50 border-yellow-300 scale-[1.02]" : isCompleted ? "bg-green-50 border-green-200" : "bg-white border-gray-200"}`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0 transition-all duration-300 ${isActive ? "bg-yellow-400" : isCompleted ? "bg-green-500" : "bg-gray-200"}`}>
+                    <div key={index}
+                      className={`flex items-center p-3 rounded-xl border transition-all duration-500 ${isActive ? "scale-[1.02]" : ""}`}
+                      style={{
+                        background: isActive ? 'rgba(251,191,36,0.12)' : isCompleted ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.04)',
+                        borderColor: isActive ? 'rgba(251,191,36,0.4)' : isCompleted ? 'rgba(34,197,94,0.25)' : 'rgba(255,255,255,0.08)'
+                      }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0 transition-all duration-300"
+                        style={{
+                          background: isActive ? '#FFEB3B' : isCompleted ? '#22c55e' : 'rgba(255,255,255,0.1)',
+                          boxShadow: isActive ? '0 0 12px rgba(251,191,36,0.5)' : 'none'
+                        }}>
                         {isCompleted ? (
-                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
                         ) : (
                           <span className={`text-xs font-bold ${isActive ? "text-gray-900" : "text-gray-500"}`}>{index + 1}</span>
                         )}
                       </div>
-                      <span className={`text-sm font-medium transition-all duration-300 ${isActive ? "text-gray-900" : isCompleted ? "text-green-700" : "text-gray-400"}`}>{step}</span>
+                      <span className={`text-sm font-medium transition-all duration-300 ${isActive ? "text-yellow-300" : isCompleted ? "text-green-400" : "text-gray-500"}`}>{step}</span>
                       {isActive && (
                         <div className="ml-auto flex space-x-1">
-                          <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce" />
-                          <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" />
+                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
                       )}
                     </div>
@@ -217,11 +240,12 @@ export default function EditTemp_2() {
 
           {!isPolling && (
             <div className="flex justify-center">
-              <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"
+                style={{ filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.5))' }} />
             </div>
           )}
 
-          <p className="text-center text-gray-400 text-sm mt-6">This usually takes 1–3 minutes</p>
+          <p className="text-center text-gray-600 text-xs mt-6">This usually takes 1–3 minutes</p>
         </div>
       </div>
     );
