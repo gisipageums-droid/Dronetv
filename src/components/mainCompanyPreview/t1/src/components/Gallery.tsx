@@ -8,12 +8,16 @@ export default function GallerySection({ galleryData }) {
     const [selectedImage, setSelectedImage] = useState(null);
 
     const sectionRef = useRef(null);
+    const savedScrollY = useRef(0);
 
-    // Intersection Observer for visibility
+    // One-shot IntersectionObserver — once visible, stays visible
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
-                setIsVisible(entry.isIntersecting);
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.unobserve(entry.target);
+                }
             },
             { threshold: 0.1 }
         );
@@ -22,23 +26,25 @@ export default function GallerySection({ galleryData }) {
             observer.observe(sectionRef.current);
         }
 
-        return () => {
-            if (sectionRef.current) {
-                observer.unobserve(sectionRef.current);
-            }
-        };
+        return () => observer.disconnect();
     }, []);
 
     const openLightbox = (index) => {
+        savedScrollY.current = window.scrollY;
         setSelectedImage(index);
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${savedScrollY.current}px`;
+        document.body.style.width = '100%';
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        document.documentElement.style.overflow = 'hidden';
         if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
     };
 
     const closeLightbox = () => {
-        document.documentElement.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
         document.body.style.paddingRight = '';
+        window.scrollTo(0, savedScrollY.current);
         setSelectedImage(null);
     };
 
