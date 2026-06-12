@@ -900,11 +900,11 @@ const GalleryPage = () => {
                     >
                       <div className="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
                         {/* Image */}
-                        <div className="relative overflow-hidden aspect-[4/3]">
+                        <div className="relative overflow-hidden aspect-[4/3] bg-gray-900 flex items-center justify-center">
                           <img
                             src={image.src}
                             alt={image.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                             onError={(e) => {
                               e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
