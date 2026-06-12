@@ -81,8 +81,8 @@ export function About({ aboutData }: AboutProps) {
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Left Content - Image */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
             className="relative"
@@ -105,8 +105,8 @@ export function About({ aboutData }: AboutProps) {
 
           {/* Right Content */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
             className="space-y-6 relative"

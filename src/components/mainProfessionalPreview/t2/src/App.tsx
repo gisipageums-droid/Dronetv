@@ -104,7 +104,7 @@ export default function MainProTemp2() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground transition-colors duration-300">
       <Header 
         onDarkModeToggle={handleDarkModeToggle}
         headerData={finaleDataReview.content.headerContent}
