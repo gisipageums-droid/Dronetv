@@ -293,7 +293,7 @@ function AppInner() {
 
     try {
       const finalSubmissionId = submissionId || `draft-${Date.now()}`;
-      const templateId = data.templateSelection || templateIdFromState;
+      const templateId = data.templateSelection || templateIdFromState || 1;
 
       const payload = {
         userId: email,
