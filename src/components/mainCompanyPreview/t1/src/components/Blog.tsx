@@ -53,48 +53,40 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
-  // Prevent background scrolling when modal is open
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.documentElement.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
     return () => {
-      document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = '';
+      document.body.style.paddingRight = '';
     };
   }, []);
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center mt-12 bg-black/70 p-4"
+      className="fixed inset-0 z-[99999999] flex items-center justify-center bg-black/70 p-4"
       onClick={onClose}
     >
+      {/* Close button — outside modal so overflow-y-auto never clips it */}
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        className="absolute top-3 right-3 bg-white rounded-full shadow-lg z-10 flex items-center justify-center"
+        style={{ minWidth: 44, minHeight: 44 }}
+        aria-label="Close modal"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto my-auto m-5"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
-        style={{ margin: "1rem" }}
       >
-        {/* Close Button - Fixed positioning */}
-        <button
-          className="absolute -top-0.5 -right-0.5 z-[1010]  hover:bg-gray-600 rounded-full p-2 text-white transition-colors shadow-lg flex items-center justify-center"
-          onClick={onClose}
-          aria-label="Close modal"
-          style={{ width: "32px", height: "32px" }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={3}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
 
         {/* Hero Image */}
         <div className="relative">
