@@ -29,12 +29,16 @@ export default function GallerySection({ galleryData }) {
         };
     }, []);
 
-    // Lightbox functions
     const openLightbox = (index) => {
         setSelectedImage(index);
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        document.documentElement.style.overflow = 'hidden';
+        if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
     };
 
     const closeLightbox = () => {
+        document.documentElement.style.overflow = '';
+        document.body.style.paddingRight = '';
         setSelectedImage(null);
     };
 
@@ -146,39 +150,56 @@ export default function GallerySection({ galleryData }) {
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="fixed top-[8rem] inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+                    onClick={closeLightbox}
                 >
+                    {/* Close button */}
                     <button
-                        onClick={closeLightbox}
-                        className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
+                        className="absolute top-3 right-3 text-white rounded-full bg-black/60 hover:bg-black/80 z-10 flex items-center justify-center"
+                        style={{ minWidth: 44, minHeight: 44 }}
+                        aria-label="Close lightbox"
                     >
-                        <X size={24} />
+                        <X size={22} />
                     </button>
 
+                    {/* Prev button — vertically centered */}
                     <button
-                        onClick={goToPrev}
-                        className="absolute left-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); goToPrev(); }}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 text-white rounded-full bg-black/60 hover:bg-black/80 z-10 flex items-center justify-center"
+                        style={{ minWidth: 44, minHeight: 44 }}
+                        aria-label="Previous image"
                     >
-                        <ChevronLeft size={32} />
+                        <ChevronLeft size={28} />
                     </button>
 
+                    {/* Next button — vertically centered */}
                     <button
-                        onClick={goToNext}
-                        className="absolute right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); goToNext(); }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full bg-black/60 hover:bg-black/80 z-10 flex items-center justify-center"
+                        style={{ minWidth: 44, minHeight: 44 }}
+                        aria-label="Next image"
                     >
-                        <ChevronRight size={32} />
+                        <ChevronRight size={28} />
                     </button>
 
-                    <div className="max-w-4xl w-full max-h-full">
+                    <div
+                        className="max-w-4xl w-full flex flex-col items-center"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <img
                             src={galleryData.images[selectedImage].url}
                             alt={galleryData.images[selectedImage].title}
-                            className="w-full h-auto max-h-full object-contain"
+                            className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
                         />
-                        <div className="text-white text-center mt-4">
-                            <h3 className="text-xl font-semibold">{galleryData.images[selectedImage].title}</h3>
-                            <p className="text-gray-300">{galleryData.images[selectedImage].category}</p>
-                            <p className="text-gray-400 text-sm mt-2 ">{galleryData.images[selectedImage].description}</p>
+                        <div className="text-white text-center mt-4 px-10">
+                            <h3 className="text-lg sm:text-xl font-semibold">{galleryData.images[selectedImage].title}</h3>
+                            <p className="text-gray-300 text-sm">{galleryData.images[selectedImage].category}</p>
+                            <p className="text-gray-400 text-xs mt-1">{galleryData.images[selectedImage].description}</p>
                         </div>
                     </div>
                 </motion.div>

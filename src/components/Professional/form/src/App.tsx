@@ -373,11 +373,21 @@ function AppInner() {
       {/* Header */}
       <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold text-black">DroneTV</h1>
-            <p className="text-sm text-gray-800">
-              AI-Powered Website Generator
-            </p>
+          <div className="flex items-center gap-3">
+            <a
+              href="/"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-black/10 hover:bg-black/20 transition-colors"
+              aria-label="Go to home page"
+              title="Back to Home"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </a>
+            <div>
+              <h1 className="text-xl font-bold text-black">DroneTV</h1>
+              <p className="text-sm text-gray-800">AI-Powered Website Generator</p>
+            </div>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-700">Drone • AI • GIS</p>
