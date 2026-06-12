@@ -2046,7 +2046,7 @@ function EventsForm() {
 
   if (formLoader)
     return (
-      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-[99999999]">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-blue-200 text-lg">

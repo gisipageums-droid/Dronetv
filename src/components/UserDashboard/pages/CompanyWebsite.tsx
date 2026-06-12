@@ -56,14 +56,22 @@ const CompanyWebsite: React.FC = () => {
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?userId=${userId}`)
-      .then((r) => r.json())
-      .then((data) => {
-        const cards: Company[] = data.cards || [];
-        if (cards.length > 0) setCompany(cards[0]);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const CARDS_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards";
+    const savedUserId = localStorage.getItem("dronetv_company_userId") || "";
+    const idsToTry = [userId, savedUserId].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
+
+    const tryNext = (idx: number) => {
+      if (idx >= idsToTry.length) { setLoading(false); return; }
+      fetch(`${CARDS_API}?userId=${idsToTry[idx]}`)
+        .then((r) => r.json())
+        .then((data) => {
+          const cards: Company[] = data.cards || [];
+          if (cards.length > 0) { setCompany(cards[0]); setLoading(false); }
+          else tryNext(idx + 1);
+        })
+        .catch(() => tryNext(idx + 1));
+    };
+    tryNext(0);
   }, [userId]);
 
   useEffect(() => {

@@ -143,7 +143,8 @@ const AppContent = () => {
     location.pathname.startsWith("/admin/professionals/edit") ||
     location.pathname.startsWith("/professional/edit") ||
     location.pathname.startsWith("/professional/form") ||
-    location.pathname.startsWith("/edit/event");
+    location.pathname.startsWith("/edit/event") ||
+    location.pathname.startsWith("/events/form");
 
   return (
     <div className="min-h-screen">

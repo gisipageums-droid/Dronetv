@@ -165,7 +165,13 @@ const handleSubmit = async (e: React.FormEvent) => {
               </div>
               <div className="mt-8">
                 <button
-                  onClick={() => formRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => {
+                    const el = formRef.current;
+                    if (el) {
+                      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+                      window.scrollTo({ top, behavior: 'smooth' });
+                    }
+                  }}
                   className="bg-black text-[#f1ee8e] px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg"
                 >
                   Become a Partner

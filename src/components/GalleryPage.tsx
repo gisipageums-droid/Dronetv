@@ -1173,100 +1173,94 @@ const GalleryPage = () => {
 
       {/* Lightbox Modal */}
       {selectedImage && (
-        <div className="fixed inset-0 bg-black/95 z-[99999999] flex items-center justify-center p-2 sm:p-4">
-          <div className="relative max-w-6xl w-full h-full flex items-center justify-center">
-            {/* Close Button */}
+        <div className="fixed inset-0 bg-black/95 z-[99999999] flex flex-col">
+          {/* Top bar — always at screen top */}
+          <div className="flex items-center justify-between px-4 py-3 flex-shrink-0">
+            <div className="bg-black/50 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
+              {lightboxIndex + 1} / {filteredImages.length}
+            </div>
             <button
               onClick={closeLightbox}
-              className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 hover:bg-white/30 text-white rounded-full p-2 sm:p-3 transition-all duration-300 z-10"
+              className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 sm:p-3 transition-all duration-300"
             >
               <X className="h-5 sm:h-6 w-5 sm:w-6" />
             </button>
+          </div>
 
-            {/* Navigation Buttons */}
+          {/* Image area — fills remaining height, nav buttons on sides */}
+          <div className="flex-1 relative flex items-center justify-center px-12 sm:px-16 min-h-0">
             {filteredImages.length > 1 && (
               <>
                 <button
                   onClick={() => navigateLightbox('prev')}
-                  className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full p-2 sm:p-3 transition-all duration-300 z-10"
+                  className="absolute left-2 sm:left-4 bg-white/20 hover:bg-white/30 text-white rounded-full p-2 sm:p-3 transition-all duration-300 z-10"
+                  style={{ top: '50%', transform: 'translateY(-50%)' }}
                 >
                   <ChevronLeft className="h-5 sm:h-6 w-5 sm:w-6" />
                 </button>
                 <button
                   onClick={() => navigateLightbox('next')}
-                  className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full p-2 sm:p-3 transition-all duration-300 z-10"
+                  className="absolute right-2 sm:right-4 bg-white/20 hover:bg-white/30 text-white rounded-full p-2 sm:p-3 transition-all duration-300 z-10"
+                  style={{ top: '50%', transform: 'translateY(-50%)' }}
                 >
                   <ChevronRight className="h-5 sm:h-6 w-5 sm:w-6" />
                 </button>
               </>
             )}
+            <img
+              src={selectedImage.src}
+              alt={selectedImage.title}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            />
+          </div>
 
-            {/* Image */}
-            <div className="relative max-w-full max-h-full">
-              <img
-                src={selectedImage.src}
-                alt={selectedImage.title}
-                className="max-w-full max-h-[70vh] sm:max-h-[80vh] object-contain rounded-lg shadow-2xl"
-              />
-            </div>
-
-            {/* Image Info Panel */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 sm:p-6">
-              <div className="max-w-4xl mx-auto">
-                <div className="flex flex-col gap-3 sm:gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-white text-lg sm:text-xl font-bold mb-1 sm:mb-2">{selectedImage.title}</h3>
-                    <p className="text-white/80 mb-2 sm:mb-3 text-sm sm:text-base">{selectedImage.description}</p>
-                    <div className="flex flex-wrap gap-2 sm:gap-4 text-white/70 text-xs sm:text-sm">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 sm:h-4 w-3 sm:w-4" />
-                        {selectedImage.date}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 sm:h-4 w-3 sm:w-4" />
-                        {selectedImage.location}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 sm:h-4 w-3 sm:w-4" />
-                        {selectedImage.attendees}
-                      </div>
-                    </div>
-                    {selectedImage.tags && selectedImage.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
-                        {selectedImage.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="bg-yellow-400/20 text-yellow-400 px-2 py-1 rounded-full text-xs font-medium"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+          {/* Info panel — always at screen bottom */}
+          <div className="flex-shrink-0 bg-gradient-to-t from-black/95 to-transparent px-4 pt-3 pb-5 sm:px-6 sm:pt-4 sm:pb-6">
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-white text-base sm:text-xl font-bold mb-1">{selectedImage.title}</h3>
+                <p className="text-white/80 text-sm sm:text-base mb-2">{selectedImage.description}</p>
+                <div className="flex flex-wrap gap-2 sm:gap-4 text-white/70 text-xs sm:text-sm">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 sm:h-4 w-3 sm:w-4" />
+                    {selectedImage.date}
                   </div>
-
-                  <div className="flex items-center gap-2 sm:gap-3 justify-center sm:justify-end">
-                    <button
-                      onClick={() => setIsLiked(!isLiked)}
-                      className={`p-2 sm:p-3 rounded-full transition-all duration-300 ${isLiked ? 'bg-red-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'
-                        }`}
-                    >
-                      <Heart className={`h-4 sm:h-5 w-4 sm:w-5 ${isLiked ? 'fill-current' : ''}`} />
-                    </button>
-                    <button onClick={handleShare} className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
-                      <Share2 className="h-4 sm:h-5 w-4 sm:w-5" />
-                    </button>
-                    <button onClick={handleDownload} className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
-                      <Download className="h-4 sm:h-5 w-4 sm:w-5" />
-                    </button>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-3 sm:h-4 w-3 sm:w-4" />
+                    {selectedImage.location}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Users className="h-3 sm:h-4 w-3 sm:w-4" />
+                    {selectedImage.attendees}
                   </div>
                 </div>
+                {selectedImage.tags && selectedImage.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
+                    {selectedImage.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="bg-yellow-400/20 text-yellow-400 px-2 py-1 rounded-full text-xs font-medium"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-
-            {/* Image Counter */}
-            <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-black/50 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
-              {lightboxIndex + 1} / {filteredImages.length}
+              <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                <button
+                  onClick={() => setIsLiked(!isLiked)}
+                  className={`p-2 sm:p-3 rounded-full transition-all duration-300 ${isLiked ? 'bg-red-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
+                >
+                  <Heart className={`h-4 sm:h-5 w-4 sm:w-5 ${isLiked ? 'fill-current' : ''}`} />
+                </button>
+                <button onClick={handleShare} className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
+                  <Share2 className="h-4 sm:h-5 w-4 sm:w-5" />
+                </button>
+                <button onClick={handleDownload} className="p-2 sm:p-3 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-300">
+                  <Download className="h-4 sm:h-5 w-4 sm:w-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
