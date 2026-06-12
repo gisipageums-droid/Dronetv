@@ -33,7 +33,13 @@ export const Step2 = ({ step, allSteps }: { step: any; allSteps: any[] }) => {
       <h2 className="text-2xl font-semibold text-gray-800">{step.title}</h2>
 
       {noCategoriesSelected && (
-        <p className="text-red-500">{step.note || "User must first select categories in Step 1"}</p>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+          <span className="text-amber-500 text-xl mt-0.5">ℹ</span>
+          <div>
+            <p className="text-amber-800 font-medium text-sm">No categories selected yet</p>
+            <p className="text-amber-700 text-sm mt-1">Go back to Step 1 and select at least one Professional Category to see subcategory options here. This step is optional.</p>
+          </div>
+        </div>
       )}
 
       {!noCategoriesSelected &&
