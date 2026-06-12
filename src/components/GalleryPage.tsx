@@ -884,7 +884,7 @@ const GalleryPage = () => {
           ) : (
             <>
               {/* Gallery Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                 {currentImages.map((image, index) => {
                   const globalIndex = indexOfFirstImage + index;
 
@@ -898,23 +898,33 @@ const GalleryPage = () => {
                         animation: `fadeInUp 0.6s ease-out ${index * 50}ms both`
                       }}
                     >
-                      <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105">
-                        <img
-                          src={image.src}
-                          alt={image.title}
-                          className="w-full h-48 sm:h-56 lg:h-64 object-cover transition-all duration-700 group-hover:scale-110"
-                          loading="lazy"
-                          onError={(e) => {
-                            e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <div className="absolute top-3 right-3 bg-black/80 text-yellow-400 px-2 py-1 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-500">
-                          {image.category}
+                      <div className="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                        {/* Image */}
+                        <div className="relative overflow-hidden aspect-[4/3]">
+                          <img
+                            src={image.src}
+                            alt={image.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+                            }}
+                          />
+                          {/* Category badge — always visible */}
+                          <span className="absolute top-2 right-2 bg-black/70 text-yellow-400 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold leading-tight">
+                            {image.category}
+                          </span>
+                          {/* Hover overlay (desktop) */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-end p-3">
+                            <div>
+                              <h3 className="text-white font-semibold text-sm leading-tight line-clamp-1">{image.title}</h3>
+                              <p className="text-white/75 text-xs mt-0.5 line-clamp-1">{image.description}</p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 p-4">
-                          <h3 className="text-white font-semibold text-sm mb-1">{image.title}</h3>
-                          <p className="text-white/80 text-xs line-clamp-2">{image.description}</p>
+                        {/* Title below image — visible on mobile only */}
+                        <div className="sm:hidden px-2 py-1.5">
+                          <p className="text-gray-800 text-xs font-medium leading-tight line-clamp-1">{image.title}</p>
                         </div>
                       </div>
                     </div>
