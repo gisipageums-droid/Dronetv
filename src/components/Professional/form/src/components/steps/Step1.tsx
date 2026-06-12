@@ -1084,11 +1084,29 @@ export const Step1 = ({
   // COMPREHENSIVE FORM VALIDATION
   useEffect(() => {
     const basicInfo = data.basicInfo || {};
+    const commAddress = data.communicationAddress || {};
     const addressInfo = data.addressInformation || {};
     const isUserAvailable = usernameAvailable === true || (originalUsername && basicInfo.user_name === originalUsername);
 
-    const isValid =
+    const isBasicInfoValid =
       basicInfo.fullName &&
+      basicInfo.date_of_birth &&
+      basicInfo.gender &&
+      basicInfo.relationship_type &&
+      basicInfo.relationship_name &&
+      basicInfo.address &&
+      basicInfo.city_district &&
+      basicInfo.pincode &&
+      basicInfo.country &&
+      basicInfo.state;
+
+    const isCommAddressValid =
+      commAddress.address &&
+      commAddress.postalCode &&
+      commAddress.country &&
+      commAddress.state;
+
+    const isAddressInfoValid =
       basicInfo.user_name &&
       isUserAvailable &&
       addressInfo.email &&
@@ -1096,6 +1114,8 @@ export const Step1 = ({
       addressInfo.nationality &&
       addressInfo.designation &&
       addressInfo.tagline;
+
+    const isValid = isBasicInfoValid && isCommAddressValid && isAddressInfoValid;
 
     setStepValid?.(!!isValid);
 
