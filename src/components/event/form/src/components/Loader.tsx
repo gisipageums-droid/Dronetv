@@ -58,7 +58,7 @@ export const Loader: React.FC<LoaderProps> = ({
   }, [duration, onComplete, steps.length]);
 
   return (
-    <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-[99999999]">
       <div className="max-w-md w-full mx-4">
         <div className="text-center mb-8">
           <div className="relative mb-6">
