@@ -31,6 +31,7 @@ const Button = ({ children, onClick, className = "", size = "md" }) => {
 
   return (
     <button
+      type="button"
       onClick={onClick}
       className={`font-medium rounded-lg transition-all duration-200 bg-yellow-400 text-gray-900 hover:bg-yellow-500 shadow-sm hover:shadow-md ${sizeClasses[size]} ${className}`}
     >
@@ -79,13 +80,21 @@ export default function Products({ productData }) {
   const openModal = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
-    document.body.style.overflow = "hidden";
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.dataset.scrollY = String(scrollY);
   };
 
   const closeModal = () => {
+    const scrollY = parseInt(document.body.dataset.scrollY || '0');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollY);
     setIsModalOpen(false);
     setSelectedProduct(null);
-    document.body.style.overflow = "unset";
   };
 
   return content.products && content.products.length > 0 && (
@@ -236,14 +245,14 @@ export default function Products({ productData }) {
       <AnimatePresence>
   {isModalOpen && selectedProduct && (
     <motion.div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[99999999]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={closeModal}
     >
       <motion.div
-        className="bg-white rounded-xl w-full max-w-4xl mt-20 max-h-[75vh] overflow-hidden shadow-xl flex flex-col"
+        className="bg-white rounded-xl w-full max-w-4xl max-h-[85vh] overflow-hidden shadow-xl flex flex-col"
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
