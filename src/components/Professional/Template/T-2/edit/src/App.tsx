@@ -39,11 +39,15 @@ interface AIGenData {
   content?: ComponentStates;
 }
 
+const POLL_INTERVAL = 8000;
+const POLL_MAX_WAIT = 300000;
+
 export default function EditTemp_2() {
   const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData, publishProfessionalTemplate } = useTemplate();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [componentStates, setComponentStates] = useState<ComponentStates>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [pollElapsed, setPollElapsed] = useState(0);
 
   const { userId, draftId } = useParams();
 
@@ -84,54 +88,76 @@ export default function EditTemp_2() {
     }
   }, [isDarkMode]);
 
-  // Fetch template data - UPDATED to handle object response properly
   useEffect(() => {
-    const fetchTemplateData = async () => {
+    if (!userId || !draftId) return;
+
+    let elapsed = 0;
+    let cancelled = false;
+
+    const tryFetch = async () => {
       try {
-        setIsLoading(true);
         const response = await fetch(`https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod/api/professional/${userId}/${draftId}?template=template-2`);
 
-        if (response.ok) {
-          const data = await response.json();
+        if (!response.ok) {
+          if (response.status === 404 && elapsed < POLL_MAX_WAIT) {
+            if (!cancelled) {
+              elapsed += POLL_INTERVAL;
+              setPollElapsed(elapsed);
+              setTimeout(tryFetch, POLL_INTERVAL);
+            }
+            return;
+          }
+          toast.error('Failed to load template data');
+          if (!cancelled) setIsLoading(false);
+          return;
+        }
 
-          // Your API returns a single object, not an array
+        const data = await response.json();
+        if (!cancelled) {
           setFinalTemplate(data);
           setAIGenData(data);
-
-          if (data.content) {
-            setComponentStates(data.content);
-          } else {
-            toast.error("No content found in response");
-            setComponentStates({});
-          }
-        } else {
-          console.error('Failed to fetch template data:', response.status);
-          toast.error('Failed to load template data');
+          setComponentStates(data.content || {});
+          setIsLoading(false);
         }
       } catch (error) {
-        console.error('Error fetching template data:', error);
-        toast.error('Error loading template data');
-      } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          toast.error('Error loading template data');
+          setIsLoading(false);
+        }
       }
     };
 
-    if (userId && draftId) {
-      fetchTemplateData();
-    }
+    tryFetch();
+    return () => { cancelled = true; };
   }, [userId, draftId, setFinalTemplate, setAIGenData]);
 
   const handleDarkModeToggle = useCallback((isDark: boolean) => {
     setIsDarkMode(isDark);
   }, []);
 
-  // Show loading state
   if (isLoading) {
+    const minutes = Math.floor(pollElapsed / 60000);
+    const seconds = Math.floor((pollElapsed % 60000) / 1000);
+    const isPolling = pollElapsed > 0;
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading template data...</p>
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-gradient-to-br from-yellow-50 to-amber-50 px-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 mx-auto mb-6 border-4 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            {isPolling ? "AI is building your website..." : "Loading your profile..."}
+          </h2>
+          <p className="text-gray-500 text-sm mb-4">
+            {isPolling
+              ? "Our AI is generating your professional website. This usually takes 1-3 minutes. Please stay on this page."
+              : "Fetching your data, please wait."}
+          </p>
+          {isPolling && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <p className="text-amber-700 text-xs font-medium">
+                Time elapsed: {minutes > 0 ? `${minutes}m ` : ""}{seconds}s &nbsp;•&nbsp; Checking every 8 seconds...
+              </p>
+            </div>
+          )}
         </div>
       </div>
     );
