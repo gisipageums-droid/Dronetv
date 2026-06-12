@@ -898,11 +898,11 @@ const GalleryPage = () => {
                         animation: `fadeInUp 0.6s ease-out ${index * 50}ms both`
                       }}
                     >
-                      <div className="relative bg-gray-900 sm:bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105">
+                      <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105">
                         <img
                           src={image.src}
                           alt={image.title}
-                          className="w-full h-48 sm:h-56 lg:h-64 object-contain sm:object-cover transition-all duration-700 group-hover:scale-110"
+                          className="w-full h-48 sm:h-56 lg:h-64 object-cover transition-all duration-700 group-hover:scale-110"
                           loading="lazy"
                           onError={(e) => {
                             e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
