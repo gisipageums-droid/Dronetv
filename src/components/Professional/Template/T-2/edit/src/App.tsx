@@ -139,25 +139,89 @@ export default function EditTemp_2() {
     const minutes = Math.floor(pollElapsed / 60000);
     const seconds = Math.floor((pollElapsed % 60000) / 1000);
     const isPolling = pollElapsed > 0;
+    const steps = [
+      "Analyzing your business information...",
+      "Generating color palette and design...",
+      "Creating website content...",
+      "Building your website structure...",
+      "Adding final touches and optimizations...",
+      "Your website is almost ready!",
+    ];
+    const activeStep = isPolling ? Math.min(Math.floor((pollElapsed / 300000) * steps.length), steps.length - 1) : 0;
     return (
-      <div className="flex flex-col items-center justify-center w-full h-screen bg-gradient-to-br from-yellow-50 to-amber-50 px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 mx-auto mb-6 border-4 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
-            {isPolling ? "AI is building your website..." : "Loading your profile..."}
-          </h2>
-          <p className="text-gray-500 text-sm mb-4">
-            {isPolling
-              ? "Our AI is generating your professional website. This usually takes 1-3 minutes. Please stay on this page."
-              : "Fetching your data, please wait."}
-          </p>
+      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center px-4">
+        <div className="max-w-md w-full">
+          <div className="text-center mb-8">
+            <div className="relative inline-block mb-6">
+              <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse">
+                <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+              </div>
+              <div className="absolute -top-1 -right-1 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce">
+                <svg className="w-4 h-4 text-yellow-800" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M11.983 1.904a.75.75 0 00-1.292-.782l-1.5 2.6a.75.75 0 001.292.782l1.5-2.6zM6 5.25a.75.75 0 01.75-.75h.01a.75.75 0 010 1.5H6.75A.75.75 0 016 6zm9 0a.75.75 0 01.75-.75h.01a.75.75 0 010 1.5h-.01A.75.75 0 0115 5.25z" />
+                </svg>
+              </div>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+              {isPolling ? "AI is Building Your Website" : "Loading Your Profile..."}
+            </h1>
+            <p className="text-blue-200">
+              {isPolling ? "Please stay on this page while we create your digital presence" : "Fetching your data, please wait."}
+            </p>
+          </div>
+
           {isPolling && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-              <p className="text-amber-700 text-xs font-medium">
-                Time elapsed: {minutes > 0 ? `${minutes}m ` : ""}{seconds}s &nbsp;•&nbsp; Checking every 8 seconds...
-              </p>
+            <>
+              <div className="mb-6">
+                <div className="flex justify-between text-sm text-blue-200 mb-2">
+                  <span>Progress</span>
+                  <span>{minutes > 0 ? `${minutes}m ` : ""}{seconds}s elapsed</span>
+                </div>
+                <div className="w-full bg-slate-700 rounded-full h-3">
+                  <div
+                    className="bg-blue-500 h-3 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${Math.min(95, (pollElapsed / 300000) * 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {steps.map((step, index) => {
+                  const isActive = index === activeStep;
+                  const isCompleted = index < activeStep;
+                  return (
+                    <div key={index} className={`flex items-center p-3 rounded-lg transition-all duration-500 ${isActive ? "bg-white/10 border border-white/20 scale-[1.02]" : isCompleted ? "bg-green-500/10 border border-green-500/20" : "bg-slate-800/50 border border-slate-700"}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0 transition-all duration-300 ${isActive ? "bg-gradient-to-r from-blue-500 to-purple-600 animate-pulse" : isCompleted ? "bg-green-500" : "bg-slate-600"}`}>
+                        {isCompleted ? (
+                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                        ) : (
+                          <span className="text-white text-xs font-bold">{index + 1}</span>
+                        )}
+                      </div>
+                      <span className={`text-sm font-medium transition-all duration-300 ${isActive ? "text-white" : isCompleted ? "text-green-300" : "text-slate-400"}`}>{step}</span>
+                      {isActive && (
+                        <div className="ml-auto flex space-x-1">
+                          <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" />
+                          <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {!isPolling && (
+            <div className="flex justify-center">
+              <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
             </div>
           )}
+
+          <p className="text-center text-slate-400 text-sm mt-6">This usually takes 1–3 minutes</p>
         </div>
       </div>
     );
