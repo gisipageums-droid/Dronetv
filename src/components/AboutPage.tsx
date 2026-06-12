@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Target, Eye, Heart, Users, Calendar, Award, Lightbulb, Globe, ArrowRight, Mail, Phone, MapPin, Rocket, Star, Video } from 'lucide-react';
 
 const AboutPage = () => {
+  const navigate = useNavigate();
   const [hoveredTeamMember, setHoveredTeamMember] = useState(null);
   const [visibleTimelineItems, setVisibleTimelineItems] = useState([]);
   const timelineRef = useRef(null);
@@ -449,11 +451,11 @@ const AboutPage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-yellow-400 text-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 justify-center">
+              <a href="mailto:bd@dronetv.in" className="bg-yellow-400 text-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 justify-center">
                 <span>Get In Touch</span>
                 <ArrowRight className="h-4 w-4" />
-              </button>
-              <button className="bg-yellow-400 text-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 justify-center">
+              </a>
+              <button onClick={() => navigate('/partner')} className="bg-yellow-400 text-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 justify-center">
                 Partner With Us
               </button>
             </div>
