@@ -1159,23 +1159,6 @@ export function Clients({
     Object.values(data.stats).some((value) => value && value.trim() !== "") ||
     Object.values(data.cta).some((value) => value && value.trim() !== "");
 
-    dataLoaded,
-    hasData,
-    clientsDataFromProps: clientsData,
-    componentData: data,
-    isEditing,
-    clientsCount: data.clients.length,
-    hasSubtitle: !!data.subtitle,
-    hasHeading: !!data.heading,
-    hasDescription: !!data.description,
-    hasStats: Object.values(data.stats).some(
-      (value) => value && value.trim() !== ""
-    ),
-    hasCta: Object.values(data.cta).some(
-      (value) => value && value.trim() !== ""
-    ),
-  });
-
   // Loading state - only show when actually loading
   if (isLoading && !dataLoaded) {
     return (

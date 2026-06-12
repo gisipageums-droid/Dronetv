@@ -1034,14 +1034,6 @@ export const Step1 = ({
     };
   }, [isPollingDigiLocker, data.basicInfo, data.communicationAddress, updateField]);
 
-  // Debug: Log form data changes
-  useEffect(() => {
-      basicInfo: data.basicInfo,
-      addressInformation: data.addressInformation,
-      communicationAddress: data.communicationAddress,
-      alternateContact: data.alternateContact
-    });
-  }, [data.basicInfo, data.addressInformation, data.communicationAddress, data.alternateContact]);
 
   // Set original username when component mounts or when data loads
   useEffect(() => {
