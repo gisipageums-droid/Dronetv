@@ -124,7 +124,8 @@ const CompaniesPage: React.FC = () => {
 
   // 7. Handle card click
   const handleCardClick = (company: Company) => {
-    const slug = ((company as any).urlSlug || (company as any).publishedId || company.companyName.replace(/[^a-zA-Z0-9]/g, '')).toLowerCase();
+    const slug = (company as any).urlSlug || (company as any).publishedId || (company as any).companyId;
+    if (!slug) return;
     if (company.templateSelection === 'template-1') {
       navigate(`/company/${slug}`);
     } else if (company.templateSelection === 'template-2') {

@@ -74,19 +74,6 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
       className="fixed inset-0 z-[99999999] flex items-center justify-center bg-black/70 p-4"
       onClick={onClose}
     >
-      {/* Close button — outside modal so overflow-y-auto never clips it */}
-      <button
-        type="button"
-        onClick={(e) => { e.stopPropagation(); onClose(); }}
-        className="absolute top-3 right-3 bg-white rounded-full shadow-lg z-10 flex items-center justify-center"
-        style={{ minWidth: 44, minHeight: 44 }}
-        aria-label="Close modal"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -203,6 +190,20 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
           )}
         </div>
       </motion.div>
+
+      {/* Close button — after modal in DOM so it renders above framer-motion stacking context */}
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        className="absolute top-3 right-3 bg-white rounded-full shadow-xl flex items-center justify-center"
+        style={{ minWidth: 44, minHeight: 44, zIndex: 10 }}
+        aria-label="Close modal"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
     </div>
   );
 }
