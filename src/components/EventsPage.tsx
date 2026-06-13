@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {
   Search,
-  Filter,
   ChevronDown,
   Calendar,
   MapPin,
   Clock,
   Users,
-  ArrowRight,
   Star,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -242,16 +240,6 @@ const EventsPage = () => {
     }
   };
 
-  const eventTypes = [
-    "All",
-    "Expo",
-    "Webinar",
-    "Conference",
-    "Workshop",
-    "Summit",
-    "Trade Show",
-    "General",
-  ];
   const sortOptions = [
     { value: "upcoming", label: "Sort by Upcoming" },
     { value: "past", label: "Sort by Past Events" },
@@ -412,12 +400,14 @@ const EventsPage = () => {
         </button>
       </section>
 
-      {/* Filter Section */}
-      <section className="py-3 bg-yellow-400 sticky top-16 z-40 border-b border-black/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row flex-wrap gap-2 items-stretch sm:items-center justify-between">
-            {/* Search Bar */}
-            <div className="relative w-full sm:flex-1 sm:max-w-xs">
+      {/* Sticky filter bar */}
+      <div className="sticky top-16 z-40 bg-yellow-400 border-b border-black/10">
+
+        {/* Search + sort row */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3">
+          <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+            {/* Search */}
+            <div className="relative flex-1 sm:max-w-xs">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <Search className="h-4 w-4 text-black/60" />
               </div>
@@ -426,73 +416,36 @@ const EventsPage = () => {
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-yellow-400 bg-yellow-200 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-black placeholder-black/60 text-sm transition-all duration-300"
+                className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-yellow-300 bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-black placeholder-black/60 text-sm transition-all duration-300"
               />
             </div>
 
-            {/* Event Type + Sort Filters */}
-            <div className="flex gap-2 w-full sm:w-auto">
-              {/* Event Type Filter */}
-              <div className="relative flex-1 sm:flex-none">
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full sm:w-44 appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-yellow-400 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300"
-                >
-                  {eventTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type === "All" ? "All Types" : type}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
-              </div>
-
-              {/* Sort Options */}
-              <div className="relative flex-1 sm:flex-none">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full sm:w-48 appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-yellow-400 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
-              </div>
+            {/* Sort */}
+            <div className="relative sm:w-52">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full appearance-none bg-yellow-200 border-2 border-yellow-300 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
             </div>
           </div>
 
-          {/* Active Filters Display */}
-          <div className="mt-2 flex flex-wrap gap-2">
-            {selectedType !== "All" && (
-              <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                Type: {selectedType}
-                <button
-                  onClick={() => setSelectedType("All")}
-                  className="hover:text-white transition-colors duration-200 text-sm"
-                >
-                  ×
-                </button>
-              </span>
-            )}
-            {searchQuery && (
+          {/* Active search tag */}
+          {searchQuery && (
+            <div className="mt-2 flex flex-wrap gap-2">
               <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
                 Search: "{searchQuery}"
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="hover:text-white transition-colors duration-200 text-sm"
-                >
-                  ×
-                </button>
+                <button onClick={() => setSearchQuery("")} className="hover:text-white text-sm ml-0.5">×</button>
               </span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      </section>
+      </div>
 
       {/* Featured Events Section - Only show if there are featured events */}
       {featuredEvents.length > 0 && (
