@@ -715,21 +715,23 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       toast.error("Director Name is required.");
       return false;
     }
-    if (!formData.directorPhone || formData.directorPhone.trim() === "") {
-      toast.error("Director Phone is required.");
+    const phoneDigits = (formData.directorPhone || '').replace(/\D/g, '');
+    if (phoneDigits.length < 12) {
+      toast.error("Please enter a valid 10-digit Indian phone number.");
       return false;
     }
     if (!formData.directorEmail || formData.directorEmail.trim() === "") {
       toast.error("Director Email is required.");
       return false;
     }
-    // Alternative Contact is optional
-    // Note: Address validation removed as the form uses Communication Address in GST section
-    // and Director Address which are collected separately
-    // Country field removed - defaulting to India
-    // State, City, and Postal Code are collected from Aadhar/GST verification
-    // All other fields in Company Information are optional
-    // Legal Information is optional
+    if (!formData.gstin || formData.gstin.trim() === "") {
+      toast.error("GST/CIN/LLPIN verification is required to list your company.");
+      return false;
+    }
+    if (!formData.gstVerified) {
+      toast.error("Please verify your GST/CIN/LLPIN before proceeding.");
+      return false;
+    }
     return true;
   };
 
