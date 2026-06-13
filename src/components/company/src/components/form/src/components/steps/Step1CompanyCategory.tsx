@@ -2212,8 +2212,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     // Reset verification if GST number changes
     if (gstVerified) {
       setGSTVerified(false);
+      updateFormData({ gstVerified: false });
       setVerifiedGSTData(null);
-      setGstAddress(""); // Clear address when GST changes
+      setGstAddress("");
     }
   };
 
@@ -2313,6 +2314,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             pan: panFromGST
           });
           setGSTVerified(true);
+          updateFormData({ gstVerified: true });
           toast.warning('GSTIN format verified. Full API verification is temporarily unavailable — please fill remaining company details manually.');
           setVerifyingGST(false);
           return;
@@ -2378,10 +2380,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
           setVerifiedGSTData(verifiedData);
           setGSTVerified(true);
-          setGstAddress(fullAddress); // Auto-fill address in GST section
+          setGstAddress(fullAddress);
 
-          // Sync with Company Information and Director information
-          const updates: any = {};
+          const updates: any = { gstVerified: true };
 
           if (verifiedData.companyName) {
             updates.companyName = verifiedData.companyName;
@@ -3347,7 +3348,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     setVerifiedGSTData(data);
     setGSTVerified(true);
     if (data.companyAddress) setGstAddress(data.companyAddress);
-    const updates: any = {};
+    const updates: any = { gstVerified: true };
     if (data.companyName) updates.companyName = data.companyName;
     if (data.registrationDate) updates.yearEstablished = data.registrationDate;
     if (data.directorEmail) { updates.directorEmail = data.directorEmail; setTempDirectorEmail(data.directorEmail); }
