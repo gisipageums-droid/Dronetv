@@ -5,11 +5,11 @@ import {
 } from 'lucide-react';
 
 const advertisements = [
-  { icon: Zap, text: "Drone EXPO 2025", url: "/products" },
-  { icon: Target, text: "indadass.com", url: "/services" },
-  { icon: Award, text: "Corteva: Advanced GIS Mapping Services - Contact Us Now! Call +1-800-123-4567", url: "/professionals" },
+  { icon: Zap, text: "Drone TV Expo 2026 - India's Biggest Drone Event!", url: "/events" },
+  { icon: Target, text: "DroneTv.in - India's #1 Drone Industry Platform", url: "/" },
+  { icon: Award, text: "Corteva: Advanced GIS Mapping Services - Contact Us Now!", url: "/contact" },
   { icon: Zap, text: "AI-Powered Flight Controllers - Revolutionary Technology!", url: "/" },
-  { icon: Star, text: "IDA Aerial  Workshop", url: "/company/india-drone-academy" },
+  { icon: Star, text: "IDA Aerial Workshop", url: "/company/indiadroneacadmeycompany" },
   { icon: Clock, text: "Extended Battery Life - Up to 60 Minutes Flight Time!", url: "/products" },
   { icon: Award, text: "IPage UMS: Award-Winning Drone Solutions - Trusted by 1000+ Companies!", url: "/companies" },
   { icon: Truck, text: "Drogo Drone: Free Shipping - Limited Time Offer!", url: "/products" },
