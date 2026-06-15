@@ -29,7 +29,7 @@ const featured = [
 
 export default function AITechCompaniesPage() {
   return (
-    <div className="pt-16 min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-gray-50">
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
         <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">

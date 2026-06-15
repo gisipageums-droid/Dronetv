@@ -99,20 +99,37 @@ const Navigation = () => {
 
   const dropdownMotion = { whileInView: { y: [-8, 0] }, transition: { type: "spring", duration: 0.4, stiffness: 60 } };
 
-  const blackDropdownBase = "absolute z-50 top-full left-0 mt-0 bg-zinc-950 border-t-[3px] border-yellow-400 rounded-b-lg shadow-2xl min-w-[200px]";
+  const dropdownBase = "absolute z-50 top-full left-0 mt-1 font-medium bg-yellow-300 border-2 border-black/20 rounded-xl shadow-lg shadow-black/15 min-w-[190px]";
 
-  const blackDropdownItem = (path: string, label: string) => (
+  const navDropdownItem = (path: string, label: string) => (
     <Link
       key={path}
       to={path}
       onClick={closeAllDropdowns}
-      className={`block px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${
-        location.pathname === path ? "text-yellow-400" : "text-white/80 hover:bg-yellow-400 hover:text-black"
+      className={`px-3 py-2 rounded-lg text-sm font-medium block whitespace-nowrap transition-colors ${
+        location.pathname === path ? "bg-yellow-200 text-gray-900 font-semibold" : "text-gray-800 hover:bg-yellow-200"
       }`}
     >
       {label}
     </Link>
   );
+
+  const subNavMap: Record<string, { index: string; label: string; items: { path: string; label: string }[] }> = {
+    media:         { index: "/media",         label: "Media Hub",     items: mediaItems },
+    events:        { index: "/events",        label: "Events",        items: eventsItems },
+    professionals: { index: "/professionals", label: "Professionals", items: professionalsItems },
+    partnerships:  { index: "/partnerships",  label: "Partnerships",  items: partnershipsItems },
+  };
+
+  const currentSection = (() => {
+    if (location.pathname.startsWith("/media")) return "media";
+    if (eventsItems.some(i => location.pathname === i.path)) return "events";
+    if (professionalsItems.some(i => location.pathname === i.path)) return "professionals";
+    if (location.pathname.startsWith("/partnerships")) return "partnerships";
+    return null;
+  })();
+
+  const subNav = currentSection ? subNavMap[currentSection] : null;
 
   const mediaItems = [
     { path: "/media/news-pulse", label: "News Pulse" },
@@ -166,6 +183,7 @@ const Navigation = () => {
   ];
 
   return (
+  <>
     <nav
       className={`fixed top-0 w-full z-[9999999] transition-all duration-500 ease-out ${
         isScrolled
@@ -216,9 +234,9 @@ const Navigation = () => {
               </motion.button>
               <div className="absolute top-full left-0 h-1 w-full" />
               {isMediaOpen && (
-                <motion.div {...dropdownMotion} className={blackDropdownBase}>
-                  <div className="py-1">
-                    {mediaItems.map(i => blackDropdownItem(i.path, i.label))}
+                <motion.div {...dropdownMotion} className={dropdownBase}>
+                  <div className="p-2 flex flex-col">
+                    {mediaItems.map(i => navDropdownItem(i.path, i.label))}
                   </div>
                 </motion.div>
               )}
@@ -239,9 +257,9 @@ const Navigation = () => {
               </motion.button>
               <div className="absolute top-full left-0 h-1 w-full" />
               {isEventsOpen && (
-                <motion.div {...dropdownMotion} className={blackDropdownBase}>
-                  <div className="py-1">
-                    {eventsItems.map(i => blackDropdownItem(i.path, i.label))}
+                <motion.div {...dropdownMotion} className={dropdownBase}>
+                  <div className="p-2 flex flex-col">
+                    {eventsItems.map(i => navDropdownItem(i.path, i.label))}
                   </div>
                 </motion.div>
               )}
@@ -268,9 +286,9 @@ const Navigation = () => {
               </motion.button>
               <div className="absolute top-full left-0 h-1 w-full" />
               {isProfessionalsOpen && (
-                <motion.div {...dropdownMotion} className={blackDropdownBase}>
-                  <div className="py-1">
-                    {professionalsItems.map(i => blackDropdownItem(i.path, i.label))}
+                <motion.div {...dropdownMotion} className={dropdownBase}>
+                  <div className="p-2 flex flex-col">
+                    {professionalsItems.map(i => navDropdownItem(i.path, i.label))}
                   </div>
                 </motion.div>
               )}
@@ -291,9 +309,9 @@ const Navigation = () => {
               </motion.button>
               <div className="absolute top-full left-0 h-1 w-full" />
               {isPartnershipsOpen && (
-                <motion.div {...dropdownMotion} className={`${blackDropdownBase} min-w-[220px]`}>
-                  <div className="py-1">
-                    {partnershipsItems.map(i => blackDropdownItem(i.path, i.label))}
+                <motion.div {...dropdownMotion} className={`${dropdownBase} min-w-[220px]`}>
+                  <div className="p-2 flex flex-col">
+                    {partnershipsItems.map(i => navDropdownItem(i.path, i.label))}
                   </div>
                 </motion.div>
               )}
@@ -376,11 +394,6 @@ const Navigation = () => {
               </div>
             )}
 
-            {/* Get Listed CTA */}
-            <Link to="/partnerships/become-a-partner"
-              className="ml-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap flex-shrink-0">
-              Get Listed
-            </Link>
           </div>
 
           {/* Language + hamburger */}
@@ -469,11 +482,42 @@ const Navigation = () => {
               </>
             )}
 
-            <button onClick={() => handleNavigation("/partnerships/become-a-partner")} className="w-full text-left px-3 py-2 rounded-md text-base font-bold bg-red-600 text-white rounded-lg mt-2">Get Listed</button>
           </div>
         </div>
       </div>
     </nav>
+
+    {/* Secondary submenu bar — shows on Media/Events/Professionals/Partnerships pages */}
+    {subNav && (
+      <div className="fixed top-16 left-0 w-full z-[9999998] bg-zinc-950 border-b-2 border-yellow-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <Link
+            to={subNav.index}
+            className={`px-4 py-[11px] text-[12.5px] font-semibold whitespace-nowrap border-b-[3px] transition-all duration-150 -mb-[2px] ${
+              location.pathname === subNav.index
+                ? "text-yellow-400 border-yellow-400"
+                : "text-white/60 border-transparent hover:text-yellow-400"
+            }`}
+          >
+            {subNav.label}
+          </Link>
+          {subNav.items.map(item => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`px-4 py-[11px] text-[12.5px] font-semibold whitespace-nowrap border-b-[3px] transition-all duration-150 -mb-[2px] ${
+                location.pathname === item.path
+                  ? "text-yellow-400 border-yellow-400"
+                  : "text-white/60 border-transparent hover:text-yellow-400"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    )}
+  </>
   );
 };
 
