@@ -1401,7 +1401,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   const modalConfig = getModalConfig();
 
   return (
-    <div className="w-full min-h-screen h-full bg-orange-50">
+    <div className="w-full min-h-screen h-full bg-orange-50 pt-16">
       <Header />
 
       {/* Universal Confirmation Modal */}
