@@ -889,22 +889,20 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   const statusStyle = getStatusBadge(event.reviewStatus);
 
   return (
-    <div className="overflow-hidden w-full h-full rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group border-gradient-to-b from-amber-500 to-yellow-600 bg-white">
-      <div className="p-4 md:p-6 lg:p-8">
-        <div className="flex flex-wrap justify-between items-start gap-2 mb-4 md:mb-6">
-          <div className="flex gap-3 items-center md:gap-4 min-w-0 flex-1">
-            <div className="flex-shrink-0 flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
+    <div className="overflow-hidden w-full h-full rounded-xl border border-gray-200 border-l-4 border-l-yellow-400 shadow-sm transition-all duration-200 hover:shadow-md bg-white">
+      <div className="p-4 md:p-5">
+        <div className="flex flex-wrap justify-between items-start gap-2 mb-4">
+          <div className="flex gap-3 items-center min-w-0 flex-1">
+            <div className="flex-shrink-0 flex overflow-hidden justify-center items-center p-1 w-10 h-10 bg-gray-100 rounded-lg sm:w-12 sm:h-12">
               {event.previewImage ? (
                 <img
                   src={event.heroBannerImage}
                   alt={`${event.eventName} logo`}
-                  className="w-full h-full object-cover rounded-lg transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
+                  className="w-full h-full object-cover rounded"
                   loading="lazy"
                 />
               ) : (
-                <span className="text-4xl font-extrabold text-yellow-600">
-                  {placeholderImg}
-                </span>
+                <Calendar className="w-5 h-5 text-gray-400" />
               )}
             </div>
 

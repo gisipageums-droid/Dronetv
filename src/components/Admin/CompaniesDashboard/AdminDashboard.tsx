@@ -499,17 +499,17 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
   const statusStyle = getStatusBadge(company.reviewStatus);
 
   return (
-    <div className="overflow-hidden w-full h-auto rounded-2xl border-l-4 sm:border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group border-gradient-to-b from-amber-500 to-yellow-600 bg-white">
+    <div className="overflow-hidden w-full h-auto rounded-xl border border-gray-200 border-l-4 border-l-yellow-400 shadow-sm transition-all duration-200 hover:shadow-md bg-white">
       <div className="p-4 sm:p-5 md:p-6 lg:p-8">
         {/* Header: stacks on small screens, row on >=sm */}
         <div className="grid grid-cols-1 sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 gap-3 sm:gap-0">
           <div className="flex gap-3 items-start sm:items-center min-w-0">
             {/* Logo */}
-            <div className="flex flex-shrink-0 overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md sm:w-14 sm:h-14 md:w-16 md:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
+            <div className="flex flex-shrink-0 overflow-hidden justify-center items-center p-1 w-10 h-10 bg-gray-100 rounded-lg sm:w-12 sm:h-12">
               <img
                 src={company.previewImage || placeholderImg}
                 alt={`${company.companyName || "Company"} logo`}
-                className="object-cover rounded-lg w-full h-full transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
+                className="object-cover rounded w-full h-full"
                 onError={(e) => {
                   const img = e.currentTarget as HTMLImageElement;
                   if (img.src !== placeholderImg) img.src = placeholderImg;

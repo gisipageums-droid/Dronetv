@@ -503,15 +503,15 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   const statusStyle = getStatusBadge(professional.reviewStatus || "draft");
 
   return (
-    <div className="w-full h-full rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-amber-500 to-yellow-600 group bg-white">
-      <div className="p-4 md:p-6 lg:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-2 mb-4 md:mb-6">
-          <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
-            <div className="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-white p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
+    <div className="w-full h-full rounded-xl border border-gray-200 border-l-4 border-l-yellow-400 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden bg-white">
+      <div className="p-4 md:p-5">
+        <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center sm:w-12 sm:h-12">
               <img
                 src={professional.previewImage || placeholderImg}
                 alt={`${professional.professionalName} profile`}
-                className="w-full h-full object-cover rounded-lg transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
+                className="w-full h-full object-cover"
                 onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                   const target = e.target as HTMLImageElement;
                   target.src = placeholderImg;
