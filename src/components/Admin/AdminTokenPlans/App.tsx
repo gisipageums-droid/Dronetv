@@ -155,7 +155,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-orange-50 pt-16">
+    <div className="min-h-screen bg-gray-50 pt-16">
       <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
         <Sidebar
           activePage={activePage}
