@@ -165,8 +165,8 @@ const Navigation = () => {
 
   const currentSection = (() => {
     if (location.pathname.startsWith("/media")) return "media";
-    if (eventsItems.some(i => location.pathname === i.path)) return "events";
-    if (professionalsItems.some(i => location.pathname === i.path)) return "professionals";
+    if (location.pathname === "/events" || location.pathname.startsWith("/events/")) return "events";
+    if (location.pathname === "/professionals" || location.pathname.startsWith("/professionals/")) return "professionals";
     if (location.pathname.startsWith("/partnerships")) return "partnerships";
     return null;
   })();
