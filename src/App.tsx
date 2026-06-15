@@ -112,6 +112,45 @@ import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
 import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
 
+// Media Hub pages
+import NewsPulsePage from "./pages/media/NewsPulse";
+import MagazinePage from "./pages/media/Magazine";
+import VideoSpotlightPage from "./pages/media/VideoSpotlight";
+import ImpactStoriesPage from "./pages/media/ImpactStories";
+import MarketIntelligencePage from "./pages/media/MarketIntelligence";
+import TechTrendsPage from "./pages/media/TechTrends";
+import PressReleasesPage from "./pages/media/PressReleases";
+import IndustryReportsPage from "./pages/media/IndustryReports";
+import MediaHubPage from "./pages/media/MediaHub";
+
+// Events sub-pages
+import EventCalendarPage from "./pages/events/EventCalendar";
+import ExposPage from "./pages/events/Expos";
+import ConferencesPage from "./pages/events/Conferences";
+import WorkshopsPage from "./pages/events/Workshops";
+import CompetitionsPage from "./pages/events/Competitions";
+import WebinarsPage from "./pages/events/Webinars";
+import MeetupsPage from "./pages/events/Meetups";
+
+// Professionals sub-pages
+import JobBoardPage from "./pages/professionals/JobBoard";
+import PilotDirectoryPage from "./pages/professionals/PilotDirectory";
+import CertificationsPage from "./pages/professionals/Certifications";
+import PortfolioPage from "./pages/professionals/Portfolio";
+import TrainingPage from "./pages/professionals/Training";
+import NetworkingPage from "./pages/professionals/Networking";
+import CommunityPage from "./pages/professionals/Community";
+
+// Partnerships pages
+import DroneManufacturersPage from "./pages/partnerships/DroneManufacturers";
+import AITechCompaniesPage from "./pages/partnerships/AITechCompanies";
+import EventOrganizersPage from "./pages/partnerships/EventOrganizers";
+import EducationPartnersPage from "./pages/partnerships/EducationPartners";
+import IndustryPlayersPage from "./pages/partnerships/IndustryPlayers";
+import PartnerBenefitsPage from "./pages/partnerships/PartnerBenefits";
+import BecomePartnerPage from "./pages/partnerships/BecomePartner";
+import PartnershipsHubPage from "./pages/partnerships/PartnershipsHub";
+
 
 const HomePage = () => (
   <>
@@ -153,6 +192,37 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/videos" element={<VideosPage />} />
+
+          {/* Media Hub routes */}
+          <Route path="/media" element={<MediaHubPage />} />
+          <Route path="/media/news-pulse" element={<NewsPulsePage />} />
+          <Route path="/media/magazine" element={<MagazinePage />} />
+          <Route path="/media/video-spotlight" element={<VideoSpotlightPage />} />
+          <Route path="/media/impact-stories" element={<ImpactStoriesPage />} />
+          <Route path="/media/market-intelligence" element={<MarketIntelligencePage />} />
+          <Route path="/media/tech-trends" element={<TechTrendsPage />} />
+          <Route path="/media/press-releases" element={<PressReleasesPage />} />
+          <Route path="/media/industry-reports" element={<IndustryReportsPage />} />
+
+          {/* Events sub-routes — must be before dynamic /event/:name */}
+          <Route path="/events/calendar" element={<EventCalendarPage />} />
+          <Route path="/events/expos" element={<ExposPage />} />
+          <Route path="/events/conferences" element={<ConferencesPage />} />
+          <Route path="/events/workshops" element={<WorkshopsPage />} />
+          <Route path="/events/competitions" element={<CompetitionsPage />} />
+          <Route path="/events/webinars" element={<WebinarsPage />} />
+          <Route path="/events/meetups" element={<MeetupsPage />} />
+
+          {/* Partnerships routes */}
+          <Route path="/partnerships" element={<PartnershipsHubPage />} />
+          <Route path="/partnerships/drone-manufacturers" element={<DroneManufacturersPage />} />
+          <Route path="/partnerships/ai-tech" element={<AITechCompaniesPage />} />
+          <Route path="/partnerships/event-organizers" element={<EventOrganizersPage />} />
+          <Route path="/partnerships/education-partners" element={<EducationPartnersPage />} />
+          <Route path="/partnerships/industry-players" element={<IndustryPlayersPage />} />
+          <Route path="/partnerships/benefits" element={<PartnerBenefitsPage />} />
+          <Route path="/partnerships/become-a-partner" element={<BecomePartnerPage />} />
+
           <Route path="/professionals" element={<ProfessionalsPage />} />
           <Route path="/listed-companies" element={<CompaniesPage />} />
 
@@ -248,6 +318,14 @@ const AppContent = () => {
           />
           <Route path="/professional/t2" element={<ProTemp2 />} />
           <Route path="/professional/t1" element={<ProTemp1 />} />
+          {/* Professionals sub-routes — must be before dynamic /:urlSlug? */}
+          <Route path="/professionals/job-board" element={<JobBoardPage />} />
+          <Route path="/professionals/pilot-directory" element={<PilotDirectoryPage />} />
+          <Route path="/professionals/certifications" element={<CertificationsPage />} />
+          <Route path="/professionals/portfolio" element={<PortfolioPage />} />
+          <Route path="/professionals/training" element={<TrainingPage />} />
+          <Route path="/professionals/networking" element={<NetworkingPage />} />
+          <Route path="/professionals/community" element={<CommunityPage />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
           <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
 
