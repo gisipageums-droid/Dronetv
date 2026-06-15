@@ -235,7 +235,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
       ${
         isMobileSidebarOpen
-          ? "fixed top-11 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
+          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
       }`}
     >
@@ -973,14 +973,21 @@ const AdminDashboard: React.FC = () => {
       setError(null);
       const data = await apiService.fetchAllCompanies(signal);
 
-      const cards: Company[] = (data.cards || []).slice();
-      cards.sort((a, b) => {
+      const seen = new Set<string>();
+      const deduped: Company[] = [];
+      for (const c of data.cards || []) {
+        if (!seen.has(c.publishedId)) {
+          seen.add(c.publishedId);
+          deduped.push(c);
+        }
+      }
+      deduped.sort((a, b) => {
         const ta = new Date(getPrimaryDate(a) || 0).getTime();
         const tb = new Date(getPrimaryDate(b) || 0).getTime();
-        return tb - ta; // newest first
+        return tb - ta;
       });
 
-      setCompanies(cards);
+      setCompanies(deduped);
       setTotalCount(data.totalCount || 0);
     } catch (err: any) {
       if (err?.name === "AbortError") return;
@@ -1327,7 +1334,7 @@ const AdminDashboard: React.FC = () => {
 
   // -------------------- Render --------------------
   return (
-    <div className="w-full min-h-screen h-full bg-orange-50">
+    <div className="w-full min-h-screen h-full bg-orange-50 pt-16">
       <Header />
 
       {/* Universal Confirmation Modal */}
