@@ -95,8 +95,8 @@ export function Header({ setSidebarOpen }: HeaderProps) {
               </div>
 
               <div className="pt-3 border-t border-gray-100">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold">
-                  <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-yellow-400 text-black rounded-full text-xs font-bold">
+                  <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
                   {admin?.adminData?.isAdmin ? 'Administrator' : 'User'}
                 </span>
               </div>

@@ -47,7 +47,7 @@ export function PlanTable({ plans, onEdit, onDelete }: PlanTableProps) {
                   <p className="text-sm font-bold text-gray-900">₹{plan.price.toLocaleString()}</p>
                 </td>
                 <td className="p-4">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-bold">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-400 text-black text-xs font-bold">
                     {plan.discount}%
                   </span>
                 </td>

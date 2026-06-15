@@ -200,7 +200,7 @@ export default function AdminMediaDashboard() {
           ))}
         </div>
 
-        <div className="relative w-64 mb-4">
+        <div className="relative w-full max-w-xs mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input type="text" placeholder="Search content..." value={search} onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
@@ -211,7 +211,7 @@ export default function AdminMediaDashboard() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No content yet. Click "Add Content" to create your first item.</div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>

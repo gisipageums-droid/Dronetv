@@ -1342,8 +1342,8 @@ const AdminProfessionalDashboard: React.FC = () => {
           title: "Confirm Edit",
           message: `Are you sure you want to edit "${professionalName}"? You will be redirected to the edit page.`,
           confirmText: "Edit Professional",
-          confirmColor: "bg-amber-600 hover:bg-amber-700",
-          icon: <Edit className="text-amber-600" size={24} />,
+          confirmColor: "bg-gray-700 hover:bg-gray-600",
+          icon: <Edit className="text-gray-700" size={24} />,
         };
       case "approve":
         return {
