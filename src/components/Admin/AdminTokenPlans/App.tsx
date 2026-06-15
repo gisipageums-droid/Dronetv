@@ -155,8 +155,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-orange-50 mt-20">
-      <div className="flex h-screen overflow-hidden">
+    <div className="min-h-screen bg-orange-50 pt-16">
+      <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
         <Sidebar
           activePage={activePage}
           setActivePage={setActivePage}
@@ -167,7 +167,7 @@ function App() {
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header setSidebarOpen={setSidebarOpen} />
 
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+          <main className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 lg:p-8">
             {renderPage()}
           </main>
         </div>

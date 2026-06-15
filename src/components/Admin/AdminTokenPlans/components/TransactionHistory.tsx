@@ -80,6 +80,31 @@ export function TransactionHistory() {
     }
   };
 
+  const exportCSV = () => {
+    const headers = ["ID", "User Name", "Email", "Phone", "Date", "Amount", "Currency", "Tokens", "Plan", "Period", "Status"];
+    const rows = filteredTransactions.map((t) => [
+      t.id,
+      t.userName,
+      t.userEmail,
+      t.userPhone,
+      new Date(t.date).toLocaleString(),
+      t.amount,
+      t.currency,
+      t.tokenCount,
+      t.planName,
+      t.period,
+      t.paymentStatus,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `transactions_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const filteredTransactions = transactions.filter((transaction) => {
     const matchesSearch =
       transaction.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,7 +118,7 @@ export function TransactionHistory() {
   });
 
   return (
-    <div className="space-y-6 mt-20">
+    <div className="space-y-6">
       <div>
         <h1 className="text-yellow-900 mb-2">Transaction History</h1>
         <p className="text-yellow-700/70">
@@ -127,7 +152,7 @@ export function TransactionHistory() {
           </select>
         </div>
 
-        <button className="flex items-center gap-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 rounded-xl transition-colors font-medium">
+        <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 rounded-xl transition-colors font-medium">
           <Download className="w-4 h-4" />
           Export CSV
         </button>
@@ -139,22 +164,22 @@ export function TransactionHistory() {
           <table className="w-full">
             <thead>
               <tr className="bg-yellow-100/50 border-b border-yellow-200/50">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
+                <th className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
                   Transaction ID
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
+                <th className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
+                <th className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
+                <th className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
                   Amount
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
+                <th className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
                   Tokens
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
+                <th className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider">
                   Status
                 </th>
               </tr>
@@ -184,12 +209,12 @@ export function TransactionHistory() {
                     key={transaction.id}
                     className="hover:bg-yellow-50/50 transition-colors"
                   >
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 md:px-6 md:py-4">
                       <span className="text-sm font-medium text-yellow-900 font-mono">
                         {transaction.id.substring(0, 8)}...
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 md:px-6 md:py-4">
                       <div className="flex flex-col">
                         <span className="text-sm font-medium text-yellow-900">
                           {transaction.userName || "Unknown User"}
@@ -199,7 +224,7 @@ export function TransactionHistory() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 md:px-6 md:py-4">
                       <span className="text-sm text-yellow-800">
                         {new Date(transaction.date).toLocaleDateString()}
                       </span>
@@ -208,17 +233,17 @@ export function TransactionHistory() {
                         {new Date(transaction.date).toLocaleTimeString()}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 md:px-6 md:py-4">
                       <span className="text-sm font-medium text-yellow-900">
                         {transaction.amount} {transaction.currency}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 md:px-6 md:py-4">
                       <span className="text-sm text-yellow-800">
                         {transaction.tokenCount}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-3 md:px-6 md:py-4">
                       <div
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(
                           transaction.paymentStatus

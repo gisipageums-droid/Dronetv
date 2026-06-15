@@ -723,7 +723,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     <div
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
       ${isMobileSidebarOpen
-          ? "fixed top-11 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
+          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
         }`}
     >
@@ -910,9 +910,9 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   return (
     <div className="overflow-hidden w-full h-full rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group border-gradient-to-b from-amber-500 to-yellow-600 bg-white">
       <div className="p-4 md:p-6 lg:p-8">
-        <div className="flex justify-between items-center mb-4 md:mb-6">
-          <div className="flex gap-3 items-center md:gap-4">
-            <div className="flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
+        <div className="flex flex-wrap justify-between items-start gap-2 mb-4 md:mb-6">
+          <div className="flex gap-3 items-center md:gap-4 min-w-0 flex-1">
+            <div className="flex-shrink-0 flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
               {event.previewImage ? (
                 <img
                   src={event.heroBannerImage}
@@ -940,12 +940,12 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
             </div>
           </div>
 
-          <div className="hidden text-right sm:block">
+          <div className="flex-shrink-0">
             <div
-              className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 md:px-3 md:py-1 rounded-full text-xs font-medium`}
+              className={`inline-flex items-center gap-1 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs font-medium`}
             >
               <Calendar className="w-3 h-3" />
-              {statusStyle.label}
+              <span>{statusStyle.label}</span>
             </div>
           </div>
         </div>
@@ -1484,7 +1484,7 @@ const EventAdminDashboard: React.FC = () => {
   const modalConfig = getModalConfig();
 
   return (
-    <div className="w-full min-h-screen h-full bg-orange-50">
+    <div className="w-full min-h-screen h-full bg-orange-50 pt-16">
       <Header />
 
       {/* Universal Confirmation Modal */}
