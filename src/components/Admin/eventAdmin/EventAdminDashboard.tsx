@@ -934,7 +934,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
         <div className="flex flex-col gap-3">
           <div className="flex gap-3 items-center md:gap-6">
             <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg md:px-4 md:py-2">
-              <span className="text-xs font-bold text-amber-600 md:text-sm">
+              <span className="text-xs font-bold text-gray-700 md:text-sm">
                 {formatDate(event.createdAt)}
               </span>
               <span className="hidden text-xs text-gray-600 md:block">
@@ -946,7 +946,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => onPreview(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-amber-700 bg-amber-100 rounded-lg transition-colors hover:bg-amber-200 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg transition-colors hover:bg-gray-200 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
               aria-label={`Preview ${event.eventName}`}
               disabled={disabled}
             >
@@ -1032,12 +1032,12 @@ const RecentEventsSection: React.FC<{
       <div className="mb-8">
         <div className="flex gap-3 items-center mb-6">
           <div className="flex gap-2 items-center">
-            <Clock className="w-6 h-6 text-yellow-600" />
-            <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
+            <Clock className="w-5 h-5 text-yellow-500" />
+            <h2 className="text-base font-bold text-gray-900">
               Recent Events
             </h2>
           </div>
-          <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
+          <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
             Last 7 days
           </span>
         </div>
@@ -1058,7 +1058,7 @@ const RecentEventsSection: React.FC<{
           ))}
         </div>
 
-        <div className="mt-6 border-t border-yellow-200/50"></div>
+        <div className="mt-6 border-t border-gray-200"></div>
       </div>
     );
   };
