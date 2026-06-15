@@ -18,6 +18,19 @@ interface RawEvent {
 
 const EVENTS_API = "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main";
 
+function getEventImage(previewImage?: string, thumbnailUrl?: string): string | null {
+  for (const url of [previewImage, thumbnailUrl]) {
+    if (!url) continue;
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+      if (m) return `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
+      continue;
+    }
+    return url;
+  }
+  return null;
+}
+
 export default function EventCalendarPage() {
   const [events, setEvents] = useState<RawEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,8 +101,8 @@ export default function EventCalendarPage() {
             {filtered.map(event => (
               <div key={event.eventId} onClick={() => navigate(`/event/${event.cleanUrl || event.urlSlug}`)}
                 className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-                {(event.previewImage || event.thumbnailUrl) ? (
-                  <img src={event.previewImage || event.thumbnailUrl} alt={event.eventName} className="w-full h-40 object-cover" />
+                {getEventImage(event.previewImage, event.thumbnailUrl) ? (
+                  <img src={getEventImage(event.previewImage, event.thumbnailUrl)!} alt={event.eventName} className="w-full h-40 object-cover" />
                 ) : (
                   <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
                     <span className="text-yellow-400 text-4xl">🗓️</span>
