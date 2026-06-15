@@ -109,6 +109,7 @@ import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
+import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
 import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
 import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
 
@@ -359,6 +360,11 @@ const AppContent = () => {
             element={<FinaleProfessionalTemp1Edit />}
           />
           {/* <Route path="/professional/:urlSlug" element={<MainProTemp1 />} /> */}
+
+          <Route path="/admin/media/dashboard" element={
+            <AdminProtectedRoute>
+              <AdminMediaDashboard />
+            </AdminProtectedRoute>} />
 
           {/* event routes */}
           <Route
