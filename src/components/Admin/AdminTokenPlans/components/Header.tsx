@@ -10,11 +10,9 @@ export function Header({ setSidebarOpen }: HeaderProps) {
   const { admin } = useUserAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  console.log("admin data", admin);
-
   return (
     <>
-      <header className="bg-white/40 backdrop-blur-xl w-[70vw] border-b rounded-md border-yellow-200/50 px-4 md:px-6 py-4">
+      <header className="bg-white/40 backdrop-blur-xl w-full border-b rounded-md border-yellow-200/50 px-4 md:px-6 py-4">
         <div className="flex items-center justify-between ">
           <div className="flex items-center gap-4">
             <button 

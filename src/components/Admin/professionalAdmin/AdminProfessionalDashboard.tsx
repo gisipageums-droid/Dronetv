@@ -325,7 +325,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
       ${
         isMobileSidebarOpen
-          ? "fixed top-11 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
+          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
           : "hidden md:block md:w-80"
       }`}
     >
@@ -523,9 +523,9 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   return (
     <div className="w-full h-full rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-amber-500 to-yellow-600 group bg-white">
       <div className="p-4 md:p-6 lg:p-8">
-        <div className="flex items-center justify-between mb-4 md:mb-6">
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-white p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
+        <div className="flex flex-wrap items-start justify-between gap-2 mb-4 md:mb-6">
+          <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
+            <div className="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-white p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
               <img
                 src={professional.previewImage || placeholderImg}
                 alt={`${professional.professionalName} profile`}
@@ -548,12 +548,12 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
               </div>
             </div>
           </div>
-          <div className="text-right hidden sm:block">
+          <div className="flex-shrink-0">
             <div
-              className={`inline-flex items-center gap-2 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 md:px-3 md:py-1 rounded-full text-xs font-medium`}
+              className={`inline-flex items-center gap-1 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs font-medium`}
             >
               <User className="w-3 h-3" />
-              {statusStyle.label}
+              <span>{statusStyle.label}</span>
             </div>
           </div>
         </div>

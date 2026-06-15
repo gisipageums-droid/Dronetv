@@ -92,7 +92,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
 
           {/* Action Buttons */}
           {company && (
-            <div className="flex flex-row justify-between gap-2 mb-6">
+            <div className="flex flex-wrap gap-2 mb-6">
               <button
                 onClick={() => onPreview(company.publishedId)}
                 className="px-3 w-full py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
