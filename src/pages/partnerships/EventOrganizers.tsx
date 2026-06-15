@@ -43,13 +43,13 @@ export default function EventOrganizersPage() {
         ) : items.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No event organizers listed yet.</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {items.map(item => (
               <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                 {item.imageUrl ? (
-                  <img src={item.imageUrl} alt={item.title} className="w-full h-36 sm:h-44 object-cover" />
+                  <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />
                 ) : (
-                  <div className="w-full h-36 sm:h-44 bg-zinc-900 flex items-center justify-center">
+                  <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
                     <Users className="w-10 h-10 text-yellow-400" />
                   </div>
                 )}
