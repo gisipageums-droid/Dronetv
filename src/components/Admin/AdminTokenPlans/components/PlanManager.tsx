@@ -52,7 +52,7 @@ export function PlanManager({ type, plans, addPlan, updatePlan, deletePlan, toke
   };
 
   return (
-    <div className="space-y-6 mt-20">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-yellow-900 mb-2">{typeLabels[type]} Plans</h1>

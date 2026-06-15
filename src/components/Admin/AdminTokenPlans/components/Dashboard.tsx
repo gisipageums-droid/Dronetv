@@ -51,7 +51,7 @@ export function Dashboard({ plans, tokenPriceINR }: DashboardProps) {
   };
 
   return (
-    <div className="space-y-6 mt-20">
+    <div className="space-y-6">
       <div>
         <h1 className="text-yellow-900 mb-2">Dashboard Overview</h1>
         <p className="text-yellow-700/70">Monitor your token plans and pricing at a glance</p>

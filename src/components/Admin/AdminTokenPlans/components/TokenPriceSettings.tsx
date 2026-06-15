@@ -28,7 +28,7 @@ export function TokenPriceSettings({ tokenPriceINR, setTokenPriceINR }: TokenPri
   };
 
   return (
-    <div className="space-y-6 mt-20">
+    <div className="space-y-6">
       <div>
         <h1 className="text-yellow-900 mb-2">Token Price Settings</h1>
         <p className="text-yellow-700/70">Set the base price per token in INR</p>
