@@ -58,14 +58,14 @@ export default function ImpactStoriesPage() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No impact stories yet.</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {filtered.map(item => (
               <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover" />}
+                {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-36 sm:h-44 object-cover" />}
                 <div className="p-5">
                   {item.category && <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                  <h3 className="text-base font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                  {item.description && <p className="text-sm text-gray-500 leading-relaxed mb-3">{item.description}</p>}
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
+                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 text-xs text-gray-400">
                       {item.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{item.location}</span>}

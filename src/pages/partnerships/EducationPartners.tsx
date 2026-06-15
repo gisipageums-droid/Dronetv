@@ -16,17 +16,23 @@ export default function EducationPartnersPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative">
+      <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Partnerships</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2">Education <span className="text-yellow-400">Partners</span></h1>
-            <p className="text-sm text-white/60 max-w-lg">DGCA approved RPTOs, universities, and training institutes developing India's next generation of drone professionals.</p>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Education <span className="text-yellow-400">Partners</span></h1>
+            <p className="text-sm text-white/60 leading-relaxed max-w-lg">DGCA approved RPTOs, universities, and training institutes developing India's next generation of drone professionals.</p>
           </div>
-          <div className="flex-shrink-0">
-            <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length}</span>
-            <span className="text-xs text-white/50 font-semibold uppercase mt-1 block">Partners</span>
+          <div className="flex gap-8 flex-shrink-0">
+            <div>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || '0'}</span>
+              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Partners</span>
+            </div>
+            <div>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">DGCA</span>
+              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Approved</span>
+            </div>
           </div>
         </div>
       </div>
@@ -43,18 +49,22 @@ export default function EducationPartnersPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 pb-12">
+        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">RPTO</span>
+          Education Partners
+        </h2>
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading education partners...</div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No education partners listed yet.</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(item => (
               <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                 {item.imageUrl ? (
-                  <img src={item.imageUrl} alt={item.title} className="w-full h-36 object-cover" />
+                  <img src={item.imageUrl} alt={item.title} className="w-full h-36 sm:h-44 object-cover" />
                 ) : (
-                  <div className="w-full h-36 bg-zinc-900 flex items-center justify-center">
+                  <div className="w-full h-36 sm:h-44 bg-zinc-900 flex items-center justify-center">
                     <GraduationCap className="w-10 h-10 text-yellow-400" />
                   </div>
                 )}
