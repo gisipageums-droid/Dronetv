@@ -216,30 +216,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 // Header Component - Updated to match EventAdminDashboard
 const Header: React.FC = () => {
   return (
-    <div className="relative h-[40vh] bg-amber-50 flex items-center justify-center px-4 sm:px-6 overflow-hidden">
-      {/* Geometric Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
-      </div>
-
-      <div className="relative w-full max-w-3xl text-center z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="mb-4 text-3xl font-extrabold text-yellow-900 md:text-5xl md:mb-6 tracking-tight">
-            Admin Dashboard
-            <span className="block mt-2 text-transparent bg-clip-text bg-amber-600 ">
-              Professional Management
-            </span>
-          </h1>
-
-          <p className="mx-auto mb-8 max-w-xl text-base font-medium text-yellow-800/80 md:text-lg leading-relaxed">
-            Review and manage all professional profiles, credentials, and approvals with ease.
-          </p>
-        </motion.div>
+    <div className="bg-gray-900 px-6 py-5">
+      <div className="max-w-7xl mx-auto">
+        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">Admin</p>
+        <h1 className="text-xl font-extrabold text-white mb-0.5">Professional Management</h1>
+        <p className="text-sm text-gray-400">Review and manage all professional profiles, credentials, and approvals</p>
       </div>
     </div>
   );
@@ -322,19 +303,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
+      className={`bg-white border-r border-gray-200 p-4 md:p-8 h-fit md:sticky md:top-0
       ${
         isMobileSidebarOpen
-          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
-          : "hidden md:block md:w-80"
+          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-white"
+          : "hidden md:block md:w-72"
       }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-xl font-bold text-yellow-900">Filters</h2>
+          <h2 className="text-base font-bold text-gray-900">Filters</h2>
           <button
             onClick={onCloseMobileSidebar}
-            className="p-2 text-yellow-800"
+            className="p-2 text-gray-500"
           >
             <X className="w-5 h-5" />
           </button>
@@ -344,7 +325,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="space-y-6 md:space-y-8">
         {/* Status Filter Section - Updated to match EventAdminDashboard */}
         <div className="space-y-3">
-          <label className="text-sm font-medium text-yellow-900 block">
+          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
             Filter by Status
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -362,7 +343,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       : option.value === "rejected"
                       ? "bg-red-100 border-red-300 text-red-800"
                       : "bg-gray-100 border-gray-300 text-gray-800"
-                    : "bg-white/50 border-yellow-200/50 hover:bg-gray-50 text-gray-700"
+                    : "bg-white border-gray-200 hover:border-yellow-400 text-gray-600"
                 }`}
               >
                 {option.label === "Needs Review" && (
@@ -383,11 +364,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Search Section */}
         <div className="space-y-3">
-          <label className="text-sm font-medium text-yellow-900 block">
+          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
             Search Professionals
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-yellow-600" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search by name, location..."
@@ -395,14 +376,14 @@ const Sidebar: React.FC<SidebarProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onSearchChange(e.target.value)
               }
-              className="w-full pl-10 pr-4 py-3 text-sm border border-yellow-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white/50 transition-colors placeholder-yellow-700/50 text-yellow-900"
+              className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white transition-colors placeholder-gray-400 text-gray-900"
             />
           </div>
         </div>
 
         {/* Sort Filter */}
         <div className="space-y-3">
-          <label className="text-sm font-medium text-yellow-900 block">
+          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
             Sort by
           </label>
           <MinimalisticDropdown
@@ -420,38 +401,39 @@ const Sidebar: React.FC<SidebarProps> = ({
             onSortChange("Sort by Name");
             onStatusChange("all");
           }}
-          className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
+          className="text-xs text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-2"
         >
           Clear all filters
         </button>
 
         {/* Divider */}
-        <div className="border-t border-yellow-200/50"></div>
+        <div className="border-t border-gray-200"></div>
 
         {/* Navigation Links */}
-        <div className="flex gap-2 flex-col mt-6">
+        <div className="flex gap-2 flex-col">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Other Sections</p>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
+            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
           >
             <Link to={"/admin/company/dashboard"} className="w-full text-left">
-              Companies{" "}
+              Companies
             </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
+            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
           >
             <Link to={"/admin/event/dashboard"} className="w-full text-left">
-              Events{" "}
+              Events
             </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
+            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
           >
             <Link to={"/admin/plans"} className="w-full text-left">
-              Admin Plans{" "}
+              Admin Plans
             </Link>
           </motion.button>
         </div>
@@ -717,7 +699,7 @@ const RecentProfessionalsSection: React.FC<{
               Recent Professionals
             </h2>
           </div>
-          <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
+          <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
             Last 7 days
           </span>
         </div>
@@ -772,13 +754,13 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
   if (loading)
     return (
-      <div className="flex-1 p-4 md:p-8 bg-orange-50">
+      <div className="flex-1 p-4 md:p-6 bg-gray-50">
         <LoadingSpinner />
       </div>
     );
   if (error)
     return (
-      <div className="flex-1 p-4 md:p-8 bg-orange-50">
+      <div className="flex-1 p-4 md:p-6 bg-gray-50">
         <ErrorMessage error={error} onRetry={onRetry} />
       </div>
     );
@@ -788,7 +770,7 @@ const MainContent: React.FC<MainContentProps> = ({
       {/* Mobile sidebar toggle */}
       <button
         onClick={onOpenMobileSidebar}
-        className="p-3 rounded-full border border-gray-200 bg-yellow-500 text-white relative left-5 hover:bg-yellow-600 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
+        className="p-3 rounded-full border border-gray-200 bg-yellow-400 text-black relative left-5 hover:bg-yellow-300 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
         aria-label="Open filters"
       >
         <Menu className="w-6 h-6" />
@@ -811,12 +793,12 @@ const MainContent: React.FC<MainContentProps> = ({
       {/* All Professionals Section */}
       <div className="flex gap-3 items-center mb-6">
         <div className="flex gap-2 items-center">
-          <User className="w-6 h-6 text-yellow-600" />
-          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
+          <User className="w-5 h-5 text-yellow-500" />
+          <h2 className="text-base font-bold text-gray-900">
             {statusFilter === "all" ? "All Professionals" : statusFilter === "under_review" ? "Under Review Professionals" : statusFilter === "approved" ? "Approved Professionals" : "Rejected Professionals"}
           </h2>
         </div>
-        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
+        <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
           {totalCount}{" "}
           {totalCount === 1 ? "professional" : "professionals"}
         </span>
@@ -857,7 +839,7 @@ const MainContent: React.FC<MainContentProps> = ({
         <div className="flex justify-center items-center mt-8">
           <button
             onClick={onPrevPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage <= 1}
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
@@ -868,7 +850,7 @@ const MainContent: React.FC<MainContentProps> = ({
           </span>
           <button
             onClick={onNextPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-lg transition-colors hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage >= totalPages}
           >
             Next
@@ -1401,7 +1383,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   const modalConfig = getModalConfig();
 
   return (
-    <div className="w-full min-h-screen h-full bg-orange-50 pt-16">
+    <div className="w-full min-h-screen h-full bg-gray-50 pt-16">
       <Header />
 
       {/* Universal Confirmation Modal */}

@@ -53,8 +53,9 @@ export function Dashboard({ plans, tokenPriceINR }: DashboardProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-yellow-900 mb-2">Dashboard Overview</h1>
-        <p className="text-yellow-700/70">Monitor your token plans and pricing at a glance</p>
+        <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Admin</p>
+        <h1 className="text-xl font-extrabold text-gray-900 mb-1">Dashboard Overview</h1>
+        <p className="text-sm text-gray-500">Monitor your token plans and pricing at a glance</p>
       </div>
 
       {/* Stats Grid */}
@@ -62,61 +63,58 @@ export function Dashboard({ plans, tokenPriceINR }: DashboardProps) {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div
-              key={index}
-              className="bg-white/40 backdrop-blur-xl border border-yellow-200/50 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 rounded-xl bg-yellow-400/20 flex items-center justify-center`}>
-                  <Icon className="w-6 h-6 text-yellow-900" />
+            <div key={index} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-black" />
                 </div>
               </div>
-              <p className="text-yellow-700/70 mb-1">{stat.label}</p>
-              <p className="text-yellow-900">{stat.value}</p>
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">{stat.label}</p>
+              <p className="text-xl font-extrabold text-gray-900">{stat.value}</p>
             </div>
           );
         })}
       </div>
 
       {/* Plans Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white/40 backdrop-blur-xl border border-yellow-200/50 rounded-2xl p-6">
-          <h3 className="text-yellow-900 mb-4">Plans by Type</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-gray-900 mb-4">Plans by Type</h3>
           <div className="space-y-3">
             {Object.entries(plansByType).map(([type, count]) => (
               <div key={type} className="flex items-center justify-between">
-                <span className="text-yellow-800 capitalize">{type}</span>
-                <div className="flex items-center gap-3 flex-1 mx-4">
-                  <div className="flex-1 h-2 bg-yellow-200/50 rounded-full overflow-hidden">
-                    <div 
+                <span className="text-sm text-gray-600 capitalize w-24">{type}</span>
+                <div className="flex items-center gap-3 flex-1 mx-3">
+                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
                       className="h-full bg-yellow-400 rounded-full transition-all"
                       style={{ width: `${totalPlans > 0 ? (count / totalPlans) * 100 : 0}%` }}
                     />
                   </div>
-                  <span className="text-yellow-900 min-w-[2rem] text-right">{count}</span>
+                  <span className="text-sm font-bold text-gray-900 min-w-[2rem] text-right">{count}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white/40 backdrop-blur-xl border border-yellow-200/50 rounded-2xl p-6">
-          <h3 className="text-yellow-900 mb-4">Recent Plans</h3>
-          <div className="space-y-3">
+        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-gray-900 mb-4">Recent Plans</h3>
+          <div className="space-y-2">
             {plans.slice(0, 4).map((plan) => (
-              <div key={plan.id} className="flex items-center justify-between p-3 bg-yellow-100/30 rounded-xl">
+              <div key={plan.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-yellow-900">{plan.name}</p>
-                  <p className="text-xs text-yellow-700/70 capitalize">{plan.type}</p>
+                  <p className="text-sm font-bold text-gray-900">{plan.name}</p>
+                  <p className="text-xs text-gray-500 capitalize">{plan.type}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-yellow-900">₹{plan.price}</p>
-                  <p className="text-xs text-yellow-700/70">{plan.tokens} tokens</p>
+                  <p className="text-sm font-bold text-gray-900">₹{plan.price}</p>
+                  <p className="text-xs text-gray-500">{plan.tokens} tokens</p>
                 </div>
               </div>
             ))}
             {plans.length === 0 && (
-              <p className="text-center text-yellow-700/70 py-8">No plans created yet</p>
+              <p className="text-center text-gray-400 text-sm py-8">No plans created yet</p>
             )}
           </div>
         </div>
