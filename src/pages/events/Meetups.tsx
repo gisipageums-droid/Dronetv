@@ -1,122 +1,66 @@
-import { Link } from 'react-router-dom';
-
-const meetups = [
-  {
-    city: 'Hyderabad',
-    title: 'Hyderabad Drone Professionals Meetup',
-    schedule: 'Monthly — 3rd Saturday',
-    area: 'Koramangala area',
-    price: 'Free',
-    members: '85+ members',
-    desc: 'Monthly gathering of drone pilots, operators, RPTO instructors, and agriculture drone service providers in Hyderabad. Mix of networking, knowledge sharing, and occasional guest speakers from the industry.',
-    themes: ['Agriculture Operations', 'DGCA Regulation Updates', 'Job Market & Hiring', 'Equipment Reviews'],
-    contact: 'hyderabad@dronetv.in',
-  },
-  {
-    city: 'Delhi NCR',
-    title: 'Delhi NCR Drone Networking Evening',
-    schedule: 'Monthly — 2nd Thursday',
-    area: 'India Habitat Centre',
-    price: 'Free',
-    members: '120+ members',
-    desc: 'Delhi\'s drone community evening bringing together professionals across defence, government, inspection, and training sectors. Includes a structured 15-minute talk from an industry guest followed by open networking.',
-    themes: ['Defence & Security', 'Policy & Regulation', 'Infrastructure Inspection', 'Startup Ecosystem'],
-    contact: 'delhi@dronetv.in',
-  },
-  {
-    city: 'Mumbai',
-    title: 'Mumbai Drone & GIS Community Meetup',
-    schedule: 'Bi-monthly — 1st Saturday',
-    area: 'BKC area',
-    price: 'Free',
-    members: '65+ members',
-    desc: 'Mumbai\'s bi-monthly drone and geospatial community, drawing professionals from survey, cinematography, real estate, and GIS mapping. Strong participation from media production companies and urban infrastructure firms.',
-    themes: ['GIS & Mapping', 'Aerial Cinematography', 'Real Estate & Urban', 'Survey Technology'],
-    contact: 'mumbai@dronetv.in',
-  },
-];
+import { useState, useEffect } from 'react';
+import { MapPin, Calendar, Users, ExternalLink } from 'lucide-react';
+import { fetchContent, MediaItem } from '../../lib/mediaApi';
 
 export default function MeetupsPage() {
+  const [items, setItems] = useState<MediaItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchContent('meetup').then(setItems).catch(console.error).finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
+      <div className="bg-black text-white relative">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Events</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Drone Professional <span className="text-yellow-400 not-italic">Meetups</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              Monthly in-person meetups for India's drone professionals — network, learn, and connect with the local community.
-            </p>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2">Drone Industry <span className="text-yellow-400">Meetups</span></h1>
+            <p className="text-sm text-white/60 max-w-lg">Community gatherings, networking events, and informal sessions for India's drone professionals and enthusiasts.</p>
           </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">3</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">City Chapters</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Free</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Networking</span>
-            </div>
+          <div className="flex-shrink-0">
+            <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length}</span>
+            <span className="text-xs text-white/50 font-semibold uppercase mt-1 block">Meetups</span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-5">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-6 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">City</span>
-          Chapters
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {meetups.map((m, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-              <div className="bg-black px-5 py-4">
-                <span className="text-yellow-400 font-extrabold text-lg">{m.city}</span>
-                <p className="text-white/50 text-xs mt-0.5">{m.members}</p>
-              </div>
-              <div className="p-5">
-                <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{m.title}</h3>
-                <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                  <span>📅 {m.schedule}</span>
+      <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
+        {loading ? (
+          <div className="text-center py-16 text-gray-400">Loading meetups...</div>
+        ) : items.length === 0 ? (
+          <div className="text-center py-16 text-gray-400">No meetups scheduled yet.</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {items.map(item => (
+              <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                {item.imageUrl ? (
+                  <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />
+                ) : (
+                  <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
+                    <Users className="w-10 h-10 text-yellow-400" />
+                  </div>
+                )}
+                <div className="p-4">
+                  {item.price && <span className={`text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block ${item.price.toLowerCase() === 'free' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{item.price}</span>}
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
+                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{item.description}</p>}
+                  <div className="space-y-1">
+                    {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
+                    {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{item.location}</div>}
+                  </div>
+                  {item.externalLink && (
+                    <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                      Join Meetup <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
                 </div>
-                <p className="text-xs text-gray-500 mb-1">📍 {m.area}</p>
-                <p className="text-xs font-bold text-green-700 mb-3">{m.price}</p>
-                <p className="text-xs text-gray-500 leading-relaxed mb-4">{m.desc}</p>
-                <div className="space-y-1">
-                  {m.themes.map((t) => (
-                    <div key={t} className="flex items-center gap-2 text-xs text-gray-600">
-                      <span className="text-yellow-400 font-bold">—</span>{t}
-                    </div>
-                  ))}
-                </div>
               </div>
-              <div className="border-t border-gray-100 px-5 py-3 bg-gray-50">
-                <a
-                  href={`mailto:${m.contact}`}
-                  className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors"
-                >
-                  Contact Chapter →
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-yellow-400 rounded-xl p-6 flex items-center justify-between gap-4">
-          <div>
-            <h3 className="font-bold text-black text-base mb-1">Host a Meetup Listed on DroneTv.in</h3>
-            <p className="text-black/70 text-sm">Starting a drone community in your city? Get it listed and promoted to India's drone professional network.</p>
+            ))}
           </div>
-          <Link
-            to="/partnerships/become-a-partner"
-            className="bg-black text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap"
-          >
-            Get Listed →
-          </Link>
-        </div>
+        )}
       </div>
     </div>
   );

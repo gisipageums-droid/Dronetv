@@ -1,179 +1,113 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { MapPin, Calendar, Search } from 'lucide-react';
 
-const events = [
-  {
-    dateShort: 'Jun 24–25',
-    year: '2026',
-    title: 'Drone International Expo 2026',
-    location: 'New Delhi',
-    type: 'Expo',
-    typeClass: 'bg-orange-100 text-orange-700',
-    badge: 'Next Event',
-    badgeClass: 'bg-yellow-400 text-black',
-    mediaPartner: true,
-  },
-  {
-    dateShort: 'Jun 24',
-    year: '2026',
-    title: 'Drone International Technical Conference',
-    location: 'New Delhi',
-    type: 'Conference',
-    typeClass: 'bg-blue-100 text-blue-700',
-    badge: null,
-    badgeClass: '',
-    mediaPartner: false,
-  },
-  {
-    dateShort: 'Jun 28',
-    year: '2026',
-    title: 'BVLOS Regulations Webinar',
-    location: 'Online',
-    type: 'Webinar',
-    typeClass: 'bg-green-100 text-green-700',
-    badge: null,
-    badgeClass: '',
-    mediaPartner: false,
-  },
-  {
-    dateShort: 'Jul 5',
-    year: '2026',
-    title: 'Agriculture Drone ROI Webinar',
-    location: 'Online',
-    type: 'Webinar',
-    typeClass: 'bg-green-100 text-green-700',
-    badge: null,
-    badgeClass: '',
-    mediaPartner: false,
-  },
-  {
-    dateShort: 'Sep 2026',
-    year: '',
-    title: 'Drone Expo 2026 Bengaluru',
-    location: 'Bengaluru',
-    type: 'Expo',
-    typeClass: 'bg-orange-100 text-orange-700',
-    badge: null,
-    badgeClass: '',
-    mediaPartner: true,
-  },
-  {
-    dateShort: 'TBA',
-    year: '2026',
-    title: 'IFSEC 2026',
-    location: 'India (Venue TBC)',
-    type: 'Expo',
-    typeClass: 'bg-orange-100 text-orange-700',
-    badge: 'Coming Soon',
-    badgeClass: 'bg-gray-200 text-gray-600',
-    mediaPartner: true,
-  },
-];
+interface RawEvent {
+  eventId: string;
+  eventName: string;
+  shortDescription: string;
+  eventDate: string;
+  location: string;
+  category: string;
+  isApproved: boolean;
+  urlSlug?: string;
+  cleanUrl?: string;
+  previewImage?: string;
+  thumbnailUrl?: string;
+}
 
-const categories = ['All', 'Expo', 'Conference', 'Competition', 'Webinar', 'Meetup'];
-const months = ['All Months', 'June 2026', 'July 2026', 'August 2026', 'September 2026'];
-const locations = ['All Locations', 'New Delhi', 'Bengaluru', 'Hyderabad', 'Mumbai', 'Online'];
+const EVENTS_API = "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main";
 
 export default function EventCalendarPage() {
-  const [category, setCategory] = useState('All');
-  const [month, setMonth] = useState('All Months');
-  const [location, setLocation] = useState('All Locations');
+  const [events, setEvents] = useState<RawEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch(EVENTS_API)
+      .then(r => r.json())
+      .then(data => {
+        const all: RawEvent[] = Array.isArray(data.cards) ? data.cards : [];
+        setEvents(all);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const categories = ['All', ...Array.from(new Set(events.map(e => e.category || 'General').filter(Boolean)))];
+
+  const filtered = events.filter(e => {
+    const matchSearch = (e.eventName || '').toLowerCase().includes(search.toLowerCase()) ||
+      (e.location || '').toLowerCase().includes(search.toLowerCase());
+    const matchCat = activeCategory === 'All' || (e.category || 'General') === activeCategory;
+    return matchSearch && matchCat;
+  });
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
+      <div className="bg-black text-white relative">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Events</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Upcoming Drone <span className="text-yellow-400 not-italic">Events Calendar</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              All drone industry events in one place — expos, conferences, webinars, workshops, and meetups across India and globally.
-            </p>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2">Event <span className="text-yellow-400">Calendar</span></h1>
+            <p className="text-sm text-white/60 max-w-lg">All drone industry events in India — expos, conferences, workshops, competitions, webinars, and meetups.</p>
           </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">5+</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Events Listed</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Free</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">To Submit</span>
-            </div>
+          <div className="flex-shrink-0">
+            <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{events.length}</span>
+            <span className="text-xs text-white/50 font-semibold uppercase mt-1 block">Total Events</span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        <div className="flex flex-wrap gap-3 mb-6">
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-yellow-400"
-          >
-            {categories.map((c) => <option key={c}>{c}</option>)}
-          </select>
-          <select
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-yellow-400"
-          >
-            {months.map((m) => <option key={m}>{m}</option>)}
-          </select>
-          <select
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-yellow-400"
-          >
-            {locations.map((l) => <option key={l}>{l}</option>)}
-          </select>
+      <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row gap-3 flex-wrap">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input type="text" placeholder="Search events..." value={search} onChange={e => setSearch(e.target.value)}
+            className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-64" />
         </div>
-
-        <div className="space-y-3 mb-8">
-          {events.map((ev, i) => (
-            <div
-              key={i}
-              className={`bg-white rounded-xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden flex ${
-                ev.badge === 'Next Event' ? 'border-yellow-300' : 'border-gray-200'
-              }`}
-            >
-              <div className="bg-black w-20 flex-shrink-0 flex flex-col items-center justify-center py-4 px-2 text-center">
-                <span className="text-yellow-400 font-extrabold text-sm leading-tight block">{ev.dateShort}</span>
-                {ev.year && <span className="text-white/40 text-xs mt-0.5">{ev.year}</span>}
-              </div>
-              <div className="p-4 flex-1 flex flex-wrap items-center gap-3 justify-between">
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${ev.typeClass}`}>{ev.type}</span>
-                    {ev.badge && (
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${ev.badgeClass}`}>{ev.badge}</span>
-                    )}
-                    {ev.mediaPartner && (
-                      <span className="bg-orange-100 text-orange-700 text-xs font-bold px-2 py-0.5 rounded">DroneTv Media Partner</span>
-                    )}
-                  </div>
-                  <h3 className="text-sm font-bold text-gray-900">{ev.title}</h3>
-                  <p className="text-xs text-gray-500 mt-0.5">📍 {ev.location}</p>
-                </div>
-              </div>
-            </div>
+        <div className="flex gap-2 flex-wrap">
+          {categories.map(cat => (
+            <button key={cat} onClick={() => setActiveCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+              {cat}
+            </button>
           ))}
         </div>
+      </div>
 
-        <div className="bg-yellow-400 rounded-xl p-6 flex items-center justify-between gap-4">
-          <div>
-            <h3 className="font-bold text-black text-base mb-1">Submit an Event</h3>
-            <p className="text-black/70 text-sm">Free listing for drone industry events. Expos, webinars, competitions, and meetups welcome.</p>
+      <div className="max-w-6xl mx-auto px-6 pb-12">
+        {loading ? (
+          <div className="text-center py-16 text-gray-400">Loading events...</div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-16 text-gray-400">No events found.</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filtered.map(event => (
+              <div key={event.eventId} onClick={() => navigate(`/event/${event.cleanUrl || event.urlSlug}`)}
+                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+                {(event.previewImage || event.thumbnailUrl) ? (
+                  <img src={event.previewImage || event.thumbnailUrl} alt={event.eventName} className="w-full h-40 object-cover" />
+                ) : (
+                  <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
+                    <span className="text-yellow-400 text-4xl">🗓️</span>
+                  </div>
+                )}
+                <div className="p-4">
+                  <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block capitalize">{event.category || 'Event'}</span>
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{event.eventName}</h3>
+                  {event.shortDescription && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
+                  <div className="space-y-1">
+                    {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
+                    {event.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <Link
-            to="/contact"
-            className="bg-black text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap"
-          >
-            Submit Event →
-          </Link>
-        </div>
+        )}
       </div>
     </div>
   );
