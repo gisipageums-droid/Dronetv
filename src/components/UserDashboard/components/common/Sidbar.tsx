@@ -45,21 +45,21 @@ const navLinks = [
       : []),
   ];
   return (
-    <aside className="flex h-screen rounded-lg shadow-lg overflow-hidden">
+    <aside className="flex h-screen rounded-lg shadow-sm overflow-hidden">
       {/* Sidebar */}
       <section
         className={`${
           isOpen ? "w-74" : "w-20"
-        } bg-amber-50  text-white transition-all duration-300 flex flex-col`}
+        } bg-white border-r border-gray-200 text-gray-900 transition-all duration-300 flex flex-col`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-yellow-400">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
           {isOpen && (
-            <h1 className="text-2xl font-bold text-black">Dashboard</h1>
+            <h1 className="text-lg font-bold text-gray-900">Dashboard</h1>
           )}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`p-2 bg-yellow-200 hover:bg-yellow-300 hover:text-gray-900 rounded-lg transition-colors text-black ${
+            className={`p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700 ${
               !isOpen && "mx-auto"
             } cursor-pointer`}
           >
@@ -68,32 +68,32 @@ const navLinks = [
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 px-3 py-6 space-y-2">
+        <nav className="flex-1 px-3 py-4 space-y-1">
           {navLinks.map(({ icon: Icon, label, href }) => (
             <NavLink
               key={href}
               to={href}
               className={({ isActive }) =>
-                `flex items-center gap-4 p-3 rounded-lg transition-all duration-200 border ${
+                `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 text-sm font-medium ${
                   isActive
-                    ? "bg-yellow-400 text-white font-semibold border-yellow-500"
-                    : "border-yellow-400 text-black hover:bg-yellow-200 hover:text-gray-900"
+                    ? "bg-yellow-400 text-black font-semibold"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`
               }
             >
-              <Icon size={22} className={`${!isOpen && "mx-auto"}`} />
+              <Icon size={20} className={`${!isOpen && "mx-auto"} flex-shrink-0`} />
               {isOpen && <span>{label}</span>}
             </NavLink>
           ))}
         </nav>
 
         {/* Profile Section */}
-        <div className="p-2">
-          <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-yellow-200 hover:text-gray-900 transition-colors cursor-pointer border border-yellow-400">
+        <div className="p-3 border-t border-gray-200">
+          <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
             {/* Profile Info */}
-            <NavLink to={"/user-profile"} className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center shrink-0">
-                <User size={22} className="text-white" />
+            <NavLink to={"/user-profile"} className="flex items-center space-x-2 min-w-0">
+              <div className="w-9 h-9 bg-yellow-400 rounded-full flex items-center justify-center shrink-0">
+                <User size={18} className="text-black" />
               </div>
 
               {isOpen && (
@@ -115,7 +115,7 @@ const navLinks = [
                 className="text-red-400 hover:text-red-500 hover:scale-110 cursor-pointer transition-all"
                 title="Logout"
               >
-                <LogOut />
+                <LogOut size={18} />
               </button>
             )}
           </div>

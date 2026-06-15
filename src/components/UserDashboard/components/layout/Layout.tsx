@@ -16,7 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 w-full overflow-y-auto rounded-lg shadow-lg border border-yellow-200 pb-20 lg:pb-0">
+        <div className="flex-1 w-full overflow-y-auto rounded-lg shadow-sm border border-gray-200 pb-20 lg:pb-0">
           {children}
         </div>
       </main>
