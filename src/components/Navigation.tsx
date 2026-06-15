@@ -114,23 +114,6 @@ const Navigation = () => {
     </Link>
   );
 
-  const subNavMap: Record<string, { index: string; label: string; items: { path: string; label: string }[] }> = {
-    media:         { index: "/media",         label: "Media Hub",     items: mediaItems },
-    events:        { index: "/events",        label: "Events",        items: eventsItems },
-    professionals: { index: "/professionals", label: "Professionals", items: professionalsItems },
-    partnerships:  { index: "/partnerships",  label: "Partnerships",  items: partnershipsItems },
-  };
-
-  const currentSection = (() => {
-    if (location.pathname.startsWith("/media")) return "media";
-    if (eventsItems.some(i => location.pathname === i.path)) return "events";
-    if (professionalsItems.some(i => location.pathname === i.path)) return "professionals";
-    if (location.pathname.startsWith("/partnerships")) return "partnerships";
-    return null;
-  })();
-
-  const subNav = currentSection ? subNavMap[currentSection] : null;
-
   const mediaItems = [
     { path: "/media/news-pulse", label: "News Pulse" },
     { path: "/media/magazine", label: "Magazine" },
@@ -172,6 +155,23 @@ const Navigation = () => {
     { path: "/partnerships/benefits", label: "Partnership Benefits" },
     { path: "/partnerships/become-a-partner", label: "Become a Partner" },
   ];
+
+  const subNavMap: Record<string, { index: string; label: string; items: { path: string; label: string }[] }> = {
+    media:         { index: "/media",         label: "Media Hub",     items: mediaItems },
+    events:        { index: "/events",        label: "Events",        items: eventsItems },
+    professionals: { index: "/professionals", label: "Professionals", items: professionalsItems },
+    partnerships:  { index: "/partnerships",  label: "Partnerships",  items: partnershipsItems },
+  };
+
+  const currentSection = (() => {
+    if (location.pathname.startsWith("/media")) return "media";
+    if (eventsItems.some(i => location.pathname === i.path)) return "events";
+    if (professionalsItems.some(i => location.pathname === i.path)) return "professionals";
+    if (location.pathname.startsWith("/partnerships")) return "partnerships";
+    return null;
+  })();
+
+  const subNav = currentSection ? subNavMap[currentSection] : null;
 
   const plainNavItems = [
     { name: "Home", path: "/" },
