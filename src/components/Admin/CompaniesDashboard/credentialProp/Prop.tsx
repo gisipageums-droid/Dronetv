@@ -693,7 +693,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               </div>
 
               {/* Documents & Links */}
-              <div className="bg-orange-50 p-4 rounded-lg">
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <h4 className="font-semibold text-lg text-gray-800 mb-3">
                   Documents & Links
                 </h4>

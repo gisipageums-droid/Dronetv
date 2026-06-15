@@ -555,7 +555,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
             ).map((sector: string, index: number) => (
               <span
                 key={index}
-                className="px-2 py-1 text-xs sm:text-sm font-medium text-amber-800 bg-amber-100 rounded-full"
+                className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
               >
                 {sector}
               </span>
@@ -567,7 +567,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-3 items-center">
             <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg">
-              <span className="text-xs sm:text-sm font-bold text-amber-600">
+              <span className="text-xs sm:text-sm font-bold text-gray-700">
                 {formatDate(displayDateValue)}
               </span>
               <span className="hidden sm:inline text-xs text-gray-600">
@@ -600,7 +600,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onEdit(company.publishedId, company.templateSelection);
               }}
               aria-label={`Edit ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-amber-700 bg-amber-100 rounded-lg transition-colors hover:bg-amber-200 disabled:opacity-50 disabled:pointer-events-none"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-gray-100 rounded-lg transition-colors hover:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
               aria-disabled={disabled}
             >
