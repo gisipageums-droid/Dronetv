@@ -12,22 +12,32 @@ export default function TechTrendsPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative">
+      <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media Hub</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2">Tech <span className="text-yellow-400">Trends</span></h1>
-            <p className="text-sm text-white/60 max-w-lg">Emerging technologies shaping drone capabilities — BVLOS, AI navigation, swarms, hybrid propulsion, and quantum sensors.</p>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Tech <span className="text-yellow-400">Trends</span></h1>
+            <p className="text-sm text-white/60 leading-relaxed max-w-lg">Emerging technologies shaping drone capabilities — BVLOS, AI navigation, swarms, hybrid propulsion, and quantum sensors.</p>
           </div>
-          <div className="flex-shrink-0">
-            <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length}</span>
-            <span className="text-xs text-white/50 font-semibold uppercase mt-1 block">Trends</span>
+          <div className="flex gap-8 flex-shrink-0">
+            <div>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || '0'}</span>
+              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Trends</span>
+            </div>
+            <div>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">2026</span>
+              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Roadmap</span>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
+        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Emerging</span>
+          Technology Trends
+        </h2>
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading tech trends...</div>
         ) : items.length === 0 ? (
