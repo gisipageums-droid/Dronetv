@@ -707,7 +707,8 @@ const apiService = {
 
       const data = await response.json();
       return data;
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.name === "AbortError") throw error;
       console.error("Error fetching companies:", error);
       throw error;
     }

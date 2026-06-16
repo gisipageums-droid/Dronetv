@@ -1218,11 +1218,12 @@ const EventAdminDashboard: React.FC = () => {
     }
   };
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (signal?: AbortSignal) => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
+        "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin",
+        { signal }
       );
       const data = await response.json();
       const fetchedEvents = data?.cards || [];
@@ -1234,7 +1235,8 @@ const EventAdminDashboard: React.FC = () => {
       });
 
       setRecentEvents(sortedByDate.slice(0, 6));
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.name === "AbortError") return;
       console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
@@ -1338,7 +1340,9 @@ const EventAdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchEvents();
+    const controller = new AbortController();
+    fetchEvents(controller.signal);
+    return () => controller.abort();
   }, []);
 
   // Reset to page 1 when filters change

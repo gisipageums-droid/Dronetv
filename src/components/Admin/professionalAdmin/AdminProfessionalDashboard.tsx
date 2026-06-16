@@ -856,7 +856,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
 // API Service for Professionals
 const apiService = {
-  async fetchAllProfessionals(): Promise<ApiResponse> {
+  async fetchAllProfessionals(signal?: AbortSignal): Promise<ApiResponse> {
     try {
       const response = await fetch(
         "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=admin",
@@ -866,6 +866,7 @@ const apiService = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
           },
+          signal,
         }
       );
 
@@ -875,7 +876,8 @@ const apiService = {
 
       const data = await response.json();
       return data;
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.name === "AbortError") throw error;
       console.error("Error fetching professionals:", error);
       throw error;
     }
@@ -1192,17 +1194,18 @@ const AdminProfessionalDashboard: React.FC = () => {
   };
 
   // Fetch all professionals from API
-  const fetchProfessionals = async (): Promise<void> => {
+  const fetchProfessionals = async (signal?: AbortSignal): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
 
-      const data = await apiService.fetchAllProfessionals();
+      const data = await apiService.fetchAllProfessionals(signal);
 
       setProfessionals(data.cards || []);
       setTotalCount(data.totalCount || 0);
       setHasMore(data.hasTemplates || false);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
       console.error("Error in fetchProfessionals:", err);
       const errorMessage =
         err instanceof Error ? err.message : "Failed to fetch professionals";
@@ -1214,7 +1217,9 @@ const AdminProfessionalDashboard: React.FC = () => {
 
   // Load data on component mount
   useEffect(() => {
-    fetchProfessionals();
+    const controller = new AbortController();
+    fetchProfessionals(controller.signal);
+    return () => controller.abort();
   }, []);
 
   // Reset to page 1 when filters change

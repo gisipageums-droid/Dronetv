@@ -61,19 +61,24 @@ export default function AdminMediaDashboard() {
   const [tagInput, setTagInput] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const loadItems = async () => {
+  const loadItems = async (signal?: AbortSignal) => {
     setLoading(true);
     try {
-      const data = await fetchAdminContent();
+      const data = await fetchAdminContent(signal);
       setItems(data);
-    } catch {
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
       toast.error('Failed to load content');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { loadItems(); }, []);
+  useEffect(() => {
+    const controller = new AbortController();
+    loadItems(controller.signal);
+    return () => controller.abort();
+  }, []);
 
   const filtered = items.filter(item => {
     const matchType = activeType === 'all' || item.contentType === activeType;

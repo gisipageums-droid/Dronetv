@@ -39,9 +39,9 @@ export async function fetchContent(type: ContentType): Promise<MediaItem[]> {
   return data.items || [];
 }
 
-export async function fetchAdminContent(type?: ContentType): Promise<MediaItem[]> {
+export async function fetchAdminContent(signal?: AbortSignal, type?: ContentType): Promise<MediaItem[]> {
   const url = type ? `${BASE}/admin?type=${type}` : `${BASE}/admin`;
-  const res = await fetch(url);
+  const res = await fetch(url, { signal });
   const data = await res.json();
   return data.items || [];
 }
