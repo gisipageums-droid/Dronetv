@@ -975,9 +975,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    // default sort on mount
     setSortBy("Sort by Date");
-    setStatusFilter("all");
     const controller = new AbortController();
     fetchCompanies(controller.signal);
     return () => controller.abort();
