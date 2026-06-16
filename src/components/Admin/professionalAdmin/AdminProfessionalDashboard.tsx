@@ -874,8 +874,6 @@ const apiService = {
       }
 
       const data = await response.json();
-      console.log("Fetched professionals data:", data);
-
       return data;
     } catch (error) {
       console.error("Error fetching professionals:", error);
@@ -894,8 +892,6 @@ const apiService = {
       }
 
       const data = await response.json();
-      console.log(data);
-
       return data;
     } catch (error) {
       console.error("Error fetching professional details:", error);
@@ -905,8 +901,6 @@ const apiService = {
 
   async approveProfessional(publishedId: string, userId: string): Promise<any> {
     try {
-      console.log(publishedId, userId);
-
       const response = await fetch(
         `https://ei94o66irc.execute-api.ap-south-1.amazonaws.com/dev/professional-tem-validation`,
         {
@@ -974,8 +968,6 @@ const apiService = {
       }
 
       const data = await response.json();
-      console.log(data);
-
       return data;
     } catch (error) {
       console.error("Error deleting professional:", error);
