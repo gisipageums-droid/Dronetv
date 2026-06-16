@@ -291,7 +291,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   news, and insights from the drone technology world.
                 </p>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {socialLinks.map((social, index) => {
                     const IconComponent = social.icon;
                     return (

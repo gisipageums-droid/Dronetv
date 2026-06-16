@@ -76,10 +76,10 @@ export default function EventCalendarPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row gap-3 flex-wrap">
-        <div className="relative">
+        <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input type="text" placeholder="Search events..." value={search} onChange={e => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-64" />
+            className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-full" />
         </div>
         <div className="flex gap-2 flex-wrap">
           {categories.map(cat => (

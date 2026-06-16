@@ -41,7 +41,7 @@ export default function PressReleasesPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-5">
-        <div className="relative w-64">
+        <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input type="text" placeholder="Search press releases..." value={search} onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400" />
