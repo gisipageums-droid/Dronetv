@@ -110,6 +110,7 @@ import RechargePlans from "./components/UserDashboard/pages/Plans";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
+import AdminLayout from "./components/Admin/AdminLayout";
 import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
 import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
 
@@ -177,10 +178,9 @@ const AppContent = () => {
     location.pathname.startsWith("/professional") ||
     location.pathname.startsWith("/template");
   const hideNavigation =
+    location.pathname.startsWith("/admin/") ||
     location.pathname.startsWith("/user/companies/edit") ||
-    location.pathname.startsWith("/admin/companies/edit") ||
     location.pathname.startsWith("/user/professionals/edit") ||
-    location.pathname.startsWith("/admin/professionals/edit") ||
     location.pathname.startsWith("/professional/edit") ||
     location.pathname.startsWith("/professional/form") ||
     location.pathname.startsWith("/edit/event") ||
@@ -283,11 +283,15 @@ const AppContent = () => {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/plans" element={
             <AdminProtectedRoute>
-              <AdminTokenPlan />
+              <AdminLayout>
+                <AdminTokenPlan />
+              </AdminLayout>
             </AdminProtectedRoute>} />
           <Route path="/admin/company/dashboard" element={
             <AdminProtectedRoute>
-              <AdminDashboard />
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
             </AdminProtectedRoute>} />
           <Route
             path="/admin/companies/preview/1/:publishedId/:userId"
@@ -340,7 +344,7 @@ const AppContent = () => {
             element={<EditTemp_1 />}
           />
           <Route path="/user/professional" element={<UserProfessional />} />
-          <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminProfessional /></AdminProtectedRoute>} />
+          <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
             path="/user/professionals/preview/2/:professionalId/:userId"
             element={<FinaleProfessionalTemp2 />}
@@ -363,7 +367,9 @@ const AppContent = () => {
 
           <Route path="/admin/media/dashboard" element={
             <AdminProtectedRoute>
-              <AdminMediaDashboard />
+              <AdminLayout>
+                <AdminMediaDashboard />
+              </AdminLayout>
             </AdminProtectedRoute>} />
 
           {/* event routes */}
@@ -371,7 +377,9 @@ const AppContent = () => {
             path="/admin/event/dashboard"
             element={
               <AdminProtectedRoute>
-                <EventAdminDashboard />
+                <AdminLayout>
+                  <EventAdminDashboard />
+                </AdminLayout>
               </AdminProtectedRoute>}
           />
           <Route path="/user/event" element={<UserEvent />} />

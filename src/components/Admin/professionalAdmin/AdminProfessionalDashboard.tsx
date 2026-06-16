@@ -754,27 +754,19 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
   if (loading)
     return (
-      <div className="flex-1 p-4 md:p-6 bg-gray-50">
+      <div className="flex-1 bg-[#F4F5F7] py-8">
         <LoadingSpinner />
       </div>
     );
   if (error)
     return (
-      <div className="flex-1 p-4 md:p-6 bg-gray-50">
+      <div className="flex-1 bg-[#F4F5F7] py-8">
         <ErrorMessage error={error} onRetry={onRetry} />
       </div>
     );
 
   return (
-    <div className="flex-1 p-4 md:p-6 bg-gray-50">
-      {/* Mobile sidebar toggle */}
-      <button
-        onClick={onOpenMobileSidebar}
-        className="p-3 rounded-full border border-gray-200 bg-yellow-400 text-black relative left-5 hover:bg-yellow-300 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
-        aria-label="Open filters"
-      >
-        <Menu className="w-6 h-6" />
-      </button>
+    <div className="flex-1 bg-[#F4F5F7]">
 
       {/* Recent Professionals Section - Updated condition to hide when status filter is not "all" */}
       {!searchTerm && statusFilter === "all" && (
@@ -1383,8 +1375,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   const modalConfig = getModalConfig();
 
   return (
-    <div className="w-full min-h-screen h-full bg-gray-50 pt-16">
-      <Header />
+    <div className="w-full min-h-screen bg-[#F4F5F7]">
 
       {/* Universal Confirmation Modal */}
       <ConfirmationModal
@@ -1415,47 +1406,72 @@ const AdminProfessionalDashboard: React.FC = () => {
         }
       />
 
-      {/* Main Layout Container */}
-      <div className="flex">
-        {/* Left Sidebar */}
-        <Sidebar
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          isMobileSidebarOpen={isMobileSidebarOpen}
-          onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-        />
-
-        {/* Main Content Area */}
-        <MainContent
-          professionals={paginatedProfessionals}
-          recentProfessionals={recentProfessionals}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          loading={loading}
-          error={error}
-          onRetry={fetchProfessionals}
-          totalCount={sortedProfessionals.length}
-          hasMore={hasMore}
-          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
-          onCredentials={handleCredentials}
-          onPreview={handlePreview}
-          onApprove={handleApprove}
-          onReject={handleReject}
-          searchTerm={searchTerm}
-          sortBy={sortBy}
-          statusFilter={statusFilter}
-          onClearFilters={handleClearFilters}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
-          isMutating={isMutating}
-          onNextPage={handleNextPage}
-          onPrevPage={handlePrevPage}
-        />
+      {/* Page title */}
+      <div className="mb-5">
+        <h1 className="text-xl font-extrabold text-gray-900">Professional Management</h1>
+        <p className="text-sm text-gray-500 mt-0.5">Review and manage all professional listings, credentials, and approvals.</p>
       </div>
+
+      {/* Horizontal toolbar */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
+          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <input
+            type="text"
+            placeholder="Search professionals…"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
+        >
+          <option value="all">All Professionals</option>
+          <option value="under_review">Under Review</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select
+          value={sortBy}
+          onChange={e => setSortBy(e.target.value)}
+          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
+        >
+          <option value="Sort by Name">Sort by Name</option>
+          <option value="Sort by Location">Sort by Location</option>
+          <option value="Sort by Date">Sort by Date</option>
+          <option value="Sort by Category">Sort by Category</option>
+        </select>
+      </div>
+
+      {/* Main Content */}
+      <MainContent
+        professionals={paginatedProfessionals}
+        recentProfessionals={recentProfessionals}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        loading={loading}
+        error={error}
+        onRetry={fetchProfessionals}
+        totalCount={sortedProfessionals.length}
+        hasMore={hasMore}
+        onOpenMobileSidebar={() => {}}
+        onCredentials={handleCredentials}
+        onPreview={handlePreview}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        searchTerm={searchTerm}
+        sortBy={sortBy}
+        statusFilter={statusFilter}
+        onClearFilters={handleClearFilters}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        isMutating={isMutating}
+        onNextPage={handleNextPage}
+        onPrevPage={handlePrevPage}
+      />
     </div>
   );
 };

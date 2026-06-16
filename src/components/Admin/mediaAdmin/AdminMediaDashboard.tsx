@@ -164,21 +164,18 @@ export default function AdminMediaDashboard() {
   const sections = Array.from(new Set(CONTENT_TYPES.map(t => t.section)));
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
-      <div className="bg-black text-white px-6 py-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">Admin</p>
-            <h1 className="text-2xl font-extrabold text-white">Media Content Manager</h1>
-            <p className="text-xs text-white/50 mt-1">{items.length} total items across all content types</p>
-          </div>
-          <button onClick={openCreate} className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
-            <Plus className="w-4 h-4" /> Add Content
-          </button>
+    <div className="min-h-screen bg-[#F4F5F7]">
+      <div className="mb-5 flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-xl font-extrabold text-gray-900">Media Content Manager</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{items.length} total items across all content types</p>
         </div>
+        <button onClick={openCreate} className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+          <Plus className="w-4 h-4" /> Add Content
+        </button>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="py-1">
         <div className="flex flex-wrap gap-2 mb-4">
           <button onClick={() => setActiveType('all')}
             className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === 'all' ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
