@@ -307,7 +307,6 @@ export default function Step1CompanyCategory({
 
           // Also handle fieldData structure for custom fields
           if (apiData.fieldData) {
-            console.log('🔍 FieldData found for custom field:', apiData.fieldData);
             // This is a custom field, add it to custom fields
             const customField = {
               id: apiData.fieldData.id || Date.now().toString(),
@@ -410,7 +409,6 @@ export default function Step1CompanyCategory({
               if (hasValidLabels) {
                 // Update company labels with processed API data
                 setEditingCompanyLabels(processedLabels);
-                console.log('✅ Company Labels loaded from API:', processedLabels);
 
                 // Also update form data with existing values if available
                 const formDataUpdate: Record<string, any> = {};
@@ -425,16 +423,12 @@ export default function Step1CompanyCategory({
                   updateFormData(formDataUpdate);
                 }
               } else {
-                console.log('⚠️ Company labels are empty, will use details API data');
               }
             } else {
-              console.log('⚠️ No company labels found in API response');
-              console.log('🔍 Available keys in item.data:', item.data ? Object.keys(item.data) : 'No data');
             }
 
             // Handle fieldData structure for custom fields
             if (fieldData && fieldData.id) {
-              console.log('🔍 FieldData found for custom field:', fieldData);
               // This is a custom field, add it to custom fields
               const customField = {
                 id: fieldData.id || Date.now().toString(),
@@ -514,22 +508,17 @@ export default function Step1CompanyCategory({
             // Update labels and placeholders if found
             if (labels) {
               setEditingCompanyLabels(labels);
-              console.log('✅ Labels set:', labels);
             }
 
             if (placeholders) {
               setEditingCompanyPlaceholders(placeholders);
-              console.log('✅ Placeholders set:', placeholders);
             }
 
             // Update form data if found
             if (Object.keys(formDataUpdate).length > 0) {
               updateFormData(formDataUpdate);
-              console.log('✅ Form data updated:', formDataUpdate);
-              console.log('🔍 Form data update completed');
             }
 
-            console.log('✅ Form data loaded from details API on refresh');
           } else {
             // console.log('⚠️ No item found in details API response');
           }
@@ -571,7 +560,6 @@ export default function Step1CompanyCategory({
     (async () => {
       try {
         await refreshDataFromAPI(); // re-use existing function that sets editingCompanyLabels/placeholders and updateFormData
-        console.log('✅ Initial refreshDataFromAPI completed on mount');
       } catch (e) {
         console.warn('Initial refresh failed', e);
       }
@@ -754,7 +742,6 @@ export default function Step1CompanyCategory({
           setNewFieldRequired(false);
           setShowAddFieldModal(false);
 
-          console.log('✅ Custom field added successfully');
         } else {
           console.error('Failed to save field:', response.statusText);
           alert('Failed to save field. Please try again.');
@@ -1133,11 +1120,9 @@ export default function Step1CompanyCategory({
 
       if (response.ok) {
         const data = await response.json();
-        console.log('🔍 API Response for edit modal:', data);
 
         if (data.success && data.item && data.item.data) {
           const apiData = data.item.data;
-          console.log('🔍 API Data structure:', apiData);
 
           // Set company data from API using companyInfo structure
           if (apiData.companyInfo) {
@@ -1191,7 +1176,6 @@ export default function Step1CompanyCategory({
             updateFormData(valuesUpdate);
           }
         } else {
-          console.log('No API data found, using default values');
         }
       } else {
         console.error('Failed to fetch company details:', response.statusText);

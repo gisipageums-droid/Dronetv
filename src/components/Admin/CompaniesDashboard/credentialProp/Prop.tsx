@@ -72,7 +72,6 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
 
   useEffect(() => {
     if (data) {
-      console.log("🔍 Modal Data:", data.formData.rawData);
     }
   }, [data]);
 
