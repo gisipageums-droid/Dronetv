@@ -17,7 +17,7 @@ import {
   Calendar,
 } from "lucide-react";
 import React, { useEffect, useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProfessionalCredentialsModal from "./ProfessionalCredentialsModal";
 import { motion, AnimatePresence } from "motion/react";
@@ -996,7 +996,8 @@ const AdminProfessionalDashboard: React.FC = () => {
   const [isMutating, setIsMutating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("all"); // Changed from "All Statuses"
+  const [searchParams] = useSearchParams();
+  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
   const [sortBy, setSortBy] = useState<string>("Sort by Name");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(12);

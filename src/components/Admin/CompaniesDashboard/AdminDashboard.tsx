@@ -17,7 +17,7 @@ import {
   Edit,
   Calendar,
 } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
 import { motion, AnimatePresence } from "motion/react";
@@ -895,7 +895,8 @@ const AdminDashboard: React.FC = () => {
   // UI state - Updated statusFilter default value
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
-  const [statusFilter, setStatusFilter] = useState<string>("all"); // Changed from "All Statuses"
+  const [searchParams] = useSearchParams();
+  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(12);

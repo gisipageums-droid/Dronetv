@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Dashboard } from "./components/Dashboard";
 import { TokenPriceSettings } from "./components/TokenPriceSettings";
 import { PlanManager } from "./components/PlanManager";
@@ -23,7 +24,8 @@ export interface TokenPlan {
 }
 
 function App() {
-  const [activePage, setActivePage] = useState<string>("dashboard");
+  const [searchParams] = useSearchParams();
+  const [activePage, setActivePage] = useState<string>(searchParams.get("tab") ?? "dashboard");
   const [tokenPriceINR, setTokenPriceINR] = useState<number>(0.5);
   const [plans, setPlans] = useState<TokenPlan[]>([]);
 

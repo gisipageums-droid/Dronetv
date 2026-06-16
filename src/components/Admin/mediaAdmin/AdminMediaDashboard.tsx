@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
@@ -47,9 +48,12 @@ const EMPTY_FORM = {
 };
 
 export default function AdminMediaDashboard() {
+  const [searchParams] = useSearchParams();
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeType, setActiveType] = useState<ContentType | 'all'>('all');
+  const [activeType, setActiveType] = useState<ContentType | 'all'>(
+    (searchParams.get('type') as ContentType) ?? 'all'
+  );
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editItem, setEditItem] = useState<MediaItem | null>(null);
