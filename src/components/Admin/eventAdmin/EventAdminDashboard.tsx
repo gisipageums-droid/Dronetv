@@ -1463,8 +1463,7 @@ const EventAdminDashboard: React.FC = () => {
   const modalConfig = getModalConfig();
 
   return (
-    <div className="w-full min-h-screen h-full bg-gray-50 pt-16">
-      <Header />
+    <div className="w-full min-h-screen bg-[#F4F5F7]">
 
       {/* Universal Confirmation Modal */}
       <ConfirmationModal
@@ -1486,29 +1485,46 @@ const EventAdminDashboard: React.FC = () => {
         data={credentialsModal.data}
       />
 
-      {/* Mobile sidebar toggle */}
-      <button
-        onClick={() => setIsMobileSidebarOpen(true)}
-        className="p-3 rounded-full border border-gray-200 bg-yellow-400 text-black relative left-5 hover:bg-yellow-300 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
-        aria-label="Open filters"
-      >
-        <Menu className="w-6 h-6" />
-      </button>
+      {/* Page title */}
+      <div className="mb-5">
+        <h1 className="text-xl font-extrabold text-gray-900">Event Management</h1>
+        <p className="text-sm text-gray-500 mt-0.5">Review and manage all event listings, credentials, and approvals.</p>
+      </div>
 
-      {/* Main layout */}
-      <div className="flex">
-        <Sidebar
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          isMobileSidebarOpen={isMobileSidebarOpen}
-          onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
-          statusFilter={statusFilter}
-          onStatusFilterChange={setStatusFilter}
-        />
+      {/* Horizontal toolbar */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
+          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <input
+            type="text"
+            placeholder="Search events…"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
+        >
+          <option value="all">All Events</option>
+          <option value="under_review">Under Review</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select
+          value={sortBy}
+          onChange={e => setSortBy(e.target.value)}
+          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
+        >
+          {SORT_OPTIONS.map(opt => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+      </div>
 
-        <div className="flex-1 p-4 md:p-6 bg-gray-50">
+      <div className="bg-[#F4F5F7]">
           {loading ? (
             <LoadingSpinner />
           ) : (
@@ -1594,7 +1610,6 @@ const EventAdminDashboard: React.FC = () => {
             </>
           )}
         </div>
-      </div>
     </div>
   );
 };
