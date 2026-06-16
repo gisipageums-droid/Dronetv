@@ -345,15 +345,12 @@ const Step5ProductsServices: React.FC<StepProps> = ({
         servicesLabel: payload.servicesLabel ?? formData.servicesLabel ?? '',
         servicesPlaceholder: payload.servicesPlaceholder ?? formData.servicesPlaceholder ?? '',
       };
-      console.log('[services] PUT /update-section →', body);
       const res = await fetch(`${SERVICES_API_BASE}/update-section`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
         body: JSON.stringify(body),
       });
-      console.log('[services] PUT /update-section status:', res.status);
-      try { const j = await res.clone().json(); console.log('[services] response json:', j); } catch { }
     } catch { } finally {
       setIsSavingServicesSection(false);
     }
@@ -371,15 +368,12 @@ const Step5ProductsServices: React.FC<StepProps> = ({
         productsLabel: payload.productsLabel ?? formData.productsLabel ?? '',
         productsPlaceholder: payload.productsPlaceholder ?? formData.productsPlaceholder ?? '',
       };
-      console.log('[products] PUT /update-section →', body);
       const res = await fetch(`${PRODUCTS_API_BASE}/update-section`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
         body: JSON.stringify(body),
       });
-      console.log('[products] PUT /update-section status:', res.status);
-      try { const j = await res.clone().json(); console.log('[products] response json:', j); } catch { }
     } catch { } finally {
       setIsSavingProductsSection(false);
     }
@@ -467,13 +461,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
           descriptionPlaceholder: serviceDescPlaceholderDraft ?? '',
         },
       };
-      console.log('[services] PUT update-item →', payload);
       const res = await fetch(`${SERVICES_API_BASE}/update-item`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log('[services] update-item status:', res.status);
     } catch (e) {
       console.warn('Failed to call update-item API', e);
     } finally {
@@ -557,13 +549,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
     const newItem = { icon: 'service', title: '', placeholder: '', descriptionLabel: '', descriptionPlaceholder: '' };
     try {
       const payload = { id: 'services', item: newItem } as const;
-      console.log('[services] PUT add-item →', payload);
       const res = await fetch(`${SERVICES_API_BASE}/add-item`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log('[services] add-item status:', res.status);
     } catch (e) {
       console.warn('Failed to call add-item API', e);
     } finally {
@@ -585,13 +575,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
   const deleteServiceItem = async (index: number) => {
     try {
       const payload = { id: 'services', index } as const;
-      console.log('[services] DELETE item →', payload);
       const res = await fetch(`${SERVICES_API_BASE}/delete-item`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log('[services] delete-item status:', res.status);
     } catch (e) {
       console.warn('Failed to call delete-item API', e);
     } finally {
@@ -617,13 +605,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
           descriptionLabel: 'Product Description',
         }
       } as const;
-      console.log('[products] add-item →', payload);
       const res = await fetch(`${PRODUCTS_API_BASE}/add-item`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log('[products] add-item status:', res.status);
     } catch (e) {
       console.warn('Failed to call products add-item API', e);
     } finally {
@@ -633,13 +619,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
   const removeProduct = async (index: number) => {
     try {
       const payload = { id: 'products', index } as const;
-      console.log('[products] DELETE item →', payload);
       const res = await fetch(`${PRODUCTS_API_BASE}/delete-item`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log('[products] delete-item status:', res.status);
     } catch (e) {
       console.warn('Failed to call products delete-item API', e);
     } finally {
@@ -696,7 +680,6 @@ const Step5ProductsServices: React.FC<StepProps> = ({
             },
           ],
         } as const;
-        console.log('[custom] POST /custom/add →', payload);
         await fetch('https://rlexs1v7m8.execute-api.ap-south-1.amazonaws.com/Products_and_Services/custom/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -732,7 +715,6 @@ const Step5ProductsServices: React.FC<StepProps> = ({
     const apiId = id.startsWith('custom-') ? id : (slug ? `custom-${slug}` : id);
 
     try {
-      console.log('[custom] DELETE /custom/delete/id →', apiId);
       await fetch(`${CUSTOM_API_BASE}/delete/${encodeURIComponent(apiId)}`, {
         method: 'DELETE',
       });
@@ -839,13 +821,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
           descriptionPlaceholder: productDescPlaceholderDraft ?? '',
         },
       };
-      console.log('[products] PUT update-item →', payload);
       const res = await fetch(`${PRODUCTS_API_BASE}/update-item`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log('[products] update-item status:', res.status);
     } catch (e) {
       console.warn('Failed to call products update-item API', e);
     } finally {
@@ -865,14 +845,12 @@ const Step5ProductsServices: React.FC<StepProps> = ({
         customLabel: (customSectionLabelDraft || '').trim(),
         customPlaceholder: (customSectionPlaceholderDraft || '').trim(),
       };
-      console.log('[custom] PUT /update-section →', payload);
       const res = await fetch(`${CUSTOM_API_BASE}/update-section`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
         body: JSON.stringify(payload),
       });
-      console.log('[custom] update-section status:', res.status);
       if (!res.ok) {
         const text = await res.text().catch(() => '');
         throw new Error(text || `Update failed (${res.status})`);
@@ -905,13 +883,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
           descriptionLabel: itemDescLabelDraft ?? '',
         },
       };
-      console.log('[custom] PUT update-item →', payload);
       const res = await fetch(`${CUSTOM_API_BASE}/update-item`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log('[custom] update-item status:', res.status);
     } catch (e) {
       console.warn('Failed to call custom update-item API', e);
     } finally {

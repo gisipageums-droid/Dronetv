@@ -94,7 +94,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Brand images API response:', data);
 
       if (data.items && Array.isArray(data.items)) {
         // Update working fields with API data
@@ -147,7 +146,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Documents API response:', data);
 
       if (data.items && Array.isArray(data.items)) {
         // Update working fields with API data
@@ -204,7 +202,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Document update response:', data);
 
       // Refresh the data after successful update
       await fetchDocuments();
@@ -235,7 +232,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Document delete response:', data);
 
       // Refresh the data after successful delete
       await fetchDocuments();
@@ -271,7 +267,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Document add response:', data);
 
       // Refresh the data after successful add
       await fetchDocuments();
@@ -306,7 +301,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Brand image update response:', data);
 
       // Refresh the data after successful update
       await fetchBrandImages();
@@ -341,7 +335,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Brand image add response:', data);
 
       // Refresh the data after successful add
       await fetchBrandImages();
@@ -372,7 +365,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Brand image delete response:', data);
 
       // Refresh the data after successful delete
       await fetchBrandImages();

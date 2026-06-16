@@ -2223,7 +2223,6 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
             onLiveChange={handleLiveGeographyChange}
             onCreate={async (name) => {
               try {
-                console.log('[Geography] add request', { name });
                 const res = await fetch(
                   'https://decjfhu8qk.execute-api.ap-south-1.amazonaws.com/geography-of-operations/add',
                   {
@@ -2238,7 +2237,6 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                   throw new Error(txt || 'Add failed');
                 }
                 const json = await res.json().catch(() => ({} as any));
-                console.log('[Geography] add success', json);
                 if (Array.isArray(json?.data)) {
                   setGeographyOptions(json.data);
                 }
@@ -2250,7 +2248,6 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
             onUpdateBackend={async (oldOption, newOption) => {
               try {
                 // debug: verify call and payload
-                console.log('[Geography] update request', { oldOption, newOption });
                 const res = await fetch(
                   'https://decjfhu8qk.execute-api.ap-south-1.amazonaws.com/geography-of-operations/update/Geography_of_Operations',
                   {
@@ -2265,7 +2262,6 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                   throw new Error(txt || 'Update failed');
                 }
                 const json = await res.json().catch(() => ({} as any));
-                console.log('[Geography] update success', json);
               } catch (e) {
                 console.error('Geography update failed', e);
                 alert(`Update failed: ${e instanceof Error ? e.message : String(e)}`);
@@ -2273,7 +2269,6 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
             }}
             onDeleteBackend={async (name) => {
               try {
-                console.log('[Geography] remove request', { removeOption: name });
                 const res = await fetch(
                   'https://decjfhu8qk.execute-api.ap-south-1.amazonaws.com/geography-of-operations/update/Geography_of_Operations',
                   {
@@ -2288,7 +2283,6 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                   throw new Error(txt || 'Remove failed');
                 }
                 const json = await res.json().catch(() => ({} as any));
-                console.log('[Geography] remove success', json);
               } catch (e) {
                 console.error('Geography remove failed', e);
                 alert(`Delete failed: ${e instanceof Error ? e.message : String(e)}`);
