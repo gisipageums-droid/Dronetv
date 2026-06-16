@@ -111,8 +111,8 @@ export default function PortfolioPage() {
                     <span key={t} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{t}</span>
                   ))}
                 </div>
-                <Link to="/professionals/community" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
-                  View Profile →
+                <Link to="/professionals/pilot-directory" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
+                  Browse Directory →
                 </Link>
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function PortfolioPage() {
             <p className="text-black/70 text-sm">DGCA-certified pilots and professional drone operators can submit their work for portfolio listing.</p>
           </div>
           <Link
-            to="/professionals/community"
+            to="/professionals/pilot-directory"
             className="bg-black text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap"
           >
             Join & List Work →
