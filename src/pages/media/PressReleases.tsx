@@ -8,7 +8,9 @@ export default function PressReleasesPage() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    fetchContent('press-release').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('press-release', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const filtered = !search ? items : items.filter(i =>

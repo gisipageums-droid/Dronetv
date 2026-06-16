@@ -35,23 +35,27 @@ export function TransactionHistory() {
   const [statusFilter, setStatusFilter] = useState("ALL");
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchTransactions = async () => {
       try {
         const response = await fetch(
-          "https://vgrrxo3wu9.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/Transaction-History/All-users-data"
+          "https://vgrrxo3wu9.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/Transaction-History/All-users-data",
+          { signal: controller.signal }
         );
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data: TransactionResponse = await response.json();
         if (data.success) {
           setTransactions(data.transactions);
         }
       } catch (error) {
-        console.error("Failed to fetch transactions", error);
+        if ((error as Error)?.name === "AbortError") return;
       } finally {
         setLoading(false);
       }
     };
 
     fetchTransactions();
+    return () => controller.abort();
   }, []);
 
   const getStatusColor = (status: string) => {
@@ -101,7 +105,9 @@ export function TransactionHistory() {
     const a = document.createElement("a");
     a.href = url;
     a.download = `transactions_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 

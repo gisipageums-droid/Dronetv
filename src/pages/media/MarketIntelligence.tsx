@@ -8,7 +8,9 @@ export default function MarketIntelligencePage() {
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
-    fetchContent('market-intelligence').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('market-intelligence', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const categories = ['All', ...Array.from(new Set(items.map(i => i.category || 'General').filter(Boolean)))];

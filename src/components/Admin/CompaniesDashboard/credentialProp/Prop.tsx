@@ -68,12 +68,9 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  if (!isOpen) return null;
+  useEffect(() => {}, [data]);
 
-  useEffect(() => {
-    if (data) {
-    }
-  }, [data]);
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999999] p-4">

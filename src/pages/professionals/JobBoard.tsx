@@ -9,7 +9,9 @@ export default function JobBoardPage() {
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
-    fetchContent('job').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('job', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const categories = ['All', ...Array.from(new Set(items.map(i => i.category || 'General').filter(Boolean)))];

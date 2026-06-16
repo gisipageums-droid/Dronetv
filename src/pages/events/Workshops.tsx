@@ -39,8 +39,9 @@ export default function WorkshopsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(EVENTS_API)
-      .then(r => r.json())
+    const controller = new AbortController();
+    fetch(EVENTS_API, { signal: controller.signal })
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(data => {
         const all: RawEvent[] = Array.isArray(data.cards) ? data.cards : [];
         const filtered = all.filter(e => {
@@ -49,8 +50,9 @@ export default function WorkshopsPage() {
         });
         setEvents(filtered.length > 0 ? filtered : all);
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const filtered = events.filter(e =>

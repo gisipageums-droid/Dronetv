@@ -7,7 +7,9 @@ export default function MeetupsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchContent('meetup').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('meetup', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   return (

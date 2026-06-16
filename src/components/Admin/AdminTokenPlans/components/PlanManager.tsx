@@ -38,7 +38,6 @@ export function PlanManager({ type, plans, addPlan, updatePlan, deletePlan, toke
       }
       handleClose();
     } catch (error) {
-      console.error("Failed to save plan", error);
     } finally {
       setSaving(false);
     }

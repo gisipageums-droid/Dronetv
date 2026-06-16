@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { DollarSign, Save, Info } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Save, Info } from 'lucide-react';
 
 interface TokenPriceSettingsProps {
   tokenPriceINR: number;
@@ -11,6 +11,10 @@ export function TokenPriceSettings({ tokenPriceINR, setTokenPriceINR }: TokenPri
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setTempPrice(tokenPriceINR.toString());
+  }, [tokenPriceINR]);
+
   const handleSave = async () => {
     const price = parseFloat(tempPrice);
     if (!isNaN(price) && price > 0) {
@@ -20,7 +24,6 @@ export function TokenPriceSettings({ tokenPriceINR, setTokenPriceINR }: TokenPri
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
       } catch (error) {
-        console.error("Failed to save price", error);
       } finally {
         setLoading(false);
       }

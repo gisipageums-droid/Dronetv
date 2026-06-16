@@ -122,9 +122,7 @@ const AdminDashboard: React.FC = () => {
       .then((res) => {
         setProfessionalCount(res.data.count);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }, [userDetails.email]);
 
   const getEventCount = useCallback(() => {
@@ -135,9 +133,7 @@ const AdminDashboard: React.FC = () => {
       .then((res) => {
         setEventCount(res.data.count);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }, [userDetails.email]);
 
   useEffect(() => {
@@ -167,7 +163,6 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
-      console.error("Error fetching leads:", err);
     } finally {
       setLoading(false);
     }
@@ -196,7 +191,6 @@ const AdminDashboard: React.FC = () => {
       setProfessionalError(
         err instanceof Error ? err.message : "An error occurred"
       );
-      console.error("Error fetching leads:", err);
     } finally {
       setProfessionalLoading(false);
     }
@@ -223,7 +217,6 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (err) {
       setEventError(err instanceof Error ? err.message : "An error occurred");
-      console.error("Error fetching leads:", err);
     } finally {
       setEventLoading(false);
     }

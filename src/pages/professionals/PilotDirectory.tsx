@@ -1,24 +1,50 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Search, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { fetchContent, MediaItem } from '../../lib/mediaApi';
+
+interface Professional {
+  professionalId: string;
+  professionalName: string;
+  fullName: string;
+  professionalDescription: string;
+  location: string;
+  categories: string[];
+  previewImage: string;
+  isApproved: boolean;
+  isVisible: boolean;
+  cleanUrl: string;
+}
+
+const PROFESSIONALS_API = 'https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=main';
 
 export default function PilotDirectoryPage() {
-  const [items, setItems] = useState<MediaItem[]>([]);
+  const [items, setItems] = useState<Professional[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchContent('certification').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetch(PROFESSIONALS_API, { signal: controller.signal })
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then(data => {
+        const cards: Professional[] = Array.isArray(data.cards) ? data.cards : [];
+        setItems(cards.filter(p => p.isApproved && p.isVisible));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
-  const categories = ['All', ...Array.from(new Set(items.map(i => i.category || 'General').filter(Boolean)))];
+  const allCategories = Array.from(new Set(items.flatMap(i => i.categories || []).filter(Boolean)));
+  const categories = ['All', ...allCategories];
 
   const filtered = items.filter(i => {
-    const matchCat = activeCategory === 'All' || (i.category || 'General') === activeCategory;
-    const matchSearch = !search || i.title.toLowerCase().includes(search.toLowerCase()) || (i.location || '').toLowerCase().includes(search.toLowerCase());
+    const matchCat = activeCategory === 'All' || (i.categories || []).includes(activeCategory);
+    const matchSearch = !search ||
+      (i.professionalName || i.fullName || '').toLowerCase().includes(search.toLowerCase()) ||
+      (i.location || '').toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -51,14 +77,16 @@ export default function PilotDirectoryPage() {
           <input type="text" placeholder="Search pilots..." value={search} onChange={e => setSearch(e.target.value)}
             className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-full" />
         </div>
-        <div className="flex gap-2 flex-wrap">
-          {categories.map(cat => (
-            <button key={cat} onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
-              {cat}
-            </button>
-          ))}
-        </div>
+        {categories.length > 1 && (
+          <div className="flex gap-2 flex-wrap">
+            {categories.map(cat => (
+              <button key={cat} onClick={() => setActiveCategory(cat)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="max-w-6xl mx-auto px-6 pb-12">
@@ -78,31 +106,35 @@ export default function PilotDirectoryPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(item => (
-              <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+              <div key={item.professionalId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
                 <div className="flex items-center gap-3 mb-3">
-                  {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.title} className="w-12 h-12 rounded-full object-cover" />
+                  {item.previewImage ? (
+                    <img src={item.previewImage} alt={item.professionalName || item.fullName} className="w-12 h-12 rounded-full object-cover" />
                   ) : (
                     <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center">
                       <User className="w-6 h-6 text-yellow-400" />
                     </div>
                   )}
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
-                    {item.category && <span className="text-xs text-gray-500">{item.category}</span>}
+                    <h3 className="text-sm font-bold text-gray-900">{item.professionalName || item.fullName}</h3>
+                    {item.categories && item.categories.length > 0 && (
+                      <span className="text-xs text-gray-500">{item.categories[0]}</span>
+                    )}
                   </div>
                 </div>
-                {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{item.description}</p>}
+                {item.professionalDescription && (
+                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{item.professionalDescription}</p>
+                )}
                 <div className="space-y-1">
                   {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3" />{item.location}</div>}
-                  {item.tags && item.tags.length > 0 && (
+                  {item.categories && item.categories.length > 1 && (
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {item.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
+                      {item.categories.slice(1).map(cat => <span key={cat} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{cat}</span>)}
                     </div>
                   )}
                 </div>
-                {item.externalLink && (
-                  <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="mt-3 block text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                {item.cleanUrl && (
+                  <a href={item.cleanUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block text-xs font-bold text-yellow-600 hover:text-yellow-700">
                     View Profile →
                   </a>
                 )}
