@@ -139,7 +139,7 @@ export default function MagazinePage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="Your email address"
-                  className="px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 w-64"
+                  className="px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 w-full sm:w-64"
                 />
                 <button
                   type="submit"

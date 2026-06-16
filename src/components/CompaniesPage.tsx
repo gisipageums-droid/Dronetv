@@ -264,12 +264,12 @@ const CompaniesPage: React.FC = () => {
             </div>
 
             {/* Filter and Sort Controls */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
               <div className="relative">
                 <select
                   value={selectedIndustry}
                   onChange={(e) => setSelectedIndustry(e.target.value)}
-                  className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
+                  className="px-3 py-2 w-full sm:w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   {['All'].concat(
                     Array.from(new Set(allCompanies.flatMap(c => c.sectors ?? [])))
@@ -285,7 +285,7 @@ const CompaniesPage: React.FC = () => {
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value)}
-                  className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
+                  className="px-3 py-2 w-full sm:w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   <option value="companyName">Sort by Name</option>
                   <option value="createdAt">Sort by Date (Newest)</option>
@@ -339,7 +339,7 @@ const CompaniesPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
               {currentCompanies.map((company, idx) => (
                 <CompanyCard key={`all-${company.companyName}-${idx}`} company={company} index={idx} />
               ))}

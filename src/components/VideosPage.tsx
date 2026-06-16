@@ -534,7 +534,7 @@ const VideosPage = () => {
             </div>
 
             {/* Add Video Button + Category Filter */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
               {/* Add Video Button */}
               <button
                 onClick={() => setShowAddVideoForm(true)}
@@ -545,11 +545,11 @@ const VideosPage = () => {
               </button>
 
               {/* Category Filter */}
-              <div className="relative">
+              <div className="relative flex-1 min-w-[140px]">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/20 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-48"
+                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/20 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-full sm:w-48"
                 >
                   {categories.map((category) => (
                     <option key={category} value={category}>
