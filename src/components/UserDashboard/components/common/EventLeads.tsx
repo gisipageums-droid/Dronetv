@@ -98,7 +98,6 @@ const EventLeads: React.FC = () => {
 
         setLeads(formattedLeads);
       } else {
-        console.log("No leads found or invalid response format");
         setLeads([]);
       }
     } catch (error) {
@@ -111,7 +110,6 @@ const EventLeads: React.FC = () => {
   useEffect(() => {
     const fetchAll = async () => {
       if (!userId) {
-        console.log("No userId found, skipping API calls");
         setLoading(false);
         return;
       }
@@ -400,6 +398,7 @@ const EventLeads: React.FC = () => {
         </div>
 
         {/* Leads Table */}
+        {filteredLeads.length > 0 ? (
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-amber-200">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-amber-100">
@@ -418,8 +417,7 @@ const EventLeads: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-amber-100">
-                {filteredLeads.length > 0 ? (
-                  filteredLeads.map((lead) => (
+                {filteredLeads.map((lead) => (
                     <tr
                       key={lead.leadId}
                       className="hover:bg-amber-50 transition-colors"
@@ -484,37 +482,33 @@ const EventLeads: React.FC = () => {
                       </td>
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-16 text-center">
-                      <div className="flex flex-col items-center justify-center">
-                        <div className="bg-amber-100 rounded-full p-4 mb-4">
-                          <MessageCircle className="w-8 h-8 text-amber-500" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-amber-900 mb-2">
-                          No leads found
-                        </h3>
-                        <p className="text-amber-700 text-sm max-w-md">
-                          {searchTerm || selectedCategory !== "All"
-                            ? "Try adjusting your search or filter criteria to find more leads."
-                            : "You haven't received any leads yet. When people contact you through your company page, they'll appear here."}
-                        </p>
-                        {!searchTerm && selectedCategory === "All" && (
-                          <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200 max-w-sm">
-                            <p className="text-xs text-amber-600">
-                              <strong>Tip:</strong> Share your company page to
-                              start receiving leads from potential customers.
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                )}
+                }
               </tbody>
             </table>
           </div>
         </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 px-6 py-16 text-center">
+            <div className="flex flex-col items-center justify-center">
+              <div className="bg-amber-100 rounded-full p-4 mb-4">
+                <MessageCircle className="w-8 h-8 text-amber-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-amber-900 mb-2">No leads found</h3>
+              <p className="text-amber-700 text-sm max-w-sm">
+                {searchTerm || selectedCategory !== "All"
+                  ? "Try adjusting your search or filter criteria to find more leads."
+                  : "You haven't received any leads yet. When people contact you through your event page, they'll appear here."}
+              </p>
+              {!searchTerm && selectedCategory === "All" && (
+                <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200 max-w-xs">
+                  <p className="text-xs text-amber-600">
+                    <strong>Tip:</strong> Share your event page to start receiving leads from potential attendees.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Token Modal */}
