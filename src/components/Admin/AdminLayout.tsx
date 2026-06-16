@@ -178,6 +178,55 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
+  // Pending reviews fetched from all 3 dashboard APIs
+  const [pendingItems, setPendingItems] = useState<{ label: string; count: number; path: string }[]>([]);
+  const pendingTotal = pendingItems.reduce((s, i) => s + i.count, 0);
+
+  useEffect(() => {
+    const fetchPendingCounts = async () => {
+      const sources = [
+        {
+          url: "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin",
+          label: "Companies",
+          path: "/admin/company/dashboard",
+          key: "cards",
+        },
+        {
+          url: "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin",
+          label: "Events",
+          path: "/admin/event/dashboard",
+          key: "cards",
+        },
+        {
+          url: "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=admin",
+          label: "Professionals",
+          path: "/admin/professional/dashboard",
+          key: "cards",
+        },
+      ];
+
+      const results = await Promise.allSettled(
+        sources.map(s => fetch(s.url).then(r => r.json()).then(d => ({
+          label: s.label,
+          path: s.path,
+          count: (d?.cards ?? d?.data ?? []).filter((c: any) =>
+            c.reviewStatus === "under_review" || c.status === "under_review"
+          ).length,
+        })))
+      );
+
+      const items = results
+        .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+        .map(r => r.value)
+        .filter(i => i.count > 0);
+      setPendingItems(items);
+    };
+
+    fetchPendingCounts();
+    const interval = setInterval(fetchPendingCounts, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -382,15 +431,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 aria-label="Notifications"
               >
                 <Bell size={18} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-yellow-400" />
+                {pendingTotal > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 border-2 border-yellow-400 text-white text-[9px] font-black flex items-center justify-center">
+                    {pendingTotal > 99 ? "99+" : pendingTotal}
+                  </span>
+                )}
               </button>
               {notifOpen && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl border border-gray-200 shadow-xl z-50">
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="font-bold text-sm text-gray-900">Notifications</p>
+                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl border border-gray-200 shadow-xl z-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                    <p className="font-bold text-sm text-gray-900">Pending Reviews</p>
+                    {pendingTotal > 0 && (
+                      <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">{pendingTotal} pending</span>
+                    )}
                   </div>
-                  <div className="px-4 py-6 text-center text-sm text-gray-400">
-                    No new notifications
+                  {pendingItems.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-sm text-gray-400">All clear — no pending reviews</div>
+                  ) : (
+                    <div className="py-1">
+                      {pendingItems.map(item => (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          onClick={() => setNotifOpen(false)}
+                          className="flex items-center justify-between px-4 py-3 hover:bg-yellow-50 transition-colors"
+                        >
+                          <span className="text-sm font-medium text-gray-800">{item.label} pending review</span>
+                          <span className="bg-yellow-400 text-black text-xs font-black px-2 py-0.5 rounded-full ml-2 flex-shrink-0">{item.count}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  <div className="px-4 py-2 border-t border-gray-100 text-center">
+                    <span className="text-xs text-gray-400">Refreshes every minute</span>
                   </div>
                 </div>
               )}
