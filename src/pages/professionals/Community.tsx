@@ -2,7 +2,7 @@ const channels = [
   {
     platform: 'LinkedIn',
     handle: '@indiaDroneTv',
-    stat: '5,000+ members',
+    stat: '6,000+ members',
     desc: 'India\'s drone professional community. Job listings, regulatory updates, event announcements, and industry news shared weekly.',
     cta: 'Join on LinkedIn',
     link: 'https://www.linkedin.com',
@@ -25,7 +25,7 @@ const channels = [
     stat: '1,200+ members',
     desc: 'State-specific WhatsApp groups for Telangana, AP, Karnataka, Maharashtra, Delhi, Rajasthan, and Tamil Nadu drone professionals.',
     cta: 'Join Your State Group',
-    link: 'https://wa.me/919000000000',
+    link: 'mailto:bd@dronetv.in',
     bgColor: 'bg-green-600',
     icon: '💬',
   },
