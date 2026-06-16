@@ -80,7 +80,7 @@ const NAV: Section[] = [
         label: "Company Listings",
         icon: <Building2 size={17} />,
         sub: [
-          { label: "All Companies",   path: "/admin/company/dashboard",                    icon: <ListChecks size={14} /> },
+          { label: "All Companies",   path: "/admin/company/dashboard?view=all",            icon: <ListChecks size={14} /> },
           { label: "Lead Management", path: "/admin/company/dashboard?view=leads",          icon: <Users2 size={14} /> },
           { label: "Subscriptions",   path: "/admin/company/dashboard?view=subscriptions",  icon: <Layers size={14} /> },
         ],
@@ -175,7 +175,6 @@ const NAV: Section[] = [
 
 // ── Path → group id ────────────────────────────────────────────────
 const PATH_TO_ID: Record<string, string> = {
-  "/admin/company/dashboard": "companies",
   "/admin/professional/dashboard": "professionals",
   "/admin/media/dashboard": "media",
   "/admin/event/dashboard": "events",
@@ -193,20 +192,33 @@ const BREADCRUMBS: Record<string, string> = {
 // Query params that shift the active group to partnerships
 const PARTNERSHIPS_TYPES = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
 
+function computeGroupId(pathname: string, search: string): string {
+  const sp = new URLSearchParams(search);
+  const type = sp.get("type") ?? "";
+  const view = sp.get("view") ?? "";
+  const tab  = sp.get("tab") ?? "";
+
+  if (pathname === "/admin/media/dashboard" && PARTNERSHIPS_TYPES.has(type)) return "partnerships";
+  if (pathname === "/admin/company/dashboard") return view ? "companies" : "dashboard";
+  if (pathname === "/admin/plans" && tab === "transaction-history") return "invoices";
+  return PATH_TO_ID[pathname] ?? "dashboard";
+}
+
+function computeBreadcrumb(groupId: string, pathname: string): string {
+  if (groupId === "dashboard") return "Dashboard";
+  if (groupId === "partnerships") return "Partnerships";
+  if (groupId === "invoices") return "Invoices";
+  return BREADCRUMBS[pathname] ?? "Admin";
+}
+
 // ── Component ──────────────────────────────────────────────────────
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
 
   // Which group the current route belongs to
-  const searchType = new URLSearchParams(location.search).get("type") ?? "";
-  const isPartnershipsRoute = location.pathname === "/admin/media/dashboard" && PARTNERSHIPS_TYPES.has(searchType);
-  const currentGroupId = isPartnershipsRoute
-    ? "partnerships"
-    : (PATH_TO_ID[location.pathname] ?? "companies");
-  const breadcrumb = isPartnershipsRoute
-    ? "Partnerships"
-    : (BREADCRUMBS[location.pathname] ?? "Admin");
+  const currentGroupId = computeGroupId(location.pathname, location.search);
+  const breadcrumb = computeBreadcrumb(currentGroupId, location.pathname);
 
   // Only one accordion open at a time; auto-opens on route change
   const [openGroup, setOpenGroup] = useState<string>(currentGroupId);
@@ -226,7 +238,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     setOpenGroup(currentGroupId);
     setActiveSub(null);
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     const fetchPendingCounts = async () => {
