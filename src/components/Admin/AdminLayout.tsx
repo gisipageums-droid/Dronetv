@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  LayoutDashboard,
   Building2,
   Users,
   Tv,
@@ -25,9 +26,17 @@ import {
   Briefcase,
   Award,
   GraduationCap,
+  Handshake,
+  Receipt,
+  UserCircle,
+  CalendarRange,
+  Factory,
+  Bot,
+  ClipboardList,
+  Users2,
+  Layers,
   IndianRupee,
   History,
-  Users2,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -53,6 +62,17 @@ interface Section {
 // ── Navigation tree ────────────────────────────────────────────────
 const NAV: Section[] = [
   {
+    heading: "",
+    items: [
+      {
+        id: "dashboard",
+        label: "Dashboard",
+        icon: <LayoutDashboard size={17} />,
+        path: "/admin/company/dashboard",
+      },
+    ],
+  },
+  {
     heading: "Management",
     items: [
       {
@@ -60,10 +80,9 @@ const NAV: Section[] = [
         label: "Company Listings",
         icon: <Building2 size={17} />,
         sub: [
-          { label: "All Companies",  path: "/admin/company/dashboard",                   icon: <ListChecks size={14} /> },
-          { label: "Pending Review", path: "/admin/company/dashboard?status=under_review", icon: <Users2 size={14} /> },
-          { label: "Approved",       path: "/admin/company/dashboard?status=approved",    icon: <Award size={14} /> },
-          { label: "Rejected",       path: "/admin/company/dashboard?status=rejected",    icon: <FileText size={14} /> },
+          { label: "All Companies",   path: "/admin/company/dashboard",                    icon: <ListChecks size={14} /> },
+          { label: "Lead Management", path: "/admin/company/dashboard?view=leads",          icon: <Users2 size={14} /> },
+          { label: "Subscriptions",   path: "/admin/company/dashboard?view=subscriptions",  icon: <Layers size={14} /> },
         ],
       },
       {
@@ -71,10 +90,12 @@ const NAV: Section[] = [
         label: "Professionals",
         icon: <Users size={17} />,
         sub: [
-          { label: "All Professionals", path: "/admin/professional/dashboard",                   icon: <ListChecks size={14} /> },
-          { label: "Pending Review",    path: "/admin/professional/dashboard?status=under_review", icon: <Users2 size={14} /> },
-          { label: "Approved",          path: "/admin/professional/dashboard?status=approved",    icon: <Award size={14} /> },
-          { label: "Rejected",          path: "/admin/professional/dashboard?status=rejected",    icon: <FileText size={14} /> },
+          { label: "Job Board",       path: "/admin/professional/dashboard?view=jobs",          icon: <Briefcase size={14} /> },
+          { label: "Pilot Directory", path: "/admin/professional/dashboard",                    icon: <UserCircle size={14} /> },
+          { label: "Certifications",  path: "/admin/professional/dashboard?view=certifications", icon: <Award size={14} /> },
+          { label: "Portfolio",       path: "/admin/professional/dashboard?view=portfolio",      icon: <FileText size={14} /> },
+          { label: "Training / RPTOs",path: "/admin/professional/dashboard?view=training",       icon: <GraduationCap size={14} /> },
+          { label: "Community",       path: "/admin/professional/dashboard?view=community",      icon: <Users size={14} /> },
         ],
       },
       {
@@ -82,15 +103,15 @@ const NAV: Section[] = [
         label: "Media Hub",
         icon: <Tv size={17} />,
         sub: [
-          { label: "All Content",        path: "/admin/media/dashboard",                      icon: <ListChecks size={14} /> },
-          { label: "News",               path: "/admin/media/dashboard?type=news",             icon: <Newspaper size={14} /> },
-          { label: "Magazine",           path: "/admin/media/dashboard?type=magazine",         icon: <BookOpen size={14} /> },
-          { label: "Video Spotlight",    path: "/admin/media/dashboard?type=video",            icon: <Video size={14} /> },
-          { label: "Impact Stories",     path: "/admin/media/dashboard?type=impact-story",     icon: <Star size={14} /> },
-          { label: "Market Intelligence",path: "/admin/media/dashboard?type=market-intelligence", icon: <BarChart2 size={14} /> },
-          { label: "Tech Trends",        path: "/admin/media/dashboard?type=tech-trends",      icon: <Cpu size={14} /> },
-          { label: "Press Releases",     path: "/admin/media/dashboard?type=press-release",    icon: <FileText size={14} /> },
-          { label: "Industry Reports",   path: "/admin/media/dashboard?type=industry-report",  icon: <ImageIcon size={14} /> },
+          { label: "News Pulse",          path: "/admin/media/dashboard?type=news",               icon: <Newspaper size={14} /> },
+          { label: "Magazine",            path: "/admin/media/dashboard?type=magazine",            icon: <BookOpen size={14} /> },
+          { label: "Video Spotlight",     path: "/admin/media/dashboard?type=video",              icon: <Video size={14} /> },
+          { label: "Gallery",             path: "/admin/media/dashboard?type=gallery",             icon: <ImageIcon size={14} /> },
+          { label: "Impact Stories",      path: "/admin/media/dashboard?type=impact-story",        icon: <Star size={14} /> },
+          { label: "Market Intelligence", path: "/admin/media/dashboard?type=market-intelligence", icon: <BarChart2 size={14} /> },
+          { label: "Tech Trends",         path: "/admin/media/dashboard?type=tech-trends",         icon: <Cpu size={14} /> },
+          { label: "Press Releases",      path: "/admin/media/dashboard?type=press-release",       icon: <FileText size={14} /> },
+          { label: "Industry Reports",    path: "/admin/media/dashboard?type=industry-report",     icon: <ClipboardList size={14} /> },
         ],
       },
       {
@@ -98,10 +119,26 @@ const NAV: Section[] = [
         label: "Events",
         icon: <CalendarDays size={17} />,
         sub: [
-          { label: "All Events",    path: "/admin/event/dashboard",                   icon: <ListChecks size={14} /> },
-          { label: "Pending Review",path: "/admin/event/dashboard?status=under_review", icon: <Users2 size={14} /> },
-          { label: "Approved",      path: "/admin/event/dashboard?status=approved",    icon: <Award size={14} /> },
-          { label: "Rejected",      path: "/admin/event/dashboard?status=rejected",    icon: <FileText size={14} /> },
+          { label: "Event Calendar", path: "/admin/event/dashboard",                         icon: <CalendarRange size={14} /> },
+          { label: "Expos",          path: "/admin/event/dashboard?view=expos",              icon: <Star size={14} /> },
+          { label: "Conferences",    path: "/admin/event/dashboard?view=conferences",        icon: <Users size={14} /> },
+          { label: "Workshops",      path: "/admin/event/dashboard?view=workshops",          icon: <GraduationCap size={14} /> },
+          { label: "Competitions",   path: "/admin/event/dashboard?view=competitions",       icon: <Award size={14} /> },
+          { label: "Webinars",       path: "/admin/event/dashboard?view=webinars",           icon: <Video size={14} /> },
+          { label: "Meetups",        path: "/admin/event/dashboard?view=meetups",            icon: <Users2 size={14} /> },
+        ],
+      },
+      {
+        id: "partnerships",
+        label: "Partnerships",
+        icon: <Handshake size={17} />,
+        sub: [
+          { label: "Applications",       path: "/admin/media/dashboard?type=applications",       icon: <ClipboardList size={14} /> },
+          { label: "Drone Manufacturers",path: "/admin/media/dashboard?type=manufacturer",        icon: <Factory size={14} /> },
+          { label: "AI & Tech Companies",path: "/admin/media/dashboard?type=ai-company",          icon: <Bot size={14} /> },
+          { label: "Event Organizers",   path: "/admin/media/dashboard?type=event-organizer",     icon: <CalendarDays size={14} /> },
+          { label: "Education Partners", path: "/admin/media/dashboard?type=education-partner",   icon: <GraduationCap size={14} /> },
+          { label: "Industry Players",   path: "/admin/media/dashboard?type=industry-player",     icon: <Briefcase size={14} /> },
         ],
       },
     ],
@@ -113,15 +150,13 @@ const NAV: Section[] = [
         id: "plans",
         label: "Packages & Revenue",
         icon: <Package size={17} />,
-        sub: [
-          { label: "Dashboard",     path: "/admin/plans",                            icon: <BarChart2 size={14} /> },
-          { label: "Token Price",   path: "/admin/plans?tab=token-price",            icon: <IndianRupee size={14} /> },
-          { label: "Transactions",  path: "/admin/plans?tab=transaction-history",    icon: <History size={14} /> },
-          { label: "One-Time Plans",path: "/admin/plans?tab=one-time",               icon: <Package size={14} /> },
-          { label: "Monthly Plans", path: "/admin/plans?tab=monthly",                icon: <GraduationCap size={14} /> },
-          { label: "Quarterly Plans",path: "/admin/plans?tab=Quarterly",             icon: <Briefcase size={14} /> },
-          { label: "Yearly Plans",  path: "/admin/plans?tab=yearly",                 icon: <Star size={14} /> },
-        ],
+        path: "/admin/plans",
+      },
+      {
+        id: "invoices",
+        label: "Invoices",
+        icon: <Receipt size={17} />,
+        path: "/admin/plans?tab=transaction-history",
       },
     ],
   },
@@ -155,14 +190,23 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/plans": "Packages & Revenue",
 };
 
+// Query params that shift the active group to partnerships
+const PARTNERSHIPS_TYPES = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
+
 // ── Component ──────────────────────────────────────────────────────
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
 
   // Which group the current route belongs to
-  const currentGroupId = PATH_TO_ID[location.pathname] ?? "companies";
-  const breadcrumb = BREADCRUMBS[location.pathname] ?? "Admin";
+  const searchType = new URLSearchParams(location.search).get("type") ?? "";
+  const isPartnershipsRoute = location.pathname === "/admin/media/dashboard" && PARTNERSHIPS_TYPES.has(searchType);
+  const currentGroupId = isPartnershipsRoute
+    ? "partnerships"
+    : (PATH_TO_ID[location.pathname] ?? "companies");
+  const breadcrumb = isPartnershipsRoute
+    ? "Partnerships"
+    : (BREADCRUMBS[location.pathname] ?? "Admin");
 
   // Only one accordion open at a time; auto-opens on route change
   const [openGroup, setOpenGroup] = useState<string>(currentGroupId);
