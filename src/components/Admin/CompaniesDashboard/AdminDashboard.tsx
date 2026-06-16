@@ -706,7 +706,6 @@ const apiService = {
       }
 
       const data = await response.json();
-      console.log("Fetched companies data:", data);
       return data;
     } catch (error) {
       console.error("Error fetching companies:", error);
@@ -792,7 +791,6 @@ const apiService = {
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      console.log("data", data);
       return data;
     } catch (error) {
       console.error("Error fetching published details:", error);
