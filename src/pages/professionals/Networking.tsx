@@ -145,7 +145,7 @@ export default function NetworkingPage() {
             <div className="bg-white border border-gray-200 rounded-b-xl px-4 py-4">
               <p className="text-xs text-gray-500 mb-3">India's largest drone professional community on LinkedIn.</p>
               <p className="text-base font-extrabold text-gray-900 mb-1">@indiaDroneTv</p>
-              <p className="text-xs text-yellow-600 font-bold mb-3">5,000+ members</p>
+              <p className="text-xs text-yellow-600 font-bold mb-3">6,000+ members</p>
               <a
                 href="https://www.linkedin.com"
                 target="_blank"
