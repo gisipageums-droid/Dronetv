@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check } from 'lucide-react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
 
@@ -49,6 +49,7 @@ const EMPTY_FORM = {
 
 export default function AdminMediaDashboard() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeType, setActiveType] = useState<ContentType | 'all'>(
@@ -60,6 +61,14 @@ export default function AdminMediaDashboard() {
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [tagInput, setTagInput] = useState('');
   const [saving, setSaving] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<MediaItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const setActiveTypeAndSync = (type: ContentType | 'all') => {
+    setActiveType(type);
+    const path = '/admin/media/dashboard' + (type !== 'all' ? `?type=${type}` : '');
+    navigate(path, { replace: true });
+  };
 
   const loadItems = async (signal?: AbortSignal) => {
     setLoading(true);
@@ -133,7 +142,8 @@ export default function AdminMediaDashboard() {
         toast.success('Created');
       }
       setShowForm(false);
-      await loadItems();
+      const controller = new AbortController();
+      await loadItems(controller.signal);
     } catch {
       toast.error('Save failed');
     } finally {
@@ -141,14 +151,23 @@ export default function AdminMediaDashboard() {
     }
   };
 
-  const handleDelete = async (item: MediaItem) => {
-    if (!confirm(`Delete "${item.title}"?`)) return;
+  const handleDelete = (item: MediaItem) => {
+    setDeleteConfirm(item);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm) return;
+    setDeleting(true);
     try {
-      await deleteContent(item.contentType, item.contentId);
+      await deleteContent(deleteConfirm.contentType, deleteConfirm.contentId);
       toast.success('Deleted');
-      await loadItems();
+      setDeleteConfirm(null);
+      const controller = new AbortController();
+      await loadItems(controller.signal);
     } catch {
       toast.error('Delete failed');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -156,7 +175,8 @@ export default function AdminMediaDashboard() {
     try {
       await updateContent({ contentType: item.contentType, contentId: item.contentId, isPublished: !item.isPublished });
       toast.success(item.isPublished ? 'Unpublished' : 'Published');
-      await loadItems();
+      const controller = new AbortController();
+      await loadItems(controller.signal);
     } catch {
       toast.error('Failed');
     }
@@ -186,7 +206,7 @@ export default function AdminMediaDashboard() {
 
       <div className="py-1">
         <div className="flex flex-wrap gap-2 mb-4">
-          <button onClick={() => setActiveType('all')}
+          <button onClick={() => setActiveTypeAndSync('all')}
             className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === 'all' ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
             All ({items.length})
           </button>
@@ -196,7 +216,7 @@ export default function AdminMediaDashboard() {
               {CONTENT_TYPES.filter(t => t.section === sec).map(t => {
                 const count = items.filter(i => i.contentType === t.value).length;
                 return (
-                  <button key={t.value} onClick={() => setActiveType(t.value)}
+                  <button key={t.value} onClick={() => setActiveTypeAndSync(t.value)}
                     className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === t.value ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
                     {t.label} {count > 0 && `(${count})`}
                   </button>
@@ -346,16 +366,30 @@ export default function AdminMediaDashboard() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Price / Salary</label>
-                  <input value={form.price || form.salary} onChange={e => setForm(f => ({ ...f, price: e.target.value, salary: e.target.value }))}
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Price (events/webinars)</label>
+                  <input value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="Free / Rs.500 / Rs.40K–60K" />
+                    placeholder="Free / Rs.500" />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Platform / Read Time</label>
-                  <input value={form.platform || form.readTime} onChange={e => setForm(f => ({ ...f, platform: e.target.value, readTime: e.target.value }))}
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Salary (jobs)</label>
+                  <input value={form.salary} onChange={e => setForm(f => ({ ...f, salary: e.target.value }))}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="Zoom / YouTube / 5 min read" />
+                    placeholder="Rs.40K–60K" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Platform (webinars/video)</label>
+                  <input value={form.platform} onChange={e => setForm(f => ({ ...f, platform: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                    placeholder="Zoom / YouTube" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Read Time (articles)</label>
+                  <input value={form.readTime} onChange={e => setForm(f => ({ ...f, readTime: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                    placeholder="5 min read" />
                 </div>
               </div>
 
@@ -418,6 +452,29 @@ export default function AdminMediaDashboard() {
               <button onClick={handleSave} disabled={saving}
                 className="flex items-center gap-2 px-5 py-2 bg-yellow-400 text-black font-bold rounded-lg text-sm hover:bg-yellow-300 transition-colors disabled:opacity-50">
                 {saving ? 'Saving...' : <><Check className="w-4 h-4" /> {editItem ? 'Update' : 'Create'}</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0" />
+              <h3 className="text-lg font-bold text-gray-900">Delete Content</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-5">
+              Delete <span className="font-semibold">"{deleteConfirm.title}"</span>? This cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Cancel
+              </button>
+              <button onClick={confirmDelete} disabled={deleting}
+                className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700 disabled:opacity-50">
+                {deleting ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>

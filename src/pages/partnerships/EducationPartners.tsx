@@ -8,7 +8,9 @@ export default function EducationPartnersPage() {
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
-    fetchContent('education-partner').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('education-partner', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const categories = ['All', ...Array.from(new Set(items.map(i => i.category || 'General').filter(Boolean)))];

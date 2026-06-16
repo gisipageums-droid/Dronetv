@@ -9,7 +9,9 @@ export default function AITechCompaniesPage() {
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
-    fetchContent('ai-company').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('ai-company', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const categories = ['All', ...Array.from(new Set(items.map(i => i.category || 'General').filter(Boolean)))];

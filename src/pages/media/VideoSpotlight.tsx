@@ -77,7 +77,9 @@ export default function VideoSpotlightPage() {
   const [activeFilter, setActiveFilter] = useState('All Videos');
 
   useEffect(() => {
-    fetchContent('video').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('video', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const categories = ['All Videos', ...Array.from(new Set(items.map(i => i.category).filter(Boolean))) as string[]];

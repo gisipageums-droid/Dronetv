@@ -896,7 +896,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
             <div className="flex-shrink-0 flex overflow-hidden justify-center items-center p-1 w-10 h-10 bg-gray-100 rounded-lg sm:w-12 sm:h-12">
               {event.previewImage ? (
                 <img
-                  src={event.heroBannerImage}
+                  src={event.previewImage}
                   alt={`${event.eventName} logo`}
                   className="w-full h-full object-cover rounded"
                   loading="lazy"
@@ -913,7 +913,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
               <div className="flex items-center mt-1 text-gray-600">
                 <MapPin className="mr-1 w-3 h-3" />
                 <span className="text-xs md:text-sm">
-                  {event.location.slice(0, 25) + `${event.location.length > 25 ? "..." : ""}` || "Location not specified"}
+                  {event.location ? (event.location.length > 25 ? event.location.slice(0, 25) + "..." : event.location) : "Location not specified"}
                 </span>
               </div>
             </div>
@@ -1076,7 +1076,6 @@ const eventApiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error fetching event credentials:", error);
       throw error;
     }
   },
@@ -1168,7 +1167,6 @@ const EventAdminDashboard: React.FC = () => {
           return;
       }
     } catch (err) {
-      console.error(`Error performing ${type} action:`, err);
       toast.error(`Failed to ${type} event`);
     } finally {
       setIsMutating(false);
@@ -1179,41 +1177,23 @@ const EventAdminDashboard: React.FC = () => {
   // -------------------- Action Handlers --------------------
   const handleCredentials = async (eventId: string) => {
     try {
-      setLoading(true);
+      setIsMutating(true);
       const credentials = await eventApiService.fetchEventCredentials(eventId);
       setCredentialsModal({ isOpen: true, data: credentials });
-    } catch (error) {
-      console.error("Error fetching credentials:", error);
+    } catch {
       toast.error("Failed to fetch credentials");
     } finally {
-      setLoading(false);
+      setIsMutating(false);
     }
   };
 
   const handlePreviewAction = (eventId: string, userId: string) => {
-    // Find the event to get its templateSelection
     const event = events.find((e) => e.eventId === eventId);
-    if (!event) {
-      toast.error("Event not found");
-      return;
-    }
+    if (!event) { toast.error("Event not found"); return; }
 
-    // Handle both template selection formats
-    if (
-      event.templateSelection === "template-1" ||
-      event.templateSelection === "1"
-    ) {
-      navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
-    } else if (
-      event.templateSelection === "template-2" ||
-      event.templateSelection === "2"
-    ) {
+    if (event.templateSelection === "template-2" || event.templateSelection === "2") {
       navigate(`/edit/event/t2/admin/${eventId}/${userId}`);
     } else {
-      // Default to template 1 if unknown
-      console.warn(
-        `Unknown template selection: ${event.templateSelection}, defaulting to template 1`
-      );
       navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
     }
   };
@@ -1225,101 +1205,62 @@ const EventAdminDashboard: React.FC = () => {
         "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin",
         { signal }
       );
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
       const fetchedEvents = data?.cards || [];
       setEvents(fetchedEvents);
-
-      // Sort by creation date descending (latest first)
-      const sortedByDate = [...fetchedEvents].sort((a: Event, b: Event) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-
+      const sortedByDate = [...fetchedEvents].sort((a: Event, b: Event) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
       setRecentEvents(sortedByDate.slice(0, 6));
     } catch (error: any) {
       if (error?.name === "AbortError") return;
-      console.error("Error fetching events:", error);
+      toast.error("Failed to load events");
     } finally {
       setLoading(false);
     }
   };
 
   const handleApproveAction = async (eventId: string, userId: string) => {
-    try {
-      await fetch(
-        `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            eventId: eventId,
-            action: "approve",
-            adminNotes: "Looks good!",
-            userId: userId,
-          }),
-        }
-      );
-
-      toast.success("Event approved successfully");
-      fetchEvents();
-    } catch (error) {
-      console.error("Error approving event:", error);
-      toast.error("Failed to approve event");
-      throw error;
-    }
+    const response = await fetch(
+      `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId, action: "approve", userId }),
+      }
+    );
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    toast.success("Event approved successfully");
+    fetchEvents();
   };
 
   const handleRejectAction = async (eventId: string, userId: string) => {
-    try {
-      await fetch(
-        `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            eventId: eventId,
-            action: "reject",
-            adminNotes: "Looks bad!",
-            userId: userId,
-          }),
-        }
-      );
-
-      toast.success("Event rejected successfully");
-      fetchEvents();
-    } catch (error) {
-      console.error("Error rejecting event:", error);
-      toast.error("Failed to reject event");
-      throw error;
-    }
+    const response = await fetch(
+      `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId, action: "reject", userId }),
+      }
+    );
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    toast.success("Event rejected");
+    fetchEvents();
   };
 
   const handleDeleteAction = async (eventId: string) => {
-    try {
-      await fetch(
-        "https://pjqm3sgpzf.execute-api.ap-south-1.amazonaws.com/dev/delete-event",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            eventId: eventId,
-            action: "delete",
-          }),
-        }
-      );
-
-      toast.success("Event deleted successfully");
-      fetchEvents();
-    } catch (error) {
-      console.error("Error deleting event:", error);
-      toast.error("Failed to delete event");
-      throw error;
-    }
+    const response = await fetch(
+      "https://pjqm3sgpzf.execute-api.ap-south-1.amazonaws.com/dev/delete-event",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId, action: "delete" }),
+      }
+    );
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    toast.success("Event deleted");
+    fetchEvents();
   };
 
   // Wrapper functions for button clicks

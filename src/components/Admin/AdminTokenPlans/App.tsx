@@ -24,8 +24,13 @@ export interface TokenPlan {
 }
 
 function App() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activePage, setActivePage] = useState<string>(searchParams.get("tab") ?? "dashboard");
+
+  const switchTab = (id: string) => {
+    setActivePage(id);
+    setSearchParams((prev) => { prev.set("tab", id); return prev; }, { replace: true });
+  };
   const [tokenPriceINR, setTokenPriceINR] = useState<number>(0.5);
   const [plans, setPlans] = useState<TokenPlan[]>([]);
 
@@ -40,7 +45,6 @@ function App() {
           }
         }
       } catch (error) {
-        console.error("Failed to load plans", error);
       }
     };
     loadPlans();
@@ -55,7 +59,6 @@ function App() {
       await addUpdatePlan(newPlan);
       setPlans([...plans, newPlan]);
     } catch (error) {
-      console.error("Failed to add plan", error);
       // Optionally show error toast
     }
   };
@@ -69,7 +72,6 @@ function App() {
       await addUpdatePlan(finalPlan);
       setPlans(plans.map((plan) => (plan.id === id ? finalPlan : plan)));
     } catch (error) {
-      console.error("Failed to update plan", error);
     }
   };
 
@@ -78,7 +80,6 @@ function App() {
       await deletePlanApi(id);
       setPlans(plans.filter((plan) => plan.id !== id));
     } catch (error) {
-      console.error("Failed to delete plan", error);
     }
   };
 
@@ -87,7 +88,6 @@ function App() {
       await updateTokenPrice(price.toString());
       setTokenPriceINR(price);
     } catch (error) {
-      console.error("Failed to update token price", error);
     }
   };
 
@@ -175,7 +175,7 @@ function App() {
         {tabs.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActivePage(tab.id)}
+            onClick={() => switchTab(tab.id)}
             className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${
               activePage === tab.id
                 ? "text-gray-900 border-yellow-400"

@@ -7,7 +7,9 @@ export default function WebinarsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchContent('webinar').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('webinar', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   return (

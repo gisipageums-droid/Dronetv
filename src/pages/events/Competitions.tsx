@@ -7,7 +7,9 @@ export default function CompetitionsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchContent('competition').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('competition', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   return (

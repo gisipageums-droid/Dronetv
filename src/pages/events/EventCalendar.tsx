@@ -39,14 +39,16 @@ export default function EventCalendarPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(EVENTS_API)
-      .then(r => r.json())
+    const controller = new AbortController();
+    fetch(EVENTS_API, { signal: controller.signal })
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(data => {
         const all: RawEvent[] = Array.isArray(data.cards) ? data.cards : [];
         setEvents(all);
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const categories = ['All', ...Array.from(new Set(events.map(e => e.category || 'General').filter(Boolean)))];

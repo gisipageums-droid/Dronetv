@@ -709,7 +709,6 @@ const apiService = {
       return data;
     } catch (error: any) {
       if (error?.name === "AbortError") throw error;
-      console.error("Error fetching companies:", error);
       throw error;
     }
   },
@@ -727,7 +726,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error fetching company credentials:", error);
       throw error;
     }
   },
@@ -749,7 +747,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error approving company:", error);
       throw error;
     }
   },
@@ -771,7 +768,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error rejecting company:", error);
       throw error;
     }
   },
@@ -794,7 +790,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error fetching published details:", error);
       throw error;
     }
   },
@@ -818,7 +813,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error deleting company:", error);
       throw error;
     }
   },
@@ -964,7 +958,6 @@ const AdminDashboard: React.FC = () => {
       setTotalCount(data.totalCount || 0);
     } catch (err: any) {
       if (err?.name === "AbortError") return;
-      console.error("Error in fetchCompanies:", err);
       setError(
         err instanceof Error ? err.message : "Failed to fetch companies"
       );
@@ -1177,7 +1170,6 @@ const AdminDashboard: React.FC = () => {
           return;
       }
     } catch (err) {
-      console.error(`Error performing ${type} action:`, err);
       toast.error(`Failed to ${type} company`);
       await fetchCompanies();
     } finally {
@@ -1198,7 +1190,6 @@ const AdminDashboard: React.FC = () => {
       const credentials = await apiService.fetchCompanyCredentials(company.draftId, company.userId);
       setCredentialsModal({ isOpen: true, data: credentials, company });
     } catch (err) {
-      console.error("Error fetching company credentials:", err);
       toast.error("Failed to fetch company credentials");
     } finally {
       setIsMutating(false);
@@ -1225,7 +1216,6 @@ const AdminDashboard: React.FC = () => {
         toast.info("Unknown template selection");
       }
     } catch (err) {
-      console.error("Error loading template for preview:", err);
       toast.error("Failed to load template for preview");
     } finally {
       setIsMutating(false);

@@ -98,7 +98,6 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
           setNotes(json?.metadata?.adminNotes || '');
         }
       } catch (err: any) {
-        console.error('Error fetching professional:', err);
         if (!cancelled) setError('Failed to load professional data');
       } finally {
         if (!cancelled) setInternalLoading(false);

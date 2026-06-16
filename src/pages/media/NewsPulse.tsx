@@ -1,56 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { fetchContent, MediaItem } from '../../lib/mediaApi';
 
 const filters = ['All News', 'Market', 'Defence', 'Policy', 'Agriculture', 'Technology', 'Training'];
 
-const news = [
-  {
-    category: 'Defence',
-    badgeClass: 'bg-orange-100 text-orange-700',
-    title: 'India Set for $2 Billion Domestic Drone Order',
-    source: 'Reuters',
-    date: 'Jun 3, 2026',
-  },
-  {
-    category: 'Defence Policy',
-    badgeClass: 'bg-orange-100 text-orange-700',
-    title: 'India Approves $25B Military Package Including 60 RPAs',
-    source: 'Defence News',
-    date: 'Apr 3, 2026',
-  },
-  {
-    category: 'Agriculture',
-    badgeClass: 'bg-amber-100 text-amber-700',
-    title: 'Namo Drone Didi: 500+ Drones Deployed to Women SHGs',
-    source: 'IBEF',
-    date: 'Feb 2026',
-  },
-  {
-    category: 'Policy',
-    badgeClass: 'bg-green-100 text-green-700',
-    title: 'SVAMITVA Surveys 3.28 Lakh Villages Using Drones',
-    source: 'Ministry of Panchayati Raj',
-    date: 'Mar 2026',
-  },
-  {
-    category: 'Market',
-    badgeClass: 'bg-blue-100 text-blue-700',
-    title: 'PLI Scheme Drives 7x Revenue Growth for Drone Manufacturers',
-    source: 'IBEF',
-    date: 'May 2026',
-  },
-  {
-    category: 'Technology',
-    badgeClass: 'bg-purple-100 text-purple-700',
-    title: 'NHAI Mandates Monthly Drone Video Monitoring for All Highway Projects',
-    source: 'NHAI',
-    date: 'Apr 2026',
-  },
-];
+const BADGE_MAP: Record<string, string> = {
+  market: 'bg-blue-100 text-blue-700',
+  defence: 'bg-orange-100 text-orange-700',
+  policy: 'bg-green-100 text-green-700',
+  agriculture: 'bg-amber-100 text-amber-700',
+  technology: 'bg-purple-100 text-purple-700',
+  training: 'bg-pink-100 text-pink-700',
+};
+
+function badgeClass(category?: string): string {
+  if (!category) return 'bg-gray-100 text-gray-600';
+  return BADGE_MAP[category.toLowerCase()] ?? 'bg-gray-100 text-gray-600';
+}
 
 export default function NewsPulsePage() {
   const [active, setActive] = useState('All News');
   const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+  const [news, setNews] = useState<MediaItem[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchContent('news', controller.signal).then(setNews).catch(() => {});
+    return () => controller.abort();
+  }, []);
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
@@ -131,18 +109,27 @@ export default function NewsPulsePage() {
               <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Latest</span>
               News Grid
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {news.map((item, i) => (
-                <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.badgeClass}`}>{item.category}</span>
-                    <span className="text-xs text-gray-400">{item.date}</span>
-                  </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3">{item.title}</h3>
-                  <p className="text-xs text-gray-500 font-semibold">{item.source}</p>
-                </div>
-              ))}
-            </div>
+            {news.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-8">No news articles published yet.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {news
+                  .filter(item => active === 'All News' || (item.category || '').toLowerCase().includes(active.toLowerCase()))
+                  .map(item => (
+                    <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
+                        <span className="text-xs text-gray-400">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : ''}</span>
+                      </div>
+                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3">{item.title}</h3>
+                      <p className="text-xs text-gray-500 font-semibold">{item.source}</p>
+                      {item.externalLink && (
+                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs text-yellow-600 font-bold hover:text-yellow-700 mt-2 block">Read more →</a>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            )}
           </div>
 
           <div className="bg-yellow-400 rounded-xl p-6 flex items-start gap-4">
@@ -174,9 +161,16 @@ export default function NewsPulsePage() {
                 placeholder="Your email address"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:border-yellow-400"
               />
-              <button className="w-full bg-yellow-400 text-black font-bold text-xs py-2 rounded-lg hover:bg-yellow-500 transition-colors">
-                Subscribe Free
-              </button>
+              {subscribed ? (
+                <p className="text-xs text-green-600 font-bold text-center py-1">Subscribed! ✓</p>
+              ) : (
+                <button
+                  onClick={() => { if (email) setSubscribed(true); }}
+                  className="w-full bg-yellow-400 text-black font-bold text-xs py-2 rounded-lg hover:bg-yellow-500 transition-colors"
+                >
+                  Subscribe Free
+                </button>
+              )}
             </div>
           </div>
 

@@ -33,8 +33,9 @@ export type ContentType =
   | 'manufacturer' | 'ai-company' | 'event-organizer'
   | 'education-partner' | 'industry-player';
 
-export async function fetchContent(type: ContentType): Promise<MediaItem[]> {
-  const res = await fetch(`${BASE}?type=${type}`);
+export async function fetchContent(type: ContentType, signal?: AbortSignal): Promise<MediaItem[]> {
+  const res = await fetch(`${BASE}?type=${type}&isPublished=true`, { signal });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   return data.items || [];
 }
@@ -42,6 +43,7 @@ export async function fetchContent(type: ContentType): Promise<MediaItem[]> {
 export async function fetchAdminContent(signal?: AbortSignal, type?: ContentType): Promise<MediaItem[]> {
   const url = type ? `${BASE}/admin?type=${type}` : `${BASE}/admin`;
   const res = await fetch(url, { signal });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   return data.items || [];
 }
@@ -52,18 +54,21 @@ export async function createContent(item: Omit<MediaItem, 'contentId' | 'created
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(item),
   });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   return data.item;
 }
 
 export async function updateContent(item: Partial<MediaItem> & { contentType: string; contentId: string }): Promise<void> {
-  await fetch(BASE, {
+  const res = await fetch(BASE, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(item),
   });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
 export async function deleteContent(type: string, id: string): Promise<void> {
-  await fetch(`${BASE}?type=${type}&id=${id}`, { method: 'DELETE' });
+  const res = await fetch(`${BASE}?type=${type}&id=${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }

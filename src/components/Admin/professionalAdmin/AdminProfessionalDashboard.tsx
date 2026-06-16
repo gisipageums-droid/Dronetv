@@ -878,7 +878,6 @@ const apiService = {
       return data;
     } catch (error: any) {
       if (error?.name === "AbortError") throw error;
-      console.error("Error fetching professionals:", error);
       throw error;
     }
   },
@@ -896,7 +895,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error fetching professional details:", error);
       throw error;
     }
   },
@@ -921,7 +919,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error approving professional:", error);
       throw error;
     }
   },
@@ -946,7 +943,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error rejecting professional:", error);
       throw error;
     }
   },
@@ -972,7 +968,6 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error deleting professional:", error);
       throw error;
     }
   },
@@ -1115,7 +1110,6 @@ const AdminProfessionalDashboard: React.FC = () => {
           return;
       }
     } catch (err) {
-      console.error(`Error performing ${type} action:`, err);
       toast.error(`Failed to ${type} professional`);
       await fetchProfessionals();
     } finally {
@@ -1136,7 +1130,6 @@ const AdminProfessionalDashboard: React.FC = () => {
         data: details,
       });
     } catch (error) {
-      console.error("Error fetching professional details:", error);
       toast.error("Failed to fetch professional details");
     } finally {
       setIsMutating(false);
@@ -1164,7 +1157,6 @@ const AdminProfessionalDashboard: React.FC = () => {
         );
       }
     } catch (error) {
-      console.error("Error loading professional for preview:", error);
       toast.error("Failed to load professional for preview");
     }
   };
@@ -1206,7 +1198,6 @@ const AdminProfessionalDashboard: React.FC = () => {
       setHasMore(data.hasTemplates || false);
     } catch (err: any) {
       if (err?.name === "AbortError") return;
-      console.error("Error in fetchProfessionals:", err);
       const errorMessage =
         err instanceof Error ? err.message : "Failed to fetch professionals";
       setError(errorMessage);

@@ -8,7 +8,9 @@ export default function IndustryReportsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
-    fetchContent('industry-report').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('industry-report', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   const categories = ['All', ...Array.from(new Set(items.map(i => i.category || 'General').filter(Boolean)))];

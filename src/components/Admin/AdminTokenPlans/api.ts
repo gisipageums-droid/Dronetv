@@ -11,7 +11,6 @@ export const fetchPlans = async () => {
         }
         return await response.json();
     } catch (error) {
-        console.error('Error fetching plans:', error);
         throw error;
     }
 };
@@ -42,7 +41,6 @@ export const addUpdatePlan = async (plan: Partial<TokenPlan>) => {
 
         return await response.json();
     } catch (error) {
-        console.error('Error adding/updating plan:', error);
         throw error;
     }
 };
@@ -65,7 +63,6 @@ export const updateTokenPrice = async (tokenPriceINR: string) => {
 
         return await response.json();
     } catch (error) {
-        console.error('Error updating token price:', error);
         throw error;
     }
 };
@@ -88,7 +85,6 @@ export const deletePlan = async (deleteId: string) => {
 
         return await response.json();
     } catch (error) {
-        console.error('Error deleting plan:', error);
         throw error;
     }
 };

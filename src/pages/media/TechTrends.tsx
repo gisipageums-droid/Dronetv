@@ -7,7 +7,9 @@ export default function TechTrendsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchContent('tech-trends').then(setItems).catch(console.error).finally(() => setLoading(false));
+    const controller = new AbortController();
+    fetchContent('tech-trends', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
+    return () => controller.abort();
   }, []);
 
   return (
