@@ -348,13 +348,13 @@ const ProductsPage: React.FC = () => {
             </div>
 
             {/* Filter and Sort Controls */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
               {/* Category Filter */}
               <div className="relative">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 w-44 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
+                  className="px-3 py-2 w-full sm:w-44 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   {categories.map((category) => (
                     <option key={category} value={category}>
@@ -370,7 +370,7 @@ const ProductsPage: React.FC = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-2 w-44 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
+                  className="px-3 py-2 w-full sm:w-44 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
