@@ -6,7 +6,6 @@ import { fetchAdminContent, createContent, updateContent, deleteContent, MediaIt
 
 const CONTENT_TYPES: { value: ContentType; label: string; section: string }[] = [
   { value: 'news', label: 'News', section: 'Media Hub' },
-  { value: 'magazine', label: 'Magazine', section: 'Media Hub' },
   { value: 'video', label: 'Video Spotlight', section: 'Media Hub' },
   { value: 'impact-story', label: 'Impact Story', section: 'Media Hub' },
   { value: 'market-intelligence', label: 'Market Intelligence', section: 'Media Hub' },
@@ -18,7 +17,6 @@ const CONTENT_TYPES: { value: ContentType; label: string; section: string }[] = 
   { value: 'meetup', label: 'Meetup', section: 'Events' },
   { value: 'job', label: 'Job Listing', section: 'Professionals' },
   { value: 'training', label: 'Training Program', section: 'Professionals' },
-  { value: 'certification', label: 'Certification', section: 'Professionals' },
   { value: 'manufacturer', label: 'Manufacturer', section: 'Partnerships' },
   { value: 'ai-company', label: 'AI Tech Company', section: 'Partnerships' },
   { value: 'event-organizer', label: 'Event Organizer', section: 'Partnerships' },
@@ -205,24 +203,24 @@ export default function AdminMediaDashboard() {
       </div>
 
       <div className="py-1">
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-x-6 gap-y-3 mb-4">
           <button onClick={() => setActiveTypeAndSync('all')}
             className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === 'all' ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
             All ({items.length})
           </button>
           {sections.map(sec => (
-            <span key={sec} className="flex items-center gap-1 flex-wrap">
-              <span className="text-xs text-gray-400 font-semibold px-1">{sec}:</span>
+            <div key={sec} className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs text-gray-400 font-bold uppercase tracking-wide border-r border-gray-200 pr-2 mr-1">{sec}</span>
               {CONTENT_TYPES.filter(t => t.section === sec).map(t => {
                 const count = items.filter(i => i.contentType === t.value).length;
                 return (
                   <button key={t.value} onClick={() => setActiveTypeAndSync(t.value)}
                     className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === t.value ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
-                    {t.label} {count > 0 && `(${count})`}
+                    {t.label}{count > 0 ? ` (${count})` : ''}
                   </button>
                 );
               })}
-            </span>
+            </div>
           ))}
         </div>
 

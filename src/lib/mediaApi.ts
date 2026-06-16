@@ -26,10 +26,10 @@ export interface MediaItem {
 }
 
 export type ContentType =
-  | 'news' | 'magazine' | 'video' | 'impact-story'
+  | 'news' | 'video' | 'impact-story'
   | 'market-intelligence' | 'tech-trends' | 'press-release' | 'industry-report'
   | 'competition' | 'webinar' | 'meetup'
-  | 'job' | 'training' | 'certification'
+  | 'job' | 'training'
   | 'manufacturer' | 'ai-company' | 'event-organizer'
   | 'education-partner' | 'industry-player';
 
