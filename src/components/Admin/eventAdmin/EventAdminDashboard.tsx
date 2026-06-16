@@ -16,7 +16,7 @@ import {
   Pen,
   Edit,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -1086,7 +1086,8 @@ const eventApiService = {
 const EventAdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [searchParams] = useSearchParams();
+  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
     useState<boolean>(false);
   const [events, setEvents] = useState<Event[]>([]);

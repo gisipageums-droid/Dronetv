@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard,
   Building2,
   Users,
   Tv,
@@ -42,8 +41,8 @@ interface NavGroup {
   id: string;
   label: string;
   icon: React.ReactNode;
-  path?: string;        // direct link (no submenu)
-  sub?: SubItem[];      // submenu items
+  path?: string;
+  sub?: SubItem[];
 }
 
 interface Section {
@@ -54,17 +53,6 @@ interface Section {
 // ── Navigation tree ────────────────────────────────────────────────
 const NAV: Section[] = [
   {
-    heading: "",
-    items: [
-      {
-        id: "dashboard",
-        label: "Dashboard",
-        icon: <LayoutDashboard size={17} />,
-        path: "/admin/company/dashboard",
-      },
-    ],
-  },
-  {
     heading: "Management",
     items: [
       {
@@ -72,8 +60,10 @@ const NAV: Section[] = [
         label: "Company Listings",
         icon: <Building2 size={17} />,
         sub: [
-          { label: "All Companies", path: "/admin/company/dashboard", icon: <ListChecks size={14} /> },
-          { label: "Lead Management", path: "/admin/company/dashboard", icon: <Users2 size={14} /> },
+          { label: "All Companies",  path: "/admin/company/dashboard",                   icon: <ListChecks size={14} /> },
+          { label: "Pending Review", path: "/admin/company/dashboard?status=under_review", icon: <Users2 size={14} /> },
+          { label: "Approved",       path: "/admin/company/dashboard?status=approved",    icon: <Award size={14} /> },
+          { label: "Rejected",       path: "/admin/company/dashboard?status=rejected",    icon: <FileText size={14} /> },
         ],
       },
       {
@@ -81,10 +71,10 @@ const NAV: Section[] = [
         label: "Professionals",
         icon: <Users size={17} />,
         sub: [
-          { label: "All Professionals", path: "/admin/professional/dashboard", icon: <ListChecks size={14} /> },
-          { label: "Certifications", path: "/admin/professional/dashboard", icon: <Award size={14} /> },
-          { label: "Training / RPTOs", path: "/admin/professional/dashboard", icon: <GraduationCap size={14} /> },
-          { label: "Job Board", path: "/admin/professional/dashboard", icon: <Briefcase size={14} /> },
+          { label: "All Professionals", path: "/admin/professional/dashboard",                   icon: <ListChecks size={14} /> },
+          { label: "Pending Review",    path: "/admin/professional/dashboard?status=under_review", icon: <Users2 size={14} /> },
+          { label: "Approved",          path: "/admin/professional/dashboard?status=approved",    icon: <Award size={14} /> },
+          { label: "Rejected",          path: "/admin/professional/dashboard?status=rejected",    icon: <FileText size={14} /> },
         ],
       },
       {
@@ -92,15 +82,15 @@ const NAV: Section[] = [
         label: "Media Hub",
         icon: <Tv size={17} />,
         sub: [
-          { label: "News Pulse", path: "/admin/media/dashboard", icon: <Newspaper size={14} /> },
-          { label: "Magazine", path: "/admin/media/dashboard", icon: <BookOpen size={14} /> },
-          { label: "Video Spotlight", path: "/admin/media/dashboard", icon: <Video size={14} /> },
-          { label: "Gallery", path: "/admin/media/dashboard", icon: <ImageIcon size={14} /> },
-          { label: "Impact Stories", path: "/admin/media/dashboard", icon: <Star size={14} /> },
-          { label: "Market Intelligence", path: "/admin/media/dashboard", icon: <BarChart2 size={14} /> },
-          { label: "Tech Trends", path: "/admin/media/dashboard", icon: <Cpu size={14} /> },
-          { label: "Press Releases", path: "/admin/media/dashboard", icon: <FileText size={14} /> },
-          { label: "Industry Reports", path: "/admin/media/dashboard", icon: <FileText size={14} /> },
+          { label: "All Content",        path: "/admin/media/dashboard",                      icon: <ListChecks size={14} /> },
+          { label: "News",               path: "/admin/media/dashboard?type=news",             icon: <Newspaper size={14} /> },
+          { label: "Magazine",           path: "/admin/media/dashboard?type=magazine",         icon: <BookOpen size={14} /> },
+          { label: "Video Spotlight",    path: "/admin/media/dashboard?type=video",            icon: <Video size={14} /> },
+          { label: "Impact Stories",     path: "/admin/media/dashboard?type=impact-story",     icon: <Star size={14} /> },
+          { label: "Market Intelligence",path: "/admin/media/dashboard?type=market-intelligence", icon: <BarChart2 size={14} /> },
+          { label: "Tech Trends",        path: "/admin/media/dashboard?type=tech-trends",      icon: <Cpu size={14} /> },
+          { label: "Press Releases",     path: "/admin/media/dashboard?type=press-release",    icon: <FileText size={14} /> },
+          { label: "Industry Reports",   path: "/admin/media/dashboard?type=industry-report",  icon: <ImageIcon size={14} /> },
         ],
       },
       {
@@ -108,13 +98,10 @@ const NAV: Section[] = [
         label: "Events",
         icon: <CalendarDays size={17} />,
         sub: [
-          { label: "All Events", path: "/admin/event/dashboard", icon: <ListChecks size={14} /> },
-          { label: "Expos", path: "/admin/event/dashboard", icon: <Star size={14} /> },
-          { label: "Conferences", path: "/admin/event/dashboard", icon: <Users size={14} /> },
-          { label: "Workshops", path: "/admin/event/dashboard", icon: <GraduationCap size={14} /> },
-          { label: "Competitions", path: "/admin/event/dashboard", icon: <Award size={14} /> },
-          { label: "Webinars", path: "/admin/event/dashboard", icon: <Video size={14} /> },
-          { label: "Meetups", path: "/admin/event/dashboard", icon: <Users2 size={14} /> },
+          { label: "All Events",    path: "/admin/event/dashboard",                   icon: <ListChecks size={14} /> },
+          { label: "Pending Review",path: "/admin/event/dashboard?status=under_review", icon: <Users2 size={14} /> },
+          { label: "Approved",      path: "/admin/event/dashboard?status=approved",    icon: <Award size={14} /> },
+          { label: "Rejected",      path: "/admin/event/dashboard?status=rejected",    icon: <FileText size={14} /> },
         ],
       },
     ],
@@ -127,9 +114,13 @@ const NAV: Section[] = [
         label: "Packages & Revenue",
         icon: <Package size={17} />,
         sub: [
-          { label: "Plans Management", path: "/admin/plans", icon: <Package size={14} /> },
-          { label: "Token Price", path: "/admin/plans", icon: <IndianRupee size={14} /> },
-          { label: "Transactions", path: "/admin/plans", icon: <History size={14} /> },
+          { label: "Dashboard",     path: "/admin/plans",                            icon: <BarChart2 size={14} /> },
+          { label: "Token Price",   path: "/admin/plans?tab=token-price",            icon: <IndianRupee size={14} /> },
+          { label: "Transactions",  path: "/admin/plans?tab=transaction-history",    icon: <History size={14} /> },
+          { label: "One-Time Plans",path: "/admin/plans?tab=one-time",               icon: <Package size={14} /> },
+          { label: "Monthly Plans", path: "/admin/plans?tab=monthly",                icon: <GraduationCap size={14} /> },
+          { label: "Quarterly Plans",path: "/admin/plans?tab=Quarterly",             icon: <Briefcase size={14} /> },
+          { label: "Yearly Plans",  path: "/admin/plans?tab=yearly",                 icon: <Star size={14} /> },
         ],
       },
     ],
@@ -147,7 +138,7 @@ const NAV: Section[] = [
   },
 ];
 
-// ── Path → group id map ────────────────────────────────────────────
+// ── Path → group id ────────────────────────────────────────────────
 const PATH_TO_ID: Record<string, string> = {
   "/admin/company/dashboard": "companies",
   "/admin/professional/dashboard": "professionals",
@@ -167,20 +158,31 @@ const BREADCRUMBS: Record<string, string> = {
 // ── Component ──────────────────────────────────────────────────────
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const activeId = PATH_TO_ID[location.pathname] ?? "dashboard";
+  const navigate = useNavigate();
+
+  // Which group the current route belongs to
+  const currentGroupId = PATH_TO_ID[location.pathname] ?? "companies";
   const breadcrumb = BREADCRUMBS[location.pathname] ?? "Admin";
 
-  // Start with the current section's submenu open
-  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>(() => ({ [activeId]: true }));
+  // Only one accordion open at a time; auto-opens on route change
+  const [openGroup, setOpenGroup] = useState<string>(currentGroupId);
+  // Track which sub-item was explicitly clicked (label-based, since multiple sub-items share the same path)
+  const [activeSub, setActiveSub] = useState<string | null>(null);
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
-  // Pending reviews fetched from all 3 dashboard APIs
   const [pendingItems, setPendingItems] = useState<{ label: string; count: number; path: string }[]>([]);
   const pendingTotal = pendingItems.reduce((s, i) => s + i.count, 0);
+
+  // Sync open group and reset activeSub when route changes
+  useEffect(() => {
+    setOpenGroup(currentGroupId);
+    setActiveSub(null);
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchPendingCounts = async () => {
@@ -189,45 +191,40 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           url: "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin",
           label: "Companies",
           path: "/admin/company/dashboard",
-          key: "cards",
         },
         {
           url: "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin",
           label: "Events",
           path: "/admin/event/dashboard",
-          key: "cards",
         },
         {
           url: "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=admin",
           label: "Professionals",
           path: "/admin/professional/dashboard",
-          key: "cards",
         },
       ];
-
       const results = await Promise.allSettled(
-        sources.map(s => fetch(s.url).then(r => r.json()).then(d => ({
-          label: s.label,
-          path: s.path,
-          count: (d?.cards ?? d?.data ?? []).filter((c: any) =>
-            c.reviewStatus === "under_review" || c.status === "under_review"
-          ).length,
-        })))
+        sources.map(s =>
+          fetch(s.url).then(r => r.json()).then(d => ({
+            label: s.label,
+            path: s.path,
+            count: (d?.cards ?? d?.data ?? []).filter(
+              (c: any) => c.reviewStatus === "under_review" || c.status === "under_review"
+            ).length,
+          }))
+        )
       );
-
       const items = results
         .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
         .map(r => r.value)
         .filter(i => i.count > 0);
       setPendingItems(items);
     };
-
     fetchPendingCounts();
     const interval = setInterval(fetchPendingCounts, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
@@ -237,11 +234,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close mobile sidebar on route change
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
 
-  const toggleMenu = (id: string) => {
-    setOpenMenus(prev => ({ ...prev, [id]: !prev[id] }));
+  const handleParentClick = (item: NavGroup) => {
+    if (item.path) {
+      // Direct link — navigate and clear sub selection
+      navigate(item.path);
+      return;
+    }
+    // Accordion toggle — exclusive: only one open at a time
+    setOpenGroup(prev => (prev === item.id ? "" : item.id));
+  };
+
+  const handleSubClick = (groupId: string, sub: SubItem) => {
+    setActiveSub(sub.label);
+    setOpenGroup(groupId);
+    // sub.path may include query params — navigate handles both forms
+    const [pathname, search] = sub.path.split("?");
+    navigate({ pathname, search: search ? `?${search}` : "" });
   };
 
   const handleLogout = () => {
@@ -250,10 +260,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     window.location.href = "/admin/login";
   };
 
-  // ── Sidebar content ──────────────────────────────────────────────
+  // ── Sidebar ──────────────────────────────────────────────────────
   const SidebarContent = () => (
     <>
-      {/* Brand */}
       <div className="flex items-center gap-2 px-5 py-4 border-b border-white/10 flex-shrink-0">
         <div className="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center flex-shrink-0">
           <Tv size={16} className="text-black" />
@@ -266,7 +275,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-3 px-2">
         {NAV.map((section, si) => (
           <div key={si} className={si > 0 ? "mt-3" : ""}>
@@ -276,34 +284,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
             )}
             {section.items.map(item => {
-              const isActive = activeId === item.id || (item.path === location.pathname && !item.sub);
-              const isOpen = !!openMenus[item.id];
+              const isGroupActive = currentGroupId === item.id;
+              const isOpen = openGroup === item.id;
 
               if (!item.sub) {
-                // Direct link
                 return (
-                  <Link
+                  <button
                     key={item.id}
-                    to={item.path!}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 mb-0.5 ${
-                      isActive
+                    onClick={() => handleParentClick(item)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 mb-0.5 text-left ${
+                      isGroupActive
                         ? "bg-yellow-400/15 text-yellow-400 border-l-[3px] border-yellow-400"
                         : "text-white/60 hover:bg-white/6 hover:text-white border-l-[3px] border-transparent"
                     }`}
                   >
                     <span className="flex-shrink-0">{item.icon}</span>
                     <span className="truncate">{item.label}</span>
-                  </Link>
+                  </button>
                 );
               }
 
-              // Accordion (submenu)
               return (
                 <div key={item.id} className="mb-0.5">
                   <button
-                    onClick={() => toggleMenu(item.id)}
+                    onClick={() => handleParentClick(item)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
-                      isActive
+                      isGroupActive
                         ? "bg-yellow-400/15 text-yellow-400 border-l-[3px] border-yellow-400"
                         : "text-white/60 hover:bg-white/6 hover:text-white border-l-[3px] border-transparent"
                     }`}
@@ -316,25 +322,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     />
                   </button>
 
-                  {/* Submenu */}
                   <div
-                    className={`overflow-hidden transition-all duration-250 ${isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
+                    className={`overflow-hidden transition-all duration-200 ${
+                      isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                    }`}
                   >
                     <div className="ml-4 mt-0.5 border-l border-white/10 pl-3 pb-1">
-                      {item.sub!.map(sub => (
-                        <Link
-                          key={sub.path + sub.label}
-                          to={sub.path}
-                          className={`flex items-center gap-2 px-2.5 py-2 rounded-md text-xs font-medium transition-all duration-150 mb-0.5 ${
-                            location.pathname === sub.path
-                              ? "text-yellow-400 bg-yellow-400/10"
-                              : "text-white/50 hover:text-white hover:bg-white/6"
-                          }`}
-                        >
-                          <span className="flex-shrink-0">{sub.icon}</span>
-                          <span className="truncate">{sub.label}</span>
-                        </Link>
-                      ))}
+                      {item.sub!.map(sub => {
+                        const fullCurrent = location.pathname + location.search;
+                        const isSubActive = isGroupActive && (
+                          activeSub === sub.label ||
+                          fullCurrent === sub.path ||
+                          (activeSub === null && !location.search && item.sub![0].label === sub.label)
+                        );
+                        return (
+                          <button
+                            key={sub.label}
+                            onClick={() => handleSubClick(item.id, sub)}
+                            className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-md text-xs font-medium transition-all duration-150 mb-0.5 text-left ${
+                              isSubActive
+                                ? "text-yellow-400 bg-yellow-400/10"
+                                : "text-white/50 hover:text-white hover:bg-white/6"
+                            }`}
+                          >
+                            <span className="flex-shrink-0">{sub.icon}</span>
+                            <span className="truncate">{sub.label}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -344,7 +359,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         ))}
       </nav>
 
-      {/* Footer / User */}
       <div className="flex-shrink-0 border-t border-white/10 p-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-[11px] font-black text-black flex-shrink-0">
@@ -369,7 +383,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen bg-gray-100" style={{ fontFamily: "'Poppins', sans-serif" }}>
 
-      {/* ── Mobile overlay ── */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 lg:hidden"
@@ -377,7 +390,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         />
       )}
 
-      {/* ── Sidebar (desktop: fixed; mobile: slide-in) ── */}
       <aside
         className={`fixed top-0 left-0 bottom-0 z-50 w-64 flex flex-col transition-transform duration-300
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
@@ -387,13 +399,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <SidebarContent />
       </aside>
 
-      {/* ── Main area ── */}
       <div className="flex flex-col flex-1 min-h-screen lg:ml-64">
 
-        {/* ── Top header (yellow DroneTv theme) ── */}
         <header className="fixed top-0 right-0 left-0 lg:left-64 z-30 flex items-center h-14 px-4 gap-3 bg-yellow-400 shadow-md">
 
-          {/* Hamburger (mobile) / Menu toggle */}
           <button
             onClick={() => setMobileOpen(v => !v)}
             className="flex-shrink-0 p-2 rounded-lg text-black hover:bg-yellow-300 transition-colors lg:hidden"
@@ -402,17 +411,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
-          {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
             <span className="text-black/60 text-sm font-medium hidden sm:block truncate">DroneTv.in</span>
             <span className="text-black/40 hidden sm:block">›</span>
             <span className="text-black font-bold text-sm truncate">{breadcrumb}</span>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center gap-1.5 flex-shrink-0">
 
-            {/* View Site */}
             <a
               href="https://dronetv.in"
               target="_blank"
@@ -423,7 +429,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               View Site
             </a>
 
-            {/* Notification bell */}
             <div ref={notifRef} className="relative">
               <button
                 onClick={() => setNotifOpen(v => !v)}
@@ -450,15 +455,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   ) : (
                     <div className="py-1">
                       {pendingItems.map(item => (
-                        <Link
+                        <button
                           key={item.path}
-                          to={item.path}
-                          onClick={() => setNotifOpen(false)}
-                          className="flex items-center justify-between px-4 py-3 hover:bg-yellow-50 transition-colors"
+                          onClick={() => { navigate(item.path); setNotifOpen(false); }}
+                          className="w-full flex items-center justify-between px-4 py-3 hover:bg-yellow-50 transition-colors text-left"
                         >
                           <span className="text-sm font-medium text-gray-800">{item.label} pending review</span>
                           <span className="bg-yellow-400 text-black text-xs font-black px-2 py-0.5 rounded-full ml-2 flex-shrink-0">{item.count}</span>
-                        </Link>
+                        </button>
                       ))}
                     </div>
                   )}
@@ -469,7 +473,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             </div>
 
-            {/* User avatar */}
             <div ref={userRef} className="relative">
               <button
                 onClick={() => setUserOpen(v => !v)}
@@ -502,7 +505,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        {/* ── Page content ── */}
         <main className="flex-1 mt-14 p-4 sm:p-6">
           {children}
         </main>
