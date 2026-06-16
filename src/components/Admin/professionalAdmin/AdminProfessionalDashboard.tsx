@@ -1407,9 +1407,24 @@ const AdminProfessionalDashboard: React.FC = () => {
       />
 
       {/* Page title */}
-      <div className="mb-5">
+      <div className="mb-4">
         <h1 className="text-xl font-extrabold text-gray-900">Professional Management</h1>
         <p className="text-sm text-gray-500 mt-0.5">Review and manage all professional listings, credentials, and approvals.</p>
+      </div>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        {[
+          { label: "Total", value: professionals.length, color: "border-t-yellow-400" },
+          { label: "Pending Review", value: professionals.filter((p: any) => p.reviewStatus === "under_review").length, color: "border-t-orange-400" },
+          { label: "Approved", value: professionals.filter((p: any) => p.reviewStatus === "approved").length, color: "border-t-green-500" },
+          { label: "Rejected", value: professionals.filter((p: any) => p.reviewStatus === "rejected").length, color: "border-t-red-500" },
+        ].map(stat => (
+          <div key={stat.label} className={`bg-white rounded-lg border border-gray-200 border-t-4 ${stat.color} p-4 shadow-sm`}>
+            <div className="text-2xl font-black text-gray-900">{loading ? "—" : stat.value}</div>
+            <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wide">{stat.label}</div>
+          </div>
+        ))}
       </div>
 
       {/* Horizontal toolbar */}
