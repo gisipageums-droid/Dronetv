@@ -283,12 +283,12 @@ const ProfessionalsPage: React.FC = () => {
             </div>
 
             {/* Filter and Sort Controls  */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
               <div className="relative">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
+                  className="px-3 py-2 w-full sm:w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   {["All"]
                     .concat(
@@ -310,7 +310,7 @@ const ProfessionalsPage: React.FC = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
+                  className="px-3 py-2 w-full sm:w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
                 >
                   <option value="fullName">Sort by Name</option>
                 </select>
@@ -378,7 +378,7 @@ const ProfessionalsPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
               {currentProfessionals.map((professional, idx) => (
                 <ProfessionalCard
                   key={`all-${professional.professionalId}-${idx}`}

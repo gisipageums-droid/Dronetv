@@ -24,7 +24,7 @@ const HeroWithVideo: React.FC = () => {
 
       {/* Foreground Content aligned to left */}
       <div className="relative z-10 h-full w-full flex items-center">
-        <div className="pl-10 pr-4 max-w-2xl text-white">
+        <div className="pl-4 sm:pl-8 md:pl-10 pr-4 max-w-2xl text-white">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
             <span className="block">Explore the Future</span>
             <span className="block text-yellow-400">of Drone Technology</span>

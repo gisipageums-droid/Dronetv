@@ -43,9 +43,9 @@ export default function WebinarsPage() {
                     ) : <span />}
                     {item.date && <span className="text-xs font-bold text-gray-500">{item.date}</span>}
                   </div>
-                  <h3 className="text-base font-bold text-gray-900 leading-snug mb-1">{item.title}</h3>
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1">{item.title}</h3>
                   {item.platform && <p className="text-xs text-gray-400 mb-3">{item.platform}</p>}
-                  {item.description && <p className="text-sm text-gray-500 leading-relaxed mb-3">{item.description}</p>}
+                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
                   {item.source && (
                     <div className="mb-3">
                       <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Speaker</p>
