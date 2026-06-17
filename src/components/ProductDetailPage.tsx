@@ -124,8 +124,7 @@ export default function ProductDetailPage() {
 
         setProduct(mapped);
       })
-      .catch((err) => {
-        console.error("API Error", err);
+      .catch(() => {
         setError("Failed to fetch product details");
       })
       .finally(() => setLoading(false));
@@ -148,7 +147,7 @@ export default function ProductDetailPage() {
 
   if (!product)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="text-lg font-semibold">Product not found.</p>
       </div>
     );
@@ -169,7 +168,7 @@ export default function ProductDetailPage() {
     ));
 
   return (
-    <div className="pt-16 min-h-screen bg-yellow-400">
+    <div className="pt-[104px] min-h-screen bg-gray-50">
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* LEFT: Images + Thumbnails */}

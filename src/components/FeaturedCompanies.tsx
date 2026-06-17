@@ -53,8 +53,7 @@ const FeaturedCompanies: React.FC = () => {
         }
 
       })
-      .catch(error => {
-        console.error('Error fetching companies:', error);
+      .catch(() => {
         setCompanies([]);
       });
     // const fetchCompanies = async () => {

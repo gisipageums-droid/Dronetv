@@ -95,70 +95,50 @@ const PrivacyPolicyPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-100">
-            {/* Hero Section */}
-            <div className="relative bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 overflow-hidden">
-                <div className="absolute inset-0">
-                    <div className="absolute top-20 left-20 w-64 h-64 bg-yellow-200/30 rounded-full animate-pulse blur-3xl"></div>
-                    <div className="absolute bottom-20 right-20 w-80 h-80 bg-yellow-600/30 rounded-full animate-pulse blur-3xl" style={{ animationDelay: '2s' }}></div>
-                </div>
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-                    <div className="text-center">
-                        <div className="flex justify-center mb-6">
-                            <div className="bg-white/20 backdrop-blur-sm rounded-full p-6 border border-white/30">
-                                <Shield className="h-16 w-16 text-black" />
-                            </div>
-                        </div>
-                        <h1 className="text-5xl md:text-6xl font-bold text-black mb-4 animate-fade-in-up">
-                            Privacy Policy
-                        </h1>
-                        <p className="text-xl text-black/80 max-w-3xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                            Your privacy is important to us. Learn how we protect and manage your data.
-                        </p>
-                        <p className="text-sm text-black/70 mt-4 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                            Last Updated: November 2024
-                        </p>
-                    </div>
+        <div className="pt-[104px] min-h-screen bg-gray-50">
+            {/* Hero */}
+            <div className="bg-black text-white relative overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
+                <div className="max-w-6xl mx-auto px-6 py-12">
+                    <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Legal</p>
+                    <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
+                        Privacy <span className="text-yellow-400">Policy</span>
+                    </h1>
+                    <p className="text-sm text-white/60 max-w-lg">Your privacy is important to us. Learn how we protect and manage your data.</p>
+                    <p className="text-xs text-white/40 mt-2">Last Updated: November 2024</p>
                 </div>
             </div>
 
-            {/* Content Section */}
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                {/* Introduction */}
-                <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border-2 border-yellow-200 hover:border-yellow-400 transition-all duration-300">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Commitment to Your Privacy</h2>
-                    <p className="text-gray-700 leading-relaxed text-lg mb-4">
+            {/* Content */}
+            <div className="max-w-6xl mx-auto px-6 py-10">
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Commitment to Your Privacy</h2>
+                    <p className="text-gray-700 leading-relaxed mb-4">
                         At Drone TV, we are committed to protecting your privacy and ensuring the security of your personal information.
                         This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
                     </p>
-                    <p className="text-gray-700 leading-relaxed text-lg">
+                    <p className="text-gray-700 leading-relaxed">
                         By using Drone TV, you consent to the data practices described in this policy.
                         If you do not agree with this policy, please do not use our services.
                     </p>
                 </div>
 
-                {/* Privacy Sections */}
-                <div className="space-y-6">
+                <div className="space-y-4">
                     {sections.map((section, index) => {
                         const IconComponent = section.icon;
                         return (
-                            <div
-                                key={index}
-                                className="bg-white rounded-2xl shadow-lg p-8 border-2 border-yellow-100 hover:border-yellow-400 hover:shadow-xl transition-all duration-300 group"
-                                style={{ animationDelay: `${index * 0.1}s` }}
-                            >
+                            <div key={index} className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
                                 <div className="flex items-start gap-4">
-                                    <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl p-4 group-hover:scale-110 transition-transform duration-300">
-                                        <IconComponent className="h-8 w-8 text-black" />
+                                    <div className="bg-black rounded-xl p-3 flex-shrink-0">
+                                        <IconComponent className="h-6 w-6 text-yellow-400" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-2xl font-bold text-gray-900 mb-4">{section.title}</h3>
+                                        <h3 className="text-xl font-bold text-gray-900 mb-4">{section.title}</h3>
                                         <ul className="space-y-3">
                                             {section.content.map((item, itemIndex) => (
                                                 <li key={itemIndex} className="flex items-start gap-3 text-gray-700">
-                                                    <span className="flex-shrink-0 h-2 w-2 bg-yellow-500 rounded-full mt-2"></span>
-                                                    <span className="leading-relaxed">{item}</span>
+                                                    <span className="flex-shrink-0 h-1.5 w-1.5 bg-yellow-400 rounded-full mt-2"></span>
+                                                    <span className="leading-relaxed text-sm">{item}</span>
                                                 </li>
                                             ))}
                                         </ul>
@@ -169,40 +149,37 @@ const PrivacyPolicyPage = () => {
                     })}
                 </div>
 
-                {/* Updates Section */}
-                <div className="mt-12 bg-white rounded-2xl shadow-xl p-8 border-2 border-yellow-200">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Changes to This Privacy Policy</h3>
-                    <p className="text-gray-700 leading-relaxed text-lg mb-4">
+                <div className="mt-6 bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Changes to This Privacy Policy</h3>
+                    <p className="text-gray-700 leading-relaxed mb-4">
                         We may update this Privacy Policy from time to time to reflect changes in our practices or for legal,
                         operational, or regulatory reasons. We will notify you of any material changes by posting the new
                         Privacy Policy on this page and updating the "Last Updated" date.
                     </p>
-                    <p className="text-gray-700 leading-relaxed text-lg">
+                    <p className="text-gray-700 leading-relaxed">
                         We encourage you to review this Privacy Policy periodically to stay informed about how we are
                         protecting your information.
                     </p>
                 </div>
 
-                {/* Contact Section */}
-                <div className="mt-12 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 rounded-2xl shadow-xl p-8 text-center">
-                    <Mail className="h-12 w-12 text-black mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-black mb-4">Privacy Questions or Concerns?</h3>
-                    <p className="text-black/80 mb-6 text-lg">
+                <div className="mt-6 bg-black rounded-xl p-8 text-center">
+                    <Mail className="h-10 w-10 text-yellow-400 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-white mb-3">Privacy Questions or Concerns?</h3>
+                    <p className="text-white/70 mb-6 text-sm">
                         If you have questions about this Privacy Policy or our data practices, please don't hesitate to contact us.
                     </p>
                     <a
                         href="/contact"
-                        className="inline-block bg-black text-yellow-400 px-8 py-4 rounded-full font-semibold hover:bg-gray-900 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                        className="inline-block bg-yellow-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-all duration-200"
                     >
                         Contact Us
                     </a>
                 </div>
 
-                {/* Back to Top */}
-                <div className="text-center mt-12">
+                <div className="text-center mt-8">
                     <button
                         onClick={scrollToTop}
-                        className="bg-white/80 backdrop-blur-sm text-black px-6 py-3 rounded-full border-2 border-yellow-400 hover:bg-yellow-400 hover:text-black transition-all duration-300 transform hover:scale-105 font-semibold shadow-lg"
+                        className="px-6 py-2.5 text-sm font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-700 transition"
                     >
                         Back to Top
                     </button>
