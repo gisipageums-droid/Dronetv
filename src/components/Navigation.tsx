@@ -205,7 +205,7 @@ const Navigation = () => {
           </div>
 
           {/* Desktop nav */}
-          <div className="hidden xl:flex items-center gap-0.5">
+          <div className="hidden lg:flex items-center gap-0.5">
 
             {/* Home */}
             <Link to="/" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/" ? "text-gray-800 bg-black/10" : "text-black hover:text-gray-800"}`}>
@@ -423,7 +423,7 @@ const Navigation = () => {
               )}
             </div>
 
-            <div className="xl:hidden">
+            <div className="lg:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-black hover:text-gray-800 focus:outline-none hover:scale-110 transition-all duration-300"
@@ -438,7 +438,7 @@ const Navigation = () => {
         </div>
 
         {/* Mobile menu */}
-        <div className={`xl:hidden transition-all duration-500 ease-out overflow-hidden ${isMenuOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}>
+        <div className={`lg:hidden transition-all duration-500 ease-out overflow-hidden ${isMenuOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-yellow-400 max-h-[70vh] overflow-y-auto rounded-b-2xl">
 
             <button onClick={() => handleNavigation("/")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-black/10 text-black">Home</button>

@@ -33,7 +33,7 @@ const Footer = () => {
         <div className="absolute bottom-10 right-10 w-80 h-80 bg-yellow-600/20 rounded-full animate-pulse blur-3xl" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <div className="relative py-16">
+      <div className="relative py-10 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center">
             {/* Logo */}
@@ -41,7 +41,7 @@ const Footer = () => {
               <img
                 src="/images/logo.png"
                 alt="Drone TV Logo"
-                className="w-64 h-24 mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300"
+                className="w-40 h-16 sm:w-52 sm:h-20 md:w-64 md:h-24 mx-auto cursor-pointer group-hover:scale-110 transition-all duration-300"
               />
               <div className="w-16 h-1 bg-black mx-auto mt-2 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
             </div>
@@ -84,7 +84,7 @@ const Footer = () => {
 
             {/* Copyright */}
             <div className="text-center text-black/80 mb-8">
-              <p className="flex items-center justify-center gap-2 text-lg">
+              <p className="flex items-center justify-center gap-2 text-sm sm:text-base md:text-lg text-center px-4">
                 &copy; 2024 Drone TV. Built with <Heart className="h-5 w-5 text-red-500 fill-red-500" /> for the global drone community.
               </p>
             </div>

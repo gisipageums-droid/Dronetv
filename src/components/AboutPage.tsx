@@ -70,7 +70,7 @@ const AboutPage = () => {
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">About</p>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">About <span className="text-yellow-400">Drone TV</span></h1>
@@ -91,7 +91,7 @@ const AboutPage = () => {
 
       {/* Mission and Vision */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="space-y-5">
               <div className="bg-gray-50 rounded-xl border border-gray-200 p-7 hover:shadow-md transition-shadow">
@@ -129,7 +129,7 @@ const AboutPage = () => {
       </div>
 
       {/* Founder's Message */}
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-8 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           A Message from Our Founder
         </h2>
@@ -161,7 +161,7 @@ const AboutPage = () => {
 
       {/* Our Team */}
       <div className="bg-white border-t border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-2 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             Meet Our Team
           </h2>
@@ -196,7 +196,7 @@ const AboutPage = () => {
       </div>
 
       {/* History Timeline */}
-      <div className="max-w-6xl mx-auto px-6 py-12" ref={timelineRef}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12" ref={timelineRef}>
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-2 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           Our Journey
         </h2>
@@ -283,7 +283,7 @@ const AboutPage = () => {
 
       {/* Contact CTA */}
       <div className="bg-black">
-        <div className="max-w-6xl mx-auto px-6 py-12 text-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
           <h2 className="text-2xl font-extrabold text-white mb-3">Ready to Join Our Mission?</h2>
           <p className="text-sm text-white/60 max-w-xl mx-auto mb-8">Whether you're a drone enthusiast, industry professional, or technology innovator, we'd love to connect with you.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">

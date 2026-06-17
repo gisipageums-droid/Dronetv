@@ -438,7 +438,7 @@ const SearchPage = () => {
       {/* Hero / Search */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Search</p>
           <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
             Search <span className="text-yellow-400">Results</span>
@@ -477,7 +477,7 @@ const SearchPage = () => {
       </div>
 
       {/* Results */}
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
         <div className="flex items-center justify-between mb-6">
           <p className="text-sm text-gray-500">{filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''} found</p>
           {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}

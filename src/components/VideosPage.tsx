@@ -381,7 +381,7 @@ const VideosPage = () => {
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media</p>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Video <span className="text-yellow-400">Library</span></h1>
@@ -512,7 +512,7 @@ const VideosPage = () => {
 
       {/* Filter Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
             <div className="relative flex-1 max-w-xs">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -573,7 +573,7 @@ const VideosPage = () => {
       {/* Featured Videos */}
       {filteredFeaturedVideos.length > 0 && (
         <div className="bg-white border-b border-gray-200">
-          <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
               <Star className="h-5 w-5 text-yellow-400 fill-current" />
               Featured Videos ({filteredFeaturedVideos.length})
@@ -610,7 +610,7 @@ const VideosPage = () => {
       )}
 
       {/* All Videos */}
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
         <div className="flex justify-between items-center mb-6">
           <p className="text-sm text-gray-500">{filteredVideos.length} video{filteredVideos.length !== 1 ? 's' : ''}</p>
           {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}

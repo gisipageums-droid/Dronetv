@@ -35,7 +35,7 @@ export default function NewsPage() {
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media</p>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">News <span className="text-yellow-400">&amp; Insights</span></h1>
@@ -56,7 +56,7 @@ export default function NewsPage() {
 
       {/* Filter Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex flex-col sm:flex-row gap-2 items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row gap-2 items-center justify-between">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -67,11 +67,11 @@ export default function NewsPage() {
               className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
             />
           </div>
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <select
               value={selectedCategory}
               onChange={e => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
-              className="appearance-none pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 min-w-[160px]"
+              className="appearance-none w-full sm:w-auto pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 sm:min-w-[160px]"
             >
               {categories.map(c => (
                 <option key={c} value={c}>{c === 'All' ? 'All Categories' : c}</option>
@@ -83,7 +83,7 @@ export default function NewsPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading articles...</div>
         ) : filtered.length === 0 ? (
