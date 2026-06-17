@@ -160,7 +160,6 @@ const Navigation = () => {
     { path: "/partnerships/event-organizers", label: "Event Organizers" },
     { path: "/partnerships/education-partners", label: "Education Partners" },
     { path: "/partnerships/industry-players", label: "Industry Players" },
-    { path: "/partnerships/benefits", label: "Partnership Benefits" },
     { path: "/partner", label: "Partner With Us" },
   ];
 
@@ -362,6 +361,12 @@ const Navigation = () => {
               <div className="absolute inset-0 rounded-lg bg-black/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
             </Link>
 
+            {/* Purchase */}
+            <Link to="/partnerships/benefits" className={`relative px-2.5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/partnerships/benefits" ? "text-gray-800 bg-black/10" : "text-black hover:text-gray-800"}`}>
+              <span className="relative z-10">Purchase</span>
+              <div className="absolute inset-0 rounded-lg bg-black/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+            </Link>
+
             {/* Account / Login */}
             {isLogin || isAdminLogin ? (
               <div className="relative" ref={accountRef}
@@ -500,6 +505,7 @@ const Navigation = () => {
             <button onClick={() => handleNavigation("/products")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-black/10 text-black">Products</button>
             <button onClick={() => handleNavigation("/services")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-black/10 text-black">Services</button>
             <button onClick={() => handleNavigation("/contact")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-black/10 text-black">Contact</button>
+            <button onClick={() => handleNavigation("/partnerships/benefits")} className="w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-black/10 text-black">Purchase</button>
 
             {isLogin || isAdminLogin ? (
               <>
