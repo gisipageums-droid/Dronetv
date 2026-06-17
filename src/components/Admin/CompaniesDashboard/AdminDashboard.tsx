@@ -888,7 +888,8 @@ const AdminDashboard: React.FC = () => {
   // UI state - Updated statusFilter default value
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [viewFilter, setViewFilter] = useState<string>(searchParams.get("view") ?? "all");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -1331,7 +1332,40 @@ const AdminDashboard: React.FC = () => {
         ))}
       </div>
 
-      {/* Horizontal toolbar */}
+      {/* View tabs */}
+      <div className="flex gap-0 border-b-2 border-gray-200 mb-4 overflow-x-auto">
+        {[
+          { id: "all", label: "All Companies" },
+          { id: "leads", label: "Lead Management" },
+          { id: "subscriptions", label: "Subscriptions" },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setViewFilter(tab.id);
+              setSearchParams(prev => { if (tab.id === "all") { prev.delete("view"); } else { prev.set("view", tab.id); } return prev; }, { replace: true });
+              setCurrentPage(1);
+              if (tab.id === "leads") setStatusFilter("under_review");
+              else setStatusFilter("all");
+            }}
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {viewFilter === "subscriptions" && (
+        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center mb-4 shadow-sm">
+          <Building2 className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-gray-700 mb-1">Subscriptions</h3>
+          <p className="text-sm text-gray-400">Company subscription plans, billing status and renewal tracking will appear here. Coming soon.</p>
+        </div>
+      )}
+
+      {/* Horizontal toolbar + content */}
+      {viewFilter !== "subscriptions" && (
+      <React.Fragment>
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
           <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -1378,12 +1412,12 @@ const AdminDashboard: React.FC = () => {
             />
           )}
 
-          {/* All Companies Section */}
+          {/* Companies Section */}
           <div className="flex gap-3 items-center mb-6">
             <div className="flex gap-2 items-center">
               <Building2 className="w-5 h-5 text-yellow-500" />
               <h2 className="text-base font-bold text-gray-900">
-                {statusFilter === "all" ? "All Companies" : statusFilter === "under_review" ? "Under Review Companies" : statusFilter === "approved" ? "Approved Companies" : "Rejected Companies"}
+                {viewFilter === "leads" ? "Lead Management" : statusFilter === "all" ? "All Companies" : statusFilter === "under_review" ? "Under Review Companies" : statusFilter === "approved" ? "Approved Companies" : "Rejected Companies"}
               </h2>
             </div>
             <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
@@ -1448,6 +1482,8 @@ const AdminDashboard: React.FC = () => {
             </>
           )}
         </div>
+      </React.Fragment>
+      )}
 
       {/* Credentials Modal */}
       {credentialsModal.isOpen && (

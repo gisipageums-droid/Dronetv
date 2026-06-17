@@ -1082,11 +1082,28 @@ const eventApiService = {
 };
 
 // -------------------- Main Component --------------------
+const VIEW_TABS = [
+  { id: "all", label: "All Events" },
+  { id: "expos", label: "Expos" },
+  { id: "conferences", label: "Conferences" },
+  { id: "workshops", label: "Workshops" },
+];
+
+function matchesView(event: Event, view: string): boolean {
+  if (view === "all") return true;
+  const cat = (event.category || "").toLowerCase();
+  if (view === "expos") return cat.includes("expo");
+  if (view === "conferences") return cat.includes("conference");
+  if (view === "workshops") return cat.includes("workshop");
+  return true;
+}
+
 const EventAdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
+  const [viewFilter, setViewFilter] = useState<string>(searchParams.get("view") ?? "all");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
     useState<boolean>(false);
   const [events, setEvents] = useState<Event[]>([]);
@@ -1303,16 +1320,15 @@ const EventAdminDashboard: React.FC = () => {
         (event.category &&
           event.category.toLowerCase().includes(searchTerm.toLowerCase()));
 
-      // Status filter logic
       const matchesStatus =
         statusFilter === "all" ||
         (statusFilter === "under_review" && event.reviewStatus === "under_review") ||
         (statusFilter === "approved" && event.reviewStatus === "approved") ||
         (statusFilter === "rejected" && event.reviewStatus === "rejected");
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesView(event, viewFilter);
     });
-  }, [events, searchTerm, statusFilter]);
+  }, [events, searchTerm, statusFilter, viewFilter]);
 
   const sortedEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {
@@ -1449,6 +1465,23 @@ const EventAdminDashboard: React.FC = () => {
             <div className="text-2xl font-black text-gray-900">{loading ? "—" : stat.value}</div>
             <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wide">{stat.label}</div>
           </div>
+        ))}
+      </div>
+
+      {/* View tabs */}
+      <div className="flex gap-0 border-b-2 border-gray-200 mb-4 overflow-x-auto">
+        {VIEW_TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setViewFilter(tab.id);
+              setSearchParams(prev => { if (tab.id === "all") { prev.delete("view"); } else { prev.set("view", tab.id); } return prev; }, { replace: true });
+              setCurrentPage(1);
+            }}
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"}`}
+          >
+            {tab.label}
+          </button>
         ))}
       </div>
 
