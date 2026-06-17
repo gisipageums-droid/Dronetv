@@ -142,10 +142,11 @@ const EventsPage = () => {
   }, []);
 
   const handleCardClick = (event) => {
+    const slug = event.cleanUrl || event.name;
     if (event.templateSelection === "1") {
-      navigate(`/event/${event.name}`);
+      navigate(`/event/${slug}`);
     } else {
-      navigate(`/events/${event.name}`);
+      navigate(`/events/${slug}`);
     }
   };
 

@@ -156,7 +156,7 @@ const NAV: Section[] = [
         id: "invoices",
         label: "Invoices",
         icon: <Receipt size={17} />,
-        path: "/admin/plans?tab=transaction-history",
+        path: "/admin/invoices",
       },
     ],
   },
@@ -167,7 +167,7 @@ const NAV: Section[] = [
         id: "settings",
         label: "Settings",
         icon: <Settings size={17} />,
-        path: "#",
+        path: "/admin/settings",
       },
     ],
   },
@@ -179,6 +179,8 @@ const PATH_TO_ID: Record<string, string> = {
   "/admin/media/dashboard": "media",
   "/admin/event/dashboard": "events",
   "/admin/plans": "plans",
+  "/admin/invoices": "invoices",
+  "/admin/settings": "settings",
 };
 
 const BREADCRUMBS: Record<string, string> = {
@@ -187,6 +189,8 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/media/dashboard": "Media Hub",
   "/admin/event/dashboard": "Events",
   "/admin/plans": "Packages & Revenue",
+  "/admin/invoices": "Invoices",
+  "/admin/settings": "Settings",
 };
 
 const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
@@ -207,7 +211,6 @@ function computeGroupId(pathname: string, search: string): string {
     return "media";
   }
   if (pathname === "/admin/company/dashboard") return view ? "companies" : "dashboard";
-  if (pathname === "/admin/plans" && tab === "transaction-history") return "invoices";
   return PATH_TO_ID[pathname] ?? "dashboard";
 }
 

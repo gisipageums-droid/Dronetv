@@ -75,7 +75,7 @@ export default function NewsPulsePage() {
             ))}
           </div>
 
-          <div>
+          {(active === 'All News' || active === 'Market') && <div>
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
               <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Featured</span>
               Top Story
@@ -102,20 +102,24 @@ export default function NewsPulsePage() {
                 </div>
               </div>
             </div>
-          </div>
+          </div>}
 
           <div>
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
               <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Latest</span>
               News Grid
             </h2>
-            {news.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-8">No news articles published yet.</p>
-            ) : (
+            {(() => {
+              const filtered = news.filter(item => active === 'All News' || (item.category || '').toLowerCase().includes(active.toLowerCase()));
+              if (news.length === 0) {
+                return <p className="text-sm text-gray-400 text-center py-8">No news articles published yet.</p>;
+              }
+              if (filtered.length === 0) {
+                return <p className="text-sm text-gray-400 text-center py-8">No {active} articles found.</p>;
+              }
+              return (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {news
-                  .filter(item => active === 'All News' || (item.category || '').toLowerCase().includes(active.toLowerCase()))
-                  .map(item => (
+                {filtered.map(item => (
                     <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
                       <div className="flex items-center justify-between mb-3">
                         <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
@@ -129,7 +133,8 @@ export default function NewsPulsePage() {
                     </div>
                   ))}
               </div>
-            )}
+              );
+            })()}
           </div>
 
           <div className="bg-yellow-400 rounded-xl p-6 flex items-start gap-4">

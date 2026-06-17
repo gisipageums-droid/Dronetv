@@ -14,6 +14,7 @@ const Navigation = () => {
   const [isProfessionalsOpen, setIsProfessionalsOpen] = useState(false);
   const [isPartnershipsOpen, setIsPartnershipsOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [selectedLang, setSelectedLang] = useState("English");
 
   const { isLogin, isAdminLogin, setHaveAccount } = useUserAuth();
@@ -24,6 +25,7 @@ const Navigation = () => {
   const professionalsRef = useRef<HTMLDivElement>(null);
   const partnershipsRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -47,6 +49,7 @@ const Navigation = () => {
       if (eventsRef.current && !eventsRef.current.contains(e.target as Node)) setIsEventsOpen(false);
       if (professionalsRef.current && !professionalsRef.current.contains(e.target as Node)) setIsProfessionalsOpen(false);
       if (partnershipsRef.current && !partnershipsRef.current.contains(e.target as Node)) setIsPartnershipsOpen(false);
+      if (aboutRef.current && !aboutRef.current.contains(e.target as Node)) setIsAboutOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -89,6 +92,7 @@ const Navigation = () => {
     setIsEventsOpen(false);
     setIsProfessionalsOpen(false);
     setIsPartnershipsOpen(false);
+    setIsAboutOpen(false);
   };
 
   const chevron = (
@@ -136,11 +140,15 @@ const Navigation = () => {
     { path: "/events/meetups", label: "Meetups" },
   ];
 
+  const aboutItems = [
+    { path: "/about", label: "About Us" },
+    { path: "/professionals/portfolio", label: "Platform Portfolio" },
+  ];
+
   const professionalsItems = [
     { path: "/professionals/job-board", label: "Job Board" },
     { path: "/professionals/pilot-directory", label: "Pilot Directory" },
     { path: "/professionals/certifications", label: "Certifications" },
-    { path: "/professionals/portfolio", label: "Portfolio" },
     { path: "/professionals/training", label: "Training" },
     { path: "/professionals/networking", label: "Networking" },
     { path: "/professionals/community", label: "Community" },
@@ -157,6 +165,7 @@ const Navigation = () => {
   ];
 
   const subNavMap: Record<string, { index: string; label: string; items: { path: string; label: string }[] }> = {
+    about:         { index: "/about",         label: "About",         items: aboutItems },
     media:         { index: "/media",         label: "Media Hub",     items: mediaItems },
     events:        { index: "/events",        label: "Events",        items: eventsItems },
     professionals: { index: "/professionals", label: "Professionals", items: professionalsItems },
@@ -164,6 +173,7 @@ const Navigation = () => {
   };
 
   const currentSection = (() => {
+    if (location.pathname === "/about" || location.pathname === "/professionals/portfolio") return "about";
     if (location.pathname.startsWith("/media") || location.pathname === "/gallery") return "media";
     if (location.pathname === "/events" || location.pathname.startsWith("/events/")) return "events";
     if (location.pathname === "/professionals" || location.pathname.startsWith("/professionals/")) return "professionals";
@@ -213,11 +223,28 @@ const Navigation = () => {
               <div className="absolute inset-0 rounded-lg bg-black/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
             </Link>
 
-            {/* About */}
-            <Link to="/about" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/about" ? "text-gray-800 bg-black/10" : "text-black hover:text-gray-800"}`}>
-              <span className="relative z-10">About Us</span>
-              <div className="absolute inset-0 rounded-lg bg-black/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-            </Link>
+            {/* About Us dropdown */}
+            <div className="relative" ref={aboutRef}
+              onMouseEnter={() => { closeAllDropdowns(); setIsAboutOpen(true); }}
+              onMouseLeave={() => setIsAboutOpen(false)}
+            >
+              <motion.button
+                onClick={() => { closeAllDropdowns(); setIsAboutOpen(s => !s); }}
+                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-black flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${aboutItems.some(i => location.pathname === i.path) ? "bg-black/10" : ""}`}
+              >
+                <span className="relative z-10">About Us</span>
+                {chevron}
+                <div className="absolute inset-0 rounded-lg bg-black/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+              </motion.button>
+              <div className="absolute top-full left-0 h-1 w-full" />
+              {isAboutOpen && (
+                <motion.div {...dropdownMotion} className={dropdownBase}>
+                  <div className="p-2 flex flex-col">
+                    {aboutItems.map(i => navDropdownItem(i.path, i.label))}
+                  </div>
+                </motion.div>
+              )}
+            </div>
 
             {/* Media Hub dropdown */}
             <div className="relative" ref={mediaRef}
@@ -442,7 +469,11 @@ const Navigation = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-yellow-400 max-h-[70vh] overflow-y-auto rounded-b-2xl">
 
             <button onClick={() => handleNavigation("/")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-black/10 text-black">Home</button>
-            <button onClick={() => handleNavigation("/about")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-black/10 text-black">About Us</button>
+
+            <p className="px-3 py-1 text-xs font-bold text-black/50 uppercase tracking-widest">About</p>
+            {aboutItems.map(i => (
+              <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-black/10 text-black">{i.label}</button>
+            ))}
 
             <p className="px-3 py-1 text-xs font-bold text-black/50 uppercase tracking-widest">Media Hub</p>
             {mediaItems.map(i => (
