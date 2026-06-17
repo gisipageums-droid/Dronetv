@@ -181,7 +181,7 @@ const ProfessionalsPage: React.FC = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+      <div className="bg-white border-b border-gray-200 sticky top-[104px] z-40">
         <div className="max-w-6xl mx-auto px-6 py-3">
           <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
             <div className="relative flex-1 max-w-xs">

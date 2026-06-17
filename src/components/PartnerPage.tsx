@@ -13,6 +13,7 @@ const PartnerPage = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -30,6 +31,7 @@ const PartnerPage = () => {
       organization: formData.organization.trim(),
       message: formData.message.trim()
     };
+    setSubmitError('');
     try {
       const response = await fetch('https://0etsqrl2k1.execute-api.ap-south-1.amazonaws.com/postdronetvpartner', {
         method: 'POST',
@@ -40,14 +42,10 @@ const PartnerPage = () => {
       if (response.ok) {
         setIsSubmitted(true);
       } else {
-        alert("Failed to submit: " + result.error);
+        setSubmitError(result.error || 'Submission failed. Please try again.');
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        alert("Network error: " + error.message);
-      } else {
-        alert("An unexpected error occurred.");
-      }
+    } catch {
+      setSubmitError('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -275,6 +273,9 @@ const PartnerPage = () => {
                   )}
                   <span>{isLoading ? 'Submitting...' : 'Become a Partner'}</span>
                 </button>
+                {submitError && (
+                  <p className="mt-3 text-sm text-red-600 text-center">{submitError}</p>
+                )}
               </form>
             ) : (
               <div className="text-center py-8">
