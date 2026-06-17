@@ -183,7 +183,6 @@ const GalleryPage = () => {
     const file = event.target.files[0];
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
         return;
       }
       const reader = new FileReader();
@@ -202,7 +201,6 @@ const GalleryPage = () => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (!formData.imagePreview) {
-      alert('Please upload an image.');
       return;
     }
     const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
@@ -253,7 +251,7 @@ const GalleryPage = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+      <div className="bg-white border-b border-gray-200 sticky top-[104px] z-40">
         <div className="max-w-6xl mx-auto px-6 py-3">
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
             <div className="relative flex-1 max-w-xs w-full">

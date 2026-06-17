@@ -153,7 +153,7 @@ const Navigation = () => {
     { path: "/partnerships/education-partners", label: "Education Partners" },
     { path: "/partnerships/industry-players", label: "Industry Players" },
     { path: "/partnerships/benefits", label: "Partnership Benefits" },
-    { path: "/partnerships/become-a-partner", label: "Become a Partner" },
+    { path: "/partner", label: "Partner With Us" },
   ];
 
   const subNavMap: Record<string, { index: string; label: string; items: { path: string; label: string }[] }> = {
@@ -164,10 +164,10 @@ const Navigation = () => {
   };
 
   const currentSection = (() => {
-    if (location.pathname.startsWith("/media")) return "media";
+    if (location.pathname.startsWith("/media") || location.pathname === "/gallery") return "media";
     if (location.pathname === "/events" || location.pathname.startsWith("/events/")) return "events";
     if (location.pathname === "/professionals" || location.pathname.startsWith("/professionals/")) return "professionals";
-    if (location.pathname.startsWith("/partnerships")) return "partnerships";
+    if (location.pathname.startsWith("/partnerships") || location.pathname === "/partner") return "partnerships";
     return null;
   })();
 
@@ -301,7 +301,7 @@ const Navigation = () => {
             >
               <motion.button
                 onClick={() => { closeAllDropdowns(); setIsPartnershipsOpen(s => !s); }}
-                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-black flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${partnershipsItems.some(i => location.pathname === i.path) ? "bg-black/10" : ""}`}
+                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-black flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${(partnershipsItems.some(i => location.pathname === i.path) || location.pathname === "/partner") ? "bg-black/10" : ""}`}
               >
                 <span className="relative z-10">Partnerships</span>
                 {chevron}

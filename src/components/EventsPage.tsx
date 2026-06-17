@@ -238,7 +238,7 @@ const EventsPage = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+      <div className="bg-white border-b border-gray-200 sticky top-[104px] z-40">
         <div className="max-w-6xl mx-auto px-6 py-3 flex flex-col sm:flex-row gap-2 items-center">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
