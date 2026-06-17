@@ -3,18 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
-const decodeHTML = (str: string): string => {
-  if (!str) return '';
-  const txt = document.createElement('textarea');
-  txt.innerHTML = str;
-  return txt.value;
-};
-
-const isCleanTitle = (title: string): boolean => {
-  if (!title?.trim()) return false;
-  return !/^\s*'\s*\+|\+\s*'\s*$|\$el\.|outerHTML|\.prop\s*\(|\beval\b|<script/i.test(title);
-};
 import { Search, ChevronDown, Zap as Drone, Brain, Map, Star, Users, MapPin, Building2 } from 'lucide-react';
 import LoadingScreen from './loadingscreen';
 
@@ -49,7 +37,6 @@ const ServicesPage = () => {
   const servicesPerPage = 12;
   const [allServices, setAllServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState(['All']);
 
   const sortOptions = [
@@ -63,7 +50,6 @@ const ServicesPage = () => {
   useEffect(() => {
     const fetchServices = () => {
       setLoading(true);
-      setError(null);
 
       const API_URL = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/services/view";
 
@@ -75,12 +61,8 @@ const ServicesPage = () => {
           if (responseData.status && responseData.data && Array.isArray(responseData.data)) {
             const apiServices: Service[] = [];
             const allCategories = new Set(['All']);
-            const seenCompanyIds = new Set<string>();
 
             responseData.data.forEach((item: any) => {
-              const cid = (item.publishedId || '').trim();
-              if (cid && seenCompanyIds.has(cid)) return;
-              if (cid) seenCompanyIds.add(cid);
               // Check if services array exists and has at least one service
               if (item.services &&
                 item.services.services &&
@@ -96,15 +78,15 @@ const ServicesPage = () => {
 
                 // Process each service in the services array
                 item.services.services.forEach((service: any, index: number) => {
-                  // Only process services that have a clean, non-code title
-                  if (service && service.title && isCleanTitle(service.title)) {
+                  // Only process services that have at least a title
+                  if (service && service.title) {
                     const mappedService: Service = {
                       id: `${item.publishedId}-${index}`, // Unique ID for each service
                       publishedId: item.publishedId,
                       userId: item.userId,
-                      title: decodeHTML(service.title),
+                      title: service.title || "Untitled Service",
                       company: item.companyName || (item.userId ? item.userId.split('@')[0] : "Unknown Company"),
-                      description: decodeHTML(service.description || service.detailedDescription || "No description available"),
+                      description: service.description || service.detailedDescription || "No description available",
                       image: service.image || "/images/service-placeholder.jpg",
                       category: service.category || "General",
                       price: service.pricing || "Contact for pricing",
@@ -252,7 +234,7 @@ const ServicesPage = () => {
   if (loading) {
     return (
       <LoadingScreen
-        logoSrc="/images/logo.png"
+        logoSrc="images/logo.png"
         loadingText="Loading Services..."
       />
     );
@@ -260,7 +242,6 @@ const ServicesPage = () => {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
         <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -278,7 +259,6 @@ const ServicesPage = () => {
         </div>
       </div>
 
-      {/* Filter Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
         <div className="max-w-6xl mx-auto px-6 py-3">
           <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
@@ -294,7 +274,6 @@ const ServicesPage = () => {
                 className="py-2.5 pr-3 pl-9 w-full text-sm text-gray-900 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 placeholder-gray-400"
               />
             </div>
-
             <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
               <div className="relative">
                 <select
@@ -310,7 +289,6 @@ const ServicesPage = () => {
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-gray-400" />
               </div>
-
               <div className="relative">
                 <select
                   value={sortBy}
@@ -327,25 +305,23 @@ const ServicesPage = () => {
               </div>
             </div>
           </div>
-
           <div className="flex flex-wrap gap-2 mt-2">
             {selectedCategory !== 'All' && (
               <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
                 Category: {selectedCategory}
-                <button onClick={() => setSelectedCategory('All')} className="text-sm hover:text-white">×</button>
+                <button onClick={() => setSelectedCategory('All')} className="text-sm hover:text-white">x</button>
               </span>
             )}
             {searchQuery && (
               <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
                 Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="text-sm hover:text-white">×</button>
+                <button onClick={() => setSearchQuery('')} className="text-sm hover:text-white">x</button>
               </span>
             )}
           </div>
         </div>
       </div>
 
-      {/* Services Grid */}
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
         <div className="flex justify-between items-center mb-6">
           <p className="text-sm text-gray-500">{filteredServices.length} service{filteredServices.length !== 1 ? 's' : ''}</p>
@@ -371,10 +347,12 @@ const ServicesPage = () => {
                   state={{ service }}
                   key={service.id}
                   className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-200 block"
+                  style={{
+                    animationDelay: `${index * 100}ms`,
+                  }}
                 >
                     <div className="p-3">
                       <div className="overflow-hidden relative rounded-lg bg-gray-100 h-48 flex items-center justify-center">
-                        <span className="text-gray-500 text-sm font-medium text-center px-4 leading-relaxed z-0 line-clamp-3">{service.title}</span>
                         <img
                           src={service.image}
                           alt={service.title}
@@ -408,6 +386,7 @@ const ServicesPage = () => {
                         {service.company}
                       </p>
 
+                      {/* Added timestamp display */}
                       {service.timestamp && (
                         <p className="mb-3 text-xs text-gray-400">
                           Added: {formatDate(service.timestamp)}
@@ -453,47 +432,43 @@ const ServicesPage = () => {
             </div>
           )}
 
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-10">
-              <div className="flex gap-1 items-center">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                {[...Array(totalPages)].map((_, index) => {
-                  const page = index + 1;
-                  if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium ${page === currentPage
-                          ? 'bg-black text-yellow-400 border border-black'
-                          : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  } else if (page === currentPage - 2 || page === currentPage + 2) {
-                    return <span key={page} className="px-2 text-gray-400">...</span>;
-                  }
-                  return null;
-                })}
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-10">
+            <div className="flex gap-2 items-center">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-sm font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              {[...Array(totalPages)].map((_, index) => {
+                const page = index + 1;
+                if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${page === currentPage ? 'bg-black text-yellow-400 border border-black' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (page === currentPage - 2 || page === currentPage + 2) {
+                  return <span key={page} className="px-2 text-gray-400">...</span>;
+                }
+                return null;
+              })}
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-sm font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
