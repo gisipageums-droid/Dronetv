@@ -274,16 +274,16 @@ export default function AdminMediaDashboard() {
       </div>
 
       <div className="py-1">
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex gap-0 border-b-2 border-gray-200 mb-4 overflow-x-auto">
           <button onClick={() => setActiveTypeAndSync('all')}
-            className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === 'all' ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${activeType === 'all' ? 'text-gray-900 border-yellow-400' : 'text-gray-500 border-transparent hover:text-gray-700'}`}>
             All ({sectionItems.length})
           </button>
           {config.types.map(t => {
             const count = items.filter(i => i.contentType === t.value).length;
             return (
               <button key={t.value} onClick={() => setActiveTypeAndSync(t.value)}
-                className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === t.value ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
+                className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${activeType === t.value ? 'text-gray-900 border-yellow-400' : 'text-gray-500 border-transparent hover:text-gray-700'}`}>
                 {t.label}{count > 0 ? ` (${count})` : ''}
               </button>
             );

@@ -8,6 +8,7 @@ import {
   Search,
   Trash2,
   User,
+  Users,
   X,
   XCircle,
   Clock,
@@ -974,6 +975,12 @@ const apiService = {
 };
 
 // Main Professional Dashboard Component
+const PROF_VIEW_TABS = [
+  { id: "all", label: "Pilot Directory" },
+  { id: "portfolio", label: "Portfolio" },
+  { id: "community", label: "Community" },
+];
+
 const AdminProfessionalDashboard: React.FC = () => {
   const navigate = useNavigate();
 
@@ -985,7 +992,8 @@ const AdminProfessionalDashboard: React.FC = () => {
   const [isMutating, setIsMutating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [viewFilter, setViewFilter] = useState<string>(searchParams.get("view") ?? "all");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
   const [sortBy, setSortBy] = useState<string>("Sort by Name");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -1415,6 +1423,39 @@ const AdminProfessionalDashboard: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* View tabs */}
+      <div className="flex gap-0 border-b-2 border-gray-200 mb-4 overflow-x-auto">
+        {PROF_VIEW_TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setViewFilter(tab.id);
+              setSearchParams(prev => { if (tab.id === "all") { prev.delete("view"); } else { prev.set("view", tab.id); } return prev; }, { replace: true });
+              setCurrentPage(1);
+            }}
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {viewFilter === "portfolio" && (
+        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center mb-4 shadow-sm">
+          <FileText className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-gray-700 mb-1">Portfolio Management</h3>
+          <p className="text-sm text-gray-400">Showing professionals with uploaded portfolio content. Full portfolio module coming soon.</p>
+        </div>
+      )}
+
+      {viewFilter === "community" && (
+        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center mb-4 shadow-sm">
+          <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-gray-700 mb-1">Community Management</h3>
+          <p className="text-sm text-gray-400">Community posts, forum threads, and member activity will appear here. Coming soon.</p>
+        </div>
+      )}
 
       {/* Horizontal toolbar */}
       <div className="flex flex-wrap items-center gap-2 mb-4">

@@ -28,6 +28,24 @@ interface Service {
   timestamp?: string;
 }
 
+const isValidTitle = (title: string): boolean => {
+  if (!title) return false;
+  const junk = ["$el.prop", "outerHTML", "' + ", "+ '", "+ text +", "jquery", "$("];
+  return !junk.some(p => title.toLowerCase().includes(p.toLowerCase()));
+};
+
+const decodeHTML = (str: string): string => {
+  if (!str) return str;
+  const map: Record<string, string> = {
+    '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#039;': "'",
+    '&#8211;': '–', '&#8212;': '—', '&#8216;': '‘', '&#8217;': '’',
+    '&#8220;': '“', '&#8221;': '”', '&#038;': '&', '&nbsp;': ' ',
+    '&rsquo;': '’', '&lsquo;': '‘', '&rdquo;': '”', '&ldquo;': '“',
+    '&ndash;': '–', '&mdash;': '—',
+  };
+  return str.replace(/&[^;\s]+;/g, m => map[m] ?? m);
+};
+
 const ServicesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('timestamp'); // Changed default to timestamp for newest first
@@ -78,15 +96,17 @@ const ServicesPage = () => {
 
                 // Process each service in the services array
                 item.services.services.forEach((service: any, index: number) => {
-                  // Only process services that have at least a title
-                  if (service && service.title) {
+                  // Only process services that have a valid, non-malformed title
+                  const rawTitle = service && service.title ? String(service.title) : '';
+                  if (!rawTitle || !isValidTitle(rawTitle)) return;
+                  if (service) {
                     const mappedService: Service = {
-                      id: `${item.publishedId}-${index}`, // Unique ID for each service
+                      id: `${item.publishedId}-${index}`,
                       publishedId: item.publishedId,
                       userId: item.userId,
-                      title: service.title || "Untitled Service",
+                      title: decodeHTML(rawTitle),
                       company: item.companyName || (item.userId ? item.userId.split('@')[0] : "Unknown Company"),
-                      description: service.description || service.detailedDescription || "No description available",
+                      description: decodeHTML(service.description || service.detailedDescription || "No description available"),
                       image: service.image || "/images/service-placeholder.jpg",
                       category: service.category || "General",
                       price: service.pricing || "Contact for pricing",
