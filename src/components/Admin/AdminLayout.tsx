@@ -90,12 +90,12 @@ const NAV: Section[] = [
         label: "Professionals",
         icon: <Users size={17} />,
         sub: [
-          { label: "Job Board",       path: "/admin/professional/dashboard?view=jobs",          icon: <Briefcase size={14} /> },
+          { label: "Job Board",       path: "/admin/media/dashboard?type=job",                  icon: <Briefcase size={14} /> },
           { label: "Pilot Directory", path: "/admin/professional/dashboard",                    icon: <UserCircle size={14} /> },
-          { label: "Certifications",  path: "/admin/professional/dashboard?view=certifications", icon: <Award size={14} /> },
+          { label: "Certifications",  path: "/admin/media/dashboard?type=certification",        icon: <Award size={14} /> },
           { label: "Portfolio",       path: "/admin/professional/dashboard?view=portfolio",      icon: <FileText size={14} /> },
-          { label: "Training / RPTOs",path: "/admin/professional/dashboard?view=training",       icon: <GraduationCap size={14} /> },
-          { label: "Community",       path: "/admin/professional/dashboard?view=community",      icon: <Users size={14} /> },
+          { label: "Training / RPTOs",path: "/admin/media/dashboard?type=training",             icon: <GraduationCap size={14} /> },
+          { label: "Community",       path: "/admin/professional/dashboard?view=community",     icon: <Users size={14} /> },
         ],
       },
       {
@@ -123,9 +123,9 @@ const NAV: Section[] = [
           { label: "Expos",          path: "/admin/event/dashboard?view=expos",              icon: <Star size={14} /> },
           { label: "Conferences",    path: "/admin/event/dashboard?view=conferences",        icon: <Users size={14} /> },
           { label: "Workshops",      path: "/admin/event/dashboard?view=workshops",          icon: <GraduationCap size={14} /> },
-          { label: "Competitions",   path: "/admin/event/dashboard?view=competitions",       icon: <Award size={14} /> },
-          { label: "Webinars",       path: "/admin/event/dashboard?view=webinars",           icon: <Video size={14} /> },
-          { label: "Meetups",        path: "/admin/event/dashboard?view=meetups",            icon: <Users2 size={14} /> },
+          { label: "Competitions",   path: "/admin/media/dashboard?type=competition",        icon: <Award size={14} /> },
+          { label: "Webinars",       path: "/admin/media/dashboard?type=webinar",            icon: <Video size={14} /> },
+          { label: "Meetups",        path: "/admin/media/dashboard?type=meetup",             icon: <Users2 size={14} /> },
         ],
       },
       {
@@ -189,16 +189,23 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/plans": "Packages & Revenue",
 };
 
-// Query params that shift the active group to partnerships
-const PARTNERSHIPS_TYPES = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
+const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
+const EVENTS_CMS = new Set(["competition","webinar","meetup"]);
+const PROFESSIONALS_CMS = new Set(["job","training","certification"]);
 
 function computeGroupId(pathname: string, search: string): string {
   const sp = new URLSearchParams(search);
   const type = sp.get("type") ?? "";
+  const section = sp.get("section") ?? "";
   const view = sp.get("view") ?? "";
   const tab  = sp.get("tab") ?? "";
 
-  if (pathname === "/admin/media/dashboard" && PARTNERSHIPS_TYPES.has(type)) return "partnerships";
+  if (pathname === "/admin/media/dashboard") {
+    if (PARTNERSHIPS_CMS.has(type) || section === "partnerships") return "partnerships";
+    if (EVENTS_CMS.has(type) || section === "events-cms") return "events";
+    if (PROFESSIONALS_CMS.has(type) || section === "professionals-cms") return "professionals";
+    return "media";
+  }
   if (pathname === "/admin/company/dashboard") return view ? "companies" : "dashboard";
   if (pathname === "/admin/plans" && tab === "transaction-history") return "invoices";
   return PATH_TO_ID[pathname] ?? "dashboard";
@@ -208,6 +215,8 @@ function computeBreadcrumb(groupId: string, pathname: string): string {
   if (groupId === "dashboard") return "Dashboard";
   if (groupId === "partnerships") return "Partnerships";
   if (groupId === "invoices") return "Invoices";
+  if (groupId === "events") return "Events";
+  if (groupId === "professionals") return "Professionals";
   return BREADCRUMBS[pathname] ?? "Admin";
 }
 
