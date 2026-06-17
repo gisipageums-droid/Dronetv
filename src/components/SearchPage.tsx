@@ -229,13 +229,10 @@ const SearchPage = () => {
               animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
             }}
           >
-            <div className="p-8 bg-gradient-to-br from-yellow-50 to-yellow-100 group-hover:from-yellow-100 group-hover:to-yellow-200 transition-all duration-500">
+            <div className="p-8 bg-gray-50 transition-all duration-300">
               <div className="flex justify-center mb-4">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-yellow-400/20 rounded-full blur-xl scale-150 group-hover:scale-200 transition-all duration-700"></div>
-                  <div className="relative bg-yellow-400/20 backdrop-blur-sm rounded-full p-6 group-hover:scale-110 transition-all duration-500 border border-yellow-400/30">
-                    <LogoComponent className="h-12 w-12 text-black" />
-                  </div>
+                <div className="bg-gray-200 rounded-full p-6">
+                  <LogoComponent className="h-12 w-12 text-gray-600" />
                 </div>
               </div>
               
@@ -256,16 +253,16 @@ const SearchPage = () => {
               </p>
               
               <div className="grid grid-cols-2 gap-2">
-                <div className="text-center p-2 bg-yellow-50 rounded-lg">
-                  <div className="text-sm font-bold text-black">{result.employees}</div>
-                  <div className="text-xs text-gray-600">Employees</div>
+                <div className="text-center p-2 bg-gray-50 rounded-lg border border-gray-100">
+                  <div className="text-sm font-bold text-gray-900">{result.employees}</div>
+                  <div className="text-xs text-gray-500">Employees</div>
                 </div>
-                <div className="text-center p-2 bg-yellow-100 rounded-lg">
-                  <div className="text-sm font-bold text-yellow-700 flex items-center justify-center gap-1">
-                    <Star className="h-3 w-3 fill-current" />
+                <div className="text-center p-2 bg-gray-50 rounded-lg border border-gray-100">
+                  <div className="text-sm font-bold text-gray-900 flex items-center justify-center gap-1">
+                    <Star className="h-3 w-3 fill-current text-yellow-400" />
                     {result.rating}
                   </div>
-                  <div className="text-xs text-yellow-600">Rating</div>
+                  <div className="text-xs text-gray-500">Rating</div>
                 </div>
               </div>
             </div>
@@ -437,44 +434,35 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-400 pt-16">
-      {/* Search Bar Section */}
-      <section className="py-16 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200/30 rounded-full animate-pulse blur-2xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-600/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
-        </div>
+    <div className="pt-[104px] min-h-screen bg-gray-50">
+      {/* Hero / Search */}
+      <div className="bg-black text-white relative overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
+        <div className="max-w-6xl mx-auto px-6 py-12">
+          <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Search</p>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
+            Search <span className="text-yellow-400">Results</span>
+          </h1>
+          <p className="text-sm text-white/60 mb-6">Showing results for "<span className="text-white font-semibold">{searchTerm}</span>"</p>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-6xl font-black text-black mb-4 tracking-tight">
-              Search Results
-            </h1>
-            <p className="text-xl text-black/80 mb-8">
-              Showing results for "<span className="font-bold">{searchTerm}</span>"
-            </p>
-          </div>
-
-          {/* Search and Filter Controls */}
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-center max-w-4xl mx-auto">
-            <div className="relative flex-1 max-w-md">
+          <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
+            <div className="relative flex-1">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="h-5 w-5 text-black/60" />
+                <Search className="h-4 w-4 text-gray-400" />
               </div>
               <input
                 type="text"
                 placeholder="Search for videos, companies, products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-black/20 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-black placeholder-black/60 font-medium transition-all duration-300"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-900 placeholder-gray-400 text-sm"
               />
             </div>
-
             <div className="relative">
               <select
                 value={selectedFilter}
                 onChange={(e) => setSelectedFilter(e.target.value)}
-                className="appearance-none bg-white/80 backdrop-blur-sm border-2 border-black/20 rounded-xl px-4 py-3 pr-10 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 transition-all duration-300"
+                className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-9 text-gray-700 text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
               >
                 {filterOptions.map(option => (
                   <option key={option} value={option}>
@@ -482,84 +470,71 @@ const SearchPage = () => {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-black/60 pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Results Display Section */}
-      <section className="py-16 bg-yellow-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl md:text-4xl font-black text-black">
-              {filteredResults.length} Results Found
-            </h2>
-            <div className="text-black/60">
-              Page {currentPage} of {totalPages}
+      {/* Results */}
+      <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
+        <div className="flex items-center justify-between mb-6">
+          <p className="text-sm text-gray-500">{filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''} found</p>
+          {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}
+        </div>
+
+        {currentResults.length === 0 ? (
+          <div className="py-16 text-center">
+            <div className="p-10 mx-auto max-w-md rounded-xl border border-gray-200 bg-white">
+              <Search className="mx-auto mb-4 w-12 h-12 text-gray-300" />
+              <h3 className="mb-2 text-lg font-bold text-gray-900">No results found</h3>
+              <p className="text-sm text-gray-400">Try adjusting your search terms or filters</p>
             </div>
           </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {currentResults.map((result, index) => renderResultCard(result, index))}
+          </div>
+        )}
 
-          {currentResults.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto">
-                <Search className="h-16 w-16 text-black/40 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-black mb-2">No results found</h3>
-                <p className="text-black/60">Try adjusting your search terms or filters</p>
-              </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-10">
+            <div className="flex gap-2 items-center">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+              >
+                Previous
+              </button>
+              {[...Array(totalPages)].map((_, index) => {
+                const page = index + 1;
+                if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${page === currentPage ? 'bg-black text-yellow-400 border border-black' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (page === currentPage - 2 || page === currentPage + 2) {
+                  return <span key={page} className="px-2 text-gray-400">...</span>;
+                }
+                return null;
+              })}
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+              >
+                Next
+              </button>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {currentResults.map((result, index) => renderResultCard(result, index))}
-            </div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-12">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                >
-                  Previous
-                </button>
-                
-                {[...Array(totalPages)].map((_, index) => {
-                  const page = index + 1;
-                  if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                          page === currentPage
-                            ? 'bg-black text-yellow-400 border-2 border-black'
-                            : 'bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  } else if (page === currentPage - 2 || page === currentPage + 2) {
-                    return <span key={page} className="px-2 text-black/60">...</span>;
-                  }
-                  return null;
-                })}
-                
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

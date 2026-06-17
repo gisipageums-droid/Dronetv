@@ -166,7 +166,7 @@ interface ErrorMessageProps {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className='h-[40vh] md:h-[60vh] bg-yellow-50 flex items-center justify-center px-4 sm:px-6  md:mt-4 pt-[120px] md:pt-[10px]'>
+    <div className='h-[40vh] md:h-[60vh] bg-gray-100 flex items-center justify-center px-4 sm:px-6  md:mt-4 pt-[120px] md:pt-[10px]'>
       {/* ===== Always Visible Popup ===== */}
       <div className="fixed right-4 bottom-24 md:right-12 md:bottom-auto md:top-28 z-10 animate-bounce">
         <div className="px-3 py-2 md:px-5 md:py-4 text-center bg-white rounded-xl border border-yellow-300 shadow-lg max-w-[280px] md:max-w-none">
@@ -291,7 +291,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className={`bg-yellow-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 
+    <div className={`bg-white p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-200
       ${isMobileSidebarOpen ? 'fixed inset-0 z-50 w-full overflow-y-auto' : 'hidden md:block md:w-80'}`}
     >
       {isMobileSidebarOpen && (
@@ -367,9 +367,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         <motion.button
           whileTap={{ scale: [0.9, 1] }}
-          className="bg-blue-300 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+          className="bg-gray-100 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
         >
-          <Link to={"/user/companies"}>Companies </Link>
+          <Link to={"/user/companies"}>Companies</Link>
         </motion.button>
 
 
@@ -488,7 +488,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
             {(profile.specialties && profile.specialties.length > 0 ? profile.specialties : ['General']).map((specialty: string, index: number) => (
               <span
                 key={index}
-                className='px-2 py-1 md:px-3 md:py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full'
+                className='px-2 py-1 md:px-3 md:py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full'
               >
                 {specialty}
               </span>
@@ -579,7 +579,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
 // Loading Component
 const LoadingSpinner: React.FC = () => (
   <div className='flex items-center justify-center py-16'>
-    <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600'></div>
+    <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-black'></div>
     <span className='ml-4 text-gray-600'>Loading profiles...</span>
   </div>
 );
@@ -621,19 +621,19 @@ const MainContent: React.FC<MainContentProps> = ({
 
   if (loading)
     return (
-      <div className='flex-1 bg-yellow-50 px-4 md:px-8 py-8'>
+      <div className='flex-1 bg-gray-50 px-4 md:px-8 py-8'>
         <LoadingSpinner />
       </div>
     );
   if (error)
     return (
-      <div className='flex-1 bg-yellow-50 px-4 md:px-8 py-8'>
+      <div className='flex-1 bg-gray-50 px-4 md:px-8 py-8'>
         <ErrorMessage error={error} onRetry={onRetry} />
       </div>
     );
 
   return (
-    <div className='flex-1 bg-yellow-50 px-4 md:px-8 py-8'>
+    <div className='flex-1 bg-gray-50 px-4 md:px-8 py-8'>
       {/* Mobile filter button */}
       <button
         onClick={onOpenMobileSidebar}
@@ -653,7 +653,7 @@ const MainContent: React.FC<MainContentProps> = ({
             Page {currentPage} of {totalPages}
           </span>
           {hasMore && (
-            <span className='text-xs md:text-sm text-gray-600 bg-blue-100 px-2 py-1 md:px-3 md:py-1 rounded-full'>
+            <span className='text-xs md:text-sm text-gray-600 bg-gray-200 px-2 py-1 md:px-3 md:py-1 rounded-full'>
               More available
             </span>
           )}
@@ -686,7 +686,7 @@ const MainContent: React.FC<MainContentProps> = ({
               </p>
               <button
                 onClick={onClearFilters}
-                className='bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors'
+                className='bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors'
               >
                 Clear All Filters
               </button>
@@ -701,7 +701,7 @@ const MainContent: React.FC<MainContentProps> = ({
               </p>
               <button
                 onClick={() => navigate('/user/professionals/template-selection')}
-                className='bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors'
+                className='bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors'
               >
                 Create Your First Professional Profile
               </button>
@@ -726,8 +726,6 @@ const apiService = {
     try {
       const url = new URL(`https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=user&userId=${userId.trim()}`);
       // url.searchParams.append('userId', userId.trim());
-
-      // console.log('Fetching profiles from:', url.toString());
 
       const response = await fetch(url.toString(), {
         method: 'GET',
@@ -755,12 +753,9 @@ const apiService = {
           } else {
             errorText = await response.text();
           }
-        } catch (parseError) {
-          console.error("Error parsing error response:", parseError);
+        } catch {
           errorText = `HTTP ${response.status} - Unable to parse error response`;
         }
-
-        console.error("API Error Response:", { status: response.status, error: errorText, details: errorJson });
 
         switch (response.status) {
           case 400:
@@ -791,8 +786,7 @@ const apiService = {
           throw new Error("Empty response from server");
         }
         data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("Error parsing JSON response:", parseError);
+      } catch {
         throw new Error("Invalid response format from server");
       }
 
@@ -804,7 +798,6 @@ const apiService = {
       const cards = data.cards || data.items || data.profiles || [];
 
       if (!Array.isArray(cards)) {
-        console.warn("Cards is not an array:", cards);
         return {
           cards: [],
           totalCount: 0,
@@ -831,8 +824,7 @@ const apiService = {
             education: Array.isArray(card.education) ? card.education : [],
             templateSelection: String(card.templateSelection)
           };
-        } catch (cardError) {
-          console.error(`Error processing card at index ${index}:`, cardError);
+        } catch {
           return null;
         }
       }).filter(Boolean) as ProfessionalProfile[];
@@ -846,8 +838,6 @@ const apiService = {
 
     } catch (error) {
       clearTimeout(timeoutId);
-
-      console.error("Error fetching profiles:", error);
 
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new Error("Network error. Please check your internet connection and try again.");
@@ -904,8 +894,7 @@ const ProfessionalDirectory: React.FC = () => {
         navigate(`/user/professionals/edit/2/${professionalId}/${user.userData.email}`);
       }
 
-    } catch (error) {
-      console.error("Error loading template for editing:", error);
+    } catch {
       toast.error("Failed to load template for editing. Please try again.");
     }
   };
@@ -926,9 +915,8 @@ const ProfessionalDirectory: React.FC = () => {
       } else if (templateSelection === "template-2") {
         navigate(`/user/professionals/preview/2/${professionalId}/${user.userData.email}`);
       }
-    } catch (error) {
-      console.error("Error loading template for preview:", error);
-      alert("Failed to load template for preview. Please try again.");
+    } catch {
+      toast.error("Failed to load template for preview. Please try again.");
     }
   };
 
@@ -960,8 +948,6 @@ const ProfessionalDirectory: React.FC = () => {
       setHasMore(data.hasMore || false);
 
     } catch (err) {
-      console.error('Error in fetchProfiles:', err);
-
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch profiles";
       setError(errorMessage);
 
@@ -1034,7 +1020,7 @@ const ProfessionalDirectory: React.FC = () => {
   const totalPages = Math.max(1, Math.ceil(sortedProfiles.length / 12));
 
   return (
-    <div className='min-h-screen bg-blue-100'>
+    <div className='min-h-screen bg-gray-50'>
       <Header />
 
       {/* Main Layout Container */}
