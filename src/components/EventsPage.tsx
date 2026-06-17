@@ -214,7 +214,7 @@ const EventsPage = () => {
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Events</p>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Events <span className="text-yellow-400">Calendar</span></h1>
@@ -239,7 +239,7 @@ const EventsPage = () => {
 
       {/* Filter Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-[104px] z-40">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex flex-col sm:flex-row gap-2 items-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center flex-wrap">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -250,11 +250,11 @@ const EventsPage = () => {
               className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
             />
           </div>
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-none">
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="appearance-none pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 min-w-[150px]"
+              className="appearance-none w-full sm:w-auto pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 sm:min-w-[150px]"
             >
               {eventTypes.map((t) => (
                 <option key={t} value={t}>{t === 'All' ? 'All Types' : t}</option>
@@ -262,11 +262,11 @@ const EventsPage = () => {
             </select>
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-none">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 min-w-[160px]"
+              className="appearance-none w-full sm:w-auto pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 sm:min-w-[160px]"
             >
               {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -284,7 +284,7 @@ const EventsPage = () => {
       </div>
 
       {/* Events Grid */}
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-12">
         <div className="flex items-center justify-between mb-6">
           <p className="text-sm text-gray-500">{filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}</p>
           {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}

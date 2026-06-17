@@ -231,7 +231,7 @@ const GalleryPage = () => {
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media</p>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Photo <span className="text-yellow-400">Gallery</span></h1>
@@ -252,7 +252,7 @@ const GalleryPage = () => {
 
       {/* Filter Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-[104px] z-40">
-        <div className="max-w-6xl mx-auto px-6 py-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
             <div className="relative flex-1 max-w-xs w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -290,7 +290,7 @@ const GalleryPage = () => {
       </div>
 
       {/* Photo Grid */}
-      <div className="max-w-6xl mx-auto px-6 py-6 pb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 pb-12">
         <div className="mb-5">
           <h2 className="text-lg font-bold text-gray-900">Gallery ({filteredImages.length})</h2>
         </div>

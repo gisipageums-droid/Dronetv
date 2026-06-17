@@ -99,7 +99,7 @@ const PrivacyPolicyPage = () => {
             {/* Hero */}
             <div className="bg-black text-white relative overflow-hidden">
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-                <div className="max-w-6xl mx-auto px-6 py-12">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
                     <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Legal</p>
                     <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
                         Privacy <span className="text-yellow-400">Policy</span>
@@ -110,7 +110,7 @@ const PrivacyPolicyPage = () => {
             </div>
 
             {/* Content */}
-            <div className="max-w-6xl mx-auto px-6 py-10">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-6">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Commitment to Your Privacy</h2>
                     <p className="text-gray-700 leading-relaxed mb-4">

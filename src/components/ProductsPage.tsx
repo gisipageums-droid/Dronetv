@@ -287,7 +287,7 @@ const ProductsPage: React.FC = () => {
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Catalog</p>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Products <span className="text-yellow-400">Catalog</span></h1>
@@ -304,7 +304,7 @@ const ProductsPage: React.FC = () => {
 
       {/* Filter Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
             <div className="relative flex-1 max-w-xs">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -370,7 +370,7 @@ const ProductsPage: React.FC = () => {
       </div>
 
       {/* Products Grid */}
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
         <div className="flex justify-between items-center mb-6">
           <p className="text-sm text-gray-500">{filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}</p>
           {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}

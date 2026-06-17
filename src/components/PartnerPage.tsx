@@ -73,7 +73,7 @@ const PartnerPage = () => {
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
           <div>
             <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Partner</p>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Partner <span className="text-yellow-400">With Us</span></h1>
@@ -94,7 +94,7 @@ const PartnerPage = () => {
 
       {/* Why Partner */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-2xl font-extrabold text-gray-900 mb-5">Why Partner With Drone TV?</h2>
@@ -141,7 +141,7 @@ const PartnerPage = () => {
       </div>
 
       {/* Who Can Join */}
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-8">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-1 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             Who Can Partner With Us?
@@ -166,7 +166,7 @@ const PartnerPage = () => {
 
       {/* Partnership Benefits */}
       <div className="bg-white border-t border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <div className="mb-8">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-1 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
               Partnership Benefits
@@ -193,7 +193,7 @@ const PartnerPage = () => {
       </div>
 
       {/* Partnership Form */}
-      <div ref={formRef} className="max-w-6xl mx-auto px-6 py-12">
+      <div ref={formRef} className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="max-w-2xl mx-auto">
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Ready to Partner With Us?</h2>
@@ -296,7 +296,7 @@ const PartnerPage = () => {
 
       {/* Contact Strip */}
       <div className="bg-black">
-        <div className="max-w-6xl mx-auto px-6 py-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-center justify-center gap-3 text-white/70">
               <Mail className="h-4 w-4 text-yellow-400" />
