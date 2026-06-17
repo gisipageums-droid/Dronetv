@@ -111,6 +111,8 @@ import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
 import AdminLayout from "./components/Admin/AdminLayout";
+import AdminInvoicesPage from "./pages/admin/AdminInvoicesPage";
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
 import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
 
@@ -285,6 +287,18 @@ const AppContent = () => {
             <AdminProtectedRoute>
               <AdminLayout>
                 <AdminTokenPlan />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+          <Route path="/admin/invoices" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminInvoicesPage />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+          <Route path="/admin/settings" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminSettingsPage />
               </AdminLayout>
             </AdminProtectedRoute>} />
           <Route path="/admin/company/dashboard" element={
