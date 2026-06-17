@@ -26,11 +26,11 @@ export interface MediaItem {
 }
 
 export type ContentType =
-  | 'news' | 'video' | 'impact-story'
+  | 'news' | 'magazine' | 'video' | 'impact-story'
   | 'market-intelligence' | 'tech-trends' | 'press-release' | 'industry-report'
   | 'competition' | 'webinar' | 'meetup'
-  | 'job' | 'training'
-  | 'manufacturer' | 'ai-company' | 'event-organizer'
+  | 'job' | 'training' | 'certification'
+  | 'applications' | 'manufacturer' | 'ai-company' | 'event-organizer'
   | 'education-partner' | 'industry-player';
 
 export async function fetchContent(type: ContentType, signal?: AbortSignal): Promise<MediaItem[]> {

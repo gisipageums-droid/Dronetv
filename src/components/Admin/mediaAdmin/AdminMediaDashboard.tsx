@@ -1,28 +1,85 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
 
-const CONTENT_TYPES: { value: ContentType; label: string; section: string }[] = [
-  { value: 'news', label: 'News', section: 'Media Hub' },
-  { value: 'video', label: 'Video Spotlight', section: 'Media Hub' },
-  { value: 'impact-story', label: 'Impact Story', section: 'Media Hub' },
-  { value: 'market-intelligence', label: 'Market Intelligence', section: 'Media Hub' },
-  { value: 'tech-trends', label: 'Tech Trends', section: 'Media Hub' },
-  { value: 'press-release', label: 'Press Release', section: 'Media Hub' },
-  { value: 'industry-report', label: 'Industry Report', section: 'Media Hub' },
-  { value: 'competition', label: 'Competition', section: 'Events' },
-  { value: 'webinar', label: 'Webinar', section: 'Events' },
-  { value: 'meetup', label: 'Meetup', section: 'Events' },
-  { value: 'job', label: 'Job Listing', section: 'Professionals' },
-  { value: 'training', label: 'Training Program', section: 'Professionals' },
-  { value: 'manufacturer', label: 'Manufacturer', section: 'Partnerships' },
-  { value: 'ai-company', label: 'AI Tech Company', section: 'Partnerships' },
-  { value: 'event-organizer', label: 'Event Organizer', section: 'Partnerships' },
-  { value: 'education-partner', label: 'Education Partner', section: 'Partnerships' },
-  { value: 'industry-player', label: 'Industry Player', section: 'Partnerships' },
+const MEDIA_TYPES: { value: ContentType; label: string }[] = [
+  { value: 'news', label: 'News' },
+  { value: 'magazine', label: 'Magazine' },
+  { value: 'video', label: 'Video Spotlight' },
+  { value: 'impact-story', label: 'Impact Story' },
+  { value: 'market-intelligence', label: 'Market Intelligence' },
+  { value: 'tech-trends', label: 'Tech Trends' },
+  { value: 'press-release', label: 'Press Release' },
+  { value: 'industry-report', label: 'Industry Report' },
 ];
+
+const EVENTS_TYPES: { value: ContentType; label: string }[] = [
+  { value: 'competition', label: 'Competition' },
+  { value: 'webinar', label: 'Webinar' },
+  { value: 'meetup', label: 'Meetup' },
+];
+
+const PROFESSIONALS_TYPES: { value: ContentType; label: string }[] = [
+  { value: 'job', label: 'Job Listing' },
+  { value: 'training', label: 'Training Program' },
+  { value: 'certification', label: 'Certification' },
+];
+
+const PARTNERSHIPS_TYPES: { value: ContentType; label: string }[] = [
+  { value: 'applications', label: 'Applications' },
+  { value: 'manufacturer', label: 'Manufacturer' },
+  { value: 'ai-company', label: 'AI Tech Company' },
+  { value: 'event-organizer', label: 'Event Organizer' },
+  { value: 'education-partner', label: 'Education Partner' },
+  { value: 'industry-player', label: 'Industry Player' },
+];
+
+const ALL_TYPE_DEFS = [...MEDIA_TYPES, ...EVENTS_TYPES, ...PROFESSIONALS_TYPES, ...PARTNERSHIPS_TYPES];
+
+const EVENTS_VALS = new Set(EVENTS_TYPES.map(t => t.value));
+const PROFESSIONALS_VALS = new Set(PROFESSIONALS_TYPES.map(t => t.value));
+const PARTNERSHIPS_VALS = new Set(PARTNERSHIPS_TYPES.map(t => t.value));
+
+type SectionMode = 'media' | 'events' | 'professionals' | 'partnerships';
+
+const MODE_CONFIG: Record<SectionMode, { title: string; subtitle: string; types: { value: ContentType; label: string }[]; sectionParam: string }> = {
+  media: {
+    title: 'Media Content Manager',
+    subtitle: 'Manage news, articles, videos and media content',
+    types: MEDIA_TYPES,
+    sectionParam: '',
+  },
+  events: {
+    title: 'Events Content Manager',
+    subtitle: 'Manage competitions, webinars and meetup listings',
+    types: EVENTS_TYPES,
+    sectionParam: 'events-cms',
+  },
+  professionals: {
+    title: 'Professionals Content Manager',
+    subtitle: 'Manage job listings, training programs and certifications',
+    types: PROFESSIONALS_TYPES,
+    sectionParam: 'professionals-cms',
+  },
+  partnerships: {
+    title: 'Partnerships Content Manager',
+    subtitle: 'Manage partner applications and partner directory listings',
+    types: PARTNERSHIPS_TYPES,
+    sectionParam: 'partnerships',
+  },
+};
+
+function getMode(urlType: string | null, urlSection: string): SectionMode {
+  if (urlType && PARTNERSHIPS_VALS.has(urlType as ContentType)) return 'partnerships';
+  if (urlType && EVENTS_VALS.has(urlType as ContentType)) return 'events';
+  if (urlType && PROFESSIONALS_VALS.has(urlType as ContentType)) return 'professionals';
+  if (urlSection === 'partnerships') return 'partnerships';
+  if (urlSection === 'events-cms') return 'events';
+  if (urlSection === 'professionals-cms') return 'professionals';
+  return 'media';
+}
 
 const EMPTY_FORM = {
   contentType: 'news' as ContentType,
@@ -50,9 +107,13 @@ export default function AdminMediaDashboard() {
   const navigate = useNavigate();
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeType, setActiveType] = useState<ContentType | 'all'>(
-    (searchParams.get('type') as ContentType) ?? 'all'
-  );
+
+  const urlType = searchParams.get('type') as ContentType | null;
+  const urlSection = searchParams.get('section') ?? '';
+  const mode = useMemo(() => getMode(urlType, urlSection), [urlType, urlSection]);
+  const config = MODE_CONFIG[mode];
+
+  const [activeType, setActiveType] = useState<ContentType | 'all'>(urlType ?? 'all');
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editItem, setEditItem] = useState<MediaItem | null>(null);
@@ -62,10 +123,20 @@ export default function AdminMediaDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState<MediaItem | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  useEffect(() => {
+    setActiveType(urlType ?? 'all');
+  }, [urlType]);
+
   const setActiveTypeAndSync = (type: ContentType | 'all') => {
     setActiveType(type);
-    const path = '/admin/media/dashboard' + (type !== 'all' ? `?type=${type}` : '');
-    navigate(path, { replace: true });
+    if (type === 'all') {
+      const path = config.sectionParam
+        ? `/admin/media/dashboard?section=${config.sectionParam}`
+        : '/admin/media/dashboard';
+      navigate(path, { replace: true });
+    } else {
+      navigate(`/admin/media/dashboard?type=${type}`, { replace: true });
+    }
   };
 
   const loadItems = async (signal?: AbortSignal) => {
@@ -74,7 +145,7 @@ export default function AdminMediaDashboard() {
       const data = await fetchAdminContent(signal);
       setItems(data);
     } catch (err: any) {
-      if (err?.name === "AbortError") return;
+      if (err?.name === 'AbortError') return;
       toast.error('Failed to load content');
     } finally {
       setLoading(false);
@@ -87,8 +158,11 @@ export default function AdminMediaDashboard() {
     return () => controller.abort();
   }, []);
 
+  const sectionItems = items.filter(i => config.types.some(t => t.value === i.contentType));
+
   const filtered = items.filter(item => {
-    const matchType = activeType === 'all' || item.contentType === activeType;
+    const inSection = config.types.some(t => t.value === item.contentType);
+    const matchType = activeType === 'all' ? inSection : item.contentType === activeType;
     const matchSearch = !search ||
       item.title.toLowerCase().includes(search.toLowerCase()) ||
       (item.source || '').toLowerCase().includes(search.toLowerCase());
@@ -97,7 +171,8 @@ export default function AdminMediaDashboard() {
 
   const openCreate = () => {
     setEditItem(null);
-    setForm({ ...EMPTY_FORM, contentType: activeType === 'all' ? 'news' : activeType });
+    const defaultType = activeType === 'all' ? config.types[0].value : activeType;
+    setForm({ ...EMPTY_FORM, contentType: defaultType });
     setTagInput('');
     setShowForm(true);
   };
@@ -149,9 +224,7 @@ export default function AdminMediaDashboard() {
     }
   };
 
-  const handleDelete = (item: MediaItem) => {
-    setDeleteConfirm(item);
-  };
+  const handleDelete = (item: MediaItem) => setDeleteConfirm(item);
 
   const confirmDelete = async () => {
     if (!deleteConfirm) return;
@@ -188,14 +261,12 @@ export default function AdminMediaDashboard() {
     setTagInput('');
   };
 
-  const sections = Array.from(new Set(CONTENT_TYPES.map(t => t.section)));
-
   return (
     <div className="min-h-screen bg-[#F4F5F7]">
       <div className="mb-5 flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-900">Media Content Manager</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{items.length} total items across all content types</p>
+          <h1 className="text-xl font-extrabold text-gray-900">{config.title}</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{sectionItems.length} items · {config.subtitle}</p>
         </div>
         <button onClick={openCreate} className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
           <Plus className="w-4 h-4" /> Add Content
@@ -203,25 +274,20 @@ export default function AdminMediaDashboard() {
       </div>
 
       <div className="py-1">
-        <div className="flex flex-wrap gap-x-6 gap-y-3 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <button onClick={() => setActiveTypeAndSync('all')}
             className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === 'all' ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
-            All ({items.length})
+            All ({sectionItems.length})
           </button>
-          {sections.map(sec => (
-            <div key={sec} className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-xs text-gray-400 font-bold uppercase tracking-wide border-r border-gray-200 pr-2 mr-1">{sec}</span>
-              {CONTENT_TYPES.filter(t => t.section === sec).map(t => {
-                const count = items.filter(i => i.contentType === t.value).length;
-                return (
-                  <button key={t.value} onClick={() => setActiveTypeAndSync(t.value)}
-                    className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === t.value ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
-                    {t.label}{count > 0 ? ` (${count})` : ''}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
+          {config.types.map(t => {
+            const count = items.filter(i => i.contentType === t.value).length;
+            return (
+              <button key={t.value} onClick={() => setActiveTypeAndSync(t.value)}
+                className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${activeType === t.value ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-300 text-gray-600 hover:border-yellow-400'}`}>
+                {t.label}{count > 0 ? ` (${count})` : ''}
+              </button>
+            );
+          })}
         </div>
 
         <div className="relative w-full max-w-xs mb-4">
@@ -258,7 +324,7 @@ export default function AdminMediaDashboard() {
                     </td>
                     <td className="px-4 py-3">
                       <span className="bg-gray-100 text-gray-700 text-xs font-bold px-2 py-0.5 rounded capitalize">
-                        {CONTENT_TYPES.find(t => t.value === item.contentType)?.label || item.contentType}
+                        {ALL_TYPE_DEFS.find(t => t.value === item.contentType)?.label || item.contentType}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-gray-500 text-xs">{item.source || item.company || '—'}</td>
@@ -307,7 +373,7 @@ export default function AdminMediaDashboard() {
                   <select value={form.contentType} onChange={e => setForm(f => ({ ...f, contentType: e.target.value as ContentType }))}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
                     disabled={!!editItem}>
-                    {CONTENT_TYPES.map(t => <option key={t.value} value={t.value}>{t.section} — {t.label}</option>)}
+                    {config.types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                   </select>
                 </div>
                 <div>
@@ -364,7 +430,7 @@ export default function AdminMediaDashboard() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Price (events/webinars)</label>
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Price (events)</label>
                   <input value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
                     placeholder="Free / Rs.500" />
@@ -376,9 +442,10 @@ export default function AdminMediaDashboard() {
                     placeholder="Rs.40K–60K" />
                 </div>
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Platform (webinars/video)</label>
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Platform</label>
                   <input value={form.platform} onChange={e => setForm(f => ({ ...f, platform: e.target.value }))}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
                     placeholder="Zoom / YouTube" />
