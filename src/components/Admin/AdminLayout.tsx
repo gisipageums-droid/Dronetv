@@ -302,7 +302,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+  useEffect(() => { setMobileOpen(false); }, [location.pathname, location.search]);
 
   const handleParentClick = (item: NavGroup) => {
     if (item.path) {

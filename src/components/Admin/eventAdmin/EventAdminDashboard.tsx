@@ -854,7 +854,14 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   onDelete,
   disabled = false,
 }) => {
-  const placeholderImg = event.previewImage || event.eventName[0];
+  const getEventImageUrl = (url?: string): string | null => {
+    if (!url) return null;
+    const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/);
+    if (yt) return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`;
+    if (url.startsWith('http')) return url;
+    return null;
+  };
+  const eventImageUrl = getEventImageUrl(event.previewImage);
 
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "Date not available";
@@ -894,9 +901,9 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
         <div className="flex flex-wrap justify-between items-start gap-2 mb-4">
           <div className="flex gap-3 items-center min-w-0 flex-1">
             <div className="flex-shrink-0 flex overflow-hidden justify-center items-center p-1 w-10 h-10 bg-gray-100 rounded-lg sm:w-12 sm:h-12">
-              {event.previewImage ? (
+              {eventImageUrl ? (
                 <img
-                  src={event.previewImage}
+                  src={eventImageUrl}
                   alt={`${event.eventName} logo`}
                   className="w-full h-full object-cover rounded"
                   loading="lazy"
