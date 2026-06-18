@@ -1,3 +1,7 @@
+import { useState, useEffect } from 'react';
+import { ExternalLink } from 'lucide-react';
+import { fetchContent, MediaItem } from '../../lib/mediaApi';
+
 const certTypes = [
   {
     title: 'Remote Pilot Certificate (RPC)',
@@ -38,6 +42,16 @@ const rptOs = [
 ];
 
 export default function CertificationsPage() {
+  const [cmsItems, setCmsItems] = useState<MediaItem[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchContent('certification', controller.signal).then(setCmsItems).catch(() => {});
+    return () => controller.abort();
+  }, []);
+
+  const rptOsToShow = cmsItems.length > 0 ? null : rptOs;
+
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       <div className="bg-black text-white relative overflow-hidden">
@@ -118,17 +132,43 @@ export default function CertificationsPage() {
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">RPTOs</span>
             Top Training Organisations
           </h2>
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            {rptOs.map((r, i) => (
-              <div key={i} className={`flex items-center justify-between px-5 py-3.5 ${i < rptOs.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                <div>
-                  <p className="font-bold text-gray-900 text-sm">{r.name}</p>
-                  <p className="text-xs text-gray-500">{r.specialty}</p>
+          {cmsItems.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {cmsItems.map(item => (
+                <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                  {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-32 object-cover rounded-lg mb-3" />}
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <h3 className="font-bold text-gray-900 text-sm leading-snug">{item.title}</h3>
+                    {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded flex-shrink-0">{item.category}</span>}
+                  </div>
+                  {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
+                  {item.location && <p className="text-xs text-gray-400 mb-2">{item.location}</p>}
+                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  <div className="flex items-center justify-between mt-2">
+                    {item.price && <span className="text-xs font-semibold text-gray-600">{item.price}</span>}
+                    {item.externalLink && (
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
+                        className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 ml-auto">
+                        Learn More <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
                 </div>
-                <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">{r.city}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              {rptOsToShow!.map((r, i) => (
+                <div key={i} className={`flex items-center justify-between px-5 py-3.5 ${i < rptOsToShow!.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                  <div>
+                    <p className="font-bold text-gray-900 text-sm">{r.name}</p>
+                    <p className="text-xs text-gray-500">{r.specialty}</p>
+                  </div>
+                  <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">{r.city}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="mt-4 text-center">
             <a
               href="https://digitalsky.dgca.gov.in"

@@ -1,3 +1,7 @@
+import { useState, useEffect } from 'react';
+import { ExternalLink } from 'lucide-react';
+import { fetchContent, MediaItem } from '../../lib/mediaApi';
+
 const channels = [
   {
     platform: 'LinkedIn',
@@ -55,6 +59,14 @@ const highlights = [
 ];
 
 export default function CommunityPage() {
+  const [cmsItems, setCmsItems] = useState<MediaItem[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchContent('community', controller.signal).then(setCmsItems).catch(() => {});
+    return () => controller.abort();
+  }, []);
+
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       <div className="bg-black text-white relative overflow-hidden">
@@ -79,6 +91,34 @@ export default function CommunityPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+        {cmsItems.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Featured</span>
+              Community Highlights
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {cmsItems.map(item => (
+                <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-36 object-cover" />}
+                  <div className="p-4">
+                    {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
+                    <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
+                    {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
+                    {item.location && <p className="text-xs text-gray-400 mb-2">{item.location}</p>}
+                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                    {item.externalLink && (
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
+                        className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                        Join Now <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Join</span>

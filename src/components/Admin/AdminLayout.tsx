@@ -90,12 +90,12 @@ const NAV: Section[] = [
         label: "Professionals",
         icon: <Users size={17} />,
         sub: [
-          { label: "Job Board",       path: "/admin/media/dashboard?type=job",                  icon: <Briefcase size={14} /> },
-          { label: "Pilot Directory", path: "/admin/professional/dashboard",                    icon: <UserCircle size={14} /> },
-          { label: "Certifications",  path: "/admin/media/dashboard?type=certification",        icon: <Award size={14} /> },
-          { label: "Portfolio",       path: "/admin/professional/dashboard?view=portfolio",      icon: <FileText size={14} /> },
-          { label: "Training / RPTOs",path: "/admin/media/dashboard?type=training",             icon: <GraduationCap size={14} /> },
-          { label: "Community",       path: "/admin/professional/dashboard?view=community",     icon: <Users size={14} /> },
+          { label: "Job Board",       path: "/admin/media/dashboard?type=job",           icon: <Briefcase size={14} /> },
+          { label: "Pilot Directory", path: "/admin/professional/dashboard",             icon: <UserCircle size={14} /> },
+          { label: "Certifications",  path: "/admin/media/dashboard?type=certification", icon: <Award size={14} /> },
+          { label: "Training / RPTOs",path: "/admin/media/dashboard?type=training",      icon: <GraduationCap size={14} /> },
+          { label: "Networking",      path: "/admin/media/dashboard?type=networking",    icon: <Users2 size={14} /> },
+          { label: "Community",       path: "/admin/media/dashboard?type=community",     icon: <Users size={14} /> },
         ],
       },
       {
@@ -195,7 +195,7 @@ const BREADCRUMBS: Record<string, string> = {
 
 const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
 const EVENTS_CMS = new Set(["competition","webinar","meetup"]);
-const PROFESSIONALS_CMS = new Set(["job","training","certification"]);
+const PROFESSIONALS_CMS = new Set(["job","training","certification","networking","community"]);
 
 function computeGroupId(pathname: string, search: string): string {
   const sp = new URLSearchParams(search);

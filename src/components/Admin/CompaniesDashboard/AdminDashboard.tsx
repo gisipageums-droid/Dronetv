@@ -975,6 +975,14 @@ const AdminDashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Sync viewFilter when URL search params change (sidebar navigation)
+  useEffect(() => {
+    const view = searchParams.get("view") ?? "all";
+    setViewFilter(view);
+    if (view === "leads") setStatusFilter("under_review");
+    else if (view === "all") setStatusFilter("all");
+  }, [searchParams]);
+
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);

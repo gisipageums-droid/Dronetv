@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -8,6 +8,7 @@ const MEDIA_TYPES: { value: ContentType; label: string }[] = [
   { value: 'news', label: 'News' },
   { value: 'magazine', label: 'Magazine' },
   { value: 'video', label: 'Video Spotlight' },
+  { value: 'gallery', label: 'Gallery' },
   { value: 'impact-story', label: 'Impact Story' },
   { value: 'market-intelligence', label: 'Market Intelligence' },
   { value: 'tech-trends', label: 'Tech Trends' },
@@ -25,6 +26,8 @@ const PROFESSIONALS_TYPES: { value: ContentType; label: string }[] = [
   { value: 'job', label: 'Job Listing' },
   { value: 'training', label: 'Training Program' },
   { value: 'certification', label: 'Certification' },
+  { value: 'networking', label: 'Networking' },
+  { value: 'community', label: 'Community' },
 ];
 
 const PARTNERSHIPS_TYPES: { value: ContentType; label: string }[] = [
@@ -80,6 +83,41 @@ function getMode(urlType: string | null, urlSection: string): SectionMode {
   if (urlSection === 'professionals-cms') return 'professionals';
   return 'media';
 }
+
+type FieldKey = 'category' | 'source' | 'author' | 'date' | 'readTime' | 'videoUrl'
+  | 'company' | 'location' | 'price' | 'salary' | 'platform';
+
+const FIELD_CONFIG: Record<ContentType, FieldKey[]> = {
+  'news':                ['category', 'source', 'date', 'readTime'],
+  'magazine':            ['category', 'source', 'author', 'date', 'readTime'],
+  'video':               ['videoUrl', 'source', 'date'],
+  'gallery':             ['category', 'location', 'date'],
+  'impact-story':        ['category', 'source', 'author', 'date', 'readTime'],
+  'market-intelligence': ['category', 'source', 'author', 'date', 'readTime'],
+  'tech-trends':         ['category', 'source', 'author', 'date', 'readTime'],
+  'press-release':       ['company', 'source', 'date'],
+  'industry-report':     ['category', 'source', 'author', 'date', 'readTime'],
+  'competition':         ['company', 'location', 'date', 'price', 'category'],
+  'webinar':             ['source', 'company', 'platform', 'location', 'date', 'price', 'videoUrl'],
+  'meetup':              ['company', 'location', 'date', 'price'],
+  'job':                 ['company', 'location', 'salary', 'category', 'date'],
+  'training':            ['company', 'location', 'price', 'category', 'date'],
+  'certification':       ['company', 'location', 'price', 'category', 'date'],
+  'networking':          ['category', 'location', 'company', 'date'],
+  'community':           ['company', 'location', 'category'],
+  'manufacturer':        ['company', 'location', 'category'],
+  'ai-company':          ['company', 'location', 'category'],
+  'event-organizer':     ['company', 'location', 'category'],
+  'education-partner':   ['company', 'location', 'category'],
+  'industry-player':     ['company', 'location', 'category'],
+  'applications':        ['company', 'location', 'category'],
+};
+
+const FIELD_LABELS: Partial<Record<ContentType, Partial<Record<FieldKey, string>>>> = {
+  'webinar':     { source: 'Speaker', company: 'Organizer' },
+  'competition': { company: 'Organizer' },
+  'meetup':      { company: 'Organizer' },
+};
 
 const EMPTY_FORM = {
   contentType: 'news' as ContentType,
@@ -367,23 +405,17 @@ export default function AdminMediaDashboard() {
             </div>
 
             <div className="px-6 py-5 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Content Type *</label>
-                  <select value={form.contentType} onChange={e => setForm(f => ({ ...f, contentType: e.target.value as ContentType }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    disabled={!!editItem}>
-                    {config.types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Category</label>
-                  <input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="e.g. Defence, Agriculture" />
-                </div>
+              {/* Content type selector — top row */}
+              <div>
+                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Content Type *</label>
+                <select value={form.contentType} onChange={e => setForm(f => ({ ...f, contentType: e.target.value as ContentType }))}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                  disabled={!!editItem}>
+                  {config.types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                </select>
               </div>
 
+              {/* Title — always required */}
               <div>
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Title *</label>
                 <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
@@ -391,6 +423,7 @@ export default function AdminMediaDashboard() {
                   placeholder="Content title" />
               </div>
 
+              {/* Description — always shown */}
               <div>
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Description</label>
                 <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
@@ -398,66 +431,165 @@ export default function AdminMediaDashboard() {
                   placeholder="Short description or summary" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Source / Author</label>
-                  <input value={form.source} onChange={e => setForm(f => ({ ...f, source: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="e.g. Reuters, IBEF" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Date</label>
-                  <input value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="e.g. Jun 15, 2026" />
-                </div>
-              </div>
+              {/* Type-specific fields rendered in logical pairs */}
+              {(() => {
+                const fields = FIELD_CONFIG[form.contentType] ?? [];
+                const has = (k: FieldKey) => fields.includes(k);
+                const label = (k: FieldKey, fallback: string) =>
+                  FIELD_LABELS[form.contentType]?.[k] ?? fallback;
+                const inp = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400';
+                const lbl = 'text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1';
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Company / Organizer</label>
-                  <input value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="Company or organizer name" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Location</label>
-                  <input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="City or Online" />
-                </div>
-              </div>
+                const rows: React.ReactNode[] = [];
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Price (events)</label>
-                  <input value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="Free / Rs.500" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Salary (jobs)</label>
-                  <input value={form.salary} onChange={e => setForm(f => ({ ...f, salary: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="Rs.40K–60K" />
-                </div>
-              </div>
+                // Category
+                if (has('category')) {
+                  rows.push(
+                    <div key="category">
+                      <label className={lbl}>Category</label>
+                      <input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+                        className={inp} placeholder="e.g. Defence, Agriculture" />
+                    </div>
+                  );
+                }
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Platform</label>
-                  <input value={form.platform} onChange={e => setForm(f => ({ ...f, platform: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="Zoom / YouTube" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Read Time (articles)</label>
-                  <input value={form.readTime} onChange={e => setForm(f => ({ ...f, readTime: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="5 min read" />
-                </div>
-              </div>
+                // Source + Author (paired if both exist, else full-width)
+                if (has('source') && has('author')) {
+                  rows.push(
+                    <div key="source-author" className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={lbl}>{label('source', 'Source')}</label>
+                        <input value={form.source} onChange={e => setForm(f => ({ ...f, source: e.target.value }))}
+                          className={inp} placeholder="e.g. Reuters, IBEF" />
+                      </div>
+                      <div>
+                        <label className={lbl}>Author</label>
+                        <input value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))}
+                          className={inp} placeholder="Author name" />
+                      </div>
+                    </div>
+                  );
+                } else if (has('source')) {
+                  rows.push(
+                    <div key="source">
+                      <label className={lbl}>{label('source', 'Source')}</label>
+                      <input value={form.source} onChange={e => setForm(f => ({ ...f, source: e.target.value }))}
+                        className={inp} placeholder="e.g. Reuters, IBEF" />
+                    </div>
+                  );
+                }
 
+                // Company + Location (paired)
+                if (has('company') && has('location')) {
+                  rows.push(
+                    <div key="company-location" className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={lbl}>{label('company', 'Company')}</label>
+                        <input value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
+                          className={inp} placeholder="Company or organizer name" />
+                      </div>
+                      <div>
+                        <label className={lbl}>Location</label>
+                        <input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
+                          className={inp} placeholder="City or Online" />
+                      </div>
+                    </div>
+                  );
+                } else if (has('company')) {
+                  rows.push(
+                    <div key="company">
+                      <label className={lbl}>{label('company', 'Company')}</label>
+                      <input value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
+                        className={inp} placeholder="Company or organizer name" />
+                    </div>
+                  );
+                }
+
+                // Platform + Date (paired)
+                const hasPlatform = has('platform');
+                const hasDate = has('date');
+                if (hasPlatform && hasDate) {
+                  rows.push(
+                    <div key="platform-date" className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={lbl}>Platform</label>
+                        <input value={form.platform} onChange={e => setForm(f => ({ ...f, platform: e.target.value }))}
+                          className={inp} placeholder="Zoom / YouTube" />
+                      </div>
+                      <div>
+                        <label className={lbl}>Date</label>
+                        <input value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
+                          className={inp} placeholder="e.g. Jun 15, 2026" />
+                      </div>
+                    </div>
+                  );
+                } else if (hasPlatform) {
+                  rows.push(
+                    <div key="platform">
+                      <label className={lbl}>Platform</label>
+                      <input value={form.platform} onChange={e => setForm(f => ({ ...f, platform: e.target.value }))}
+                        className={inp} placeholder="Zoom / YouTube" />
+                    </div>
+                  );
+                } else if (hasDate) {
+                  rows.push(
+                    <div key="date">
+                      <label className={lbl}>Date</label>
+                      <input value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
+                        className={inp} placeholder="e.g. Jun 15, 2026" />
+                    </div>
+                  );
+                }
+
+                // Price + Salary (paired if both; otherwise single)
+                if (has('price') && has('salary')) {
+                  rows.push(
+                    <div key="price-salary" className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={lbl}>Price</label>
+                        <input value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
+                          className={inp} placeholder="Free / Rs.500" />
+                      </div>
+                      <div>
+                        <label className={lbl}>Salary</label>
+                        <input value={form.salary} onChange={e => setForm(f => ({ ...f, salary: e.target.value }))}
+                          className={inp} placeholder="Rs.40K–60K" />
+                      </div>
+                    </div>
+                  );
+                } else if (has('price')) {
+                  rows.push(
+                    <div key="price">
+                      <label className={lbl}>Price</label>
+                      <input value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
+                        className={inp} placeholder="Free / Rs.500" />
+                    </div>
+                  );
+                } else if (has('salary')) {
+                  rows.push(
+                    <div key="salary">
+                      <label className={lbl}>Salary</label>
+                      <input value={form.salary} onChange={e => setForm(f => ({ ...f, salary: e.target.value }))}
+                        className={inp} placeholder="Rs.40K–60K" />
+                    </div>
+                  );
+                }
+
+                // Read Time (articles only)
+                if (has('readTime')) {
+                  rows.push(
+                    <div key="readTime">
+                      <label className={lbl}>Read Time</label>
+                      <input value={form.readTime} onChange={e => setForm(f => ({ ...f, readTime: e.target.value }))}
+                        className={inp} placeholder="5 min read" />
+                    </div>
+                  );
+                }
+
+                return rows;
+              })()}
+
+              {/* Image URL — always shown */}
               <div>
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Image URL</label>
                 <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
@@ -465,21 +597,32 @@ export default function AdminMediaDashboard() {
                   placeholder="https://..." />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* External Link + Video URL (video URL only for types that need it) */}
+              {(FIELD_CONFIG[form.contentType] ?? []).includes('videoUrl') ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">External Link</label>
+                    <input value={form.externalLink} onChange={e => setForm(f => ({ ...f, externalLink: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                      placeholder="https://..." />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Video URL</label>
+                    <input value={form.videoUrl} onChange={e => setForm(f => ({ ...f, videoUrl: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                      placeholder="YouTube URL" />
+                  </div>
+                </div>
+              ) : (
                 <div>
                   <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">External Link</label>
                   <input value={form.externalLink} onChange={e => setForm(f => ({ ...f, externalLink: e.target.value }))}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
                     placeholder="https://..." />
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Video URL</label>
-                  <input value={form.videoUrl} onChange={e => setForm(f => ({ ...f, videoUrl: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
-                    placeholder="YouTube URL" />
-                </div>
-              </div>
+              )}
 
+              {/* Tags */}
               <div>
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Tags</label>
                 <div className="flex gap-2">
@@ -501,6 +644,7 @@ export default function AdminMediaDashboard() {
                 )}
               </div>
 
+              {/* Publish toggle */}
               <div className="flex items-center gap-2">
                 <button onClick={() => setForm(f => ({ ...f, isPublished: !f.isPublished }))}
                   className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${form.isPublished ? 'bg-green-500' : 'bg-gray-300'}`}>
