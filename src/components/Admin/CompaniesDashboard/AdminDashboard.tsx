@@ -889,7 +889,7 @@ const AdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [viewFilter, setViewFilter] = useState<string>(searchParams.get("view") ?? "all");
+  const viewFilter = searchParams.get("view") ?? "all";
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -975,10 +975,9 @@ const AdminDashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync viewFilter when URL search params change (sidebar navigation)
+  // Sync statusFilter when URL changes via sidebar navigation
   useEffect(() => {
     const view = searchParams.get("view") ?? "all";
-    setViewFilter(view);
     if (view === "leads") setStatusFilter("under_review");
     else if (view === "all") setStatusFilter("all");
   }, [searchParams]);
@@ -1350,7 +1349,6 @@ const AdminDashboard: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => {
-              setViewFilter(tab.id);
               setSearchParams(prev => { if (tab.id === "all") { prev.delete("view"); } else { prev.set("view", tab.id); } return prev; }, { replace: true });
               setCurrentPage(1);
               if (tab.id === "leads") setStatusFilter("under_review");
