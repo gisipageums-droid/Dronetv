@@ -1,5 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DarkModeProvider } from "./context/DarkModeContext";
+import { useParams } from "react-router-dom";
+
+// T1 components
 import Navbar from "./components/Header";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -9,55 +12,81 @@ import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import Service from "./components/Service";
-import { useParams } from "react-router-dom";
-import { useTemplate } from "../../../context/context";
 import Back from "./components/Back";
 
+// T2 components
+import { Header as T2Header } from "../../t2/src/components/Header";
+import { Hero as T2Hero } from "../../t2/src/components/Hero";
+import { About as T2About } from "../../t2/src/components/About";
+import { Skills as T2Skills } from "../../t2/src/components/Skills";
+import { Projects as T2Projects } from "../../t2/src/components/Projects";
+import { Services as T2Services } from "../../t2/src/components/services";
+import { Certifications as T2Certifications } from "../../t2/src/components/Certifications";
+import { Clients as T2Clients } from "../../t2/src/components/Clients";
+import { SimpleTestimonials as T2Testimonials } from "../../t2/src/components/SimpleTestimonials";
+import { Contact as T2Contact } from "../../t2/src/components/Contact";
+import { Footer as T2Footer } from "../../t2/src/components/Footer";
+
+const CARDS_API =
+  "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=main";
+const CONTENT_API = "https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev";
+
 const FinalT1: React.FC = () => {
-  const { finaleDataReview, setFinaleDataReview } = useTemplate();
   const { urlSlug } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchTemplateData = useCallback(
-    async (urlSlug: string) => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `https://t6nbbkwszi.execute-api.ap-south-1.amazonaws.com/prod2/${urlSlug}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setFinaleDataReview(data.items);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching template data:", error);
-        if (error instanceof Error) setError(error.message);
-        else setError("Something went wrong please try again!");
-        setIsLoading(false);
-      }
-    },
-    [setFinaleDataReview]
-  );
+  const [profileData, setProfileData] = useState<any>(null);
+  const [templateType, setTemplateType] = useState<string>("template-1");
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    if (urlSlug) {
-      fetchTemplateData(urlSlug);
-    } else {
-      setError("Required parameters not found in URL");
+    if (!urlSlug) {
+      setError("Profile not found");
       setIsLoading(false);
+      return;
     }
-  }, [urlSlug, fetchTemplateData]);
+
+    const controller = new AbortController();
+
+    (async () => {
+      try {
+        setIsLoading(true);
+
+        const cardsRes = await fetch(CARDS_API, { signal: controller.signal });
+        if (!cardsRes.ok) throw new Error("Failed to load profiles");
+        const cardsData = await cardsRes.json();
+        const card = (cardsData.cards || []).find(
+          (c: any) => c.urlSlug === urlSlug
+        );
+        if (!card) throw new Error("Profile not found");
+
+        const templateParam =
+          card.templateSelection === "template-2" ? "template2" : "template1";
+        const contentRes = await fetch(
+          `${CONTENT_API}/${card.userId}/${card.professionalId}?template=${templateParam}`,
+          { signal: controller.signal }
+        );
+        if (!contentRes.ok) throw new Error("Failed to load profile content");
+        const contentData = await contentRes.json();
+
+        setTemplateType(card.templateSelection || "template-1");
+        setProfileData(Array.isArray(contentData) ? contentData[0] : contentData);
+        setIsLoading(false);
+      } catch (err: any) {
+        if (err.name !== "AbortError") {
+          setError(err.message || "Failed to load profile");
+          setIsLoading(false);
+        }
+      }
+    })();
+
+    return () => controller.abort();
+  }, [urlSlug]);
+
+  useEffect(() => {
+    if (isDarkMode) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [isDarkMode]);
 
   if (isLoading) {
     return (
@@ -71,28 +100,61 @@ const FinalT1: React.FC = () => {
     return (
       <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Error Loading Page</h2>
+          <h2 className="text-2xl font-bold mb-4">Profile Not Found</h2>
           <p className="text-muted-foreground mb-4">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => window.history.back()}
             className="bg-primary text-primary-foreground px-4 py-2 rounded-lg"
           >
-            Try Again
+            Go Back
           </button>
         </div>
       </div>
     );
   }
 
-  if (!finaleDataReview[0] || !finaleDataReview[0].content) {
+  if (!profileData?.content) {
     return (
       <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">No Data Found</h2>
           <p className="text-muted-foreground">
-            The requested company page could not be loaded.
+            The requested profile could not be loaded.
           </p>
         </div>
+      </div>
+    );
+  }
+
+  const { content, professionalId } = profileData;
+
+  if (templateType === "template-2") {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-background text-foreground transition-colors duration-300">
+        <T2Header
+          headerData={content.headerContent}
+          onDarkModeToggle={setIsDarkMode}
+        />
+        <main>
+          <T2Hero heroData={content.heroContent} />
+          <T2About aboutData={content.aboutContent} />
+          <T2Skills skillsData={content.skillContent} />
+          <T2Projects projectData={content.projectContent} />
+          <T2Services serviceData={content.serviceContent} />
+          <T2Certifications certificationsData={content.certificationsContent} />
+          <section id="clients">
+            <T2Clients clientData={content.clientsContent} />
+          </section>
+          <section id="testimonials">
+            <T2Testimonials testimonialData={content.testimonialContent} />
+          </section>
+          <T2Contact
+            contactData={content.contactContent}
+            professionalId={professionalId}
+          />
+          <Back />
+        </main>
+        <T2Footer footerData={content.footerContent} />
       </div>
     );
   }
@@ -100,20 +162,18 @@ const FinalT1: React.FC = () => {
   return (
     <DarkModeProvider>
       <div className="relative min-h-screen transition-colors duration-300 bg-white dark:bg-gray-900">
-        <Navbar content={finaleDataReview[0].content.headerContent} />
-        <Hero content={finaleDataReview[0].content.heroContent} />
-        <About content={finaleDataReview[0].content.aboutContent} />
-        <Skills content={finaleDataReview[0].content.skillContent} />
-        <Projects content={finaleDataReview[0].content.projectContent} />
-        <Service content={finaleDataReview[0].content.serviceContent} />
-        <Testimonials
-          content={finaleDataReview[0].content.testimonialContent}
-        />
+        <Navbar content={content.headerContent} />
+        <Hero content={content.heroContent} />
+        <About content={content.aboutContent} />
+        <Skills content={content.skillContent} />
+        <Projects content={content.projectContent} />
+        <Service content={content.serviceContent} />
+        <Testimonials content={content.testimonialContent} />
         <Contact
-          content={finaleDataReview[0].content.contactContent}
-          professionalId={finaleDataReview[0].professionalId}
+          content={content.contactContent}
+          professionalId={professionalId}
         />
-        <Footer content={finaleDataReview[0].content.footerContent} />
+        <Footer content={content.footerContent} />
         <Back />
       </div>
     </DarkModeProvider>
