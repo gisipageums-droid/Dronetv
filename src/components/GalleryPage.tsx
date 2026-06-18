@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, ChevronDown, X, ChevronLeft, ChevronRight, Download, Share2, Heart, Calendar, MapPin, Users, Plus, Upload, Tag } from 'lucide-react';
+import { fetchContent } from '../lib/mediaApi';
 
 const GalleryPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -78,6 +79,7 @@ const GalleryPage = () => {
   ];
 
   const [allImages, setAllImages] = useState([]);
+  const [cmsImages, setCmsImages] = useState([]);
   const STORAGE_KEY = 'droneTV_gallery_images_v3';
 
   useEffect(() => {
@@ -96,6 +98,27 @@ const GalleryPage = () => {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+    fetchContent('gallery', controller.signal).then(items => {
+      if (items.length > 0) {
+        const base = Date.now();
+        setCmsImages(items.map((item, i) => ({
+          id: base + i,
+          src: item.imageUrl || '',
+          title: item.title,
+          category: item.category || 'Events',
+          date: item.date || '',
+          location: item.location || '',
+          attendees: '',
+          description: item.description || '',
+          tags: item.tags || [],
+        })));
+      }
+    }).catch(() => {});
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
     if (!isInitialLoad.current && allImages.length > 0) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(allImages));
@@ -107,8 +130,10 @@ const GalleryPage = () => {
     return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
+  const displayImages = [...cmsImages, ...allImages];
+
   useEffect(() => {
-    let filtered = [...allImages];
+    let filtered = [...displayImages];
     if (selectedCategory !== 'All') {
       filtered = filtered.filter(image => image.category === selectedCategory);
     }
@@ -116,15 +141,15 @@ const GalleryPage = () => {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(image =>
         image.title.toLowerCase().includes(lowerQuery) ||
-        image.description.toLowerCase().includes(lowerQuery) ||
-        image.location.toLowerCase().includes(lowerQuery) ||
-        (image.tags && image.tags.some(tag => tag.toLowerCase().includes(lowerQuery)))
+        (image.description || '').toLowerCase().includes(lowerQuery) ||
+        (image.location || '').toLowerCase().includes(lowerQuery) ||
+        (image.tags && image.tags.some((tag: string) => tag.toLowerCase().includes(lowerQuery)))
       );
     }
     filtered.sort((a, b) => b.id - a.id);
     setFilteredImages(filtered);
     setCurrentPage(1);
-  }, [selectedCategory, searchQuery, allImages]);
+  }, [selectedCategory, searchQuery, allImages, cmsImages]);
 
   const indexOfLastImage = currentPage * imagesPerPage;
   const indexOfFirstImage = indexOfLastImage - imagesPerPage;
