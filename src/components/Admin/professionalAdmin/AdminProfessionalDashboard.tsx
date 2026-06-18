@@ -8,7 +8,6 @@ import {
   Search,
   Trash2,
   User,
-  Users,
   X,
   XCircle,
   Clock,
@@ -18,7 +17,7 @@ import {
   Calendar,
 } from "lucide-react";
 import React, { useEffect, useState, useMemo } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProfessionalCredentialsModal from "./ProfessionalCredentialsModal";
 import { motion, AnimatePresence } from "motion/react";
@@ -217,11 +216,30 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 // Header Component - Updated to match EventAdminDashboard
 const Header: React.FC = () => {
   return (
-    <div className="bg-gray-900 px-6 py-5">
-      <div className="max-w-7xl mx-auto">
-        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">Admin</p>
-        <h1 className="text-xl font-extrabold text-white mb-0.5">Professional Management</h1>
-        <p className="text-sm text-gray-400">Review and manage all professional profiles, credentials, and approvals</p>
+    <div className="relative h-[40vh] bg-amber-50 flex items-center justify-center px-4 sm:px-6 overflow-hidden">
+      {/* Geometric Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+      </div>
+
+      <div className="relative w-full max-w-3xl text-center z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="mb-4 text-3xl font-extrabold text-yellow-900 md:text-5xl md:mb-6 tracking-tight">
+            Admin Dashboard
+            <span className="block mt-2 text-transparent bg-clip-text bg-amber-600 ">
+              Professional Management
+            </span>
+          </h1>
+
+          <p className="mx-auto mb-8 max-w-xl text-base font-medium text-yellow-800/80 md:text-lg leading-relaxed">
+            Review and manage all professional profiles, credentials, and approvals with ease.
+          </p>
+        </motion.div>
       </div>
     </div>
   );
@@ -304,19 +322,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className={`bg-white border-r border-gray-200 p-4 md:p-8 h-fit md:sticky md:top-0
+      className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
       ${
         isMobileSidebarOpen
-          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-white"
-          : "hidden md:block md:w-72"
+          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
+          : "hidden md:block md:w-80"
       }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-base font-bold text-gray-900">Filters</h2>
+          <h2 className="text-xl font-bold text-yellow-900">Filters</h2>
           <button
             onClick={onCloseMobileSidebar}
-            className="p-2 text-gray-500"
+            className="p-2 text-yellow-800"
           >
             <X className="w-5 h-5" />
           </button>
@@ -326,7 +344,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="space-y-6 md:space-y-8">
         {/* Status Filter Section - Updated to match EventAdminDashboard */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Filter by Status
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -344,7 +362,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       : option.value === "rejected"
                       ? "bg-red-100 border-red-300 text-red-800"
                       : "bg-gray-100 border-gray-300 text-gray-800"
-                    : "bg-white border-gray-200 hover:border-yellow-400 text-gray-600"
+                    : "bg-white/50 border-yellow-200/50 hover:bg-gray-50 text-gray-700"
                 }`}
               >
                 {option.label === "Needs Review" && (
@@ -365,11 +383,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Search Section */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Search Professionals
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-yellow-600" />
             <input
               type="text"
               placeholder="Search by name, location..."
@@ -377,14 +395,14 @@ const Sidebar: React.FC<SidebarProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onSearchChange(e.target.value)
               }
-              className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white transition-colors placeholder-gray-400 text-gray-900"
+              className="w-full pl-10 pr-4 py-3 text-sm border border-yellow-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white/50 transition-colors placeholder-yellow-700/50 text-yellow-900"
             />
           </div>
         </div>
 
         {/* Sort Filter */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Sort by
           </label>
           <MinimalisticDropdown
@@ -402,39 +420,38 @@ const Sidebar: React.FC<SidebarProps> = ({
             onSortChange("Sort by Name");
             onStatusChange("all");
           }}
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-2"
+          className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
         >
           Clear all filters
         </button>
 
         {/* Divider */}
-        <div className="border-t border-gray-200"></div>
+        <div className="border-t border-yellow-200/50"></div>
 
         {/* Navigation Links */}
-        <div className="flex gap-2 flex-col">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Other Sections</p>
+        <div className="flex gap-2 flex-col mt-6">
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
             <Link to={"/admin/company/dashboard"} className="w-full text-left">
-              Companies
+              Companies{" "}
             </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
             <Link to={"/admin/event/dashboard"} className="w-full text-left">
-              Events
+              Events{" "}
             </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
             <Link to={"/admin/plans"} className="w-full text-left">
-              Admin Plans
+              Admin Plans{" "}
             </Link>
           </motion.button>
         </div>
@@ -504,15 +521,15 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   const statusStyle = getStatusBadge(professional.reviewStatus || "draft");
 
   return (
-    <div className="w-full h-full rounded-xl border border-gray-200 border-l-4 border-l-yellow-400 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden bg-white">
-      <div className="p-4 md:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center sm:w-12 sm:h-12">
+    <div className="w-full h-full rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border-l-8 border-gradient-to-b from-amber-500 to-yellow-600 group bg-white">
+      <div className="p-4 md:p-6 lg:p-8">
+        <div className="flex flex-wrap items-start justify-between gap-2 mb-4 md:mb-6">
+          <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
+            <div className="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-white p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
               <img
                 src={professional.previewImage || placeholderImg}
                 alt={`${professional.professionalName} profile`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-lg transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
                 onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                   const target = e.target as HTMLImageElement;
                   target.src = placeholderImg;
@@ -550,7 +567,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             ).map((category: string, index: number) => (
               <span
                 key={index}
-                className="px-2 py-1 md:px-3 md:py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full"
+                className="px-2 py-1 md:px-3 md:py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full"
               >
                 {category}
               </span>
@@ -562,7 +579,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3 md:gap-6">
             <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1 md:px-4 md:py-2">
-              <span className="font-bold text-gray-700 text-xs md:text-sm">
+              <span className="font-bold text-amber-600 text-xs md:text-sm">
                 {professional.publishedDate
                   ? formatDate(professional.publishedDate)
                   : "Not published"}
@@ -584,7 +601,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                 );
               }}
               disabled={disabled}
-              className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-2 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Edit className="w-3 h-3 md:w-4 md:h-4" />
               Edit /
@@ -695,12 +712,12 @@ const RecentProfessionalsSection: React.FC<{
       <div className="mb-8">
         <div className="flex gap-3 items-center mb-6">
           <div className="flex gap-2 items-center">
-            <Clock className="w-5 h-5 text-yellow-500" />
-            <h2 className="text-base font-bold text-gray-900">
+            <Clock className="w-6 h-6 text-yellow-600" />
+            <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
               Recent Professionals
             </h2>
           </div>
-          <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+          <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
             Last 7 days
           </span>
         </div>
@@ -722,7 +739,7 @@ const RecentProfessionalsSection: React.FC<{
           ))}
         </div>
 
-        <div className="mt-6 border-t border-gray-200"></div>
+        <div className="mt-6 border-t border-yellow-200/50"></div>
       </div>
     );
   };
@@ -755,19 +772,27 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
   if (loading)
     return (
-      <div className="flex-1 bg-[#F4F5F7] py-8">
+      <div className="flex-1 p-4 md:p-8 bg-orange-50">
         <LoadingSpinner />
       </div>
     );
   if (error)
     return (
-      <div className="flex-1 bg-[#F4F5F7] py-8">
+      <div className="flex-1 p-4 md:p-8 bg-orange-50">
         <ErrorMessage error={error} onRetry={onRetry} />
       </div>
     );
 
   return (
-    <div className="flex-1 bg-[#F4F5F7]">
+    <div className="flex-1 p-4 md:p-8 bg-orange-50">
+      {/* Mobile sidebar toggle */}
+      <button
+        onClick={onOpenMobileSidebar}
+        className="p-3 rounded-full border border-gray-200 bg-yellow-500 text-white relative left-5 hover:bg-yellow-600 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
+        aria-label="Open filters"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
 
       {/* Recent Professionals Section - Updated condition to hide when status filter is not "all" */}
       {!searchTerm && statusFilter === "all" && (
@@ -786,12 +811,12 @@ const MainContent: React.FC<MainContentProps> = ({
       {/* All Professionals Section */}
       <div className="flex gap-3 items-center mb-6">
         <div className="flex gap-2 items-center">
-          <User className="w-5 h-5 text-yellow-500" />
-          <h2 className="text-base font-bold text-gray-900">
+          <User className="w-6 h-6 text-yellow-600" />
+          <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
             {statusFilter === "all" ? "All Professionals" : statusFilter === "under_review" ? "Under Review Professionals" : statusFilter === "approved" ? "Approved Professionals" : "Rejected Professionals"}
           </h2>
         </div>
-        <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+        <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
           {totalCount}{" "}
           {totalCount === 1 ? "professional" : "professionals"}
         </span>
@@ -832,7 +857,7 @@ const MainContent: React.FC<MainContentProps> = ({
         <div className="flex justify-center items-center mt-8">
           <button
             onClick={onPrevPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage <= 1}
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
@@ -843,7 +868,7 @@ const MainContent: React.FC<MainContentProps> = ({
           </span>
           <button
             onClick={onNextPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-lg transition-colors hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage >= totalPages}
           >
             Next
@@ -857,7 +882,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
 // API Service for Professionals
 const apiService = {
-  async fetchAllProfessionals(signal?: AbortSignal): Promise<ApiResponse> {
+  async fetchAllProfessionals(): Promise<ApiResponse> {
     try {
       const response = await fetch(
         "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=admin",
@@ -867,7 +892,6 @@ const apiService = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
           },
-          signal,
         }
       );
 
@@ -876,9 +900,11 @@ const apiService = {
       }
 
       const data = await response.json();
+      console.log("Fetched professionals data:", data);
+
       return data;
-    } catch (error: any) {
-      if (error?.name === "AbortError") throw error;
+    } catch (error) {
+      console.error("Error fetching professionals:", error);
       throw error;
     }
   },
@@ -894,14 +920,19 @@ const apiService = {
       }
 
       const data = await response.json();
+      console.log(data);
+
       return data;
     } catch (error) {
+      console.error("Error fetching professional details:", error);
       throw error;
     }
   },
 
   async approveProfessional(publishedId: string, userId: string): Promise<any> {
     try {
+      console.log(publishedId, userId);
+
       const response = await fetch(
         `https://ei94o66irc.execute-api.ap-south-1.amazonaws.com/dev/professional-tem-validation`,
         {
@@ -920,6 +951,7 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
+      console.error("Error approving professional:", error);
       throw error;
     }
   },
@@ -944,6 +976,7 @@ const apiService = {
       const data = await response.json();
       return data;
     } catch (error) {
+      console.error("Error rejecting professional:", error);
       throw error;
     }
   },
@@ -967,20 +1000,17 @@ const apiService = {
       }
 
       const data = await response.json();
+      console.log(data);
+
       return data;
     } catch (error) {
+      console.error("Error deleting professional:", error);
       throw error;
     }
   },
 };
 
 // Main Professional Dashboard Component
-const PROF_VIEW_TABS = [
-  { id: "all", label: "Pilot Directory" },
-  { id: "portfolio", label: "Portfolio" },
-  { id: "community", label: "Community" },
-];
-
 const AdminProfessionalDashboard: React.FC = () => {
   const navigate = useNavigate();
 
@@ -992,9 +1022,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   const [isMutating, setIsMutating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [viewFilter, setViewFilter] = useState<string>(searchParams.get("view") ?? "all");
-  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
+  const [statusFilter, setStatusFilter] = useState<string>("all"); // Changed from "All Statuses"
   const [sortBy, setSortBy] = useState<string>("Sort by Name");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(12);
@@ -1118,6 +1146,7 @@ const AdminProfessionalDashboard: React.FC = () => {
           return;
       }
     } catch (err) {
+      console.error(`Error performing ${type} action:`, err);
       toast.error(`Failed to ${type} professional`);
       await fetchProfessionals();
     } finally {
@@ -1138,6 +1167,7 @@ const AdminProfessionalDashboard: React.FC = () => {
         data: details,
       });
     } catch (error) {
+      console.error("Error fetching professional details:", error);
       toast.error("Failed to fetch professional details");
     } finally {
       setIsMutating(false);
@@ -1165,6 +1195,7 @@ const AdminProfessionalDashboard: React.FC = () => {
         );
       }
     } catch (error) {
+      console.error("Error loading professional for preview:", error);
       toast.error("Failed to load professional for preview");
     }
   };
@@ -1194,18 +1225,18 @@ const AdminProfessionalDashboard: React.FC = () => {
   };
 
   // Fetch all professionals from API
-  const fetchProfessionals = async (signal?: AbortSignal): Promise<void> => {
+  const fetchProfessionals = async (): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
 
-      const data = await apiService.fetchAllProfessionals(signal);
+      const data = await apiService.fetchAllProfessionals();
 
       setProfessionals(data.cards || []);
       setTotalCount(data.totalCount || 0);
       setHasMore(data.hasTemplates || false);
-    } catch (err: any) {
-      if (err?.name === "AbortError") return;
+    } catch (err) {
+      console.error("Error in fetchProfessionals:", err);
       const errorMessage =
         err instanceof Error ? err.message : "Failed to fetch professionals";
       setError(errorMessage);
@@ -1216,9 +1247,7 @@ const AdminProfessionalDashboard: React.FC = () => {
 
   // Load data on component mount
   useEffect(() => {
-    const controller = new AbortController();
-    fetchProfessionals(controller.signal);
-    return () => controller.abort();
+    fetchProfessionals();
   }, []);
 
   // Reset to page 1 when filters change
@@ -1331,8 +1360,8 @@ const AdminProfessionalDashboard: React.FC = () => {
           title: "Confirm Edit",
           message: `Are you sure you want to edit "${professionalName}"? You will be redirected to the edit page.`,
           confirmText: "Edit Professional",
-          confirmColor: "bg-gray-700 hover:bg-gray-600",
-          icon: <Edit className="text-gray-700" size={24} />,
+          confirmColor: "bg-amber-600 hover:bg-amber-700",
+          icon: <Edit className="text-amber-600" size={24} />,
         };
       case "approve":
         return {
@@ -1372,7 +1401,8 @@ const AdminProfessionalDashboard: React.FC = () => {
   const modalConfig = getModalConfig();
 
   return (
-    <div className="w-full min-h-screen bg-[#F4F5F7]">
+    <div className="w-full min-h-screen h-full bg-orange-50">
+      <Header />
 
       {/* Universal Confirmation Modal */}
       <ConfirmationModal
@@ -1403,120 +1433,47 @@ const AdminProfessionalDashboard: React.FC = () => {
         }
       />
 
-      {/* Page title */}
-      <div className="mb-4">
-        <h1 className="text-xl font-extrabold text-gray-900">Professional Management</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Review and manage all professional listings, credentials, and approvals.</p>
+      {/* Main Layout Container */}
+      <div className="flex">
+        {/* Left Sidebar */}
+        <Sidebar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          isMobileSidebarOpen={isMobileSidebarOpen}
+          onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
+          statusFilter={statusFilter}
+          onStatusChange={setStatusFilter}
+        />
+
+        {/* Main Content Area */}
+        <MainContent
+          professionals={paginatedProfessionals}
+          recentProfessionals={recentProfessionals}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          loading={loading}
+          error={error}
+          onRetry={fetchProfessionals}
+          totalCount={sortedProfessionals.length}
+          hasMore={hasMore}
+          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          onCredentials={handleCredentials}
+          onPreview={handlePreview}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          searchTerm={searchTerm}
+          sortBy={sortBy}
+          statusFilter={statusFilter}
+          onClearFilters={handleClearFilters}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          isMutating={isMutating}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
+        />
       </div>
-
-      {/* Stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        {[
-          { label: "Total", value: professionals.length, color: "border-t-yellow-400" },
-          { label: "Pending Review", value: professionals.filter((p: any) => p.reviewStatus === "under_review").length, color: "border-t-orange-400" },
-          { label: "Approved", value: professionals.filter((p: any) => p.reviewStatus === "approved").length, color: "border-t-green-500" },
-          { label: "Rejected", value: professionals.filter((p: any) => p.reviewStatus === "rejected").length, color: "border-t-red-500" },
-        ].map(stat => (
-          <div key={stat.label} className={`bg-white rounded-lg border border-gray-200 border-t-4 ${stat.color} p-4 shadow-sm`}>
-            <div className="text-2xl font-black text-gray-900">{loading ? "—" : stat.value}</div>
-            <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wide">{stat.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* View tabs */}
-      <div className="flex gap-0 border-b-2 border-gray-200 mb-4 overflow-x-auto">
-        {PROF_VIEW_TABS.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => {
-              setViewFilter(tab.id);
-              setSearchParams(prev => { if (tab.id === "all") { prev.delete("view"); } else { prev.set("view", tab.id); } return prev; }, { replace: true });
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"}`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {viewFilter === "portfolio" && (
-        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center mb-4 shadow-sm">
-          <FileText className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-gray-700 mb-1">Portfolio Management</h3>
-          <p className="text-sm text-gray-400">Showing professionals with uploaded portfolio content. Full portfolio module coming soon.</p>
-        </div>
-      )}
-
-      {viewFilter === "community" && (
-        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center mb-4 shadow-sm">
-          <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-gray-700 mb-1">Community Management</h3>
-          <p className="text-sm text-gray-400">Community posts, forum threads, and member activity will appear here. Coming soon.</p>
-        </div>
-      )}
-
-      {/* Horizontal toolbar */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
-          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
-          <input
-            type="text"
-            placeholder="Search professionals…"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
-          />
-        </div>
-        <select
-          value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
-        >
-          <option value="all">All Professionals</option>
-          <option value="under_review">Under Review</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
-        <select
-          value={sortBy}
-          onChange={e => setSortBy(e.target.value)}
-          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
-        >
-          <option value="Sort by Name">Sort by Name</option>
-          <option value="Sort by Location">Sort by Location</option>
-          <option value="Sort by Date">Sort by Date</option>
-          <option value="Sort by Category">Sort by Category</option>
-        </select>
-      </div>
-
-      {/* Main Content */}
-      <MainContent
-        professionals={paginatedProfessionals}
-        recentProfessionals={recentProfessionals}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        loading={loading}
-        error={error}
-        onRetry={fetchProfessionals}
-        totalCount={sortedProfessionals.length}
-        hasMore={hasMore}
-        onOpenMobileSidebar={() => {}}
-        onCredentials={handleCredentials}
-        onPreview={handlePreview}
-        onApprove={handleApprove}
-        onReject={handleReject}
-        searchTerm={searchTerm}
-        sortBy={sortBy}
-        statusFilter={statusFilter}
-        onClearFilters={handleClearFilters}
-        onDelete={handleDelete}
-        onEdit={handleEdit}
-        isMutating={isMutating}
-        onNextPage={handleNextPage}
-        onPrevPage={handlePrevPage}
-      />
     </div>
   );
 };

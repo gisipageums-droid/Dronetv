@@ -16,7 +16,7 @@ import {
   Pen,
   Edit,
 } from "lucide-react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -610,11 +610,31 @@ const SORT_OPTIONS = [
 // -------------------- Header --------------------
 const Header: React.FC = () => {
   return (
-    <div className="bg-gray-900 px-6 py-5">
-      <div className="max-w-7xl mx-auto">
-        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">Admin</p>
-        <h1 className="text-xl font-extrabold text-white mb-0.5">Event Management</h1>
-        <p className="text-sm text-gray-400">Review and manage all event listings, credentials, and approvals</p>
+    <div className="relative h-[40vh] bg-amber-50 flex items-center justify-center px-4 sm:px-6 overflow-hidden">
+      {/* Geometric Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+      </div>
+
+      <div className="relative w-full max-w-3xl text-center z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="mb-4 text-3xl font-extrabold text-yellow-900 md:text-5xl md:mb-6 tracking-tight">
+            Admin Dashboard
+            <span className="block mt-2 text-transparent bg-clip-text bg-amber-600 ">
+              Event Management
+            </span>
+          </h1>
+
+          <p className="mx-auto mb-8 max-w-xl text-base font-medium text-yellow-800/80 md:text-lg leading-relaxed">
+            Review and manage all event listings, credentials, and approvals
+            with ease.
+          </p>
+        </motion.div>
       </div>
     </div>
   );
@@ -701,18 +721,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className={`bg-white border-r border-gray-200 p-4 md:p-8 h-fit md:sticky md:top-0
+      className={`bg-white/40 backdrop-blur-xl border-r border-yellow-200/50 p-4 md:p-8 h-fit md:sticky md:top-0 
       ${isMobileSidebarOpen
-          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-white"
-          : "hidden md:block md:w-72"
+          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-orange-50"
+          : "hidden md:block md:w-80"
         }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-base font-bold text-gray-900">Filters</h2>
+          <h2 className="text-xl font-bold text-yellow-900">Filters</h2>
           <button
             onClick={onCloseMobileSidebar}
-            className="p-2 text-gray-500"
+            className="p-2 text-yellow-800"
             aria-label="Close filters"
           >
             <X className="w-5 h-5" />
@@ -723,7 +743,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="space-y-6 md:space-y-8">
         {/* Status Filter Section */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Filter by Status
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -740,7 +760,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       : option.value === "rejected"
                         ? "bg-red-100 border-red-300 text-red-800"
                         : "bg-gray-100 border-gray-300 text-gray-800"
-                  : "bg-white border-gray-200 hover:border-yellow-400 text-gray-600"
+                  : "bg-white/50 border-yellow-200/50 hover:bg-gray-50 text-gray-700"
                   }`}
               >
                 {option.label === "Needs Review" && (
@@ -761,11 +781,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Search Section */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Search Events
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-yellow-600" />
             <input
               type="text"
               placeholder="Search events..."
@@ -773,7 +793,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onSearchChange(e.target.value)
               }
-              className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white transition-colors placeholder-gray-400 text-gray-900"
+              className="w-full pl-10 pr-4 py-3 text-sm border border-yellow-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white/50 transition-colors placeholder-yellow-700/50 text-yellow-900"
               aria-label="Search events"
             />
           </div>
@@ -781,7 +801,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Sort Filter */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-sm font-medium text-yellow-900 block">
             Sort by
           </label>
           <MinimalisticDropdown
@@ -800,42 +820,41 @@ const Sidebar: React.FC<SidebarProps> = ({
             onSortChange("Sort by Date");
             onStatusFilterChange("all");
           }}
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-2"
+          className="text-sm text-yellow-700 hover:text-yellow-900 transition-colors underline underline-offset-2"
         >
           Clear all filters
         </button>
 
         {/* Divider */}
-        <div className="border-t border-gray-200"></div>
+        <div className="border-t border-yellow-200/50"></div>
 
         {/* Navigation Links */}
-        <div className="flex gap-2 flex-col">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Other Sections</p>
+        <div className="flex gap-2 flex-col mt-6">
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
             <Link
               to={"/admin/professional/dashboard"}
               className="w-full text-left"
             >
-              Professionals
+              Professionals{" "}
             </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
             <Link to={"/admin/company/dashboard"} className="w-full text-left">
-              Companies
+              Companies{" "}
             </Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="bg-yellow-400/30 text-yellow-900 p-3 rounded-xl shadow-sm hover:shadow-md hover:bg-yellow-400/50 duration-200 flex items-center gap-3 backdrop-blur-sm border border-yellow-200/50"
           >
             <Link to={"/admin/plans"} className="w-full text-left">
-              Admin Plans
+              Admin Plans{" "}
             </Link>
           </motion.button>
         </div>
@@ -854,14 +873,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   onDelete,
   disabled = false,
 }) => {
-  const getEventImageUrl = (url?: string): string | null => {
-    if (!url) return null;
-    const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/);
-    if (yt) return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`;
-    if (url.startsWith('http')) return url;
-    return null;
-  };
-  const eventImageUrl = getEventImageUrl(event.previewImage);
+  const placeholderImg = event.previewImage || event.eventName[0];
 
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "Date not available";
@@ -896,20 +908,22 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   const statusStyle = getStatusBadge(event.reviewStatus);
 
   return (
-    <div className="overflow-hidden w-full h-full rounded-xl border border-gray-200 border-l-4 border-l-yellow-400 shadow-sm transition-all duration-200 hover:shadow-md bg-white">
-      <div className="p-4 md:p-5">
-        <div className="flex flex-wrap justify-between items-start gap-2 mb-4">
-          <div className="flex gap-3 items-center min-w-0 flex-1">
-            <div className="flex-shrink-0 flex overflow-hidden justify-center items-center p-1 w-10 h-10 bg-gray-100 rounded-lg sm:w-12 sm:h-12">
-              {eventImageUrl ? (
+    <div className="overflow-hidden w-full h-full rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl group border-gradient-to-b from-amber-500 to-yellow-600 bg-white">
+      <div className="p-4 md:p-6 lg:p-8">
+        <div className="flex flex-wrap justify-between items-start gap-2 mb-4 md:mb-6">
+          <div className="flex gap-3 items-center md:gap-4 min-w-0 flex-1">
+            <div className="flex-shrink-0 flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md md:w-14 md:h-14 lg:w-16 lg:h-16 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-yellow-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110">
+              {event.previewImage ? (
                 <img
-                  src={eventImageUrl}
+                  src={event.heroBannerImage}
                   alt={`${event.eventName} logo`}
-                  className="w-full h-full object-cover rounded"
+                  className="w-full h-full object-cover rounded-lg transition-all duration-500 group-hover:rotate-[-3deg] group-hover:scale-110"
                   loading="lazy"
                 />
               ) : (
-                <Calendar className="w-5 h-5 text-gray-400" />
+                <span className="text-4xl font-extrabold text-yellow-600">
+                  {placeholderImg}
+                </span>
               )}
             </div>
 
@@ -920,7 +934,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
               <div className="flex items-center mt-1 text-gray-600">
                 <MapPin className="mr-1 w-3 h-3" />
                 <span className="text-xs md:text-sm">
-                  {event.location ? (event.location.length > 25 ? event.location.slice(0, 25) + "..." : event.location) : "Location not specified"}
+                  {event.location.slice(0, 25) + `${event.location.length > 25 ? "..." : ""}` || "Location not specified"}
                 </span>
               </div>
             </div>
@@ -939,7 +953,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
         <div className="flex flex-col gap-3">
           <div className="flex gap-3 items-center md:gap-6">
             <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg md:px-4 md:py-2">
-              <span className="text-xs font-bold text-gray-700 md:text-sm">
+              <span className="text-xs font-bold text-amber-600 md:text-sm">
                 {formatDate(event.createdAt)}
               </span>
               <span className="hidden text-xs text-gray-600 md:block">
@@ -951,7 +965,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => onPreview(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg transition-colors hover:bg-gray-200 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-amber-700 bg-amber-100 rounded-lg transition-colors hover:bg-amber-200 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
               aria-label={`Preview ${event.eventName}`}
               disabled={disabled}
             >
@@ -1037,12 +1051,12 @@ const RecentEventsSection: React.FC<{
       <div className="mb-8">
         <div className="flex gap-3 items-center mb-6">
           <div className="flex gap-2 items-center">
-            <Clock className="w-5 h-5 text-yellow-500" />
-            <h2 className="text-base font-bold text-gray-900">
+            <Clock className="w-6 h-6 text-yellow-600" />
+            <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
               Recent Events
             </h2>
           </div>
-          <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+          <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
             Last 7 days
           </span>
         </div>
@@ -1063,7 +1077,7 @@ const RecentEventsSection: React.FC<{
           ))}
         </div>
 
-        <div className="mt-6 border-t border-gray-200"></div>
+        <div className="mt-6 border-t border-yellow-200/50"></div>
       </div>
     );
   };
@@ -1083,34 +1097,17 @@ const eventApiService = {
       const data = await response.json();
       return data;
     } catch (error) {
+      console.error("Error fetching event credentials:", error);
       throw error;
     }
   },
 };
 
 // -------------------- Main Component --------------------
-const VIEW_TABS = [
-  { id: "all", label: "All Events" },
-  { id: "expos", label: "Expos" },
-  { id: "conferences", label: "Conferences" },
-  { id: "workshops", label: "Workshops" },
-];
-
-function matchesView(event: Event, view: string): boolean {
-  if (view === "all") return true;
-  const cat = (event.category || "").toLowerCase();
-  if (view === "expos") return cat.includes("expo");
-  if (view === "conferences") return cat.includes("conference");
-  if (view === "workshops") return cat.includes("workshop");
-  return true;
-}
-
 const EventAdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("Sort by Date");
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
-  const [viewFilter, setViewFilter] = useState<string>(searchParams.get("view") ?? "all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
     useState<boolean>(false);
   const [events, setEvents] = useState<Event[]>([]);
@@ -1191,6 +1188,7 @@ const EventAdminDashboard: React.FC = () => {
           return;
       }
     } catch (err) {
+      console.error(`Error performing ${type} action:`, err);
       toast.error(`Failed to ${type} event`);
     } finally {
       setIsMutating(false);
@@ -1201,90 +1199,145 @@ const EventAdminDashboard: React.FC = () => {
   // -------------------- Action Handlers --------------------
   const handleCredentials = async (eventId: string) => {
     try {
-      setIsMutating(true);
+      setLoading(true);
       const credentials = await eventApiService.fetchEventCredentials(eventId);
       setCredentialsModal({ isOpen: true, data: credentials });
-    } catch {
+    } catch (error) {
+      console.error("Error fetching credentials:", error);
       toast.error("Failed to fetch credentials");
     } finally {
-      setIsMutating(false);
+      setLoading(false);
     }
   };
 
   const handlePreviewAction = (eventId: string, userId: string) => {
+    // Find the event to get its templateSelection
     const event = events.find((e) => e.eventId === eventId);
-    if (!event) { toast.error("Event not found"); return; }
+    if (!event) {
+      toast.error("Event not found");
+      return;
+    }
 
-    if (event.templateSelection === "template-2" || event.templateSelection === "2") {
+    // Handle both template selection formats
+    if (
+      event.templateSelection === "template-1" ||
+      event.templateSelection === "1"
+    ) {
+      navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
+    } else if (
+      event.templateSelection === "template-2" ||
+      event.templateSelection === "2"
+    ) {
       navigate(`/edit/event/t2/admin/${eventId}/${userId}`);
     } else {
+      // Default to template 1 if unknown
+      console.warn(
+        `Unknown template selection: ${event.templateSelection}, defaulting to template 1`
+      );
       navigate(`/edit/event/t1/admin/${eventId}/${userId}`);
     }
   };
 
-  const fetchEvents = async (signal?: AbortSignal) => {
+  const fetchEvents = async () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin",
-        { signal }
+        "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin"
       );
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
       const fetchedEvents = data?.cards || [];
       setEvents(fetchedEvents);
-      const sortedByDate = [...fetchedEvents].sort((a: Event, b: Event) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+
+      // Sort by creation date descending (latest first)
+      const sortedByDate = [...fetchedEvents].sort((a: Event, b: Event) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+
       setRecentEvents(sortedByDate.slice(0, 6));
-    } catch (error: any) {
-      if (error?.name === "AbortError") return;
-      toast.error("Failed to load events");
+    } catch (error) {
+      console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleApproveAction = async (eventId: string, userId: string) => {
-    const response = await fetch(
-      `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, action: "approve", userId }),
-      }
-    );
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    toast.success("Event approved successfully");
-    fetchEvents();
+    try {
+      await fetch(
+        `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            eventId: eventId,
+            action: "approve",
+            adminNotes: "Looks good!",
+            userId: userId,
+          }),
+        }
+      );
+
+      toast.success("Event approved successfully");
+      fetchEvents();
+    } catch (error) {
+      console.error("Error approving event:", error);
+      toast.error("Failed to approve event");
+      throw error;
+    }
   };
 
   const handleRejectAction = async (eventId: string, userId: string) => {
-    const response = await fetch(
-      `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, action: "reject", userId }),
-      }
-    );
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    toast.success("Event rejected");
-    fetchEvents();
+    try {
+      await fetch(
+        `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            eventId: eventId,
+            action: "reject",
+            adminNotes: "Looks bad!",
+            userId: userId,
+          }),
+        }
+      );
+
+      toast.success("Event rejected successfully");
+      fetchEvents();
+    } catch (error) {
+      console.error("Error rejecting event:", error);
+      toast.error("Failed to reject event");
+      throw error;
+    }
   };
 
   const handleDeleteAction = async (eventId: string) => {
-    const response = await fetch(
-      "https://pjqm3sgpzf.execute-api.ap-south-1.amazonaws.com/dev/delete-event",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, action: "delete" }),
-      }
-    );
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    toast.success("Event deleted");
-    fetchEvents();
+    try {
+      await fetch(
+        "https://pjqm3sgpzf.execute-api.ap-south-1.amazonaws.com/dev/delete-event",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            eventId: eventId,
+            action: "delete",
+          }),
+        }
+      );
+
+      toast.success("Event deleted successfully");
+      fetchEvents();
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("Failed to delete event");
+      throw error;
+    }
   };
 
   // Wrapper functions for button clicks
@@ -1305,9 +1358,7 @@ const EventAdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    fetchEvents(controller.signal);
-    return () => controller.abort();
+    fetchEvents();
   }, []);
 
   // Reset to page 1 when filters change
@@ -1327,15 +1378,16 @@ const EventAdminDashboard: React.FC = () => {
         (event.category &&
           event.category.toLowerCase().includes(searchTerm.toLowerCase()));
 
+      // Status filter logic
       const matchesStatus =
         statusFilter === "all" ||
         (statusFilter === "under_review" && event.reviewStatus === "under_review") ||
         (statusFilter === "approved" && event.reviewStatus === "approved") ||
         (statusFilter === "rejected" && event.reviewStatus === "rejected");
 
-      return matchesSearch && matchesStatus && matchesView(event, viewFilter);
+      return matchesSearch && matchesStatus;
     });
-  }, [events, searchTerm, statusFilter, viewFilter]);
+  }, [events, searchTerm, statusFilter]);
 
   const sortedEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {
@@ -1391,8 +1443,8 @@ const EventAdminDashboard: React.FC = () => {
           title: "Confirm Edit",
           message: `Are you sure you want to edit "${eventName}"? You will be redirected to the edit page.`,
           confirmText: "Edit Event",
-          confirmColor: "bg-gray-700 hover:bg-gray-600",
-          icon: <Edit className="text-gray-700" size={24} />,
+          confirmColor: "bg-amber-600 hover:bg-amber-700",
+          icon: <Edit className="text-amber-600" size={24} />,
         };
       case "approve":
         return {
@@ -1432,7 +1484,8 @@ const EventAdminDashboard: React.FC = () => {
   const modalConfig = getModalConfig();
 
   return (
-    <div className="w-full min-h-screen bg-[#F4F5F7]">
+    <div className="w-full min-h-screen h-full bg-orange-50 pt-16">
+      <Header />
 
       {/* Universal Confirmation Modal */}
       <ConfirmationModal
@@ -1454,78 +1507,29 @@ const EventAdminDashboard: React.FC = () => {
         data={credentialsModal.data}
       />
 
-      {/* Page title */}
-      <div className="mb-4">
-        <h1 className="text-xl font-extrabold text-gray-900">Event Management</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Review and manage all event listings, credentials, and approvals.</p>
-      </div>
+      {/* Mobile sidebar toggle */}
+      <button
+        onClick={() => setIsMobileSidebarOpen(true)}
+        className="p-3 rounded-full border border-gray-200 bg-yellow-500 text-white relative left-5 hover:bg-yellow-600 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 duration-200 md:hidden"
+        aria-label="Open filters"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        {[
-          { label: "Total", value: events.length, color: "border-t-yellow-400" },
-          { label: "Pending Review", value: events.filter(e => e.reviewStatus === "under_review").length, color: "border-t-orange-400" },
-          { label: "Approved", value: events.filter(e => e.reviewStatus === "approved").length, color: "border-t-green-500" },
-          { label: "Rejected", value: events.filter(e => e.reviewStatus === "rejected").length, color: "border-t-red-500" },
-        ].map(stat => (
-          <div key={stat.label} className={`bg-white rounded-lg border border-gray-200 border-t-4 ${stat.color} p-4 shadow-sm`}>
-            <div className="text-2xl font-black text-gray-900">{loading ? "—" : stat.value}</div>
-            <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wide">{stat.label}</div>
-          </div>
-        ))}
-      </div>
+      {/* Main layout */}
+      <div className="flex">
+        <Sidebar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          isMobileSidebarOpen={isMobileSidebarOpen}
+          onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
 
-      {/* View tabs */}
-      <div className="flex gap-0 border-b-2 border-gray-200 mb-4 overflow-x-auto">
-        {VIEW_TABS.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => {
-              setViewFilter(tab.id);
-              setSearchParams(prev => { if (tab.id === "all") { prev.delete("view"); } else { prev.set("view", tab.id); } return prev; }, { replace: true });
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"}`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Horizontal toolbar */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
-          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
-          <input
-            type="text"
-            placeholder="Search events…"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
-          />
-        </div>
-        <select
-          value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
-        >
-          <option value="all">All Events</option>
-          <option value="under_review">Under Review</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
-        <select
-          value={sortBy}
-          onChange={e => setSortBy(e.target.value)}
-          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
-        >
-          {SORT_OPTIONS.map(opt => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="bg-[#F4F5F7]">
+        <div className="flex-1 p-4 md:p-8 bg-orange-50">
           {loading ? (
             <LoadingSpinner />
           ) : (
@@ -1546,12 +1550,12 @@ const EventAdminDashboard: React.FC = () => {
               {/* All Events Section */}
               <div className="flex gap-3 items-center mb-6">
                 <div className="flex gap-2 items-center">
-                  <Calendar className="w-5 h-5 text-yellow-500" />
-                  <h2 className="text-base font-bold text-gray-900">
+                  <Calendar className="w-6 h-6 text-yellow-600" />
+                  <h2 className="text-xl font-bold text-yellow-900 md:text-2xl">
                     {statusFilter === "all" ? "All Events" : statusFilter === "under_review" ? "Under Review Events" : statusFilter === "approved" ? "Approved Events" : "Rejected Events"}
                   </h2>
                 </div>
-                <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+                <span className="px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-full">
                   {sortedEvents.length}{" "}
                   {sortedEvents.length === 1 ? "event" : "events"}
                 </span>
@@ -1589,7 +1593,7 @@ const EventAdminDashboard: React.FC = () => {
                 <div className="flex justify-center items-center mt-8">
                   <button
                     onClick={handlePrevPage}
-                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={currentPage <= 1}
                   >
                     <ArrowRight className="w-4 h-4 rotate-180" />
@@ -1600,7 +1604,7 @@ const EventAdminDashboard: React.FC = () => {
                   </span>
                   <button
                     onClick={handleNextPage}
-                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-lg transition-colors hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={currentPage >= totalPages}
                   >
                     Next
@@ -1611,6 +1615,7 @@ const EventAdminDashboard: React.FC = () => {
             </>
           )}
         </div>
+      </div>
     </div>
   );
 };

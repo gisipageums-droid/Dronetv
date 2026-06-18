@@ -12,30 +12,34 @@ export function Header({ setSidebarOpen }: HeaderProps) {
 
   return (
     <>
-      <header className="bg-white w-full border-b border-gray-200 px-4 md:px-6 py-3">
-        <div className="flex items-center justify-between">
+      <header className="bg-white/40 backdrop-blur-xl w-full border-b rounded-md border-yellow-200/50 px-4 md:px-6 py-4">
+        <div className="flex items-center justify-between ">
           <div className="flex items-center gap-4">
-            <button
+            <button 
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="lg:hidden text-yellow-800 hover:text-yellow-900 p-2 hover:bg-yellow-300/20 rounded-lg transition-colors"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-6 h-6" />
             </button>
+            
             <div>
-              <p className="text-sm font-bold text-gray-900">Token Plan Management</p>
-              <p className="text-xs text-gray-400">Manage your token plans and pricing</p>
+              <h2 className="text-yellow-900">Token Plan Management</h2>
+              <p className="text-xs text-yellow-700/70">Manage your token plans and pricing</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            
+            
+            {/* Admin data button */}
+            <button 
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-2 hover:bg-yellow-300/20 rounded-lg transition-colors"
             >
-              <div className="w-7 h-7 rounded-full bg-yellow-400 flex items-center justify-center">
-                <User className="w-4 h-4 text-black" />
+              <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
               </div>
-              <span className="hidden sm:block text-sm font-medium text-gray-700">{admin?.name}</span>
+              <span className="hidden sm:block text-yellow-900">{admin?.name}</span>
             </button>
           </div>
         </div>
@@ -44,61 +48,64 @@ export function Header({ setSidebarOpen }: HeaderProps) {
       {/* Admin Details Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 border border-gray-200 shadow-xl">
-            <div className="flex justify-between items-center mb-5">
-              <h3 className="text-base font-bold text-gray-900">Admin Profile</h3>
-              <button
+          <div className="bg-white/90 backdrop-blur-xl rounded-xl p-6 max-w-md w-full mx-4 border border-yellow-200/50">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-yellow-900">Admin Profile</h3>
+              <button 
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                className="text-yellow-700 hover:text-yellow-900 p-1 hover:bg-yellow-300/20 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center">
-                  <User className="w-5 h-5 text-black" />
+            
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center">
+                  <User className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900 text-sm">{admin?.name}</p>
-                  <p className="text-xs text-gray-500">{admin?.adminData?.role}</p>
+                  <h4 className="font-medium text-yellow-900">{admin?.name}</h4>
+                  <p className="text-sm text-yellow-700/70">{admin?.adminData?.role}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-400 mb-0.5">Email</p>
-                  <p className="font-medium text-gray-800">{admin?.adminData?.email}</p>
+                  <label className="text-yellow-700/70">Email:</label>
+                  <p className="text-yellow-900">{admin?.adminData?.email}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 mb-0.5">Username</p>
-                  <p className="font-medium text-gray-800">{admin?.adminData?.userName}</p>
+                  <label className="text-yellow-700/70">Username:</label>
+                  <p className="text-yellow-900">{admin?.adminData?.userName}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 mb-0.5">City</p>
-                  <p className="font-medium text-gray-800">{admin?.adminData?.city}</p>
+                  <label className="text-yellow-700/70">City:</label>
+                  <p className="text-yellow-900">{admin?.adminData?.city}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 mb-0.5">State</p>
-                  <p className="font-medium text-gray-800">{admin?.adminData?.state}</p>
+                  <label className="text-yellow-700/70">State:</label>
+                  <p className="text-yellow-900">{admin?.adminData?.state}</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-gray-400 mb-0.5">Login Time</p>
-                  <p className="font-medium text-gray-800">
+                  <label className="text-yellow-700/70">login time:</label>
+                  <p className="text-yellow-900">
                     {admin?.timestamp ? new Date(admin.timestamp).toLocaleDateString('en-US', {
-                      year: 'numeric', month: 'long', day: 'numeric',
-                      hour: '2-digit', minute: '2-digit'
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
                     }) : 'N/A'}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-gray-100">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-yellow-400 text-black rounded-full text-xs font-bold">
-                  <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
+              <div className="mt-4 pt-4 border-t border-yellow-200/50">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs">
+                  <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
                   {admin?.adminData?.isAdmin ? 'Administrator' : 'User'}
-                </span>
+                </div>
               </div>
             </div>
           </div>

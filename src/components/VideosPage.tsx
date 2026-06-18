@@ -226,7 +226,9 @@ const VideosPage = () => {
         setAllVideos(defaultVideos);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultVideos));
       }
-    } catch {
+    } catch (error) {
+      console.error('Error loading videos from localStorage:', error);
+      // Fallback to defaults if there's any error
       setAllVideos(defaultVideos);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultVideos));
     }
@@ -236,7 +238,9 @@ const VideosPage = () => {
   const saveVideosToStorage = (videos) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
-    } catch {
+    } catch (error) {
+      console.error('Error saving videos to localStorage:', error);
+      alert('Unable to save videos. Please check your browser settings.');
     }
   };
 
@@ -273,6 +277,7 @@ const VideosPage = () => {
     e.preventDefault();
 
     if (!newVideo.title || !newVideo.description || !newVideo.videoUrl) {
+      alert('Please fill in all required fields');
       return;
     }
 
@@ -377,24 +382,24 @@ const VideosPage = () => {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
-      {/* Hero */}
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Video <span className="text-yellow-400">Library</span></h1>
-            <p className="text-sm text-white/60 max-w-lg">Explore innovative drone tech, AI, and GIS solutions.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{allVideos.length}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Videos</span>
-            </div>
-          </div>
+    <div className="min-h-screen bg-yellow-400 pt-16">
+      {/* Hero Section */}
+      <section className="py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200/30 rounded-full animate-pulse blur-2xl"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-600/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
         </div>
-      </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h1 className="text-2xl md:text-5xl font-black text-black mb-2 tracking-tight">
+            Video Library
+          </h1>
+          <p className="text-xl text-black/80 max-w-2xl mx-auto mb-4">
+            Explore innovative drone tech, AI, and GIS solutions.
+          </p>
+          <div className="w-24 h-1 bg-black mx-auto rounded-full mb-4"></div>
+        </div>
+      </section>
 
       {/* Add Video Modal */}
       {showAddVideoForm && (
@@ -510,37 +515,41 @@ const VideosPage = () => {
         </div>
       )}
 
-      {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex flex-col lg:flex-row gap-2 items-center justify-between">
+      {/* Filter Section */}
+      <section className="py-2 bg-yellow-400 sticky top-0 z-40 border-b border-black/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-1 items-center justify-between">
+            {/* Search Bar */}
             <div className="relative flex-1 max-w-xs">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
+                <Search className="h-4 w-4 text-black/60" />
               </div>
               <input
                 type="text"
                 placeholder="Search videos or topics..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="py-2.5 pr-3 pl-9 w-full text-sm text-gray-900 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 placeholder-gray-400"
+                className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-black/20 bg-yellow-200 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-black placeholder-black/60 font-medium text-sm transition-all duration-300"
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+            {/* Add Video Button + Category Filter */}
+            <div className="flex items-center gap-2">
+              {/* Add Video Button */}
               <button
                 onClick={() => setShowAddVideoForm(true)}
-                className="bg-black text-yellow-400 px-5 py-2 rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 text-sm"
+                className="bg-black text-yellow-400 px-7 py-2 rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 flex items-center gap-2 text-sm"
               >
                 <Plus className="h-4 w-4" />
-                Add Video
+                Video
               </button>
 
+              {/* Category Filter */}
               <div className="relative">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none px-3 py-2.5 w-full sm:w-44 text-sm text-gray-700 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 pr-8"
+                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/20 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-48"
                 >
                   {categories.map((category) => (
                     <option key={category} value={category}>
@@ -548,148 +557,181 @@ const VideosPage = () => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
               </div>
             </div>
           </div>
 
-          <div className="mt-2 flex flex-wrap gap-1">
+          {/* Active Filters Display */}
+          <div className="mt-1 flex flex-wrap gap-1">
             {selectedCategory !== 'All' && (
               <span className="bg-black text-yellow-400 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
                 Category: {selectedCategory}
-                <button onClick={() => setSelectedCategory('All')} className="hover:text-white text-sm">×</button>
+                <button onClick={() => setSelectedCategory('All')} className="hover:text-white text-sm">
+                  ×
+                </button>
               </span>
             )}
             {searchQuery && (
               <span className="bg-black text-yellow-400 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
                 Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="hover:text-white text-sm">×</button>
+                <button onClick={() => setSearchQuery('')} className="hover:text-white text-sm">
+                  ×
+                </button>
               </span>
             )}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Featured Videos */}
+      {/* Featured Videos Section - Only show when there are filtered featured videos */}
       {filteredFeaturedVideos.length > 0 && (
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <Star className="h-5 w-5 text-yellow-400 fill-current" />
-              Featured Videos ({filteredFeaturedVideos.length})
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {filteredFeaturedVideos.map((video) => (
+        <section className="py-4 bg-gradient-to-b from-yellow-400 to-yellow-300">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl md:text-3xl font-black text-black flex items-center gap-2">
+                <Star className="h-6 w-6 fill-current" />
+                Featured Videos ({filteredFeaturedVideos.length})
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {filteredFeaturedVideos.map((video, index) => (
                 <div
                   key={video.id}
-                  className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
+                  className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 border-2 border-black/20 hover:border-black/40"
+                  style={{
+                    animationDelay: `${index * 200}ms`,
+                    animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`
+                  }}
                 >
                   <div className="relative overflow-hidden">
                     <iframe
                       src={convertToEmbedUrl(video.videoUrl)}
                       title={video.title}
-                      className="w-full h-44 rounded-t-xl"
+                      className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110 border-b-2 border-black/10 rounded-t-3xl"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     ></iframe>
-                    <div className="absolute top-3 left-3 bg-yellow-400 text-black px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1">
+                    <div className="absolute top-4 left-4 bg-yellow-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
                       <Star className="h-3 w-3 fill-current" />
                       Featured
                     </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2">{video.title}</h3>
-                    <p className="text-xs text-gray-500 line-clamp-2">{video.description}</p>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-black mb-2 group-hover:text-red-800 transition-colors duration-300">
+                      {video.title}
+                    </h3>
+                    <p className="text-gray-600 mb-4 line-clamp-2">{video.description}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </div>
+        </section>
       )}
 
-      {/* All Videos */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-sm text-gray-500">{filteredVideos.length} video{filteredVideos.length !== 1 ? 's' : ''}</p>
-          {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}
-        </div>
-
-        {currentVideos.length === 0 ? (
-          <div className="py-16 text-center">
-            <div className="p-10 mx-auto max-w-md rounded-xl border border-gray-200 bg-white">
-              <Search className="mx-auto mb-4 w-12 h-12 text-gray-300" />
-              <h3 className="mb-2 text-lg font-bold text-gray-900">No videos found</h3>
-              <p className="text-sm text-gray-400">Try adjusting your filters or search terms</p>
+      {/* Video Grid Section */}
+      <section className="py-16 bg-yellow-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl md:text-4xl font-black text-black">
+              All Videos ({filteredVideos.length})
+            </h2>
+            <div className="text-black/60">
+              Page {currentPage} of {totalPages}
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {currentVideos.map((video) => (
-              <div
-                key={video.id}
-                className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
-              >
-                <div className="p-2">
-                  <div className="relative overflow-hidden rounded-lg">
-                    <iframe
-                      src={convertToEmbedUrl(video.videoUrl)}
-                      title={video.title}
-                      className="w-full h-44 rounded-lg"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
+
+          {currentVideos.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto">
+                <Search className="h-16 w-16 text-black/40 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-black mb-2">No videos found</h3>
+                <p className="text-black/60">Try adjusting your filters or search terms</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {currentVideos.map((video, index) => (
+                <div
+                  key={video.id}
+                  className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 border-2 border-black/20 hover:border-black/40"
+                  style={{
+                    animationDelay: `${index * 100}ms`,
+                    animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
+                  }}
+                >
+                  <div className="p-3">
+                    <div className="relative overflow-hidden rounded-2xl">
+                      <iframe
+                        src={convertToEmbedUrl(video.videoUrl)}
+                        title={video.title}
+                        className="w-full h-48 object-cover rounded-2xl"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold text-black mb-2 group-hover:text-red-800 transition-colors duration-300 line-clamp-2">
+                      {video.title}
+                    </h3>
+                    <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{video.description}</p>
                   </div>
                 </div>
-                <div className="px-4 pb-4">
-                  <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2">{video.title}</h3>
-                  <p className="text-xs text-gray-500 line-clamp-2">{video.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-10">
-            <div className="flex gap-2 items-center">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-              >
-                Previous
-              </button>
-              {[...Array(totalPages)].map((_, index) => {
-                const page = index + 1;
-                if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${page === currentPage ? 'bg-black text-yellow-400 border border-black' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
-                    >
-                      {page}
-                    </button>
-                  );
-                } else if (page === currentPage - 2 || page === currentPage + 2) {
-                  return <span key={page} className="px-2 text-gray-400">...</span>;
-                }
-                return null;
-              })}
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-              >
-                Next
-              </button>
+              ))}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-12">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                >
+                  Previous
+                </button>
+
+                {[...Array(totalPages)].map((_, index) => {
+                  const page = index + 1;
+                  if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${page === currentPage
+                          ? 'bg-black text-yellow-400 border-2 border-black'
+                          : 'bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40'
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  } else if (page === currentPage - 2 || page === currentPage + 2) {
+                    return <span key={page} className="px-2 text-black/60">...</span>;
+                  }
+                  return null;
+                })}
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 };

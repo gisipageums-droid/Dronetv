@@ -279,7 +279,9 @@ const Events: React.FC = () => {
   const navigate = useNavigate();
 
   const { user } = useUserAuth();
+  console.log("user", user);
   const [events, setEvents] = useState<EventCard[]>([]);
+  console.log("events", events)
   const [loading, setloading] = useState(true);
 
   //get data
@@ -287,9 +289,10 @@ const Events: React.FC = () => {
     setloading(true);
 
     axios.get<EventResponse>(`https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user?.userData?.email}`).then((response) => {
+      console.log(response.data);
       setEvents(response.data.cards);
     }).catch((error) => {
-      console.error(error);
+      console.log(error);
     }).finally(() => {
       setloading(false);
     })
@@ -320,6 +323,8 @@ const Events: React.FC = () => {
       alert("Failed to load template for preview. Please try again.");
     }
   };
+  console.log("events", events);
+
   const filteredEvents = useMemo(() => {
     return events?.filter(
       (event) =>
@@ -384,21 +389,21 @@ const Events: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-amber-50 p-4 sm:p-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-0">
+    <div className="min-h-screen bg-amber-50 p-8">
+      <div className="flex items-center gap-4 justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
-            <Users className="w-6 h-6 flex-shrink-0" />
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <Users className="w-6 h-6" />
             Events Directory
           </h1>
-          <p className="text-gray-600 sm:mb-8">
+          <p className="text-gray-600 mb-8">
             Browse and manage your events and registrations
           </p>
         </div>
 
         <button
           onClick={() => navigate("/event/select")}
-          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto hover:bg-yellow-600 hover:scale-110 transition-all duration-200 whitespace-nowrap"
+          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
         >
           <Plus className="w-5 h-5" />
           Create New Event

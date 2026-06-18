@@ -38,6 +38,7 @@ export function PlanManager({ type, plans, addPlan, updatePlan, deletePlan, toke
       }
       handleClose();
     } catch (error) {
+      console.error("Failed to save plan", error);
     } finally {
       setSaving(false);
     }
@@ -54,16 +55,15 @@ export function PlanManager({ type, plans, addPlan, updatePlan, deletePlan, toke
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Plans</p>
-          <h1 className="text-xl font-extrabold text-gray-900 mb-1">{typeLabels[type]} Plans</h1>
-          <p className="text-sm text-gray-500">Manage your {typeLabels[type].toLowerCase()} token plans</p>
+          <h1 className="text-yellow-900 mb-2">{typeLabels[type]} Plans</h1>
+          <p className="text-yellow-700/70">Manage your {typeLabels[type].toLowerCase()} token plans</p>
         </div>
-
+        
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-yellow-400 text-black font-bold py-2.5 px-5 rounded-xl hover:bg-yellow-300 transition-colors flex items-center justify-center gap-2 text-sm"
+          className="bg-amber-500 text-white py-3 px-6 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-5 h-5" />
           Create New Plan
         </button>
       </div>

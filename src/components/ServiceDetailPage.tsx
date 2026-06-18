@@ -81,6 +81,8 @@ export default function ServiceDetailPage() {
     setLoading(true);
     setError(null);
 
+    // Using the same API structure as ProductDetailPage but for services
+    // The user provided ID is likely the publishedId
     const API_URL = `https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/services/details/${id}`;
 
     axios
@@ -94,9 +96,11 @@ export default function ServiceDetailPage() {
 
         const apiData = responseData.data;
 
+        // Extract company name
         setCompanyName(apiData?.companyName || "");
         setTemplate(apiData?.template || "");
 
+        // Access nested services array
         const serviceArray: ServiceAPIItem[] =
           apiData?.services?.services && apiData.services.services.length > 0
             ? apiData.services.services
@@ -127,7 +131,8 @@ export default function ServiceDetailPage() {
 
         setService(mapped);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("API Error", err);
         setError("Failed to fetch service details");
       })
       .finally(() => setLoading(false));
@@ -137,7 +142,7 @@ export default function ServiceDetailPage() {
 
   if (error)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+      <div className="min-h-screen flex items-center justify-center bg-yellow-400 p-6">
         <div className="bg-white rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
           <p className="mb-6 text-gray-700">{error}</p>
@@ -150,7 +155,7 @@ export default function ServiceDetailPage() {
 
   if (!service)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-yellow-50">
         <p className="text-lg font-semibold">Service not found.</p>
       </div>
     );
@@ -169,7 +174,7 @@ export default function ServiceDetailPage() {
     ));
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-16 min-h-screen bg-yellow-400 border-[black]">
 
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
@@ -309,6 +314,7 @@ export default function ServiceDetailPage() {
           </div>
         </div>
 
+        {/* Detailed Descriptionsgit */}
         <div className="p-4 rounded-2xl shadow shadow-black mt-[5px] bg-white">
           <h4 className="font-semibold mb-3">Description</h4>
           <ul className="grid grid-cols-1 text-justify">

@@ -68,9 +68,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  useEffect(() => {}, [data]);
-
   if (!isOpen) return null;
+
+  useEffect(() => {
+    if (data) {
+      console.log("🔍 Modal Data:", data.formData.rawData);
+    }
+  }, [data]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999999] p-4">
@@ -230,7 +234,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${data.formData.rawData.aadharConsentAccepted
                             ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-600"
+                            : "bg-yellow-100 text-yellow-800"
                           }`}
                       >
                         {data.formData.rawData.aadharConsentAccepted
@@ -650,7 +654,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               </div>
 
               {/* Technical Information */}
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div className="bg-yellow-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-lg text-gray-800 mb-3">
                   Technical Information
                 </h4>
@@ -689,7 +693,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               </div>
 
               {/* Documents & Links */}
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div className="bg-orange-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-lg text-gray-800 mb-3">
                   Documents & Links
                 </h4>

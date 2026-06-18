@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Sidebar } from "./components/Sidebar";
+import { Header } from "./components/Header";
 import { Dashboard } from "./components/Dashboard";
 import { TokenPriceSettings } from "./components/TokenPriceSettings";
 import { PlanManager } from "./components/PlanManager";
@@ -24,14 +25,9 @@ export interface TokenPlan {
 }
 
 function App() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [activePage, setActivePage] = useState<string>(searchParams.get("tab") ?? "dashboard");
-
-  const switchTab = (id: string) => {
-    setActivePage(id);
-    setSearchParams((prev) => { prev.set("tab", id); return prev; }, { replace: true });
-  };
+  const [activePage, setActivePage] = useState<string>("dashboard");
   const [tokenPriceINR, setTokenPriceINR] = useState<number>(0.5);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [plans, setPlans] = useState<TokenPlan[]>([]);
 
   useEffect(() => {
@@ -45,6 +41,7 @@ function App() {
           }
         }
       } catch (error) {
+        console.error("Failed to load plans", error);
       }
     };
     loadPlans();
@@ -59,6 +56,7 @@ function App() {
       await addUpdatePlan(newPlan);
       setPlans([...plans, newPlan]);
     } catch (error) {
+      console.error("Failed to add plan", error);
       // Optionally show error toast
     }
   };
@@ -72,6 +70,7 @@ function App() {
       await addUpdatePlan(finalPlan);
       setPlans(plans.map((plan) => (plan.id === id ? finalPlan : plan)));
     } catch (error) {
+      console.error("Failed to update plan", error);
     }
   };
 
@@ -80,6 +79,7 @@ function App() {
       await deletePlanApi(id);
       setPlans(plans.filter((plan) => plan.id !== id));
     } catch (error) {
+      console.error("Failed to delete plan", error);
     }
   };
 
@@ -88,6 +88,7 @@ function App() {
       await updateTokenPrice(price.toString());
       setTokenPriceINR(price);
     } catch (error) {
+      console.error("Failed to update token price", error);
     }
   };
 
@@ -153,41 +154,24 @@ function App() {
     }
   };
 
-  const tabs = [
-    { id: "dashboard", label: "Dashboard" },
-    { id: "token-price", label: "Token Price" },
-    { id: "transaction-history", label: "Transactions" },
-    { id: "one-time", label: "One-Time Plans" },
-    { id: "monthly", label: "Monthly" },
-    { id: "Quarterly", label: "Quarterly" },
-    { id: "yearly", label: "Yearly" },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#F4F5F7]">
-      <div className="mb-4">
-        <h1 className="text-xl font-extrabold text-gray-900">Packages & Revenue</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Manage token plans, pricing, and transaction history.</p>
-      </div>
+    <div className="min-h-screen bg-orange-50 pt-16">
+      <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+        <Sidebar
+          activePage={activePage}
+          setActivePage={setActivePage}
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
 
-      {/* Sub-tabs */}
-      <div className="flex gap-0 border-b-2 border-gray-200 mb-6 overflow-x-auto">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => switchTab(tab.id)}
-            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${
-              activePage === tab.id
-                ? "text-gray-900 border-yellow-400"
-                : "text-gray-500 border-transparent hover:text-gray-700"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Header setSidebarOpen={setSidebarOpen} />
 
-      <div>{renderPage()}</div>
+          <main className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 lg:p-8">
+            {renderPage()}
+          </main>
+        </div>
+      </div>
     </div>
   );
 }
