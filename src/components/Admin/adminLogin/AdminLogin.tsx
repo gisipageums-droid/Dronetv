@@ -88,7 +88,7 @@ export default function AdminLogin() {
         <div className="p-8">
           {/* Logo inside card */}
           <div className="flex justify-center mb-7">
-            <img src="/images/Drone tv .in.png" alt="Drone TV" className="h-16 w-auto" />
+            <img src="/images/Drone tv .in.png" alt="Drone TV" className="h-24 w-auto" />
           </div>
 
           <div className="mb-7">
