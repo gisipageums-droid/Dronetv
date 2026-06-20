@@ -142,7 +142,10 @@ const EventsPage = () => {
   }, []);
 
   const handleCardClick = (event) => {
-    const slug = event.cleanUrl || event.name;
+    let slug = event.cleanUrl || event.name;
+    if (slug && slug.startsWith("http")) {
+      slug = slug.split("/").pop() || event.name;
+    }
     if (event.templateSelection === "1") {
       navigate(`/event/${slug}`);
     } else {
