@@ -66,6 +66,7 @@ import NotFound from "./components/company/src/components/form/src/Notfound";
 import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboard";
 import UserEvent from "./components/UserEvent";
 import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard";
+import AdminUsersDashboard from "./components/Admin/userAdmin/AdminUsersDashboard";
 import UserProfessional from "./components/profissionalDirectory";
 
 import ExcelDataProcessor from "./components/excelextraction/excel";
@@ -358,6 +359,7 @@ const AppContent = () => {
             element={<EditTemp_1 />}
           />
           <Route path="/user/professional" element={<UserProfessional />} />
+          <Route path="/admin/users" element={<AdminProtectedRoute><AdminLayout><AdminUsersDashboard /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
             path="/user/professionals/preview/2/:professionalId/:userId"

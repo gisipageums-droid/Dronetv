@@ -76,6 +76,12 @@ const NAV: Section[] = [
     heading: "Management",
     items: [
       {
+        id: "users",
+        label: "Users",
+        icon: <UserCircle size={17} />,
+        path: "/admin/users",
+      },
+      {
         id: "companies",
         label: "Company Listings",
         icon: <Building2 size={17} />,
@@ -175,6 +181,7 @@ const NAV: Section[] = [
 
 // ── Path → group id ────────────────────────────────────────────────
 const PATH_TO_ID: Record<string, string> = {
+  "/admin/users": "users",
   "/admin/professional/dashboard": "professionals",
   "/admin/media/dashboard": "media",
   "/admin/event/dashboard": "events",
@@ -184,6 +191,7 @@ const PATH_TO_ID: Record<string, string> = {
 };
 
 const BREADCRUMBS: Record<string, string> = {
+  "/admin/users": "Users",
   "/admin/company/dashboard": "Company Listings",
   "/admin/professional/dashboard": "Professionals",
   "/admin/media/dashboard": "Media Hub",
