@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Shield, Tv } from "lucide-react";
+import { Eye, EyeOff, Shield } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
 
@@ -87,13 +87,8 @@ export default function AdminLogin() {
 
         <div className="p-8">
           {/* Logo inside card */}
-          <div className="flex items-center gap-3 mb-7">
-            <div className="w-9 h-9 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0">
-              <Tv size={16} className="text-black" />
-            </div>
-            <div className="text-white font-black text-base leading-none">
-              Drone<span className="text-yellow-400">Tv</span>.in
-            </div>
+          <div className="flex justify-center mb-7">
+            <img src="/images/Drone tv .in.png" alt="Drone TV" className="h-16 w-auto" />
           </div>
 
           <div className="mb-7">
