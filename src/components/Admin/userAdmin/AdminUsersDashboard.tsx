@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { Search, RotateCcw, Mail, User, ChevronLeft, ChevronRight, X, Building2, UserCircle } from "lucide-react";
-import { toast } from "react-toastify";
+import { Search, RotateCcw, User, ChevronLeft, ChevronRight, X, Building2, UserCircle } from "lucide-react";
 
 const COMPANIES_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin";
 const PROFESSIONALS_API = "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=admin";
-const FORGOT_PASSWORD_API = "https://ly8r7e8131.execute-api.ap-south-1.amazonaws.com/dev/forgot";
 
 interface UserRecord {
   email: string;
@@ -25,8 +23,6 @@ export default function AdminUsersDashboard() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [resetting, setResetting] = useState<string | null>(null);
-  const [confirmReset, setConfirmReset] = useState<UserRecord | null>(null);
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -47,27 +43,14 @@ export default function AdminUsersDashboard() {
         const email: string = c.userId ?? "";
         if (!email || seen.has(email)) continue;
         seen.add(email);
-        combined.push({
-          email,
-          displayName: c.companyName ?? email,
-          type: "company",
-          status: c.status,
-          createdAt: c.createdAt,
-        });
+        combined.push({ email, displayName: c.companyName ?? email, type: "company", status: c.status, createdAt: c.createdAt });
       }
 
       for (const p of (proData.cards ?? [])) {
         const email: string = p.userId ?? "";
         if (!email || seen.has(email)) continue;
         seen.add(email);
-        combined.push({
-          email,
-          displayName: p.fullName ?? p.professionalName ?? email,
-          type: "professional",
-          location: p.location,
-          status: p.status,
-          createdAt: p.createdAt,
-        });
+        combined.push({ email, displayName: p.fullName ?? p.professionalName ?? email, type: "professional", location: p.location, status: p.status, createdAt: p.createdAt });
       }
 
       combined.sort((a, b) => (b.createdAt ?? "") > (a.createdAt ?? "") ? 1 : -1);
@@ -97,28 +80,6 @@ export default function AdminUsersDashboard() {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const sendReset = async (user: UserRecord) => {
-    setResetting(user.email);
-    setConfirmReset(null);
-    try {
-      const res = await fetch(FORGOT_PASSWORD_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user.email }),
-      });
-      if (res.ok) {
-        toast.success(`Password reset email sent to ${user.email}`);
-      } else {
-        const d = await res.json();
-        toast.error(d.error || d.message || "Failed to send reset email");
-      }
-    } catch {
-      toast.error("Network error. Please try again.");
-    } finally {
-      setResetting(null);
-    }
-  };
 
   const displayDate = (u: UserRecord) => {
     if (!u.createdAt) return "—";
@@ -190,10 +151,8 @@ export default function AdminUsersDashboard() {
             <button
               key={t}
               onClick={() => setTypeFilter(t)}
-              className={`px-4 py-2.5 text-xs font-semibold capitalize transition-all ${
-                typeFilter === t
-                  ? "bg-yellow-400 text-black"
-                  : "bg-white/5 text-white/50 hover:text-white hover:bg-white/10"
+              className={`px-4 py-2.5 text-xs font-semibold transition-all ${
+                typeFilter === t ? "bg-yellow-400 text-black" : "bg-white/5 text-white/50 hover:text-white hover:bg-white/10"
               }`}
             >
               {t === "all" ? "All" : t === "company" ? "Companies" : "Professionals"}
@@ -230,7 +189,6 @@ export default function AdminUsersDashboard() {
                     <th className="px-4 py-3 text-left text-[11px] font-bold text-white/40 uppercase tracking-wider">Type</th>
                     <th className="px-4 py-3 text-left text-[11px] font-bold text-white/40 uppercase tracking-wider">Status</th>
                     <th className="px-4 py-3 text-left text-[11px] font-bold text-white/40 uppercase tracking-wider">Registered</th>
-                    <th className="px-4 py-3 text-center text-[11px] font-bold text-white/40 uppercase tracking-wider">Reset Password</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -240,9 +198,7 @@ export default function AdminUsersDashboard() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full bg-yellow-400/15 flex items-center justify-center flex-shrink-0">
-                            <span className="text-yellow-400 text-[11px] font-bold">
-                              {u.displayName.charAt(0).toUpperCase()}
-                            </span>
+                            <span className="text-yellow-400 text-[11px] font-bold">{u.displayName.charAt(0).toUpperCase()}</span>
                           </div>
                           <span className="text-white font-medium truncate max-w-[160px]">{u.displayName}</span>
                         </div>
@@ -250,9 +206,7 @@ export default function AdminUsersDashboard() {
                       <td className="px-4 py-3 text-white/50 text-xs truncate max-w-[180px]">{u.email}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
-                          u.type === "company"
-                            ? "bg-blue-400/10 text-blue-400"
-                            : "bg-purple-400/10 text-purple-400"
+                          u.type === "company" ? "bg-blue-400/10 text-blue-400" : "bg-purple-400/10 text-purple-400"
                         }`}>
                           {u.type === "company" ? <Building2 size={10} /> : <UserCircle size={10} />}
                           {u.type === "company" ? "Company" : "Professional"}
@@ -262,20 +216,6 @@ export default function AdminUsersDashboard() {
                         <span className={`inline-block w-2 h-2 rounded-full ${u.status ? "bg-green-400" : "bg-red-400"}`} />
                       </td>
                       <td className="px-4 py-3 text-white/50 text-xs whitespace-nowrap">{displayDate(u)}</td>
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          onClick={() => setConfirmReset(u)}
-                          disabled={resetting === u.email}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-400 text-xs font-semibold transition-all disabled:opacity-40"
-                        >
-                          {resetting === u.email ? (
-                            <span className="w-3 h-3 border border-yellow-400/40 border-t-yellow-400 rounded-full animate-spin" />
-                          ) : (
-                            <Mail size={12} />
-                          )}
-                          Send Reset
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -302,37 +242,6 @@ export default function AdminUsersDashboard() {
           </>
         )}
       </div>
-
-      {/* Confirm reset modal */}
-      {confirmReset && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-          <div className="w-full max-w-sm rounded-2xl p-6 shadow-2xl" style={{ background: "#1e293b", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-yellow-400/15 flex items-center justify-center">
-                <Mail size={18} className="text-yellow-400" />
-              </div>
-              <div>
-                <h3 className="text-white font-bold text-base">Send Password Reset?</h3>
-                <p className="text-white/40 text-xs mt-0.5">A reset link will be emailed to the user</p>
-              </div>
-            </div>
-            <div className="mb-5 p-3 rounded-xl bg-white/5 border border-white/8">
-              <p className="text-white text-sm font-medium truncate">{confirmReset.displayName}</p>
-              <p className="text-white/50 text-xs mt-0.5 truncate">{confirmReset.email}</p>
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setConfirmReset(null)}
-                className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 text-sm font-semibold transition-all">
-                Cancel
-              </button>
-              <button onClick={() => sendReset(confirmReset)}
-                className="flex-1 py-2.5 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-black text-sm font-bold transition-all">
-                Send Reset Email
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
