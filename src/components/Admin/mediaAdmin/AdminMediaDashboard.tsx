@@ -339,8 +339,8 @@ export default function AdminMediaDashboard() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No content yet. Click "Add Content" to create your first item.</div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+            <table className="w-full min-w-[600px] text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Title</th>
