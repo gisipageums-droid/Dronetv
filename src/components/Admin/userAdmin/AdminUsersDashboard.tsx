@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Search, RotateCcw, User, ChevronLeft, ChevronRight, X,
   Building2, UserCircle, ExternalLink, CheckCircle, XCircle,
-  MapPin, Briefcase, Star, Eye, Calendar, BarChart2, ChevronRight as Arrow, Pencil,
+  MapPin, Briefcase, Star, Eye, Calendar, BarChart2, ChevronRight as Arrow, Pencil, Trash2, AlertTriangle,
 } from "lucide-react";
 
 const COMPANIES_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin";
@@ -64,9 +65,11 @@ function ReviewBadge({ status }: { status?: string }) {
   );
 }
 
-function DetailDrawer({ user, onClose }: { user: UserRecord; onClose: () => void }) {
+function DetailDrawer({ user, onClose, onDeleted }: { user: UserRecord; onClose: () => void; onDeleted: (email: string) => void }) {
   const navigate = useNavigate();
   const image = user.headerLogo || user.previewImage;
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleEdit = () => {
     const template = user.templateSelection === "template-2" ? "2" : "1";
@@ -74,6 +77,39 @@ function DetailDrawer({ user, onClose }: { user: UserRecord; onClose: () => void
       navigate(`/admin/companies/edit/${template}/${user.publishedId}/${user.email}?adminMode=true`);
     } else if (user.type === "professional" && user.professionalId) {
       navigate(`/user/professionals/edit/${template}/${user.professionalId}/${user.email}?adminMode=true`);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      let res: Response;
+      if (user.type === "company" && user.publishedId) {
+        res = await fetch("https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+          body: JSON.stringify({ publishedId: user.publishedId, action: "delete" }),
+        });
+      } else if (user.type === "professional" && user.professionalId) {
+        res = await fetch("https://ss6lmkj0o8.execute-api.ap-south-1.amazonaws.com/prof/delete-prof-tem", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+          body: JSON.stringify({ professionalId: user.professionalId, action: "delete" }),
+        });
+      } else {
+        toast.error("Cannot delete — no ID found");
+        setDeleting(false);
+        return;
+      }
+      if (!res.ok) throw new Error("Delete failed");
+      toast.success(`${user.displayName} deleted successfully`);
+      onDeleted(user.email);
+      onClose();
+    } catch {
+      toast.error("Failed to delete user");
+    } finally {
+      setDeleting(false);
+      setShowConfirm(false);
     }
   };
 
@@ -224,8 +260,64 @@ function DetailDrawer({ user, onClose }: { user: UserRecord; onClose: () => void
               <ExternalLink size={14} className="text-yellow-400" />
             </a>
           )}
+
+          {/* Delete */}
+          {((user.type === "company" && user.publishedId) || (user.type === "professional" && user.professionalId)) && (
+            <button
+              onClick={() => setShowConfirm(true)}
+              className="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all"
+            >
+              <span className="text-red-400 text-sm font-semibold flex items-center gap-2">
+                <Trash2 size={14} />
+                Delete User
+              </span>
+              <Arrow size={14} className="text-red-400/50" />
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Confirm dialog */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" onClick={() => !deleting && setShowConfirm(false)}>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div
+            className="relative w-full max-w-sm rounded-2xl p-6 shadow-2xl"
+            style={{ background: "#1e293b", border: "1px solid rgba(239,68,68,0.2)" }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle size={18} className="text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-white font-bold text-base">Delete User?</h3>
+                <p className="text-white/40 text-xs mt-0.5">This cannot be undone</p>
+              </div>
+            </div>
+            <p className="text-white/60 text-sm mb-5">
+              Permanently delete <span className="text-white font-semibold">{user.displayName}</span> and all their data?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                disabled={deleting}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-sm font-semibold transition-all disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {deleting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Trash2 size={14} />}
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -515,7 +607,16 @@ export default function AdminUsersDashboard() {
         )}
       </div>
 
-      {selected && <DetailDrawer user={selected} onClose={() => setSelected(null)} />}
+      {selected && (
+        <DetailDrawer
+          user={selected}
+          onClose={() => setSelected(null)}
+          onDeleted={(email) => {
+            setUsers(prev => prev.filter(u => u.email !== email));
+            setSelected(null);
+          }}
+        />
+      )}
     </div>
   );
 }
