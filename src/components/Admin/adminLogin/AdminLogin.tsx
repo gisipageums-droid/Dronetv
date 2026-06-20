@@ -71,36 +71,73 @@ export default function AdminLogin() {
 
   return (
     <div
-      className="h-screen w-screen flex items-center justify-center bg-gray-950 px-4 overflow-y-auto"
-      style={{ fontFamily: "'Poppins', sans-serif" }}
+      className="h-screen w-screen flex"
+      style={{ fontFamily: "'Poppins', sans-serif", background: "#111827" }}
     >
-      {/* Card */}
-      <div className="w-full max-w-sm bg-gray-900 rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
-
-        {/* Header bar */}
-        <div className="bg-yellow-400 px-6 py-4 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-black/20 flex items-center justify-center flex-shrink-0">
-            <Tv size={16} className="text-black" />
+      {/* Left — branding sidebar (same style as admin sidebar) */}
+      <div
+        className="hidden lg:flex flex-col justify-between w-80 flex-shrink-0 px-8 py-10"
+        style={{ background: "#111827", borderRight: "1px solid rgba(255,255,255,0.07)" }}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-yellow-400 flex items-center justify-center flex-shrink-0">
+            <Tv size={17} className="text-black" />
           </div>
           <div>
-            <div className="text-black font-black text-base leading-tight">
-              Drone<span className="text-white/80">Tv</span>.in
+            <div className="text-white font-black text-lg leading-tight">
+              Drone<span className="text-yellow-400">Tv</span>.in
             </div>
-            <div className="text-black/60 text-[10px] font-semibold uppercase tracking-widest">
-              Admin Panel
-            </div>
+            <div className="text-white/30 text-[10px] font-semibold uppercase tracking-widest">Admin Panel</div>
           </div>
         </div>
 
-        {/* Form */}
-        <div className="px-6 py-6">
-          <h2 className="text-white font-bold text-xl mb-1">Sign In</h2>
-          <p className="text-white/40 text-xs mb-6">Authorized administrators only</p>
+        {/* Center text */}
+        <div>
+          <div className="w-10 h-1 bg-yellow-400 rounded-full mb-6" />
+          <h1 className="text-white font-black text-3xl leading-snug mb-4">
+            Manage your<br />
+            <span className="text-yellow-400">drone ecosystem</span>
+          </h1>
+          <p className="text-white/40 text-sm leading-relaxed">
+            Companies, professionals, events, media and partnerships — all from one place.
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Bottom status */}
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+          <span className="text-white/30 text-xs">All systems operational</span>
+        </div>
+      </div>
+
+      {/* Right — login form (white, matches admin content area) */}
+      <div className="flex-1 flex flex-col items-center justify-center bg-gray-100 px-6">
+
+        {/* Mobile logo */}
+        <div className="flex lg:hidden items-center gap-3 mb-8">
+          <div className="w-9 h-9 rounded-lg bg-yellow-400 flex items-center justify-center">
+            <Tv size={17} className="text-black" />
+          </div>
+          <div>
+            <div className="font-black text-lg leading-tight" style={{ color: "#111827" }}>
+              Drone<span className="text-yellow-400">Tv</span>.in
+            </div>
+            <div className="text-gray-400 text-[10px] font-semibold uppercase tracking-widest">Admin Panel</div>
+          </div>
+        </div>
+
+        <div className="w-full max-w-sm">
+          {/* Yellow top accent — matches admin header */}
+          <div className="h-1.5 w-12 bg-yellow-400 rounded-full mb-6" />
+
+          <h2 className="text-2xl font-black text-gray-900 mb-1">Sign in</h2>
+          <p className="text-gray-400 text-sm mb-8">Enter your admin credentials to continue</p>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider mb-1.5" htmlFor="email">
-                Email
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="email">
+                Email address
               </label>
               <input
                 type="email"
@@ -108,7 +145,7 @@ export default function AdminLogin() {
                 name="email"
                 value={loginData.email}
                 onChange={onChange}
-                className="w-full px-3 py-2.5 bg-gray-800 border border-white/10 rounded-lg text-white text-sm placeholder-white/20 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-colors"
+                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 text-sm placeholder-gray-300 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20 transition-all"
                 placeholder="admin@dronetv.in"
                 required
                 autoComplete="email"
@@ -116,17 +153,17 @@ export default function AdminLogin() {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider mb-1.5" htmlFor="password">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="password">
                 Password
               </label>
-              <div className="flex items-center bg-gray-800 border border-white/10 rounded-lg focus-within:border-yellow-400 focus-within:ring-1 focus-within:ring-yellow-400 transition-colors">
+              <div className="flex items-center bg-white border border-gray-200 rounded-xl focus-within:border-yellow-400 focus-within:ring-2 focus-within:ring-yellow-400/20 transition-all">
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   value={loginData.password}
                   onChange={onChange}
-                  className="flex-1 px-3 py-2.5 bg-transparent text-white text-sm placeholder-white/20 focus:outline-none"
+                  className="flex-1 px-4 py-3 bg-transparent text-gray-900 text-sm placeholder-gray-300 focus:outline-none"
                   placeholder="Enter your password"
                   required
                   autoComplete="current-password"
@@ -134,10 +171,10 @@ export default function AdminLogin() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="px-3 text-white/30 hover:text-yellow-400 transition-colors"
+                  className="px-3 text-gray-300 hover:text-yellow-500 transition-colors"
                   tabIndex={-1}
                 >
-                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
@@ -145,7 +182,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2.5 font-bold text-black bg-yellow-400 rounded-lg hover:bg-yellow-300 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-1"
+              className="w-full py-3 font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-300 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-sm"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -158,6 +195,10 @@ export default function AdminLogin() {
               ) : "Sign In"}
             </button>
           </form>
+
+          <p className="text-xs text-gray-400 text-center mt-8">
+            Restricted to authorized administrators only
+          </p>
         </div>
       </div>
     </div>
