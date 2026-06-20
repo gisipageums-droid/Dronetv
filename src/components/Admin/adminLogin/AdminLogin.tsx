@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Eye, EyeOff, Tv } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
 
@@ -12,19 +12,24 @@ interface LoginData {
 const ADMIN_LOGIN_API = "https://mwbeqdpn09.execute-api.ap-south-1.amazonaws.com/prod/dev";
 
 export default function AdminLogin() {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [loginData, setLoginData] = useState<LoginData>({ email: "", password: "" });
 
   const { adminLogin } = useUserAuth();
   const navigate = useNavigate();
 
-  const onLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setLoginData({ ...loginData, [name]: value });
+    setLoginData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginData.email || !loginData.password) {
       toast.error("Please enter both email and password");
@@ -64,85 +69,95 @@ export default function AdminLogin() {
     }
   };
 
-  const getInputClassName = (value: string) => {
-    return `w-full p-2 border rounded ${
-      !value ? "border-gray-300" : "border-yellow-500"
-    } focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200`;
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md px-8 py-8 bg-white rounded-2xl shadow-lg border border-yellow-200">
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center mb-4">
-            <span className="text-white text-2xl font-bold">A</span>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-800">Admin Sign In</h2>
-          <p className="text-gray-600 text-sm mt-2">Access the admin dashboard</p>
-        </div>
+    <div
+      className="h-screen w-screen flex items-center justify-center bg-gray-950 px-4 overflow-y-auto"
+      style={{ fontFamily: "'Poppins', sans-serif" }}
+    >
+      {/* Card */}
+      <div className="w-full max-w-sm bg-gray-900 rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
 
-        <form onSubmit={handleLoginSubmit}>
-          <div className="mb-6">
-            <label className="block mb-2 text-sm font-medium text-gray-700" htmlFor="email">
-              Admin Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={loginData.email}
-              onChange={onLoginChange}
-              className={getInputClassName(loginData.email)}
-              placeholder="admin@example.com"
-              required
-            />
+        {/* Header bar */}
+        <div className="bg-yellow-400 px-6 py-4 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-black/20 flex items-center justify-center flex-shrink-0">
+            <Tv size={16} className="text-black" />
           </div>
-
-          <div className="mb-6">
-            <label className="block mb-2 text-sm font-medium text-gray-700" htmlFor="password">
-              Password
-            </label>
-            <div className="flex items-center border border-gray-300 rounded focus-within:border-yellow-500 focus-within:ring-2 focus-within:ring-yellow-200">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                value={loginData.password}
-                onChange={onLoginChange}
-                className="w-full p-2 border-none focus:ring-0 outline-none"
-                placeholder="Enter your password"
-                required
-              />
-              <span
-                onClick={() => setShowPassword(!showPassword)}
-                className="p-2 cursor-pointer text-gray-500 hover:text-yellow-600"
-              >
-                {showPassword ? <FaEye className="mx-1" /> : <FaEyeSlash className="mx-1" />}
-              </span>
+          <div>
+            <div className="text-black font-black text-base leading-tight">
+              Drone<span className="text-white/80">Tv</span>.in
+            </div>
+            <div className="text-black/60 text-[10px] font-semibold uppercase tracking-widest">
+              Admin Panel
             </div>
           </div>
+        </div>
 
-          <button
-            type="submit"
-            className="w-full py-3 text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-200 font-medium transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                Signing In...
-              </span>
-            ) : "Sign In"}
-          </button>
-        </form>
+        {/* Form */}
+        <div className="px-6 py-6">
+          <h2 className="text-white font-bold text-xl mb-1">Sign In</h2>
+          <p className="text-white/40 text-xs mb-6">Authorized administrators only</p>
 
-        <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-          <p className="text-xs text-yellow-800 text-center">
-            <strong>Note:</strong> This area is restricted to authorized administrators only.
-          </p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider mb-1.5" htmlFor="email">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={loginData.email}
+                onChange={onChange}
+                className="w-full px-3 py-2.5 bg-gray-800 border border-white/10 rounded-lg text-white text-sm placeholder-white/20 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-colors"
+                placeholder="admin@dronetv.in"
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider mb-1.5" htmlFor="password">
+                Password
+              </label>
+              <div className="flex items-center bg-gray-800 border border-white/10 rounded-lg focus-within:border-yellow-400 focus-within:ring-1 focus-within:ring-yellow-400 transition-colors">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={loginData.password}
+                  onChange={onChange}
+                  className="flex-1 px-3 py-2.5 bg-transparent text-white text-sm placeholder-white/20 focus:outline-none"
+                  placeholder="Enter your password"
+                  required
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="px-3 text-white/30 hover:text-yellow-400 transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-2.5 font-bold text-black bg-yellow-400 rounded-lg hover:bg-yellow-300 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-1"
+            >
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Signing in...
+                </span>
+              ) : "Sign In"}
+            </button>
+          </form>
         </div>
       </div>
     </div>
