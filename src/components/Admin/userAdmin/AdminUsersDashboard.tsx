@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search, RotateCcw, User, ChevronLeft, ChevronRight, X,
   Building2, UserCircle, ExternalLink, CheckCircle, XCircle,
-  MapPin, Briefcase, Star, Eye, Calendar, BarChart2, ChevronRight as Arrow,
+  MapPin, Briefcase, Star, Eye, Calendar, BarChart2, ChevronRight as Arrow, Pencil,
 } from "lucide-react";
 
 const COMPANIES_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin";
@@ -13,6 +14,7 @@ interface UserRecord {
   displayName: string;
   type: "company" | "professional";
   // common
+  publishedId?: string;
   location?: string;
   status?: boolean;
   createdAt?: string;
@@ -62,7 +64,14 @@ function ReviewBadge({ status }: { status?: string }) {
 }
 
 function DetailDrawer({ user, onClose }: { user: UserRecord; onClose: () => void }) {
+  const navigate = useNavigate();
   const image = user.headerLogo || user.previewImage;
+
+  const handleEdit = () => {
+    if (!user.publishedId) return;
+    const template = user.templateSelection === "template-2" ? "2" : "1";
+    navigate(`/admin/companies/edit/${template}/${user.publishedId}/${user.email}?adminMode=true`);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
@@ -185,6 +194,20 @@ function DetailDrawer({ user, onClose }: { user: UserRecord; onClose: () => void
             </div>
           </div>
 
+          {/* Edit button — company only */}
+          {user.type === "company" && user.publishedId && (
+            <button
+              onClick={handleEdit}
+              className="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+            >
+              <span className="text-white text-sm font-semibold flex items-center gap-2">
+                <Pencil size={14} className="text-yellow-400" />
+                Edit Company Steps
+              </span>
+              <Arrow size={14} className="text-white/40" />
+            </button>
+          )}
+
           {/* Profile link */}
           {user.cleanUrl && (
             <a
@@ -247,6 +270,7 @@ export default function AdminUsersDashboard() {
           email,
           displayName: c.companyName ?? email,
           type: "company",
+          publishedId: c.publishedId,
           location: c.location,
           status: c.status,
           createdAt: c.createdAt,

@@ -5,6 +5,7 @@ import { CheckCircle, X, Upload, AlertCircle, Scale } from "lucide-react";
 import { useTemplate } from "../../../../../../../../../context/context"; // Adjust path as needed
 
 export default function Publish() {
+  if (new URLSearchParams(window.location.search).get("adminMode") === "true") return null;
   const [model, setModel] = useState(false);
   const [termsModel, setTermsModel] = useState(false);
   const { editPublishTemplate } = useTemplate(); // Get the publish function from context
