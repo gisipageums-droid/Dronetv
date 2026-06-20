@@ -74,21 +74,6 @@ export default function AdminLogin() {
       className="h-screen w-screen overflow-hidden flex flex-col items-center justify-center px-4"
       style={{ fontFamily: "'Poppins', sans-serif", background: "#0f172a" }}
     >
-      {/* Logo above card */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-9 h-9 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0">
-          <Tv size={16} className="text-black" />
-        </div>
-        <div>
-          <div className="text-white font-black text-base leading-none">
-            Drone<span className="text-yellow-400">Tv</span>.in
-          </div>
-          <div className="text-white/30 text-[10px] font-semibold tracking-widest uppercase mt-0.5">
-            Admin Panel
-          </div>
-        </div>
-      </div>
-
       {/* Card */}
       <div
         className="w-full max-w-[400px] rounded-2xl overflow-hidden"
@@ -101,6 +86,16 @@ export default function AdminLogin() {
         <div className="h-1 w-full bg-yellow-400" />
 
         <div className="p-8">
+          {/* Logo inside card */}
+          <div className="flex items-center gap-3 mb-7">
+            <div className="w-9 h-9 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0">
+              <Tv size={16} className="text-black" />
+            </div>
+            <div className="text-white font-black text-base leading-none">
+              Drone<span className="text-yellow-400">Tv</span>.in
+            </div>
+          </div>
+
           <div className="mb-7">
             <h2 className="text-white font-black text-2xl mb-1">Welcome back</h2>
             <p className="text-white/40 text-sm">Sign in to your admin account</p>
