@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Tv } from "lucide-react";
+import { Eye, EyeOff, Shield, Tv } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
 
@@ -71,45 +71,44 @@ export default function AdminLogin() {
 
   return (
     <div
-      className="h-screen w-screen overflow-hidden flex items-center justify-center p-4"
-      style={{ fontFamily: "'Poppins', sans-serif", background: "#111827" }}
+      className="h-screen w-screen overflow-hidden flex flex-col items-center justify-center px-4"
+      style={{ fontFamily: "'Poppins', sans-serif", background: "#0f172a" }}
     >
-      {/* Card */}
-      <div className="w-full max-w-[420px] rounded-2xl overflow-hidden shadow-2xl">
-
-        {/* Card header */}
-        <div className="bg-yellow-400 px-8 py-5 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-black/15 flex items-center justify-center flex-shrink-0">
-            <Tv size={19} className="text-black" />
+      {/* Logo above card */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-9 h-9 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0">
+          <Tv size={16} className="text-black" />
+        </div>
+        <div>
+          <div className="text-white font-black text-base leading-none">
+            Drone<span className="text-yellow-400">Tv</span>.in
           </div>
-          <div>
-            <div className="text-black font-black text-lg leading-tight tracking-tight">
-              DroneTv.in
-            </div>
-            <div className="text-black/50 text-[11px] font-semibold uppercase tracking-widest">
-              Admin Panel
-            </div>
+          <div className="text-white/30 text-[10px] font-semibold tracking-widest uppercase mt-0.5">
+            Admin Panel
           </div>
         </div>
+      </div>
 
-        {/* Card body */}
-        <div className="px-8 py-8" style={{ background: "#1e293b" }}>
+      {/* Card */}
+      <div
+        className="w-full max-w-[400px] rounded-2xl overflow-hidden"
+        style={{
+          background: "#1e293b",
+          boxShadow: "0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+        }}
+      >
+        {/* Yellow top strip */}
+        <div className="h-1 w-full bg-yellow-400" />
+
+        <div className="p-8">
           <div className="mb-7">
-            <h2 className="text-white font-black text-2xl tracking-tight mb-1">
-              Sign in
-            </h2>
-            <p className="text-white/40 text-sm">
-              Enter your credentials to access the dashboard
-            </p>
+            <h2 className="text-white font-black text-2xl mb-1">Welcome back</h2>
+            <p className="text-white/40 text-sm">Sign in to your admin account</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-[11px] font-bold text-white/40 uppercase tracking-widest mb-2"
-              >
+              <label className="block text-[11px] font-bold text-white/40 uppercase tracking-wider mb-2" htmlFor="email">
                 Email address
               </label>
               <input
@@ -118,31 +117,23 @@ export default function AdminLogin() {
                 name="email"
                 value={loginData.email}
                 onChange={onChange}
+                className="w-full px-4 py-3 rounded-xl text-white text-sm placeholder-white/20 outline-none transition-all"
+                style={{ background: "#0f172a", border: "1.5px solid rgba(255,255,255,0.08)" }}
                 placeholder="admin@dronetv.in"
                 required
                 autoComplete="email"
-                className="w-full px-4 py-3 rounded-xl text-white text-sm placeholder-white/20 outline-none transition-all"
-                style={{
-                  background: "#0f172a",
-                  border: "1.5px solid rgba(255,255,255,0.08)",
-                }}
                 onFocus={e => (e.currentTarget.style.borderColor = "#facc15")}
                 onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-[11px] font-bold text-white/40 uppercase tracking-widest mb-2"
-              >
+              <label className="block text-[11px] font-bold text-white/40 uppercase tracking-wider mb-2" htmlFor="password">
                 Password
               </label>
               <div
-                className="flex items-center rounded-xl transition-all overflow-hidden"
+                className="flex items-center rounded-xl overflow-hidden"
                 style={{ background: "#0f172a", border: "1.5px solid rgba(255,255,255,0.08)" }}
-                onFocus={() => {}}
               >
                 <input
                   type={showPassword ? "text" : "password"}
@@ -150,36 +141,29 @@ export default function AdminLogin() {
                   name="password"
                   value={loginData.password}
                   onChange={onChange}
+                  className="flex-1 px-4 py-3 bg-transparent text-white text-sm placeholder-white/20 outline-none"
                   placeholder="Enter your password"
                   required
                   autoComplete="current-password"
-                  className="flex-1 px-4 py-3 bg-transparent text-white text-sm placeholder-white/20 outline-none"
-                  onFocus={e => {
-                    const parent = e.currentTarget.parentElement!;
-                    parent.style.borderColor = "#facc15";
-                  }}
-                  onBlur={e => {
-                    const parent = e.currentTarget.parentElement!;
-                    parent.style.borderColor = "rgba(255,255,255,0.08)";
-                  }}
+                  onFocus={e => { (e.currentTarget.parentElement as HTMLElement).style.borderColor = "#facc15"; }}
+                  onBlur={e => { (e.currentTarget.parentElement as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)"; }}
                 />
                 <button
                   type="button"
                   tabIndex={-1}
                   onClick={() => setShowPassword(p => !p)}
-                  className="px-4 text-white/25 hover:text-yellow-400 transition-colors flex-shrink-0"
+                  className="px-3 text-white/25 hover:text-yellow-400 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 rounded-xl font-bold text-black text-sm bg-yellow-400 hover:bg-yellow-300 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed mt-1"
-              style={{ boxShadow: "0 4px 24px rgba(250,204,21,0.3)" }}
+              className="w-full py-3 font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-300 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm mt-2"
+              style={{ boxShadow: "0 4px 20px rgba(250,204,21,0.25)" }}
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -193,9 +177,10 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          <p className="text-center text-white/20 text-xs mt-7">
-            Restricted to authorized administrators only
-          </p>
+          <div className="mt-6 flex items-center justify-center gap-1.5">
+            <Shield size={11} className="text-white/20" />
+            <p className="text-[11px] text-white/20">Restricted to authorized administrators</p>
+          </div>
         </div>
       </div>
     </div>
