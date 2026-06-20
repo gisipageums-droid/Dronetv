@@ -35,6 +35,7 @@ interface UserRecord {
   servicesCount?: number;
   productsCount?: number;
   // professional-specific
+  professionalId?: string;
   categories?: string[];
   skillsCount?: number;
   userName?: string;
@@ -68,9 +69,12 @@ function DetailDrawer({ user, onClose }: { user: UserRecord; onClose: () => void
   const image = user.headerLogo || user.previewImage;
 
   const handleEdit = () => {
-    if (!user.publishedId) return;
     const template = user.templateSelection === "template-2" ? "2" : "1";
-    navigate(`/admin/companies/edit/${template}/${user.publishedId}/${user.email}?adminMode=true`);
+    if (user.type === "company" && user.publishedId) {
+      navigate(`/admin/companies/edit/${template}/${user.publishedId}/${user.email}?adminMode=true`);
+    } else if (user.type === "professional" && user.professionalId) {
+      navigate(`/user/professionals/edit/${template}/${user.professionalId}/${user.email}?adminMode=true`);
+    }
   };
 
   return (
@@ -194,15 +198,15 @@ function DetailDrawer({ user, onClose }: { user: UserRecord; onClose: () => void
             </div>
           </div>
 
-          {/* Edit button — company only */}
-          {user.type === "company" && user.publishedId && (
+          {/* Edit button — company and professional */}
+          {((user.type === "company" && user.publishedId) || (user.type === "professional" && user.professionalId)) && (
             <button
               onClick={handleEdit}
               className="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
             >
               <span className="text-white text-sm font-semibold flex items-center gap-2">
                 <Pencil size={14} className="text-yellow-400" />
-                Edit Company Steps
+                Edit {user.type === "company" ? "Company" : "Professional"} Steps
               </span>
               <Arrow size={14} className="text-white/40" />
             </button>
@@ -300,6 +304,7 @@ export default function AdminUsersDashboard() {
           email,
           displayName: p.fullName ?? p.professionalName ?? email,
           type: "professional",
+          professionalId: p.professionalId,
           location: p.location,
           status: p.status,
           createdAt: p.createdAt,
