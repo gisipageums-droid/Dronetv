@@ -8,8 +8,8 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen pt-20 pb-4 px-2 md:px-6 flex bg-gray-50 text-gray-900">
-      <main className="h-screen w-full flex gap-2">
+    <div className="h-screen pt-20 pb-4 px-2 md:px-6 flex bg-gray-50 text-gray-900">
+      <main className="flex-1 min-h-0 w-full flex gap-2">
         {/* Sidebar — desktop only */}
         <div className="hidden lg:block">
           <Sidebar />
