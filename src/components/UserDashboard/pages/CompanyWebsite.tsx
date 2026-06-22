@@ -330,20 +330,21 @@ const CompanyWebsite: React.FC = () => {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-6 pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-gray-900">{company.companyName}</h1>
-            {isVerified && <BadgeCheck className="w-6 h-6 text-green-600" title="Verified" />}
+      <div className="flex items-start justify-between px-4 sm:px-6 pt-5 pb-4 gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">{company.companyName}</h1>
+            {isVerified && <BadgeCheck className="w-5 h-5 text-green-600 flex-shrink-0" title="Verified" />}
           </div>
-          <p className="text-sm text-gray-500 mt-0.5">{company.location}</p>
+          <p className="text-sm text-gray-500 mt-0.5 truncate">{company.location}</p>
         </div>
         <button
           onClick={() => setShowEditModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-2 sm:px-4 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors shadow-sm flex-shrink-0 text-sm"
         >
-          <Edit className="w-4 h-4" />
-          Edit Website
+          <Edit className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Edit Website</span>
+          <span className="sm:hidden">Edit</span>
         </button>
       </div>
 
@@ -373,7 +374,7 @@ const CompanyWebsite: React.FC = () => {
 
       {/* Tab Content */}
       {activeTab === "preview" ? (
-        <div className="flex flex-col gap-5 p-6">
+        <div className="flex flex-col gap-4 p-4 sm:p-6 pb-6 lg:pb-6">
           {/* Status Banner */}
           {isVerified ? (
             <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-xl">
@@ -396,27 +397,28 @@ const CompanyWebsite: React.FC = () => {
           )}
 
           {/* Logo Upload */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex items-center gap-5">
-            <div className="w-16 h-16 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center gap-3 sm:gap-5">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
               {currentLogo ? (
                 <img src={currentLogo} alt="Logo" className="w-full h-full object-contain" />
               ) : (
-                <span className="text-xs text-gray-400 text-center px-1">No Logo</span>
+                <span className="text-[10px] text-gray-400 text-center leading-tight px-1">No Logo</span>
               )}
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-800">Company Logo</p>
-              <p className="text-xs text-gray-400 mt-0.5">Shown in your website header. PNG, JPG, or SVG.</p>
+              <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">Shown in your website header. PNG, JPG, or SVG.</p>
+              <p className="text-xs text-gray-400 mt-0.5 sm:hidden">PNG, JPG, or SVG</p>
             </div>
             <button
               onClick={() => logoInputRef.current?.click()}
               disabled={logoUploading}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               {logoUploading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" />Uploading...</>
+                <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span className="hidden sm:inline">Uploading...</span></>
               ) : (
-                <><Upload className="w-4 h-4" />{currentLogo ? "Change Logo" : "Upload Logo"}</>
+                <><Upload className="w-3.5 h-3.5" /><span className="hidden sm:inline">{currentLogo ? "Change Logo" : "Upload Logo"}</span><span className="sm:hidden">Upload</span></>
               )}
             </button>
             <input
@@ -457,7 +459,7 @@ const CompanyWebsite: React.FC = () => {
                 src={previewUrl}
                 title="Company Website Preview"
                 className="w-full border-0"
-                style={{ height: "560px", pointerEvents: "none" }}
+                style={{ height: "clamp(320px, 60vw, 560px)", pointerEvents: "none" }}
               />
               {/* Transparent overlay blocks all clicks inside the iframe */}
               <div className="absolute inset-0" style={{ pointerEvents: "auto", background: "transparent" }} />
