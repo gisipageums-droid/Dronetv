@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   CheckCircle, AlertCircle, Loader2, ExternalLink,
-  BadgeCheck, Upload, Edit, X, Lock, Globe,
+  BadgeCheck, Upload, Edit, X, Globe,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "motion/react";
 import FormApp from "../../company/src/components/form/src/App";
-
-type DigiStatus = "idle" | "loading" | "ready" | "polling" | "verified" | "error";
 
 interface Company {
   publishedId: string;
@@ -29,8 +27,9 @@ const CompanyWebsite: React.FC = () => {
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [companyCategory, setCompanyCategory] = useState<string[]>([]);
-  const [isDetailsUpdated, setIsDetailsUpdated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showPublish, setShowPublish] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "details">(
     searchParams.get("tab") === "details" ? "details" : "preview"
   );
@@ -74,25 +73,6 @@ const CompanyWebsite: React.FC = () => {
       .catch(() => {});
   }, [company]);
 
-  useEffect(() => {
-    if (!company) return;
-    // Fast check: localStorage cache
-    const cachedLock = localStorage.getItem(`details_updated_${company.publishedId}`) === "true";
-    if (cachedLock) { setIsDetailsUpdated(true); return; }
-    // Server-side check: look for _detailsUpdatedAt in published content
-    fetch(
-      `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${company.publishedId}`,
-      { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
-    )
-      .then(r => r.json())
-      .then(data => {
-        if (data?.content?._detailsUpdatedAt) {
-          setIsDetailsUpdated(true);
-          localStorage.setItem(`details_updated_${company.publishedId}`, "true");
-        }
-      })
-      .catch(() => {});
-  }, [company]);
 
   const handleFormSubmit = useCallback(async (aiGenData: any) => {
     if (!company) return;
@@ -171,22 +151,37 @@ const CompanyWebsite: React.FC = () => {
         }),
       });
 
-      localStorage.setItem(`details_updated_${company.publishedId}`, "true");
-      setIsDetailsUpdated(true);
       setIframeKey((k) => k + 1);
-      toast.success("Details updated! Redirecting to editor...");
-      navigate(
-        `/user/companies/edit/1/${company.publishedId}/${company.userId}`,
-        { state: { aiGenData: { ...aiGenData, content: finalContent } } }
-      );
+      toast.success("Details saved! You can now publish your company.");
+      setShowPublish(true);
     } catch {
       toast.error("Failed to update details. Please try again.");
     } finally {
       setSubmitting(false);
     }
-  }, [company, navigate]);
+  }, [company]);
 
   const isVerified = company?.reviewStatus === "approved";
+
+  const handlePublish = async () => {
+    if (!company) return;
+    setPublishing(true);
+    try {
+      await fetch("https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publishedId: company.publishedId, action: "approve" }),
+      });
+      toast.success("Your company is now live!");
+      setCompany(prev => prev ? { ...prev, reviewStatus: "approved" } : prev);
+      setShowPublish(false);
+      setActiveTab("preview");
+    } catch {
+      toast.error("Failed to publish. Please try again.");
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   const handleLogoUpload = async (file: File) => {
     if (!company) return;
@@ -472,26 +467,36 @@ const CompanyWebsite: React.FC = () => {
         </div>
       ) : (
         <div className="flex-1">
-          {isDetailsUpdated ? (
-            <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                <Lock className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Details Already Updated</h3>
-              <p className="text-gray-500 max-w-sm">
-                You have already submitted your company details. Updates are a one-time action. Contact support if you need further changes.
-              </p>
-              <button
-                onClick={() => setActiveTab("preview")}
-                className="mt-6 px-5 py-2.5 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
-              >
-                View Website Preview
-              </button>
-            </div>
-          ) : submitting ? (
+          {submitting ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
               <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
               <p className="text-gray-600 font-medium">Saving your details...</p>
+            </div>
+          ) : showPublish ? (
+            <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+              <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5">
+                <CheckCircle className="w-10 h-10 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Details Saved!</h3>
+              <p className="text-gray-500 max-w-sm mb-8">
+                Your company details are ready. Publish now to make your company live and visible to everyone.
+              </p>
+              <button
+                onClick={handlePublish}
+                disabled={publishing}
+                className="flex items-center gap-2 px-8 py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-xl transition-colors shadow-lg disabled:opacity-60"
+              >
+                {publishing
+                  ? <><Loader2 className="w-5 h-5 animate-spin" /> Publishing...</>
+                  : <><Globe className="w-5 h-5" /> Publish My Company</>
+                }
+              </button>
+              <button
+                onClick={() => setShowPublish(false)}
+                className="mt-4 text-sm text-gray-400 hover:text-gray-600 underline"
+              >
+                Go back and review
+              </button>
             </div>
           ) : (
             <FormApp
