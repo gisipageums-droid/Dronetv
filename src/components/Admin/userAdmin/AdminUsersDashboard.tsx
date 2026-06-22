@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Search, RotateCcw, User, ChevronLeft, ChevronRight, X,
   Building2, UserCircle, ExternalLink, CheckCircle, XCircle,
-  MapPin, Briefcase, Star, Eye, Calendar, BarChart2, Pencil, Trash2, AlertTriangle,
+  MapPin, Briefcase, Star, Eye, Calendar, BarChart2, Trash2, AlertTriangle, Globe,
 } from "lucide-react";
 
 const COMPANIES_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin";
@@ -62,18 +61,31 @@ function ReviewBadge({ status }: { status?: string }) {
   );
 }
 
-function DetailDrawer({ user, onClose, onDeleted }: { user: UserRecord; onClose: () => void; onDeleted: (email: string) => void }) {
-  const navigate = useNavigate();
+function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: UserRecord; onClose: () => void; onDeleted: (email: string) => void; onStatusChanged: (email: string, status: string) => void }) {
   const image = user.headerLogo || user.previewImage;
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [actionLoading, setActionLoading] = useState<"approve" | "reject" | null>(null);
+  const [currentReviewStatus, setCurrentReviewStatus] = useState(user.reviewStatus);
 
-  const handleEdit = () => {
-    const template = user.templateSelection === "template-2" ? "2" : "1";
-    if (user.type === "company" && user.publishedId) {
-      navigate(`/admin/companies/edit/${template}/${user.publishedId}/${user.email}?adminMode=true`);
-    } else if (user.type === "professional" && user.professionalId) {
-      navigate(`/user/professionals/edit/${template}/${user.professionalId}/${user.email}?adminMode=true`);
+  const handleReviewAction = async (action: "approve" | "reject") => {
+    if (!user.publishedId) return;
+    setActionLoading(action);
+    try {
+      const res = await fetch("https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publishedId: user.publishedId, action }),
+      });
+      if (!res.ok) throw new Error();
+      const newStatus = action === "approve" ? "approved" : "rejected";
+      toast.success(`Company ${action === "approve" ? "approved" : "rejected"} successfully`);
+      setCurrentReviewStatus(newStatus);
+      onStatusChanged(user.email, newStatus);
+    } catch {
+      toast.error(`Failed to ${action} company`);
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -229,18 +241,68 @@ function DetailDrawer({ user, onClose, onDeleted }: { user: UserRecord; onClose:
               </div>
             </div>
 
-            {/* Edit */}
-            {((user.type === "company" && user.publishedId) || (user.type === "professional" && user.professionalId)) && (
-              <button
-                onClick={handleEdit}
-                className="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all"
-              >
-                <span className="text-gray-800 text-sm font-semibold flex items-center gap-2">
-                  <Pencil size={14} className="text-yellow-500" />
-                  Edit {user.type === "company" ? "Company" : "Professional"} Steps
-                </span>
-                <ChevronRight size={14} className="text-gray-400" />
-              </button>
+            {/* Website Steps (company only) */}
+            {user.type === "company" && user.publishedId && (
+              <div className="space-y-2">
+                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Globe size={11} />
+                  Website Status
+                </h3>
+                <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
+                  {[
+                    { label: "Company Registered", done: true },
+                    { label: "Published / Visible", done: !!user.isVisible },
+                    { label: "Verified & Approved", done: currentReviewStatus === "approved" },
+                  ].map((step, i) => (
+                    <div key={step.label} className={`flex items-center justify-between px-4 py-3 ${i < 2 ? "border-b border-gray-100" : ""}`}>
+                      <span className="text-gray-700 text-xs font-medium">{step.label}</span>
+                      {step.done
+                        ? <CheckCircle size={14} className="text-green-500" />
+                        : <XCircle size={14} className="text-gray-300" />
+                      }
+                    </div>
+                  ))}
+                </div>
+
+                {currentReviewStatus !== "approved" ? (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleReviewAction("approve")}
+                      disabled={!!actionLoading}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-green-50 hover:bg-green-100 border border-green-200 text-green-700 text-sm font-semibold transition-all disabled:opacity-50"
+                    >
+                      {actionLoading === "approve"
+                        ? <div className="w-4 h-4 border-2 border-green-400/40 border-t-green-500 rounded-full animate-spin" />
+                        : <CheckCircle size={14} />
+                      }
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleReviewAction("reject")}
+                      disabled={!!actionLoading}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 text-sm font-semibold transition-all disabled:opacity-50"
+                    >
+                      {actionLoading === "reject"
+                        ? <div className="w-4 h-4 border-2 border-red-400/40 border-t-red-500 rounded-full animate-spin" />
+                        : <XCircle size={14} />
+                      }
+                      Reject
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleReviewAction("reject")}
+                    disabled={!!actionLoading}
+                    className="flex items-center justify-center gap-2 w-full px-3 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 text-sm font-semibold transition-all disabled:opacity-50"
+                  >
+                    {actionLoading === "reject"
+                      ? <div className="w-4 h-4 border-2 border-red-400/40 border-t-red-500 rounded-full animate-spin" />
+                      : <XCircle size={14} />
+                    }
+                    Revoke Approval
+                  </button>
+                )}
+              </div>
             )}
 
             {/* View profile */}
@@ -635,6 +697,9 @@ export default function AdminUsersDashboard() {
           onDeleted={(email) => {
             setUsers(prev => prev.filter(u => u.email !== email));
             setSelected(null);
+          }}
+          onStatusChanged={(email, status) => {
+            setUsers(prev => prev.map(u => u.email === email ? { ...u, reviewStatus: status } : u));
           }}
         />
       )}
