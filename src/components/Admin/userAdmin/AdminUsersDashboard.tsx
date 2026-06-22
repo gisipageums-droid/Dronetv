@@ -115,7 +115,7 @@ function DetailDrawer({ user, onClose, onDeleted }: { user: UserRecord; onClose:
       <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
         <div className="absolute inset-0 bg-black/40" />
         <div
-          className="relative w-full max-w-sm h-full overflow-y-auto bg-white shadow-2xl border-l border-gray-200"
+          className="relative w-full sm:max-w-sm h-full overflow-y-auto bg-white shadow-2xl border-l border-gray-200"
           onClick={e => e.stopPropagation()}
         >
           <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b border-gray-200 bg-white">
@@ -472,17 +472,17 @@ export default function AdminUsersDashboard() {
       <div className="px-6 space-y-5 pb-6">
         {/* Stats */}
         {!loading && !error && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {[
               { label: "Total Users", value: users.length, icon: <User size={16} />, color: "text-yellow-500" },
               { label: "Companies", value: compCount, icon: <Building2 size={16} />, color: "text-blue-500" },
               { label: "Professionals", value: proCount, icon: <UserCircle size={16} />, color: "text-purple-500" },
             ].map(s => (
-              <div key={s.label} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm flex items-center gap-3">
-                <div className={s.color}>{s.icon}</div>
+              <div key={s.label} className="bg-white rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm flex items-center gap-2 sm:gap-3">
+                <div className={`${s.color} hidden sm:block`}>{s.icon}</div>
                 <div>
-                  <div className="text-gray-900 font-bold text-lg leading-none">{s.value}</div>
-                  <div className="text-gray-500 text-xs mt-0.5">{s.label}</div>
+                  <div className="text-gray-900 font-bold text-base sm:text-lg leading-none">{s.value}</div>
+                  <div className="text-gray-500 text-[10px] sm:text-xs mt-0.5 leading-tight">{s.label}</div>
                 </div>
               </div>
             ))}
@@ -540,17 +540,17 @@ export default function AdminUsersDashboard() {
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[700px] text-sm">
+                <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-200 bg-gray-50">
-                      <th className="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">#</th>
-                      <th className="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">Name</th>
-                      <th className="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">Location</th>
-                      <th className="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">Type</th>
-                      <th className="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">Review</th>
-                      <th className="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">Registered</th>
-                      <th className="px-4 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider">Details</th>
+                      <th className="px-3 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden sm:table-cell">#</th>
+                      <th className="px-3 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">Name</th>
+                      <th className="px-3 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden md:table-cell">Email</th>
+                      <th className="px-3 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Location</th>
+                      <th className="px-3 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                      <th className="px-3 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Review</th>
+                      <th className="px-3 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Registered</th>
+                      <th className="px-3 py-3 text-center text-[11px] font-bold text-gray-500 uppercase tracking-wider">Details</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -560,9 +560,9 @@ export default function AdminUsersDashboard() {
                         onClick={() => setSelected(u)}
                         className="hover:bg-gray-50 cursor-pointer transition-colors"
                       >
-                        <td className="px-4 py-3 text-gray-400 text-xs">{(page - 1) * PAGE_SIZE + i + 1}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2.5">
+                        <td className="px-3 py-3 text-gray-400 text-xs hidden sm:table-cell">{(page - 1) * PAGE_SIZE + i + 1}</td>
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-lg flex-shrink-0 overflow-hidden bg-yellow-50 border border-yellow-100 flex items-center justify-center">
                               {u.headerLogo || u.previewImage
                                 ? <img src={u.headerLogo || u.previewImage} alt="" className="w-full h-full object-cover"
@@ -570,22 +570,25 @@ export default function AdminUsersDashboard() {
                                 : <span className="text-yellow-500 text-[11px] font-bold">{u.displayName.charAt(0).toUpperCase()}</span>
                               }
                             </div>
-                            <span className="text-gray-900 font-medium truncate max-w-[140px]">{u.displayName}</span>
+                            <div className="min-w-0">
+                              <div className="text-gray-900 font-medium text-xs truncate max-w-[120px] sm:max-w-[160px]">{u.displayName}</div>
+                              <div className="text-gray-400 text-[10px] truncate max-w-[120px] md:hidden">{u.email}</div>
+                            </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-gray-500 text-xs truncate max-w-[160px]">{u.email}</td>
-                        <td className="px-4 py-3 text-gray-500 text-xs">{u.location ?? "—"}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-3 text-gray-500 text-xs hidden md:table-cell max-w-[160px] truncate">{u.email}</td>
+                        <td className="px-3 py-3 text-gray-500 text-xs hidden lg:table-cell">{u.location ?? "—"}</td>
+                        <td className="px-3 py-3">
                           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                             u.type === "company" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
                           }`}>
                             {u.type === "company" ? <Building2 size={10} /> : <UserCircle size={10} />}
-                            {u.type === "company" ? "Company" : "Professional"}
+                            <span className="hidden sm:inline">{u.type === "company" ? "Company" : "Professional"}</span>
                           </span>
                         </td>
-                        <td className="px-4 py-3"><ReviewBadge status={u.reviewStatus} /></td>
-                        <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">{fmtDate(u.createdAt)}</td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-3 py-3 hidden sm:table-cell"><ReviewBadge status={u.reviewStatus} /></td>
+                        <td className="px-3 py-3 text-gray-500 text-xs whitespace-nowrap hidden lg:table-cell">{fmtDate(u.createdAt)}</td>
+                        <td className="px-3 py-3 text-center">
                           <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-gray-100 hover:bg-yellow-100 text-gray-400 hover:text-yellow-600 transition-all mx-auto">
                             <ChevronRight size={14} />
                           </button>
