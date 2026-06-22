@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle, Building2 } from "lucide-react";
 import { toast } from "react-toastify";
 import FormApp from "../../company/src/components/form/src/App";
 
@@ -18,6 +18,34 @@ interface Company {
   reviewStatus: string;
 }
 
+function AdminHeader({ title, subtitle, onBack }: { title: string; subtitle?: string; onBack: () => void }) {
+  return (
+    <div className="bg-gray-900 px-4 sm:px-6 py-4 flex items-center gap-3 flex-shrink-0">
+      <button
+        onClick={onBack}
+        className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm transition-colors flex-shrink-0"
+      >
+        <ArrowLeft size={15} />
+        <span className="hidden sm:inline">Back to Users</span>
+        <span className="sm:hidden">Back</span>
+      </button>
+      <div className="h-4 w-px bg-gray-700 flex-shrink-0" />
+      <div className="min-w-0 flex items-center gap-2">
+        <Building2 size={16} className="text-yellow-400 flex-shrink-0" />
+        <div className="min-w-0">
+          <p className="text-white font-semibold text-sm truncate">{title}</p>
+          {subtitle && <p className="text-gray-500 text-xs truncate">{subtitle}</p>}
+        </div>
+      </div>
+      <div className="ml-auto flex-shrink-0">
+        <span className="px-2.5 py-1 rounded-full bg-yellow-400/10 text-yellow-400 text-xs font-semibold border border-yellow-400/20">
+          Admin Edit
+        </span>
+      </div>
+    </div>
+  );
+}
+
 const AdminCompanyEdit: React.FC = () => {
   const { publishedId, userId } = useParams<{ publishedId: string; userId: string }>();
   const navigate = useNavigate();
@@ -27,6 +55,8 @@ const AdminCompanyEdit: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+
+  const goBack = () => navigate("/admin/users");
 
   useEffect(() => {
     if (!userId) return;
@@ -120,86 +150,113 @@ const AdminCompanyEdit: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+      <div className="min-h-screen bg-gray-100 flex flex-col">
+        <AdminHeader title="Loading..." onBack={goBack} />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+            <p className="text-gray-500 text-sm">Loading company data...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!company) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 text-center">
-        <p className="text-gray-500 text-lg">Company not found for this user.</p>
-        <button onClick={() => navigate(-1)} className="mt-4 text-sm text-yellow-600 underline">Go back</button>
+      <div className="min-h-screen bg-gray-100 flex flex-col">
+        <AdminHeader title="Company Not Found" subtitle={userId} onBack={goBack} />
+        <div className="flex-1 flex items-center justify-center px-4">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center max-w-sm w-full">
+            <div className="w-14 h-14 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center mx-auto mb-4">
+              <Building2 size={24} className="text-gray-400" />
+            </div>
+            <h3 className="text-gray-900 font-bold text-base mb-1">No Company Found</h3>
+            <p className="text-gray-500 text-sm mb-5">
+              This user hasn't registered a company yet, or the company ID doesn't match.
+            </p>
+            <button
+              onClick={goBack}
+              className="w-full px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold text-sm rounded-xl transition-colors"
+            >
+              Back to Users
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (done) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex flex-col">
+        <AdminHeader title={company.companyName} subtitle={company.userId} onBack={goBack} />
+        <div className="flex-1 flex items-center justify-center px-4">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center max-w-sm w-full">
+            <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle size={24} className="text-green-600" />
+            </div>
+            <h3 className="text-gray-900 font-bold text-base mb-1">Details Saved</h3>
+            <p className="text-gray-500 text-sm mb-5">
+              Company details updated. The user will see these when they log in.
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => setDone(false)}
+                className="w-full px-4 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold text-sm rounded-xl transition-colors"
+              >
+                Edit Again
+              </button>
+              <button
+                onClick={goBack}
+                className="w-full px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl border border-gray-200 transition-colors"
+              >
+                Back to Users
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (submitting) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex flex-col">
+        <AdminHeader title={company.companyName} subtitle={company.userId} onBack={goBack} />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+            <p className="text-gray-500 text-sm">Saving company details...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Header */}
-      <div className="bg-gray-900 px-6 py-4 flex items-center gap-4">
-        <button
-          onClick={() => navigate("/admin/users")}
-          className="flex items-center gap-2 text-gray-300 hover:text-white text-sm transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Back to Users
-        </button>
-        <div className="h-4 w-px bg-gray-600" />
-        <div>
-          <h1 className="text-white font-bold text-base">{company.companyName}</h1>
-          <p className="text-gray-400 text-xs">{company.userId} · Edit Company Details</p>
-        </div>
+      <AdminHeader title={company.companyName} subtitle={`${company.userId} · ${company.location || "—"}`} onBack={goBack} />
+
+      <div className="mx-4 sm:mx-6 mt-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2">
+        <span className="text-amber-500 mt-0.5 flex-shrink-0">⚠</span>
+        <p className="text-amber-800 text-sm font-medium">
+          Admin editing mode — fill in the company details below. The user will see these when they log in and can then publish their listing.
+        </p>
       </div>
 
-      {/* Admin notice */}
-      <div className="mx-6 mt-4 px-4 py-3 bg-yellow-50 border border-yellow-200 rounded-xl text-sm text-yellow-800 font-medium">
-        Admin editing mode — changes save directly to this company. Publish is controlled by the user.
-      </div>
-
-      {/* Form */}
-      <div className="flex-1">
-        {done ? (
-          <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-              <span className="text-3xl">✓</span>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Details Updated</h3>
-            <p className="text-gray-500 max-w-sm mb-6">Company details have been saved successfully.</p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setDone(false)}
-                className="px-5 py-2.5 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition-colors"
-              >
-                Edit Again
-              </button>
-              <button
-                onClick={() => navigate("/admin/users")}
-                className="px-5 py-2.5 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Back to Users
-              </button>
-            </div>
-          </div>
-        ) : submitting ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
-            <p className="text-gray-600 font-medium">Saving company details...</p>
-          </div>
-        ) : (
-          <FormApp
-            embedded={true}
-            initialCompanyCategory={companyCategory}
-            companyData={{
-              publishedId: company.publishedId,
-              userId: company.userId,
-              draftId: company.draftId,
-              templateSelection: company.templateSelection,
-            }}
-            onEmbeddedSubmit={handleFormSubmit}
-          />
-        )}
+      <div className="flex-1 mt-2">
+        <FormApp
+          embedded={true}
+          initialCompanyCategory={companyCategory}
+          companyData={{
+            publishedId: company.publishedId,
+            userId: company.userId,
+            draftId: company.draftId,
+            templateSelection: company.templateSelection,
+          }}
+          onEmbeddedSubmit={handleFormSubmit}
+        />
       </div>
     </div>
   );

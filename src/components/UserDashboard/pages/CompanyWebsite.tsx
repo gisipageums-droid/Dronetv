@@ -249,7 +249,7 @@ const CompanyWebsite: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+      <div className="h-full bg-amber-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
       </div>
     );
@@ -257,7 +257,7 @@ const CompanyWebsite: React.FC = () => {
 
   if (!company) {
     return (
-      <div className="min-h-screen bg-amber-50 flex flex-col items-center justify-center px-4 text-center">
+      <div className="h-full bg-amber-50 flex flex-col items-center justify-center px-4 text-center pb-20 lg:pb-0">
         <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mb-5">
           <Globe className="w-10 h-10 text-amber-500" />
         </div>
@@ -276,7 +276,7 @@ const CompanyWebsite: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-amber-50 flex flex-col">
+    <div className="h-full bg-amber-50 flex flex-col overflow-y-auto">
 
       {/* Edit Confirmation Modal */}
       <AnimatePresence>
@@ -468,35 +468,55 @@ const CompanyWebsite: React.FC = () => {
       ) : (
         <div className="flex-1">
           {submitting ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="flex flex-col items-center justify-center py-16 px-6 gap-4">
               <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
               <p className="text-gray-600 font-medium">Saving your details...</p>
             </div>
           ) : showPublish ? (
-            <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-              <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5">
-                <CheckCircle className="w-10 h-10 text-green-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Details Saved!</h3>
-              <p className="text-gray-500 max-w-sm mb-8">
-                Your company details are ready. Publish now to make your company live and visible to everyone.
-              </p>
-              <button
-                onClick={handlePublish}
-                disabled={publishing}
-                className="flex items-center gap-2 px-8 py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-xl transition-colors shadow-lg disabled:opacity-60"
-              >
-                {publishing
-                  ? <><Loader2 className="w-5 h-5 animate-spin" /> Publishing...</>
-                  : <><Globe className="w-5 h-5" /> Publish My Company</>
-                }
-              </button>
-              <button
-                onClick={() => setShowPublish(false)}
-                className="mt-4 text-sm text-gray-400 hover:text-gray-600 underline"
-              >
-                Go back and review
-              </button>
+            <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+              {isVerified ? (
+                <>
+                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5">
+                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Details Updated!</h3>
+                  <p className="text-gray-500 max-w-sm mb-8">
+                    Your company is already live. The updated details are now saved to your listing.
+                  </p>
+                  <button
+                    onClick={() => { setShowPublish(false); setActiveTab("preview"); }}
+                    className="flex items-center gap-2 px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-base rounded-xl transition-colors shadow-md"
+                  >
+                    <Globe className="w-5 h-5" /> View My Website
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5">
+                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Details Saved!</h3>
+                  <p className="text-gray-500 max-w-sm mb-8">
+                    Your company details are ready. Publish now to make your company live and visible to everyone.
+                  </p>
+                  <button
+                    onClick={handlePublish}
+                    disabled={publishing}
+                    className="flex items-center gap-2 px-8 py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-base rounded-xl transition-colors shadow-lg disabled:opacity-60"
+                  >
+                    {publishing
+                      ? <><Loader2 className="w-5 h-5 animate-spin" /> Publishing...</>
+                      : <><Globe className="w-5 h-5" /> Publish My Company</>
+                    }
+                  </button>
+                  <button
+                    onClick={() => setShowPublish(false)}
+                    className="mt-4 text-sm text-gray-400 hover:text-gray-600 underline"
+                  >
+                    Go back and review
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             <FormApp
