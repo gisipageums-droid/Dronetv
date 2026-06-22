@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
-  Shield, CheckCircle, AlertCircle, Loader2, ExternalLink,
-  RefreshCw, BadgeCheck, Upload, Edit, X, Lock, Globe,
+  CheckCircle, AlertCircle, Loader2, ExternalLink,
+  BadgeCheck, Upload, Edit, X, Lock, Globe,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import { toast } from "sonner";
-import axios from "axios";
 import { AnimatePresence, motion } from "motion/react";
 import FormApp from "../../company/src/components/form/src/App";
-
-const SUREPASS_TOKEN =
-  "SUREPASS_TOKEN_REMOVED";
 
 type DigiStatus = "idle" | "loading" | "ready" | "polling" | "verified" | "error";
 
@@ -38,19 +34,11 @@ const CompanyWebsite: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"preview" | "details">(
     searchParams.get("tab") === "details" ? "details" : "preview"
   );
-  const [digiStatus, setDigiStatus] = useState<DigiStatus>("idle");
-  const [digiUrl, setDigiUrl] = useState("");
-  const [digiClientId, setDigiClientId] = useState("");
-  const [isPublishing, setIsPublishing] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
   const [currentLogo, setCurrentLogo] = useState<string>("");
   const [iframeKey, setIframeKey] = useState(0);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const popupRef = useRef<Window | null>(null);
   const logoInputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
 
   const userId = user?.email || user?.userData?.email || "";
 
@@ -258,97 +246,6 @@ const CompanyWebsite: React.FC = () => {
     ? `/user/companies/preview/1/${company.publishedId}/${company.userId}`
     : "";
 
-  // ---- Aadhaar flow ----
-  const initDigiBoost = async () => {
-    setDigiStatus("loading");
-    setDigiUrl("");
-    setDigiClientId("");
-    try {
-      const res = await axios.post(
-        "https://kyc-api.surepass.app/api/v1/digilocker/initialize",
-        { data: { signup_flow: true } },
-        { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, "Content-Type": "application/json" } }
-      );
-      if (!res.data?.success || !res.data?.data?.url) throw new Error("Init failed");
-      setDigiUrl(res.data.data.url);
-      setDigiClientId(res.data.data.client_id);
-      setDigiStatus("ready");
-    } catch {
-      setDigiStatus("error");
-    }
-  };
-
-  const startPolling = (clientId: string) => {
-    if (pollRef.current) clearInterval(pollRef.current);
-    let attempts = 0;
-    pollRef.current = setInterval(async () => {
-      attempts++;
-      try {
-        const res = await axios.get(
-          `https://kyc-api.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
-          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}` } }
-        );
-        if (res.data?.success) {
-          clearInterval(pollRef.current!);
-          popupRef.current?.close();
-          setDigiStatus("verified");
-          toast.success("Aadhaar verified successfully!");
-          return;
-        }
-      } catch { /* keep polling */ }
-
-      if (popupRef.current?.closed) {
-        clearInterval(pollRef.current!);
-        try {
-          const finalRes = await axios.get(
-            `https://kyc-api.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
-            { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}` } }
-          );
-          if (finalRes.data?.success) {
-            setDigiStatus("verified");
-            toast.success("Aadhaar verified successfully!");
-          } else {
-            setDigiStatus("ready");
-          }
-        } catch { setDigiStatus("ready"); }
-        return;
-      }
-
-      if (attempts >= 60) {
-        clearInterval(pollRef.current!);
-        setDigiStatus("error");
-        toast.error("Verification timed out. Please try again.");
-      }
-    }, 2000);
-  };
-
-  const handleOpenDigiLocker = () => {
-    if (!digiUrl || !digiClientId) return;
-    const popup = window.open(digiUrl, "digilocker-verify", "width=620,height=720,left=300,top=80");
-    popupRef.current = popup;
-    setDigiStatus("polling");
-    startPolling(digiClientId);
-  };
-
-  const handleConfirmPublish = async () => {
-    if (!company || digiStatus !== "verified") return;
-    setIsPublishing(true);
-    try {
-      await axios.post(
-        "https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review",
-        { publishedId: company.publishedId, action: "approve" },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      toast.success("Your company is now live and verified!");
-      setCompany((prev) => prev ? { ...prev, reviewStatus: "approved" } : prev);
-      setDigiStatus("idle");
-    } catch {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setIsPublishing(false);
-    }
-  };
-
   const handleConfirmEdit = () => {
     if (!company) return;
     setShowEditModal(false);
@@ -495,9 +392,9 @@ const CompanyWebsite: React.FC = () => {
             <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-300 rounded-xl">
               <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="font-semibold text-yellow-800">Your company is listed but not yet verified</p>
+                <p className="font-semibold text-yellow-800">Verification pending</p>
                 <p className="text-sm text-yellow-700 mt-0.5">
-                  Complete Aadhaar verification below to get a Verified badge and confirm your listing.
+                  Your company is listed. Our team will review and verify your listing shortly.
                 </p>
               </div>
             </div>
@@ -572,98 +469,6 @@ const CompanyWebsite: React.FC = () => {
             </div>
           </div>
 
-          {/* Aadhaar Verification */}
-          {!isVerified && (
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-indigo-600" />
-                Aadhaar Verification
-              </h3>
-              <p className="text-sm text-gray-500 mb-5">
-                Verify your identity via DigiLocker to publish your company as a verified listing.
-              </p>
-
-              {digiStatus === "idle" && (
-                <button
-                  onClick={initDigiBoost}
-                  className="px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
-                >
-                  Start Aadhaar Verification
-                </button>
-              )}
-
-              {digiStatus === "loading" && (
-                <div className="flex items-center gap-2 text-indigo-600 text-sm">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Initializing secure verification...
-                </div>
-              )}
-
-              {digiStatus === "error" && (
-                <div>
-                  <p className="text-sm text-red-600 mb-2">Initialization failed. Please retry.</p>
-                  <button
-                    onClick={initDigiBoost}
-                    className="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-                  >
-                    <RefreshCw className="w-4 h-4" /> Retry
-                  </button>
-                </div>
-              )}
-
-              {digiStatus === "ready" && (
-                <div>
-                  <p className="text-sm text-gray-500 mb-3">
-                    Click below to open DigiLocker in a new window and complete verification.
-                  </p>
-                  <button
-                    onClick={handleOpenDigiLocker}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Verify via DigiLocker
-                  </button>
-                </div>
-              )}
-
-              {digiStatus === "polling" && (
-                <div className="flex items-center gap-3 text-indigo-600 text-sm">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Waiting for DigiLocker verification...
-                  <button
-                    onClick={() => { if (pollRef.current) clearInterval(pollRef.current); setDigiStatus("ready"); }}
-                    className="text-xs text-gray-500 hover:text-gray-700 underline ml-2"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-
-              {digiStatus === "verified" && (
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span className="text-sm font-medium text-green-700">Aadhaar Verified Successfully</span>
-                  </div>
-                  <button
-                    onClick={handleConfirmPublish}
-                    disabled={isPublishing}
-                    className={`flex items-center gap-2 px-5 py-2.5 font-semibold rounded-lg transition-colors shadow-md w-fit ${
-                      isPublishing
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
-                    }`}
-                  >
-                    {isPublishing ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
-                    ) : (
-                      <><CheckCircle className="w-4 h-4" /> Confirm & Publish</>
-                    )}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       ) : (
         <div className="flex-1">
