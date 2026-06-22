@@ -67,6 +67,7 @@ import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboa
 import UserEvent from "./components/UserEvent";
 import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard";
 import AdminUsersDashboard from "./components/Admin/userAdmin/AdminUsersDashboard";
+import AdminCompanyEdit from "./components/Admin/userAdmin/AdminCompanyEdit";
 import UserProfessional from "./components/profissionalDirectory";
 
 import ExcelDataProcessor from "./components/excelextraction/excel";
@@ -360,6 +361,7 @@ const AppContent = () => {
           />
           <Route path="/user/professional" element={<UserProfessional />} />
           <Route path="/admin/users" element={<AdminProtectedRoute><AdminLayout><AdminUsersDashboard /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/companies/details/:publishedId/:userId" element={<AdminProtectedRoute><AdminCompanyEdit /></AdminProtectedRoute>} />
           <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
             path="/user/professionals/preview/2/:professionalId/:userId"

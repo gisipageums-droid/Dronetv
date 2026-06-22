@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Search, RotateCcw, User, ChevronLeft, ChevronRight, X,
@@ -62,6 +63,7 @@ function ReviewBadge({ status }: { status?: string }) {
 }
 
 function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: UserRecord; onClose: () => void; onDeleted: (email: string) => void; onStatusChanged: (email: string, status: string) => void }) {
+  const navigate = useNavigate();
   const image = user.headerLogo || user.previewImage;
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -246,8 +248,18 @@ function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: Use
               <div className="space-y-2">
                 <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                   <Globe size={11} />
-                  Website Status
+                  Website
                 </h3>
+
+                {/* Edit company details — opens the 5-step form for this company */}
+                <button
+                  onClick={() => navigate(`/admin/companies/details/${user.publishedId}/${user.email}`)}
+                  className="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 transition-all"
+                >
+                  <span className="text-yellow-800 text-sm font-semibold">Edit Company Details</span>
+                  <ChevronRight size={14} className="text-yellow-500" />
+                </button>
+
                 <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
                   {[
                     { label: "Company Registered", done: true },
