@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import { toast } from "sonner";
 import axios from "axios";
+import ListingLimitBanner from "../components/common/ListingLimitBanner";
 
 const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
 
@@ -504,7 +505,8 @@ const CompanyPage: React.FC = () => {
             <Building2 className="w-6 h-6" />
             Company Directory
           </h1>
-          <p className="text-gray-600 mb-8">Browse and manage company submissions</p>
+          <p className="text-gray-600 mb-3">Browse and manage company submissions</p>
+          <ListingLimitBanner count={companies.length} type="company" label="Companies" />
         </div>
         <button
           onClick={() => navigate("/form")}

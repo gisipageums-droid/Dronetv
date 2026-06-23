@@ -11,6 +11,7 @@ import {
 import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
+import ListingLimitBanner from "../components/common/ListingLimitBanner";
 
 interface EventCard {
   heroBannerImage: string | undefined;
@@ -391,9 +392,10 @@ const Events: React.FC = () => {
             <Users className="w-6 h-6 flex-shrink-0" />
             Events Directory
           </h1>
-          <p className="text-gray-600 sm:mb-8">
+          <p className="text-gray-600 mb-2">
             Browse and manage your events and registrations
           </p>
+          <ListingLimitBanner count={events?.length ?? 0} type="event" label="Events" />
         </div>
 
         <button

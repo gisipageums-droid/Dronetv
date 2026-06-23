@@ -109,6 +109,8 @@ import MainEvent1 from "./components/mainEventPreview/t1/EventTemplate1"
 import BuyTokenPage from "./components/UserDashboard/pages/Buy";
 import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
+import MediaHub from "./components/UserDashboard/pages/MediaHub";
+import Addons from "./components/UserDashboard/pages/Addons";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
@@ -502,6 +504,29 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/user-media-hub"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <MediaHub />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-addons"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <Addons />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/user-transactions"
             element={

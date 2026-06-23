@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
+import ListingLimitBanner from "../components/common/ListingLimitBanner";
 
 interface User {
   userId: string;
@@ -433,9 +434,10 @@ const Professinal: React.FC = () => {
             <Users className="w-6 h-6 shrink-0" />
             Professional Directory
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mb-2">
             Browse and manage professional submissions
           </p>
+          <ListingLimitBanner count={professionals?.cards?.length ?? 0} type="professional" label="Professionals" />
         </div>
 
         <button

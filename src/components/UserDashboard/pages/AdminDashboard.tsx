@@ -252,12 +252,14 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-8">
+    <div className="min-h-full bg-gray-100 p-6 md:p-8">
       {/* Header */}
       <div className="mb-8">
-        <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Admin</p>
-        <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Overview Dashboard</h1>
-        <p className="text-sm text-gray-500">Welcome back! Here's your business overview.</p>
+        <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Dashboard</p>
+        <h1 className="text-2xl font-extrabold text-gray-900 mb-1">
+          Welcome back, {userDetails?.fullName?.split(" ")[0] || "there"} 👋
+        </h1>
+        <p className="text-sm text-gray-500">Here's your business overview.</p>
       </div>
 
       {/* Search Bar */}
