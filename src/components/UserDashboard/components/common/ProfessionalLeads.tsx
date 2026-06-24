@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useUserAuth } from "../../../context/context";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MessageCircle, Send, X, Check, CheckCheck, Clock } from "lucide-react";
+import { MessageCircle, Send, X, Check, CheckCheck, Clock, Coins, Search, Eye, AlertTriangle } from "lucide-react";
 
 interface Lead {
   leadId: string;
@@ -351,7 +351,7 @@ const ProfessionalLeads: React.FC = () => {
           </div>
           <div className="mt-4 sm:mt-0 bg-amber-500 rounded-xl px-6 py-3 shadow-md">
             <div className="flex items-center">
-              <i className="fas fa-coins text-white text-xl mr-2"></i>
+              <Coins size={20} className="text-white mr-2" />
               <span className="text-white font-bold text-lg">
                 Tokens: {totalTokens}
               </span>
@@ -370,7 +370,7 @@ const ProfessionalLeads: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <i className="fas fa-search text-amber-500"></i>
+              <Search size={14} className="text-amber-500" />
             </div>
           </div>
 
@@ -464,7 +464,7 @@ const ProfessionalLeads: React.FC = () => {
                             onClick={() => handleViewClick(lead.leadId)}
                             className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm flex items-center"
                           >
-                            <i className="fas fa-eye mr-2"></i> View (10 tokens)
+                            <Eye size={14} className="mr-2" /> View (10 tokens)
                           </button>
                         )}
                       </td>
@@ -505,7 +505,7 @@ const ProfessionalLeads: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
             <div className="flex justify-center mb-4">
               <div className="bg-amber-100 rounded-full p-3">
-                <i className="fas fa-exclamation-triangle text-amber-600 text-2xl"></i>
+                <AlertTriangle size={24} className="text-amber-600" />
               </div>
             </div>
             <h3 className="text-xl font-bold text-center text-amber-900 mb-2">
@@ -542,7 +542,7 @@ const ProfessionalLeads: React.FC = () => {
                   onClick={closeMessageModal}
                   className="text-white hover:text-amber-200 transition-colors"
                 >
-                  <i className="fas fa-times text-xl"></i>
+                  <X size={20} />
                 </button>
               </div>
             </div>

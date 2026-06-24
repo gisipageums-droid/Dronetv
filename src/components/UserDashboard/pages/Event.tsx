@@ -441,7 +441,7 @@ const Events: React.FC = () => {
       ) : (
         <div className="text-center py-20 text-gray-500">
           <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
-          No events found matching "{searchTerm}"
+          {searchTerm ? `No events found matching "${searchTerm}"` : "No events yet. Click Create New Event to add one."}
         </div>
       )}
     </div>

@@ -3,6 +3,7 @@ import token from "../assets/token.jpeg";
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../context/context';
 import { toast } from 'react-toastify';
+import { X, Lock, Search } from 'lucide-react';
 
 interface Transaction {
   transactionId: string;
@@ -338,7 +339,7 @@ const ProfilePage: React.FC = () => {
                   onClick={() => navigate('/forgot-password')}
                   className="text-amber-600 hover:text-amber-800 font-medium flex items-center"
                 >
-                  <i className="fas fa-lock mr-2 text-amber-600"></i>
+                  <Lock size={15} className="mr-2 text-amber-600" />
                   Reset Password
                 </button>
               </div>
@@ -439,9 +440,9 @@ const ProfilePage: React.FC = () => {
                 <h3 className="text-xl font-semibold text-amber-900">Buy Tokens</h3>
                 <button
                   onClick={() => setShowTokenPurchase(false)}
-                  className="text-amber-500 hover:text-amber-700"
+                  className="p-1.5 rounded-lg text-amber-500 hover:text-amber-700 hover:bg-amber-100 transition-colors"
                 >
-                  <i className="fas fa-times text-xl"></i>
+                  <X size={20} />
                 </button>
               </div>
               <p className="text-amber-700">Choose a token package</p>
@@ -490,9 +491,9 @@ const ProfilePage: React.FC = () => {
                 <h3 className="text-xl font-semibold text-amber-900">All Transactions</h3>
                 <button
                   onClick={() => setShowAllTransactions(false)}
-                  className="text-amber-500 hover:text-amber-700"
+                  className="p-1.5 rounded-lg text-amber-500 hover:text-amber-700 hover:bg-amber-100 transition-colors"
                 >
-                  <i className="fas fa-times text-xl"></i>
+                  <X size={20} />
                 </button>
               </div>
 
@@ -506,7 +507,7 @@ const ProfilePage: React.FC = () => {
                     onChange={(e) => setTransactionSearch(e.target.value)}
                   />
                   <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <i className="fas fa-search text-amber-500"></i>
+                    <Search size={14} className="text-amber-500" />
                   </div>
                 </div>
                 <div className="relative">
