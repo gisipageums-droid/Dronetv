@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Building2, Users, Calendar, User, Wallet, Clock1,
-  MessageSquare, Globe, FileText, Brain, LogOut, X, Grid3X3, Video, ShoppingBag,
+  MessageSquare, Globe, FileText, Brain, LogOut, X, Grid3X3, Video, ShoppingBag, Share2,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
@@ -16,6 +16,7 @@ const MobileBottomNav: React.FC = () => {
     { icon: Building2,    label: "Companies",   href: "/user-companies" },
     { icon: Users,        label: "Professionals", href: "/user-professionals" },
     { icon: Calendar,     label: "Events",      href: "/user-events" },
+    { icon: Share2,       label: "Posts",       href: "/user-posts" },
     { icon: Video,        label: "Media Hub",   href: "/user-media-hub" },
     { icon: ShoppingBag,  label: "Addons",      href: "/user-addons" },
     { icon: FileText,     label: "Leads",       href: "/user-leads" },

@@ -111,6 +111,7 @@ import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
 import MediaHub from "./components/UserDashboard/pages/MediaHub";
 import Addons from "./components/UserDashboard/pages/Addons";
+import UserPosts from "./components/UserDashboard/pages/UserPosts";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
@@ -522,6 +523,17 @@ const AppContent = () => {
               <ProtectedRoute>
                 <UserDashboardLayout>
                   <Addons />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-posts"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <UserPosts />
                 </UserDashboardLayout>
               </ProtectedRoute>
             }
