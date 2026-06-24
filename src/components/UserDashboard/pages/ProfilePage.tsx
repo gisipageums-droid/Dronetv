@@ -246,7 +246,7 @@ const ProfilePage: React.FC = () => {
       const orderData = await createRazorpayOrder(amount, tokenCount);
 
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY_ID || orderData.key,
+        key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key,
         amount: orderData.order.amount,
         currency: orderData.order.currency,
         name: 'DroneTV',

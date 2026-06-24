@@ -81,9 +81,7 @@ const Sidebar: React.FC = () => {
 
   const getInitialOpen = () => {
     const open: Record<string, boolean> = {};
-    NAV_GROUPS.forEach(g => {
-      open[g.id] = g.paths.some(p => location.pathname.startsWith(p));
-    });
+    NAV_GROUPS.forEach(g => { open[g.id] = true; });
     return open;
   };
 
