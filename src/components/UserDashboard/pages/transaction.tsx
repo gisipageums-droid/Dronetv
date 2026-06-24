@@ -54,8 +54,6 @@ const TransactionHistory: React.FC = () => {
                 `https://vgrrxo3wu9.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/Transaction-History/${userId}`
             );
 
-            console.log("API Response:", response.data);
-
             if (response.data.success) {
                 setTransactionHistoryData(response.data);
                 setTransactions(response.data.transactions || []);

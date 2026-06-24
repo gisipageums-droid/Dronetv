@@ -283,18 +283,17 @@ const Events: React.FC = () => {
   const [events, setEvents] = useState<EventCard[]>([]);
   const [loading, setloading] = useState(true);
 
-  //get data
   useEffect(() => {
+    if (!user?.userData?.email) return;
     setloading(true);
-
-    axios.get<EventResponse>(`https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user?.userData?.email}`).then((response) => {
+    axios.get<EventResponse>(`https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user.userData.email}`).then((response) => {
       setEvents(response.data.cards);
     }).catch((error) => {
       console.error(error);
     }).finally(() => {
       setloading(false);
-    })
-  }, []);
+    });
+  }, [user?.userData?.email]);
 
   const handleEdit = async (eventId: string, templateSelection: string) => {
     try {
