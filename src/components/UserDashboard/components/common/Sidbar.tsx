@@ -16,14 +16,28 @@ import {
   Tv,
   Video,
   ShoppingBag,
+  Coins,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
+import axios from "axios";
+
+const PROFILE_API = "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile";
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
+  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const { user, logout } = useUserAuth();
   const navigate = useNavigate();
+
+  const userId = user?.userData?.email || user?.email || "";
+
+  React.useEffect(() => {
+    if (!userId) return;
+    axios.get(`${PROFILE_API}?userId=${userId}`)
+      .then(r => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
+      .catch(() => setTokenBalance(0));
+  }, [userId]);
 
   const handleLogout = () => {
     logout();
@@ -102,6 +116,28 @@ const navLinks = [
             </NavLink>
           ))}
         </nav>
+
+        {/* Token balance */}
+        {isOpen && tokenBalance !== null && (
+          <NavLink
+            to="/user-recharge"
+            className="mx-3 mb-1 flex items-center justify-between px-3 py-2 rounded-lg bg-yellow-400/10 border border-yellow-400/20 hover:bg-yellow-400/20 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Coins size={14} className="text-yellow-400 flex-shrink-0" />
+              <span className="text-xs text-white/60">Tokens</span>
+            </div>
+            <span className="text-sm font-black text-yellow-400">{tokenBalance.toLocaleString()}</span>
+          </NavLink>
+        )}
+        {!isOpen && tokenBalance !== null && (
+          <NavLink to="/user-recharge" className="flex justify-center mb-1 px-2" title={`${tokenBalance} tokens`}>
+            <div className="flex flex-col items-center gap-0.5">
+              <Coins size={16} className="text-yellow-400" />
+              <span className="text-[9px] font-black text-yellow-400">{tokenBalance > 999 ? `${Math.floor(tokenBalance/1000)}k` : tokenBalance}</span>
+            </div>
+          </NavLink>
+        )}
 
         {/* Profile Section */}
         <div className="flex-shrink-0 border-t border-white/10 p-3">

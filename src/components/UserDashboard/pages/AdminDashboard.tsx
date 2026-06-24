@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Search, Users, Briefcase, Calendar } from "lucide-react";
+import { Search, Users, Briefcase, Calendar, Coins } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import {
   PieChart,
@@ -62,6 +62,7 @@ const AdminDashboard: React.FC = () => {
   const [companyCount, setCompanyCount] = useState(0);
   const [professionalCount, setProfessionalCount] = useState(0);
   const [eventCount, setEventCount] = useState(0);
+  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
 
   // Mock data (keeping other static data as is for now)
   const stats = [
@@ -140,7 +141,12 @@ const AdminDashboard: React.FC = () => {
     getCategory();
     getProfessionalCount();
     getEventCount();
-  }, [getCategory, getProfessionalCount, getEventCount]);
+    if (userDetails?.email) {
+      axios.get(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile?userId=${userDetails.email}`)
+        .then(r => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
+        .catch(() => setTokenBalance(0));
+    }
+  }, [getCategory, getProfessionalCount, getEventCount, userDetails?.email]);
 
   // fetch for company recent leads
   const fetchRecentCompaniesLeads = useCallback(async () => {
@@ -277,7 +283,7 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
@@ -294,6 +300,20 @@ const AdminDashboard: React.FC = () => {
             </div>
           );
         })}
+        {/* Token balance card */}
+        <a href="/user-recharge" className="bg-gray-900 border border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow block">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Token Balance</p>
+              <p className="text-3xl font-extrabold text-yellow-400">
+                {tokenBalance === null ? "…" : tokenBalance.toLocaleString()}
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-yellow-400/15 rounded-xl flex items-center justify-center">
+              <Coins size={22} className="text-yellow-400" />
+            </div>
+          </div>
+        </a>
       </div>
 
       {/* Charts Row */}
