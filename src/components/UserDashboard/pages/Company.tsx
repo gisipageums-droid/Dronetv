@@ -5,6 +5,7 @@ import { useTemplate, useUserAuth } from "../../context/context";
 import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
+import { COMPANY_API } from "../../../lib/apiConfig";
 
 const SUREPASS_PROXY = import.meta.env.VITE_SUREPASS_PROXY_URL;
 
@@ -242,7 +243,7 @@ const CompanyPage: React.FC = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?userId=${userId}`
+        COMPANY_API ? `${COMPANY_API}/dashboard-cards?userId=${userId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?userId=${userId}`
       );
       if (!res.ok) throw new Error("Failed to fetch companies");
       const data = await res.json();
@@ -273,7 +274,7 @@ const CompanyPage: React.FC = () => {
     cb: (data: PublishedDetailsResponse) => void
   ) => {
     const res = await fetch(
-      `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
+      COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${publishedId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
       { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
     );
     if (!res.ok) {
@@ -405,7 +406,7 @@ const CompanyPage: React.FC = () => {
     try {
       const userId = user?.email || user?.userData?.email || '';
       await axios.post(
-        'https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review',
+        COMPANY_API ? `${COMPANY_API}/admin/templates/review` : 'https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review',
         { publishedId: publishingCompany.publishedId, action: 'approve' },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -436,7 +437,7 @@ const CompanyPage: React.FC = () => {
       }
       // Server-side check
       fetch(
-        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${c.publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${c.publishedId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${c.publishedId}`,
         { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
       )
         .then((r) => r.json())

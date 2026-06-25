@@ -1,4 +1,5 @@
-const BASE = 'https://quvfyw4hwc.execute-api.ap-south-1.amazonaws.com/prod/media-content';
+import { MEDIA_API, LAMBDA } from './apiConfig';
+const BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
 
 export interface MediaItem {
   contentType: string;

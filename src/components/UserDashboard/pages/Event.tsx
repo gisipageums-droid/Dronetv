@@ -12,6 +12,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
+import { EVENTS_API } from "../../../lib/apiConfig";
 
 interface EventCard {
   heroBannerImage: string | undefined;
@@ -286,7 +287,7 @@ const Events: React.FC = () => {
   useEffect(() => {
     if (!user?.userData?.email) return;
     setloading(true);
-    axios.get<EventResponse>(`https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user.userData.email}`).then((response) => {
+    axios.get<EventResponse>(EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=user&userId=${user.userData.email}` : `https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user.userData.email}`).then((response) => {
       setEvents(response.data.cards);
     }).catch((error) => {
       console.error(error);

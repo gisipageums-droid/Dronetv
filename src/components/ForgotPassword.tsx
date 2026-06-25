@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AUTH_API } from '../lib/apiConfig';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -34,7 +35,7 @@ const ForgotPassword: React.FC = () => {
 
     setIsLoading(true)
     try {
-      const response = await fetch('https://ly8r7e8131.execute-api.ap-south-1.amazonaws.com/dev/forgot', {
+      const response = await fetch(AUTH_API ? `${AUTH_API}/forgot-password` : 'https://ly8r7e8131.execute-api.ap-south-1.amazonaws.com/dev/forgot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

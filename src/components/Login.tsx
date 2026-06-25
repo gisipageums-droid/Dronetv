@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 import { useUserAuth } from "./context/context";
 import { toast } from "react-toastify";
+import { AUTH_API, LAMBDA } from "../lib/apiConfig";
 interface LoginData {
   email: string;
   password: string;
@@ -164,7 +165,7 @@ export default function Login() {
 
     try {
       const response = await fetch(
-        "https://rnpcnionle.execute-api.ap-south-1.amazonaws.com/user_register_post",
+        AUTH_API ? `${AUTH_API}/register` : "https://rnpcnionle.execute-api.ap-south-1.amazonaws.com/user_register_post",
         {
           method: "POST",
           headers: {
@@ -213,7 +214,7 @@ export default function Login() {
       try {
         // Send Google credential to your backend for verification
         const response = await fetch(
-          "https://67duf9ey84.execute-api.ap-south-1.amazonaws.com/google_log/Google_login",
+          AUTH_API ? `${AUTH_API}/google-login` : "https://67duf9ey84.execute-api.ap-south-1.amazonaws.com/google_log/Google_login",
           {
             method: "POST",
             headers: {
@@ -250,7 +251,7 @@ export default function Login() {
                
     try {
       const response = await fetch(
-        "https://yxzlfcqwf7.execute-api.ap-south-1.amazonaws.com/prod/login_post",
+        AUTH_API ? `${AUTH_API}/login` : "https://yxzlfcqwf7.execute-api.ap-south-1.amazonaws.com/prod/login_post",
         {
           method: "POST",
           headers: {

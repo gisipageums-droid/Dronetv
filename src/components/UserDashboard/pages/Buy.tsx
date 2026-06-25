@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import { useUserAuth } from "../../context/context";
 import axios from 'axios';
+import { PAYMENT_API } from '../../../lib/apiConfig';
 
 const BuyTokenPage: React.FC = () => {
   const { Razorpay } = useRazorpay();
@@ -33,7 +34,7 @@ const BuyTokenPage: React.FC = () => {
 
   // Place Order API Call
   const placeOrder = (orderData: any) => {
-    return axios.post('https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/place-order', orderData, {
+    return axios.post('PAYMENT_API ? `${PAYMENT_API}/place-order` : 'https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/place-order'', orderData, {
       headers: {
         'Content-Type': 'application/json',
       }
@@ -49,7 +50,7 @@ const BuyTokenPage: React.FC = () => {
 
   // Fail Order API Call
   const failOrder = (transactionId: string, reason: string, errorCode: string = '', status: 'FAILED' | 'CANCELLED' = 'FAILED') => {
-    return axios.post('https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/fail-order', {
+    return axios.post('PAYMENT_API ? `${PAYMENT_API}/fail-order` : 'https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/fail-order'', {
       transactionId, reason, errorCode, status
     }, { headers: { 'Content-Type': 'application/json' } })
       .then(r => r.data)
@@ -58,7 +59,7 @@ const BuyTokenPage: React.FC = () => {
 
   // Confirm Order API Call
   const confirmOrder = (paymentData: any) => {
-    return axios.post('https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/confirm-order', paymentData, {
+    return axios.post('PAYMENT_API ? `${PAYMENT_API}/confirm-order` : 'https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/confirm-order'', paymentData, {
       headers: {
         'Content-Type': 'application/json',
       }
