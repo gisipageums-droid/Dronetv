@@ -1114,7 +1114,7 @@ const GSTVerificationSection: React.FC<{
       if (!gstNumber || gstNumber.length < 4) return;
       setIsVerifyingCIN(true);
       try {
-        const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
+        const SUREPASS_TOKEN = import.meta.env.VITE_SUREPASS_TOKEN;
         const response = await axios.post(
           'https://kyc-api.surepass.io/api/v1/corporate/company-details',
           { id_number: gstNumber },
@@ -2238,7 +2238,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
       try {
         // SUREPASS GST ADVANCED API
-        const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
+        const SUREPASS_TOKEN = import.meta.env.VITE_SUREPASS_TOKEN;
 
         let response;
         let apiUnavailable = false;

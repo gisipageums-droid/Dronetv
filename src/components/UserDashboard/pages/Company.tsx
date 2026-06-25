@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 
-const SUREPASS_TOKEN = "SUREPASS_TOKEN_REMOVED";
+const SUREPASS_TOKEN = import.meta.env.VITE_SUREPASS_TOKEN;
 
 type DigiStatus = 'idle' | 'loading' | 'ready' | 'polling' | 'verified' | 'error';
 
