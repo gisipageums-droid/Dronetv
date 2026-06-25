@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
-import { FiArrowRight, FiCheck, FiExternalLink, FiEye, FiStar } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight, FiCheck, FiExternalLink, FiEye, FiStar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import TPL1 from "/images/event t1.png";
 
@@ -64,6 +64,15 @@ const EventSelect: React.FC = () => {
 
     return (
         <div className="max-w-6xl bg-white my-16 mx-auto px-4 py-8">
+            {/* Back Button */}
+            <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 text-gray-600 hover:text-yellow-600 transition-colors mb-8 text-sm font-medium"
+            >
+                <FiArrowLeft className="w-4 h-4" />
+                Back
+            </button>
+
             {/* Header */}
             <motion.div
                 className="text-center mb-12"
@@ -80,7 +89,7 @@ const EventSelect: React.FC = () => {
             </motion.div>
 
             {/* Grid (single card) */}
-            <div className="grid grid-cols-2 gap-6 ">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {templates.map((tpl) => {
                     const isActive = selectedTemplate === tpl.id;
                     const isHovered = hoveredTemplate === tpl.id;
