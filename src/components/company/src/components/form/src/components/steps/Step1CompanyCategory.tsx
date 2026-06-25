@@ -1114,11 +1114,10 @@ const GSTVerificationSection: React.FC<{
       if (!gstNumber || gstNumber.length < 4) return;
       setIsVerifyingCIN(true);
       try {
-        const SUREPASS_TOKEN = import.meta.env.VITE_SUREPASS_TOKEN;
         const response = await axios.post(
-          'https://kyc-api.surepass.io/api/v1/corporate/company-details',
-          { id_number: gstNumber },
-          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json', Accept: 'application/json' }, timeout: 15000 }
+          import.meta.env.VITE_SUREPASS_PROXY_URL,
+          { action: 'cin', id_number: gstNumber },
+          { timeout: 15000 }
         );
         if (response.data?.success && response.data?.data) {
           const d = response.data.data;
@@ -2238,22 +2237,13 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
       try {
         // SUREPASS GST ADVANCED API
-        const SUREPASS_TOKEN = import.meta.env.VITE_SUREPASS_TOKEN;
-
         let response;
         let apiUnavailable = false;
         try {
           response = await axios.post(
-            "https://kyc-api.surepass.io/api/v1/corporate/gstin-advanced",
-            { "id_number": gstNumber },
-            {
-              headers: {
-                "Authorization": `Bearer ${SUREPASS_TOKEN}`,
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-              },
-              timeout: 15000,
-            }
+            import.meta.env.VITE_SUREPASS_PROXY_URL,
+            { action: 'gstin', id_number: gstNumber },
+            { timeout: 15000 }
           );
         } catch (apiErr: any) {
           if (apiErr?.response?.status === 401 || apiErr?.response?.status === 403) {

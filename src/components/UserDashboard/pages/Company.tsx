@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 
-const SUREPASS_TOKEN = import.meta.env.VITE_SUREPASS_TOKEN;
+const SUREPASS_PROXY = import.meta.env.VITE_SUREPASS_PROXY_URL;
 
 type DigiStatus = 'idle' | 'loading' | 'ready' | 'polling' | 'verified' | 'error';
 
@@ -328,11 +328,7 @@ const CompanyPage: React.FC = () => {
     setDigiUrl('');
     setDigiClientId('');
     try {
-      const res = await axios.post(
-        'https://kyc-api.surepass.app/api/v1/digilocker/initialize',
-        { data: { signup_flow: true } },
-        { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, 'Content-Type': 'application/json' } }
-      );
+      const res = await axios.post(SUREPASS_PROXY, { action: 'digilocker-init' });
       if (!res.data?.success || !res.data?.data?.url) throw new Error('Init failed');
       setDigiUrl(res.data.data.url);
       setDigiClientId(res.data.data.client_id);
@@ -349,10 +345,7 @@ const CompanyPage: React.FC = () => {
     pollRef.current = setInterval(async () => {
       attempts++;
       try {
-        const res = await axios.get(
-          `https://kyc-api.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
-          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}` } }
-        );
+        const res = await axios.post(SUREPASS_PROXY, { action: 'digilocker-poll', client_id: clientId });
         if (res.data?.success) {
           clearInterval(pollRef.current!);
           popupRef.current?.close();
@@ -365,10 +358,7 @@ const CompanyPage: React.FC = () => {
       if (popupRef.current?.closed) {
         clearInterval(pollRef.current!);
         try {
-          const finalRes = await axios.get(
-            `https://kyc-api.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
-            { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}` } }
-          );
+          const finalRes = await axios.post(SUREPASS_PROXY, { action: 'digilocker-poll', client_id: clientId });
           if (finalRes.data?.success) {
             setDigiStatus('verified');
             toast.success('Aadhaar verified successfully!');
