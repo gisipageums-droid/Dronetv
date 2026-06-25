@@ -2324,8 +2324,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           const apiData = response.data.data;
 
           // Map Surepass fields to our verifiedData structure as per user's JSON response
-          const companyName = apiData.business_name || apiData.legal_name || "";
-          const legalName = apiData.legal_name || "";
+          const companyName = apiData.trade_name || apiData.business_name || apiData.legal_name || "";
+          const legalName = apiData.legal_name || apiData.trade_name || "";
           const panNumber = apiData.pan_number || "";
           const registrationDate = apiData.date_of_registration || "";
           const businessEntityType = apiData.constitution_of_business || "";
