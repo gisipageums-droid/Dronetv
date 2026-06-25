@@ -1111,6 +1111,13 @@ const EventAdminDashboard: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") ?? "all");
   const [viewFilter, setViewFilter] = useState<string>(searchParams.get("view") ?? "all");
+
+  React.useEffect(() => {
+    const view = searchParams.get("view") ?? "all";
+    const status = searchParams.get("status") ?? "all";
+    setViewFilter(view);
+    setStatusFilter(status);
+  }, [searchParams]);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
     useState<boolean>(false);
   const [events, setEvents] = useState<Event[]>([]);

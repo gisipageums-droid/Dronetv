@@ -104,7 +104,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside className="flex h-full">
+    <aside className="flex h-screen sticky top-0">
       <section
         className={`${isOpen ? "w-64" : "w-16"} flex flex-col transition-all duration-300 overflow-x-hidden`}
         style={{ background: "#111827" }}
