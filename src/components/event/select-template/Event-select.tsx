@@ -63,7 +63,7 @@ const EventSelect: React.FC = () => {
     };
 
     return (
-        <div className="max-w-6xl bg-white my-16 mx-auto px-4 py-8">
+        <div className="w-full max-w-2xl bg-white my-8 mx-auto px-4 py-8">
             {/* Back Button */}
             <button
                 onClick={() => navigate(-1)}
@@ -104,10 +104,10 @@ const EventSelect: React.FC = () => {
                             onMouseEnter={() => setHoveredTemplate(tpl.id)}
                             onMouseLeave={() => setHoveredTemplate(null)}
                             onClick={() => handleSelect(tpl.id)}
-                            className={`relative flex flex-col group border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 ${isActive
+                            className={`relative flex flex-col group border-2 rounded-xl p-4 sm:p-6 cursor-pointer transition-all duration-300 w-full min-w-0 ${isActive
                                 ? "border-yellow-400 bg-yellow-50/50 shadow-lg"
                                 : "border-gray-200 hover:border-yellow-300 hover:shadow-xl"
-                                } overflow-hidden`}
+                                }`}
                         >
                             {/* Popular Badge */}
                             {tpl.tags.includes("Popular") && (
@@ -212,7 +212,7 @@ const EventSelect: React.FC = () => {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     type="button"
-                                    className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium border transition-all duration-200 ${isActive
+                                    className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium border transition-all duration-200 flex-1 ${isActive
                                         ? "border-yellow-400 text-yellow-600"
                                         : "border-gray-300 text-gray-600 hover:border-yellow-300 hover:text-yellow-600"
                                         }`}
