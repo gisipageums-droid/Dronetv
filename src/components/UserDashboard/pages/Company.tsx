@@ -5,7 +5,7 @@ import { useTemplate, useUserAuth } from "../../context/context";
 import { toast } from "sonner";
 import axios from "axios";
 
-const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4MTkzODA3NiwianRpIjoiMTgzYTY4ODktYzhlOS00ZGUxLTkwYTMtYzA5MmZhM2VlNjlhIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3ODE5MzgwNzYsImV4cCI6MjA5NzI5ODA3NiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.MqRyYMS8ktHGcfRndLfFO6YnYhtNO2Avo6mgAoHvrk8";
+const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4MjExNTUyMiwianRpIjoiMDkyNDI3N2ItNmM4Ny00MmQwLTlhMWMtM2ViMzMwOTI0YmEyIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3ODIxMTU1MjIsImV4cCI6MjA5NzQ3NTUyMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.1WRNWhTkC6d8rulL3cotFDvuNP7Y1kDUeAlkbky6L70";
 
 type DigiStatus = 'idle' | 'loading' | 'ready' | 'polling' | 'verified' | 'error';
 

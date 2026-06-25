@@ -1114,7 +1114,7 @@ const GSTVerificationSection: React.FC<{
       if (!gstNumber || gstNumber.length < 4) return;
       setIsVerifyingCIN(true);
       try {
-        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4MTkzODA3NiwianRpIjoiMTgzYTY4ODktYzhlOS00ZGUxLTkwYTMtYzA5MmZhM2VlNjlhIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3ODE5MzgwNzYsImV4cCI6MjA5NzI5ODA3NiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.MqRyYMS8ktHGcfRndLfFO6YnYhtNO2Avo6mgAoHvrk8";
+        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4MjExNTUyMiwianRpIjoiMDkyNDI3N2ItNmM4Ny00MmQwLTlhMWMtM2ViMzMwOTI0YmEyIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3ODIxMTU1MjIsImV4cCI6MjA5NzQ3NTUyMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.1WRNWhTkC6d8rulL3cotFDvuNP7Y1kDUeAlkbky6L70";
         const response = await axios.post(
           'https://kyc-api.surepass.io/api/v1/corporate/company-details',
           { id_number: gstNumber },
@@ -2238,7 +2238,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
       try {
         // SUREPASS GST ADVANCED API
-        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4MTkzODA3NiwianRpIjoiMTgzYTY4ODktYzhlOS00ZGUxLTkwYTMtYzA5MmZhM2VlNjlhIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3ODE5MzgwNzYsImV4cCI6MjA5NzI5ODA3NiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.MqRyYMS8ktHGcfRndLfFO6YnYhtNO2Avo6mgAoHvrk8";
+        const SUREPASS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc4MjExNTUyMiwianRpIjoiMDkyNDI3N2ItNmM4Ny00MmQwLTlhMWMtM2ViMzMwOTI0YmEyIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3ODIxMTU1MjIsImV4cCI6MjA5NzQ3NTUyMiwiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.1WRNWhTkC6d8rulL3cotFDvuNP7Y1kDUeAlkbky6L70";
 
         let response;
         let apiUnavailable = false;
@@ -2324,7 +2324,8 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           const apiData = response.data.data;
 
           // Map Surepass fields to our verifiedData structure as per user's JSON response
-          const companyName = apiData.business_name || apiData.legal_name || "";
+          const notNA = (v: string | undefined | null) => (v && v !== "NA") ? v : "";
+          const companyName = notNA(apiData.trade_name) || notNA(apiData.business_name) || apiData.legal_name || "";
           const legalName = apiData.legal_name || "";
           const panNumber = apiData.pan_number || "";
           const registrationDate = apiData.date_of_registration || "";
