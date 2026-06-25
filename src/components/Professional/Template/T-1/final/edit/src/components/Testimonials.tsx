@@ -314,7 +314,7 @@
 //       formData.append("fieldName", "testimonialImage");
 
 //       const uploadResponse = await fetch(
-//         `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+//         MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`,
 //         {
 //           method: "POST",
 //           body: formData,
@@ -1133,6 +1133,7 @@ import {
 import { toast } from "sonner";
 import maleAvatar from "/logos/maleAvatar.png";
 import femaleAvatar from "/logos/femaleAvatar.png";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 export interface Testimonial {
   id: number;
@@ -1397,7 +1398,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({
 
       xhr.open(
         "POST",
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`
+        MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`
       );
       xhr.send(formData);
     });

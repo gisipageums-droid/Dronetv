@@ -14,6 +14,7 @@ import { ContactSection } from './components/ContactSection';
 import Publish from './components/Publish';
 import Back from './components/Back';
 import { Footer } from './components/FooterSection';
+import { EVENTS_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 // Define types for the component states
 interface ComponentStates {
@@ -99,7 +100,7 @@ export default function FinalEdit_event_t2() {
     const fetchTemplateData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`https://2lksnliog8.execute-api.ap-south-1.amazonaws.com/prod/${eventId}/${userId}`, {
+        const response = await fetch(EVENTS_API ? `${EVENTS_API}/event-content/${eventId}/${userId}` : `${LAMBDA.eventTemplateContent}/${eventId}/${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'

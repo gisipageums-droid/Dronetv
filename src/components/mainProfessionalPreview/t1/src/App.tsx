@@ -26,10 +26,12 @@ import { Clients as T2Clients } from "../../t2/src/components/Clients";
 import { SimpleTestimonials as T2Testimonials } from "../../t2/src/components/SimpleTestimonials";
 import { Contact as T2Contact } from "../../t2/src/components/Contact";
 import { Footer as T2Footer } from "../../t2/src/components/Footer";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
 
-const CARDS_API =
-  "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=main";
-const CONTENT_API = "https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev";
+const CARDS_API = PROFESSIONAL_API
+  ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=main`
+  : `${LAMBDA.professional}/professional-dashboard-cards?viewType=main`;
+const CONTENT_API = PROFESSIONAL_API ? `${PROFESSIONAL_API}/template-content` : `${LAMBDA.profTemplateDash}`;
 
 const FinalT1: React.FC = () => {
   const { urlSlug } = useParams();

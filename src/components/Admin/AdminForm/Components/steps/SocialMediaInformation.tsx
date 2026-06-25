@@ -2,6 +2,7 @@
 import React from 'react';
 import { FormInput } from '../FormInput';
 import { Globe } from 'lucide-react';
+import { ADMIN_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 export default function SocialMediaInformation({
     setShowSocialMediaModal,
@@ -88,7 +89,7 @@ export default function SocialMediaInformation({
 
     const hideSocialMediaField = async (fieldName: string) => {
         try {
-            const res = await fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete-core-field/${fieldName}`, {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/delete-core-field/${fieldName}` : `${LAMBDA.adminForm}/delete-core-field/${fieldName}`, {
                 method: 'DELETE', 
                 headers: { 'Content-Type': 'application/json' }
             });

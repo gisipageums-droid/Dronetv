@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { CheckCircle, X } from "lucide-react";
+import { COMPANY_API, PROFESSIONAL_API, EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 
 // User Authentication Types and Context
 interface User {
@@ -278,8 +279,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     );
   }
 
-  const API =
-    "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft";
+  const API = COMPANY_API ? `${COMPANY_API}/draft` : `${LAMBDA.companyDraft}/api/draft`;
   //get API AI gen data :
   const getAIgenData = async (
     userId: string,
@@ -327,8 +327,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        // `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${AIGenData.userId}/update/${AIGenData.publishedId}`,
-        `https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update`,
+        COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`,
         {
           method: "PUT",
           headers: {
@@ -378,8 +377,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        // `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${finaleDataReview.userId}/update/${finaleDataReview.publishedId}`,
-        `https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update`,
+        COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`,
         {
           method: "PUT",
           headers: {
@@ -440,7 +438,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        `https://bre0tniae1.execute-api.ap-south-1.amazonaws.com/prod/`,
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/publish` : `${LAMBDA.profPublish}/`,
         {
           method: "PUT",
           headers: {
@@ -492,8 +490,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         submissionId: AIGenData.eventId,
       };
       const response = await fetch(
-        // `https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/prod/events-publish/${AIGenData.userId}/${AIGenData.eventId}`,
-        "https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/dev/events-publish/event-publish",
+        EVENTS_API ? `${EVENTS_API}/publish` : `${LAMBDA.eventsPublish}/events-publish/event-publish`,
         {
           method: "POST",
           headers: {

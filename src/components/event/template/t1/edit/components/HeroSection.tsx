@@ -15,6 +15,7 @@ import {
 import Cropper from "react-easy-crop";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface HeroSectionProps {
   heroData?: {
@@ -336,7 +337,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     formData.append("fieldName", fieldName + Date.now());
 
     const uploadResponse = await fetch(
-      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`,
+      MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`,
       {
         method: "POST",
         body: formData,

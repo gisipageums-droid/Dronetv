@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Handshake, Building2, Brain, Calendar, GraduationCap, Users, Eye, Award, TrendingUp, Mail, Phone, MapPin, CheckCircle, Send } from 'lucide-react';
+import { ADMIN_API, LAMBDA } from '../lib/apiConfig';
 
 const PartnerPage = () => {
   const formRef = useRef<HTMLDivElement>(null);
@@ -33,7 +34,7 @@ const PartnerPage = () => {
     };
     setSubmitError('');
     try {
-      const response = await fetch('https://0etsqrl2k1.execute-api.ap-south-1.amazonaws.com/postdronetvpartner', {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/partner` : `${LAMBDA.partner}/postdronetvpartner`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -12,6 +12,7 @@ import { GallerySection } from './components/GallerySection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/FooterSection';
 import Back from './components/Back';
+import { EVENTS_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 // Define types for the component states
 interface ComponentStates {
@@ -61,7 +62,7 @@ export default function FinalPreview_event_t2() {
     const fetchTemplateData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`https://fupab15ap0.execute-api.ap-south-1.amazonaws.com/dev/${userId}`, {
+        const response = await fetch(EVENTS_API ? `${EVENTS_API}/preview/${userId}` : `${LAMBDA.eventPreview}/${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'

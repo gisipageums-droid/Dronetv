@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { EVENTS_API, LAMBDA } from '../lib/apiConfig';
 
 // (optional) Type – aap chahe toh hata bhi sakte ho
 // interface EventCard {
@@ -52,7 +53,7 @@ const UpcomingEvents = () => {
   useEffect(() => {
     axios
       .get(
-        "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main"
+        EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=main` : `${LAMBDA.events}/events-dashboard?viewType=main`
       )
       .then((res) => {
         if (res.data?.success && Array.isArray(res.data.cards)) {

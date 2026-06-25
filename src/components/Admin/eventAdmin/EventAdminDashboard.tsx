@@ -19,6 +19,7 @@ import {
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "motion/react";
+import { EVENTS_API, LAMBDA } from '../../../lib/apiConfig';
 
 // -------------------- Types --------------------
 interface Event {
@@ -1073,7 +1074,7 @@ const eventApiService = {
   async fetchEventCredentials(eventId: string): Promise<EventCredentialsData> {
     try {
       const response = await fetch(
-        `https://dmxs169e33.execute-api.ap-south-1.amazonaws.com/dev/event-formdetails-verification/${eventId}`
+        EVENTS_API ? `${EVENTS_API}/event-formdetails-verification/${eventId}` : `${LAMBDA.eventsVerify}/event-formdetails-verification/${eventId}`
       );
 
       if (!response.ok) {
@@ -1233,7 +1234,7 @@ const EventAdminDashboard: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin",
+        EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=admin` : `${LAMBDA.events}/events-dashboard?viewType=admin`,
         { signal }
       );
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -1254,7 +1255,7 @@ const EventAdminDashboard: React.FC = () => {
 
   const handleApproveAction = async (eventId: string, userId: string) => {
     const response = await fetch(
-      `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
+      EVENTS_API ? `${EVENTS_API}/event/${eventId}` : `${LAMBDA.eventsAdmin}/event/${eventId}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1268,7 +1269,7 @@ const EventAdminDashboard: React.FC = () => {
 
   const handleRejectAction = async (eventId: string, userId: string) => {
     const response = await fetch(
-      `https://tl85vj590m.execute-api.ap-south-1.amazonaws.com/dev/event/${eventId}`,
+      EVENTS_API ? `${EVENTS_API}/event/${eventId}` : `${LAMBDA.eventsAdmin}/event/${eventId}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

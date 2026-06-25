@@ -38,6 +38,7 @@ import {
   IndianRupee,
   History,
 } from "lucide-react";
+import { COMPANY_API, EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 
 // ── Types ──────────────────────────────────────────────────────────
 interface SubItem {
@@ -264,17 +265,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const fetchPendingCounts = async () => {
       const sources = [
         {
-          url: "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin",
+          url: COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin` : `${LAMBDA.company}/dashboard-cards?viewType=admin`,
           label: "Companies",
           path: "/admin/company/dashboard",
         },
         {
-          url: "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=admin",
+          url: EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=admin` : `${LAMBDA.events}/events-dashboard?viewType=admin`,
           label: "Events",
           path: "/admin/event/dashboard",
         },
         {
-          url: "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=admin",
+          url: PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`,
           label: "Professionals",
           path: "/admin/professional/dashboard",
         },

@@ -6,9 +6,10 @@ import {
   Building2, UserCircle, ExternalLink, CheckCircle, XCircle,
   MapPin, Briefcase, Star, Eye, Calendar, BarChart2, Trash2, AlertTriangle, Globe,
 } from "lucide-react";
+import { COMPANY_API, PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 
-const COMPANIES_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin";
-const PROFESSIONALS_API = "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=admin";
+const COMPANIES_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin` : `${LAMBDA.company}/dashboard-cards?viewType=admin`;
+const PROFESSIONALS_API = PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`;
 
 interface UserRecord {
   email: string;
@@ -74,7 +75,7 @@ function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: Use
     if (!user.publishedId) return;
     setActionLoading(action);
     try {
-      const res = await fetch("https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review", {
+      const res = await fetch(COMPANY_API ? `${COMPANY_API}/admin/templates/review` : `${LAMBDA.companyAdmin}/admin/templates/review`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ publishedId: user.publishedId, action }),
@@ -96,13 +97,13 @@ function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: Use
     try {
       let res: Response;
       if (user.type === "company" && user.publishedId) {
-        res = await fetch("https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete", {
+        res = await fetch(COMPANY_API ? `${COMPANY_API}/admin/templates/delete` : `${LAMBDA.companyAdmin}/admin/templates/delete`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
           body: JSON.stringify({ publishedId: user.publishedId, action: "delete" }),
         });
       } else if (user.type === "professional" && user.professionalId) {
-        res = await fetch("https://ss6lmkj0o8.execute-api.ap-south-1.amazonaws.com/prof/delete-prof-tem", {
+        res = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/delete-prof-tem` : `${LAMBDA.profDelete}/delete-prof-tem`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
           body: JSON.stringify({ professionalId: user.professionalId, action: "delete" }),

@@ -7,9 +7,10 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useUserAuth } from "../../context/context";
+import { LEADS_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
-const PROFILE_API = "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile";
-const SPEND_API = "https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/spend-tokens";
+const PROFILE_API = LEADS_API ? `${LEADS_API}/profile` : `${LAMBDA.profile}/profile`;
+const SPEND_API = PAYMENT_API ? `${PAYMENT_API}/spend-tokens` : `${LAMBDA.tokenGateway}/spend-tokens`;
 
 function getStoredActive(email: string): string[] {
   try { return JSON.parse(localStorage.getItem(`addons_active_${email}`) || "[]"); }

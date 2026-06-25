@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUserAuth } from "./context/context";
+import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
 
 // TypeScript Interfaces for Professional Profiles
 interface ProfessionalProfile {
@@ -724,7 +725,7 @@ const apiService = {
     const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     try {
-      const url = new URL(`https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=user&userId=${userId.trim()}`);
+      const url = new URL(PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${userId.trim()}` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=user&userId=${userId.trim()}`);
       // url.searchParams.append('userId', userId.trim());
 
       const response = await fetch(url.toString(), {

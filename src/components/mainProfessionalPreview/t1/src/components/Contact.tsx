@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import axios from "axios";
+import { LEADS_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 export interface ContactContent {
   subtitle: string;
@@ -63,7 +64,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
     setIsSubmitting(true);
     try {
       await axios.post(
-        "https://l7p8i65gl5.execute-api.ap-south-1.amazonaws.com/prod/",
+        LEADS_API ? `${LEADS_API}/professional-contact` : `${LAMBDA.profLeadContact}/`,
         { professionalId, ...formData },
         { headers: { "Content-Type": "application/json" } }
       );

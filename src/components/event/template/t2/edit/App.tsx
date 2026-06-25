@@ -13,6 +13,7 @@ import { GallerySection } from './components/GallerySection';
 import { ContactSection } from './components/ContactSection';
 import Publish from './components/Publish';
 import { Footer } from './components/FooterSection';
+import { EVENTS_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 // Define types for the component states
 interface ComponentStates {
@@ -121,7 +122,7 @@ export default function Edit_event_t2() {
 
         if (isAIgen === "AIgen") {
           response = await fetch(
-            `https://2kmz6d0aqa.execute-api.ap-south-1.amazonaws.com/prod/events?submissionId=${draftId}&userId=${userId}&templateId=2`,
+            EVENTS_API ? `${EVENTS_API}/events?submissionId=${draftId}&userId=${userId}&templateId=2` : `${LAMBDA.eventTemplateLoad}/events?submissionId=${draftId}&userId=${userId}&templateId=2`,
             {
               method: "GET",
               headers: {
@@ -132,7 +133,7 @@ export default function Edit_event_t2() {
         } else {
           // Replace with your actual API for non-AIgen case
           response = await fetch(
-            `https://2lksnliog8.execute-api.ap-south-1.amazonaws.com/prod/${draftId}/${userId}`,
+            EVENTS_API ? `${EVENTS_API}/event-content/${draftId}/${userId}` : `${LAMBDA.eventTemplateContent}/${draftId}/${userId}`,
             {
               method: "GET",
               headers: {

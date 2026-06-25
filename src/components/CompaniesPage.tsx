@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, ChevronDown, MapPin, BadgeCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
 interface Company {
   companyName: string;
@@ -36,7 +37,7 @@ const CompaniesPage: React.FC = () => {
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        const res = await fetch('https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=main');
+        const res = await fetch(COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=main` : `${LAMBDA.company}/dashboard-cards?viewType=main`);
         const data = await res.json();
         const companies = Array.isArray(data.cards) ? data.cards : [];
         const seenIds = new Set<string>();

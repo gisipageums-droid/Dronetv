@@ -3,10 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, CheckCircle, Building2 } from "lucide-react";
 import { toast } from "react-toastify";
 import FormApp from "../../company/src/components/form/src/App";
+import { COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 
-const CARDS_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards";
-const UPDATE_API = "https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update";
-const DETAILS_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details";
+const CARDS_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards` : `${LAMBDA.company}/dashboard-cards`;
+const UPDATE_API = COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`;
+const DETAILS_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details` : `${LAMBDA.company}/dashboard-cards/published-details`;
 
 interface Company {
   publishedId: string;
@@ -76,7 +77,7 @@ const AdminCompanyEdit: React.FC = () => {
   useEffect(() => {
     if (!company) return;
     const template = company.templateSelection || "template-1";
-    fetch(`https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${company.userId}/${company.draftId}?template=${template}`)
+    fetch(COMPANY_API ? `${COMPANY_API}/draft/${company.userId}/${company.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${company.userId}/${company.draftId}?template=${template}`)
       .then(r => r.json())
       .then(data => {
         const cats: string[] = data?.formData?.companyCategory;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, ChevronDown, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./loadingscreen";
+import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
 
 interface Professional {
   professionalId: string;
@@ -38,7 +39,7 @@ const ProfessionalsPage: React.FC = () => {
     const fetchProfessionals = async () => {
       setLoading(true);
       try {
-        const res = await fetch("https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=main");
+        const res = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=main` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=main`);
         const data = await res.json();
         const professionals = Array.isArray(data.cards) ? data.cards : [];
         const seenPIds = new Set<string>();

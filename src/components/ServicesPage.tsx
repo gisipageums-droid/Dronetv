@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Search, ChevronDown, Zap as Drone, Brain, Map, Star, Users, MapPin, Building2 } from 'lucide-react';
 import LoadingScreen from './loadingscreen';
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
 interface Service {
   id: string;
@@ -69,7 +70,7 @@ const ServicesPage = () => {
     const fetchServices = () => {
       setLoading(true);
 
-      const API_URL = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/services/view";
+      const API_URL = COMPANY_API ? `${COMPANY_API}/services/view` : `${LAMBDA.products}/services/view`;
 
       axios
         .get(API_URL)

@@ -3,6 +3,7 @@ import { Link, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Star, Plane, Clock, Tag, CheckCircle, Activity, Layers, ShieldCheck } from "lucide-react";
 import LoadingScreen from "./loadingscreen";
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
 
 type ServiceFeature = {
@@ -81,7 +82,7 @@ export default function ServiceDetailPage() {
     setLoading(true);
     setError(null);
 
-    const API_URL = `https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/services/details/${id}`;
+    const API_URL = COMPANY_API ? `${COMPANY_API}/services/details/${id}` : `${LAMBDA.products}/services/details/${id}`;
 
     axios
       .get(API_URL)

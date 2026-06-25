@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import UserDashboardLayout from "../components/layout/Layout";
 import CompanyLeads from "../components/common/CompanyLeads";
+import { COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 
-const API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards";
+const API = COMPANY_API ? `${COMPANY_API}/dashboard-cards` : `${LAMBDA.company}/dashboard-cards`;
 
 const CompanyLeadsPage: React.FC = () => {
   const { user } = useUserAuth();

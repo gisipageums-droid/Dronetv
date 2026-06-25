@@ -19,8 +19,9 @@ import {
 } from "lucide-react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import CredentialsModal from "./credentialProp/Prop"; // ✅ import the modal component
+import CredentialsModal from "./credentialProp/Prop";
 import { motion, AnimatePresence } from "motion/react";
+import { COMPANY_API, ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
 
 // -------------------- Types --------------------
 interface Company {
@@ -690,7 +691,7 @@ const apiService = {
   async fetchAllCompanies(signal?: AbortSignal): Promise<ApiResponse> {
     try {
       const response = await fetch(
-        "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=admin",
+        COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin` : `${LAMBDA.company}/dashboard-cards?viewType=admin`,
         {
           method: "GET",
           headers: {
@@ -716,7 +717,7 @@ const apiService = {
   async fetchCompanyCredentials(draftId: string, userId: string): Promise<any> {
     try {
       const response = await fetch(
-        `https://xe9l3knwqi.execute-api.ap-south-1.amazonaws.com/dev/js?draftId=${draftId}&userId=${userId}`
+        COMPANY_API ? `${COMPANY_API}/restore-js?draftId=${draftId}&userId=${userId}` : `${LAMBDA.companyRestoreJs}/js?draftId=${draftId}&userId=${userId}`
       );
 
       if (!response.ok) {
@@ -734,7 +735,7 @@ const apiService = {
     try {
       const body = JSON.stringify({ publishedId, action });
       const response = await fetch(
-        `https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review`,
+        COMPANY_API ? `${COMPANY_API}/admin/templates/review` : `${LAMBDA.companyAdmin}/admin/templates/review`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -755,7 +756,7 @@ const apiService = {
     try {
       const body = JSON.stringify({ publishedId, action });
       const response = await fetch(
-        `https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review`,
+        COMPANY_API ? `${COMPANY_API}/admin/templates/review` : `${LAMBDA.companyAdmin}/admin/templates/review`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -778,7 +779,7 @@ const apiService = {
   ): Promise<any> {
     try {
       const response = await fetch(
-        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${publishedId}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json", "X-User-Id": userId },
@@ -797,7 +798,7 @@ const apiService = {
   async deleteCompany(publishedId: string): Promise<any> {
     try {
       const response = await fetch(
-        "https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete",
+        COMPANY_API ? `${COMPANY_API}/admin/templates/delete` : `${LAMBDA.companyAdmin}/admin/templates/delete`,
         {
           method: "POST",
           headers: {

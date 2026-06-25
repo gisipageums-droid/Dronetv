@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import Publish from "./components/Publish";
 import { Toaster } from "sonner";
 import Back from "./components/Back";
+import { EVENTS_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 interface EventTemplateData {
   draftId?: string;
@@ -320,7 +321,7 @@ const EventTemplate1: React.FC = () => {
 
         if (isAIgen === "AIgen") {
           response = await fetch(
-            `https://2kmz6d0aqa.execute-api.ap-south-1.amazonaws.com/prod/events?submissionId=${draftId}&userId=${userId}&templateId=1`,
+            EVENTS_API ? `${EVENTS_API}/events?submissionId=${draftId}&userId=${userId}&templateId=1` : `${LAMBDA.eventTemplateLoad}/events?submissionId=${draftId}&userId=${userId}&templateId=1`,
             {
               method: "GET",
               headers: {
@@ -331,7 +332,7 @@ const EventTemplate1: React.FC = () => {
         } else {
           // Replace with your actual API for non-AIgen case
           response = await fetch(
-            `https://2lksnliog8.execute-api.ap-south-1.amazonaws.com/prod/${draftId}/${userId}`,
+            EVENTS_API ? `${EVENTS_API}/event-content/${draftId}/${userId}` : `${LAMBDA.eventTemplateContent}/${draftId}/${userId}`,
             {
               method: "GET",
               headers: {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, ChevronDown, Calendar, MapPin, Clock, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { EVENTS_API, LAMBDA } from '../lib/apiConfig';
 
 const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime: string }) => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isEventStarted: false, isEventExpired: false });
@@ -95,7 +96,7 @@ const EventsPage = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main");
+        const response = await fetch(EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=main` : `${LAMBDA.events}/events-dashboard?viewType=main`);
         if (!response.ok) throw new Error("Failed to fetch events");
         const data = await response.json();
         if (data.success && data.cards) {

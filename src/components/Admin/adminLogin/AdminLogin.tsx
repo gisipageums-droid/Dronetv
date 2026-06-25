@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
+import { ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface LoginData {
   email: string;
   password: string;
 }
 
-const ADMIN_LOGIN_API = "https://mwbeqdpn09.execute-api.ap-south-1.amazonaws.com/prod/dev";
+const ADMIN_LOGIN_API = ADMIN_API ? `${ADMIN_API}/login` : `${LAMBDA.adminLogin}/dev`;
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);

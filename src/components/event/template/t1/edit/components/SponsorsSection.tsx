@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Edit, Save, X, Plus, Trash2, Upload, Loader2 } from "lucide-react";
 import Cropper from "react-easy-crop";
 import { toast } from "sonner";
+import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface Partner {
   id: string;
@@ -335,7 +336,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
     formData.append("fieldName", fieldName + Date.now());
 
     const uploadResponse = await fetch(
-      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`,
+      MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`,
       {
         method: "POST",
         body: formData,

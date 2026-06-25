@@ -22,6 +22,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProfessionalCredentialsModal from "./ProfessionalCredentialsModal";
 import { motion, AnimatePresence } from "motion/react";
+import { PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 
 // TypeScript Interfaces for Professionals
 interface Professional {
@@ -860,7 +861,7 @@ const apiService = {
   async fetchAllProfessionals(signal?: AbortSignal): Promise<ApiResponse> {
     try {
       const response = await fetch(
-        "https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=admin",
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`,
         {
           method: "GET",
           headers: {
@@ -886,7 +887,7 @@ const apiService = {
   async fetchProfessionalDetails(professionalId: string): Promise<any> {
     try {
       const response = await fetch(
-        `https://dfdooqn9k1.execute-api.ap-south-1.amazonaws.com/dev/professionals/${professionalId}`
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professionals/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`
       );
 
       if (!response.ok) {
@@ -903,7 +904,7 @@ const apiService = {
   async approveProfessional(publishedId: string, userId: string): Promise<any> {
     try {
       const response = await fetch(
-        `https://ei94o66irc.execute-api.ap-south-1.amazonaws.com/dev/professional-tem-validation`,
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-tem-validation` : `${LAMBDA.profValidate}/professional-tem-validation`,
         {
           method: "POST",
           headers: {
@@ -927,7 +928,7 @@ const apiService = {
   async rejectProfessional(publishedId: string, userId: string): Promise<any> {
     try {
       const response = await fetch(
-        `https://ei94o66irc.execute-api.ap-south-1.amazonaws.com/dev/professional-tem-validation`,
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-tem-validation` : `${LAMBDA.profValidate}/professional-tem-validation`,
         {
           method: "POST",
           headers: {
@@ -951,7 +952,7 @@ const apiService = {
   async deleteProfessional(professionalId: string): Promise<any> {
     try {
       const response = await fetch(
-        `https://ss6lmkj0o8.execute-api.ap-south-1.amazonaws.com/prof/delete-prof-tem`,
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/delete-prof-tem` : `${LAMBDA.profDelete}/delete-prof-tem`,
         {
           method: "POST",
           headers: {

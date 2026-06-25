@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { FormStep } from '../FormStep';
 import { FormInput } from '../FormInput';
 import { StepProps } from '../../types/form';
+import { ADMIN_API, LAMBDA } from '../../../../../lib/apiConfig';
 
-const PROMO_API_BASE = 'https://tty7xn2j01.execute-api.ap-south-1.amazonaws.com/Promotion_Preferences_and_Billing';
+const PROMO_API_BASE = ADMIN_API ? `${ADMIN_API}/promotion-billing` : `${LAMBDA.promoForm}/Promotion_Preferences_and_Billing`;
 
 const Step7PromotionBilling: React.FC<StepProps> = ({
   formData,

@@ -1685,10 +1685,12 @@ import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
+import { EVENTS_API, LAMBDA as LAMBDA_CFG } from '../../../../lib/apiConfig';
 
 // ✅ Token Validation API URL
-const TOKEN_VALIDATION_API_URL =
-  "https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev/";
+const TOKEN_VALIDATION_API_URL = EVENTS_API
+  ? `${EVENTS_API}/token-validation/`
+  : "https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev/";
 
 // ================== Token validation function ====================
 const validateUserTokens = async (

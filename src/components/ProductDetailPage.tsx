@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { Star, Plane, Truck, ShieldCheck } from "lucide-react";
 import LoadingScreen from "./loadingscreen";
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
 type ProductFeature = {
   icon?: React.ReactNode;
@@ -60,7 +61,7 @@ export default function ProductDetailPage() {
     setLoading(true);
     setError(null);
 
-    const API_URL = `https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/details/${id}`;
+    const API_URL = COMPANY_API ? `${COMPANY_API}/product/details/${id}` : `${LAMBDA.products}/product/details/${id}`;
 
     axios
       .get(API_URL)

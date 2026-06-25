@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useUserAuth } from "../../context/context";
+import { PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
 // Define transaction type - updated to match API response
 interface Transaction {
@@ -51,7 +52,9 @@ const TransactionHistory: React.FC = () => {
             setError(null);
 
             const response = await axios.get(
-                `https://vgrrxo3wu9.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/Transaction-History/${userId}`
+                PAYMENT_API
+                    ? `${PAYMENT_API}/transaction-history/${userId}`
+                    : `${LAMBDA.transactions}/Transaction-History/${userId}`
             );
 
             if (response.data.success) {

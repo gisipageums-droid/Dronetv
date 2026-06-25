@@ -4,6 +4,7 @@ import Cropper from 'react-easy-crop';
 import { toast } from 'sonner';
 import maleAvatar from "/logos/maleAvatar.png"
 import femaleAvatar from "/logos/femaleAvatar.png"
+import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface Speaker {
   name: string;
@@ -479,7 +480,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
     formData.append('fieldName', fieldName + Date.now());
 
     const uploadResponse = await fetch(
-      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`,
+      MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`,
       {
         method: 'POST',
         body: formData,

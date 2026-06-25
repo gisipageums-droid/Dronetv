@@ -13,6 +13,8 @@ import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Services } from './components/services';
 import  Back  from './components/Back';
+import { PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
+
 export default function MainProTemp2() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
@@ -24,7 +26,7 @@ export default function MainProTemp2() {
   async function fetchTemplateData( urlSlug: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://t6nbbkwszi.execute-api.ap-south-1.amazonaws.com/prod2/${urlSlug}`, {
+      const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/template/${urlSlug}` : `${LAMBDA.profTemplateSingle}/${urlSlug}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

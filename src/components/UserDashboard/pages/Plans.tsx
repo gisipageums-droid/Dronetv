@@ -32,7 +32,7 @@ const RechargePlans: React.FC = () => {
     useEffect(() => {
         const fetchPlans = async () => {
             try {
-                const response = await axios.get('PAYMENT_API ? `${PAYMENT_API}/plans` : `${LAMBDA.plans}/dev`');
+                const response = await axios.get(PAYMENT_API ? `${PAYMENT_API}/plans` : `${LAMBDA.plans}/dev`);
                 if (response.data && response.data.data && response.data.data.plans) {
                     setPlans(response.data.data.plans);
                 }
@@ -73,7 +73,7 @@ const RechargePlans: React.FC = () => {
                 }
             };
 
-            const placeOrderResponse = await axios.post('PAYMENT_API ? `${PAYMENT_API}/place-order` : 'https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/place-order'', orderData);
+            const placeOrderResponse = await axios.post(PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`, orderData);
 
             if (!placeOrderResponse.data.success) {
                 throw new Error(placeOrderResponse.data.message || 'Failed to create order');
@@ -100,7 +100,7 @@ const RechargePlans: React.FC = () => {
                             transactionId: transactionId
                         };
 
-                        const confirmResponse = await axios.post('PAYMENT_API ? `${PAYMENT_API}/confirm-order` : 'https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/confirm-order'', confirmData);
+                        const confirmResponse = await axios.post(PAYMENT_API ? `${PAYMENT_API}/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`, confirmData);
 
                         if (confirmResponse.data.success) {
                             toast.success(`Plan purchased successfully! ${plan.tokens} tokens added.`);

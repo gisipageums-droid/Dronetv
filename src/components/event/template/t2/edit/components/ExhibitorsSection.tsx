@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Building2, ExternalLink, Edit2, Loader2, Save, X, Plus, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import Cropper from 'react-easy-crop';
-import { motion } from 'motion/react'; // Add motion import
+import { motion } from 'motion/react';
+import { EVENTS_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 // Text limits
 const TEXT_LIMITS = {
@@ -370,7 +371,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
     formData.append('userId', userId);
     formData.append(`fieldName`, fieldName+Date.now());
 
-    const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`, {
+    const uploadResponse = await fetch(EVENTS_API ? `${EVENTS_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`, {
       method: 'POST',
       body: formData,
     });

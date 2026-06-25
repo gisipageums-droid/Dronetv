@@ -196,7 +196,7 @@
 //       formData.append("fieldName", "projectImage");
 
 //       const uploadResponse = await fetch(
-//         `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+//         MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`,
 //         {
 //           method: "POST",
 //           body: formData,
@@ -320,7 +320,7 @@
 //           formData.append("userId", userId);
 //           formData.append("fieldName", "projectImage");
 //           const uploadResponse = await fetch(
-//             `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+//             MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`,
 //             { method: "POST", body: formData }
 //           );
 //           if (uploadResponse.ok) {
@@ -1057,6 +1057,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 interface Project {
   id: number;
@@ -1359,7 +1360,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
       xhr.open(
         "POST",
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`
+        MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`
       );
       xhr.send(formData);
     });

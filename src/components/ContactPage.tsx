@@ -10,6 +10,7 @@ import {
   Youtube,
   Twitter,
 } from "lucide-react";
+import { ADMIN_API, LAMBDA } from '../lib/apiConfig';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -30,7 +31,7 @@ const ContactPage = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await fetch('https://zlnlobchx7.execute-api.ap-south-1.amazonaws.com/contact', {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

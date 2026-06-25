@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import {
   Search,
   ChevronDown,
@@ -79,7 +80,7 @@ const ProductsPage: React.FC = () => {
     const fetchProducts = () => {
       setLoading(true);
 
-      const API_URL = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/view";
+      const API_URL = COMPANY_API ? `${COMPANY_API}/product/view` : `${LAMBDA.products}/product/view`;
 
       axios
         .get(API_URL)
