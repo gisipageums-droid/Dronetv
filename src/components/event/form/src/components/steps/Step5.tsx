@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "../../context/FormContext";
 import { Plus, Minus, Trash2, Globe, Mail, Phone, MapPin, Share2, Calendar, Upload, Eye, X, RefreshCw, FileText, Image as ImageIcon, Video } from "lucide-react";
 import { PhoneInput } from "../common/PhoneInput";
+import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface ExhibitorInterview {
   videoTitle: string;
@@ -239,7 +240,7 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
   //       console.log(`  ${key}:`, value);
   //     }
       
-  //     const response = await fetch('https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod/upload/events', {
+  //     const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
   //       method: 'POST',
   //       body: formData,
   //       // Don't set Content-Type header - let browser set it with boundary
@@ -302,7 +303,7 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
       console.log(`  ${key}:`, value);
     }
     
-    const response = await fetch('https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod/upload/events', {
+    const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
       method: 'POST',
       body: formData,
       // Don't set Content-Type header - let browser set it with boundary

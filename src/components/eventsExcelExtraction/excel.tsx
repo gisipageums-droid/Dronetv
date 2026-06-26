@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Eye, Search, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import { ADMIN_API, EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 
 // Type definitions
 interface ExcelDataItem {
@@ -182,7 +183,7 @@ const EventsExcelDataProcessor = () => {
     // Legacy function - posts all data at once
     setPostingStatus({ loading: true });
 
-    const API_ENDPOINT = 'https://m6x894fyqk.execute-api.ap-south-1.amazonaws.com/dev2/';
+    const API_ENDPOINT = EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsExcelUpload}/`;
 
     try {
       // Prepare all data for batch posting
@@ -251,9 +252,9 @@ const EventsExcelDataProcessor = () => {
       }
     }));
 
-    // const API_ENDPOINT = 'https://3qw4mfji02.execute-api.ap-south-1.amazonaws.com/prod/ingest';
-    const API_ENDPOINT = 'https://m6x894fyqk.execute-api.ap-south-1.amazonaws.com/dev2/';
-    // const API_ENDPOINT = 'https://9jkuuqgayb.execute-api.ap-south-1.amazonaws.com/dev/';
+    // const API_ENDPOINT = ADMIN_API ? `${ADMIN_API}/ingest` : `${LAMBDA.adminIngest}/ingest`;
+    const API_ENDPOINT = EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsExcelUpload}/`;
+    // const API_ENDPOINT = EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsExcelGenerate}/`;
 
     // 🔑 Stabilize idempotency for the whole run
     const batchUploadedAtIso = new Date().toISOString();
@@ -361,8 +362,8 @@ const EventsExcelDataProcessor = () => {
         throw new Error('No uploadId found for this item');
       }
 
-      // const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev/'; // Replace with your actual API
-      const GENERATE_API_ENDPOINT = 'https://9jkuuqgayb.execute-api.ap-south-1.amazonaws.com/dev/';
+      // const GENERATE_API_ENDPOINT = ADMIN_API ? `${ADMIN_API}/` : `${LAMBDA.adminGen}/`; // Replace with your actual API
+      const GENERATE_API_ENDPOINT = EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsExcelGenerate}/`;
 
       // Prepare payload for generate API
       const payload = {
@@ -420,8 +421,8 @@ const EventsExcelDataProcessor = () => {
       }
     }));
 
-    // const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev';
-    const GENERATE_API_ENDPOINT = 'https://9jkuuqgayb.execute-api.ap-south-1.amazonaws.com/dev/';
+    // const GENERATE_API_ENDPOINT = ADMIN_API ? `${ADMIN_API}` : `${LAMBDA.adminGen}`;
+    const GENERATE_API_ENDPOINT = EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsExcelGenerate}/`;
 
     // Generate websites one by one with actual API calls
     for (let i = 0; i < postedItems.length; i++) {

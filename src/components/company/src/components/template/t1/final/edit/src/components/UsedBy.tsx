@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Edit2, Plus, Save, Trash2, Upload, X, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 const itemVariants = {
   hidden: { y: 50, opacity: 0 },
@@ -253,7 +254,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,

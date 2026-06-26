@@ -6,9 +6,10 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useUserAuth } from "../../context/context";
+import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
-const PROFILE_API = "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile";
-const NOTIFY_API  = "https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/spend-tokens";
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+const NOTIFY_API  = PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/spend-tokens` : `${LAMBDA.tokenGateway}/drontv-token-buy-payment-gateway/spend-tokens`;
 
 function getTier(t: number) {
   if (t >= 8000) return "brand";

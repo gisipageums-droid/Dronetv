@@ -8,6 +8,7 @@ import { useUserAuth } from "../../context/context";
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "motion/react";
 import FormApp from "../../company/src/components/form/src/App";
+import { COMPANY_API, MEDIA_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface Company {
   publishedId: string;
@@ -43,7 +44,7 @@ const CompanyWebsite: React.FC = () => {
 
   useEffect(() => {
     if (!userId) return;
-    const CARDS_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards";
+    const CARDS_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards` : `${LAMBDA.company}/dashboard-cards`;
     const savedUserId = localStorage.getItem("dronetv_company_userId") || "";
     const idsToTry = [userId, savedUserId].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
 
@@ -64,7 +65,7 @@ const CompanyWebsite: React.FC = () => {
   useEffect(() => {
     if (!company) return;
     const template = company.templateSelection || "template-1";
-    fetch(`https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${company.userId}/${company.draftId}?template=${template}`)
+    fetch(COMPANY_API ? `${COMPANY_API}/api/draft/${company.userId}/${company.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${company.userId}/${company.draftId}?template=${template}`)
       .then((r) => r.json())
       .then((data) => {
         const cats: string[] = data?.formData?.companyCategory;
@@ -82,7 +83,7 @@ const CompanyWebsite: React.FC = () => {
       let existingContent: any = {};
       try {
         const detailsRes = await fetch(
-          `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${company.publishedId}`,
+          COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${company.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${company.publishedId}`,
           { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
         );
         const details = await detailsRes.json();
@@ -139,7 +140,7 @@ const CompanyWebsite: React.FC = () => {
         _detailsUpdatedAt: new Date().toISOString(),
       };
 
-      await fetch("https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update", {
+      await fetch(COMPANY_API ? `${COMPANY_API}/update` : `${LAMBDA.companyDraft2}/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -167,7 +168,7 @@ const CompanyWebsite: React.FC = () => {
     if (!company) return;
     setPublishing(true);
     try {
-      await fetch("https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review", {
+      await fetch(COMPANY_API ? `${COMPANY_API}/admin/templates/review` : `${LAMBDA.companyAdmin}/admin/templates/review`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ publishedId: company.publishedId, action: "approve" }),
@@ -195,7 +196,7 @@ const CompanyWebsite: React.FC = () => {
       fd.append("templateSelection", company.templateSelection);
 
       const uploadRes = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${company.publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${company.publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${company.publishedId}`,
         { method: "POST", body: fd }
       );
       if (!uploadRes.ok) throw new Error("Upload failed");
@@ -203,7 +204,7 @@ const CompanyWebsite: React.FC = () => {
 
       // 2. Fetch current company content
       const detailsRes = await fetch(
-        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${company.publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${company.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${company.publishedId}`,
         { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
       );
       const details = await detailsRes.json();
@@ -215,7 +216,7 @@ const CompanyWebsite: React.FC = () => {
         company: { ...content.company, logo: imageUrl },
         header: { ...content.header, logoUrl: imageUrl, logoSrc: imageUrl },
       };
-      await fetch("https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update", {
+      await fetch(COMPANY_API ? `${COMPANY_API}/update` : `${LAMBDA.companyDraft2}/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

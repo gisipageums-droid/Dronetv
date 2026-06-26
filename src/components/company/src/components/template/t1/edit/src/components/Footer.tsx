@@ -339,7 +339,7 @@
 //         formData.append("templateSelection", templateSelection);
 
 //         const uploadResponse = await fetch(
-//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //           {
 //             method: "POST",
 //             body: formData,
@@ -1387,7 +1387,7 @@
 //     formData.append("templateSelection", templateSelection);
 
 //     const uploadResponse = await fetch(
-//       `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//       MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //       {
 //         method: "POST",
 //         body: formData,
@@ -2238,6 +2238,7 @@ import { toast } from "react-toastify";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 // Enhanced crop helper function
 const createImage = (url) =>
@@ -2495,7 +2496,7 @@ export default function EditableFooter({
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,

@@ -11,6 +11,7 @@ import Step8MediaUploads from "./components/steps/Step8MediaUploads";
 import PreviewPublish from "./components/PreviewPublish";
 import { useTemplate, useUserAuth } from "../../../../../context/context";
 import { toast } from "react-toastify";
+import { COMPANY_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 type DigiStatus = 'idle' | 'loading' | 'polling' | 'verified' | 'error';
 
@@ -412,9 +413,9 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     const template = companyData.templateSelection || 'template-1';
     setIsDraftLoading(true);
 
-    const draftUrl = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
+    const draftUrl = COMPANY_API ? `${COMPANY_API}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
     const publishedUrl = companyData.publishedId
-      ? `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${companyData.publishedId}`
+      ? COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${companyData.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${companyData.publishedId}`
       : null;
 
     Promise.all([
@@ -470,7 +471,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       if (publicId && urlUserId && urlDraftId) {
         try {
           setIsApiLoading(true);
-          const API_URL = `https://l0jg1d9hnc.execute-api.ap-south-1.amazonaws.com/dev/${publicId}/${urlUserId}/${urlDraftId}`;
+          const API_URL = COMPANY_API ? `${COMPANY_API}/${publicId}/${urlUserId}/${urlDraftId}` : `${LAMBDA.companyDraftLoad}/${publicId}/${urlUserId}/${urlDraftId}`;
           const response = await fetch(API_URL);
           const data = await response.json();
 
@@ -656,7 +657,9 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     setIsCheckingName(true);
     try {
       const res = await fetch(
-        `https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(
+        COMPANY_API ? `${COMPANY_API}/drafts/check-name?name=${encodeURIComponent(
+          name
+        )}` : `${LAMBDA.companyFormDraft}/drafts/check-name?name=${encodeURIComponent(
           name
         )}`
       );
@@ -826,7 +829,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
 
     setIsSubmitting(true);
     try {
-      const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+      const FORM_SUBMIT_API_URL = COMPANY_API ? `${COMPANY_API}/drafts` : `${LAMBDA.companyFormDraft}/drafts`;
       
       const finalTemplateId = formData.templateId || templateId || "1";
 

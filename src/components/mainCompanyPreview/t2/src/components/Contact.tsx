@@ -6,6 +6,7 @@ import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { motion } from "motion/react";
 import { toast } from "react-toastify";
+import { AUTH_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 export default function Contact({ contactData, publishedId }) {
   const [formData, setFormData] = useState({
@@ -63,7 +64,7 @@ export default function Contact({ contactData, publishedId }) {
     setLoading(true);
     try {
       const response = await fetch(
-        "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads-resource/submit",
+        AUTH_API ? `${AUTH_API}/leads-resource/submit` : `${LAMBDA.profile}/leads-resource/submit`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

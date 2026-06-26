@@ -4,6 +4,7 @@ import { MultiSelect, FormInput } from "../FormInput";
 import { StepProps } from "../../types/form";
 import { Edit3, Trash2 } from "lucide-react";
 import { FaPencilAlt } from "react-icons/fa";
+import { ADMIN_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 // Enhanced EditModal with better design and functionality
 const EditModal: React.FC<{
@@ -758,7 +759,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       try {
         setLoadingBackendParents(true);
         const res = await fetch(
-          "https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/view",
+          ADMIN_API ? `${ADMIN_API}/view` : `${LAMBDA.adminCats}/view`,
           { method: "GET" }
         );
         if (!res.ok) throw new Error(await res.text());
@@ -817,7 +818,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
     const loadGeography = async () => {
       try {
         const res = await fetch(
-          "https://decjfhu8qk.execute-api.ap-south-1.amazonaws.com/geography-of-operations/view",
+          ADMIN_API ? `${ADMIN_API}/view` : `${LAMBDA.adminGeo}/view`,
           { method: "GET" }
         );
         if (!res.ok) throw new Error(await res.text());
@@ -909,7 +910,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       // 3) Fetch /tree and rebuild map, then pick id
       try {
         const treeRes = await fetch(
-          'https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/tree',
+          ADMIN_API ? `${ADMIN_API}/tree` : `${LAMBDA.adminCats}/tree`,
           { method: 'GET' }
         );
         if (treeRes.ok) {
@@ -1228,7 +1229,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
 
     // 4) Fetch /tree to rebuild map and try again
     try {
-      const treeRes = await fetch('https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/tree', { method: 'GET' });
+      const treeRes = await fetch(ADMIN_API ? `${ADMIN_API}/tree` : `${LAMBDA.adminCats}/tree`, { method: 'GET' });
       if (treeRes.ok) {
         const data = await treeRes.json().catch(() => ({} as any));
         const tree = Array.isArray(data?.tree) ? (data.tree as any[]) : [];
@@ -1289,7 +1290,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   const openSubModal = async (mainKey: string, parentModalWas: "main" | "sub" | "deep" | null = "main") => {
     try {
       const res = await fetch(
-        "https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/tree",
+        ADMIN_API ? `${ADMIN_API}/tree` : `${LAMBDA.adminCats}/tree`,
         { method: "GET" }
       );
       if (!res.ok) throw new Error(await res.text());
@@ -1318,7 +1319,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   const loadSubsFromTree = async (mainKey: string) => {
     try {
       const res = await fetch(
-        "https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/tree",
+        ADMIN_API ? `${ADMIN_API}/tree` : `${LAMBDA.adminCats}/tree`,
         { method: "GET" }
       );
       if (!res.ok) throw new Error(await res.text());
@@ -1346,7 +1347,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   const openSubSubModal = async (subKey: string, parentModalWas: "sub" | "deep" | "main" | null = "sub") => {
     try {
       const res = await fetch(
-        "https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/tree",
+        ADMIN_API ? `${ADMIN_API}/tree` : `${LAMBDA.adminCats}/tree`,
         { method: "GET" }
       );
       if (!res.ok) throw new Error(await res.text());
@@ -1390,7 +1391,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   const loadSubSubFromTree = async (subKey: string) => {
     try {
       const res = await fetch(
-        "https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/tree",
+        ADMIN_API ? `${ADMIN_API}/tree` : `${LAMBDA.adminCats}/tree`,
         { method: "GET" }
       );
       if (!res.ok) throw new Error(await res.text());
@@ -2225,7 +2226,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
               try {
                 console.log('[Geography] add request', { name });
                 const res = await fetch(
-                  'https://decjfhu8qk.execute-api.ap-south-1.amazonaws.com/geography-of-operations/add',
+                  ADMIN_API ? `${ADMIN_API}/add` : `${LAMBDA.adminGeo}/add`,
                   {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -2252,7 +2253,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 // debug: verify call and payload
                 console.log('[Geography] update request', { oldOption, newOption });
                 const res = await fetch(
-                  'https://decjfhu8qk.execute-api.ap-south-1.amazonaws.com/geography-of-operations/update/Geography_of_Operations',
+                  ADMIN_API ? `${ADMIN_API}/update/Geography_of_Operations` : `${LAMBDA.adminGeo}/update/Geography_of_Operations`,
                   {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -2275,7 +2276,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
               try {
                 console.log('[Geography] remove request', { removeOption: name });
                 const res = await fetch(
-                  'https://decjfhu8qk.execute-api.ap-south-1.amazonaws.com/geography-of-operations/update/Geography_of_Operations',
+                  ADMIN_API ? `${ADMIN_API}/update/Geography_of_Operations` : `${LAMBDA.adminGeo}/update/Geography_of_Operations`,
                   {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -2427,13 +2428,13 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
               // use name->id mapping if present for main list
               const id = mainNameToId[name];
               if (!id) return; // if id unknown, skip backend delete
-              const res = await fetch(`https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/delete/${id}`, { method: 'DELETE' });
+              const res = await fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminCats}/delete/${id}`, { method: 'DELETE' });
               if (!res.ok) throw new Error(await res.text());
             }}
             onUpdateBackend={async (oldName, newName) => {
               const id = mainNameToId[oldName];
               if (!id) return; // skip if id not known (likely user-added unsynced item)
-              const res = await fetch(`https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/update/${id}`, {
+              const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/${id}` : `${LAMBDA.adminCats}/update/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newName, slug: newName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') }),
@@ -2455,7 +2456,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                   : (mainNameToId[editingEntity!.key] || null);
 
               const payload = { name, parentId } as any;
-              const res = await fetch('https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/add', {
+              const res = await fetch(ADMIN_API ? `${ADMIN_API}/add` : `${LAMBDA.adminCats}/add`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -2580,7 +2581,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 const map = subNameToIdByMain[childEntity.key] || {};
                 const id = map[name];
                 if (!id) return;
-                const res = await fetch(`https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/delete/${id}`, { method: 'DELETE' });
+                const res = await fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminCats}/delete/${id}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error(await res.text());
                 return;
               }
@@ -2588,7 +2589,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 const map = subSubNameToIdBySub[childEntity.key] || {};
                 const id = map[name];
                 if (!id) return;
-                const res = await fetch(`https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/delete/${id}`, { method: 'DELETE' });
+                const res = await fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminCats}/delete/${id}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error(await res.text());
                 return;
               }
@@ -2599,7 +2600,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 const map = subNameToIdByMain[childEntity.key] || {};
                 const id = map[oldName];
                 if (!id) return;
-                const res = await fetch(`https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/update/${id}`, {
+                const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/${id}` : `${LAMBDA.adminCats}/update/${id}`, {
                   method: 'PUT',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ name: newName, slug: newName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') }),
@@ -2618,7 +2619,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 const map = subSubNameToIdBySub[childEntity.key] || {};
                 const id = map[oldName];
                 if (!id) return;
-                const res = await fetch(`https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/update/${id}`, {
+                const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/${id}` : `${LAMBDA.adminCats}/update/${id}`, {
                   method: 'PUT',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ name: newName, slug: newName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') }),
@@ -2675,7 +2676,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 if (!parentId) {
                   try {
                     const treeRes = await fetch(
-                      'https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/tree',
+                      ADMIN_API ? `${ADMIN_API}/tree` : `${LAMBDA.adminCats}/tree`,
                       { method: 'GET' }
                     );
                     if (treeRes.ok) {
@@ -2751,7 +2752,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 if (!parentId) {
                   try {
                     const treeRes = await fetch(
-                      'https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/tree',
+                      ADMIN_API ? `${ADMIN_API}/tree` : `${LAMBDA.adminCats}/tree`,
                       { method: 'GET' }
                     );
                     if (treeRes.ok) {
@@ -2783,7 +2784,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 alert(`Couldn't resolve parent id for "${childEntity.key}". Please try again.`);
                 return;
               }
-              const res = await fetch('https://ic7x2avpej.execute-api.ap-south-1.amazonaws.com/Business_Categories_and_Coverage/add', {
+              const res = await fetch(ADMIN_API ? `${ADMIN_API}/add` : `${LAMBDA.adminCats}/add`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, parentId }),

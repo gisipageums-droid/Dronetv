@@ -1229,7 +1229,7 @@
 // //         file: file
 // //       });
 
-// //       const response = await fetch('https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod/upload/events', {
+// //       const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
 // //         method: 'POST',
 // //         body: formData,
 // //         // Don't set Content-Type header - let browser set it with boundary
@@ -2035,7 +2035,7 @@
 //         file: file
 //       });
 
-//       const response = await fetch('https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod/upload/events', {
+//       const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
 //         method: 'POST',
 //         body: formData,
 //         // Don't set Content-Type header - let browser set it with boundary
@@ -2661,6 +2661,7 @@
 import React, { useState } from "react";
 import { useForm } from "../../context/FormContext";
 import { Plus, Minus, User, Palette, Users, Upload, X, ChevronDown } from "lucide-react";
+import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface Speaker {
   name: string;
@@ -2844,7 +2845,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
         file: file
       });
 
-      const response = await fetch('https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod/upload/events', {
+      const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
         method: 'POST',
         body: formData,
         // Don't set Content-Type header - let browser set it with boundary

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../context/context';
 import { toast } from 'react-toastify';
 import { X, Lock, Search } from 'lucide-react';
+import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface Transaction {
   transactionId: string;
@@ -51,7 +52,7 @@ const ProfilePage: React.FC = () => {
 
   async function getTokenData() {
     try {
-      const response = await fetch(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile?userId=${stored?.email}`, {
+      const response = await fetch(AUTH_API ? `${AUTH_API}/profile?userId=${stored?.email}` : `${LAMBDA.profile}/profile?userId=${stored?.email}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`
         }
@@ -71,7 +72,7 @@ const ProfilePage: React.FC = () => {
   const [recentToken, setRecentToken] = useState<any>(null);
   async function getRecentToken() {
     try {
-      const response = await fetch(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5`);
+      const response = await fetch(AUTH_API ? `${AUTH_API}/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5` : `${LAMBDA.profile}/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5`);
       if (response.ok) {
         const data = await response.json();
         setRecentToken(data);
@@ -97,7 +98,7 @@ const ProfilePage: React.FC = () => {
 
   async function getAllToken() {
     try {
-      const response = await fetch(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/transactions/all?userId=${stored?.email}&publishedId=all`);
+      const response = await fetch(AUTH_API ? `${AUTH_API}/transactions/all?userId=${stored?.email}&publishedId=all` : `${LAMBDA.profile}/transactions/all?userId=${stored?.email}&publishedId=all`);
       if (response.ok) {
         const data = await response.json();
         setAllTokenData(data);
@@ -135,7 +136,7 @@ const ProfilePage: React.FC = () => {
         phone: userDetails.phone
       };
 
-      const response = await fetch(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads/update-profile`, {
+      const response = await fetch(AUTH_API ? `${AUTH_API}/leads/update-profile` : `${LAMBDA.profile}/leads/update-profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -173,7 +174,7 @@ const ProfilePage: React.FC = () => {
       setLoading(true);
 
       const response = await fetch(
-        'https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/place-order',
+        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/place-order` : `${LAMBDA.tokenGateway}/drontv-token-buy-payment-gateway/place-order`,
         {
           method: 'POST',
           headers: {
@@ -207,7 +208,7 @@ const ProfilePage: React.FC = () => {
   const handlePaymentSuccess = async (response: any, transactionId: string) => {
     try {
       const confirmResponse = await fetch(
-        'https://yv3392if0d.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/confirm-order',
+        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/confirm-order` : `${LAMBDA.tokenGateway}/drontv-token-buy-payment-gateway/confirm-order`,
         {
           method: 'POST',
           headers: {

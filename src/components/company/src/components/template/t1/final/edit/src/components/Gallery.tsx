@@ -211,7 +211,7 @@
 //         formData.append("templateSelection", templateSelection);
 
 //         const uploadResponse = await fetch(
-//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //           {
 //             method: "POST",
 //             body: formData,
@@ -1246,7 +1246,7 @@
 //       formData.append("templateSelection", templateSelection);
 
 //       const uploadResponse = await fetch(
-//         `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//         MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //         {
 //           method: "POST",
 //           body: formData,
@@ -2221,6 +2221,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Badge } from "./ui/badge";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 // Custom Button component
 const Button = ({
@@ -2437,7 +2438,7 @@ export default function EditableGallerySection({
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,

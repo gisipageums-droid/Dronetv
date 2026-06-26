@@ -13,6 +13,7 @@ import CompanyProfile from "./components/Profile";
 import Services from "./components/Services";
 import Testimonials from "./components/Testimonials";
 import UsedBy from "./components/UsedBy";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 // import { useEffect } from "react";
 
 export default function App() {
@@ -31,7 +32,9 @@ export default function App() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev/templates?publishId=${encodeURIComponent(
+        COMPANY_API ? `${COMPANY_API}/templates?publishId=${encodeURIComponent(
+          pubId ?? ""
+        )}` : `${LAMBDA.companyTemplateLoad}/templates?publishId=${encodeURIComponent(
           pubId ?? ""
         )}`,
         {

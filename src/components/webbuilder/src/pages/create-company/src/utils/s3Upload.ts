@@ -1,6 +1,7 @@
+import { MEDIA_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 export async function uploadImageToS3(file: File): Promise<string> {
   const response = await fetch(
-    'https://oljot50ikk.execute-api.ap-south-1.amazonaws.com/presign-upload',
+    MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.webbuilderS3Presign}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

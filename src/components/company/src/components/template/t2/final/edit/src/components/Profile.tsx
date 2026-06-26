@@ -65,7 +65,7 @@
 
 //     try {
 //       const uploadResponse = await fetch(
-//         `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//         MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //         {
 //           method: "POST",
 //           body: formData,
@@ -879,6 +879,7 @@ import Cropper from "react-easy-crop";
 import maleAvatar from "../../../../../../../../../../../public/logos/maleAvatar.png";
 import femaleAvatar from "../../../../../../../../../../../public/logos/femaleAvatar.png";
 import neutralAvatar from "../../../../../../../../../../../public/logos/maleAvatar.png";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 const Profile = ({
   profileData,
@@ -1022,7 +1023,7 @@ const Profile = ({
 
     try {
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,

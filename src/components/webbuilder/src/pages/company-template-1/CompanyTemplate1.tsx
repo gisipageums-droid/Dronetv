@@ -9,6 +9,7 @@ import ProductsSection from './components/ProductsSection';
 import ClientsSection from './components/ClientsSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
+import { COMPANY_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 interface Company {
   [key: string]: any;
@@ -26,7 +27,7 @@ const CompanyTemplate1: React.FC = () => {
       setLoading(true);
       try {
         const decodedCompanyName = decodeURIComponent(companySlug);
-        const res = await fetch('https://80lbhj32ja.execute-api.ap-south-1.amazonaws.com/singlecompany', {
+        const res = await fetch(COMPANY_API ? `${COMPANY_API}` : `${LAMBDA.webbuilderGet}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ companyName: decodedCompanyName })

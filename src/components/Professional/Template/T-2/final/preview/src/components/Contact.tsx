@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AnimatedButton } from './AnimatedButton';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { LEADS_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 interface ContactInfo {
   icon: string;
@@ -115,7 +116,7 @@ export function Contact({ contactData, professionalId }: ContactProps) {
     try {
       // Send form data as JSON body using POST
       const res = await axios.post(
-        'https://l7p8i65gl5.execute-api.ap-south-1.amazonaws.com/prod/',
+        LEADS_API ? `${LEADS_API}/` : `${LAMBDA.profLeadContact}/`,
         { professionalId, ...formData },
         { headers: { 'Content-Type': 'application/json' } }
       );

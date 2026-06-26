@@ -18,10 +18,10 @@
 // import { useUserAuth } from "../../../../../../../context/context";
 
 // // ✅ Updated File Upload API URL (your actual endpoint)
-// const FILE_UPLOAD_API_URL = "https://1i8zpm4qu4.execute-api.ap-south-1.amazonaws.com/prod/upload-file";
+// const FILE_UPLOAD_API_URL = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
 
 // // ✅ Form Submission API URL (unchanged)
-// const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+// const FORM_SUBMIT_API_URL = COMPANY_API ? `${COMPANY_API}/drafts` : `${LAMBDA.companyFormDraft}/drafts`;
 
 // // ✅ Helper function to upload individual file
 // const uploadSingleFile = async (file: File, fieldName: string, userId: string): Promise<any> => {
@@ -227,7 +227,7 @@
 
 //       if (isDraftLink && userIdFromUrl && draftId) {
 //         // ✅ PUT request for draft link
-//         const draftApiUrl = `https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev/${userIdFromUrl}/${draftId}`;
+//         const draftApiUrl = COMPANY_API ? `${COMPANY_API}/${userIdFromUrl}/${draftId}` : `${LAMBDA.companyDraftMedia}/${userIdFromUrl}/${draftId}`;
 //         setUploadStatus("Updating draft...");
 //         setUploadProgress(60);
 
@@ -740,18 +740,19 @@ import { useTemplate } from "../../../../../../../context/context";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import { useUserAuth } from "../../../../../../../context/context";
+import { COMPANY_API, EVENTS_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 // ✅ Updated File Upload API URL (your actual endpoint)
 const FILE_UPLOAD_API_URL =
-  "https://1i8zpm4qu4.execute-api.ap-south-1.amazonaws.com/prod/upload-file";
+  COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
 
 // ✅ Form Submission API URL (unchanged)
 const FORM_SUBMIT_API_URL =
-  "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+  COMPANY_API ? `${COMPANY_API}/drafts` : `${LAMBDA.companyFormDraft}/drafts`;
 
 // ✅ Token Validation API URL
 const TOKEN_VALIDATION_API_URL =
-  "https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev/";
+  EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsFormBase}/`;
 
 // ✅ Helper function to upload individual file
 const uploadSingleFile = async (
@@ -1145,7 +1146,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
       if (isDraftLink && userIdFromUrl && draftId) {
         // ✅ PUT request for draft link
-        const draftApiUrl = `https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev/${userIdFromUrl}/${draftId}`;
+        const draftApiUrl = COMPANY_API ? `${COMPANY_API}/${userIdFromUrl}/${draftId}` : `${LAMBDA.companyDraftMedia}/${userIdFromUrl}/${draftId}`;
         setUploadStatus("Updating draft...");
         setUploadProgress(60);
 

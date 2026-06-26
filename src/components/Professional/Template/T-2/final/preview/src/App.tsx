@@ -12,6 +12,7 @@ import { Projects } from './components/Projects';
 import { SimpleTestimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Services } from './components/services';
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 export default function FinalProTemp2() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -24,7 +25,7 @@ export default function FinalProTemp2() {
   async function fetchTemplateData(professionalId: string, userId: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=template2`, {
+      const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}?template=template2` : `${LAMBDA.profTemplateDash}/${userId}/${professionalId}?template=template2`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

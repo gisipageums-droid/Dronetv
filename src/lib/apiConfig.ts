@@ -90,4 +90,45 @@ export const LAMBDA = {
   eventTemplateContent: 'https://2lksnliog8.execute-api.ap-south-1.amazonaws.com/prod',
   eventImageUpdate: 'https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev',
   eventPreview:   'https://fupab15ap0.execute-api.ap-south-1.amazonaws.com/dev',
+
+  // Company form & templates
+  companyFormDraft:   'https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod',
+  companyFileUpload:  'https://1i8zpm4qu4.execute-api.ap-south-1.amazonaws.com/prod',
+  companyTemplateLoad:'https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev',
+  companyImageUpload: 'https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod',
+  companyPreviewLoad: 'https://ykcimvca79.execute-api.ap-south-1.amazonaws.com/dev',
+  companyDraftLoad:   'https://l0jg1d9hnc.execute-api.ap-south-1.amazonaws.com/dev',
+  companyDraftMedia:  'https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev',
+  companyScrape:      'https://eqzkmjhfbc.execute-api.ap-south-1.amazonaws.com/dev1',
+
+  // Events form & templates
+  eventsFormDraft:    'https://9fszydao5h.execute-api.ap-south-1.amazonaws.com/prod',
+  eventsFormBase:     'https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev',
+  eventsImageUpload:  'https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod',
+  formStructure:      'https://qemducz8gc.execute-api.ap-south-1.amazonaws.com/formstructure',
+  formAdminUpdate:    'https://0i53elbzf2.execute-api.ap-south-1.amazonaws.com/dev',
+
+  // Professional form & templates
+  profTemplateLoad:      'https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod',
+  profTemplateFinalLoad: 'https://l5fb7y1eij.execute-api.ap-south-1.amazonaws.com/dev',
+  profUsernameCheck:     'https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev',
+  profFormLoad:          'https://ec1amurqr9.execute-api.ap-south-1.amazonaws.com/dev',
+
+  // Excel extractions
+  profExcelUpload:    'https://0ang8mgh10.execute-api.ap-south-1.amazonaws.com/prod',
+  profExcelGenerate:  'https://il6m5mp6ak.execute-api.ap-south-1.amazonaws.com/dev1',
+  eventsExcelUpload:  'https://m6x894fyqk.execute-api.ap-south-1.amazonaws.com/dev2',
+  eventsExcelGenerate:'https://9jkuuqgayb.execute-api.ap-south-1.amazonaws.com/dev',
+
+  // Dashboard & leads
+  profLeadsGet:          'https://r5mcwn6b10.execute-api.ap-south-1.amazonaws.com/prod',
+  adminUserTemplates1:   'https://kgm0ckp0uf.execute-api.ap-south-1.amazonaws.com/dev',
+  adminUserTemplates2:   'https://zd3q4ewnxe.execute-api.ap-south-1.amazonaws.com/dev',
+  adminUserTemplates3:   'https://5otjcn6oi1.execute-api.ap-south-1.amazonaws.com/dev',
+
+  // Webbuilder (legacy)
+  webbuilderPost:     'https://6dcd2cnc76.execute-api.ap-south-1.amazonaws.com/postCompanyform',
+  webbuilderGet:      'https://80lbhj32ja.execute-api.ap-south-1.amazonaws.com/singlecompany',
+  webbuilderPortfolio:'https://ginc7xsgw8.execute-api.ap-south-1.amazonaws.com/portfolio',
+  webbuilderS3Presign:'https://oljot50ikk.execute-api.ap-south-1.amazonaws.com/presign-upload',
 };

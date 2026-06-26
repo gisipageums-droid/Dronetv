@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
+import { PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface User {
   userId: string;
@@ -294,7 +295,7 @@ const Professinal: React.FC = () => {
       setLoading(true);
 
       const res = await fetch(
-        `https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=user&userId=${user.userData.email}`
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}`
       );
 
       if (!res.ok) throw new Error("Failed to fetch companies");

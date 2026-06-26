@@ -17,6 +17,7 @@ import { motion } from "motion/react";
 import user from "/images/user.png";
 import maleAvatar from "/logos/maleAvatar.png";
 import femaleAvatar from "/logos/femaleAvatar.png";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 interface Testimonial {
   name: string;
@@ -298,7 +299,7 @@ export default function EditableTestimonials({
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,

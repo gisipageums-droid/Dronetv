@@ -5,8 +5,9 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { useUserAuth } from "../../context/context";
+import { AUTH_API, LAMBDA } from '../../../lib/apiConfig';
 
-const PROFILE_API = "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile";
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_THRESHOLD = { reach: 500, scale: 2000, brand: 8000 };
 
 function getTier(tokens: number) {

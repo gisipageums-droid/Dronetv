@@ -312,7 +312,7 @@
 //         formData.append("templateSelection", templateSelection);
 
 //         const uploadResponse = await fetch(
-//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //           {
 //             method: "POST",
 //             body: formData,
@@ -1133,7 +1133,7 @@
 //         formData.append("templateSelection", templateSelection);
 
 //         const uploadResponse = await fetch(
-//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //           {
 //             method: "POST",
 //             body: formData,
@@ -1625,6 +1625,7 @@ import Cropper, { Area } from "react-easy-crop";
 import { toast } from "react-toastify";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 interface Client {
   name: string;
@@ -1997,7 +1998,7 @@ export default function Clients({
         console.log("Auto-uploading client image to S3:", file);
 
         const uploadPromise = fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
             body: formData,

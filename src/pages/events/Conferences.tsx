@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Calendar, Search } from 'lucide-react';
+import { EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 
 interface RawEvent {
   eventId: string;
@@ -16,7 +17,7 @@ interface RawEvent {
   thumbnailUrl?: string;
 }
 
-const EVENTS_API = "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main";
+const EVENTS_API = EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=main` : `${LAMBDA.events}/events-dashboard?viewType=main`;
 const KEYWORDS = ['conference', 'summit', 'congress', 'symposium', 'forum'];
 
 function getEventImage(previewImage?: string, thumbnailUrl?: string): string | null {

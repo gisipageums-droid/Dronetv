@@ -9,6 +9,7 @@ import { useUserAuth } from "../../../../../../../context/context";
 import axios from "axios";
 import "./step1.css";
 import { toast } from "react-toastify";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 interface Step1CompanyCategoryProps extends StepProps {
   checkCompanyName: (name: string) => void;
@@ -2999,7 +3000,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
     try {
       const response = await axios.post(
-        "https://eqzkmjhfbc.execute-api.ap-south-1.amazonaws.com/dev1/",
+        COMPANY_API ? `${COMPANY_API}/` : `${LAMBDA.companyScrape}/`,
         { email }
       );
 

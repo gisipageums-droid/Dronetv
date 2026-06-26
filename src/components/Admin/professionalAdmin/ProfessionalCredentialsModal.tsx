@@ -17,6 +17,7 @@ import {
   Image
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface Professional {
   professionalId: string;
@@ -88,7 +89,7 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
       setInternalLoading(true);
       try {
         const res = await fetch(
-          `https://dfdooqn9k1.execute-api.ap-south-1.amazonaws.com/dev/professionals/${professionalId}`
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/professionals/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();

@@ -3,6 +3,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 const img = "/images/about-office.jpg";
 
 // Custom Button component
@@ -305,7 +306,7 @@ export default function EditableAbout({
   //         formData.append("templateSelection", templateSelection);
 
   //         const uploadResponse = await fetch(
-  //           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+  //           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
   //           {
   //             method: "POST",
   //             body: formData,
@@ -392,7 +393,7 @@ const handleAutoSave = async () => {
         formData.append("templateSelection", templateSelection);
 
         const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
             body: formData,
@@ -571,7 +572,7 @@ const handleAutoSave = async () => {
           formData.append("templateSelection", templateSelection);
 
           const uploadResponse = await fetch(
-            `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+            MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
             {
               method: "POST",
               body: formData,

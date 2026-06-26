@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { Toaster } from "sonner";
 import { useTemplate } from "../../../../../../components/context/context";
 import Publish from "./components/Publish";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface AIResponse {
   professionalId?: string;
@@ -136,7 +137,7 @@ const App: React.FC = () => {
     const tryFetch = async () => {
       try {
         const response = await fetch(
-          `https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod/api/professional/${userId}/${draftId}?template=template-1`
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/api/professional/${userId}/${draftId}?template=template-1` : `${LAMBDA.profTemplateLoad}/api/professional/${userId}/${draftId}?template=template-1`
         );
 
         if (!response.ok) {

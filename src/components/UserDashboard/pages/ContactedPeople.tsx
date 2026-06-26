@@ -16,6 +16,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useUserAuth } from "../../context/context";
+import { LEADS_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface ApiResponse {
   success: boolean;
@@ -209,7 +210,7 @@ const ContactedPeople: React.FC = () => {
     const id = setInterval(async () => {
       try {
         const response = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${contact.leadId}&markAsRead=false`,
+          LEADS_API ? `${LEADS_API}/chat/messages?leadId=${contact.leadId}&markAsRead=false` : `${LAMBDA.leadsChat}/chat/messages?leadId=${contact.leadId}&markAsRead=false`,
           {
             headers: {
               "X-User-Email": userId,
@@ -268,7 +269,7 @@ const ContactedPeople: React.FC = () => {
 
     try {
       const res = await fetch(
-        "https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/send",
+        LEADS_API ? `${LEADS_API}/chat/send` : `${LAMBDA.leadsChat}/chat/send`,
         {
           method: "POST",
           headers: {
@@ -330,7 +331,7 @@ const ContactedPeople: React.FC = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/leads?mode=recent&sort=latest&userId=${userId}`,
+          LEADS_API ? `${LEADS_API}/chat/leads?mode=recent&sort=latest&userId=${userId}` : `${LAMBDA.leadsChat}/chat/leads?mode=recent&sort=latest&userId=${userId}`,
           {
             headers: { "X-User-Email": userId },
           }

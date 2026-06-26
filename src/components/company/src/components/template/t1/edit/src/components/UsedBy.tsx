@@ -319,7 +319,7 @@
 //           formData.append("templateSelection", templateSelection);
 
 //           const uploadResponse = await fetch(
-//             `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//             MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //             {
 //               method: "POST",
 //               body: formData,
@@ -970,6 +970,7 @@ import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 const BusinessInsider = "/logos/BusinessInsider.png";
 const Forbes = "/logos/Forbes.png";
 const TechCrunch = "/logos/TechCrunch.png";
@@ -1209,7 +1210,7 @@ export default function EditableUsedBy({
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,

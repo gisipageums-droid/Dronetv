@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, Globe, Mail, Download, ExternalLink } from 'lucide-react';
 import { useAuth } from '../../../../../../context/context';
+import { COMPANY_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 interface SuccessPageProps {
   formData: any;
@@ -15,8 +16,8 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ formData }) => {
   const { draftDetails, setAIGenData, AIGenData } = useAuth();
   const navigate = useNavigate(); // Use the useNavigate hook
 
-  const API = "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft";
-//  const Dummyapi = "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/alok-12345/draft-alok-aerospace-2025-002?template=template-2";
+  const API = COMPANY_API ? `${COMPANY_API}/api/draft` : `${LAMBDA.companyDraft}/api/draft`;
+//  const Dummyapi = COMPANY_API ? `${COMPANY_API}/api/draft/alok-12345/draft-alok-aerospace-2025-002?template=template-2` : `${LAMBDA.companyDraft}/api/draft/alok-12345/draft-alok-aerospace-2025-002?template=template-2`;
   async function handleClick() {
     try {
       const response = await fetch(`${API}/${draftDetails.userId}/${draftDetails.draftId}?template=template-${draftDetails.templateSelection}`);

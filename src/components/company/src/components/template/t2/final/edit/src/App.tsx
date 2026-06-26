@@ -16,6 +16,7 @@ import Publish from "./components/Publish";
 import Profile from "./components/Profile";
 import Gallery from "./components/Gallery";
 import Back from "./components/Back";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 function fillSectionDefaults(content: any, companyName: string) {
   const name = companyName || "Our Company";
@@ -164,7 +165,7 @@ export default function App() {
         setError(null);
 
         const response = await fetch(
-          `https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev/templates?publishId=${encodeURIComponent(pub ?? "")}`,
+          COMPANY_API ? `${COMPANY_API}/templates?publishId=${encodeURIComponent(pub ?? "")}` : `${LAMBDA.companyTemplateLoad}/templates?publishId=${encodeURIComponent(pub ?? "")}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },

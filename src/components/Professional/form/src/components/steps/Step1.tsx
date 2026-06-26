@@ -39,6 +39,7 @@ const RedirectModal = ({ onClose }: { onClose: () => void }) => (
 );
 import { PhoneInput } from "../common/PhoneInput";
 import { CountryStateSelect } from "../common/CountryStateSelect";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 // Custom Date Picker Component
 interface ScrollColumnProps {
@@ -1061,7 +1062,7 @@ export const Step1 = ({
       try {
         setChecking(true);
         const res = await fetch(
-          "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-username-check` : `${LAMBDA.profUsernameCheck}/professional-username-check`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

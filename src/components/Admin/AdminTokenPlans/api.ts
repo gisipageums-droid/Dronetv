@@ -1,7 +1,8 @@
 import { TokenPlan } from './App';
+import { ADMIN_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
-const API_URL = 'https://i8hkp4rc47.execute-api.ap-south-1.amazonaws.com/prod/dev';
-const GET_API_URL = 'https://m6iy4nsz94.execute-api.ap-south-1.amazonaws.com/prod/dev';
+const API_URL = ADMIN_API ? `${ADMIN_API}/dev` : `${LAMBDA.plansAdmin}/dev`;
+const GET_API_URL = PAYMENT_API ? `${PAYMENT_API}/dev` : `${LAMBDA.plans}/dev`;
 
 export const fetchPlans = async () => {
     try {

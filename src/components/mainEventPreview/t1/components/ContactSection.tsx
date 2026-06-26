@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { AUTH_API, LAMBDA } from '../../../../lib/apiConfig';
 
 interface ContactSectionProps {
   id?: string;
@@ -30,7 +31,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ id }) => {
 
     try {
       const res = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/event-leads-resource`,
+        AUTH_API ? `${AUTH_API}/event-leads-resource` : `${LAMBDA.profile}/event-leads-resource`,
         {
           method: "POST",
           headers: {

@@ -16,10 +16,11 @@ import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
+import { EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
 
 // ✅ Token Validation API URL
 const TOKEN_VALIDATION_API_URL =
-  "https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev/";
+  EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsFormBase}/`;
 
 // ================== Token validation function ====================
 const validateUserTokens = async (
@@ -195,7 +196,7 @@ function AppInner() {
           setFormLoader(true);
 
           const res = await fetch(
-            `https://ec1amurqr9.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}`
+            PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}` : `${LAMBDA.profFormLoad}/${userId}/${professionalId}`
           );
           const userData = await res.json();
           setFormLoader(false);
@@ -316,7 +317,7 @@ function AppInner() {
 
       if (userId && professionalId) {
         response = await axios.put(
-          `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}` : `${LAMBDA.profUpdate}/${userId}/${professionalId}`,
           payload
         );
       } else {

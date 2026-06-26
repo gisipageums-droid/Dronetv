@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "../../context/FormContext";
 import axios from "axios";
+import { EVENTS_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 
 
@@ -336,7 +337,7 @@ export const Step1 = ({
     setIsCheckingEventTitle(true);
     try {
       const response = await axios.get(
-        `https://9fszydao5h.execute-api.ap-south-1.amazonaws.com/prod/events/check-name?name=${encodeURIComponent(title)}`
+        EVENTS_API ? `${EVENTS_API}/events/check-name?name=${encodeURIComponent(title)}` : `${LAMBDA.eventsFormDraft}/events/check-name?name=${encodeURIComponent(title)}`
       );
       
       setEventTitleStatus(response.data);

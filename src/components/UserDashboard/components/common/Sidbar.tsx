@@ -7,8 +7,9 @@ import {
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
 import axios from "axios";
+import { AUTH_API, LAMBDA } from '../../../../lib/apiConfig';
 
-const PROFILE_API = "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile";
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
 interface SubItem {
   icon: React.ElementType;

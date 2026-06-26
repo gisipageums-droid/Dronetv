@@ -10,6 +10,7 @@ import Step8MediaUploads from "./components/steps/Step8MediaUploads";
 import { AIGenerationLoader } from "./components/AIGenerationLoader";
 import {useTemplate} from "../../../../../context/context"
 import { toast } from "react-toastify";
+import { COMPANY_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 // ---- initial form state ----
 const initialFormData: FormData = {
@@ -128,7 +129,7 @@ const initialFormData: FormData = {
 };
 
 // ── Form submission API
-const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+const FORM_SUBMIT_API_URL = COMPANY_API ? `${COMPANY_API}/drafts` : `${LAMBDA.companyFormDraft}/drafts`;
 
 function App() {
   const [companyNameStatus, setCompanyNameStatus] = useState<null | { available: boolean; suggestions?: string[]; message: string }>(null);
@@ -153,7 +154,7 @@ function App() {
     }
     setIsCheckingName(true);
     try {
-      const res = await fetch(`https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(name)}`);
+      const res = await fetch(COMPANY_API ? `${COMPANY_API}/drafts/check-name?name=${encodeURIComponent(name)}` : `${LAMBDA.companyFormDraft}/drafts/check-name?name=${encodeURIComponent(name)}`);
       const data = await res.json();
       setCompanyNameStatus(data);
     } catch (err) {

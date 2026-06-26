@@ -4,6 +4,7 @@ import { ArrowRight, Play, CheckCircle, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 export default function Hero({
   heroData,
@@ -164,7 +165,7 @@ export default function Hero({
 
     try {
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,

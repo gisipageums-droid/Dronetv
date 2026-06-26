@@ -3,6 +3,7 @@ import { useUserAuth } from "../../../context/context";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MessageCircle, Send, X, Check, CheckCheck, Clock, Coins, Search, Eye, AlertTriangle } from "lucide-react";
+import { AUTH_API, LEADS_API, LAMBDA } from '../../../../lib/apiConfig';
 
 interface Lead {
   leadId: string;
@@ -60,7 +61,7 @@ const EventLeads: React.FC = () => {
     if (!userId) return;
     try {
       const res = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile?userId=${userId}`
+        AUTH_API ? `${AUTH_API}/profile?userId=${userId}` : `${LAMBDA.profile}/profile?userId=${userId}`
       );
       const data = await res.json();
       setTotalTokens(data.profile?.tokenBalance || 0);
@@ -75,7 +76,7 @@ const EventLeads: React.FC = () => {
 
     try {
       const res = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/event-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${eventId}`
+        AUTH_API ? `${AUTH_API}/event-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${eventId}` : `${LAMBDA.profile}/event-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${eventId}`
       );
       const data = await res.json();
 
@@ -136,7 +137,7 @@ const EventLeads: React.FC = () => {
 
     try {
       const res = await fetch(
-        "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads/view",
+        AUTH_API ? `${AUTH_API}/leads/view` : `${LAMBDA.profile}/leads/view`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -187,7 +188,7 @@ const EventLeads: React.FC = () => {
     const id = setInterval(async () => {
       try {
         const response = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`,
+          LEADS_API ? `${LEADS_API}/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false` : `${LAMBDA.leadsChat}/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -250,7 +251,7 @@ const EventLeads: React.FC = () => {
 
     try {
       const response = await fetch(
-        "https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/send",
+        LEADS_API ? `${LEADS_API}/chat/send` : `${LAMBDA.leadsChat}/chat/send`,
         {
           method: "POST",
           headers: {

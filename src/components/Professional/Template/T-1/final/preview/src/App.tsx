@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import Service from "./components/Service";
 import { useParams } from "react-router-dom";
 import { useTemplate } from "../../../../../../context/context";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 const App: React.FC = () => {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
@@ -23,7 +24,7 @@ const App: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=template1`,
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}?template=template1` : `${LAMBDA.profTemplateDash}/${userId}/${professionalId}?template=template1`,
           {
             method: "GET",
             headers: {

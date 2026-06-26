@@ -14,6 +14,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import GallerySection from "./components/Gallery";
 import CompanyProfile from "./components/Profile"
 import Back from "./components/Back"
+import { COMPANY_API, LAMBDA } from '../../../../lib/apiConfig';
 
 export default function App() {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
@@ -25,7 +26,7 @@ export default function App() {
   async function fetchTemplateData(slug: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://ykcimvca79.execute-api.ap-south-1.amazonaws.com/dev/template?companyName=${encodeURIComponent(slug)}`);
+      const response = await fetch(COMPANY_API ? `${COMPANY_API}/template?companyName=${encodeURIComponent(slug)}` : `${LAMBDA.companyPreviewLoad}/template?companyName=${encodeURIComponent(slug)}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

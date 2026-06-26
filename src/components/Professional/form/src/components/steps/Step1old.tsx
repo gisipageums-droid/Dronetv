@@ -24,7 +24,7 @@
 //       try {
 //         setChecking(true);
 //         const res = await fetch(
-//           "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
+//           PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-username-check` : `${LAMBDA.profUsernameCheck}/professional-username-check`,
 //           {
 //             method: "POST",
 //             headers: { "Content-Type": "application/json" },
@@ -380,7 +380,7 @@
 //       try {
 //         setChecking(true);
 //         const res = await fetch(
-//           "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
+//           PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-username-check` : `${LAMBDA.profUsernameCheck}/professional-username-check`,
 //           {
 //             method: "POST",
 //             headers: { "Content-Type": "application/json" },
@@ -776,7 +776,7 @@
 //       try {
 //         setChecking(true);
 //         const res = await fetch(
-//           "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
+//           PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-username-check` : `${LAMBDA.profUsernameCheck}/professional-username-check`,
 //           {
 //             method: "POST",
 //             headers: { "Content-Type": "application/json" },
@@ -1142,6 +1142,7 @@ import { MultiSelect } from "../common/MultiSelect";
 import { PhoneInput } from "../common/PhoneInput";
 import { CountryStateSelect } from "../common/CountryStateSelect";
 import { DatePicker } from "../common/DatePicker";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid: boolean) => void }) => {
   const { data, updateField } = useForm();
@@ -1181,7 +1182,7 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
       try {
         setChecking(true);
         const res = await fetch(
-          "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-username-check` : `${LAMBDA.profUsernameCheck}/professional-username-check`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

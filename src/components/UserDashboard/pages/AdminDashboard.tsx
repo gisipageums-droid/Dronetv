@@ -17,6 +17,7 @@ import {
   Line,
 } from "recharts";
 import axios from "axios";
+import { ADMIN_API, AUTH_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface Lead {
   leadId: string;
@@ -109,7 +110,7 @@ const AdminDashboard: React.FC = () => {
 
   const getCategory = useCallback(async () => {
     const fetchData = await fetch(
-      `https://kgm0ckp0uf.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+      ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates1}/user-templates/${userDetails.email} `
     );
     const resData = await fetchData.json();
     setCompanyCount(resData.count);
@@ -118,7 +119,7 @@ const AdminDashboard: React.FC = () => {
   const getProfessionalCount = useCallback(() => {
     axios
       .get(
-        `https://5otjcn6oi1.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+        ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates3}/user-templates/${userDetails.email} `
       )
       .then((res) => {
         setProfessionalCount(res.data.count);
@@ -129,7 +130,7 @@ const AdminDashboard: React.FC = () => {
   const getEventCount = useCallback(() => {
     axios
       .get(
-        `https://zd3q4ewnxe.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+        ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates2}/user-templates/${userDetails.email} `
       )
       .then((res) => {
         setEventCount(res.data.count);
@@ -142,7 +143,7 @@ const AdminDashboard: React.FC = () => {
     getProfessionalCount();
     getEventCount();
     if (userDetails?.email) {
-      axios.get(`https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile?userId=${userDetails.email}`)
+      axios.get(AUTH_API ? `${AUTH_API}/profile?userId=${userDetails.email}` : `${LAMBDA.profile}/profile?userId=${userDetails.email}`)
         .then(r => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
         .catch(() => setTokenBalance(0));
     }
@@ -153,7 +154,7 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
+        AUTH_API ? `${AUTH_API}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0` : `${LAMBDA.profile}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
       );
 
       if (!response.ok) {
@@ -179,7 +180,7 @@ const AdminDashboard: React.FC = () => {
     try {
       setProfessionalLoading(true);
       const response = await fetch(
-        `https://r5mcwn6b10.execute-api.ap-south-1.amazonaws.com/prod/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`
+        LEADS_API ? `${LEADS_API}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`
       );
 
       if (!response.ok) {
@@ -207,7 +208,7 @@ const AdminDashboard: React.FC = () => {
     try {
       setEventLoading(true);
       const response = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`
+        AUTH_API ? `${AUTH_API}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0` : `${LAMBDA.profile}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`
       );
 
       if (!response.ok) {

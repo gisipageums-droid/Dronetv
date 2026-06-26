@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ADMIN_API, EVENTS_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 // Types
 interface AdminEditorProps {
@@ -75,7 +76,7 @@ export const AdminEditor = ({ isOpen, onClose }: AdminEditorProps) => {
   useEffect(() => {
     if (!isOpen) return;
     setLoading(true);
-    fetch("https://qemducz8gc.execute-api.ap-south-1.amazonaws.com/formstructure")
+    fetch(EVENTS_API ? `${EVENTS_API}` : `${LAMBDA.formStructure}`)
       .then((res) => res.json())
       .then((data) => setFormData(data))
       .catch((err) => alert("Failed to fetch form structure"))
@@ -468,7 +469,7 @@ const deleteSkill = (stepIndex: number, path: number[]) => {
     setSaving(true);
     try {
       const res = await fetch(
-        "https://0i53elbzf2.execute-api.ap-south-1.amazonaws.com/dev/update-form-data",
+        ADMIN_API ? `${ADMIN_API}/update-form-data` : `${LAMBDA.formAdminUpdate}/update-form-data`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

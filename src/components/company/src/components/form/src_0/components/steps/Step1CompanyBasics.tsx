@@ -3,6 +3,7 @@ import { FormStep } from '../FormStep';
 import { FormInput } from '../FormInput';
 import { StepProps } from '../../types/form';
 import { Building2, Calendar, User, Phone, Mail, Globe } from 'lucide-react';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 // Add debounce utility (you can install lodash or use this simple version)
 const debounce = (func: Function, wait: number) => {
@@ -55,7 +56,7 @@ const Step1CompanyBasics: React.FC<StepProps> = ({
       
       try {
         const response = await fetch(
-          `https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${name}`,
+          COMPANY_API ? `${COMPANY_API}/drafts/check-name?name=${name}` : `${LAMBDA.companyFormDraft}/drafts/check-name?name=${name}`,
           {
             method: 'GET',
             headers: {

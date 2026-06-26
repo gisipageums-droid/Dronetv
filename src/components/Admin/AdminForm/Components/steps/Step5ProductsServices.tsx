@@ -3,6 +3,7 @@ import { FormStep } from "../FormStep";
 import { FormInput } from "../FormInput";
 import { StepProps } from "../../types/form";
 import { Plus, Minus, Package, Wrench, X, Grid } from "lucide-react";
+import { COMPANY_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 interface SectionItem {
   title: string;
@@ -22,9 +23,9 @@ interface CustomSection {
   items: SectionItem[];
 }
 
-const SERVICES_API_BASE = "https://rlexs1v7m8.execute-api.ap-south-1.amazonaws.com/Products_and_Services/Services";
-const PRODUCTS_API_BASE = "https://rlexs1v7m8.execute-api.ap-south-1.amazonaws.com/Products_and_Services/Products";
-const CUSTOM_API_BASE = "https://rlexs1v7m8.execute-api.ap-south-1.amazonaws.com/Products_and_Services/custom";
+const SERVICES_API_BASE = COMPANY_API ? `${COMPANY_API}/Services` : `${LAMBDA.products}/Services`;
+const PRODUCTS_API_BASE = COMPANY_API ? `${COMPANY_API}/Products` : `${LAMBDA.products}/Products`;
+const CUSTOM_API_BASE = COMPANY_API ? `${COMPANY_API}/custom` : `${LAMBDA.products}/custom`;
 
 const Step5ProductsServices: React.FC<StepProps> = ({
   formData,
@@ -697,7 +698,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
           ],
         } as const;
         console.log('[custom] POST /custom/add →', payload);
-        await fetch('https://rlexs1v7m8.execute-api.ap-south-1.amazonaws.com/Products_and_Services/custom/add', {
+        await fetch(COMPANY_API ? `${COMPANY_API}/custom/add` : `${LAMBDA.products}/custom/add`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),

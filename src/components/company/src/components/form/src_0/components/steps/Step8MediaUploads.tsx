@@ -14,12 +14,13 @@ import {
 } from "lucide-react";
 import { useTemplate } from "../../../../../../../context/context";
 import { toast } from "react-toastify";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 // ✅ Updated File Upload API URL (your actual endpoint)
-const FILE_UPLOAD_API_URL = "https://1i8zpm4qu4.execute-api.ap-south-1.amazonaws.com/prod/upload-file";
+const FILE_UPLOAD_API_URL = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
 
 // ✅ Form Submission API URL (unchanged)
-const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+const FORM_SUBMIT_API_URL = COMPANY_API ? `${COMPANY_API}/drafts` : `${LAMBDA.companyFormDraft}/drafts`;
 
 // ✅ Helper function to upload individual file
 const uploadSingleFile = async (file: File, fieldName: string, userId: string): Promise<any> => {

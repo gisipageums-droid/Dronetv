@@ -15,6 +15,7 @@ import Testimonials from "./components/Testimonials";
 import UsedBy from "./components/UsedBy";
 import { useParams } from "react-router-dom";
 import Back from "./components/Back";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 // Fills empty sections with placeholder content so sections don't appear headless
 function fillSectionDefaults(content: any, companyName: string) {
@@ -236,7 +237,7 @@ export default function App() {
         setError(null);
 
         const response = await fetch(
-          `https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev/templates?publishId=${encodeURIComponent(pub || "")}`,
+          COMPANY_API ? `${COMPANY_API}/templates?publishId=${encodeURIComponent(pub || "")}` : `${LAMBDA.companyTemplateLoad}/templates?publishId=${encodeURIComponent(pub || "")}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },

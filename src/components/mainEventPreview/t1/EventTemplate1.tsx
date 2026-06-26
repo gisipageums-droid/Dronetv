@@ -12,6 +12,7 @@ import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
 import { Toaster } from "sonner";
 import Back from "./components/Back";
+import { EVENTS_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface EventTemplateData {
   draftId?: string;
@@ -180,7 +181,7 @@ const EventTemplate1: React.FC = () => {
     try {
       setIsLoading(true);
      const response = await fetch(
-          `https://fupab15ap0.execute-api.ap-south-1.amazonaws.com/dev/${eventName}`,
+          EVENTS_API ? `${EVENTS_API}/${eventName}` : `${LAMBDA.eventPreview}/${eventName}`,
           {
             method: "GET",
             headers: {

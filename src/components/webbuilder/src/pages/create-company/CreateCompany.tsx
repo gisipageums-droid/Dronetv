@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Save, Upload, Plus, Trash2, Star } from 'lucide-react';
 import { uploadImageToS3 } from './src/utils/s3Upload';
+import { COMPANY_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 interface CompanyValue {
   icon?: string; // optional for select
@@ -131,7 +132,7 @@ const CreateCompany: React.FC = () => {
       timestamp: new Date().toISOString(),// or new Date().toISOString() if you want ISO format
     };
     // Call the API
-    const response = await fetch('https://6dcd2cnc76.execute-api.ap-south-1.amazonaws.com/postCompanyform', {
+    const response = await fetch(COMPANY_API ? `${COMPANY_API}` : `${LAMBDA.webbuilderPost}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formDataWithTimestamp)

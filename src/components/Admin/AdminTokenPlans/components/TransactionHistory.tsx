@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Search, Download, CheckCircle, XCircle, Clock } from "lucide-react";
+import { PAYMENT_API, LAMBDA } from '../../../../lib/apiConfig';
 
 interface Transaction {
   id: string;
@@ -39,7 +40,7 @@ export function TransactionHistory() {
     const fetchTransactions = async () => {
       try {
         const response = await fetch(
-          "https://vgrrxo3wu9.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/Transaction-History/All-users-data",
+          PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/Transaction-History/All-users-data` : `${LAMBDA.transactions}/drontv-token-buy-payment-gateway/Transaction-History/All-users-data`,
           { signal: controller.signal }
         );
         if (!response.ok) throw new Error(`HTTP ${response.status}`);

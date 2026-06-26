@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Search, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 
 interface Professional {
   professionalId: string;
@@ -15,7 +16,7 @@ interface Professional {
   cleanUrl: string;
 }
 
-const PROFESSIONALS_API = 'https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=main';
+const PROFESSIONALS_API = PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=main` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=main`;
 
 export default function PilotDirectoryPage() {
   const [items, setItems] = useState<Professional[]>([]);
