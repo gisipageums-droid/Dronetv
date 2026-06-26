@@ -75,11 +75,16 @@ export default function JobBoardPage() {
             {filtered.map(item => (
               <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 border-l-4 border-l-yellow-400">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                  <div>
-                    {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-1 inline-block">{item.category}</span>}
-                    <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
-                    {item.company && <p className="text-xs text-gray-500">{item.company}{item.location ? ` · ${item.location}` : ''}</p>}
-                    {item.description && <p className="text-xs text-gray-400 mt-1 line-clamp-2">{item.description}</p>}
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    {item.imageUrl && (
+                      <img src={item.imageUrl} alt={item.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-gray-100" />
+                    )}
+                    <div className="min-w-0">
+                      {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-1 inline-block">{item.category}</span>}
+                      <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
+                      {item.company && <p className="text-xs text-gray-500">{item.company}{item.location ? ` · ${item.location}` : ''}</p>}
+                      {item.description && <p className="text-xs text-gray-400 mt-1 line-clamp-2">{item.description}</p>}
+                    </div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     {item.salary && <span className="text-sm font-bold text-gray-700">{item.salary}</span>}
