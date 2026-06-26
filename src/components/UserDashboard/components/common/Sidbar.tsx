@@ -62,8 +62,9 @@ const NAV_GROUPS: NavGroup[] = [
     id: "account",
     icon: Globe,
     label: "Account",
-    paths: ["/user-website", "/user-recharge", "/user-transactions"],
+    paths: ["/user-website", "/user-recharge", "/user-transactions", "/user-profile"],
     items: [
+      { icon: User,   label: "Profile",      href: "/user-profile" },
       { icon: Globe,  label: "Website",      href: "/user-website" },
       { icon: Wallet, label: "Recharge",     href: "/user-recharge" },
       { icon: Clock1, label: "Transactions", href: "/user-transactions" },
@@ -105,7 +106,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside className="flex h-screen sticky top-0">
+    <aside className="flex h-full">
       <section
         className={`${isOpen ? "w-64" : "w-16"} flex flex-col transition-all duration-300 overflow-x-hidden`}
         style={{ background: "#111827" }}

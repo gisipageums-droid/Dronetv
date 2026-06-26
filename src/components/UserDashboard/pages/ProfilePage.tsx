@@ -486,8 +486,8 @@ const ProfilePage: React.FC = () => {
 
       {showAllTransactions && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[80vh] overflow-hidden border border-amber-200">
-            <div className="p-6 border-b border-amber-200">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden border border-amber-200">
+            <div className="p-6 border-b border-amber-200 flex-shrink-0">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold text-amber-900">All Transactions</h3>
                 <button
@@ -533,7 +533,7 @@ const ProfilePage: React.FC = () => {
               )}
             </div>
 
-            <div className="overflow-y-auto max-h-[50vh]">
+            <div className="overflow-y-auto flex-1">
               {AllTokenData && AllTokenData.transactions && AllTokenData.transactions.length > 0 ? (
                 <table className="w-full">
                   <thead className="bg-amber-50 text-left sticky top-0">
@@ -593,7 +593,7 @@ const ProfilePage: React.FC = () => {
             </div>
 
             {AllTokenData && AllTokenData.totalPages > 1 && (
-              <div className="p-4 border-t border-amber-200 bg-amber-50">
+              <div className="p-4 border-t border-amber-200 bg-amber-50 flex-shrink-0">
                 <div className="flex justify-between items-center text-sm text-amber-700">
                   <span>Page {AllTokenData.currentPage} of {AllTokenData.totalPages}</span>
                   <span>Showing {AllTokenData.transactions.length} of {AllTokenData.totalCount} transactions</span>
@@ -606,7 +606,7 @@ const ProfilePage: React.FC = () => {
               </div>
             )}
 
-            <div className="p-6 flex justify-end border-t border-amber-200">
+            <div className="p-6 flex justify-end border-t border-amber-200 flex-shrink-0">
               <button
                 onClick={() => setShowAllTransactions(false)}
                 className="cursor-pointer px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition duration-300 shadow-md"

@@ -168,14 +168,18 @@ const Addons: React.FC = () => {
         service: confirmAddon.id,
         serviceName: confirmAddon.title,
       });
-    } catch { /* optimistic — team is notified via email flow */ }
+    } catch {
+      toast.error("Purchase failed. Please try again.");
+      setPurchasing(null);
+      return;
+    }
 
     const updated = [...new Set([...activeIds, confirmAddon.id])];
     setActiveIds(updated);
     saveActive(userId, updated);
-    setTokenBalance(prev => prev - confirmAddon.tokens);
     toast.success(`${confirmAddon.title} purchased! Our team will contact you within 24 hours.`);
     setPurchasing(null);
+    fetchProfile();
   };
 
   const activeAddons = ADDONS.filter(a => activeIds.includes(a.id));

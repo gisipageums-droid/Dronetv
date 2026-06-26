@@ -227,7 +227,7 @@ const EventCard: React.FC<EventCardProps> = ({
               onClick={(e) => {
                 e.stopPropagation();
                 if (event?.eventId && event.templateSelection)
-                  onEdit(event.eventId, event.templateSelection);
+                  onEdit(event.submissionId || event.eventId, event.templateSelection);
               }}
               className="flex-1 px-3 py-2 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-500"
             >
