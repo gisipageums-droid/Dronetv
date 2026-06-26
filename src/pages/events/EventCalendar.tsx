@@ -17,7 +17,7 @@ interface RawEvent {
   thumbnailUrl?: string;
 }
 
-const EVENTS_API = EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=main` : `${LAMBDA.events}/events-dashboard?viewType=main`;
+const EVENTS_DASHBOARD_URL = EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=main` : `${LAMBDA.events}/events-dashboard?viewType=main`;
 
 function getEventImage(previewImage?: string, thumbnailUrl?: string): string | null {
   for (const url of [previewImage, thumbnailUrl]) {
@@ -41,7 +41,7 @@ export default function EventCalendarPage() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(EVENTS_API, { signal: controller.signal })
+    fetch(EVENTS_DASHBOARD_URL, { signal: controller.signal })
       .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(data => {
         const all: RawEvent[] = Array.isArray(data.cards) ? data.cards : [];
