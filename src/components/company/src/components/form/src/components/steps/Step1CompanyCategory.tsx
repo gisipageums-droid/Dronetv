@@ -1166,10 +1166,15 @@ const GSTVerificationSection: React.FC<{
           onVerifySuccess(mappedData);
           if (regAddress) onAddressChange(regAddress);
         } else {
-          // silent — no toast in child component
+          toast.error('Could not verify CIN details. Please fill the form manually.');
         }
-      } catch {
-        // silent
+      } catch (cinErr: any) {
+        const cinMsg = cinErr?.response?.data?.message || '';
+        if (cinMsg.toLowerCase().includes('timed out') || cinMsg.toLowerCase().includes('timeout')) {
+          toast.error('Verification service is busy. Please try again in a moment.');
+        } else {
+          toast.error('Could not connect to verification service. Please fill the form manually.');
+        }
       } finally {
         setIsVerifyingCIN(false);
       }
@@ -2433,10 +2438,13 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         }
       } catch (error: any) {
         const errStatus = error?.response?.status;
+        const errMsg = error?.response?.data?.message || '';
         if (errStatus === 401 || errStatus === 403) {
           toast.warning('GST verification service unavailable. GSTIN format accepted — please fill company details manually.');
+        } else if (errMsg.toLowerCase().includes('timed out') || errMsg.toLowerCase().includes('timeout')) {
+          toast.error('Verification service is busy. Please try again in a moment.');
         } else {
-          toast.error(error?.response?.data?.message || "Error connecting to verification service");
+          toast.error('GST verification failed. Please try again.');
         }
       } finally {
         setVerifyingGST(false);
