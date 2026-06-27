@@ -5,7 +5,7 @@ import {
   ShoppingBag, Coins, ChevronDown, Share2, Briefcase, Award,
   GraduationCap, Users2, Newspaper, BookOpen, ImageIcon, Star,
   BarChart2, Cpu, ClipboardList, Factory, Bot, Handshake,
-  Zap, Target, Layout, Receipt, Package,
+  Zap, Target, Layout, Receipt, Package, TrendingUp,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
@@ -44,13 +44,14 @@ const NAV_GROUPS: NavGroup[] = [
     id: "professionals",
     icon: Users,
     label: "Professionals",
-    paths: ["/professionals/", "/professionals/portfolio"],
+    paths: ["/professionals/", "/professionals/portfolio", "/professionals/career-path"],
     items: [
       { icon: Briefcase,      label: "Job Board",       href: "/professionals/job-board" },
       { icon: User,           label: "Pilot Directory", href: "/professionals/pilot-directory" },
       { icon: Award,          label: "Certifications",  href: "/professionals/certifications" },
       { icon: ImageIcon,      label: "Portfolio",       href: "/professionals/portfolio" },
       { icon: GraduationCap,  label: "Training",        href: "/professionals/training" },
+      { icon: TrendingUp,     label: "Career Path",     href: "/professionals/career-path" },
       { icon: Users2,         label: "Networking",      href: "/professionals/networking" },
       { icon: Users,          label: "Community",       href: "/professionals/community" },
     ],
@@ -125,12 +126,13 @@ const NAV_GROUPS: NavGroup[] = [
     id: "tokens",
     icon: Coins,
     label: "Tokens",
-    paths: ["/user-recharge", "/user-buy", "/user-bid-keywords", "/user-page-placements"],
+    paths: ["/user-recharge", "/user-buy", "/user-bid-keywords", "/user-page-placements", "/user-active-campaigns"],
     items: [
-      { icon: Wallet, label: "Token Wallet",    href: "/user-recharge" },
-      { icon: Zap,    label: "Buy Tokens",      href: "/user-buy" },
-      { icon: Target, label: "Bid for Keywords",href: "/user-bid-keywords" },
-      { icon: Layout, label: "Page Placements", href: "/user-page-placements" },
+      { icon: Wallet,   label: "Token Wallet",      href: "/user-recharge" },
+      { icon: Zap,      label: "Buy Tokens",        href: "/user-buy" },
+      { icon: Target,   label: "Bid for Keywords",  href: "/user-bid-keywords" },
+      { icon: Layout,   label: "Page Placements",   href: "/user-page-placements" },
+      { icon: BarChart2,label: "Active Campaigns",  href: "/user-active-campaigns" },
     ],
   },
   {

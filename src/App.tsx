@@ -115,6 +115,7 @@ import UserPosts from "./components/UserDashboard/pages/UserPosts";
 import BidKeywords from "./components/UserDashboard/pages/BidKeywords";
 import PagePlacements from "./components/UserDashboard/pages/PagePlacements";
 import MyPackage from "./components/UserDashboard/pages/MyPackage";
+import ActiveCampaigns from "./components/UserDashboard/pages/ActiveCampaigns";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
@@ -153,6 +154,7 @@ import PortfolioPage from "./pages/professionals/Portfolio";
 import TrainingPage from "./pages/professionals/Training";
 import NetworkingPage from "./pages/professionals/Networking";
 import CommunityPage from "./pages/professionals/Community";
+import CareerPathPage from "./pages/professionals/CareerPath";
 
 // Partnerships pages
 import DroneManufacturersPage from "./pages/partnerships/DroneManufacturers";
@@ -355,6 +357,7 @@ const AppContent = () => {
           <Route path="/professionals/training" element={<TrainingPage />} />
           <Route path="/professionals/networking" element={<NetworkingPage />} />
           <Route path="/professionals/community" element={<CommunityPage />} />
+          <Route path="/professionals/career-path" element={<CareerPathPage />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
           <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
 
@@ -592,6 +595,17 @@ const AppContent = () => {
               <ProtectedRoute>
                 <UserDashboardLayout>
                   <MyPackage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-active-campaigns"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ActiveCampaigns />
                 </UserDashboardLayout>
               </ProtectedRoute>
             }
