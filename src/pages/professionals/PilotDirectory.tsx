@@ -3,6 +3,15 @@ import { MapPin, Search, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 
+const samplePilots = [
+  { icon: '👨‍✈️', name: 'Rajesh K.', badge: 'RPC — Small & Medium Category', location: 'Hyderabad, Telangana', categories: ['Agriculture', 'GIS Mapping'], experience: '4 Years | 800+ Hours', tags: ['Agriculture Spraying', 'NDVI Mapping', 'AP Missions'] },
+  { icon: '👩‍✈️', name: 'Priya S.', badge: 'RPC — Small Category', location: 'Bengaluru, Karnataka', categories: ['Cinematography'], experience: '2 Years | 350+ Hours', tags: ['Aerial Photography', 'Real Estate', 'Cinematography'] },
+  { icon: '👨‍💼', name: 'Arun M.', badge: 'RPC — Medium Category', location: 'Mumbai, Maharashtra', categories: ['Survey / GIS'], experience: '6 Years | 1,200+ Hours', tags: ['LiDAR Survey', 'Photogrammetry', 'GIS Processing'] },
+  { icon: '👨‍🔧', name: 'Sanjay R.', badge: 'RPC — Small, Medium & Large', location: 'Delhi NCR', categories: ['Inspection'], experience: '8 Years | 2,000+ Hours', tags: ['Infrastructure Inspection', 'Tower Survey', 'Pipeline Monitoring'] },
+  { icon: '👩‍💻', name: 'Kavitha N.', badge: 'RPC — Small Category + GIS Specialist', location: 'Chennai, Tamil Nadu', categories: ['Survey / GIS'], experience: '3 Years | 500+ Hours', tags: ['GIS Analysis', 'Remote Sensing', 'QGIS'] },
+  { icon: '👨‍🏫', name: 'Vikram P.', badge: 'RPC — Small & Medium + Instructor', location: 'Pune, Maharashtra', categories: ['Instructor'], experience: '5 Years | 900+ Hours | 200 Students', tags: ['Flight Instruction', 'DGCA Exam Prep', 'Simulator Training'] },
+];
+
 interface Professional {
   professionalId: string;
   professionalName: string;
@@ -39,7 +48,12 @@ export default function PilotDirectoryPage() {
   }, []);
 
   const allCategories = Array.from(new Set(items.flatMap(i => i.categories || []).filter(Boolean)));
-  const categories = ['All', ...allCategories];
+  const categories = items.length > 0
+    ? ['All', ...allCategories]
+    : ['All', 'Agriculture', 'Survey / GIS', 'Cinematography', 'Inspection', 'Instructor'];
+  const cities = items.length > 0
+    ? []
+    : ['Hyderabad', 'Bengaluru', 'Mumbai', 'Delhi', 'Chennai', 'Pune'];
 
   const filtered = items.filter(i => {
     const matchCat = activeCategory === 'All' || (i.categories || []).includes(activeCategory);
@@ -61,29 +75,39 @@ export default function PilotDirectoryPage() {
           </div>
           <div className="flex gap-8 flex-shrink-0">
             <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || '0'}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Pilots</span>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">39,890</span>
+              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Certified Pilots India</span>
             </div>
             <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">DGCA</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Certified</span>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Free</span>
+              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">To Create Profile</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row gap-3 flex-wrap">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder="Search pilots..." value={search} onChange={e => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-full" />
-        </div>
-        {categories.length > 1 && (
+      <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder="Search pilots, locations..." value={search} onChange={e => setSearch(e.target.value)}
+              className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-full" />
+          </div>
           <div className="flex gap-2 flex-wrap">
             {categories.map(cat => (
               <button key={cat} onClick={() => setActiveCategory(cat)}
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
                 {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+        {cities.length > 0 && (
+          <div className="flex gap-2 flex-wrap">
+            {cities.map(city => (
+              <button key={city} onClick={() => setSearch(city)}
+                className="px-3 py-1 rounded-full text-xs font-semibold border border-dashed border-gray-300 text-gray-500 hover:border-yellow-400 hover:text-yellow-700 transition-colors">
+                📍 {city}
               </button>
             ))}
           </div>
@@ -96,14 +120,44 @@ export default function PilotDirectoryPage() {
           Drone Pilots
         </h2>
         {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading pilots...</div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
-            <p className="mb-4">No pilots listed yet.</p>
-            <button onClick={() => navigate('/professional/form')} className="bg-yellow-400 text-black font-bold px-5 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
-              Create Your Professional Profile →
-            </button>
+          <div className="text-center py-10 text-gray-400">Loading pilots...</div>
+        ) : items.length === 0 ? (
+          <div className="space-y-4">
+            <div className="bg-white rounded-xl border border-dashed border-gray-300 p-6 text-center mb-4">
+              <User className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+              <p className="font-semibold text-gray-500 mb-1">Are you a DGCA-certified drone pilot?</p>
+              <p className="text-sm text-gray-400 mb-3">Add your profile to DroneTv.in's Pilot Directory for free. Drone companies, service operators, and recruiters search here when they need pilots.</p>
+              <button onClick={() => navigate('/professional/form')}
+                className="bg-yellow-400 text-black font-bold px-5 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+                Add Your Profile →
+              </button>
+            </div>
+            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">Sample Pilot Profiles</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {samplePilots.map((pilot, i) => (
+                <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 opacity-80">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-xl flex-shrink-0">{pilot.icon}</div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <h3 className="text-sm font-bold text-gray-900">{pilot.name}</h3>
+                        <span className="bg-green-100 text-green-700 text-xs font-bold px-1.5 py-0.5 rounded">✓ DGCA</span>
+                      </div>
+                      <p className="text-xs text-gray-500">{pilot.badge}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-2"><MapPin className="w-3 h-3" />{pilot.location}</div>
+                  <p className="text-xs text-gray-500 mb-2">{pilot.experience}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {pilot.tags.map((tag, j) => <span key={j} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
+                  </div>
+                  <button className="mt-3 text-xs font-bold text-yellow-600 hover:text-yellow-700">Contact →</button>
+                </div>
+              ))}
+            </div>
           </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-10 text-gray-400">No pilots match your search.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(item => (

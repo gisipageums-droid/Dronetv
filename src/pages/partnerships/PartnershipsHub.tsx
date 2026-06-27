@@ -1,5 +1,21 @@
 import { Link } from 'react-router-dom';
 
+const whyPartner = [
+  { icon: '🎯', title: '100% Drone, GIS & AI Audience', desc: 'Every visitor, viewer, and lead on DroneTv.in is from the drone, GIS & AI ecosystem. No dilution across unrelated industries. Agriculture drones, defence UAVs, GIS & mapping technology, AI and computer-vision platforms — your content reaches exactly the right people.' },
+  { icon: '📹', title: 'Professional Video Production', desc: 'In-house production team delivers 5-minute video interviews published on YouTube (@indiadronetv) and embedded permanently on your company profile. Both promoted via social media on publish week across LinkedIn, Instagram, and Facebook.' },
+  { icon: '🏛️', title: 'Expo Media Partnership', desc: 'DroneTv.in is the official Digital Broadcast Media Partner for major drone expos including Drone Expo 2026 Bengaluru. Brand partners receive expo stall branding credit and on-ground media coverage at DroneTv partner events.' },
+  { icon: '📊', title: 'B2B Lead Generation', desc: 'Verified leads from buyers actively searching for your product or service category. Lead notification emails sent immediately. Brand package subscribers see full buyer contact details — name, company, email, and phone — directly on the platform.' },
+  { icon: '📖', title: 'Magazine and Editorial Coverage', desc: "Scale and Brand partners receive advertising and editorial coverage in DroneTv's quarterly digital magazine — half-page or full-page ads, editorial articles, and cover page eligibility for Brand tier partners." },
+  { icon: '🌐', title: 'Dedicated Company Profile', desc: 'A single-page website on DroneTv.in with product listings, service descriptions, video embeds, contact details, and an active B2B enquiry form — updated as part of your subscription and permanently indexed on the platform.' },
+];
+
+const testimonials = [
+  { quote: 'DroneTv covered our product launch at Drone Expo 2025 with a video interview that reached more qualified buyers than any other media we have tried. The ROI was immediate.', name: 'Dr. Pranay Kumar', role: 'COO — BBPL Aero Pvt Ltd' },
+  { quote: 'Being listed on DroneTv.in gave our training institute credibility with industry partners. The enquiry quality is strong — these are people who already know what they want.', name: 'Training Partner', role: 'DGCA-Approved RPTO, Telangana' },
+  { quote: "DroneTv's media partnership at Drone Expo is different from other media partners. They bring a full team, do live interviews, and push content to their channels same day.", name: 'Event Organizer', role: 'Drone Expo Series' },
+  { quote: 'As an AI company moving into the drone sector, DroneTv gave us a credible platform to establish ourselves before we had market presence. Worth every rupee.', name: 'AI Partner', role: 'Drone AI Platform, Bengaluru' },
+];
+
 const categories = [
   {
     to: '/partnerships/drone-manufacturers',
@@ -139,6 +155,40 @@ export default function PartnershipsHubPage() {
             ))}
           </div>
           <p className="text-xs text-gray-400 mt-3 text-center">All prices exclusive of GST. 100% advance payment. 12-month term.</p>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Why</span>
+            Why Partner with DroneTv.in
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {whyPartner.map((item, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <div className="text-2xl mb-3">{item.icon}</div>
+                <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Reviews</span>
+            Partner Testimonials
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {testimonials.map((t, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                <p className="text-sm text-gray-600 leading-relaxed mb-4 italic">"{t.quote}"</p>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">{t.name}</p>
+                  <p className="text-xs text-gray-400">{t.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="bg-yellow-400 rounded-xl p-8 text-center">
