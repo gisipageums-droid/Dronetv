@@ -116,7 +116,11 @@ export default function WorkshopsPage() {
             ? <div className="text-center py-8 text-gray-400">No workshops match your search.</div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filtered.map(event => (
-                  <div key={event.eventId} onClick={() => navigate(`/event/${event.cleanUrl || event.urlSlug}`)}
+                  <div key={event.eventId} onClick={() => {
+                    let slug = event.cleanUrl || event.urlSlug || '';
+                    if (slug.startsWith('http')) slug = slug.split('/').pop() || slug;
+                    navigate(`/event/${slug}`);
+                  }}
                     className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
                     {getEventImage(event.previewImage, event.thumbnailUrl) ? (
                       <img src={getEventImage(event.previewImage, event.thumbnailUrl)!} alt={event.eventName} className="w-full h-40 object-cover" />

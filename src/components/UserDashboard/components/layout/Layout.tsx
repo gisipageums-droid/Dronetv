@@ -1,17 +1,12 @@
 import Sidebar from "../common/Sidbar";
 import MobileBottomNav from "../common/MobileBottomNav";
-import React, { useEffect } from "react";
+import React from "react";
 
 interface LayoutProps {
   children?: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
-  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-950 text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
