@@ -112,10 +112,14 @@ import RechargePlans from "./components/UserDashboard/pages/Plans";
 import MediaHub from "./components/UserDashboard/pages/MediaHub";
 import Addons from "./components/UserDashboard/pages/Addons";
 import UserPosts from "./components/UserDashboard/pages/UserPosts";
+import BidKeywords from "./components/UserDashboard/pages/BidKeywords";
+import PagePlacements from "./components/UserDashboard/pages/PagePlacements";
+import MyPackage from "./components/UserDashboard/pages/MyPackage";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
 import AdminLayout from "./components/Admin/AdminLayout";
+import AdminTokenEconomy from "./components/Admin/AdminTokenEconomy";
 import AdminInvoicesPage from "./pages/admin/AdminInvoicesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
@@ -393,6 +397,15 @@ const AppContent = () => {
               </AdminLayout>
             </AdminProtectedRoute>} />
 
+          {["/admin/tokens/revenue", "/admin/tokens/auctions", "/admin/tokens/ledger", "/admin/tokens/slots", "/admin/tokens/phase-gate"].map(p => (
+            <Route key={p} path={p} element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <AdminTokenEconomy />
+                </AdminLayout>
+              </AdminProtectedRoute>} />
+          ))}
+
           {/* event routes */}
           <Route
             path="/admin/event/dashboard"
@@ -545,6 +558,39 @@ const AppContent = () => {
               <ProtectedRoute>
                 <UserDashboardLayout>
                   <TransactionHistory />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-bid-keywords"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <BidKeywords />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-page-placements"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <PagePlacements />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-plans"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <MyPackage />
                 </UserDashboardLayout>
               </ProtectedRoute>
             }

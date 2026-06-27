@@ -37,6 +37,11 @@ import {
   Layers,
   IndianRupee,
   History,
+  Coins,
+  Gavel,
+  BarChart,
+  ShieldCheck,
+  Zap,
 } from "lucide-react";
 import { COMPANY_API, EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 
@@ -168,6 +173,23 @@ const NAV: Section[] = [
     ],
   },
   {
+    heading: "Token Economy",
+    items: [
+      {
+        id: "token-economy",
+        label: "Token Economy",
+        icon: <Coins size={17} />,
+        sub: [
+          { label: "Token Revenue",  path: "/admin/tokens/revenue",    icon: <IndianRupee size={14} /> },
+          { label: "Live Auctions",  path: "/admin/tokens/auctions",   icon: <Gavel size={14} /> },
+          { label: "Token Ledger",   path: "/admin/tokens/ledger",     icon: <History size={14} /> },
+          { label: "Slot Management",path: "/admin/tokens/slots",      icon: <Layers size={14} /> },
+          { label: "Phase Gate",     path: "/admin/tokens/phase-gate", icon: <ShieldCheck size={14} /> },
+        ],
+      },
+    ],
+  },
+  {
     heading: "System",
     items: [
       {
@@ -189,6 +211,11 @@ const PATH_TO_ID: Record<string, string> = {
   "/admin/plans": "plans",
   "/admin/invoices": "invoices",
   "/admin/settings": "settings",
+  "/admin/tokens/revenue": "token-economy",
+  "/admin/tokens/auctions": "token-economy",
+  "/admin/tokens/ledger": "token-economy",
+  "/admin/tokens/slots": "token-economy",
+  "/admin/tokens/phase-gate": "token-economy",
 };
 
 const BREADCRUMBS: Record<string, string> = {
@@ -200,6 +227,11 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/plans": "Packages & Revenue",
   "/admin/invoices": "Invoices",
   "/admin/settings": "Settings",
+  "/admin/tokens/revenue": "Token Revenue",
+  "/admin/tokens/auctions": "Live Auctions",
+  "/admin/tokens/ledger": "Token Ledger",
+  "/admin/tokens/slots": "Slot Management",
+  "/admin/tokens/phase-gate": "Phase Gate",
 };
 
 const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
