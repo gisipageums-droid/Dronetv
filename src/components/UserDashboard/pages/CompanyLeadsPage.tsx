@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
-import UserDashboardLayout from "../components/layout/Layout";
 import CompanyLeads from "../components/common/CompanyLeads";
 import { COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 
@@ -30,32 +29,28 @@ const CompanyLeadsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <UserDashboardLayout>
-        <div className="flex items-center justify-center h-64 text-gray-500">
-          Loading...
-        </div>
-      </UserDashboardLayout>
+      <div className="flex items-center justify-center h-64 text-gray-500">
+        Loading...
+      </div>
     );
   }
 
   if (!companies.length) {
     return (
-      <UserDashboardLayout>
-        <div className="flex flex-col items-center justify-center h-64 gap-3 text-gray-500">
-          <p className="text-lg font-medium">No companies found.</p>
-          <button
-            onClick={() => navigate("/user-companies")}
-            className="px-4 py-2 bg-yellow-400 text-black rounded-lg font-semibold hover:bg-yellow-500 transition"
-          >
-            Go to Companies
-          </button>
-        </div>
-      </UserDashboardLayout>
+      <div className="flex flex-col items-center justify-center h-64 gap-3 text-gray-500">
+        <p className="text-lg font-medium">No companies found.</p>
+        <button
+          onClick={() => navigate("/user-companies")}
+          className="px-4 py-2 bg-yellow-400 text-black rounded-lg font-semibold hover:bg-yellow-500 transition"
+        >
+          Go to Companies
+        </button>
+      </div>
     );
   }
 
   return (
-    <UserDashboardLayout>
+    <div>
       {companies.length > 1 && (
         <div className="px-6 pt-6 flex flex-wrap gap-2">
           {companies.map((c) => (
@@ -84,7 +79,7 @@ const CompanyLeadsPage: React.FC = () => {
           Select a company above to view leads.
         </div>
       )}
-    </UserDashboardLayout>
+    </div>
   );
 };
 

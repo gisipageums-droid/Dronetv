@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100 text-gray-900" style={{ fontFamily: "'Poppins', sans-serif" }}>
+    <div className="flex h-screen overflow-hidden bg-gray-950 text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
       {/* Sidebar fills full height */}
       <div className="hidden lg:flex flex-shrink-0 h-full">
         <Sidebar />

@@ -707,7 +707,7 @@ const toggleMute = () => {
     height: "100%",
     minHeight: "100vh",
   }}
-  src={`${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1`|| "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"}
+  src={heroContent.videoUrl ? `${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1` : "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"}
   title="Event Background Video"
   frameBorder="0"
   allow="autoplay; encrypted-media; fullscreen"

@@ -209,7 +209,10 @@ const EventTemplate1: React.FC = () => {
 
   useEffect(() => {
     if (eventName) {
-      fetchTemplateData(eventName);
+      const cleanSlug = eventName.includes("/event/")
+        ? eventName.split("/event/").pop() || eventName
+        : eventName;
+      fetchTemplateData(cleanSlug);
     } else {
       setError("Required parameters not found in URL");
       setIsLoading(false);
