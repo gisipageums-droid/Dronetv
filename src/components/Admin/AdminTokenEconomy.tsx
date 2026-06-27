@@ -70,7 +70,16 @@ const AdminTokenEconomy: React.FC = () => {
       ]);
       setStatsResp(statsR.data ?? null);
       setLedger(ledgerR.data?.entries ?? []);
-      setSlots(slotsR.data?.slots ?? []);
+      const rawSlots = slotsR.data?.slots ?? {};
+      const converted: Slot[] = Object.entries(rawSlots).map(([id, v]: [string, any]) => ({
+        slotId: id,
+        slotLabel: id,
+        costPerDay: v.costPerDay ?? 0,
+        totalSlots: 1,
+        occupiedSlots: v.available === false ? 1 : 0,
+        available: v.available !== false,
+      }));
+      setSlots(converted);
     } catch {}
     setLoading(false);
   }, []);

@@ -72,7 +72,8 @@ const PagePlacements: React.FC = () => {
   const activePlacements = myPlacements.filter(p => p.status === "active");
   const slotDef = selectedSlot ? getSlotDef(selectedSlot) : null;
   const durOpt  = DURATION_OPTIONS[selectedDuration];
-  const bookCost = slotDef && durOpt ? slotDef.costPerDay * durOpt.days : 0;
+  const liveCostPerDay = selectedSlot ? (slotStatus[selectedSlot]?.costPerDay ?? slotDef?.costPerDay ?? 0) : 0;
+  const bookCost = durOpt ? liveCostPerDay * durOpt.days : 0;
   const categories = Array.from(new Set(SLOT_DEFINITIONS.map(s => s.category)));
 
   const handleBook = async () => {
@@ -153,7 +154,7 @@ const PagePlacements: React.FC = () => {
                 <div key={p.placementId} className="flex items-center justify-between px-5 py-3">
                   <div>
                     <div className="text-sm font-bold text-white">{p.slotLabel}</div>
-                    <div className="text-xs text-white/40">{p.totalTokens} ₮ · {p.daysLeft ?? 0}d remaining</div>
+                    <div className="text-xs text-white/40">{p.totalTokens} ₮ · {Math.max(0, Math.ceil((new Date(p.expiresAt).getTime() - Date.now()) / 86400000))}d remaining</div>
                   </div>
                   <button
                     onClick={() => handleCancel(p.placementId)}
@@ -221,9 +222,9 @@ const PagePlacements: React.FC = () => {
                                 </p>
                               )}
                             </div>
-                            {slot.costPerDay > 0 && (
+                            {(slotStatus[slot.id]?.costPerDay ?? slot.costPerDay) > 0 && (
                               <div className="text-right flex-shrink-0">
-                                <div className="text-sm font-black text-yellow-400">{slot.costPerDay} ₮</div>
+                                <div className="text-sm font-black text-yellow-400">{slotStatus[slot.id]?.costPerDay ?? slot.costPerDay} ₮</div>
                                 <div className="text-[10px] text-white/30">per day</div>
                               </div>
                             )}
@@ -247,7 +248,7 @@ const PagePlacements: React.FC = () => {
                   <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-3">Duration</div>
                   <div className="space-y-2 mb-5">
                     {DURATION_OPTIONS.map((d, i) => {
-                      const cost = slotDef.costPerDay * d.days;
+                      const cost = liveCostPerDay * d.days;
                       return (
                         <button
                           key={d.days}
