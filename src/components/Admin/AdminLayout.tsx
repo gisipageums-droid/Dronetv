@@ -37,6 +37,11 @@ import {
   Layers,
   IndianRupee,
   History,
+  Coins,
+  Gavel,
+  BarChart,
+  ShieldCheck,
+  Zap,
 } from "lucide-react";
 import { COMPANY_API, EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 
@@ -100,7 +105,9 @@ const NAV: Section[] = [
           { label: "Job Board",       path: "/admin/media/dashboard?type=job",           icon: <Briefcase size={14} /> },
           { label: "Pilot Directory", path: "/admin/professional/dashboard",             icon: <UserCircle size={14} /> },
           { label: "Certifications",  path: "/admin/media/dashboard?type=certification", icon: <Award size={14} /> },
+          { label: "Portfolio",       path: "/admin/media/dashboard?type=portfolio",     icon: <Layers size={14} /> },
           { label: "Training / RPTOs",path: "/admin/media/dashboard?type=training",      icon: <GraduationCap size={14} /> },
+          { label: "Career Path",     path: "/professionals/career-path",                icon: <Zap size={14} /> },
           { label: "Networking",      path: "/admin/media/dashboard?type=networking",    icon: <Users2 size={14} /> },
           { label: "Community",       path: "/admin/media/dashboard?type=community",     icon: <Users size={14} /> },
         ],
@@ -168,6 +175,23 @@ const NAV: Section[] = [
     ],
   },
   {
+    heading: "Token Economy",
+    items: [
+      {
+        id: "token-economy",
+        label: "Token Economy",
+        icon: <Coins size={17} />,
+        sub: [
+          { label: "Token Revenue",  path: "/admin/tokens/revenue",    icon: <IndianRupee size={14} /> },
+          { label: "Live Auctions",  path: "/admin/tokens/auctions",   icon: <Gavel size={14} /> },
+          { label: "Token Ledger",   path: "/admin/tokens/ledger",     icon: <History size={14} /> },
+          { label: "Slot Management",path: "/admin/tokens/slots",      icon: <Layers size={14} /> },
+          { label: "Phase Gate",     path: "/admin/tokens/phase-gate", icon: <ShieldCheck size={14} /> },
+        ],
+      },
+    ],
+  },
+  {
     heading: "System",
     items: [
       {
@@ -189,6 +213,11 @@ const PATH_TO_ID: Record<string, string> = {
   "/admin/plans": "plans",
   "/admin/invoices": "invoices",
   "/admin/settings": "settings",
+  "/admin/tokens/revenue": "token-economy",
+  "/admin/tokens/auctions": "token-economy",
+  "/admin/tokens/ledger": "token-economy",
+  "/admin/tokens/slots": "token-economy",
+  "/admin/tokens/phase-gate": "token-economy",
 };
 
 const BREADCRUMBS: Record<string, string> = {
@@ -200,11 +229,16 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/plans": "Packages & Revenue",
   "/admin/invoices": "Invoices",
   "/admin/settings": "Settings",
+  "/admin/tokens/revenue": "Token Revenue",
+  "/admin/tokens/auctions": "Live Auctions",
+  "/admin/tokens/ledger": "Token Ledger",
+  "/admin/tokens/slots": "Slot Management",
+  "/admin/tokens/phase-gate": "Phase Gate",
 };
 
 const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
 const EVENTS_CMS = new Set(["competition","webinar","meetup"]);
-const PROFESSIONALS_CMS = new Set(["job","training","certification","networking","community"]);
+const PROFESSIONALS_CMS = new Set(["job","training","certification","portfolio","networking","community"]);
 
 function computeGroupId(pathname: string, search: string): string {
   const sp = new URLSearchParams(search);

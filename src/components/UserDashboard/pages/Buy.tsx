@@ -1,318 +1,340 @@
 import React, { useState, useEffect } from 'react';
+import { Coins, Zap, Target, Layout, FileText, CheckCircle, ArrowRight, Info } from 'lucide-react';
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import { useUserAuth } from "../../context/context";
 import axios from 'axios';
-import { PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
+import { PAYMENT_API, LAMBDA, AUTH_API } from '../../../lib/apiConfig';
+
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+
+const TOKEN_RATE = 10; // ₹10 = 1 token
+
+const PRESETS = [
+  { amount: 50,   label: '₹50',   tokens: 5,    tag: '' },
+  { amount: 100,  label: '₹100',  tokens: 10,   tag: '' },
+  { amount: 500,  label: '₹500',  tokens: 50,   tag: 'Min Bid' },
+  { amount: 1000, label: '₹1,000',tokens: 100,  tag: 'Popular' },
+  { amount: 2000, label: '₹2,000',tokens: 200,  tag: '' },
+  { amount: 5000, label: '₹5,000',tokens: 500,  tag: 'Best Value' },
+];
+
+const TOKEN_USES = [
+  { icon: Target, label: 'Keyword Bids', desc: 'Win sponsored spots when buyers search drone keywords', tokens: '50–500 ₮/week' },
+  { icon: Layout, label: 'Page Placements', desc: 'Book premium homepage and category page slots', tokens: '200–2,000 ₮' },
+  { icon: FileText, label: 'Unlock Leads', desc: 'View full contact details of buyers who enquired', tokens: '10–50 ₮/lead' },
+  { icon: Zap, label: 'Boost Profile', desc: 'Push your company to top of directory listings', tokens: '100 ₮/week' },
+];
 
 const BuyTokenPage: React.FC = () => {
   const { Razorpay } = useRazorpay();
-  const [amount, setAmount] = useState<string>('');
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [showSuccess, setShowSuccess] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
   const { user } = useUserAuth();
 
-  // Conversion rate: ₹10 = 1 token
-  const TOKEN_RATE = 10;
-  const numericAmount = parseFloat(amount) || 0;
-  const tokens = Math.floor(numericAmount / TOKEN_RATE);
-  const isValid = numericAmount >= 10 && !isNaN(numericAmount);
+  const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
+  const [customAmount, setCustomAmount] = useState<string>('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [currentBalance, setCurrentBalance] = useState<number>(0);
+
+  const userId = user?.userData?.email || user?.email || '';
+
+  useEffect(() => {
+    if (!userId) return;
+    axios.get(`${PROFILE_API}?userId=${userId}`)
+      .then(r => setCurrentBalance(r.data?.profile?.tokenBalance ?? 0))
+      .catch(() => {});
+  }, [userId]);
 
   useEffect(() => {
     if (showSuccess) {
-      const timer = setTimeout(() => setShowSuccess(false), 3000);
-      return () => clearTimeout(timer);
+      const t = setTimeout(() => setShowSuccess(false), 4000);
+      return () => clearTimeout(t);
     }
   }, [showSuccess]);
 
   useEffect(() => {
     if (errorMessage) {
-      const timer = setTimeout(() => setErrorMessage(''), 5000);
-      return () => clearTimeout(timer);
+      const t = setTimeout(() => setErrorMessage(''), 5000);
+      return () => clearTimeout(t);
     }
   }, [errorMessage]);
 
-  // Place Order API Call
-  const placeOrder = (orderData: any) => {
-    return axios.post(PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`, orderData, {
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-      .then(response => {
-        return response.data;
-      })
-      .catch(error => {
-        console.error('Place order error:', error);
-        throw new Error(error.response?.data?.message || 'Failed to place order');
-      });
-  };
+  const finalAmount = selectedPreset !== null
+    ? selectedPreset
+    : parseFloat(customAmount) || 0;
 
-  // Fail Order API Call
-  const failOrder = (transactionId: string, reason: string, errorCode: string = '', status: 'FAILED' | 'CANCELLED' = 'FAILED') => {
-    return axios.post(PAYMENT_API ? `${PAYMENT_API}/fail-order` : `${LAMBDA.tokenGateway}/fail-order`, {
-      transactionId, reason, errorCode, status
-    }, { headers: { 'Content-Type': 'application/json' } })
+  const tokens = Math.floor(finalAmount / TOKEN_RATE);
+  const isValid = finalAmount >= 10;
+
+  const placeOrder = (orderData: any) =>
+    axios.post(PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`, orderData)
       .then(r => r.data)
-      .catch(() => null); // silent — UI already shows error
-  };
+      .catch(e => { throw new Error(e.response?.data?.message || 'Failed to place order'); });
 
-  // Confirm Order API Call
-  const confirmOrder = (paymentData: any) => {
-    return axios.post(PAYMENT_API ? `${PAYMENT_API}/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`, paymentData, {
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-      .then(response => {
-        return response.data;
-      })
-      .catch(error => {
-        console.error('Confirm order error:', error);
-        throw new Error(error.response?.data?.message || 'Failed to confirm order');
-      });
-  };
+  const failOrder = (transactionId: string, reason: string, errorCode = '', status: 'FAILED' | 'CANCELLED' = 'FAILED') =>
+    axios.post(PAYMENT_API ? `${PAYMENT_API}/fail-order` : `${LAMBDA.tokenGateway}/fail-order`,
+      { transactionId, reason, errorCode, status })
+      .then(r => r.data)
+      .catch(() => null);
+
+  const confirmOrder = (paymentData: any) =>
+    axios.post(PAYMENT_API ? `${PAYMENT_API}/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`, paymentData)
+      .then(r => r.data)
+      .catch(e => { throw new Error(e.response?.data?.message || 'Failed to confirm order'); });
 
   const handlePayNow = async () => {
     if (!isValid) return;
-
     setIsProcessing(true);
     setErrorMessage('');
 
     try {
-      // Step 1: Place Order API Call
       const orderData = {
-        userId: user?.userData?.userId || user?.userData?.email, // Use email as fallback for userId
-        amount: numericAmount,
+        userId: user?.userData?.userId || userId,
+        amount: finalAmount,
         tokenCount: tokens,
-        currency: "INR",
+        currency: 'INR',
         email: user?.userData?.email || '',
         name: user?.userData?.fullName || '',
-        phone: user?.userData?.phone || ''
+        phone: user?.userData?.phone || '',
       };
 
-      placeOrder(orderData)
-        .then(placeOrderResponse => {
-          if (!placeOrderResponse.success) {
-            throw new Error(placeOrderResponse.message || 'Failed to create order');
-          }
+      const placeRes = await placeOrder(orderData);
+      if (!placeRes.success) throw new Error(placeRes.message || 'Failed to create order');
 
-          const { transactionId, razorpayOrderId, key, order } = placeOrderResponse.data;
+      const { transactionId, razorpayOrderId, key, order } = placeRes.data;
+      let paymentHandled = false;
 
-          // Track whether payment was handled (success or failure) to guard ondismiss
-          let paymentHandled = false;
-
-          // Step 2: Initialize Razorpay Payment
-          const options: RazorpayOrderOptions = {
-            key: import.meta.env.VITE_RAZORPAY_KEY || key,
-            amount: order.amount,
-            currency: order.currency,
-            name: "DRONETV",
-            description: `Purchase of ${tokens} tokens`,
-            image: "https://www.dronetv.in/images/Drone%20tv%20.in.png",
-            order_id: razorpayOrderId,
-            handler: async (response) => {
-              paymentHandled = true;
-              try {
-                const confirmData = {
-                  payment_id: response.razorpay_payment_id,
-                  order_id: response.razorpay_order_id,
-                  signature: response.razorpay_signature,
-                  transactionId: transactionId
-                };
-
-                confirmOrder(confirmData)
-                  .then(confirmResponse => {
-                    if (confirmResponse.success) {
-                      setShowSuccess(true);
-                      setAmount('');
-                    } else {
-                      setErrorMessage(confirmResponse.message || 'Payment verification failed');
-                    }
-                  })
-                  .catch(() => {
-                    setErrorMessage('Payment verification failed. Please contact support.');
-                  });
-              } catch (error: any) {
-                setErrorMessage(error.message || 'Payment processing failed. Please contact support.');
-              }
-            },
-            prefill: {
-              name: user?.userData?.fullName || 'Customer',
-              email: user?.userData?.email || '',
-              contact: user?.userData?.phone || '9999999999'
-            },
-            theme: {
-              color: "#F59E0B",
-            },
-            modal: {
-              ondismiss: () => {
-                setIsProcessing(false);
-                if (!paymentHandled) {
-                  failOrder(transactionId, 'Payment cancelled by user', '', 'CANCELLED');
-                }
-              }
-            }
-          };
-
-          const razorpayInstance = new Razorpay(options);
-
-          razorpayInstance.on('payment.failed', (response: any) => {
-            paymentHandled = true;
-            const reason = response?.error?.description || response?.error?.reason || 'Payment failed';
-            const errorCode = response?.error?.code || '';
-            setErrorMessage(`Payment failed: ${reason}`);
-            setIsProcessing(false);
-            failOrder(transactionId, reason, errorCode, 'FAILED');
+      const options: RazorpayOrderOptions = {
+        key: import.meta.env.VITE_RAZORPAY_KEY || key,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'DroneTv.in',
+        description: `${tokens} Tokens`,
+        image: 'https://www.dronetv.in/images/Drone%20tv%20.in.png',
+        order_id: razorpayOrderId,
+        handler: async (response) => {
+          paymentHandled = true;
+          const confirmRes = await confirmOrder({
+            payment_id: response.razorpay_payment_id,
+            order_id: response.razorpay_order_id,
+            signature: response.razorpay_signature,
+            transactionId,
           });
+          if (confirmRes.success) {
+            setShowSuccess(true);
+            setCurrentBalance(prev => prev + tokens);
+            setSelectedPreset(null);
+            setCustomAmount('');
+          } else {
+            setErrorMessage(confirmRes.message || 'Payment verification failed');
+          }
+        },
+        prefill: {
+          name: user?.userData?.fullName || '',
+          email: user?.userData?.email || '',
+          contact: user?.userData?.phone || '9999999999',
+        },
+        theme: { color: '#F59E0B' },
+        modal: {
+          ondismiss: () => {
+            setIsProcessing(false);
+            if (!paymentHandled) failOrder(transactionId, 'Payment cancelled by user', '', 'CANCELLED');
+          },
+        },
+      };
 
-          razorpayInstance.open();
-
-        })
-        .catch(error => {
-          console.error('Payment initiation error:', error);
-          setErrorMessage(error.message || 'Failed to initiate payment. Please try again.');
-        })
-        .finally(() => {
-          setIsProcessing(false);
-        });
-    } catch (error) {
-      console.error('Payment initiation error:', error);
-      setErrorMessage(error.message || 'Failed to initiate payment. Please try again.');
+      const rp = new Razorpay(options);
+      rp.on('payment.failed', (r: any) => {
+        paymentHandled = true;
+        const reason = r?.error?.description || 'Payment failed';
+        setErrorMessage(`Payment failed: ${reason}`);
+        setIsProcessing(false);
+        failOrder(transactionId, reason, r?.error?.code || '', 'FAILED');
+      });
+      rp.open();
+    } catch (e: any) {
+      setErrorMessage(e.message || 'Failed to initiate payment');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Main Card */}
-        <div className="bg-white rounded-2xl hover:shadow-xl hover:shadow-yellow-200 overflow-hidden">
-          {/* Header */}
-          <div className="bg-amber-500 text-white py-5 px-6">
-            <h1 className="text-2xl md:text-3xl font-bold flex items-center">
-              <span className="ml-3">Buy Tokens</span>
-            </h1>
-          </div>
+    <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
+      <div className="max-w-4xl mx-auto">
 
-          {/* Body */}
-          <div className="p-6 md:p-8">
-            {/* Amount Input */}
-            <div className="mb-6">
-              <label htmlFor="amount" className="block text-amber-800 font-medium mb-2">
-                Enter Amount (₹)
-              </label>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-black text-white flex items-center gap-2">
+              <Coins size={22} className="text-yellow-400" />
+              Buy Tokens
+            </h1>
+            <p className="text-sm text-white/40 mt-0.5">₹10 = 1 token · No expiry · Instant credit</p>
+          </div>
+          <div className="text-right">
+            <div className="text-[10px] text-white/40 uppercase tracking-widest mb-0.5">Current Balance</div>
+            <div className="text-xl font-black text-yellow-400">{currentBalance.toLocaleString()} ₮</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          {/* LEFT — Preset + Custom + Pay */}
+          <div className="lg:col-span-2 space-y-4">
+
+            {/* Preset amounts */}
+            <div className="bg-gray-900 border border-white/8 rounded-xl p-5">
+              <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">Select Amount</div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                {PRESETS.map(p => (
+                  <button
+                    key={p.amount}
+                    onClick={() => { setSelectedPreset(p.amount); setCustomAmount(''); }}
+                    className={`relative rounded-xl border p-3 text-left transition-all ${
+                      selectedPreset === p.amount
+                        ? 'border-yellow-400 bg-yellow-400/10'
+                        : 'border-white/10 bg-gray-800 hover:border-yellow-400/30'
+                    }`}
+                  >
+                    {p.tag && (
+                      <span className="absolute -top-2 left-2 text-[9px] font-black bg-yellow-400 text-black px-1.5 py-0.5 rounded-full">
+                        {p.tag}
+                      </span>
+                    )}
+                    <div className={`text-base font-black ${selectedPreset === p.amount ? 'text-yellow-400' : 'text-white'}`}>
+                      {p.label}
+                    </div>
+                    <div className="text-xs text-white/50 mt-0.5">{p.tokens} tokens</div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Custom amount */}
+              <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Or enter custom amount</div>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500 font-bold">
-                  ₹
-                </span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 font-bold">₹</span>
                 <input
-                  id="amount"
                   type="number"
                   min="10"
                   step="10"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="w-full pl-10 pr-4 py-4 text-lg border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-3 focus:ring-amber-300 focus:border-amber-500 transition"
-                  placeholder="Enter amount in rupees"
+                  value={customAmount}
+                  onChange={e => { setCustomAmount(e.target.value); setSelectedPreset(null); }}
+                  placeholder="Min ₹10"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/50 text-sm"
                 />
               </div>
 
-              {/* Token Preview */}
-              {numericAmount > 0 && (
-                <div className={`mt-3 text-center p-3 rounded-lg ${isValid
-                  ? 'bg-green-50 text-green-700'
-                  : 'bg-amber-50 text-amber-700'
-                  }`}>
+              {/* Preview */}
+              {finalAmount > 0 && (
+                <div className={`mt-3 flex items-center justify-between rounded-lg px-4 py-3 ${
+                  isValid ? 'bg-green-500/10 border border-green-500/20' : 'bg-red-500/10 border border-red-500/20'
+                }`}>
                   {isValid ? (
-                    <span className="font-bold">
-                      ₹{numericAmount.toFixed(2)} → <span className="text-amber-600">{tokens} token{tokens !== 1 ? 's' : ''}</span>
-                    </span>
+                    <>
+                      <span className="text-sm text-white/70">You get</span>
+                      <span className="text-lg font-black text-yellow-400">{tokens} tokens</span>
+                      <span className="text-sm text-green-400 font-bold">₹{finalAmount.toLocaleString()}</span>
+                    </>
                   ) : (
-                    <span>Min. ₹10 required (1 token)</span>
+                    <span className="text-sm text-red-400">Minimum purchase is ₹10 (1 token)</span>
                   )}
                 </div>
               )}
             </div>
 
-            {/* Error Message */}
+            {/* Error */}
             {errorMessage && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-center">
+              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm">
                 {errorMessage}
               </div>
             )}
 
-            {/* Pay Button */}
+            {/* Pay button */}
             <button
               onClick={handlePayNow}
               disabled={!isValid || isProcessing}
-              className={`w-full py-4 px-6 text-lg font-bold rounded-xl transition-all duration-200 flex items-center justify-center mb-6 ${isValid && !isProcessing
-                ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
-                : 'bg-amber-300 text-amber-500 cursor-not-allowed'
-                }`}
+              className="w-full py-4 rounded-xl font-black text-base transition-all bg-yellow-400 text-black hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isProcessing ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
                   Processing...
                 </>
               ) : (
-                'Pay Now'
+                <>
+                  <Coins size={18} />
+                  Pay ₹{finalAmount > 0 ? finalAmount.toLocaleString() : '—'} → Get {tokens > 0 ? tokens : '—'} Tokens
+                </>
               )}
             </button>
 
-            {/* Conversion Card */}
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-              <h3 className="text-amber-800 font-semibold text-sm mb-3 flex items-center">
-                <span className="bg-amber-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center mr-2">i</span>
-                Token Conversion Rate
-              </h3>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">₹10</span>
-                  <span>= 1 token</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">₹100</span>
-                  <span>= 10 tokens</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">₹500</span>
-                  <span>= 50 tokens</span>
-                </div>
-                <div className="flex justify-between text-sm pt-2 border-t border-amber-100 mt-2">
-                  <span className="font-medium">₹1000</span>
-                  <span>= 100 tokens</span>
+            <p className="text-center text-xs text-white/30">Secured by Razorpay · UPI / Card / Net Banking accepted</p>
+          </div>
+
+          {/* RIGHT — How tokens work */}
+          <div className="space-y-4">
+            {/* Conversion table */}
+            <div className="bg-gray-900 border border-yellow-400/20 rounded-xl overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/8">
+                <div className="flex items-center gap-2">
+                  <Info size={13} className="text-yellow-400" />
+                  <span className="text-xs font-bold text-yellow-400 uppercase tracking-wider">Token Rate</span>
                 </div>
               </div>
-              <p className="text-xs text-amber-600 mt-3 text-center">
-                💡 1 token = ₹10 value • No expiry • Instant recharge
-              </p>
+              <div className="divide-y divide-white/5">
+                {[
+                  { inr: '₹100', tokens: '10 ₮' },
+                  { inr: '₹500', tokens: '50 ₮' },
+                  { inr: '₹1,000', tokens: '100 ₮' },
+                  { inr: '₹5,000', tokens: '500 ₮' },
+                  { inr: '₹10,000', tokens: '1,000 ₮' },
+                ].map(r => (
+                  <div key={r.inr} className="flex items-center justify-between px-4 py-2.5">
+                    <span className="text-sm font-semibold text-white">{r.inr}</span>
+                    <ArrowRight size={12} className="text-white/20" />
+                    <span className="text-sm font-black text-yellow-400">{r.tokens}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="px-4 py-3 bg-yellow-400/5 text-[11px] text-white/40 text-center">
+                ₹10 = 1 token · No expiry · Instant credit
+              </div>
+            </div>
+
+            {/* How to use */}
+            <div className="bg-gray-900 border border-white/8 rounded-xl overflow-hidden">
+              <div className="px-4 py-3 border-b border-white/8">
+                <span className="text-xs font-bold text-white/50 uppercase tracking-wider">What tokens unlock</span>
+              </div>
+              <div className="divide-y divide-white/5">
+                {TOKEN_USES.map(u => {
+                  const Icon = u.icon;
+                  return (
+                    <div key={u.label} className="px-4 py-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon size={13} className="text-yellow-400 flex-shrink-0" />
+                        <span className="text-xs font-bold text-white">{u.label}</span>
+                      </div>
+                      <p className="text-[11px] text-white/40 leading-relaxed mb-1">{u.desc}</p>
+                      <span className="text-[10px] font-bold text-yellow-400/70">{u.tokens}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Success Toast */}
-        {showSuccess && (
-          <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center animate-fade-in">
-            <span className="mr-2">🎉</span>
-            <span>₹{numericAmount} → {tokens} token{tokens !== 1 ? 's' : ''} added!</span>
-          </div>
-        )}
+        </div>
       </div>
 
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes fade-in {
-          0% { opacity: 0; transform: translateX(100%); }
-          100% { opacity: 1; transform: translateX(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.4s ease-out;
-        }
-      `}</style>
+      {/* Success toast */}
+      {showSuccess && (
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-3 bg-green-500 text-white px-5 py-3 rounded-xl shadow-lg">
+          <CheckCircle size={18} />
+          <span className="font-bold text-sm">{tokens} tokens added to your wallet!</span>
+        </div>
+      )}
     </div>
   );
 };

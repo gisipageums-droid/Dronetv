@@ -63,8 +63,7 @@ const TransactionHistory: React.FC = () => {
             } else {
                 throw new Error(response.data.message || 'Failed to fetch transactions');
             }
-        } catch (error) {
-            console.error("Error fetching transaction history:", error);
+        } catch {
             setError('Failed to load transactions. Showing demo data.');
 
             // Fallback to mock data

@@ -112,10 +112,15 @@ import RechargePlans from "./components/UserDashboard/pages/Plans";
 import MediaHub from "./components/UserDashboard/pages/MediaHub";
 import Addons from "./components/UserDashboard/pages/Addons";
 import UserPosts from "./components/UserDashboard/pages/UserPosts";
+import BidKeywords from "./components/UserDashboard/pages/BidKeywords";
+import PagePlacements from "./components/UserDashboard/pages/PagePlacements";
+import MyPackage from "./components/UserDashboard/pages/MyPackage";
+import ActiveCampaigns from "./components/UserDashboard/pages/ActiveCampaigns";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
 import AdminLayout from "./components/Admin/AdminLayout";
+import AdminTokenEconomy from "./components/Admin/AdminTokenEconomy";
 import AdminInvoicesPage from "./pages/admin/AdminInvoicesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
@@ -149,6 +154,7 @@ import PortfolioPage from "./pages/professionals/Portfolio";
 import TrainingPage from "./pages/professionals/Training";
 import NetworkingPage from "./pages/professionals/Networking";
 import CommunityPage from "./pages/professionals/Community";
+import CareerPathPage from "./pages/professionals/CareerPath";
 
 // Partnerships pages
 import DroneManufacturersPage from "./pages/partnerships/DroneManufacturers";
@@ -211,6 +217,7 @@ const AppContent = () => {
           <Route path="/media/tech-trends" element={<TechTrendsPage />} />
           <Route path="/media/press-releases" element={<PressReleasesPage />} />
           <Route path="/media/industry-reports" element={<IndustryReportsPage />} />
+          <Route path="/media/gallery" element={<GalleryPage />} />
 
           {/* Events sub-routes — must be before dynamic /event/:name */}
           <Route path="/events/calendar" element={<EventCalendarPage />} />
@@ -350,6 +357,7 @@ const AppContent = () => {
           <Route path="/professionals/training" element={<TrainingPage />} />
           <Route path="/professionals/networking" element={<NetworkingPage />} />
           <Route path="/professionals/community" element={<CommunityPage />} />
+          <Route path="/professionals/career-path" element={<CareerPathPage />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
           <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
 
@@ -392,6 +400,15 @@ const AppContent = () => {
                 <AdminMediaDashboard />
               </AdminLayout>
             </AdminProtectedRoute>} />
+
+          {["/admin/tokens/revenue", "/admin/tokens/auctions", "/admin/tokens/ledger", "/admin/tokens/slots", "/admin/tokens/phase-gate"].map(p => (
+            <Route key={p} path={p} element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <AdminTokenEconomy />
+                </AdminLayout>
+              </AdminProtectedRoute>} />
+          ))}
 
           {/* event routes */}
           <Route
@@ -549,6 +566,50 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/user-bid-keywords"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <BidKeywords />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-page-placements"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <PagePlacements />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-plans"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <MyPackage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-active-campaigns"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ActiveCampaigns />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/user-company/leads/:companyName"
             element={
@@ -557,7 +618,16 @@ const AppContent = () => {
               </UserDashboardLayout>
             }
           />
-          <Route path="/user-leads" element={<CompanyLeadsPage />} />
+          <Route
+            path="/user-leads"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <CompanyLeadsPage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/user-professional/leads/:ProfessionalName/:professionalId"
             element={

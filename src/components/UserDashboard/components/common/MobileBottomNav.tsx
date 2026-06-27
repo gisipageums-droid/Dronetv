@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Building2, Users, Calendar, User, Wallet, Clock1,
   MessageSquare, Globe, FileText, Brain, LogOut, X, Grid3X3, Video, ShoppingBag, Share2,
+  Target, Layout, Package,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
@@ -22,6 +23,9 @@ const MobileBottomNav: React.FC = () => {
     { icon: FileText,     label: "Leads",       href: "/user-leads" },
     { icon: Globe,        label: "Website",     href: "/user-website" },
     { icon: Wallet,       label: "Recharge",    href: "/user-recharge" },
+    { icon: Target,       label: "Keywords",    href: "/user-bid-keywords" },
+    { icon: Layout,       label: "Placements",  href: "/user-page-placements" },
+    { icon: Package,      label: "My Package",  href: "/user-plans" },
     { icon: Clock1,       label: "Transactions", href: "/user-transactions" },
     { icon: MessageSquare, label: "Contacted",  href: "/user-contacted" },
     ...(user?.email === "dronesimulatorpro@gmail.com"
