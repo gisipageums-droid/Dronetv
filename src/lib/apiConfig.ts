@@ -108,6 +108,9 @@ export const LAMBDA = {
   formStructure:      'https://qemducz8gc.execute-api.ap-south-1.amazonaws.com/formstructure',
   formAdminUpdate:    'https://0i53elbzf2.execute-api.ap-south-1.amazonaws.com/dev',
 
+  // Token economy — bids, placements, admin stats
+  tokenSpend:     'https://vfqft3zag5.execute-api.ap-south-1.amazonaws.com',
+
   // Professional form & templates
   profTemplateLoad:      'https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod',
   profTemplateFinalLoad: 'https://l5fb7y1eij.execute-api.ap-south-1.amazonaws.com/dev',
