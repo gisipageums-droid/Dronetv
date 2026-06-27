@@ -2,6 +2,20 @@ import { useState, useEffect } from 'react';
 import { MapPin, ExternalLink, GraduationCap } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 
+const eduStats = [
+  { num: '240+', label: 'DGCA-Approved\nRPTOs' },
+  { num: '39,890', label: 'Certified Remote\nPilots Feb 2026' },
+  { num: '₹50K–1L', label: 'Avg. Annual\nPilot Salary' },
+  { num: '5 Days', label: 'Minimum DGCA\nCertification' },
+];
+
+const eduOffers = [
+  { icon: '🎓', title: 'Verified Institute Listing', desc: "Your RPTO or training institute listed on DroneTv.in's Workshops and Professionals sections — reaching students actively searching for drone training programmes across India." },
+  { icon: '🏆', title: 'Competition and Achievement Coverage', desc: 'DroneTv covers major drone competitions including SAE Aerothon, SUAS, and IRoC-U. Teams from partner institutions receive editorial coverage and social media promotion for competition milestones.' },
+  { icon: '📹', title: 'Faculty and Course Interviews', desc: 'Video interviews with instructors and graduates published on DroneTv YouTube and social media — building credibility and organic reach for your institution.' },
+  { icon: '📝', title: 'Workshop Listings Free', desc: "Submit your drone, GIS, or AI workshops for free listing on DroneTv.in's Events section — reaching students and professionals actively planning skill upgrades." },
+];
+
 export default function EducationPartnersPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,9 +71,7 @@ export default function EducationPartnersPage() {
         </h2>
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading education partners...</div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">No education partners listed yet.</div>
-        ) : (
+        ) : filtered.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(item => (
               <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
@@ -90,6 +102,41 @@ export default function EducationPartnersPage() {
                 </div>
               </div>
             ))}
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {eduStats.map((s, i) => (
+                <div key={i} className="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm">
+                  <div className="text-2xl font-extrabold text-yellow-500 leading-none mb-2">{s.num}</div>
+                  <div className="text-xs font-semibold text-gray-500 whitespace-pre-line">{s.label}</div>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-gray-900 mb-4">What DroneTv.in Offers Education Partners</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {eduOffers.map((o, i) => (
+                  <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-start gap-4">
+                    <span className="text-2xl flex-shrink-0">{o.icon}</span>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-sm mb-1">{o.title}</h3>
+                      <p className="text-xs text-gray-500 leading-relaxed">{o.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-zinc-900 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <h3 className="font-bold text-white text-sm mb-1">Drone Academy Private Limited — DroneTv's Training Entity</h3>
+                <p className="text-xs text-white/60 max-w-lg">DroneTv.in is operated by Drone Academy Private Limited, which is directly involved in drone training and certification. Education partnerships with DroneTv carry the credibility of an operating training entity — not just a media platform.</p>
+              </div>
+              <div className="flex gap-3 flex-shrink-0">
+                <a href="/partnerships/become-a-partner" className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">Apply as Education Partner</a>
+                <a href="/events/workshops" className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">List Your Workshop Free →</a>
+              </div>
+            </div>
           </div>
         )}
       </div>
