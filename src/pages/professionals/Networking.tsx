@@ -3,6 +3,49 @@ import { Link } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 
+const networkingChannels = [
+  {
+    icon: '💼',
+    title: 'VirelbBiz — B2B Networking Platform',
+    desc: "DroneTv.in's VirelbBiz layer connects drone businesses, professionals, and clients. Structured B2B networking for deals, collaborations, and professional introductions — not casual social media, but focused industry networking.",
+    stat: 'Connect — Collaborate — Grow',
+    cta: 'Join VirelbBiz',
+    link: 'mailto:bd@dronetv.in?subject=VirelbBiz Networking',
+  },
+  {
+    icon: '📱',
+    title: 'WhatsApp Drone Professional Groups',
+    desc: 'State and vertical-specific WhatsApp groups for drone pilots, GIS professionals, AI & analytics specialists, and industry players. Agriculture drone operators group, GIS & mapping specialists, AI/computer-vision practitioners, DGCA updates, and job alerts.',
+    stat: 'Active groups across Telangana, AP, Maharashtra, Karnataka',
+    cta: 'Request to Join',
+    link: 'https://wa.me/917520123555',
+  },
+  {
+    icon: '💼',
+    title: 'LinkedIn Drone Professionals India',
+    desc: "DroneTv.in's LinkedIn presence connects professionals with industry news, job postings, and company announcements. Follow @dronetv.in on LinkedIn and join the Drone Professionals India group for peer discussions and career visibility.",
+    stat: '6,000+ members',
+    cta: 'Follow on LinkedIn',
+    link: 'https://www.linkedin.com/company/indiadronetv',
+  },
+  {
+    icon: '🏛️',
+    title: 'Drone Association Memberships',
+    desc: 'Key industry associations provide additional networking and advocacy. Drone Federation India (DFI), FICCI Drone Committee, CII Aerospace and Defence Committee, and ASSOCHAM Technology Council are the primary bodies for industry representation.',
+    stat: 'DFI, FICCI, CII, ASSOCHAM — national and regional chapters',
+    cta: 'Association Directory',
+    link: 'mailto:bd@dronetv.in?subject=Association Membership',
+  },
+];
+
+const upcomingEvents = [
+  { date: '24 Jun', title: 'Drone International Expo 2026 — Networking at Bharat Mandapam', location: 'Bharat Mandapam, New Delhi', type: 'In Person', detail: 'B2B Sessions + Exhibitor Network' },
+  { date: '28 Sep', title: 'Drone Expo 2026 New Delhi — Industry Networking Sessions', location: 'Yashobhoomi, IICC, Dwarka, New Delhi', type: 'In Person', detail: '28–30 Sep 2026' },
+  { date: 'TBC 2026', title: 'DroneTv Professional Meetup — Hyderabad Drone Professionals Network', location: 'Hyderabad, Telangana', type: 'In Person', detail: '30–80 Attendees Expected' },
+  { date: 'Dec 2026', title: 'IFSEC Expo 2026 — Security and Drone Professional Networking', location: 'India (Venue TBC)', type: 'In Person', detail: 'DroneTv Media Partner' },
+  { date: 'Ongoing', title: 'DroneTv Webinar Series — Monthly Industry Briefings for Professionals', location: 'Online', type: 'Online', detail: 'LinkedIn Live + YouTube Live | Free to attend' },
+];
+
 const chapters = [
   {
     city: 'Hyderabad',
@@ -95,7 +138,52 @@ export default function NetworkingPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Channels</span>
+            Networking Channels
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {networkingChannels.map((ch, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                <div className="flex items-start gap-3 mb-3">
+                  <span className="text-2xl">{ch.icon}</span>
+                  <h3 className="font-bold text-gray-900 text-sm leading-snug">{ch.title}</h3>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed mb-2">{ch.desc}</p>
+                <p className="text-xs text-gray-400 italic mb-3">{ch.stat}</p>
+                <a href={ch.link} target={ch.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
+                  className="text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                  {ch.cta} →
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Events</span>
+            Upcoming Networking Events India 2026
+          </h2>
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            {upcomingEvents.map((ev, i) => (
+              <div key={i} className={`flex items-start gap-4 px-5 py-4 ${i < upcomingEvents.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                <div className="flex-shrink-0 text-center min-w-[60px]">
+                  <span className="text-xs font-extrabold text-yellow-600 block leading-tight">{ev.date}</span>
+                  <span className={`text-xs font-bold px-1.5 py-0.5 rounded mt-1 inline-block ${ev.type === 'Online' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>{ev.type}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-0.5">{ev.title}</h3>
+                  <p className="text-xs text-gray-500">📍 {ev.location} · {ev.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           {cmsItems.length > 0 && (
             <div>
@@ -216,6 +304,7 @@ export default function NetworkingPage() {
               ))}
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
