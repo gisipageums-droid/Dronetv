@@ -71,6 +71,13 @@ function VideoCard({ item }: { item: MediaItem }) {
   );
 }
 
+const staticVideos = [
+  { id: 'sv1', ep: 'Ep. 19', title: 'Dev R on Building India\'s Drone Media Platform', person: 'Dev R', company: 'DroneTv.in', tag: 'DroneTv CEO', link: 'https://www.youtube.com/@indiadronetv' },
+  { id: 'sv2', ep: 'Ep. 33', title: 'Sakthivelan on AI-Powered Agricultural Drone Systems', person: 'Sakthivelan', company: 'Aeroby Labs', tag: 'Agriculture Tech', link: 'https://www.youtube.com/@indiadronetv' },
+  { id: 'sv3', ep: 'Ep. 38', title: 'Gowrav Reddy — Drone-Powered Precision Crop Management', person: 'Gowrav Reddy', company: 'Crop Wings', tag: 'Agriculture', link: 'https://www.youtube.com/@indiadronetv' },
+  { id: 'sv4', ep: 'Ep. 14', title: 'Kiran Kakarlmudi on Survey-Grade Drone Mapping for Infrastructure', person: 'Kiran Kakarlmudi', company: 'NKI', tag: 'GIS / Survey', link: 'https://www.youtube.com/@indiadronetv' },
+];
+
 export default function VideoSpotlightPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,11 +142,37 @@ export default function VideoSpotlightPage() {
           </h2>
           {loading ? (
             <div className="text-center py-16 text-gray-400">Loading videos...</div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">No videos found.</div>
+          ) : items.length > 0 ? (
+            filtered.length === 0
+              ? <div className="text-center py-8 text-gray-400">No videos in this category.</div>
+              : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filtered.map(item => <VideoCard key={item.contentId} item={item} />)}
+                </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map(item => <VideoCard key={item.contentId} item={item} />)}
+            <div className="space-y-6">
+              <p className="text-sm text-gray-500">Drone Expo 2025 — Mumbai Interviews <span className="font-bold text-yellow-600">40+ Videos</span></p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {staticVideos.map(v => (
+                  <div key={v.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <div className="bg-zinc-900 aspect-video flex items-center justify-center relative">
+                      <span className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">{v.ep}</span>
+                      <a href={v.link} target="_blank" rel="noopener noreferrer"
+                        className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center hover:bg-yellow-300 transition-colors">
+                        <svg className="w-5 h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                      </a>
+                    </div>
+                    <div className="p-4">
+                      <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{v.tag}</span>
+                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1">{v.title}</h3>
+                      <p className="text-xs text-gray-500">{v.person} — {v.company}</p>
+                      <a href={v.link} target="_blank" rel="noopener noreferrer"
+                        className="mt-3 text-xs font-bold text-yellow-600 hover:text-yellow-700 block">
+                        Watch on YouTube →
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

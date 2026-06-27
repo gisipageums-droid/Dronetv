@@ -4,6 +4,17 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 
 const filters = ['All News', 'Market', 'Defence', 'Policy', 'Agriculture', 'Technology', 'Training'];
 
+const staticNews = [
+  { id: 's1', category: 'Defence', date: '3 June 2026', title: 'India Set for $2 Billion Domestic Drone Order in Biggest Military Purchase', excerpt: 'India is likely to order more than $2 billion worth of military drones from domestic firms this year in its biggest such purchase. The move represents a major shift toward indigenous drone procurement for defence.', source: 'Reuters' },
+  { id: 's2', category: 'Defence Policy', date: '3 April 2026', title: 'India Approves $25B Military Package Including 60 Remotely Piloted Strike Aircraft', excerpt: 'The Defence Acquisition Council approved procurement of 60 new remotely piloted strike aircraft alongside five additional S-400 air defence systems in a record modernisation push.', source: 'Defence News' },
+  { id: 's3', category: 'Agriculture', date: 'February 2026', title: 'Namo Drone Didi: Over 500 Drones Deployed to Women SHGs for Precision Farming', excerpt: 'More than 1,094 drones distributed to women self-help groups, including 500+ under the Namo Drone Didi initiative, enabling precision spraying, crop monitoring, and enhanced farm efficiency across rural India.', source: 'IBEF' },
+  { id: 's4', category: 'Policy', date: 'February 2026', title: 'SVAMITVA Scheme Surveys 3.28 Lakh Villages Using Drones; 2.76 Crore Property Cards Issued', excerpt: 'Government drone surveys under the SVAMITVA scheme have reached 3.28 lakh villages across 31 states, with 2.76 crore property cards distributed — strengthening land records and reducing property disputes.', source: 'Ministry of Panchayati Raj' },
+  { id: 's5', category: 'Market', date: '2025–2026', title: 'PLI Scheme Drives 7x Revenue Growth for Participating Drone Manufacturers', excerpt: 'Production-Linked Incentive scheme for drones, offering up to 20% on value addition, has resulted in sevenfold revenue increase for participating firms, significantly improving manufacturing economics.', source: 'IBEF' },
+  { id: 's6', category: 'Technology', date: '2026', title: 'NHAI Mandates Monthly Drone Video Monitoring for All Highway Projects', excerpt: 'National Highways Authority of India now requires contractors to upload monthly drone footage for all highway projects, enabling progress comparison and improving project oversight.', source: 'NHAI / IBEF' },
+  { id: 's7', category: 'Training', date: 'February 2026', title: 'India Now Has 39,890 Certified Remote Pilots and 240+ DGCA-Approved RPTOs', excerpt: "India's DGCA has certified 39,890 remote pilots and approved over 240 Remote Pilot Training Organisations as of February 2026, reflecting the rapid expansion of the country's drone workforce.", source: 'DGCA India' },
+  { id: 's8', category: 'Policy', date: '2026', title: 'Indian Railways Adopts Drone Inspections for Tracks, Bridges, and Infrastructure Nationwide', excerpt: 'Ministry of Railways has instructed all railway zones and divisions to deploy drones for regular inspection and upkeep of tracks, bridges, and railway infrastructure — reducing inspection time and improving accuracy.', source: 'Ministry of Railways' },
+];
+
 const BADGE_MAP: Record<string, string> = {
   market: 'bg-blue-100 text-blue-700',
   defence: 'bg-orange-100 text-orange-700',
@@ -110,29 +121,43 @@ export default function NewsPulsePage() {
               News Grid
             </h2>
             {(() => {
-              const filtered = news.filter(item => active === 'All News' || (item.category || '').toLowerCase().includes(active.toLowerCase()));
-              if (news.length === 0) {
-                return <p className="text-sm text-gray-400 text-center py-8">No news articles published yet.</p>;
-              }
-              if (filtered.length === 0) {
-                return <p className="text-sm text-gray-400 text-center py-8">No {active} articles found.</p>;
-              }
-              return (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filtered.map(item => (
-                    <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
-                        <span className="text-xs text-gray-400">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : ''}</span>
+              if (news.length > 0) {
+                const filtered = news.filter(item => active === 'All News' || (item.category || '').toLowerCase().includes(active.toLowerCase()));
+                if (filtered.length === 0) return <p className="text-sm text-gray-400 text-center py-8">No {active} articles found.</p>;
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filtered.map(item => (
+                      <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
+                          <span className="text-xs text-gray-400">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : ''}</span>
+                        </div>
+                        <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3">{item.title}</h3>
+                        <p className="text-xs text-gray-500 font-semibold">{item.source}</p>
+                        {item.externalLink && (
+                          <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs text-yellow-600 font-bold hover:text-yellow-700 mt-2 block">Read more →</a>
+                        )}
                       </div>
-                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3">{item.title}</h3>
-                      <p className="text-xs text-gray-500 font-semibold">{item.source}</p>
-                      {item.externalLink && (
-                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs text-yellow-600 font-bold hover:text-yellow-700 mt-2 block">Read more →</a>
-                      )}
+                    ))}
+                  </div>
+                );
+              }
+              const filtered = staticNews.filter(item => active === 'All News' || item.category.toLowerCase().includes(active.toLowerCase()));
+              const displayed = filtered.length > 0 ? filtered : staticNews;
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {displayed.map(item => (
+                    <div key={item.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category}</span>
+                        <span className="text-xs text-gray-400">{item.date}</span>
+                      </div>
+                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
+                      <p className="text-xs text-gray-500 leading-relaxed mb-2">{item.excerpt}</p>
+                      <p className="text-xs text-gray-500 font-semibold">Source: {item.source}</p>
                     </div>
                   ))}
-              </div>
+                </div>
               );
             })()}
           </div>

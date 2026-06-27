@@ -121,6 +121,32 @@ export default function MagazinePage() {
           ))}
         </div>
 
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-6 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Advertise</span>
+            Advertise in DroneTv Magazine
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: '📰', title: 'Directory Listing', desc: 'Logo, company name, and category in the DroneTv Industry Directory — included in every magazine issue for the full subscription year.', badge: 'All Packages', badgeColor: 'bg-green-100 text-green-700', note: 'All 4 issues per year' },
+              { icon: '📄', title: 'Half-Page Advertisement', desc: 'Half-page advertisement in 2 issues of DroneTv magazine. Professionally placed in relevant vertical sections.', badge: 'Scale Package', badgeColor: 'bg-blue-100 text-blue-700', note: '2 issues per year' },
+              { icon: '📑', title: 'Full-Page Advertisement', desc: 'Full-page advertisement in all 4 quarterly issues plus 1 full editorial article (2–3 pages) in one selected issue. Cover page eligibility included.', badge: 'Brand Package', badgeColor: 'bg-yellow-100 text-yellow-700', note: '4 issues + editorial article' },
+              { icon: '🏆', title: 'Cover Page Feature', desc: 'Cover page feature photo eligibility for Brand package subscribers, subject to editorial schedule. The highest-visibility placement in the DroneTv media ecosystem.', badge: 'Brand Package Only', badgeColor: 'bg-orange-100 text-orange-700', note: 'Subject to editorial calendar' },
+            ].map((item, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                <div className="text-2xl mb-3">{item.icon}</div>
+                <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.desc}</p>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded inline-block mb-3 ${item.badgeColor}`}>{item.badge}</span>
+                <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <span className="text-xs text-gray-400">{item.note}</span>
+                  <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Packages →</a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="bg-black rounded-xl p-8 flex flex-col md:flex-row items-center gap-6">
           <div className="flex-1">
             <h3 className="text-white font-extrabold text-xl mb-2">
