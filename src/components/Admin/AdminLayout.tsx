@@ -238,7 +238,7 @@ const BREADCRUMBS: Record<string, string> = {
 
 const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
 const EVENTS_CMS = new Set(["competition","webinar","meetup"]);
-const PROFESSIONALS_CMS = new Set(["job","training","certification","networking","community"]);
+const PROFESSIONALS_CMS = new Set(["job","training","certification","portfolio","networking","community"]);
 
 function computeGroupId(pathname: string, search: string): string {
   const sp = new URLSearchParams(search);
