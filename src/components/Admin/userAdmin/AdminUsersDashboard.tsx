@@ -127,7 +127,7 @@ function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: Use
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
+      <div className="fixed top-14 inset-x-0 bottom-0 z-50 flex justify-end" onClick={onClose}>
         <div className="absolute inset-0 bg-black/40" />
         <div
           className="relative w-full sm:max-w-sm h-full overflow-y-auto bg-white shadow-2xl border-l border-gray-200"

@@ -71,22 +71,22 @@ const PACKAGES = [
 
 const colorMap: Record<string, { bg: string; border: string; text: string; badge: string }> = {
   blue: {
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/30",
+    bg: "bg-blue-500/15",
+    border: "border-blue-500/40",
     text: "text-blue-400",
-    badge: "bg-blue-500/20 text-blue-300",
+    badge: "bg-blue-500/25 text-blue-300",
   },
   yellow: {
-    bg: "bg-yellow-400/10",
-    border: "border-yellow-400/30",
+    bg: "bg-yellow-400/15",
+    border: "border-yellow-400/40",
     text: "text-yellow-400",
-    badge: "bg-yellow-400/20 text-yellow-300",
+    badge: "bg-yellow-400/25 text-yellow-300",
   },
   purple: {
-    bg: "bg-purple-500/10",
-    border: "border-purple-500/30",
+    bg: "bg-purple-500/15",
+    border: "border-purple-500/40",
     text: "text-purple-400",
-    badge: "bg-purple-500/20 text-purple-300",
+    badge: "bg-purple-500/25 text-purple-300",
   },
 };
 
@@ -175,7 +175,7 @@ const MyPackage: React.FC = () => {
           {currentPkg.benefits.map((b) => (
             <div key={b} className="flex items-center gap-2">
               <CheckCircle size={13} className="text-green-400 flex-shrink-0" />
-              <span className="text-xs text-white/70">{b}</span>
+              <span className="text-xs text-gray-200">{b}</span>
             </div>
           ))}
         </div>
@@ -221,18 +221,18 @@ const MyPackage: React.FC = () => {
                     <span className={`text-sm font-black ${c.text}`}>{pkg.name}</span>
                     <span className="text-xs font-bold text-white/40 ml-auto">{formatINR(pkg.price)}/yr</span>
                   </div>
-                  <p className="text-xs text-white/50 mb-3">
+                  <p className="text-xs text-gray-300 mb-3">
                     {pkg.tokens.toLocaleString()} tokens + {pkg.benefits.length} benefits included
                   </p>
                   <div className="space-y-1 mb-4">
                     {pkg.benefits.slice(0, 4).map((b) => (
                       <div key={b} className="flex items-center gap-1.5">
                         <CheckCircle size={11} className="text-green-400 flex-shrink-0" />
-                        <span className="text-xs text-white/60">{b}</span>
+                        <span className="text-xs text-gray-200">{b}</span>
                       </div>
                     ))}
                     {pkg.benefits.length > 4 && (
-                      <span className="text-xs text-white/30">+{pkg.benefits.length - 4} more benefits</span>
+                      <span className="text-xs text-gray-400">+{pkg.benefits.length - 4} more benefits</span>
                     )}
                   </div>
                   <button
@@ -259,10 +259,10 @@ const MyPackage: React.FC = () => {
         ].map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="rounded-xl bg-white/3 border border-white/10 p-3">
+            <div key={stat.label} className="rounded-xl bg-white/8 border border-white/15 p-3">
               <div className="flex items-center gap-1.5 mb-1">
-                <Icon size={13} className="text-white/30" />
-                <span className="text-[10px] text-white/30 uppercase tracking-wider">{stat.label}</span>
+                <Icon size={13} className="text-white/50" />
+                <span className="text-[10px] text-white/50 uppercase tracking-wider">{stat.label}</span>
               </div>
               <div className="text-sm font-black text-white">{stat.value}</div>
             </div>

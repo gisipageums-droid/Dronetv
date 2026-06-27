@@ -1,4 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { MEDIA_API, LAMBDA } from '../../lib/apiConfig';
+
+const MEDIA_BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
+
+interface MagazineArticle {
+  contentId: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  externalLink?: string;
+  source?: string;
+  author?: string;
+  date?: string;
+  category?: string;
+  readTime?: string;
+}
 
 const issues = [
   {
@@ -42,6 +58,14 @@ const issues = [
 export default function MagazinePage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [articles, setArticles] = useState<MagazineArticle[]>([]);
+
+  useEffect(() => {
+    fetch(`${MEDIA_BASE}?type=magazine&isPublished=true`)
+      .then(r => r.json())
+      .then(d => setArticles(d.items || []))
+      .catch(() => {});
+  }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +101,52 @@ export default function MagazinePage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-10">
+
+        {/* Articles from CMS */}
+        {articles.length > 0 && (
+          <div className="mb-10">
+            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-6 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Latest</span>
+              Latest Articles
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {articles.map(article => (
+                <div key={article.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  {article.imageUrl && (
+                    <img src={article.imageUrl} alt={article.title} className="w-full h-40 object-cover" />
+                  )}
+                  <div className="p-5">
+                    {article.category && (
+                      <span className="text-xs font-bold text-yellow-600 uppercase tracking-wider">{article.category}</span>
+                    )}
+                    <h3 className="font-bold text-gray-900 text-sm mt-1 mb-2 line-clamp-2">{article.title}</h3>
+                    {article.description && (
+                      <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{article.description}</p>
+                    )}
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <div className="text-xs text-gray-400">
+                        {article.author && <span>{article.author}</span>}
+                        {article.author && article.date && <span> · </span>}
+                        {article.date && <span>{article.date}</span>}
+                      </div>
+                      {article.externalLink && (
+                        <a
+                          href={article.externalLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-bold text-gray-900 hover:text-yellow-600 transition-colors"
+                        >
+                          Read →
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-6 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Issues</span>
           All Editions
@@ -147,7 +217,7 @@ export default function MagazinePage() {
           </div>
         </div>
 
-        <div className="bg-black rounded-xl p-8 flex flex-col md:flex-row items-center gap-6">
+        <div className="bg-black rounded-xl p-8 flex flex-col md:flex-row items-center gap-6 mt-10">
           <div className="flex-1">
             <h3 className="text-white font-extrabold text-xl mb-2">
               Subscribe to receive all future issues <span className="text-yellow-400">free</span>

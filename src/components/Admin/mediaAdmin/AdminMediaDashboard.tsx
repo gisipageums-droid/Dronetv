@@ -255,8 +255,8 @@ export default function AdminMediaDashboard() {
       setShowForm(false);
       const controller = new AbortController();
       await loadItems(controller.signal);
-    } catch {
-      toast.error('Save failed');
+    } catch (err: any) {
+      toast.error(err?.message || 'Save failed');
     } finally {
       setSaving(false);
     }

@@ -56,7 +56,10 @@ export async function createContent(item: Omit<MediaItem, 'contentId' | 'created
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(item),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error || body?.message || `HTTP ${res.status}`);
+  }
   const data = await res.json();
   return data.item;
 }
@@ -67,10 +70,16 @@ export async function updateContent(item: Partial<MediaItem> & { contentType: st
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(item),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error || body?.message || `HTTP ${res.status}`);
+  }
 }
 
 export async function deleteContent(type: string, id: string): Promise<void> {
   const res = await fetch(`${BASE}?type=${type}&id=${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error || body?.message || `HTTP ${res.status}`);
+  }
 }

@@ -21,7 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </div>
 
       {/* Content starts below navbar */}
-      <div className="flex-1 min-w-0 mt-20 overflow-y-auto pb-20 lg:pb-0 overscroll-contain">
+      <div className="flex-1 min-w-0 mt-20 overflow-y-auto pb-20 lg:pb-0 overscroll-contain bg-gray-950">
         {children}
       </div>
 
