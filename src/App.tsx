@@ -215,6 +215,7 @@ const AppContent = () => {
           <Route path="/media/tech-trends" element={<TechTrendsPage />} />
           <Route path="/media/press-releases" element={<PressReleasesPage />} />
           <Route path="/media/industry-reports" element={<IndustryReportsPage />} />
+          <Route path="/media/gallery" element={<GalleryPage />} />
 
           {/* Events sub-routes — must be before dynamic /event/:name */}
           <Route path="/events/calendar" element={<EventCalendarPage />} />

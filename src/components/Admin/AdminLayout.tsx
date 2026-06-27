@@ -105,6 +105,7 @@ const NAV: Section[] = [
           { label: "Job Board",       path: "/admin/media/dashboard?type=job",           icon: <Briefcase size={14} /> },
           { label: "Pilot Directory", path: "/admin/professional/dashboard",             icon: <UserCircle size={14} /> },
           { label: "Certifications",  path: "/admin/media/dashboard?type=certification", icon: <Award size={14} /> },
+          { label: "Portfolio",       path: "/admin/media/dashboard?type=portfolio",     icon: <Layers size={14} /> },
           { label: "Training / RPTOs",path: "/admin/media/dashboard?type=training",      icon: <GraduationCap size={14} /> },
           { label: "Networking",      path: "/admin/media/dashboard?type=networking",    icon: <Users2 size={14} /> },
           { label: "Community",       path: "/admin/media/dashboard?type=community",     icon: <Users size={14} /> },
