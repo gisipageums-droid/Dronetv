@@ -10,12 +10,12 @@ const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profil
 const TOKEN_RATE = 10; // ₹10 = 1 token
 
 const PRESETS = [
-  { amount: 100, label: '₹100', tokens: 10, tag: '' },
-  { amount: 500, label: '₹500', tokens: 50, tag: '' },
-  { amount: 1000, label: '₹1,000', tokens: 100, tag: 'Popular' },
-  { amount: 2000, label: '₹2,000', tokens: 200, tag: '' },
-  { amount: 5000, label: '₹5,000', tokens: 500, tag: 'Best Value' },
-  { amount: 10000, label: '₹10,000', tokens: 1000, tag: '' },
+  { amount: 50,   label: '₹50',   tokens: 5,    tag: '' },
+  { amount: 100,  label: '₹100',  tokens: 10,   tag: '' },
+  { amount: 500,  label: '₹500',  tokens: 50,   tag: 'Min Bid' },
+  { amount: 1000, label: '₹1,000',tokens: 100,  tag: 'Popular' },
+  { amount: 2000, label: '₹2,000',tokens: 200,  tag: '' },
+  { amount: 5000, label: '₹5,000',tokens: 500,  tag: 'Best Value' },
 ];
 
 const TOKEN_USES = [
@@ -64,7 +64,7 @@ const BuyTokenPage: React.FC = () => {
     : parseFloat(customAmount) || 0;
 
   const tokens = Math.floor(finalAmount / TOKEN_RATE);
-  const isValid = finalAmount >= 100;
+  const isValid = finalAmount >= 10;
 
   const placeOrder = (orderData: any) =>
     axios.post(PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`, orderData)
@@ -216,11 +216,11 @@ const BuyTokenPage: React.FC = () => {
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 font-bold">₹</span>
                 <input
                   type="number"
-                  min="100"
+                  min="10"
                   step="10"
                   value={customAmount}
                   onChange={e => { setCustomAmount(e.target.value); setSelectedPreset(null); }}
-                  placeholder="Min ₹100"
+                  placeholder="Min ₹10"
                   className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/50 text-sm"
                 />
               </div>
@@ -237,7 +237,7 @@ const BuyTokenPage: React.FC = () => {
                       <span className="text-sm text-green-400 font-bold">₹{finalAmount.toLocaleString()}</span>
                     </>
                   ) : (
-                    <span className="text-sm text-red-400">Minimum purchase is ₹100 (10 tokens)</span>
+                    <span className="text-sm text-red-400">Minimum purchase is ₹10 (1 token)</span>
                   )}
                 </div>
               )}

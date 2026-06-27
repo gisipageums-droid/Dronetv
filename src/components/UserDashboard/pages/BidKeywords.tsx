@@ -206,6 +206,7 @@ const BidKeywordsPage: React.FC = () => {
                 <span className="font-bold text-white text-sm">My Active Bids</span>
                 <span className="text-xs text-white/40">{MY_BIDS.length} active</span>
               </div>
+              <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="bg-gray-950">
@@ -239,6 +240,7 @@ const BidKeywordsPage: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
 

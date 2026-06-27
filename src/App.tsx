@@ -618,7 +618,16 @@ const AppContent = () => {
               </UserDashboardLayout>
             }
           />
-          <Route path="/user-leads" element={<CompanyLeadsPage />} />
+          <Route
+            path="/user-leads"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <CompanyLeadsPage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/user-professional/leads/:ProfessionalName/:professionalId"
             element={

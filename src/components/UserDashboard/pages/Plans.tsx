@@ -239,6 +239,7 @@ const RechargePlans: React.FC = () => {
                     ))}
                   </div>
                   <button
+                    onClick={() => navigate('/user-buy')}
                     className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-black transition-all ${c.btn}`}
                   >
                     Get {pkg.name} <ArrowRight size={14} />

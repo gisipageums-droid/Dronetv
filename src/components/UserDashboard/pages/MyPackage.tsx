@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Package, CheckCircle, TrendingUp, Coins, Calendar,
   Building2, Video, FileText, Users, Star, Crown,
@@ -98,6 +99,7 @@ interface ProfileData {
 
 const MyPackage: React.FC = () => {
   const { user } = useUserAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -184,7 +186,10 @@ const MyPackage: React.FC = () => {
             <Calendar size={13} className="text-white/40" />
             <span className="text-xs text-white/50">Renewal: {expiryLabel}</span>
           </div>
-          <button className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${colors.bg} ${colors.border} ${colors.text} hover:opacity-80`}>
+          <button
+            onClick={() => navigate('/user-recharge')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${colors.bg} ${colors.border} ${colors.text} hover:opacity-80`}
+          >
             Renew Now
           </button>
         </div>
@@ -231,6 +236,7 @@ const MyPackage: React.FC = () => {
                     )}
                   </div>
                   <button
+                    onClick={() => navigate('/user-recharge')}
                     className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-black transition-colors border ${c.bg} ${c.border} ${c.text} hover:opacity-80`}
                   >
                     Upgrade to {pkg.name}

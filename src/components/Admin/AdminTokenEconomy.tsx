@@ -48,17 +48,10 @@ const MOCK_SLOTS = [
   { id: "HP-5", label: "Ticker Announcement", type: "Token", status: "available", holder: "—", revenue: 0 },
 ];
 
-const PHASE_GATE = {
+const PHASE_GATE_DEFAULTS = {
   current: 248,
   threshold: 250,
   readiness: 99.2,
-  status: "pending",
-  controls: [
-    { label: "Keyword Auctions", active: false },
-    { label: "Homepage Slots", active: false },
-    { label: "Lead Unlock", active: false },
-    { label: "Professional Boosts", active: false },
-  ],
 };
 
 const tabFromPath = (path: string) => {
@@ -72,10 +65,29 @@ const tabFromPath = (path: string) => {
 const AdminTokenEconomy: React.FC = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(tabFromPath(location.pathname));
+  const [phaseControls, setPhaseControls] = useState([
+    { label: "Keyword Auctions", active: false },
+    { label: "Homepage Slots", active: false },
+    { label: "Lead Unlock", active: false },
+    { label: "Professional Boosts", active: false },
+  ]);
+  const [phaseActivated, setPhaseActivated] = useState(false);
 
   useEffect(() => {
     setActiveTab(tabFromPath(location.pathname));
   }, [location.pathname]);
+
+  const toggleControl = (idx: number) => {
+    setPhaseControls(prev => prev.map((c, i) => i === idx ? { ...c, active: !c.active } : c));
+  };
+
+  const handleActivate = () => {
+    setPhaseActivated(true);
+    setPhaseControls(prev => prev.map(c => ({ ...c, active: true })));
+  };
+
+  const now = new Date();
+  const ledgerMonthLabel = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
 
   const tabs = [
     { id: "revenue", label: "Token Revenue", icon: IndianRupee, path: "/admin/tokens/revenue" },
@@ -146,7 +158,7 @@ const AdminTokenEconomy: React.FC = () => {
 
           {/* Revenue by stream */}
           <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h3 className="text-sm font-bold text-gray-700 mb-3">Revenue by Stream — June 2026</h3>
+            <h3 className="text-sm font-bold text-gray-700 mb-3">Revenue by Stream — {ledgerMonthLabel}</h3>
             <div className="space-y-2.5">
               {MOCK_REVENUE.streams.map((s) => (
                 <div key={s.label}>
@@ -221,7 +233,7 @@ const AdminTokenEconomy: React.FC = () => {
       {activeTab === "ledger" && (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-100">
-            <h3 className="text-sm font-bold text-gray-700">Token Transaction Ledger — June 2026</h3>
+            <h3 className="text-sm font-bold text-gray-700">Token Transaction Ledger — {ledgerMonthLabel}</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -295,40 +307,51 @@ const AdminTokenEconomy: React.FC = () => {
       {activeTab === "phase-gate" && (
         <div className="space-y-4">
           <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <h3 className="text-sm font-bold text-gray-700 mb-4">
+            <h3 className="text-sm font-bold text-gray-700 mb-1">
               Token Economy Activation — Phase Gate
             </h3>
             <p className="text-xs text-gray-500 mb-4">
-              Token economy activates automatically at 250 active listings.
+              Token economy activates automatically at 250 active listings. You can also force-activate manually.
             </p>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-bold text-gray-900">
-                {PHASE_GATE.current} / {PHASE_GATE.threshold} active listings
+                {PHASE_GATE_DEFAULTS.current} / {PHASE_GATE_DEFAULTS.threshold} active listings
               </span>
-              <span className="text-sm font-black text-orange-600">{PHASE_GATE.readiness}% ready</span>
+              <span className="text-sm font-black text-orange-600">{PHASE_GATE_DEFAULTS.readiness}% ready</span>
             </div>
             <div className="h-4 bg-gray-100 rounded-full overflow-hidden mb-5">
               <div
                 className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all"
-                style={{ width: `${PHASE_GATE.readiness}%` }}
+                style={{ width: `${PHASE_GATE_DEFAULTS.readiness}%` }}
               />
             </div>
-            <button className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black text-sm font-black hover:bg-yellow-300 transition-colors flex items-center gap-2">
-              <Coins size={15} />
-              Activate Token Economy Now
-            </button>
+            {phaseActivated ? (
+              <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-green-700 text-sm font-bold">
+                <CheckCircle size={16} className="text-green-500" />
+                Token Economy is LIVE — all features enabled
+              </div>
+            ) : (
+              <button
+                onClick={handleActivate}
+                className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black text-sm font-black hover:bg-yellow-300 transition-colors flex items-center gap-2"
+              >
+                <Coins size={15} />
+                Activate Token Economy Now
+              </button>
+            )}
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h3 className="text-sm font-bold text-gray-700 mb-3">Slot Controls</h3>
+            <h3 className="text-sm font-bold text-gray-700 mb-3">Feature Controls</h3>
             <div className="space-y-2">
-              {PHASE_GATE.controls.map((ctrl) => (
+              {phaseControls.map((ctrl, idx) => (
                 <div key={ctrl.label} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                   <span className="text-sm text-gray-700">{ctrl.label}</span>
                   <button
-                    className={`w-10 h-5 rounded-full transition-all ${
+                    onClick={() => toggleControl(idx)}
+                    className={`w-10 h-5 rounded-full transition-all relative ${
                       ctrl.active ? "bg-green-500" : "bg-gray-200"
-                    } relative`}
+                    }`}
                   >
                     <span
                       className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform shadow ${
