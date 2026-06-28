@@ -158,6 +158,7 @@ const Addons: React.FC = () => {
 
   const confirmPurchase = async () => {
     if (!confirmAddon) return;
+    if (confirmAddon.tokens <= 0) return;
     setPurchasing(confirmAddon.id);
     setConfirmAddon(null);
 

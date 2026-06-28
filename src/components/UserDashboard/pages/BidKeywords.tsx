@@ -79,6 +79,7 @@ const BidKeywordsPage: React.FC = () => {
 
   const handlePlaceBid = async () => {
     if (!canBid) return;
+    if (bidAmount <= 0 || totalCost <= 0) return;
     setPlacing(true);
     setError("");
     try {

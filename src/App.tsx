@@ -63,6 +63,7 @@ import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App";
 import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
 import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main";
 import NotFound from "./components/company/src/components/form/src/Notfound";
+import NotFoundPage from "./components/NotFoundPage";
 import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboard";
 import UserEvent from "./components/UserEvent";
 import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard";
@@ -656,6 +657,7 @@ const AppContent = () => {
           />
         <Route path="/eventsexcel" element={<EventsExcelDataProcessor />} />
         <Route path="/professionalsexcel" element={<ProfessionalsDocumentTextExtractor />} />
+        <Route path="*" element={<NotFoundPage />} />
         </Routes>
 
         {!hideFooter && <Footer />}
