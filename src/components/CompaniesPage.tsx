@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -23,23 +23,41 @@ interface Company {
   [key: string]: any;
 }
 
-const DRONE_KW = /drone|uav|uas|rpas|rpto|aerial|unmanned|pilot|flight|multirotor|quadcopter/i;
-const GIS_KW   = /gis|geospatial|spatial|mapping|lidar|survey|topographic|remote sensing|cartograph|photogramm/i;
-const AI_KW    = /\bai\b|artificial intel|machine learn|deep learn|computer vision|analytics|algorithm|neural/i;
+// Industry detection from company name (sectors API field is always "General")
+const DRONE_KW = /drone|uav|uas|unmanned|aerial|aero(?:space)?|aviation|rotor|rpas|rpto|multicopter|quadcopter|drona/i;
+const GIS_KW   = /gis|geospatial|spatial|mapping|lidar|survey|topograph|remote.?sensing|cartograph|photogramm/i;
+const AI_KW    = /\bai\b|\bai\s+lab|\balgo|robot(?:ics)?|machine.?learn|deep.?learn|computer.?vision|neural|intelligence\b|automation/i;
 
-function getIndustry(sectors: string[]): 'drone' | 'gis' | 'ai' | 'all' {
-  const s = (sectors || []).join(' ');
+function getIndustry(c: Company): 'drone' | 'gis' | 'ai' | 'all' {
+  const s = `${c.companyName || ''} ${c.companyDescription || ''} ${c.aboutDescription || ''}`;
   if (AI_KW.test(s)) return 'ai';
   if (GIS_KW.test(s)) return 'gis';
   if (DRONE_KW.test(s)) return 'drone';
   return 'all';
 }
 
+// Sector detection from company name
+const SECTOR_KW: Record<string, RegExp> = {
+  'Agriculture': /agri|spray|crop|farm|precision|kisan/i,
+  'Survey & Mapping': /survey|mapping|topograph|lidar|georef|photogramm|cadastral/i,
+  'Defence': /defenc|defense|military|security|force|army|navy/i,
+  'Infrastructure': /infra|construct|inspection|bridge|pipeline|power|railway|highway/i,
+  'Aerial Media': /media|photo|film|cinema|video|content|studio|creative/i,
+  'Training': /train|academy|institute|education|school|learn|certif/i,
+};
+
+function getSectors(c: Company): string[] {
+  const s = `${c.companyName || ''} ${c.companyDescription || ''} ${c.aboutDescription || ''}`;
+  return Object.entries(SECTOR_KW)
+    .filter(([, rx]) => rx.test(s))
+    .map(([k]) => k);
+}
+
 function getInitials(name: string): string {
   return name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
 }
 
-const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#1a7a3a', ai: '#6B2FB5', all: '#444444' };
+const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#1a7a3a', ai: '#6B2FB5', all: '#444' };
 const IND_LABELS: Record<string, string> = { all: 'All', drone: '🚁 Drone', gis: '🗺️ GIS', ai: '🤖 AI' };
 const AV_COLORS = ['#0B5CB5','#1a7a3a','#CC1F1F','#6B2FB5','#c05800','#1a5a9a','#3a6a1a','#9a3a1a'];
 
@@ -49,9 +67,9 @@ function avColor(name: string): string {
   return AV_COLORS[h % AV_COLORS.length];
 }
 
-const COMPANIES_CSS = `
+const CSS = `
 .co-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
-.co-hero { background: linear-gradient(135deg,#0A0A0A,#111500); color:#fff; }
+.co-hero { background: linear-gradient(135deg,#0A0A0A,#111500); color: #fff; }
 .co-hero-i { max-width: 1280px; margin: 0 auto; padding: 28px 22px; }
 .co-hero h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.4px; margin-bottom: 5px; line-height: 1.25; }
 .co-hero h1 span { color: #F5C518; }
@@ -67,31 +85,49 @@ const COMPANIES_CSS = `
 .co-trust-i { max-width: 1280px; margin: 0 auto; padding: 8px 22px; display: flex; gap: 18px; flex-wrap: wrap; }
 .co-trust-item { display: flex; align-items: center; gap: 5px; color: rgba(255,255,255,.6); font-size: 11.5px; font-weight: 500; }
 .co-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
-.co-toolbar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 15px; }
-.co-search { flex: 1; min-width: 180px; display: flex; align-items: center; gap: 6px; background: #F8F8F8; border: 1.5px solid #E5E5E5; border-radius: 8px; padding: 8px 12px; }
-.co-search input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
-.co-chip-lbl { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+
+/* Sidebar layout */
+.co-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
+.co-sidebar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 120px; }
+.co-sidebar-title { font-size: 13px; font-weight: 800; color: #0A0A0A; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.co-filter-grp { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
+.co-filter-grp:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.co-fl-label { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
 .co-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-.co-chip { padding: 4px 11px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; }
+.co-chip { padding: 4px 10px; border-radius: 14px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
+.co-main { min-width: 0; }
+.co-search-bar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.co-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
 .co-note { background: #FFFBE8; border: 1px solid #C9A010; border-radius: 8px; padding: 7px 12px; font-size: 11.5px; color: #7a5800; margin-bottom: 12px; }
 .co-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
 .co-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
-.co-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.co-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 13px; }
 .co-empty { padding: 64px 0; text-align: center; }
-.co-pages { display: flex; justify-content: center; margin-top: 32px; gap: 6px; flex-wrap: wrap; }
+.co-pages { display: flex; justify-content: center; margin-top: 28px; gap: 6px; flex-wrap: wrap; }
 .co-page-btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins',sans-serif; }
+
+/* Mobile sidebar toggle */
+.co-filter-toggle { display: none; }
+.co-mobile-overlay { display: none; }
+
+/* Card */
 .co-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; }
 .co-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.14); transform: translateY(-2px); }
-.co-card-top { padding: 14px 15px 0; display: flex; gap: 12px; align-items: flex-start; }
-.co-avatar { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
-.co-avatar img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; }
-.co-card-name { font-size: 14px; font-weight: 700; color: #0A0A0A; line-height: 1.3; }
-.co-card-loc { display: flex; align-items: center; gap: 3px; font-size: 12px; color: #777; margin-top: 2px; }
-.co-card-desc { font-size: 12.5px; color: #777; line-height: 1.6; padding: 0 15px; margin-bottom: 10px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.co-card-foot { padding: 10px 15px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; gap: 7px; }
-.co-btn-out { flex: 1; background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; font-family: 'Poppins',sans-serif; }
-.co-btn-red { flex: 1; background: #CC1F1F; color: #fff; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+.co-card-top { padding: 13px 13px 0; display: flex; gap: 10px; align-items: flex-start; }
+.co-avatar { width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
+.co-avatar img { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; }
+.co-card-name { font-size: 13px; font-weight: 700; color: #0A0A0A; line-height: 1.3; }
+.co-card-loc { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #777; margin-top: 2px; }
+.co-card-desc { font-size: 12px; color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.co-card-foot { padding: 9px 13px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; gap: 6px; }
+.co-btn-out { flex: 1; background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; }
+.co-btn-red { flex: 1; background: #CC1F1F; color: #fff; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+
 @media (max-width: 960px) {
+  .co-layout { grid-template-columns: 1fr; }
+  .co-sidebar { position: static; display: none; }
+  .co-sidebar.open { display: block; }
+  .co-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
   .co-trust-item:nth-child(n+3) { display: none; }
 }
 @media (max-width: 600px) {
@@ -100,19 +136,18 @@ const COMPANIES_CSS = `
   .co-stat-n { font-size: 17px; }
   .co-wrap { padding: 14px 14px; }
   .co-trust-i { padding: 7px 14px; gap: 12px; }
-  .co-trust-item:nth-child(n+3) { display: none; }
   .co-grid { grid-template-columns: 1fr; }
-  .co-toolbar { padding: 12px; }
   .co-tabs-i { padding: 0 14px; }
-  .co-tab { padding: 8px 13px; font-size: 12px; }
+  .co-tab { padding: 8px 12px; font-size: 12px; }
 }
 `;
+
+const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
 
 const CompaniesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [industry, setIndustry] = useState<string>('all');
-  const [sectors, setSectors] = useState<string[]>([]);
   const [states, setStates] = useState<string[]>([]);
   const [selSectors, setSelSectors] = useState<string[]>([]);
   const [selStates, setSelStates] = useState<string[]>([]);
@@ -120,6 +155,7 @@ const CompaniesPage: React.FC = () => {
   const [sortBy, setSortBy] = useState('createdAt');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const perPage = 12;
   const navigate = useNavigate();
 
@@ -138,16 +174,13 @@ const CompaniesPage: React.FC = () => {
           seen.add(k); return true;
         });
         setAllCompanies(unique);
-        const secSet = new Set<string>();
         const stateSet = new Set<string>();
         unique.forEach(c => {
-          (c.sectors || []).forEach(s => { if (s) secSet.add(s); });
           const parts = (c.location || '').split(',');
           const st = parts[parts.length - 1]?.trim().replace(/\s+India$/i, '').trim();
           if (st && st.length > 1 && st.length < 30) stateSet.add(st);
         });
-        setSectors(Array.from(secSet).slice(0, 10));
-        setStates(Array.from(stateSet).slice(0, 8));
+        setStates(Array.from(stateSet).slice(0, 10));
       })
       .catch(() => setAllCompanies([]))
       .finally(() => setLoading(false));
@@ -155,8 +188,8 @@ const CompaniesPage: React.FC = () => {
 
   const filtered = useMemo(() => {
     let list = allCompanies;
-    if (industry !== 'all') list = list.filter(c => getIndustry(c.sectors || []) === industry);
-    if (selSectors.length) list = list.filter(c => selSectors.some(s => (c.sectors || []).includes(s)));
+    if (industry !== 'all') list = list.filter(c => getIndustry(c) === industry);
+    if (selSectors.length) list = list.filter(c => selSectors.some(s => getSectors(c).includes(s)));
     if (selStates.length) {
       list = list.filter(c => {
         const parts = (c.location || '').split(',');
@@ -170,7 +203,7 @@ const CompaniesPage: React.FC = () => {
       list = list.filter(c =>
         c.companyName?.toLowerCase().includes(q) ||
         c.companyDescription?.toLowerCase().includes(q) ||
-        (c.sectors || []).join(' ').toLowerCase().includes(q)
+        c.location?.toLowerCase().includes(q)
       );
     }
     return [...list].sort((a, b) => {
@@ -184,8 +217,12 @@ const CompaniesPage: React.FC = () => {
   const totalPages = Math.ceil(filtered.length / perPage);
   const current = filtered.slice((page - 1) * perPage, page * perPage);
 
-  const toggleChip = (arr: string[], setArr: (v: string[]) => void, val: string) => {
-    setArr(arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val]);
+  const toggleSector = (s: string) => {
+    setSelSectors(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]);
+    setPage(1);
+  };
+  const toggleState = (s: string) => {
+    setSelStates(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]);
     setPage(1);
   };
 
@@ -196,26 +233,97 @@ const CompaniesPage: React.FC = () => {
     else navigate(`/company/${slug}`);
   };
 
-  if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Companies..." />;
+  const chipStyle = (on: boolean): React.CSSProperties => ({
+    background: on ? '#0A0A0A' : 'transparent',
+    color: on ? '#F5C518' : '#555',
+    border: `1.5px solid ${on ? '#0A0A0A' : '#E0E0E0'}`,
+  });
+
+  const activeFiltersCount = selSectors.length + selStates.length + (verifiedOnly ? 1 : 0);
 
   const verifiedCount = allCompanies.filter(c => c.reviewStatus === 'approved').length;
 
-  const chipStyle = (on: boolean): React.CSSProperties => ({
-    background: on ? '#0A0A0A' : 'transparent',
-    color: on ? '#F5C518' : '#444',
-    border: `1.5px solid ${on ? '#0A0A0A' : '#E5E5E5'}`,
-  });
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+    .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+    .reduce<(number | '...')[]>((acc, p, i, arr) => {
+      if (i > 0 && typeof arr[i - 1] === 'number' && (p as number) - (arr[i - 1] as number) > 1) acc.push('...');
+      acc.push(p); return acc;
+    }, []);
 
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1).filter(p =>
-    p === 1 || p === totalPages || Math.abs(p - page) <= 1
-  ).reduce<(number | '...')[]>((acc, p, i, arr) => {
-    if (i > 0 && typeof arr[i - 1] === 'number' && (p as number) - (arr[i - 1] as number) > 1) acc.push('...');
-    acc.push(p); return acc;
-  }, []);
+  if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Companies..." />;
+
+  const indryCounts: Record<string, number> = { all: allCompanies.length };
+  for (const ind of ['drone', 'gis', 'ai'] as const) {
+    indryCounts[ind] = allCompanies.filter(c => getIndustry(c) === ind).length;
+  }
+
+  const Sidebar = () => (
+    <aside className={`co-sidebar${sidebarOpen ? ' open' : ''}`}>
+      <div className="co-sidebar-title">
+        <SlidersHorizontal size={14} /> Filters
+        {activeFiltersCount > 0 && (
+          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#CC1F1F', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
+            {activeFiltersCount}
+          </span>
+        )}
+      </div>
+
+      {/* Package Tier */}
+      <div className="co-filter-grp">
+        <div className="co-fl-label">Package Tier</div>
+        <div className="co-chips">
+          {[{ l: '⭐ Brand', v: 'brand' }, { l: '🔵 Scale', v: 'scale' }, { l: '📌 Reach', v: 'reach' }].map(t => (
+            <button key={t.v} className="co-chip" style={chipStyle(false)} disabled>{t.l}</button>
+          ))}
+        </div>
+        <div style={{ fontSize: 10, color: '#aaa', marginTop: 5 }}>Coming soon</div>
+      </div>
+
+      {/* Sector */}
+      <div className="co-filter-grp">
+        <div className="co-fl-label">Sector</div>
+        <div className="co-chips">
+          {ALL_SECTORS.map(s => (
+            <button key={s} className="co-chip" onClick={() => toggleSector(s)} style={chipStyle(selSectors.includes(s))}>{s}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* State */}
+      {states.length > 0 && (
+        <div className="co-filter-grp">
+          <div className="co-fl-label">State</div>
+          <div className="co-chips">
+            {states.map(st => (
+              <button key={st} className="co-chip" onClick={() => toggleState(st)} style={chipStyle(selStates.includes(st))}>{st}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Verification */}
+      <div className="co-filter-grp">
+        <div className="co-fl-label">Verification</div>
+        <div className="co-chips">
+          <button className="co-chip" onClick={() => { setVerifiedOnly(!verifiedOnly); setPage(1); }} style={chipStyle(verifiedOnly)}>
+            ✓ DGCA-Verified only
+          </button>
+        </div>
+      </div>
+
+      {/* Clear */}
+      {activeFiltersCount > 0 && (
+        <button onClick={() => { setSelSectors([]); setSelStates([]); setVerifiedOnly(false); setPage(1); }}
+          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#CC1F1F', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          <X size={12} /> Clear all filters
+        </button>
+      )}
+    </aside>
+  );
 
   return (
     <>
-      <style>{COMPANIES_CSS}</style>
+      <style>{CSS}</style>
       <div className="co-page">
 
         {/* HERO */}
@@ -225,10 +333,10 @@ const CompaniesPage: React.FC = () => {
             <p>Browse {allCompanies.length} listed companies — manufacturers, service providers, GIS firms, and AI companies.</p>
             <div className="co-stats">
               {[
-                { n: allCompanies.length, l: 'Listed Companies' },
+                { n: allCompanies.length, l: 'Listed' },
                 { n: verifiedCount, l: 'Verified' },
-                { n: allCompanies.reduce((s, c) => s + (c.productsCount || 0), 0), l: 'Products' },
-                { n: allCompanies.reduce((s, c) => s + (c.servicesCount || 0), 0), l: 'Services' },
+                { n: allCompanies.reduce((s, c) => s + (Number(c.productsCount) || 0), 0), l: 'Products' },
+                { n: allCompanies.reduce((s, c) => s + (Number(c.servicesCount) || 0), 0), l: 'Services' },
               ].map(st => (
                 <div key={st.l}>
                   <div className="co-stat-n">{st.n}</div>
@@ -243,14 +351,15 @@ const CompaniesPage: React.FC = () => {
         <nav className="co-tabs">
           <div className="co-tabs-i">
             {(['all', 'drone', 'gis', 'ai'] as const).map(ind => {
-              const count = ind === 'all' ? allCompanies.length : allCompanies.filter(c => getIndustry(c.sectors || []) === ind).length;
               const active = industry === ind;
               return (
                 <button key={ind} className="co-tab"
                   onClick={() => { setIndustry(ind); setPage(1); }}
                   style={{ color: active ? '#F5C518' : 'rgba(255,255,255,.48)', borderBottomColor: active ? '#F5C518' : 'transparent' }}>
                   {IND_LABELS[ind]}
-                  <span style={{ fontSize: 10, fontWeight: 800, padding: '1px 7px', borderRadius: 10, background: active ? '#F5C518' : 'rgba(255,255,255,.1)', color: active ? '#0A0A0A' : 'rgba(255,255,255,.7)' }}>{count}</span>
+                  <span style={{ fontSize: 10, fontWeight: 800, padding: '1px 7px', borderRadius: 10, background: active ? '#F5C518' : 'rgba(255,255,255,.1)', color: active ? '#0A0A0A' : 'rgba(255,255,255,.7)' }}>
+                    {indryCounts[ind] ?? 0}
+                  </span>
                 </button>
               );
             })}
@@ -267,108 +376,77 @@ const CompaniesPage: React.FC = () => {
               { icon: '🛡️', b: 'Service guarantee', l: 'Brand partners' },
             ].map(t => (
               <div key={t.l} className="co-trust-item">
-                <span>{t.icon}</span><b style={{ color: '#F5C518' }}>{t.b}</b> {t.l}
+                <span>{t.icon}</span><b style={{ color: '#F5C518' }}>{t.b}</b>&nbsp;{t.l}
               </div>
             ))}
           </div>
         </div>
 
         <div className="co-wrap">
-
-          {/* TOOLBAR */}
-          <div className="co-toolbar">
-            <div style={{ display: 'flex', gap: 9, marginBottom: 12 }}>
-              <div className="co-search">
-                <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
-                <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-                  placeholder="Search companies, sectors, locations..." />
-              </div>
-            </div>
-
-            {sectors.length > 0 && (
-              <div style={{ marginBottom: 9 }}>
-                <div className="co-chip-lbl">Sector</div>
-                <div className="co-chips">
-                  {sectors.map(s => (
-                    <button key={s} className="co-chip" onClick={() => toggleChip(selSectors, setSelSectors, s)}
-                      style={chipStyle(selSectors.includes(s))}>{s}</button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {states.length > 0 && (
-              <div style={{ marginBottom: 9 }}>
-                <div className="co-chip-lbl">State</div>
-                <div className="co-chips">
-                  {states.map(st => (
-                    <button key={st} className="co-chip" onClick={() => toggleChip(selStates, setSelStates, st)}
-                      style={chipStyle(selStates.includes(st))}>{st}</button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div>
-              <div className="co-chip-lbl">Verification</div>
-              <div className="co-chips">
-                <button className="co-chip" onClick={() => { setVerifiedOnly(!verifiedOnly); setPage(1); }}
-                  style={chipStyle(verifiedOnly)}>✓ Verified only</button>
-              </div>
-            </div>
+          {/* Search bar */}
+          <div className="co-search-bar">
+            <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search companies, names, locations..." />
           </div>
 
-          <div className="co-note">⭐ Verified companies appear first. Get your company verified by submitting GST documents in your dashboard.</div>
+          {/* Mobile filter toggle */}
+          <button className="co-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+            <SlidersHorizontal size={14} /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+          </button>
 
-          {/* RESULTS BAR */}
-          <div className="co-resbar">
-            <div style={{ fontSize: 12.5, color: '#777' }}>
-              <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> {filtered.length === 1 ? 'company' : 'companies'}
-              {industry !== 'all' && <span style={{ color: '#0B5CB5', fontWeight: 600 }}> · {IND_LABELS[industry]}</span>}
-            </div>
-            <select className="co-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
-              <option value="featured">Verified first</option>
-              <option value="createdAt">Newest first</option>
-              <option value="companyName">A – Z</option>
-            </select>
-          </div>
+          <div className="co-layout">
+            <Sidebar />
 
-          {/* GRID */}
-          {current.length === 0 ? (
-            <div className="co-empty">
-              <Search size={48} style={{ color: '#ccc', margin: '0 auto 12px' }} />
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No companies found</div>
-              <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
-            </div>
-          ) : (
-            <div className="co-grid">
-              {current.map((c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} />)}
-            </div>
-          )}
+            <div className="co-main">
+              <div className="co-note">⭐ Verified companies appear first. Get your company verified by submitting GST documents in your dashboard.</div>
 
-          {/* PAGINATION */}
-          {totalPages > 1 && (
-            <div className="co-pages">
-              <button className="co-page-btn"
-                onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
-                Previous
-              </button>
-              {pages.map((p, i) => p === '...' ? (
-                <span key={`e${i}`} style={{ padding: '7px 4px', color: '#777' }}>…</span>
+              <div className="co-resbar">
+                <div style={{ fontSize: 12.5, color: '#777' }}>
+                  <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> {filtered.length === 1 ? 'company' : 'companies'}
+                  {industry !== 'all' && <span style={{ color: IND_COLORS[industry], fontWeight: 600 }}> · {IND_LABELS[industry]}</span>}
+                </div>
+                <select className="co-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
+                  <option value="featured">Verified first</option>
+                  <option value="createdAt">Newest first</option>
+                  <option value="companyName">A – Z</option>
+                </select>
+              </div>
+
+              {current.length === 0 ? (
+                <div className="co-empty">
+                  <Search size={48} style={{ color: '#ccc', margin: '0 auto 12px' }} />
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No companies found</div>
+                  <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
+                </div>
               ) : (
-                <button key={p} className="co-page-btn" onClick={() => setPage(p as number)}
-                  style={{ border: `1.5px solid ${page === p ? '#0A0A0A' : '#E5E5E5'}`, background: page === p ? '#0A0A0A' : '#fff', color: page === p ? '#F5C518' : '#1A1A1A', cursor: 'pointer' }}>
-                  {p}
-                </button>
-              ))}
-              <button className="co-page-btn"
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
-                Next
-              </button>
+                <div className="co-grid">
+                  {current.map((c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} />)}
+                </div>
+              )}
+
+              {totalPages > 1 && (
+                <div className="co-pages">
+                  <button className="co-page-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                    style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
+                    Previous
+                  </button>
+                  {pages.map((p, i) => p === '...' ? (
+                    <span key={`e${i}`} style={{ padding: '7px 4px', color: '#777' }}>…</span>
+                  ) : (
+                    <button key={p} className="co-page-btn" onClick={() => setPage(p as number)}
+                      style={{ border: `1.5px solid ${page === p ? '#0A0A0A' : '#E5E5E5'}`, background: page === p ? '#0A0A0A' : '#fff', color: page === p ? '#F5C518' : '#1A1A1A', cursor: 'pointer' }}>
+                      {p}
+                    </button>
+                  ))}
+                  <button className="co-page-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                    style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </>
@@ -376,11 +454,12 @@ const CompaniesPage: React.FC = () => {
 };
 
 const CompanyCard: React.FC<{ company: Company; onClick: () => void }> = ({ company, onClick }) => {
-  const ind = getIndustry(company.sectors || []);
+  const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
   const verified = company.reviewStatus === 'approved';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
+  const detectedSectors = getSectors(company);
 
   return (
     <div className="co-card" onClick={onClick}>
@@ -393,56 +472,36 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void }> = ({ comp
           ) : getInitials(company.companyName)}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <span className="co-card-name">{company.companyName}</span>
-            {verified && <BadgeCheck size={15} style={{ color: '#1a7a3a', flexShrink: 0 }} />}
+            {verified && <BadgeCheck size={14} style={{ color: '#1a7a3a', flexShrink: 0 }} />}
           </div>
           {company.location && (
-            <div className="co-card-loc"><MapPin size={11} />{company.location}</div>
+            <div className="co-card-loc"><MapPin size={10} />{company.location}</div>
           )}
         </div>
       </div>
 
-      <div style={{ padding: '8px 15px', display: 'flex', gap: 5, flexWrap: 'wrap', alignItems: 'center' }}>
-        {verified && (
-          <span style={{ fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8, background: '#e8f5ec', color: '#1a7a3a', textTransform: 'uppercase' as const }}>Verified</span>
-        )}
-        {ind !== 'all' && (
-          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 7, background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor, textTransform: 'uppercase' as const, letterSpacing: .3 }}>
-            {ind.toUpperCase()}
-          </span>
-        )}
-        {(company.sectors || []).slice(0, 2).map(s => (
-          <span key={s} style={{ fontSize: 9.5, fontWeight: 600, padding: '2px 7px', borderRadius: 7, background: '#F8F8F8', color: '#444', border: '1px solid #E5E5E5' }}>{s}</span>
+      <div style={{ padding: '7px 13px', display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+        {verified && <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#e8f5ec', color: '#1a7a3a', textTransform: 'uppercase' as const }}>Verified</span>}
+        {ind !== 'all' && <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 7, background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor, textTransform: 'uppercase' as const }}>{ind.toUpperCase()}</span>}
+        {detectedSectors.slice(0, 1).map(s => (
+          <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 7, background: '#F8F8F8', color: '#555', border: '1px solid #E5E5E5' }}>{s}</span>
         ))}
       </div>
 
-      <p className="co-card-desc">
-        {company.companyDescription || company.aboutDescription || 'No description available.'}
-      </p>
+      <p className="co-card-desc">{company.companyDescription || company.aboutDescription || 'No description available.'}</p>
 
-      {((company.servicesCount || 0) > 0 || (company.productsCount || 0) > 0) && (
-        <div style={{ padding: '0 15px 10px', display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-          {(company.productsCount || 0) > 0 && (
-            <span style={{ fontSize: 11, color: '#444', display: 'flex', alignItems: 'center', gap: 3, background: '#F8F8F8', padding: '3px 7px', borderRadius: 5 }}>
-              📦 {company.productsCount} products
-            </span>
-          )}
-          {(company.servicesCount || 0) > 0 && (
-            <span style={{ fontSize: 11, color: '#444', display: 'flex', alignItems: 'center', gap: 3, background: '#F8F8F8', padding: '3px 7px', borderRadius: 5 }}>
-              🔧 {company.servicesCount} services
-            </span>
-          )}
+      {((Number(company.servicesCount) || 0) > 0 || (Number(company.productsCount) || 0) > 0) && (
+        <div style={{ padding: '0 13px 9px', display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+          {(Number(company.productsCount) || 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>📦 {company.productsCount} products</span>}
+          {(Number(company.servicesCount) || 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>🔧 {company.servicesCount} services</span>}
         </div>
       )}
 
       <div className="co-card-foot">
-        <button className="co-btn-out" onClick={e => { e.stopPropagation(); onClick(); }}>
-          View Profile <ChevronRight size={12} />
-        </button>
-        <button className="co-btn-red" onClick={e => { e.stopPropagation(); onClick(); }}>
-          Enquire
-        </button>
+        <button className="co-btn-out" onClick={e => { e.stopPropagation(); onClick(); }}>View Profile <ChevronRight size={11} /></button>
+        <button className="co-btn-red" onClick={e => { e.stopPropagation(); onClick(); }}>Enquire</button>
       </div>
     </div>
   );
