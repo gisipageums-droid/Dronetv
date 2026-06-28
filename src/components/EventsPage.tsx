@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ChevronDown, Calendar, MapPin, Clock, Users } from "lucide-react";
+import { Search, ChevronDown, Calendar, MapPin, Clock, Users, SlidersHorizontal, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { EVENTS_API, LAMBDA } from '../lib/apiConfig';
 
@@ -89,6 +89,7 @@ const EventsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [allEvents, setAllEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const eventsPerPage = 12;
   const navigate = useNavigate();
 
@@ -230,153 +231,160 @@ const EventsPage = () => {
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-[104px] z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center flex-wrap">
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search events..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-            />
-          </div>
-          <div className="relative flex-1 sm:flex-none">
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="appearance-none w-full sm:w-auto pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 sm:min-w-[150px]"
-            >
-              {eventTypes.map((t) => (
-                <option key={t} value={t}>{t === 'All' ? 'All Types' : t}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          </div>
-          <div className="relative flex-1 sm:flex-none">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none w-full sm:w-auto pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 sm:min-w-[160px]"
-            >
-              {sortOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          </div>
-          {searchQuery && (
-            <span className="bg-black text-yellow-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-              "{searchQuery}"
-              <button onClick={() => setSearchQuery("")} className="hover:text-white text-sm ml-0.5">×</button>
-            </span>
-          )}
-        </div>
-      </div>
+      <style>{`
+.ev-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
+.ev-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
+.ev-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
+.ev-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.ev-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
+.ev-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.ev-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.ev-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
+.ev-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.ev-chips{display:flex;gap:5px;flex-wrap:wrap}
+.ev-main{min-width:0}
+.ev-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ev-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.ev-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
+.ev-sort{padding:6px 10px;border:1.5px solid #E5E5E5;border-radius:8px;font-size:12.5px;color:#444;background:#fff;cursor:pointer;font-family:inherit}
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px}
+.ev-empty{padding:64px 0;text-align:center}
+.ev-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
+.ev-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
+.ev-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.ev-filter-toggle{display:none}
+@media(max-width:960px){
+  .ev-layout{grid-template-columns:1fr}
+  .ev-sidebar{position:static;display:none}
+  .ev-sidebar.open{display:block}
+  .ev-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+}
+@media(max-width:600px){
+  .ev-wrap{padding:12px 14px}
+  .ev-grid{grid-template-columns:1fr}
+}
+`}</style>
 
-      {/* Events Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-12">
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-gray-500">{filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}</p>
-          {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}
-        </div>
+      {/* Main content with sidebar */}
+      <div className="ev-wrap">
+        <div className="ev-layout">
+          {/* Sidebar */}
+          <aside className={`ev-sidebar${sidebarOpen ? ' open' : ''}`}>
+            <div className="ev-sidebar-title"><SlidersHorizontal size={14} /> Filters</div>
 
-        {currentEvents.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="bg-white border border-gray-200 rounded-xl p-12 max-w-md mx-auto">
-              <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-gray-900 mb-2">No events found</h3>
-              <p className="text-sm text-gray-400">Try adjusting your filters or search terms</p>
+            {/* Search */}
+            <div className="ev-filter-grp">
+              <div className="ev-fl-label">Search</div>
+              <div className="ev-search-bar">
+                <Search size={14} color="#999" />
+                <input
+                  placeholder="Search events..."
+                  value={searchQuery}
+                  onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                />
+                {searchQuery && <X size={13} color="#999" style={{cursor:'pointer',flexShrink:0}} onClick={() => setSearchQuery('')} />}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {currentEvents.map((event) => (
-              <div
-                key={event.id}
-                onClick={() => handleCardClick(event)}
-                className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
+
+            {/* Event Type */}
+            <div className="ev-filter-grp">
+              <div className="ev-fl-label">Event Type</div>
+              <div className="ev-chips">
+                {eventTypes.map(t => (
+                  <button key={t} className={`ev-chip${selectedType === t ? ' active' : ''}`} onClick={() => { setSelectedType(t); setCurrentPage(1); }}>
+                    {t === 'All' ? 'All Types' : t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sort */}
+            <div className="ev-filter-grp">
+              <div className="ev-fl-label">Sort By</div>
+              <div className="ev-chips">
+                {sortOptions.map(opt => (
+                  <button key={opt.value} className={`ev-chip${sortBy === opt.value ? ' active' : ''}`} onClick={() => { setSortBy(opt.value); setCurrentPage(1); }}>
+                    {opt.label.replace('Sort by ', '')}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Clear */}
+            {(selectedType !== 'All' || searchQuery || sortBy !== 'upcoming') && (
+              <button
+                onClick={() => { setSelectedType('All'); setSearchQuery(''); setSortBy('upcoming'); setCurrentPage(1); }}
+                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit'}}
               >
-                <div className="relative overflow-hidden rounded-t-xl">
-                  <img
-                    src={event.image}
-                    alt={event.name}
-                    className="w-full h-40 object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className={`absolute top-3 right-3 ${getTypeColor(event.type)} text-white px-2 py-1 rounded-full text-xs font-bold`}>
-                    {event.type}
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{event.name}</h3>
-                  {event.description && (
-                    <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.description}</p>
-                  )}
-                  <div className="space-y-1 text-xs text-gray-500">
-                    {event.date && (
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3 w-3 flex-shrink-0" />{event.date}
-                      </div>
-                    )}
-                    {event.location && (
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="h-3 w-3 flex-shrink-0" />{event.location}
-                      </div>
-                    )}
-                    {event.attendees && event.attendees !== "Not specified" && (
-                      <div className="flex items-center gap-1.5">
-                        <Users className="h-3 w-3 flex-shrink-0" />{event.attendees}
-                      </div>
-                    )}
-                  </div>
-                  {event.eventDate && event.eventTime && (
-                    <div className="mt-3">
-                      <EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} />
-                    </div>
-                  )}
+                Clear All Filters
+              </button>
+            )}
+          </aside>
+
+          {/* Main */}
+          <div className="ev-main">
+            {/* Mobile filter toggle */}
+            <button className="ev-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+              <SlidersHorizontal size={14} /> Filters {(selectedType !== 'All' || searchQuery) ? '(active)' : ''}
+            </button>
+
+            <div className="ev-resbar">
+              <span style={{fontSize:'13px',color:'#666'}}>{filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}</span>
+              {totalPages > 1 && <span style={{fontSize:'12px',color:'#999'}}>Page {currentPage} of {totalPages}</span>}
+            </div>
+
+            {currentEvents.length === 0 ? (
+              <div className="ev-empty">
+                <div style={{background:'#fff',border:'1px solid #E5E5E5',borderRadius:'12px',padding:'48px 32px',maxWidth:'360px',margin:'0 auto',textAlign:'center'}}>
+                  <Search size={40} color="#ccc" style={{margin:'0 auto 12px'}} />
+                  <p style={{fontWeight:700,color:'#333',marginBottom:4}}>No events found</p>
+                  <p style={{fontSize:'13px',color:'#999'}}>Try adjusting your filters</p>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-10 gap-2">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            {[...Array(totalPages)].map((_, index) => {
-              const page = index + 1;
-              if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                return (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${page === currentPage ? "bg-black text-yellow-400 border border-black" : "border border-gray-200 text-gray-700 hover:bg-gray-50"}`}
+            ) : (
+              <div className="ev-grid">
+                {currentEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    onClick={() => handleCardClick(event)}
+                    className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
                   >
-                    {page}
-                  </button>
-                );
-              } else if (page === currentPage - 2 || page === currentPage + 2) {
-                return <span key={page} className="px-2 text-gray-400 self-center">...</span>;
-              }
-              return null;
-            })}
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
+                    <div className="relative overflow-hidden rounded-t-xl">
+                      <img src={event.image} alt={event.name} className="w-full h-40 object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <div className={`absolute top-3 right-3 ${getTypeColor(event.type)} text-white px-2 py-1 rounded-full text-xs font-bold`}>{event.type}</div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{event.name}</h3>
+                      {event.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.description}</p>}
+                      <div className="space-y-1 text-xs text-gray-500">
+                        {event.date && <div className="flex items-center gap-1.5"><Calendar className="h-3 w-3 flex-shrink-0" />{event.date}</div>}
+                        {event.location && <div className="flex items-center gap-1.5"><MapPin className="h-3 w-3 flex-shrink-0" />{event.location}</div>}
+                        {event.attendees && event.attendees !== "Not specified" && <div className="flex items-center gap-1.5"><Users className="h-3 w-3 flex-shrink-0" />{event.attendees}</div>}
+                      </div>
+                      {event.eventDate && event.eventTime && <div className="mt-3"><EventCountdown eventDate={event.eventDate} eventTime={event.eventTime} /></div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {totalPages > 1 && (
+              <div className="ev-pages">
+                <button className="ev-page-btn" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>← Prev</button>
+                {[...Array(totalPages)].map((_, i) => {
+                  const pg = i + 1;
+                  if (pg === currentPage || pg === 1 || pg === totalPages || (pg >= currentPage - 1 && pg <= currentPage + 1)) {
+                    return <button key={pg} className={`ev-page-btn${pg === currentPage ? ' active' : ''}`} onClick={() => setCurrentPage(pg)}>{pg}</button>;
+                  } else if (pg === currentPage - 2 || pg === currentPage + 2) {
+                    return <span key={pg} style={{alignSelf:'center',color:'#999'}}>…</span>;
+                  }
+                  return null;
+                })}
+                <button className="ev-page-btn" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Next →</button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

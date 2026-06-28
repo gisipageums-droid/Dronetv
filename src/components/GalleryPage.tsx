@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, ChevronDown, X, ChevronLeft, ChevronRight, Download, Share2, Heart, Calendar, MapPin, Users, Plus, Upload, Tag } from 'lucide-react';
+import { Search, ChevronDown, X, ChevronLeft, ChevronRight, Download, Share2, Heart, Calendar, MapPin, Users, Plus, Upload, Tag, SlidersHorizontal } from 'lucide-react';
 import { fetchContent } from '../lib/mediaApi';
 
 const GalleryPage = () => {
@@ -11,6 +11,7 @@ const GalleryPage = () => {
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [showAddImageModal, setShowAddImageModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isInitialLoad = useRef(true);
 
   const [formData, setFormData] = useState({
@@ -261,135 +262,133 @@ const GalleryPage = () => {
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-[104px] z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-            <div className="relative flex-1 max-w-xs w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search photos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-900 placeholder-gray-400 text-sm"
-              />
-            </div>
-            <div className="flex gap-2 items-center w-full sm:w-auto justify-between sm:justify-end">
-              <button
-                onClick={() => setShowAddImageModal(true)}
-                className="bg-black text-yellow-400 px-4 py-2.5 rounded-xl font-medium hover:bg-gray-900 transition-all flex items-center gap-2 text-sm"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Add Photo</span>
-              </button>
-              <div className="relative">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none bg-white border border-gray-200 rounded-xl px-3 py-2.5 pr-8 text-gray-700 font-medium focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-sm min-w-[130px]"
-                >
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category === 'All' ? 'All Photos' : category}</option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+      <style>{`
+.gl-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
+.gl-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
+.gl-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
+.gl-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.gl-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
+.gl-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.gl-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.gl-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
+.gl-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.gl-chips{display:flex;gap:5px;flex-wrap:wrap}
+.gl-main{min-width:0}
+.gl-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.gl-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.gl-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
+.gl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.gl-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
+.gl-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
+.gl-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.gl-filter-toggle{display:none}
+@media(max-width:960px){
+  .gl-layout{grid-template-columns:1fr}
+  .gl-sidebar{position:static;display:none}
+  .gl-sidebar.open{display:block}
+  .gl-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+}
+@media(max-width:600px){.gl-wrap{padding:12px 14px}.gl-grid{grid-template-columns:repeat(2,1fr)}}
+`}</style>
+
+      {/* Main content with sidebar */}
+      <div className="gl-wrap">
+        <div className="gl-layout">
+          {/* Sidebar */}
+          <aside className={`gl-sidebar${sidebarOpen ? ' open' : ''}`}>
+            <div className="gl-sidebar-title"><SlidersHorizontal size={14} /> Filters</div>
+
+            <div className="gl-filter-grp">
+              <div className="gl-fl-label">Search</div>
+              <div className="gl-search-bar">
+                <Search size={14} color="#999" />
+                <input placeholder="Search photos..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                {searchQuery && <X size={13} color="#999" style={{cursor:'pointer',flexShrink:0}} onClick={() => setSearchQuery('')} />}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Photo Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 pb-12">
-        <div className="mb-5">
-          <h2 className="text-lg font-bold text-gray-900">Gallery ({filteredImages.length})</h2>
-        </div>
-
-        {filteredImages.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="bg-white border border-gray-200 rounded-xl p-10 max-w-md mx-auto">
-              <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-gray-900 mb-2">No photos found</h3>
-              <p className="text-sm text-gray-400">Try adjusting your search or filter</p>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4">
-              {currentImages.map((image, index) => {
-                const globalIndex = indexOfFirstImage + index;
-                return (
-                  <div
-                    key={image.id}
-                    className="group cursor-pointer"
-                    onClick={() => openLightbox(image, globalIndex)}
-                  >
-                    <div className="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-                      <img
-                        src={image.src}
-                        alt={image.title}
-                        className="w-full h-36 sm:h-52 lg:h-60 object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400" />
-                      <div className="absolute top-2 right-2 bg-black/70 text-yellow-400 px-2 py-0.5 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        {image.category}
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-400 p-3">
-                        <h3 className="text-white font-semibold text-xs mb-1 line-clamp-1">{image.title}</h3>
-                        <p className="text-white/70 text-xs line-clamp-1">{image.description}</p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="gl-filter-grp">
+              <div className="gl-fl-label">Category</div>
+              <div className="gl-chips">
+                {categories.map(cat => (
+                  <button key={cat} className={`gl-chip${selectedCategory === cat ? ' active' : ''}`} onClick={() => setSelectedCategory(cat)}>
+                    {cat === 'All' ? 'All Photos' : cat}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {totalPages > 1 && (
-              <div className="flex justify-center mt-10 pb-4">
-                <div className="flex items-center gap-2 flex-wrap justify-center">
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                  >
-                    <span className="hidden sm:inline">Previous</span>
-                    <ChevronLeft className="h-4 w-4 sm:hidden" />
-                  </button>
-                  {[...Array(totalPages)].map((_, index) => {
-                    const page = index + 1;
-                    if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                      return (
-                        <button
-                          key={page}
-                          onClick={() => setCurrentPage(page)}
-                          className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${page === currentPage ? 'bg-black text-yellow-400 border border-black' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
-                        >
-                          {page}
-                        </button>
-                      );
-                    } else if (page === currentPage - 2 || page === currentPage + 2) {
-                      return <span key={page} className="px-1 text-gray-400 text-sm">...</span>;
-                    }
-                    return null;
-                  })}
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                  >
-                    <span className="hidden sm:inline">Next</span>
-                    <ChevronRight className="h-4 w-4 sm:hidden" />
-                  </button>
+            <button onClick={() => setShowAddImageModal(true)}
+              style={{width:'100%',padding:'8px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+              <Plus size={13} /> Add Photo
+            </button>
+          </aside>
+
+          {/* Main */}
+          <div className="gl-main">
+            <button className="gl-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+              <SlidersHorizontal size={14} /> Filters {(searchQuery || selectedCategory !== 'All') ? '(active)' : ''}
+            </button>
+
+            <div className="gl-resbar">
+              <span style={{fontSize:'13px',color:'#666'}}>Gallery ({filteredImages.length})</span>
+              {totalPages > 1 && <span style={{fontSize:'12px',color:'#999'}}>Page {currentPage} of {totalPages}</span>}
+            </div>
+
+            {filteredImages.length === 0 ? (
+              <div style={{textAlign:'center',padding:'64px 0'}}>
+                <div style={{background:'#fff',border:'1px solid #E5E5E5',borderRadius:'12px',padding:'48px 32px',maxWidth:'360px',margin:'0 auto'}}>
+                  <Search size={40} color="#ccc" style={{margin:'0 auto 12px'}} />
+                  <p style={{fontWeight:700,color:'#333',marginBottom:4}}>No photos found</p>
+                  <p style={{fontSize:'13px',color:'#999'}}>Try adjusting your filters</p>
                 </div>
               </div>
+            ) : (
+              <>
+                <div className="gl-grid">
+                  {currentImages.map((image, index) => {
+                    const globalIndex = indexOfFirstImage + index;
+                    return (
+                      <div key={image.id} className="group cursor-pointer" onClick={() => openLightbox(image, globalIndex)}>
+                        <div className="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                          <img
+                            src={image.src}
+                            alt={image.title}
+                            className="w-full h-36 sm:h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found'; }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400" />
+                          <div className="absolute top-2 right-2 bg-black/70 text-yellow-400 px-2 py-0.5 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300">{image.category}</div>
+                          <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-400 p-3">
+                            <h3 className="text-white font-semibold text-xs mb-1 line-clamp-1">{image.title}</h3>
+                            <p className="text-white/70 text-xs line-clamp-1">{image.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="gl-pages">
+                    <button className="gl-page-btn" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}><ChevronLeft size={14} /></button>
+                    {[...Array(totalPages)].map((_, i) => {
+                      const pg = i + 1;
+                      if (pg === currentPage || pg === 1 || pg === totalPages || (pg >= currentPage - 1 && pg <= currentPage + 1)) {
+                        return <button key={pg} className={`gl-page-btn${pg === currentPage ? ' active' : ''}`} onClick={() => setCurrentPage(pg)}>{pg}</button>;
+                      } else if (pg === currentPage - 2 || pg === currentPage + 2) {
+                        return <span key={pg} style={{alignSelf:'center',color:'#999'}}>…</span>;
+                      }
+                      return null;
+                    })}
+                    <button className="gl-page-btn" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}><ChevronRight size={14} /></button>
+                  </div>
+                )}
+              </>
             )}
-          </>
-        )}
+          </div>
+        </div>
       </div>
 
       {/* Add Image Modal */}

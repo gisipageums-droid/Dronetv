@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ChevronDown, MapPin } from "lucide-react";
+import { Search, ChevronDown, MapPin, SlidersHorizontal, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
@@ -228,115 +228,114 @@ const ProfessionalsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-[104px] z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
-            <div className="relative flex-1 max-w-xs">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search professionals..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="py-2.5 pr-3 pl-9 w-full text-sm text-gray-900 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 placeholder-gray-400"
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
-              <div className="relative">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2.5 w-full sm:w-48 text-sm text-gray-700 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-                >
-                  {["All"].concat(Array.from(new Set(allProfessionals.flatMap(p => p.categories ?? [])))).map(cat => (
-                    <option key={cat} value={cat}>{cat === "All" ? "All Categories" : cat}</option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-gray-400" />
-              </div>
-            </div>
-          </div>
+      <style>{`
+.prf-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
+.prf-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
+.prf-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
+.prf-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.prf-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
+.prf-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.prf-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.prf-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
+.prf-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.prf-chips{display:flex;gap:5px;flex-wrap:wrap}
+.prf-main{min-width:0}
+.prf-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.prf-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.prf-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
+.prf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px}
+.prf-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
+.prf-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
+.prf-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.prf-filter-toggle{display:none}
+@media(max-width:960px){
+  .prf-layout{grid-template-columns:1fr}
+  .prf-sidebar{position:static;display:none}
+  .prf-sidebar.open{display:block}
+  .prf-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+}
+@media(max-width:600px){.prf-wrap{padding:12px 14px}.prf-grid{grid-template-columns:repeat(2,1fr)}}
+`}</style>
 
-          <div className="flex flex-wrap gap-2 mt-2">
-            {selectedCategory !== "All" && (
-              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
-                Category: {selectedCategory}
-                <button onClick={() => setSelectedCategory("All")} className="text-sm hover:text-white">×</button>
-              </span>
+      {/* Professionals listing with sidebar */}
+      <div className="prf-wrap">
+        <div className="prf-layout">
+          {/* Sidebar */}
+          <aside className={`prf-sidebar${sidebarOpen ? ' open' : ''}`}>
+            <div className="prf-sidebar-title"><SlidersHorizontal size={14} /> Filters</div>
+
+            <div className="prf-filter-grp">
+              <div className="prf-fl-label">Search</div>
+              <div className="prf-search-bar">
+                <Search size={14} color="#999" />
+                <input placeholder="Search professionals..." value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} />
+                {searchQuery && <X size={13} color="#999" style={{cursor:'pointer',flexShrink:0}} onClick={() => setSearchQuery('')} />}
+              </div>
+            </div>
+
+            <div className="prf-filter-grp">
+              <div className="prf-fl-label">Category</div>
+              <div className="prf-chips">
+                {["All"].concat(Array.from(new Set(allProfessionals.flatMap(p => p.categories ?? [])))).map(cat => (
+                  <button key={cat} className={`prf-chip${selectedCategory === cat ? ' active' : ''}`} onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}>
+                    {cat === "All" ? "All" : cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {(searchQuery || selectedCategory !== "All") && (
+              <button onClick={() => { setSearchQuery(''); setSelectedCategory('All'); setCurrentPage(1); }}
+                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit'}}>
+                Clear All Filters
+              </button>
             )}
-            {searchQuery && (
-              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
-                Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery("")} className="text-sm hover:text-white">×</button>
-              </span>
+          </aside>
+
+          {/* Main */}
+          <div className="prf-main">
+            <button className="prf-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+              <SlidersHorizontal size={14} /> Filters {(searchQuery || selectedCategory !== 'All') ? '(active)' : ''}
+            </button>
+
+            <div className="prf-resbar">
+              <span style={{fontSize:'13px',color:'#666'}}>{filteredProfessionals.length} professional{filteredProfessionals.length !== 1 ? 's' : ''}</span>
+              {totalPages > 1 && <span style={{fontSize:'12px',color:'#999'}}>Page {currentPage} of {totalPages}</span>}
+            </div>
+
+            {currentProfessionals.length === 0 ? (
+              <div style={{textAlign:'center',padding:'64px 0'}}>
+                <div style={{background:'#fff',border:'1px solid #E5E5E5',borderRadius:'12px',padding:'48px 32px',maxWidth:'360px',margin:'0 auto'}}>
+                  <Search size={40} color="#ccc" style={{margin:'0 auto 12px'}} />
+                  <p style={{fontWeight:700,color:'#333',marginBottom:4}}>No professionals found</p>
+                  <p style={{fontSize:'13px',color:'#999'}}>Try adjusting your filters</p>
+                </div>
+              </div>
+            ) : (
+              <div className="prf-grid">
+                {currentProfessionals.map((professional, idx) => (
+                  <ProfessionalCard key={`all-${professional.professionalId}-${idx}`} professional={professional} index={idx} />
+                ))}
+              </div>
+            )}
+
+            {totalPages > 1 && (
+              <div className="prf-pages">
+                <button className="prf-page-btn" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>← Prev</button>
+                {[...Array(totalPages)].map((_, i) => {
+                  const pg = i + 1;
+                  if (pg === currentPage || pg === 1 || pg === totalPages || (pg >= currentPage - 1 && pg <= currentPage + 1)) {
+                    return <button key={pg} className={`prf-page-btn${pg === currentPage ? ' active' : ''}`} onClick={() => setCurrentPage(pg)}>{pg}</button>;
+                  } else if (pg === currentPage - 2 || pg === currentPage + 2) {
+                    return <span key={pg} style={{alignSelf:'center',color:'#999'}}>…</span>;
+                  }
+                  return null;
+                })}
+                <button className="prf-page-btn" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Next →</button>
+              </div>
             )}
           </div>
         </div>
-      </div>
-
-      {/* Professionals Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-12">
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-sm text-gray-500">{filteredProfessionals.length} professional{filteredProfessionals.length !== 1 ? 's' : ''}</p>
-          {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}
-        </div>
-
-        {currentProfessionals.length === 0 ? (
-          <div className="py-16 text-center">
-            <div className="p-10 mx-auto max-w-md rounded-xl border border-gray-200 bg-white">
-              <Search className="mx-auto mb-4 w-12 h-12 text-gray-300" />
-              <h3 className="mb-2 text-lg font-bold text-gray-900">No professionals found</h3>
-              <p className="text-sm text-gray-400">Try adjusting your filters or search terms</p>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
-            {currentProfessionals.map((professional, idx) => (
-              <ProfessionalCard key={`all-${professional.professionalId}-${idx}`} professional={professional} index={idx} />
-            ))}
-          </div>
-        )}
-
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-10">
-            <div className="flex gap-2 items-center">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-              >
-                Previous
-              </button>
-              {[...Array(totalPages)].map((_, index) => {
-                const page = index + 1;
-                if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${page === currentPage ? "bg-black text-yellow-400 border border-black" : "border border-gray-200 text-gray-700 hover:bg-gray-50"}`}
-                    >
-                      {page}
-                    </button>
-                  );
-                } else if (page === currentPage - 2 || page === currentPage + 2) {
-                  return <span key={page} className="px-2 text-gray-400">...</span>;
-                }
-                return null;
-              })}
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

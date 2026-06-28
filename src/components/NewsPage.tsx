@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, ChevronDown, Calendar, User, Clock, ExternalLink } from 'lucide-react';
+import { Search, Calendar, User, Clock, ExternalLink, SlidersHorizontal, X } from 'lucide-react';
 import { fetchContent, MediaItem } from '../lib/mediaApi';
 
 export default function NewsPage() {
@@ -8,6 +8,7 @@ export default function NewsPage() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const articlesPerPage = 9;
 
   useEffect(() => {
@@ -40,147 +41,138 @@ export default function NewsPage() {
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row gap-2 items-center justify-between">
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={search}
-              onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
-              className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-            />
-          </div>
-          <div className="relative w-full sm:w-auto">
-            <select
-              value={selectedCategory}
-              onChange={e => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
-              className="appearance-none w-full sm:w-auto pl-3 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-700 sm:min-w-[160px]"
-            >
-              {categories.map(c => (
-                <option key={c} value={c}>{c === 'All' ? 'All Categories' : c}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+      <style>{`
+.nw-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
+.nw-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
+.nw-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
+.nw-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.nw-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
+.nw-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.nw-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.nw-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
+.nw-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.nw-chips{display:flex;gap:5px;flex-wrap:wrap}
+.nw-main{min-width:0}
+.nw-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.nw-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.nw-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
+.nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:13px}
+.nw-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
+.nw-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
+.nw-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.nw-filter-toggle{display:none}
+@media(max-width:960px){
+  .nw-layout{grid-template-columns:1fr}
+  .nw-sidebar{position:static;display:none}
+  .nw-sidebar.open{display:block}
+  .nw-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+}
+@media(max-width:600px){.nw-wrap{padding:12px 14px}.nw-grid{grid-template-columns:1fr}}
+`}</style>
+
+      {/* Main content with sidebar */}
+      <div className="nw-wrap">
+        <div className="nw-layout">
+          {/* Sidebar */}
+          <aside className={`nw-sidebar${sidebarOpen ? ' open' : ''}`}>
+            <div className="nw-sidebar-title"><SlidersHorizontal size={14} /> Filters</div>
+
+            <div className="nw-filter-grp">
+              <div className="nw-fl-label">Search</div>
+              <div className="nw-search-bar">
+                <Search size={14} color="#999" />
+                <input placeholder="Search articles..." value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1); }} />
+                {search && <X size={13} color="#999" style={{cursor:'pointer',flexShrink:0}} onClick={() => setSearch('')} />}
+              </div>
+            </div>
+
+            <div className="nw-filter-grp">
+              <div className="nw-fl-label">Category</div>
+              <div className="nw-chips">
+                {categories.map(c => (
+                  <button key={c} className={`nw-chip${selectedCategory === c ? ' active' : ''}`} onClick={() => { setSelectedCategory(c); setCurrentPage(1); }}>
+                    {c === 'All' ? 'All' : c}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {(search || selectedCategory !== 'All') && (
+              <button onClick={() => { setSearch(''); setSelectedCategory('All'); setCurrentPage(1); }}
+                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit'}}>
+                Clear All Filters
+              </button>
+            )}
+          </aside>
+
+          {/* Main */}
+          <div className="nw-main">
+            <button className="nw-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+              <SlidersHorizontal size={14} /> Filters {(search || selectedCategory !== 'All') ? '(active)' : ''}
+            </button>
+
+            {loading ? (
+              <div style={{textAlign:'center',padding:'64px 0',color:'#999'}}>Loading articles...</div>
+            ) : filtered.length === 0 ? (
+              <div style={{textAlign:'center',padding:'64px 0',color:'#999'}}>No articles found.</div>
+            ) : (
+              <>
+                <div className="nw-resbar">
+                  <span style={{fontSize:'13px',color:'#666'}}>{filtered.length} article{filtered.length !== 1 ? 's' : ''}</span>
+                  {totalPages > 1 && <span style={{fontSize:'12px',color:'#999'}}>Page {currentPage} of {totalPages}</span>}
+                </div>
+
+                <div className="nw-grid">
+                  {paginated.map(item => (
+                    <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
+                      {item.imageUrl ? <img src={item.imageUrl} alt={item.title} className="w-full h-44 object-cover" /> : (
+                        <div className="w-full h-44 bg-zinc-900 flex items-center justify-center">
+                          <span className="text-yellow-400 text-3xl font-extrabold">DTV</span>
+                        </div>
+                      )}
+                      <div className="p-4 flex flex-col flex-1">
+                        {item.category && <span className="bg-black text-yellow-400 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                        <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                        {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3 flex-1">{item.description}</p>}
+                        <div className="space-y-1 mt-auto">
+                          {(item.source || item.author) && <div className="flex items-center gap-1.5 text-xs text-gray-400"><User className="w-3 h-3 flex-shrink-0" />{item.source || item.author}</div>}
+                          {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-400"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
+                          {item.readTime && <div className="flex items-center gap-1.5 text-xs text-gray-400"><Clock className="w-3 h-3 flex-shrink-0" />{item.readTime}</div>}
+                        </div>
+                        {item.tags && item.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-3">
+                            {item.tags.slice(0, 3).map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
+                          </div>
+                        )}
+                        {item.externalLink && (
+                          <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                            Read Article <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="nw-pages">
+                    <button className="nw-page-btn" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>← Prev</button>
+                    {[...Array(totalPages)].map((_, i) => {
+                      const pg = i + 1;
+                      if (pg === currentPage || pg === 1 || pg === totalPages || (pg >= currentPage - 1 && pg <= currentPage + 1)) {
+                        return <button key={pg} className={`nw-page-btn${pg === currentPage ? ' active' : ''}`} onClick={() => setCurrentPage(pg)}>{pg}</button>;
+                      } else if (pg === currentPage - 2 || pg === currentPage + 2) {
+                        return <span key={pg} style={{alignSelf:'center',color:'#999'}}>…</span>;
+                      }
+                      return null;
+                    })}
+                    <button className="nw-page-btn" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Next →</button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
-        {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading articles...</div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">No articles found.</div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-gray-500">{filtered.length} article{filtered.length !== 1 ? 's' : ''}</p>
-              {totalPages > 1 && (
-                <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {paginated.map(item => (
-                <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
-                  {item.imageUrl && (
-                    <img src={item.imageUrl} alt={item.title} className="w-full h-44 object-cover" />
-                  )}
-                  {!item.imageUrl && (
-                    <div className="w-full h-44 bg-zinc-900 flex items-center justify-center">
-                      <span className="text-yellow-400 text-3xl font-extrabold">DTV</span>
-                    </div>
-                  )}
-                  <div className="p-4 flex flex-col flex-1">
-                    {item.category && (
-                      <span className="bg-black text-yellow-400 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>
-                    )}
-                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
-                    {item.description && (
-                      <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3 flex-1">{item.description}</p>
-                    )}
-                    <div className="space-y-1 mt-auto">
-                      {(item.source || item.author) && (
-                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                          <User className="w-3 h-3 flex-shrink-0" />
-                          {item.source || item.author}
-                        </div>
-                      )}
-                      {item.date && (
-                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                          <Calendar className="w-3 h-3 flex-shrink-0" />
-                          {item.date}
-                        </div>
-                      )}
-                      {item.readTime && (
-                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                          <Clock className="w-3 h-3 flex-shrink-0" />
-                          {item.readTime}
-                        </div>
-                      )}
-                    </div>
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-3">
-                        {item.tags.slice(0, 3).map(tag => (
-                          <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>
-                        ))}
-                      </div>
-                    )}
-                    {item.externalLink && (
-                      <a
-                        href={item.externalLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-3 flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700"
-                      >
-                        Read Article <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="flex justify-center mt-10 gap-2">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                {[...Array(totalPages)].map((_, i) => {
-                  const page = i + 1;
-                  if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${page === currentPage ? 'bg-black text-yellow-400 border border-black' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  } else if (page === currentPage - 2 || page === currentPage + 2) {
-                    return <span key={page} className="px-2 text-gray-400 self-center">...</span>;
-                  }
-                  return null;
-                })}
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            )}
-          </>
-        )}
       </div>
     </div>
   );
