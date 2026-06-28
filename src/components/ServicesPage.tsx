@@ -69,14 +69,13 @@ function catIcon(cat: string): string {
 
 const SERVICES_CSS = `
 .sv-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
-.sv-hero { background: linear-gradient(135deg,#0A0A0A,#111500); color: #fff; }
-.sv-hero-i { max-width: 1280px; margin: 0 auto; padding: 28px 22px; }
-.sv-hero h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.4px; margin-bottom: 5px; line-height: 1.25; }
+.sv-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.sv-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.sv-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; white-space: nowrap; }
 .sv-hero h1 span { color: #F5C518; }
-.sv-hero p { font-size: 13px; color: rgba(255,255,255,.55); max-width: 560px; line-height: 1.7; margin-bottom: 14px; }
-.sv-stats { display: flex; gap: 24px; flex-wrap: wrap; }
-.sv-stat-n { font-size: 20px; font-weight: 900; color: #F5C518; line-height: 1; }
-.sv-stat-l { font-size: 10.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
+.sv-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
+.sv-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.sv-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 .sv-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
 .sv-toolbar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 15px; }
 .sv-search { flex: 1; min-width: 180px; display: flex; align-items: center; gap: 6px; background: #F8F8F8; border: 1.5px solid #E5E5E5; border-radius: 8px; padding: 8px 12px; }
@@ -109,10 +108,10 @@ const SERVICES_CSS = `
 .sv-btn-red { flex: 1; background: #CC1F1F; color: #fff; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; text-align: center; font-family: 'Poppins',sans-serif; }
 .sv-btn-out { background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
 @media (max-width: 600px) {
-  .sv-hero h1 { font-size: 19px; }
-  .sv-hero-i { padding: 18px 16px; }
-  .sv-stat-n { font-size: 17px; }
-  .sv-wrap { padding: 14px 14px; }
+  .sv-hero-i { padding: 8px 14px; gap: 10px; }
+  .sv-hero h1 { font-size: 13px; }
+  .sv-stat-n { font-size: 13px; }
+  .sv-wrap { padding: 12px 14px; }
   .sv-toolbar { padding: 12px; }
   .sv-grid { grid-template-columns: 1fr; }
   .sv-btns { flex-direction: column; }
@@ -214,7 +213,6 @@ const ServicesPage: React.FC = () => {
         <section className="sv-hero">
           <div className="sv-hero-i">
             <h1>Book <span>Drone, GIS &amp; AI</span> services</h1>
-            <p>{allServices.length} services available — surveys, inspections, AI analytics, GIS processing, and training. Connect directly with providers.</p>
             <div className="sv-stats">
               {[
                 { n: allServices.length, l: 'Services Available' },

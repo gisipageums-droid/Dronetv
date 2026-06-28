@@ -49,14 +49,13 @@ function getIcon(cat: string, title: string): string {
 
 const PRODUCTS_CSS = `
 .pr-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
-.pr-hero { background: linear-gradient(135deg,#0A0A0A,#111500); color: #fff; }
-.pr-hero-i { max-width: 1280px; margin: 0 auto; padding: 28px 22px; }
-.pr-hero h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.4px; margin-bottom: 5px; line-height: 1.25; }
+.pr-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.pr-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.pr-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; white-space: nowrap; }
 .pr-hero h1 span { color: #F5C518; }
-.pr-hero p { font-size: 13px; color: rgba(255,255,255,.55); max-width: 560px; line-height: 1.7; margin-bottom: 14px; }
-.pr-stats { display: flex; gap: 24px; flex-wrap: wrap; }
-.pr-stat-n { font-size: 20px; font-weight: 900; color: #F5C518; line-height: 1; }
-.pr-stat-l { font-size: 10.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
+.pr-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
+.pr-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.pr-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 .pr-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
 .pr-toolbar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 15px; }
 .pr-search { flex: 1; min-width: 180px; display: flex; align-items: center; gap: 6px; background: #F8F8F8; border: 1.5px solid #E5E5E5; border-radius: 8px; padding: 8px 12px; }
@@ -84,10 +83,10 @@ const PRODUCTS_CSS = `
 .pr-btn-out { background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
 .pr-btn-red { background: #CC1F1F; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
 @media (max-width: 600px) {
-  .pr-hero h1 { font-size: 19px; }
-  .pr-hero-i { padding: 18px 16px; }
-  .pr-stat-n { font-size: 17px; }
-  .pr-wrap { padding: 14px 14px; }
+  .pr-hero-i { padding: 8px 14px; gap: 10px; }
+  .pr-hero h1 { font-size: 13px; }
+  .pr-stat-n { font-size: 13px; }
+  .pr-wrap { padding: 12px 14px; }
   .pr-toolbar { padding: 12px; }
   .pr-grid { grid-template-columns: 1fr; }
   .pr-card-foot { flex-direction: column; align-items: stretch; }
@@ -208,7 +207,6 @@ const ProductsPage: React.FC = () => {
         <section className="pr-hero">
           <div className="pr-hero-i">
             <h1>Explore <span>Drone, GIS &amp; AI</span> products</h1>
-            <p>Browse {allProducts.length} products — drones, payloads, GIS hardware, software, and AI platforms. Get quotes directly from OEMs.</p>
             <div className="pr-stats">
               {[
                 { n: allProducts.length, l: 'Products Listed' },
