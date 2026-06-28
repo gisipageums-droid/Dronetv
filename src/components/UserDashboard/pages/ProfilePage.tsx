@@ -62,10 +62,8 @@ const ProfilePage: React.FC = () => {
         const data = await response.json();
         setTotalTokens(data || 0);
       } else {
-        console.error('Failed to fetch token data:', response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching token data:', error);
     }
   }
 
@@ -77,10 +75,8 @@ const ProfilePage: React.FC = () => {
         const data = await response.json();
         setRecentToken(data);
       } else {
-        console.error('Failed to fetch recent token data:', response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching recent token data:', error);
     }
   }
 
@@ -104,7 +100,6 @@ const ProfilePage: React.FC = () => {
         setAllTokenData(data);
       }
     } catch (error) {
-      console.error('Error fetching all token data:', error);
     }
   }
 
@@ -160,11 +155,9 @@ const ProfilePage: React.FC = () => {
 
         toast.success('Profile updated successfully!');
       } else {
-        console.error('Failed to update profile:', response.statusText);
         toast.error('Failed to update profile. Please try again.');
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
       toast.error('Error updating profile. Please try again.');
     }
   };
@@ -197,7 +190,6 @@ const ProfilePage: React.FC = () => {
         throw new Error(result.message || 'Failed to create order');
       }
     } catch (error) {
-      console.error('Order creation error:', error);
       toast.error('Failed to create order. Please try again.');
       throw error;
     } finally {
@@ -233,11 +225,9 @@ const ProfilePage: React.FC = () => {
         await getAllToken();
 
       } else {
-        console.error('Payment verification failed:', result);
         toast.error('Payment verification failed. Please contact support.');
       }
     } catch (error) {
-      console.error('Error in payment success:', error);
       toast.error('Error processing payment. Please contact support.');
     }
   };
@@ -275,7 +265,6 @@ const ProfilePage: React.FC = () => {
       razorpayInstance.open();
 
     } catch (error) {
-      console.error('Razorpay checkout error:', error);
     }
   };
 

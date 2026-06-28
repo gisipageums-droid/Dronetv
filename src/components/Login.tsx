@@ -197,7 +197,6 @@ export default function Login() {
         );
       }
     } catch (error) {
-      console.error("Error during registration:", error);
       toast.error(
         "An error occurred during registration. Please try again later."
       );
@@ -234,13 +233,11 @@ export default function Login() {
           toast.error("Google authentication failed:", response.statusText);
         }
       } catch (error) {
-        console.error("Error during Google authentication:", error);
       }
     }
   };
 
   const handleGoogleError = () => {
-    console.error("Google login failed");
   };
 
   // Handle login form submission
@@ -281,7 +278,6 @@ export default function Login() {
         );
       }
     } catch (error) {
-      console.error("Error during login:", error);
       toast.error("Network error. Please try again later.");
     } finally {
       setIsLoading(false);

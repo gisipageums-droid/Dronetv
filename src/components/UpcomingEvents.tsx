@@ -83,7 +83,6 @@ const UpcomingEvents = () => {
         }
       })
       .catch((err) => {
-        console.error("Error fetching events:", err);
         // yaha aap chahe toh toast / alert de sakte ho
         // staticEvents already state me hai, to UI blank nahi hoga
       });

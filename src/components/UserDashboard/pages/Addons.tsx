@@ -7,10 +7,10 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useUserAuth } from "../../context/context";
-import { LEADS_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
+import { LEADS_API, LAMBDA } from '../../../lib/apiConfig';
 
 const PROFILE_API = LEADS_API ? `${LEADS_API}/profile` : `${LAMBDA.profile}/profile`;
-const SPEND_API = PAYMENT_API ? `${PAYMENT_API}/spend-tokens` : `${LAMBDA.tokenGateway}/spend-tokens`;
+const TOKEN_SPEND = LAMBDA.tokenSpend;
 
 function getStoredActive(email: string): string[] {
   try { return JSON.parse(localStorage.getItem(`addons_active_${email}`) || "[]"); }
@@ -162,12 +162,18 @@ const Addons: React.FC = () => {
     setConfirmAddon(null);
 
     try {
-      await axios.post(SPEND_API, {
+      const r = await axios.post(`${TOKEN_SPEND}/bid`, {
         userId,
-        tokenCount: confirmAddon.tokens,
-        service: confirmAddon.id,
-        serviceName: confirmAddon.title,
+        keyword: `[Addon] ${confirmAddon.title}`,
+        bidAmount: confirmAddon.tokens,
+        durationDays: 1,
+        totalCost: confirmAddon.tokens,
       });
+      if (!r.data?.success) {
+        toast.error(r.data?.message || "Purchase failed. Please try again.");
+        setPurchasing(null);
+        return;
+      }
     } catch {
       toast.error("Purchase failed. Please try again.");
       setPurchasing(null);

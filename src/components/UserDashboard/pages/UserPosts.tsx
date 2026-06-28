@@ -9,7 +9,7 @@ import { useUserAuth } from "../../context/context";
 import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
-const NOTIFY_API  = PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/spend-tokens` : `${LAMBDA.tokenGateway}/drontv-token-buy-payment-gateway/spend-tokens`;
+const NOTIFY_API  = PAYMENT_API ? `${PAYMENT_API}/spend-tokens` : `${LAMBDA.tokenGateway}/spend-tokens`;
 
 function getTier(t: number) {
   if (t >= 8000) return "brand";

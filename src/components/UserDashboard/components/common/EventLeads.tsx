@@ -66,7 +66,6 @@ const EventLeads: React.FC = () => {
       const data = await res.json();
       setTotalTokens(data.profile?.tokenBalance || 0);
     } catch (error) {
-      console.error("Error fetching user tokens:", error);
     }
   }, [userId]);
 
@@ -102,7 +101,6 @@ const EventLeads: React.FC = () => {
         setLeads([]);
       }
     } catch (error) {
-      console.error("Error fetching leads:", error);
       setLeads([]);
     }
   }, [userId]);
@@ -119,7 +117,6 @@ const EventLeads: React.FC = () => {
         setLoading(true);
         await Promise.all([fetchUserTokens(), fetchLeads()]);
       } catch (error) {
-        console.error("Error in fetchAll:", error);
       } finally {
         setLoading(false);
       }
@@ -156,10 +153,8 @@ const EventLeads: React.FC = () => {
         toast.success("Lead viewed successfully!");
         fetchLeads();
       } else {
-        console.error("Error:", data.message);
       }
     } catch (error) {
-      console.error("Error viewing lead:", error);
     }
   };
 
@@ -220,7 +215,6 @@ const EventLeads: React.FC = () => {
           setChatMessages(transformedMessages);
         }
       } catch (error) {
-        console.error("Error fetching chat messages:", error);
       }
     }, 1000);
 
@@ -289,7 +283,6 @@ const EventLeads: React.FC = () => {
         toast.error("Failed to send message");
       }
     } catch (error) {
-      console.error("Error sending message:", error);
       // Remove message if failed
       setChatMessages((prev) =>
         prev.filter((msg) => msg.id !== tempMessage.id)

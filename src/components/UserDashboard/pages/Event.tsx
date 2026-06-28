@@ -290,7 +290,6 @@ const Events: React.FC = () => {
     axios.get<EventResponse>(EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=user&userId=${user.userData.email}` : `https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user.userData.email}`).then((response) => {
       setEvents(response.data.cards);
     }).catch((error) => {
-      console.error(error);
     }).finally(() => {
       setloading(false);
     });
@@ -304,7 +303,6 @@ const Events: React.FC = () => {
         navigate(`/edit/event/t2/final/${eventId}/${user?.userData?.email}`);
       }
     } catch (error) {
-      console.error("Error loading template for editing:", error);
       alert("Failed to load template for editing. Please try again.");
     }
   };
@@ -317,7 +315,6 @@ const Events: React.FC = () => {
         navigate(`/user/events/preview/2/${eventId}/user123`);
       }
     } catch (error) {
-      console.error("Error loading template for preview:", error);
       alert("Failed to load template for preview. Please try again.");
     }
   };

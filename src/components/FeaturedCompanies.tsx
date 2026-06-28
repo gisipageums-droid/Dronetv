@@ -281,7 +281,7 @@ const FeaturedCompanies: React.FC = () => {
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            navigate(company.templateSelection === "template-1" ? `/company/${companySlug}` : `/companies/${companySlug}`);
+                            navigate(company.templateSelection === "template-1" ? `/company/${urlSlug}` : `/companies/${urlSlug}`);
                           }}
                           className="group/btn bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-6 py-3 rounded-xl font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg"
                         >

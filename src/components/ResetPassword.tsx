@@ -46,7 +46,6 @@ export default function ResetPassword() {
       }
     } catch (err) {
       setError("Network error. Please try again.");
-      console.error("Reset password error:", err);
     }
   };
 

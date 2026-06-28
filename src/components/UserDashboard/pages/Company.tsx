@@ -262,7 +262,6 @@ const CompanyPage: React.FC = () => {
         }))
       );
     } catch (err) {
-      console.error("Error fetching companies:", err);
     } finally {
       setLoading(false);
     }
@@ -301,7 +300,6 @@ const CompanyPage: React.FC = () => {
         navigate(`/user/companies/edit/2/${publishedId}/${userId}`);
       }
     } catch (error) {
-      console.error("Error loading template for editing:", error);
       toast.error("Failed to load template for editing. Please try again.");
     }
   };
@@ -317,7 +315,6 @@ const CompanyPage: React.FC = () => {
         navigate(`/user/companies/preview/2/${publishedId}/${userId}`);
       }
     } catch (error) {
-      console.error("Error loading template for preview:", error);
       toast.error("Failed to load template for preview. Please try again.");
     }
   };
