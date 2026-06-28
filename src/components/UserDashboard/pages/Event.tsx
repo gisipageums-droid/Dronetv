@@ -12,7 +12,16 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
-import { EVENTS_API } from "../../../lib/apiConfig";
+import { EVENTS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+
+function getEventLimit(earned: number) {
+  if (earned >= 8000) return Infinity;
+  if (earned >= 2000) return 10;
+  if (earned >= 500) return 3;
+  return 2;
+}
 
 interface EventCard {
   heroBannerImage: string | undefined;
@@ -283,16 +292,25 @@ const Events: React.FC = () => {
   const { user } = useUserAuth();
   const [events, setEvents] = useState<EventCard[]>([]);
   const [loading, setloading] = useState(true);
+  const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
 
   useEffect(() => {
-    if (!user?.userData?.email) return;
+    const userId = user?.userData?.email;
+    if (!userId) return;
     setloading(true);
-    axios.get<EventResponse>(EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=user&userId=${user.userData.email}` : `https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user.userData.email}`).then((response) => {
+    axios.get<EventResponse>(EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=user&userId=${userId}` : `https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${userId}`).then((response) => {
       setEvents(response.data.cards);
-    }).catch((error) => {
+    }).catch(() => {
     }).finally(() => {
       setloading(false);
     });
+    fetch(`${PROFILE_API}?userId=${userId}`)
+      .then(r => r.json())
+      .then(d => {
+        const p = d?.profile ?? {};
+        setTotalTokensEarned(p.totalTokensEarned ?? p.tokenBalance ?? 0);
+      })
+      .catch(() => {});
   }, [user?.userData?.email]);
 
   const handleEdit = async (eventId: string, templateSelection: string) => {
@@ -395,13 +413,28 @@ const Events: React.FC = () => {
           <ListingLimitBanner count={events?.length ?? 0} type="event" label="Events" />
         </div>
 
-        <button
-          onClick={() => navigate("/event/select")}
-          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto hover:bg-yellow-600 hover:scale-110 transition-all duration-200 whitespace-nowrap"
-        >
-          <Plus className="w-5 h-5" />
-          Create New Event
-        </button>
+        {(() => {
+          const limit = getEventLimit(totalTokensEarned);
+          const atLimit = isFinite(limit) && events.length >= limit;
+          return atLimit ? (
+            <button
+              onClick={() => navigate("/user-recharge")}
+              className="bg-gray-100 text-sm font-medium text-gray-500 flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto border border-gray-300 cursor-not-allowed whitespace-nowrap"
+              title="Plan limit reached. Upgrade to add more."
+            >
+              <Plus className="w-5 h-5" />
+              Limit Reached — Upgrade
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/event/select")}
+              className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto hover:bg-yellow-600 hover:scale-110 transition-all duration-200 whitespace-nowrap"
+            >
+              <Plus className="w-5 h-5" />
+              Create New Event
+            </button>
+          );
+        })()}
       </div>
 
       <div className="mb-8 relative">

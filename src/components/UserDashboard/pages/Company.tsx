@@ -5,9 +5,17 @@ import { useTemplate, useUserAuth } from "../../context/context";
 import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
-import { COMPANY_API } from "../../../lib/apiConfig";
+import { COMPANY_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 
 const SUREPASS_PROXY = import.meta.env.VITE_SUREPASS_PROXY_URL;
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+
+function getCompanyLimit(earned: number) {
+  if (earned >= 8000) return Infinity;
+  if (earned >= 2000) return 5;
+  if (earned >= 500) return 2;
+  return 1;
+}
 
 type DigiStatus = 'idle' | 'loading' | 'ready' | 'polling' | 'verified' | 'error';
 
@@ -227,6 +235,7 @@ const CompanyPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [detailsUpdatedIds, setDetailsUpdatedIds] = useState<Set<string>>(new Set());
+  const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
 
   // Aadhaar modal state
   const [publishingCompany, setPublishingCompany] = useState<Company | null>(null);
@@ -418,9 +427,15 @@ const CompanyPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (user?.email || user?.userData?.email) {
-      fetchCompanies(user?.email || user?.userData?.email || "");
-    }
+    const userId = user?.email || user?.userData?.email || "";
+    if (!userId) return;
+    fetchCompanies(userId);
+    axios.get(`${PROFILE_API}?userId=${userId}`)
+      .then(r => {
+        const p = r.data?.profile ?? {};
+        setTotalTokensEarned(p.totalTokensEarned ?? p.tokenBalance ?? 0);
+      })
+      .catch(() => {});
   }, [user]);
 
   useEffect(() => {
@@ -496,13 +511,28 @@ const CompanyPage: React.FC = () => {
           <p className="text-gray-600 mb-3">Browse and manage company submissions</p>
           <ListingLimitBanner count={companies.length} type="company" label="Companies" />
         </div>
-        <button
-          onClick={() => navigate("/form")}
-          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
-        >
-          <Plus className="w-5 h-5" />
-          Add New Company
-        </button>
+        {(() => {
+          const limit = getCompanyLimit(totalTokensEarned);
+          const atLimit = isFinite(limit) && companies.length >= limit;
+          return atLimit ? (
+            <button
+              onClick={() => navigate("/user-recharge")}
+              className="bg-gray-100 text-sm font-medium text-gray-500 flex items-center gap-2 px-4 py-4 rounded-lg align-top border border-gray-300 cursor-not-allowed"
+              title={`Plan limit reached (${companies.length}/${limit}). Upgrade to add more.`}
+            >
+              <Plus className="w-5 h-5" />
+              Limit Reached — Upgrade
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/form")}
+              className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
+            >
+              <Plus className="w-5 h-5" />
+              Add New Company
+            </button>
+          );
+        })()}
       </div>
 
       <div className="mb-8 relative">
