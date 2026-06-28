@@ -1,9 +1,7 @@
-
-
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { Search, ChevronDown, Zap as Drone, Brain, Map, Star, Users, MapPin, Building2 } from 'lucide-react';
+import { Search, MapPin, Star, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
@@ -29,14 +27,14 @@ interface Service {
   timestamp?: string;
 }
 
-const isValidTitle = (title: string): boolean => {
-  if (!title) return false;
-  const junk = ["$el.prop", "outerHTML", "' + ", "+ '", "+ text +", "jquery", "$("];
-  return !junk.some(p => title.toLowerCase().includes(p.toLowerCase()));
+const isValidTitle = (t: string): boolean => {
+  if (!t) return false;
+  const junk = ['$el.prop', 'outerHTML', "' + ", "+ '", '+ text +', 'jquery', '$('];
+  return !junk.some(p => t.toLowerCase().includes(p.toLowerCase()));
 };
 
-const decodeHTML = (str: string): string => {
-  if (!str) return str;
+const decodeHTML = (s: string): string => {
+  if (!s) return s;
   const map: Record<string, string> = {
     '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#039;': "'",
     '&#8211;': '–', '&#8212;': '—', '&#8216;': '‘', '&#8217;': '’',
@@ -44,452 +42,298 @@ const decodeHTML = (str: string): string => {
     '&rsquo;': '’', '&lsquo;': '‘', '&rdquo;': '”', '&ldquo;': '“',
     '&ndash;': '–', '&mdash;': '—',
   };
-  return str.replace(/&[^;\s]+;/g, m => map[m] ?? m);
+  return s.replace(/&[^;\s]+;/g, m => map[m] ?? m);
 };
 
-const ServicesPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sortBy, setSortBy] = useState('timestamp'); // Changed default to timestamp for newest first
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const servicesPerPage = 12;
+const CAT_COLORS: Record<string, string> = {
+  Survey: '#0B5CB5', Agriculture: '#1a7a3a', Defence: '#CC1F1F', Infrastructure: '#c05800',
+  GIS: '#1a5a9a', AI: '#6B2FB5', Media: '#9a3a1a', Training: '#444',
+  General: '#777', Inspection: '#0B5CB5', LiDAR: '#3a6a1a',
+};
+function barColor(cat: string): string {
+  for (const [k, v] of Object.entries(CAT_COLORS)) {
+    if (cat.toLowerCase().includes(k.toLowerCase())) return v;
+  }
+  return '#F5C518';
+}
+
+const ServicesPage: React.FC = () => {
   const [allServices, setAllServices] = useState<Service[]>([]);
+  const [categories, setCategories] = useState<string[]>(['All']);
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState(['All']);
+  const [search, setSearch] = useState('');
+  const [selCats, setSelCats] = useState<string[]>([]);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [sortBy, setSortBy] = useState('timestamp');
+  const [page, setPage] = useState(1);
+  const perPage = 12;
+  const navigate = useNavigate();
 
-  const sortOptions = [
-    { value: 'timestamp', label: 'Sort by Newest' }, // New option
-    { value: 'popularity', label: 'Sort by Popularity' },
-    { value: 'rating', label: 'Sort by Rating' },
-    { value: 'company', label: 'Sort by Company' }
-  ];
-
-  // Fetch services data from API
   useEffect(() => {
-    const fetchServices = () => {
-      setLoading(true);
-
-      const API_URL = COMPANY_API ? `${COMPANY_API}/services/view` : `${LAMBDA.products}/services/view`;
-
-      axios
-        .get(API_URL)
-        .then((response) => {
-          const responseData = response.data;
-
-          if (responseData.status && responseData.data && Array.isArray(responseData.data)) {
-            const apiServices: Service[] = [];
-            const allCategories = new Set(['All']);
-
-            responseData.data.forEach((item: any) => {
-              // Check if services array exists and has at least one service
-              if (item.services &&
-                item.services.services &&
-                Array.isArray(item.services.services) &&
-                item.services.services.length > 0) {
-
-                // Add categories from this item
-                if (item.services.categories && Array.isArray(item.services.categories)) {
-                  item.services.categories.forEach((cat: string) => {
-                    if (cat && cat !== 'All') allCategories.add(cat);
-                  });
-                }
-
-                // Process each service in the services array
-                item.services.services.forEach((service: any, index: number) => {
-                  // Only process services that have a valid, non-malformed title
-                  const rawTitle = service && service.title ? String(service.title) : '';
-                  if (!rawTitle || !isValidTitle(rawTitle)) return;
-                  if (service) {
-                    const mappedService: Service = {
-                      id: `${item.publishedId}-${index}`,
-                      publishedId: item.publishedId,
-                      userId: item.userId,
-                      title: decodeHTML(rawTitle),
-                      company: item.companyName || (item.userId ? item.userId.split('@')[0] : "Unknown Company"),
-                      description: decodeHTML(service.description || service.detailedDescription || "No description available"),
-                      image: service.image || "/images/service-placeholder.jpg",
-                      category: service.category || "General",
-                      price: service.pricing || "Contact for pricing",
-                      rating: 4.0 + (Math.random() * 1.5), // Random rating between 4.0-5.5
-                      popularity: Math.floor(Math.random() * 20) + 80, // Random popularity between 80-100
-                      location: "India",
-                      features: service.features || [],
-                      featured: Math.random() > 0.8,
-                      benefits: service.benefits || [],
-                      process: service.process || [],
-                      timeline: service.timeline || "N/A",
-                      detailedDescription: service.detailedDescription || service.description || "",
-                      timestamp: item.timestamp || new Date().toISOString()
-                    };
-                    apiServices.push(mappedService);
-
-                    // Add service category to categories set
-                    if (service.category && service.category !== 'All') {
-                      allCategories.add(service.category);
-                    }
-                  }
-                });
-              }
-            });
-
-            if (apiServices.length > 0) {
-              // Sort by timestamp (newest first) initially
-              const sortedServices = apiServices.sort((a, b) => {
-                const timeA = new Date(a.timestamp || 0).getTime();
-                const timeB = new Date(b.timestamp || 0).getTime();
-                return timeB - timeA; // Descending order
+    const API_URL = COMPANY_API ? `${COMPANY_API}/services/view` : `${LAMBDA.products}/services/view`;
+    axios.get(API_URL)
+      .then(res => {
+        const d = res.data;
+        if (d.status && Array.isArray(d.data)) {
+          const services: Service[] = [];
+          const cats = new Set<string>(['All']);
+          d.data.forEach((item: any) => {
+            if (!item.services?.services?.length) return;
+            (item.services.categories || []).forEach((c: string) => { if (c && c !== 'All') cats.add(c); });
+            item.services.services.forEach((s: any, idx: number) => {
+              const raw = s?.title ? String(s.title) : '';
+              if (!raw || !isValidTitle(raw)) return;
+              if (s.category && s.category !== 'All') cats.add(s.category);
+              services.push({
+                id: `${item.publishedId}-${idx}`,
+                publishedId: item.publishedId,
+                userId: item.userId,
+                title: decodeHTML(raw),
+                company: item.companyName || (item.userId?.split('@')[0] ?? 'Unknown'),
+                description: decodeHTML(s.description || s.detailedDescription || ''),
+                image: s.image || '',
+                category: s.category || 'General',
+                price: s.pricing || 'Contact for pricing',
+                rating: parseFloat((4 + Math.random()).toFixed(1)),
+                popularity: Math.floor(Math.random() * 20) + 80,
+                location: 'India',
+                features: Array.isArray(s.features) ? s.features : [],
+                featured: Math.random() > 0.8,
+                benefits: s.benefits || [],
+                process: s.process || [],
+                timeline: s.timeline || 'N/A',
+                detailedDescription: s.detailedDescription || s.description || '',
+                timestamp: item.timestamp || new Date().toISOString(),
               });
-
-              setAllServices(sortedServices);
-              setCategories(Array.from(allCategories));
-            } else {
-              setAllServices([]);
-            }
-          } else {
-            setAllServices([]);
-          }
-        })
-        .catch(() => {
-          setAllServices([]);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
-
-    fetchServices();
+            });
+          });
+          setAllServices(services.sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime()));
+          setCategories(Array.from(cats));
+        }
+      })
+      .catch(() => setAllServices([]))
+      .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    let filtered = allServices;
-
-    // Filter by category
-    if (selectedCategory !== 'All') {
-      filtered = filtered.filter(service =>
-        service.category === selectedCategory
-      );
+  const filtered = useMemo(() => {
+    let list = allServices;
+    if (selCats.length) list = list.filter(s => selCats.includes(s.category));
+    if (verifiedOnly) list = list.filter(s => s.featured);
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(s => s.title.toLowerCase().includes(q) || s.company.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
     }
-
-    // Filter by search query
-    if (searchQuery) {
-      filtered = filtered.filter(service =>
-        service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        service.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        service.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (service.features && service.features.some((feature: string) =>
-          feature.toLowerCase().includes(searchQuery.toLowerCase())
-        ))
-      );
-    }
-
-    // Sort services
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'timestamp':
-          const timeA = new Date(a.timestamp || 0).getTime();
-          const timeB = new Date(b.timestamp || 0).getTime();
-          return timeB - timeA; // Newest first
-        case 'popularity':
-          return b.popularity - a.popularity;
-        case 'rating':
-          return b.rating - a.rating;
-        case 'company':
-          return a.company.localeCompare(b.company);
-        default:
-          return 0;
-      }
+    return [...list].sort((a, b) => {
+      if (sortBy === 'rating') return b.rating - a.rating;
+      if (sortBy === 'featured') return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      if (sortBy === 'popularity') return b.popularity - a.popularity;
+      return new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime();
     });
+  }, [allServices, selCats, verifiedOnly, search, sortBy]);
 
-    setFilteredServices(filtered);
-    setCurrentPage(1);
-  }, [allServices, selectedCategory, sortBy, searchQuery]);
+  const totalPages = Math.ceil(filtered.length / perPage);
+  const current = filtered.slice((page - 1) * perPage, page * perPage);
 
-  const indexOfLastService = currentPage * servicesPerPage;
-  const indexOfFirstService = indexOfLastService - servicesPerPage;
-  const currentServices = filteredServices.slice(indexOfFirstService, indexOfLastService);
-  const totalPages = Math.ceil(filteredServices.length / servicesPerPage);
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'Drone Technology': return Drone;
-      case 'AI Solutions': return Brain;
-      case 'GIS Services': return Map;
-      case 'Consulting': return Users;
-      case 'Training': return Building2;
-      case 'Maintenance': return Building2;
-      case 'Drone Training & Education Services': return Building2;
-      case 'UAV Manufacturing': return Drone;
-      case 'Drone training': return Building2;
-      default: return Building2;
-    }
+  const toggleCat = (cat: string) => {
+    if (cat === 'All') { setSelCats([]); setPage(1); return; }
+    setSelCats(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
+    setPage(1);
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Drone Technology':
-      case 'Drone Training & Education Services':
-      case 'Drone training':
-      case 'UAV Manufacturing':
-        return 'bg-blue-600';
-      case 'AI Solutions': return 'bg-purple-600';
-      case 'GIS Services': return 'bg-green-600';
-      case 'Consulting': return 'bg-indigo-600';
-      case 'Training': return 'bg-orange-500';
-      case 'Maintenance': return 'bg-red-600';
-      default: return 'bg-gray-800';
-    }
-  };
-
-  // Format date for display
-  const formatDate = (timestamp: string) => {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    return date.toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
-
-  if (loading) {
-    return (
-      <LoadingScreen
-        logoSrc="images/logo.png"
-        loadingText="Loading Services..."
-      />
-    );
-  }
+  if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Services..." />;
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Directory</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Services <span className="text-yellow-400">Directory</span></h1>
-            <p className="text-sm text-white/60 max-w-lg">Explore top services in Drone Tech, AI, and GIS.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{allServices.length}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Services</span>
-            </div>
+    <div className="pt-[60px] min-h-screen" style={{ background: '#F8F8F8', fontFamily: "'Poppins',sans-serif" }}>
+
+      {/* HERO */}
+      <section style={{ background: 'linear-gradient(135deg,#0A0A0A,#111500)', color: '#fff' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '28px 22px' }}>
+          <h1 style={{ fontSize: 24, fontWeight: 900, letterSpacing: -0.4, marginBottom: 5, lineHeight: 1.25 }}>
+            Book <span style={{ color: '#F5C518' }}>Drone, GIS &amp; AI</span> services
+          </h1>
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,.55)', maxWidth: 560, lineHeight: 1.7, marginBottom: 14 }}>
+            {allServices.length} services available — surveys, inspections, AI analytics, GIS processing, and training. Connect directly with providers.
+          </p>
+          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+            {[
+              { n: allServices.length, l: 'Services Available' },
+              { n: allServices.filter(s => s.featured).length, l: 'Featured' },
+              { n: categories.length - 1, l: 'Categories' },
+            ].map(st => (
+              <div key={st.l}>
+                <div style={{ fontSize: 20, fontWeight: 900, color: '#F5C518', lineHeight: 1 }}>{st.n}</div>
+                <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,.4)', marginTop: 1 }}>{st.l}</div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
-            <div className="relative flex-1 max-w-xs">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search services..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="py-2.5 pr-3 pl-9 w-full text-sm text-gray-900 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 placeholder-gray-400"
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
-              <div className="relative">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2.5 w-full sm:w-44 text-sm text-gray-700 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-                >
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category === 'All' ? 'All Categories' : category}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-gray-400" />
-              </div>
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-2.5 w-full sm:w-44 text-sm text-gray-700 bg-white rounded-xl border border-gray-200 appearance-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-                >
-                  {sortOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-gray-400" />
-              </div>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '20px 22px' }}>
+
+        {/* TOOLBAR */}
+        <div style={{ background: '#fff', border: '1px solid #E5E5E5', borderRadius: 8, padding: 14, boxShadow: '0 2px 12px rgba(0,0,0,.08)', marginBottom: 15 }}>
+          <div style={{ display: 'flex', gap: 9, marginBottom: 12, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 180, display: 'flex', alignItems: 'center', gap: 6, background: '#F8F8F8', border: '1.5px solid #E5E5E5', borderRadius: 8, padding: '8px 12px' }}>
+              <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
+              <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+                placeholder="Search services — survey, spraying, LiDAR, AI..."
+                style={{ border: 'none', background: 'none', fontSize: 13, width: '100%', outline: 'none', color: '#1A1A1A' }} />
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {selectedCategory !== 'All' && (
-              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
-                Category: {selectedCategory}
-                <button onClick={() => setSelectedCategory('All')} className="text-sm hover:text-white">x</button>
-              </span>
-            )}
-            {searchQuery && (
-              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
-                Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="text-sm hover:text-white">x</button>
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-sm text-gray-500">{filteredServices.length} service{filteredServices.length !== 1 ? 's' : ''}</p>
-          {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}
-        </div>
-
-        {currentServices.length === 0 ? (
-          <div className="py-16 text-center">
-            <div className="p-10 mx-auto max-w-md rounded-xl border border-gray-200 bg-white">
-              <Search className="mx-auto mb-4 w-12 h-12 text-gray-300" />
-              <h3 className="mb-2 text-lg font-bold text-gray-900">No services found</h3>
-              <p className="text-sm text-gray-400">Try adjusting your filters or search terms</p>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {currentServices.map((service, index) => {
-              const IconComponent = getCategoryIcon(service.category);
-
-              return (
-                <Link
-                  to={`/service/${service.publishedId}`}
-                  state={{ service }}
-                  key={service.id}
-                  className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-200 block"
-                  style={{
-                    animationDelay: `${index * 100}ms`,
-                  }}
-                >
-                    <div className="p-3">
-                      <div className="overflow-hidden relative rounded-lg bg-gray-100 h-48 flex items-center justify-center">
-                        <img
-                          src={service.image}
-                          alt={service.title}
-                          className="absolute inset-0 object-cover w-full h-48 transition-all duration-700 group-hover:scale-110"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                          }}
-                        />
-
-                        <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
-
-
-
-                        <div className={`absolute top-3 right-3 ${getCategoryColor(service.category)} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
-                          <IconComponent className="w-3 h-3" />
-                          {service.category}
-                        </div>
-
-                        <div className="absolute right-3 bottom-3 px-2 py-1 text-xs font-medium text-white rounded-lg bg-black/80">
-                          {service.price}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-5">
-                      <h3 className="mb-2 text-xl font-bold text-black transition-colors duration-300 group-hover:text-yellow-600 line-clamp-2">
-                        {service.title}
-                      </h3>
-                      <p className="mb-1 text-sm font-semibold text-gray-500 flex items-center gap-1">
-                        <Building2 className="w-3 h-3" />
-                        {service.company}
-                      </p>
-
-                      {/* Added timestamp display */}
-                      {service.timestamp && (
-                        <p className="mb-3 text-xs text-gray-400">
-                          Added: {formatDate(service.timestamp)}
-                        </p>
-                      )}
-
-                      <p className="mb-4 text-sm text-gray-600 line-clamp-2 leading-relaxed">
-                        {service.description}
-                      </p>
-
-                      <div className="flex justify-between items-center mb-4 pt-4 border-t border-gray-100">
-                        <div className="flex gap-4 items-center text-xs text-gray-500">
-                          <div className="flex gap-1 items-center bg-yellow-50 px-2 py-1 rounded-md">
-                            <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                            <span className="font-bold text-black">{service.rating.toFixed(1)}</span>
-                          </div>
-                          <div className="flex gap-1 items-center">
-                            <MapPin className="w-3 h-3" />
-                            {service.location.split(',')[0]}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        {service.features && service.features.slice(0, 2).map((feature: string, idx: number) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-black/70 bg-gray-100 rounded-md line-clamp-1"
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                        {service.features && service.features.length > 2 && (
-                          <span className="px-2 py-1 text-[10px] font-bold text-black/50 bg-gray-100 rounded-md">
-                            +{service.features.length - 2}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
+          {/* Category chips */}
+          {categories.length > 1 && (
+            <div style={{ marginBottom: 9 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: .5, marginBottom: 5 }}>Category</div>
+              <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                {categories.slice(0, 12).map(cat => {
+                  const on = cat === 'All' ? selCats.length === 0 : selCats.includes(cat);
+                  return (
+                    <button key={cat} onClick={() => toggleCat(cat)}
+                      style={{ padding: '4px 11px', borderRadius: 16, fontSize: 12, fontWeight: 600, border: `1.5px solid ${on ? '#0A0A0A' : '#E5E5E5'}`, background: on ? '#0A0A0A' : 'none', color: on ? '#F5C518' : '#444', cursor: 'pointer', transition: 'all .12s' }}>
+                      {cat}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-10">
-            <div className="flex gap-2 items-center">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 text-sm font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Previous
-              </button>
-              {[...Array(totalPages)].map((_, index) => {
-                const page = index + 1;
-                if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${page === currentPage ? 'bg-black text-yellow-400 border border-black' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
-                    >
-                      {page}
-                    </button>
-                  );
-                } else if (page === currentPage - 2 || page === currentPage + 2) {
-                  return <span key={page} className="px-2 text-gray-400">...</span>;
-                }
-                return null;
-              })}
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 text-sm font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Next
-              </button>
-            </div>
+          {/* Trust chip */}
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: .5, marginBottom: 5 }}>Trust</div>
+            <button onClick={() => { setVerifiedOnly(!verifiedOnly); setPage(1); }}
+              style={{ padding: '4px 11px', borderRadius: 16, fontSize: 12, fontWeight: 600, border: `1.5px solid ${verifiedOnly ? '#0A0A0A' : '#E5E5E5'}`, background: verifiedOnly ? '#0A0A0A' : 'none', color: verifiedOnly ? '#F5C518' : '#444', cursor: 'pointer', transition: 'all .12s' }}>
+              ⭐ Featured only
+            </button>
+          </div>
+        </div>
+
+        {/* MANAGED BOOKING NOTE */}
+        <div style={{ background: '#FFFBE8', border: '1px solid #C9A010', borderRadius: 8, padding: '7px 12px', fontSize: 11.5, color: '#7a5800', marginBottom: 12 }}>
+          📦 <b>Book via DroneTv</b> — connect directly with providers. Send enquiries and get quotes.
+        </div>
+
+        {/* RESULTS BAR */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 7 }}>
+          <div style={{ fontSize: 12.5, color: '#777' }}>
+            <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> service{filtered.length !== 1 ? 's' : ''}
+          </div>
+          <select value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}
+            style={{ padding: '6px 10px', border: '1.5px solid #E5E5E5', borderRadius: 8, fontSize: 12.5, color: '#444', background: '#fff', cursor: 'pointer' }}>
+            <option value="timestamp">Newest first</option>
+            <option value="featured">Featured first</option>
+            <option value="rating">Highest rated</option>
+            <option value="popularity">Most popular</option>
+          </select>
+        </div>
+
+        {/* GRID */}
+        {current.length === 0 ? (
+          <div style={{ padding: '64px 0', textAlign: 'center' }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>🔧</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No services found</div>
+            <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 14 }}>
+            {current.map(s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.publishedId}`)} />)}
           </div>
         )}
+
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32, gap: 6, flexWrap: 'wrap' }}>
+            <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+              style={{ padding: '7px 16px', borderRadius: 8, border: '1.5px solid #E5E5E5', fontSize: 13, fontWeight: 600, background: '#fff', color: '#1A1A1A', cursor: page === 1 ? 'not-allowed' : 'pointer', opacity: page === 1 ? .4 : 1 }}>
+              Previous
+            </button>
+            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+              if (totalPages <= 7) return i + 1;
+              if (i === 0) return 1; if (i === 6) return totalPages;
+              return page - 2 + i;
+            }).filter(n => n >= 1 && n <= totalPages).map(n => (
+              <button key={n} onClick={() => setPage(n)}
+                style={{ padding: '7px 13px', borderRadius: 8, border: `1.5px solid ${page === n ? '#0A0A0A' : '#E5E5E5'}`, fontSize: 13, fontWeight: 600, background: page === n ? '#0A0A0A' : '#fff', color: page === n ? '#F5C518' : '#1A1A1A', cursor: 'pointer' }}>
+                {n}
+              </button>
+            ))}
+            <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+              style={{ padding: '7px 16px', borderRadius: 8, border: '1.5px solid #E5E5E5', fontSize: 13, fontWeight: 600, background: '#fff', color: '#1A1A1A', cursor: page === totalPages ? 'not-allowed' : 'pointer', opacity: page === totalPages ? .4 : 1 }}>
+              Next
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const ServiceCard: React.FC<{ service: Service; onView: () => void }> = ({ service, onView }) => {
+  const color = barColor(service.category);
+
+  return (
+    <div style={{ background: '#fff', border: service.featured ? '2px solid #F5C518' : '1px solid #E5E5E5', borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,.08)', display: 'flex', flexDirection: 'column', transition: 'all .17s' }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 24px rgba(0,0,0,.14)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(0,0,0,.08)'; (e.currentTarget as HTMLElement).style.transform = 'none'; }}>
+
+      {/* Colored top bar */}
+      <div style={{ height: 3, background: color }} />
+
+      {/* Top */}
+      <div style={{ padding: '13px 14px 0' }}>
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 7, alignItems: 'center' }}>
+          <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 8, background: '#F8F8F8', color: '#444', border: '1px solid #E5E5E5', textTransform: 'uppercase' }}>{service.category}</span>
+          {service.featured && <span style={{ fontSize: 9, fontWeight: 800, background: '#F5C518', color: '#0A0A0A', padding: '2px 7px', borderRadius: 8, marginLeft: 'auto' }}>FEATURED</span>}
+        </div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: '#0A0A0A', marginBottom: 3, cursor: 'pointer', lineHeight: 1.3 }} onClick={onView}>
+          {service.title}
+        </div>
+        <div style={{ fontSize: 12, color: '#444', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
+          {service.company}
+        </div>
+      </div>
+
+      {/* Desc */}
+      <p style={{ fontSize: 12.5, color: '#777', lineHeight: 1.6, padding: '0 14px', marginBottom: 10, flex: 1, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        {service.description || 'No description available.'}
+      </p>
+
+      {/* Meta */}
+      <div style={{ padding: '0 14px 10px', display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+        {service.location && (
+          <span style={{ fontSize: 11, color: '#444', display: 'flex', alignItems: 'center', gap: 3, background: '#F8F8F8', padding: '3px 7px', borderRadius: 5 }}>
+            <MapPin size={10} />{service.location}
+          </span>
+        )}
+        {service.timeline && service.timeline !== 'N/A' && (
+          <span style={{ fontSize: 11, color: '#444', display: 'flex', alignItems: 'center', gap: 3, background: '#F8F8F8', padding: '3px 7px', borderRadius: 5 }}>
+            <Clock size={10} />{service.timeline}
+          </span>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div style={{ padding: '10px 14px', borderTop: '1px solid #E5E5E5', background: '#FAFAFA' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#0A0A0A' }}>{service.price}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: '#F5C518' }}>
+              <Star size={11} fill="#F5C518" />{service.rating.toFixed(1)}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button onClick={onView}
+            style={{ flex: 1, background: '#CC1F1F', color: '#fff', padding: '7px 10px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', textAlign: 'center' }}>
+            Book / Enquire
+          </button>
+          <button onClick={onView}
+            style={{ background: '#fff', color: '#0A0A0A', border: '1.5px solid #E5E5E5', padding: '7px 10px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+            Details
+          </button>
+        </div>
       </div>
     </div>
   );
