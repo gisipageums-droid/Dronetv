@@ -69,21 +69,17 @@ function avColor(name: string): string {
 
 const CSS = `
 .co-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
-.co-hero { background: linear-gradient(135deg,#0A0A0A,#111500); color: #fff; }
-.co-hero-i { max-width: 1280px; margin: 0 auto; padding: 28px 22px; }
-.co-hero h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.4px; margin-bottom: 5px; line-height: 1.25; }
+.co-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.co-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.co-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; white-space: nowrap; }
 .co-hero h1 span { color: #F5C518; }
-.co-hero p { font-size: 13px; color: rgba(255,255,255,.55); max-width: 560px; line-height: 1.7; margin-bottom: 14px; }
-.co-stats { display: flex; gap: 24px; flex-wrap: wrap; }
-.co-stat-n { font-size: 20px; font-weight: 900; color: #F5C518; line-height: 1; }
-.co-stat-l { font-size: 10.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
+.co-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
+.co-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.co-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 .co-tabs { background: #0A0A0A; border-bottom: 3px solid #F5C518; position: sticky; top: 60px; z-index: 110; }
 .co-tabs-i { max-width: 1280px; margin: 0 auto; padding: 0 22px; display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
 .co-tabs-i::-webkit-scrollbar { display: none; }
 .co-tab { padding: 10px 18px; font-size: 12.5px; font-weight: 700; background: none; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: all .13s; border: none; border-bottom: 3px solid transparent; margin-bottom: -3px; }
-.co-trust { background: #0A0A0A; border-bottom: 2px solid #F5C518; }
-.co-trust-i { max-width: 1280px; margin: 0 auto; padding: 8px 22px; display: flex; gap: 18px; flex-wrap: wrap; }
-.co-trust-item { display: flex; align-items: center; gap: 5px; color: rgba(255,255,255,.6); font-size: 11.5px; font-weight: 500; }
 .co-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
 
 /* Sidebar layout */
@@ -128,14 +124,12 @@ const CSS = `
   .co-sidebar { position: static; display: none; }
   .co-sidebar.open { display: block; }
   .co-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
-  .co-trust-item:nth-child(n+3) { display: none; }
 }
 @media (max-width: 600px) {
-  .co-hero h1 { font-size: 19px; }
-  .co-hero-i { padding: 18px 16px; }
-  .co-stat-n { font-size: 17px; }
-  .co-wrap { padding: 14px 14px; }
-  .co-trust-i { padding: 7px 14px; gap: 12px; }
+  .co-hero-i { padding: 8px 14px; gap: 10px; }
+  .co-hero h1 { font-size: 13px; }
+  .co-stat-n { font-size: 13px; }
+  .co-wrap { padding: 12px 14px; }
   .co-grid { grid-template-columns: 1fr; }
   .co-tabs-i { padding: 0 14px; }
   .co-tab { padding: 8px 12px; font-size: 12px; }
@@ -330,7 +324,6 @@ const CompaniesPage: React.FC = () => {
         <section className="co-hero">
           <div className="co-hero-i">
             <h1>Find verified <span>Drone, GIS &amp; AI</span> companies</h1>
-            <p>Browse {allCompanies.length} listed companies — manufacturers, service providers, GIS firms, and AI companies.</p>
             <div className="co-stats">
               {[
                 { n: allCompanies.length, l: 'Listed' },
@@ -365,22 +358,6 @@ const CompaniesPage: React.FC = () => {
             })}
           </div>
         </nav>
-
-        {/* TRUST STRIP */}
-        <div className="co-trust">
-          <div className="co-trust-i">
-            {[
-              { icon: '✓', b: verifiedCount, l: 'verified companies' },
-              { icon: '🔒', b: 'DGCA-certified', l: 'providers' },
-              { icon: '⭐', b: '4.7 avg', l: 'platform rating' },
-              { icon: '🛡️', b: 'Service guarantee', l: 'Brand partners' },
-            ].map(t => (
-              <div key={t.l} className="co-trust-item">
-                <span>{t.icon}</span><b style={{ color: '#F5C518' }}>{t.b}</b>&nbsp;{t.l}
-              </div>
-            ))}
-          </div>
-        </div>
 
         <div className="co-wrap">
           {/* Search bar */}
