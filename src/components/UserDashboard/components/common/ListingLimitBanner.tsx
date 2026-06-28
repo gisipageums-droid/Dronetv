@@ -37,7 +37,12 @@ const ListingLimitBanner: React.FC<Props> = ({ count, type, label }) => {
   useEffect(() => {
     if (!userId) return;
     axios.get(`${PROFILE_API}?userId=${userId}`)
-      .then(r => setTokens(r.data?.profile?.tokenBalance ?? 0))
+      .then(r => {
+        const p = r.data?.profile ?? {};
+        // Use totalTokensEarned so tier doesn't drop when tokens are spent
+        const earned = p.totalTokensEarned ?? p.tokenBalance ?? 0;
+        setTokens(earned);
+      })
       .catch(() => setTokens(0));
   }, [userId]);
 

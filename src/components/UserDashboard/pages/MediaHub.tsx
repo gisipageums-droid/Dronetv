@@ -127,6 +127,7 @@ function statusBadge(s: DelivStatus) {
 const MediaHub: React.FC = () => {
   const { user } = useUserAuth();
   const [tokenBalance, setTokenBalance] = useState(0);
+  const [earnedTokens, setEarnedTokens] = useState(0);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -136,14 +137,17 @@ const MediaHub: React.FC = () => {
     if (!userId) { setLoading(false); return; }
     try {
       const res = await axios.get(`${PROFILE_API}?userId=${userId}`);
-      setTokenBalance(res.data?.profile?.tokenBalance || 0);
+      const p = res.data?.profile ?? {};
+      setTokenBalance(p.tokenBalance || 0);
+      // Use totalTokensEarned so tier doesn't drop when tokens are spent
+      setEarnedTokens(p.totalTokensEarned ?? p.tokenBalance ?? 0);
     } catch { /* silent */ }
     setLoading(false);
   }, [userId]);
 
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
-  const tier = getTier(tokenBalance);
+  const tier = getTier(earnedTokens);
 
   function getAllocation(d: DeliverableItem): string {
     if (tier === "brand") return d.brand;
