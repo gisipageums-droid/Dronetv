@@ -3,16 +3,14 @@ import {useUserAuth} from "./context/context"
 import {useNavigate} from "react-router-dom"
 
 export default function ProtectedRoute({ children }) {
-   const navigate = useNavigate();
-    const {isLogin}= useUserAuth();
-useEffect(()=>{
+  const navigate = useNavigate();
+  const { isLogin } = useUserAuth();
 
-    if(isLogin===false){
-        navigate("/login");
+  useEffect(() => {
+    if (isLogin === false) {
+      navigate("/login");
     }
-},[])
+  }, [isLogin, navigate]);
 
-  return (
-       children
-  )
+  return children;
 }
