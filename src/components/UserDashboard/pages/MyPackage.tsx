@@ -94,7 +94,7 @@ interface ProfileData {
   tokenBalance?: number;
   packageType?: string;
   packageExpiry?: string;
-  listingCount?: number;
+  publishedCompanies?: number;
 }
 
 const MyPackage: React.FC = () => {
@@ -252,7 +252,7 @@ const MyPackage: React.FC = () => {
       {/* Stats */}
       <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Active Listings", value: profile?.listingCount ?? 0, icon: Building2 },
+          { label: "Active Listings", value: profile?.publishedCompanies ?? 0, icon: Building2 },
           { label: "Token Balance", value: `${(profile?.tokenBalance ?? 0).toLocaleString()} ₮`, icon: Coins },
           { label: "Package Tier", value: currentPkg.name, icon: Star },
           { label: "Renews", value: expiryLabel.split(" ").slice(-2).join(" "), icon: Calendar },
