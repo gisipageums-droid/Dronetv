@@ -219,26 +219,14 @@ const EventsPage = () => {
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Events</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Events <span className="text-yellow-400">Calendar</span></h1>
-            <p className="text-sm text-white/60 max-w-lg">Discover amazing drone events from our community.</p>
-          </div>
-          <div className="flex flex-col items-end gap-4 flex-shrink-0">
-            <div className="flex gap-8">
-              <div>
-                <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{allEvents.length || '0'}</span>
-                <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Events</span>
-              </div>
-            </div>
-            <button
-              onClick={() => navigate("/event/select")}
-              className="px-5 py-2.5 text-sm font-semibold text-black bg-yellow-400 rounded-lg hover:bg-yellow-300 transition"
-            >
-              List your Event
-            </button>
-          </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+          <h1 className="text-base font-extrabold text-white m-0">Events <span className="text-yellow-400">Calendar</span> <span className="text-xs font-semibold text-white/50 ml-2">{allEvents.length || '0'} Events</span></h1>
+          <button
+            onClick={() => navigate("/event/select")}
+            className="px-3 py-1.5 text-xs font-semibold text-black bg-yellow-400 rounded-lg hover:bg-yellow-300 transition flex-shrink-0"
+          >
+            List your Event
+          </button>
         </div>
       </div>
 
