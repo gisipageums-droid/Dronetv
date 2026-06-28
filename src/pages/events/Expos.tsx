@@ -46,10 +46,10 @@ export default function ExposPage() {
       .then(data => {
         const all: RawEvent[] = Array.isArray(data.cards) ? data.cards : [];
         const filtered = all.filter(e => {
-          const cat = (e.category || '').toLowerCase();
-          return KEYWORDS.some(k => cat.includes(k));
+          const text = `${e.category || ''} ${e.eventName || ''} ${e.shortDescription || ''}`.toLowerCase();
+          return KEYWORDS.some(k => text.includes(k));
         });
-        setEvents(filtered.length > 0 ? filtered : all);
+        setEvents(filtered);
       })
       .catch(() => {})
       .finally(() => setLoading(false));

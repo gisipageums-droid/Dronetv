@@ -11,10 +11,12 @@ import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const NOTIFY_API  = PAYMENT_API ? `${PAYMENT_API}/spend-tokens` : `${LAMBDA.tokenGateway}/spend-tokens`;
 
-function getTier(t: number) {
-  if (t >= 8000) return "brand";
-  if (t >= 2000) return "scale";
-  if (t >= 500)  return "reach";
+function getTierFromPackage(packageType: string | null | undefined): string {
+  if (!packageType) return "free";
+  const t = packageType.toLowerCase();
+  if (t === "brand") return "brand";
+  if (t === "scale") return "scale";
+  if (t === "reach") return "reach";
   return "free";
 }
 
@@ -123,6 +125,7 @@ const EDITABLE_STATUSES: Post["status"][] = ["submitted", "rejected"];
 const UserPosts: React.FC = () => {
   const { user } = useUserAuth();
   const [tokenBalance, setTokenBalance] = useState(0);
+  const [packageType, setPackageType] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
   const [activeType, setActiveType] = useState<ContentType>("promo_post");
@@ -134,7 +137,7 @@ const UserPosts: React.FC = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<Post | null>(null);
 
   const userId = user?.userData?.email || user?.email || "";
-  const tier = getTier(tokenBalance);
+  const tier = getTierFromPackage(packageType);
   const activeAddons = getActiveAddons(userId);
   const isFeatured = activeAddons.includes("featured_placement");
 
@@ -143,6 +146,7 @@ const UserPosts: React.FC = () => {
     try {
       const r = await axios.get(`${PROFILE_API}?userId=${userId}`);
       setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
+      setPackageType(r.data?.profile?.packageType ?? null);
     } catch { /* silent */ }
     setLoading(false);
   }, [userId]);
