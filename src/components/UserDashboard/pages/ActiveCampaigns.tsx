@@ -42,7 +42,7 @@ const ActiveCampaigns: React.FC = () => {
       ]);
       const prof = profileR.data?.profile ?? {};
       setTokenBalance(prof.tokenBalance ?? 0);
-      setTotalSpent(prof.totalTokensSpent ?? 0);
+      setTotalSpent(Math.max(0, prof.totalTokensSpent ?? 0));
       setBids(bidsR.data?.bids ?? []);
       setPlacements(placR.data?.placements ?? []);
     } catch {
