@@ -32,6 +32,7 @@ const ProfessionalsPage: React.FC = () => {
   const [sortBy, setSortBy] = useState("fullName");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const professionalsPerPage = 12;
   const navigate = useNavigate();
 
