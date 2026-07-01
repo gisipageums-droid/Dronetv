@@ -89,7 +89,7 @@ export default function MagazinePage() {
           </div>
           <div className="flex gap-8 flex-shrink-0">
             <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{issues.length}</span>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{articles.length || issues.length}</span>
               <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Issues Published</span>
             </div>
             <div>
