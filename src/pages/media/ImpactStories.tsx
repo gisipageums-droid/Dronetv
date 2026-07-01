@@ -35,7 +35,7 @@ export default function ImpactStoriesPage() {
           </div>
           <div className="flex gap-8 flex-shrink-0">
             <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || '0'}</span>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || staticStories.length}</span>
               <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Stories</span>
             </div>
             <div>
