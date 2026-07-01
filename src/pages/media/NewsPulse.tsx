@@ -127,16 +127,21 @@ export default function NewsPulsePage() {
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filtered.map(item => (
-                      <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
-                          <span className="text-xs text-gray-400">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : ''}</span>
-                        </div>
-                        <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3">{item.title}</h3>
-                        <p className="text-xs text-gray-500 font-semibold">{item.source}</p>
-                        {item.externalLink && (
-                          <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs text-yellow-600 font-bold hover:text-yellow-700 mt-2 block">Read more →</a>
+                      <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                        {item.imageUrl && (
+                          <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />
                         )}
+                        <div className="p-5">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
+                            <span className="text-xs text-gray-400">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : ''}</span>
+                          </div>
+                          <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3">{item.title}</h3>
+                          <p className="text-xs text-gray-500 font-semibold">{item.source}</p>
+                          {item.externalLink && (
+                            <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs text-yellow-600 font-bold hover:text-yellow-700 mt-2 block">Read more →</a>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
