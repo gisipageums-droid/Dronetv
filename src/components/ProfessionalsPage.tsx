@@ -170,65 +170,6 @@ const ProfessionalsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Hub Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Hub</span>
-          Everything You Need as a Drone, GIS & AI Professional
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-          {[
-            { to: '/professionals/job-board', icon: '💼', count: '20+', unit: 'Jobs Listed', title: 'Job Board', desc: 'Drone pilot, GIS analyst, AI engineer, instructor, and UAV operator jobs across India.' },
-            { to: '/professionals/pilot-directory', icon: '🧑‍✈️', count: 'Free', unit: 'To List', title: 'Pilot Directory', desc: 'Create your verified pilot profile. Get discovered by drone companies hiring or contracting.' },
-            { to: '/professionals/certifications', icon: '🏅', count: '3', unit: 'Categories', title: 'Certifications', desc: 'Complete DGCA RPC certification guide — Small, Medium, and Large drone categories.' },
-            { to: '/professionals/portfolio', icon: '🗂️', count: 'Free', unit: 'To Upload', title: 'Portfolio', desc: 'Showcase your drone work — aerial maps, farm surveys, inspection reports, cinematic reels.' },
-            { to: '/professionals/training', icon: '🎓', count: '240+', unit: 'RPTOs', title: 'Training', desc: 'Find DGCA-approved training organisations near you and compare courses.' },
-            { to: '/professionals/networking', icon: '🔗', count: 'Events', unit: 'Meetups', title: 'Networking', desc: 'Connect with drone companies, fellow pilots, and industry professionals at events.' },
-            { to: '/professionals/community', icon: '👥', count: 'Active', unit: 'Community', title: 'Community', desc: 'Discussion forums, WhatsApp groups, flyins, and peer support across India.' },
-            { to: '/professionals/certifications', icon: '⚡', count: 'Rs.50K', unit: 'Starting Cost', title: 'Start Here', desc: 'New to drones? Complete 5-day DGCA Small category certification. Start earning from month one.', highlight: true },
-          ].map(card => (
-            <a key={card.to} href={card.to}
-              className={`rounded-xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col ${card.highlight ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-white'}`}>
-              <div className={`px-4 py-3 flex items-center gap-3 ${card.highlight ? 'bg-yellow-400' : 'bg-black'}`}>
-                <span className="text-xl">{card.icon}</span>
-                <div>
-                  <span className={`text-sm font-extrabold block leading-none ${card.highlight ? 'text-black' : 'text-white'}`}>{card.count}</span>
-                  <span className={`text-xs ${card.highlight ? 'text-black/60' : 'text-white/50'}`}>{card.unit}</span>
-                </div>
-              </div>
-              <div className="px-4 py-3 flex-1">
-                <p className="font-bold text-gray-900 text-sm mb-1">{card.title}</p>
-                <p className="text-xs text-gray-500 leading-relaxed">{card.desc}</p>
-              </div>
-              <div className={`px-4 py-2 border-t ${card.highlight ? 'border-yellow-200' : 'border-gray-100'}`}>
-                <span className={`text-xs font-bold ${card.highlight ? 'text-yellow-700' : 'text-yellow-600'}`}>Explore →</span>
-              </div>
-            </a>
-          ))}
-        </div>
-
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">2026</span>
-          Why Drone is the Right Career
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-          {[
-            { icon: '📈', title: '2 Lakh Pilots Needed — Only 39,890 Certified', desc: "India's drone sector needs 2 lakh certified pilots by 2026. As of February 2026, only 39,890 are certified. That skill gap means strong job security, rising salaries, and wide choice of employers for anyone who qualifies now." },
-            { icon: '💰', title: 'Salary from Rs. 25,000 to Rs. 1,00,000 Per Month', desc: 'Entry-level certified pilots earn Rs. 25,000–40,000/month. Experienced pilots in GIS, defence, or specialised inspection roles earn Rs. 10–20 LPA or more. Freelance operators earn project-based income on top.' },
-            { icon: '⚡', title: 'Get Certified in 5 Days for Small Category', desc: 'DGCA Small category Remote Pilot Certificate takes just 5 days at an approved RPTO. Total cost including training, medical, and DGCA fees ranges from Rs. 50,000 upwards. No engineering degree required — Class 10 pass is sufficient.' },
-            { icon: '🌾', title: 'Jobs in Agriculture, Survey, Defence, Media, Logistics', desc: 'Agriculture spraying, GIS mapping, infrastructure inspection, aerial cinematography, defence surveillance, and drone delivery are all active hiring sectors. Specialise in what interests you most.' },
-          ].map((item, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-start gap-4">
-              <span className="text-2xl flex-shrink-0">{item.icon}</span>
-              <div>
-                <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <style>{`
 .prf-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
 .prf-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
@@ -336,6 +277,65 @@ const ProfessionalsPage: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Hub Grid */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Hub</span>
+          Everything You Need as a Drone, GIS & AI Professional
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+          {[
+            { to: '/professionals/job-board', icon: '💼', count: '20+', unit: 'Jobs Listed', title: 'Job Board', desc: 'Drone pilot, GIS analyst, AI engineer, instructor, and UAV operator jobs across India.' },
+            { to: '/professionals/pilot-directory', icon: '🧑‍✈️', count: 'Free', unit: 'To List', title: 'Pilot Directory', desc: 'Create your verified pilot profile. Get discovered by drone companies hiring or contracting.' },
+            { to: '/professionals/certifications', icon: '🏅', count: '3', unit: 'Categories', title: 'Certifications', desc: 'Complete DGCA RPC certification guide — Small, Medium, and Large drone categories.' },
+            { to: '/professionals/portfolio', icon: '🗂️', count: 'Free', unit: 'To Upload', title: 'Portfolio', desc: 'Showcase your drone work — aerial maps, farm surveys, inspection reports, cinematic reels.' },
+            { to: '/professionals/training', icon: '🎓', count: '240+', unit: 'RPTOs', title: 'Training', desc: 'Find DGCA-approved training organisations near you and compare courses.' },
+            { to: '/professionals/networking', icon: '🔗', count: 'Events', unit: 'Meetups', title: 'Networking', desc: 'Connect with drone companies, fellow pilots, and industry professionals at events.' },
+            { to: '/professionals/community', icon: '👥', count: 'Active', unit: 'Community', title: 'Community', desc: 'Discussion forums, WhatsApp groups, flyins, and peer support across India.' },
+            { to: '/professionals/certifications', icon: '⚡', count: 'Rs.50K', unit: 'Starting Cost', title: 'Start Here', desc: 'New to drones? Complete 5-day DGCA Small category certification. Start earning from month one.', highlight: true },
+          ].map(card => (
+            <a key={card.to} href={card.to}
+              className={`rounded-xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col ${card.highlight ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-white'}`}>
+              <div className={`px-4 py-3 flex items-center gap-3 ${card.highlight ? 'bg-yellow-400' : 'bg-black'}`}>
+                <span className="text-xl">{card.icon}</span>
+                <div>
+                  <span className={`text-sm font-extrabold block leading-none ${card.highlight ? 'text-black' : 'text-white'}`}>{card.count}</span>
+                  <span className={`text-xs ${card.highlight ? 'text-black/60' : 'text-white/50'}`}>{card.unit}</span>
+                </div>
+              </div>
+              <div className="px-4 py-3 flex-1">
+                <p className="font-bold text-gray-900 text-sm mb-1">{card.title}</p>
+                <p className="text-xs text-gray-500 leading-relaxed">{card.desc}</p>
+              </div>
+              <div className={`px-4 py-2 border-t ${card.highlight ? 'border-yellow-200' : 'border-gray-100'}`}>
+                <span className={`text-xs font-bold ${card.highlight ? 'text-yellow-700' : 'text-yellow-600'}`}>Explore →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">2026</span>
+          Why Drone is the Right Career
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          {[
+            { icon: '📈', title: '2 Lakh Pilots Needed — Only 39,890 Certified', desc: "India's drone sector needs 2 lakh certified pilots by 2026. As of February 2026, only 39,890 are certified. That skill gap means strong job security, rising salaries, and wide choice of employers for anyone who qualifies now." },
+            { icon: '💰', title: 'Salary from Rs. 25,000 to Rs. 1,00,000 Per Month', desc: 'Entry-level certified pilots earn Rs. 25,000–40,000/month. Experienced pilots in GIS, defence, or specialised inspection roles earn Rs. 10–20 LPA or more. Freelance operators earn project-based income on top.' },
+            { icon: '⚡', title: 'Get Certified in 5 Days for Small Category', desc: 'DGCA Small category Remote Pilot Certificate takes just 5 days at an approved RPTO. Total cost including training, medical, and DGCA fees ranges from Rs. 50,000 upwards. No engineering degree required — Class 10 pass is sufficient.' },
+            { icon: '🌾', title: 'Jobs in Agriculture, Survey, Defence, Media, Logistics', desc: 'Agriculture spraying, GIS mapping, infrastructure inspection, aerial cinematography, defence surveillance, and drone delivery are all active hiring sectors. Specialise in what interests you most.' },
+          ].map((item, i) => (
+            <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-start gap-4">
+              <span className="text-2xl flex-shrink-0">{item.icon}</span>
+              <div>
+                <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
