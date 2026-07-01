@@ -105,7 +105,7 @@ const BuyTokenPage: React.FC = () => {
       let paymentHandled = false;
 
       const options: RazorpayOrderOptions = {
-        key: import.meta.env.VITE_RAZORPAY_KEY || key,
+        key: key || import.meta.env.VITE_RAZORPAY_KEY,
         amount: order.amount,
         currency: order.currency,
         name: 'DroneTv.in',
