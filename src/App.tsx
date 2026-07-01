@@ -450,17 +450,21 @@ const AppContent = () => {
           <Route
             path="/user-professionals"
             element={
-              <UserDashboardLayout>
-                <Professinal />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <Professinal />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/user-events"
             element={
-              <UserDashboardLayout>
-                <Event />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <Event />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
@@ -496,9 +500,11 @@ const AppContent = () => {
           <Route
             path="/user-profile"
             element={
-              <UserDashboardLayout>
-                <ProfilePage />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ProfilePage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
 
@@ -614,9 +620,11 @@ const AppContent = () => {
           <Route
             path="/user-company/leads/:companyName"
             element={
-              <UserDashboardLayout>
-                <CompanyLeads />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <CompanyLeads />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
@@ -632,17 +640,21 @@ const AppContent = () => {
           <Route
             path="/user-professional/leads/:ProfessionalName/:professionalId"
             element={
-              <UserDashboardLayout>
-                <ProfessionalLeads />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ProfessionalLeads />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/user-contacted"
             element={
-              <UserDashboardLayout>
-                <ContactedPeople />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ContactedPeople />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
