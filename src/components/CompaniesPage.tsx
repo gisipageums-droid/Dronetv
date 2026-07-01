@@ -324,6 +324,7 @@ const CompaniesPage: React.FC = () => {
         <section className="co-hero">
           <div className="co-hero-i">
             <h1>Find verified <span>Drone, GIS &amp; AI</span> companies</h1>
+            <a href="/form" style={{ flexShrink: 0, padding: '5px 14px', background: '#F5C518', color: '#0A0A0A', borderRadius: 6, fontSize: 12, fontWeight: 800, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'Poppins,sans-serif' }}>+ List Your Company</a>
             <div className="co-stats">
               {[
                 { n: allCompanies.length, l: 'Listed' },
