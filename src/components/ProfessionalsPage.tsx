@@ -241,7 +241,6 @@ const ProfessionalsPage: React.FC = () => {
             </button>
 
             <div className="prf-resbar">
-              <span style={{fontSize:'13px',color:'#666'}}>{filteredProfessionals.length} professional{filteredProfessionals.length !== 1 ? 's' : ''}</span>
               {totalPages > 1 && <span style={{fontSize:'12px',color:'#999'}}>Page {currentPage} of {totalPages}</span>}
             </div>
 
